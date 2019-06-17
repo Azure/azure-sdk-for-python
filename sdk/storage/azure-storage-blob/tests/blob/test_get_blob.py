@@ -220,7 +220,7 @@ class StorageGetBlobTest(StorageTestCase):
         snapshot_ref = blob.create_snapshot()
         snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
         
-        blob.upload_blob(self.byte_data) # Modify the blob so the Etag no longer matches
+        blob.upload_blob(self.byte_data, overwrite=True) # Modify the blob so the Etag no longer matches
 
         # Act
         content = snapshot.download_blob().content_as_bytes(max_connections=2)

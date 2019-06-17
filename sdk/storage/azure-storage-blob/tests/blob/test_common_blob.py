@@ -311,7 +311,7 @@ class StorageCommonBlobTest(StorageTestCase):
             self.container_name, blob_name, snapshot=blob.create_snapshot())
 
         upload_data = b'hello world again'
-        blob.upload_blob(upload_data, length=len(upload_data))
+        blob.upload_blob(upload_data, length=len(upload_data), overwrite=True)
 
         # Act
         blob_previous = snapshot.download_blob()

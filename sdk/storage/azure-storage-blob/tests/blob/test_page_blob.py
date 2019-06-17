@@ -456,6 +456,66 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.page_blob_sequence_number, 6)
 
+    @record
+    def test_create_page_blob_with_no_overwrite(self):
+        # Arrange
+        blob = self._get_blob_reference()
+        data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
+        data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
+
+        # Act
+        create_resp = blob.upload_blob(
+            data1,
+            overwrite=True,
+            blob_type=BlobType.PageBlob,
+            metadata={'BlobData': 'Data1'})
+
+        with self.assertRaises(ResourceExistsError):
+            blob.upload_blob(
+                data2,
+                overwrite=False,
+                blob_type=BlobType.PageBlob,
+                metadata={'BlobData': 'Data2'})
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob.blob_name, data1)
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self.assertEqual(props.metadata, {'BlobData': 'Data1'})
+        self.assertEqual(props.size, LARGE_BLOB_SIZE)
+        self.assertEqual(props.blob_type, BlobType.PageBlob)
+
+    @record
+    def test_create_page_blob_with_overwrite(self):
+        # Arrange
+        blob = self._get_blob_reference()
+        data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
+        data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
+
+        # Act
+        create_resp = blob.upload_blob(
+            data1,
+            overwrite=True,
+            blob_type=BlobType.PageBlob,
+            metadata={'BlobData': 'Data1'})
+        update_resp = blob.upload_blob(
+            data2,
+            overwrite=True,
+            blob_type=BlobType.PageBlob,
+            metadata={'BlobData': 'Data2'})
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob.blob_name, data2)
+        self.assertEqual(props.etag, update_resp.get('etag'))
+        self.assertEqual(props.last_modified, update_resp.get('last_modified'))
+        self.assertEqual(props.metadata, {'BlobData': 'Data2'})
+        self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
+        self.assertEqual(props.blob_type, BlobType.PageBlob)
+
     def test_create_blob_from_bytes(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):

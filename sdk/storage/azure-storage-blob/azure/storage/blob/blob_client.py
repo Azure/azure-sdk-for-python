@@ -24,7 +24,7 @@ from .lease import LeaseClient
 from .models import BlobBlock
 from .polling import CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
-from ._encryption import _generate_blob_encryption_data, _encrypt_blob
+from ._encryption import _generate_blob_encryption_data
 from ._utils import (
     StorageAccountHostsMixin,
     get_access_conditions,
@@ -44,15 +44,12 @@ from ._deserialize import deserialize_blob_properties
 from ._generated.models import (
     BlobHTTPHeaders,
     BlockLookupList,
-    StorageErrorException,
-    AppendPositionAccessConditions)
+    StorageErrorException)
 from ._download_chunking import StorageStreamDownloader
 from ._upload_chunking import (
-    _upload_blob_chunks,
-    _upload_blob_substream_blocks,
-    _PageBlobChunkUploader,
-    _BlockBlobChunkUploader,
-    _AppendBlobChunkUploader,
+    upload_block_blob,
+    upload_page_blob,
+    upload_append_blob,
     IterStreamer)
 
 if TYPE_CHECKING:
@@ -265,9 +262,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_blob(  # pylint: disable=too-many-statements,too-many-branches,too-many-return-statements,too-many-locals
+    def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
+            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -385,158 +383,62 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
-        try:
-            if blob_type == BlobType.BlockBlob:
-                adjusted_count = length
-                if (self.key_encryption_key is not None) and (adjusted_count is not None):
-                    adjusted_count += (16 - (length % 16))
-
-                # Do single put if the size is smaller than config.max_single_put_size
-                if adjusted_count is not None and (adjusted_count < self._config.blob_settings.max_single_put_size):
-                    try:
-                        data = data.read(length)
-                        if not isinstance(data, six.binary_type):
-                            raise TypeError('blob data should be of type bytes.')
-                    except AttributeError:
-                        pass
-                    if self.key_encryption_key:
-                        encryption_data, data = _encrypt_blob(data, self.key_encryption_key)
-                        headers['x-ms-meta-encryptiondata'] = encryption_data
-                    return self._client.block_blob.upload(
-                        data,
-                        content_length=adjusted_count,
-                        timeout=timeout,
-                        blob_http_headers=blob_headers,
-                        lease_access_conditions=access_conditions,
-                        modified_access_conditions=mod_conditions,
-                        headers=headers,
-                        cls=return_response_headers,
-                        validate_content=validate_content,
-                        data_stream_total=adjusted_count,
-                        upload_stream_current=0,
-                        **kwargs)
-
-                cek, iv, encryption_data = None, None, None
-                blob_settings = self._config.blob_settings
-                use_original_upload_path = blob_settings.use_byte_buffer or \
-                    validate_content or self.require_encryption or \
-                    blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
-                    hasattr(stream, 'seekable') and not stream.seekable() or \
-                    not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
-
-                if use_original_upload_path:
-                    if self.key_encryption_key:
-                        cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
-                        headers['x-ms-meta-encryptiondata'] = encryption_data
-                    block_ids = _upload_blob_chunks(
-                        blob_service=self._client.block_blob,
-                        blob_size=length,
-                        block_size=blob_settings.max_block_size,
-                        stream=stream,
-                        max_connections=max_connections,
-                        validate_content=validate_content,
-                        access_conditions=access_conditions,
-                        uploader_class=_BlockBlobChunkUploader,
-                        timeout=timeout,
-                        content_encryption_key=cek,
-                        initialization_vector=iv,
-                        **kwargs
-                    )
-                else:
-                    block_ids = _upload_blob_substream_blocks(
-                        blob_service=self._client.block_blob,
-                        blob_size=length,
-                        block_size=blob_settings.max_block_size,
-                        stream=stream,
-                        max_connections=max_connections,
-                        validate_content=validate_content,
-                        access_conditions=access_conditions,
-                        uploader_class=_BlockBlobChunkUploader,
-                        timeout=timeout,
-                        **kwargs
-                    )
-
-                block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
-                block_lookup.latest = [b.id for b in block_ids]
-                return self._client.block_blob.commit_block_list(
-                    block_lookup,
-                    blob_http_headers=blob_headers,
-                    lease_access_conditions=access_conditions,
-                    timeout=timeout,
-                    modified_access_conditions=mod_conditions,
-                    cls=return_response_headers,
-                    validate_content=validate_content,
-                    headers=headers,
-                    **kwargs)
-
-            if blob_type == BlobType.PageBlob:
-                if length is None or length < 0:
-                    raise ValueError("A content length must be specified for a Page Blob.")
-                if length % 512 != 0:
-                    raise ValueError("Invalid page blob size: {0}. "
-                                     "The size must be aligned to a 512-byte boundary.".format(length))
-                if premium_page_blob_tier:
-                    try:
-                        headers['x-ms-access-tier'] = premium_page_blob_tier.value
-                    except AttributeError:
-                        headers['x-ms-access-tier'] = premium_page_blob_tier
-                if encryption_data is not None:
-                    headers['x-ms-meta-encryptiondata'] = encryption_data
-                response = self._client.page_blob.create(
-                    content_length=0,
-                    blob_content_length=length,
-                    blob_sequence_number=None,
-                    blob_http_headers=blob_headers,
-                    timeout=timeout,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    cls=return_response_headers,
-                    headers=headers,
-                    **kwargs)
-                if length == 0:
-                    return response
-
-                mod_conditions = get_modification_conditions(if_match=response['etag'])
-                return _upload_blob_chunks(
-                    blob_service=self._client.page_blob,
-                    blob_size=length,
-                    block_size=self._config.blob_settings.max_page_size,
-                    stream=stream,
-                    max_connections=max_connections,
-                    validate_content=validate_content,
-                    access_conditions=access_conditions,
-                    uploader_class=_PageBlobChunkUploader,
-                    modified_access_conditions=mod_conditions,
-                    timeout=timeout,
-                    content_encryption_key=cek,
-                    initialization_vector=iv,
-                    **kwargs
-                )
-            if blob_type == BlobType.AppendBlob:
-                if self.require_encryption or (self.key_encryption_key is not None):
-                    raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-                if length == 0:
-                    return {}
-                append_conditions = AppendPositionAccessConditions(
-                    max_size=maxsize_condition,
-                    append_condition=None)
-                return _upload_blob_chunks(
-                    blob_service=self._client.append_blob,
-                    blob_size=length,
-                    block_size=self._config.blob_settings.max_block_size,
-                    stream=stream,
-                    append_conditions=append_conditions,
-                    max_connections=max_connections,
-                    validate_content=validate_content,
-                    access_conditions=access_conditions,
-                    uploader_class=_AppendBlobChunkUploader,
-                    modified_access_conditions=mod_conditions,
-                    timeout=timeout,
-                    **kwargs
-                )
-        except StorageErrorException as error:
-            process_storage_error(error)
-        return None
+        if blob_type == BlobType.BlockBlob:
+            return upload_block_blob(
+                self._client.block_blob,
+                data,
+                stream,
+                length,
+                overwrite,
+                headers,
+                blob_headers,
+                access_conditions,
+                mod_conditions,
+                validate_content,
+                timeout,
+                max_connections,
+                self._config.blob_settings,
+                self.require_encryption,
+                self.key_encryption_key,
+                **kwargs)
+        if blob_type == BlobType.PageBlob:
+            return upload_page_blob(
+                self._client.page_blob,
+                stream,
+                length,
+                overwrite,
+                headers,
+                blob_headers,
+                access_conditions,
+                mod_conditions,
+                validate_content,
+                premium_page_blob_tier,
+                timeout,
+                max_connections,
+                self._config.blob_settings,
+                cek,
+                iv,
+                encryption_data,
+                **kwargs)
+        if blob_type == BlobType.AppendBlob:
+            if self.require_encryption or (self.key_encryption_key is not None):
+                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+            return upload_append_blob(
+                self._client.append_blob,
+                stream,
+                length,
+                overwrite,
+                headers,
+                blob_headers,
+                access_conditions,
+                mod_conditions,
+                maxsize_condition,
+                validate_content,
+                timeout,
+                max_connections,
+                self._config.blob_settings,
+                **kwargs)
+        raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
     def download_blob(
             self, offset=None,  # type: Optional[int]
@@ -1979,7 +1881,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if maxsize_condition or appendpos_condition:
             append_conditions = AppendPositionAccessConditions(
                 max_size=maxsize_condition,
-                append_condition=appendpos_condition
+                append_position=appendpos_condition
             )
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(

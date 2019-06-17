@@ -11,19 +11,328 @@ from threading import Lock
 from math import ceil
 
 import six
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError)
 
 from ._utils import (
     encode_base64,
     url_quote,
     get_length,
     get_modification_conditions,
+    process_storage_error,
     return_response_headers)
-from ._encryption import _get_blob_encryptor_and_padder
+from ._encryption import (
+    _get_blob_encryptor_and_padder,
+    _generate_blob_encryption_data,
+    _encrypt_blob)
+from ._generated.models import (
+    StorageErrorException,
+    BlockLookupList,
+    AppendPositionAccessConditions)
 from .models import BlobBlock
+from .common import StorageErrorCode
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
+
+
+def _convert_mod_error(error):
+    message = error.message.replace(
+        "The condition specified using HTTP conditional header(s) is not met.",
+        "The specified blob already exists.")
+    message = message.replace("ConditionNotMet", "BlobAlreadyExists")
+    overwrite_error = ResourceExistsError(
+        message=message,
+        response=error.response,
+        error=error)
+    overwrite_error.error_code = StorageErrorCode.blob_already_exists
+    raise overwrite_error
+
+
+def upload_block_blob(
+        client,
+        data,
+        stream,
+        length,
+        overwrite,
+        headers,
+        blob_headers,
+        access_conditions,
+        mod_conditions,
+        validate_content,
+        timeout,
+        max_connections,
+        blob_settings,
+        require_encryption,
+        key_encryption_key,
+        **kwargs):
+    try:
+        overwrite_mod_conditions = None
+        if not overwrite:
+            overwrite_mod_conditions = get_modification_conditions(if_none_match='*')
+        adjusted_count = length
+        if (key_encryption_key is not None) and (adjusted_count is not None):
+            adjusted_count += (16 - (length % 16))
+
+        # Do single put if the size is smaller than config.max_single_put_size
+        if adjusted_count is not None and (adjusted_count < blob_settings.max_single_put_size):
+            try:
+                data = data.read(length)
+                if not isinstance(data, six.binary_type):
+                    raise TypeError('Blob data should be of type bytes.')
+            except AttributeError:
+                pass
+            if key_encryption_key:
+                encryption_data, data = _encrypt_blob(data, key_encryption_key)
+                headers['x-ms-meta-encryptiondata'] = encryption_data
+            return client.upload(
+                data,
+                content_length=adjusted_count,
+                timeout=timeout,
+                blob_http_headers=blob_headers,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions or overwrite_mod_conditions,
+                headers=headers,
+                cls=return_response_headers,
+                validate_content=validate_content,
+                data_stream_total=adjusted_count,
+                upload_stream_current=0,
+                **kwargs)
+
+        cek, iv, encryption_data = None, None, None
+        use_original_upload_path = blob_settings.use_byte_buffer or \
+            validate_content or require_encryption or \
+            blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
+            hasattr(stream, 'seekable') and not stream.seekable() or \
+            not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+
+        if use_original_upload_path:
+            if key_encryption_key:
+                cek, iv, encryption_data = _generate_blob_encryption_data(key_encryption_key)
+                headers['x-ms-meta-encryptiondata'] = encryption_data
+            block_ids = _upload_blob_chunks(
+                blob_service=client,
+                blob_size=length,
+                block_size=blob_settings.max_block_size,
+                stream=stream,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_BlockBlobChunkUploader,
+                timeout=timeout,
+                content_encryption_key=cek,
+                initialization_vector=iv,
+                **kwargs
+            )
+        else:
+            block_ids = _upload_blob_substream_blocks(
+                blob_service=client,
+                blob_size=length,
+                block_size=blob_settings.max_block_size,
+                stream=stream,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_BlockBlobChunkUploader,
+                timeout=timeout,
+                **kwargs
+            )
+
+        block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
+        block_lookup.latest = [b.id for b in block_ids]
+        return client.commit_block_list(
+            block_lookup,
+            blob_http_headers=blob_headers,
+            lease_access_conditions=access_conditions,
+            timeout=timeout,
+            modified_access_conditions=mod_conditions or overwrite_mod_conditions,
+            cls=return_response_headers,
+            validate_content=validate_content,
+            headers=headers,
+            **kwargs)
+    except StorageErrorException as error:
+        try:
+            process_storage_error(error)
+        except ResourceModifiedError as mod_error:
+            if overwrite_mod_conditions:
+                _convert_mod_error(mod_error)
+            raise
+
+
+def upload_page_blob(
+        client,
+        stream,
+        length,
+        overwrite,
+        headers,
+        blob_headers,
+        access_conditions,
+        mod_conditions,
+        validate_content,
+        premium_page_blob_tier,
+        timeout,
+        max_connections,
+        blob_settings,
+        cek,
+        iv,
+        encryption_data,
+        **kwargs):
+    try:
+        overwrite_mod_conditions = None
+        if not overwrite:
+            overwrite_mod_conditions = get_modification_conditions(if_none_match='*')
+        if length is None or length < 0:
+            raise ValueError("A content length must be specified for a Page Blob.")
+        if length % 512 != 0:
+            raise ValueError("Invalid page blob size: {0}. "
+                             "The size must be aligned to a 512-byte boundary.".format(length))
+        if premium_page_blob_tier:
+            try:
+                headers['x-ms-access-tier'] = premium_page_blob_tier.value
+            except AttributeError:
+                headers['x-ms-access-tier'] = premium_page_blob_tier
+        if encryption_data is not None:
+            headers['x-ms-meta-encryptiondata'] = encryption_data
+        response = client.create(
+            content_length=0,
+            blob_content_length=length,
+            blob_sequence_number=None,
+            blob_http_headers=blob_headers,
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions or overwrite_mod_conditions,
+            cls=return_response_headers,
+            headers=headers,
+            **kwargs)
+        if length == 0:
+            return response
+
+        mod_conditions = get_modification_conditions(if_match=response['etag'])
+        return _upload_blob_chunks(
+            blob_service=client,
+            blob_size=length,
+            block_size=blob_settings.max_page_size,
+            stream=stream,
+            max_connections=max_connections,
+            validate_content=validate_content,
+            access_conditions=access_conditions,
+            uploader_class=_PageBlobChunkUploader,
+            modified_access_conditions=mod_conditions,
+            timeout=timeout,
+            content_encryption_key=cek,
+            initialization_vector=iv,
+            **kwargs)
+    except StorageErrorException as error:
+        try:
+            process_storage_error(error)
+        except ResourceModifiedError as mod_error:
+            if overwrite_mod_conditions:
+                _convert_mod_error(mod_error)
+            raise
+
+
+def _create_append_blob(
+        client,
+        blob_headers,
+        timeout,
+        access_conditions,
+        mod_conditions,
+        headers,
+        **kwargs):
+    created = client.create(
+        content_length=0,
+        blob_http_headers=blob_headers,
+        timeout=timeout,
+        lease_access_conditions=access_conditions,
+        modified_access_conditions=mod_conditions,
+        cls=return_response_headers,
+        headers=headers,
+        **kwargs)
+    return None #get_modification_conditions(if_match=created['etag'])
+
+
+def upload_append_blob(
+        client,
+        stream,
+        length,
+        overwrite,
+        headers,
+        blob_headers,
+        access_conditions,
+        mod_conditions,
+        maxsize_condition,
+        validate_content,
+        timeout,
+        max_connections,
+        blob_settings,
+        **kwargs
+    ):
+    try:
+        if length == 0:
+            return {}
+        append_conditions = AppendPositionAccessConditions(
+            max_size=maxsize_condition,
+            append_position=None)
+        try:
+            if overwrite:
+                mod_conditions = _create_append_blob(
+                    client,
+                    blob_headers,
+                    timeout,
+                    access_conditions,
+                    mod_conditions,
+                    headers,
+                    **kwargs)
+            return _upload_blob_chunks(
+                blob_service=client,
+                blob_size=length,
+                block_size=blob_settings.max_block_size,
+                stream=stream,
+                append_conditions=append_conditions,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_AppendBlobChunkUploader,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                **kwargs)
+        except StorageErrorException as error:
+            if error.response.status_code != 404:
+                raise
+            # rewind the request body if it is a stream
+            if hasattr(stream, 'read'):
+                try:
+                    # attempt to rewind the body to the initial position
+                    stream.seek(0, SEEK_SET)
+                except UnsupportedOperation:
+                    # if body is not seekable, then retry would not work
+                    raise error
+            mod_conditions = _create_append_blob(
+                client,
+                blob_headers,
+                timeout,
+                access_conditions,
+                mod_conditions,
+                headers,
+                **kwargs)
+            return _upload_blob_chunks(
+                blob_service=client,
+                blob_size=length,
+                block_size=blob_settings.max_block_size,
+                stream=stream,
+                append_conditions=append_conditions,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_AppendBlobChunkUploader,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                **kwargs)
+    except StorageErrorException as error:
+        process_storage_error(error)
 
 
 def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connections, validate_content,  # pylint: disable=too-many-locals
@@ -169,7 +478,7 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
                     read_size = min(self.chunk_size - len(data), self.blob_size - (index + len(data)))
                 temp = self.stream.read(read_size)
                 if not isinstance(temp, six.binary_type):
-                    raise TypeError('blob data should be of type bytes.')
+                    raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 
                 # We have read an empty string and so are at the end

@@ -308,7 +308,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
+            blob.upload_blob(data, length=len(data), if_modified_since=test_datetime, overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -339,7 +339,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
+            blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime, overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -367,7 +367,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_match='0x111111111111111')
+            blob.upload_blob(data, length=len(data), if_match='0x111111111111111', overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -395,7 +395,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_none_match=etag)
+            blob.upload_blob(data, length=len(data), if_none_match=etag, overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)

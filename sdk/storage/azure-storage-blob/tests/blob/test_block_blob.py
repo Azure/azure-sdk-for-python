@@ -12,11 +12,12 @@ import pytest
 #pytestmark = pytest.mark.xfail
 
 from azure.common import AzureHttpError
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
-    BlobClient
+    BlobClient,
+    BlobType
 )
 from azure.storage.blob.common import StandardBlobTier
 from azure.storage.blob.models import ContentSettings, BlobBlock
@@ -244,6 +245,94 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(block_list[0][1].size, 3)
         self.assertEqual(block_list[0][2].id, '3')
         self.assertEqual(block_list[0][2].size, 3)
+
+    @record
+    def test_create_small_block_blob_with_no_overwrite(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data1 = b'hello world'
+        data2 = b'hello second world'
+
+        # Act
+        create_resp = blob.upload_blob(data1, overwrite=True)
+
+        with self.assertRaises(ResourceExistsError):
+            blob.upload_blob(data2, overwrite=False)
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob_name, data1)
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+
+    @record
+    def test_create_small_block_blob_with_overwrite(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data1 = b'hello world'
+        data2 = b'hello second world'
+
+        # Act
+        create_resp = blob.upload_blob(data1, overwrite=True)
+        update_resp = blob.upload_blob(data2, overwrite=True)
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob_name, data2)
+        self.assertEqual(props.etag, update_resp.get('etag'))
+        self.assertEqual(props.last_modified, update_resp.get('last_modified'))
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+
+    @record
+    def test_create_large_block_blob_with_no_overwrite(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
+        data2 = self.get_random_bytes(LARGE_BLOB_SIZE)
+
+        # Act
+        create_resp = blob.upload_blob(data1, overwrite=True, metadata={'BlobData': 'Data1'})
+
+        with self.assertRaises(ResourceExistsError):
+            blob.upload_blob(data2, overwrite=False, metadata={'BlobData': 'Data2'})
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob_name, data1)
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.metadata, {'BlobData': 'Data1'})
+        self.assertEqual(props.size, LARGE_BLOB_SIZE)
+
+    @record
+    def test_create_large_block_blob_with_overwrite(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
+        data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
+
+        # Act
+        create_resp = blob.upload_blob(data1, overwrite=True, metadata={'BlobData': 'Data1'})
+        update_resp = blob.upload_blob(data2, overwrite=True, metadata={'BlobData': 'Data2'})
+
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertBlobEqual(self.container_name, blob_name, data2)
+        self.assertEqual(props.etag, update_resp.get('etag'))
+        self.assertEqual(props.last_modified, update_resp.get('last_modified'))
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.metadata, {'BlobData': 'Data2'})
+        self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
     @record
     def test_create_blob_from_bytes_single_put(self):

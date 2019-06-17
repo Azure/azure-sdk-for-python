@@ -290,12 +290,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Block blob specific single shot
         with self.assertRaises(TypeError) as e:
             blob.upload_blob(small_stream, length=5)
-        self.assertTrue('blob data should be of type bytes.' in str(e.exception))
+        self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
         # Generic blob chunked
         with self.assertRaises(TypeError) as e:
             blob.upload_blob(large_stream)
-        self.assertTrue('blob data should be of type bytes.' in str(e.exception))
+        self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
     def test_put_blob_chunking_required_mult_of_block_size(self):
         # parallel tests introduce random order of requests, can only run live
