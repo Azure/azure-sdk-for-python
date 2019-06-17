@@ -106,9 +106,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        await self._poll_until_exception(
-            client.get_secret, updated.name, expected_exception=ResourceNotFoundError
-        )
+        await self._poll_until_exception(client.get_secret, updated.name, expected_exception=ResourceNotFoundError)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -132,6 +130,38 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # list secrets
         result = client.list_secrets(max_results=max_secrets)
         await self._validate_secret_list(result, expected)
+
+    @ResourceGroupPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_list_deleted_secrets(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+
+        expected = {}
+
+        # create secrets
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
+            expected[secret_name] = await client.set_secret(secret_name, secret_value)
+
+        # delete them
+        for secret_name in expected.keys():
+            await client.delete_secret(secret_name)
+        for secret_name in expected.keys():
+            await self._poll_until_no_exception(
+                client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
+            )
+
+        # validate list deleted secrets with attributes
+        async for deleted_secret in client.list_deleted_secrets():
+            self.assertIsNotNone(deleted_secret.deleted_date)
+            self.assertIsNotNone(deleted_secret.scheduled_purge_date)
+            self.assertIsNotNone(deleted_secret.recovery_id)
+
+        # validate all the deleted secrets are returned by list_deleted_secrets
+        await self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()

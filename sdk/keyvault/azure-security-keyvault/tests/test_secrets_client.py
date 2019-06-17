@@ -170,7 +170,7 @@ class SecretClientTests(KeyVaultTestCase):
         expected = {}
 
         # create secrets
-        for i in range(0, self.list_test_size):
+        for i in range(self.list_test_size):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = client.set_secret(secret_name, secret_value)
@@ -182,6 +182,12 @@ class SecretClientTests(KeyVaultTestCase):
             self._poll_until_no_exception(
                 functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
             )
+
+        # validate list deleted secrets with attributes
+        for deleted_secret in client.list_deleted_secrets():
+            self.assertIsNotNone(deleted_secret.deleted_date)
+            self.assertIsNotNone(deleted_secret.scheduled_purge_date)
+            self.assertIsNotNone(deleted_secret.recovery_id)
 
         # validate all the deleted secrets are returned by list_deleted_secrets
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
@@ -275,9 +281,7 @@ class SecretClientTests(KeyVaultTestCase):
         for secret_name in secrets.keys():
             client.purge_deleted_secret(secret_name)
         for secret_name in secrets.keys():
-            self._poll_until_exception(
-                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
-            )
+            self._poll_until_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
 
         deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))

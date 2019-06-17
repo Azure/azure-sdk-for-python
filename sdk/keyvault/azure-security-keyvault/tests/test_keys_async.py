@@ -246,6 +246,12 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
         )
 
+        # validate list deleted keys with attributes
+        async for deleted_key in client.list_deleted_keys():
+            self.assertIsNotNone(deleted_key.deleted_date)
+            self.assertIsNotNone(deleted_key.scheduled_purge_date)
+            self.assertIsNotNone(deleted_key.recovery_id)
+
         # validate all our deleted keys are returned by list_deleted_keys
         result = client.list_deleted_keys()
         await self._validate_key_list(result, expected)
