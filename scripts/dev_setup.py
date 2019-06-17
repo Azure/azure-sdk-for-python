@@ -14,6 +14,8 @@ import argparse
 from collections import Counter
 from subprocess import check_call, CalledProcessError
 
+import pytest
+
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", ".."))
 
 
@@ -87,6 +89,11 @@ content_packages.insert(1, "azure-sdk-tools")
 if "azure-common" in content_packages:
     content_packages.remove("azure-common")
 content_packages.insert(2, "azure-common")
+
+if 'azure-core' in content_packages:
+    content_packages.remove('azure-core')
+content_packages.insert(1, 'azure-core')
+
 
 print("Running dev setup...")
 print("Root directory '{}'\n".format(root_dir))
