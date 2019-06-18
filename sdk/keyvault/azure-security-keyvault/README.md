@@ -10,7 +10,7 @@ Use the Key Vault client library for Python to:
 * Provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with Azure and your internal connected resources.
 * Use either software or FIPS 140-2 Level 2 validated HSMs to help protect secrets and keys.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
+[Source code]() | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
@@ -92,27 +92,27 @@ A secret client offers operations to create, retrieve, update, delete, purge, ba
 For more information on SecretClient, see [API reference documentation](TODO) and [Source Code](TODO) for Secrets Client.
 
 ### Key Client:[UPDATE]
-A key client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case. The Key Vault client library performs cryptographic key operations and vault operations against the Key Vault service. Once you've initialized a VaultClient, you can interact with the primary resource types in Key Vault.
+The Key client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting, and listing keys and its versions. An asynchronous and synchronous, KeyClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a Key, you can interact with the primary resource `Key` in Key Vault.
 
-For more information about these resources, see [What is Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis).
+For more information on KeyClient, see [API reference documentation](TODO) and [Source Code](TODO) for Keys Client.
 
 ## Examples
 The following section provides several code snippets using the above created `vault_client`, covering some of the most common Azure Key Vault service related tasks, including:
-* [Create a Secret Client](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#create-a-secret-client)
-  * Refer to Secret Client documentation [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) to use the secret client library to create and manage secrets.
-* [Create a Key Client](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#create-a-key-client)
-  * Refer to Key Client documentation [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys) to use the key client library to create and manage keys.
+* [Create a Secret Client](#create-a-secret-client)
+  * Refer to Secret Client documentation [here](/azure/security/keyvault/secrets) to use the secret client library to create and manage secrets.
+* [Create a Key Client](#create-a-key-client)
+  * Refer to Key Client documentation [here](/azure/security/keyvault/keys) to use the key client library to create and manage keys.
 
 ### Create a Secret Client
 ```python
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+# retrieves an instance of Secret Client
+secret_client = vault_client.secrets
 ```
 
 ### Create a Key Client
 ```python
-    # retrieves an instance of Key Client
-    key_client = vault_client.keys
+# retrieves an instance of Key Client
+key_client = vault_client.keys
 ```
 
 ## Troubleshooting
@@ -123,10 +123,29 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed infr
 This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
 
 ```python 
+This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
+
+ ```python
+import sys
 import logging
-logging.basicConfig(level=logging.DEBUG)
+ # Create a logger for the 'azure' SDK
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+ # Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+ # Configure a file output
+file_handler = logging.FileHandler(filename)
+logger.addHandler(file_handler)
+
+# Enable network trace logging. This will be logged at DEBUG level.
+# By default, logging is disabled.
+config = FooService.create_config()
+config.logging_policy.enable_http_logger = True
+The logger can also be enabled per operation.
+
+result = client.get_operation(logging_enable=True)
 ```
-Http request and response details are printed to stdout with this logging config.
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
