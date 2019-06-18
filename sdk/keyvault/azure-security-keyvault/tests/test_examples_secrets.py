@@ -98,6 +98,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
+
+        for i in range(7):
+            secret_client.set_secret("key{}".format(i), "value{}".format(i))
+
         # [START list_secrets]
 
         # list secrets
@@ -107,6 +111,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # the list doesn't include values or versions of the secrets
             print(secret.id)
             print(secret.name)
+            print(secret.enabled)
 
         # [END list_secrets]
 
@@ -118,7 +123,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for secret in secrets:
             # the list doesn't include the values at each version
-            print(secret.version)
+            print(secret.id)
+            print(secret.enabled)
+            print(secret.updated)
 
         # [END list_secret_versions]
         # [START list_deleted_secrets]
@@ -130,6 +137,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # the list doesn't include values or versions of the deleted secrets
             print(secret.id)
             print(secret.name)
+            print(secret.scheduled_purge_date)
+            print(secret.recovery_id)
+            print(secret.deleted_date)
 
         # [END list_deleted_secrets]
 
