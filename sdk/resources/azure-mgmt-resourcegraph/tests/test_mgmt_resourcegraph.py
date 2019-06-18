@@ -56,7 +56,6 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsInstance(query_response.data["rows"][0][1], dict)
         self.assertIsInstance(query_response.data["rows"][0][2], dict)
 
-
     def test_resources_basic_query_object_array(self):
         query = QueryRequest(
             query='project id, tags, properties | limit 2',
@@ -84,7 +83,6 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsInstance(query_response.data[0]['id'], six.string_types)
         self.assertIsInstance(query_response.data[0]['tags'], dict)
         self.assertIsInstance(query_response.data[0]['properties'], dict)
-
 
     def test_resources_query_options(self):
         query = QueryRequest(
