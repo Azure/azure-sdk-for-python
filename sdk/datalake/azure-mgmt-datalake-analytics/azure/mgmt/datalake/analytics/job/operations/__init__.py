@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_operations import JobOperations
-from .pipeline_operations import PipelineOperations
-from .recurrence_operations import RecurrenceOperations
+from ._job_operations import JobOperations
+from ._pipeline_operations import PipelineOperations
+from ._recurrence_operations import RecurrenceOperations
 
 __all__ = [
     'JobOperations',
