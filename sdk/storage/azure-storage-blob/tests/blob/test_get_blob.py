@@ -12,16 +12,15 @@ import base64
 import os
 import unittest
 
-from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    StorageErrorCode
+    StorageErrorCode,
+    BlobProperties
 )
-from azure.storage.blob.models import BlobProperties
 from tests.testcase import (
     StorageTestCase,
     TestMode,

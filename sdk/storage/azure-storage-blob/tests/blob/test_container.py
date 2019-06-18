@@ -8,20 +8,19 @@
 import pytest
 from dateutil.tz import tzutc
 
-from azure.storage.blob.models import ContainerPermissions, AccessPolicy
-
 import requests
 from datetime import datetime, timedelta
-from azure.common import (AzureConflictHttpError, AzureException,
-                          AzureHttpError, AzureMissingResourceHttpError)
+
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from azure.storage.blob.models import ContainerPermissions
-from azure.storage.blob.common import PublicAccess
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
     LeaseClient,
+    ContainerPermissions,
+    PublicAccess,
+    ContainerPermissions,
+    AccessPolicy
 )
 
 from tests.testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -45,7 +44,7 @@ class StorageContainerTest(StorageTestCase):
                 try:
                     container = self.bsc.get_container_client(container_name)
                     container.delete_container()
-                except AzureHttpError:
+                except HttpResponseError:
                     try:
                         lease = LeaseClient(container)
                         lease.break_lease(0)

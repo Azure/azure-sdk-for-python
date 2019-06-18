@@ -8,7 +8,7 @@ import sys
 from datetime import date
 
 from .constants import X_MS_VERSION
-from ._utils import _sign_string, url_quote, _QueryStringConstants
+from .utils import _sign_string, url_quote, _QueryStringConstants
 
 
 if sys.version_info < (3,):

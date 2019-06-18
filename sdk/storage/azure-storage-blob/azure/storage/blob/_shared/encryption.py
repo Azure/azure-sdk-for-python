@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
-from azure.storage.blob import __version__
+from ..version import __version__
 from .authentication import _encode_base64, _decode_base64_to_bytes
 
 
@@ -262,7 +262,7 @@ def _encrypt_blob(blob, key_encryption_key):
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
-    is done as a part of the _upload_blob_chunks method.
+    is done as a part of the upload_blob_chunks method.
 
     :param bytes blob:
         The blob to be encrypted.

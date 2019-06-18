@@ -17,39 +17,38 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
-from azure.core import Configuration
 
-from ._shared_access_signature import BlobSharedAccessSignature
-from .common import BlobType
-from .lease import LeaseClient
-from .blob_client import BlobClient
-from .models import (
-    ContainerProperties,
-    BlobProperties,
-    BlobPropertiesPaged,
-    BlobPrefix)
-from ._utils import (
+from ._shared.shared_access_signature import BlobSharedAccessSignature
+from ._shared.utils import (
     StorageAccountHostsMixin,
-    get_access_conditions,
-    get_modification_conditions,
+    process_storage_error,
     return_response_headers,
     add_metadata_headers,
-    process_storage_error,
     parse_connection_str,
     serialize_iso,
     parse_query,
     return_headers_and_deserialized)
-from ._deserialize import deserialize_container_properties
-
+from ._generated import AzureBlobStorage
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
+from ._blob_utils import (
+    get_access_conditions,
+    get_modification_conditions,
+    deserialize_container_properties)
+from ._blob_models import (
+    ContainerProperties,
+    BlobProperties,
+    BlobPropertiesPaged,
+    BlobType,
+    BlobPrefix)
+from .lease import LeaseClient
+from .blob_client import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from .common import PublicAccess
-    from .models import ContainerPermissions
+    from ._blob_models import ContainerPermissions, PublicAccess
     from datetime import datetime
 
 
@@ -96,6 +95,7 @@ class ContainerClient(StorageAccountHostsMixin):
             self.container_name = container or unquote(path_container)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         container_name = self.container_name

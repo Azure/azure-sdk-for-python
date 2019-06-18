@@ -6,83 +6,113 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from enum import Enum
+
 from azure.core.paging import Paged
 
+from ._shared.utils import (
+    decode_base64,
+    return_context_and_deserialized,
+    process_storage_error)
+from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import BlobProperties as GenBlobProps
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItem
-from ._utils import (
-    decode_base64,
-    process_storage_error,
-    return_context_and_deserialized)
-from .common import BlockState, BlobType
 
 
-def _get_enum_value(value):
-    if value is None or value in ["None", ""]:
-        return None
-    try:
-        return value.value
-    except AttributeError:
-        return value
+class BlobType(str, Enum):
+
+    BlockBlob = "BlockBlob"
+    PageBlob = "PageBlob"
+    AppendBlob = "AppendBlob"
 
 
-class DictMixin(object):
+class BlockState(str, Enum):
+    """Block blob block types."""
 
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
+    Committed = 'Committed'  #: Committed blocks.
+    Latest = 'Latest'  #: Latest blocks.
+    Uncommitted = 'Uncommitted'  #: Uncommitted blocks.
 
-    def __getitem__(self, key):
-        return self.__dict__[key]
 
-    def __repr__(self):
-        return str(self)
+class StandardBlobTier(str, Enum):
+    """
+    Specifies the blob tier to set the blob to. This is only applicable for
+    block blobs on standard storage accounts.
+    """
 
-    def __len__(self):
-        return len(self.keys())
+    Archive = 'Archive'  #: Archive
+    Cool = 'Cool'  #: Cool
+    Hot = 'Hot'  #: Hot
 
-    def __delitem__(self, key):
-        self.__dict__[key] = None
 
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
+class PremiumPageBlobTier(str, Enum):
+    """
+    Specifies the page blob tier to set the blob to. This is only applicable to page
+    blobs on premium storage accounts. Please take a look at:
+    https://docs.microsoft.com/en-us/azure/storage/storage-premium-storage#scalability-and-performance-targets
+    for detailed information on the corresponding IOPS and throughtput per PageBlobTier.
+    """
 
-    def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
-        return not self.__eq__(other)
+    P4 = 'P4'  #: P4 Tier
+    P6 = 'P6'  #: P6 Tier
+    P10 = 'P10'  #: P10 Tier
+    P20 = 'P20'  #: P20 Tier
+    P30 = 'P30'  #: P30 Tier
+    P40 = 'P40'  #: P40 Tier
+    P50 = 'P50'  #: P50 Tier
+    P60 = 'P60'  #: P60 Tier
 
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
 
-    def has_key(self, k):
-        return k in self.__dict__
+class SequenceNumberAction(str, Enum):
+    """Sequence number actions."""
 
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
+    Increment = 'increment'
+    """
+    Increments the value of the sequence number by 1. If specifying this option,
+    do not include the x-ms-blob-sequence-number header.
+    """
 
-    def keys(self):
-        return [k for k in self.__dict__ if not k.startswith('_')]
+    Max = 'max'
+    """
+    Sets the sequence number to be the higher of the value included with the
+    request and the value currently stored for the blob.
+    """
 
-    def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+    Update = 'update'
+    """Sets the sequence number to the value included with the request."""
 
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
 
-    def get(self, key, default=None):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
+class PublicAccess(str, Enum):
+    """
+    Specifies whether data in the container may be accessed publicly and the level of access.
+    """
+
+    OFF = 'off'
+    """
+    Specifies that there is no public read access for both the container and blobs within the container.
+    Clients cannot enumerate the containers within the storage account as well as the blobs within the container.
+    """
+
+    Blob = 'blob'
+    """
+    Specifies public read access for blobs. Blob data within this container can be read
+    via anonymous request, but container data is not available. Clients cannot enumerate
+    blobs within the container via anonymous request.
+    """
+
+    Container = 'container'
+    """
+    Specifies full public read access for container and blob data. Clients can enumerate
+    blobs within the container via anonymous request, but cannot enumerate containers
+    within the storage account.
+    """
 
 
 class Logging(GeneratedLogging):
@@ -398,7 +428,7 @@ class BlobProperties(DictMixin):
     def _from_generated(cls, generated):
         blob = BlobProperties()
         blob.name = generated.name
-        blob_type = _get_enum_value(generated.properties.blob_type)
+        blob_type = get_enum_value(generated.properties.blob_type)
         blob.blob_type = BlobType(blob_type) if blob_type else None
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
@@ -560,9 +590,9 @@ class LeaseProperties(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         lease = cls()
-        lease.status = _get_enum_value(generated.properties.lease_status)
-        lease.state = _get_enum_value(generated.properties.lease_state)
-        lease.duration = _get_enum_value(generated.properties.lease_duration)
+        lease.status = get_enum_value(generated.properties.lease_status)
+        lease.state = get_enum_value(generated.properties.lease_state)
+        lease.duration = get_enum_value(generated.properties.lease_duration)
         return lease
 
 
@@ -671,7 +701,7 @@ class CopyProperties(DictMixin):
     def _from_generated(cls, generated):
         copy = cls()
         copy.id = generated.properties.copy_id or None
-        copy.status = _get_enum_value(generated.properties.copy_status) or None
+        copy.status = get_enum_value(generated.properties.copy_status) or None
         copy.source = generated.properties.copy_source or None
         copy.progress = generated.properties.copy_progress or None
         copy.completion_time = generated.properties.copy_completion_time or None
@@ -777,167 +807,6 @@ class AccessPolicy(GenAccessPolicy):
         self.start = start
         self.expiry = expiry
         self.permission = permission
-
-
-class ResourceTypes(object):
-    """
-    Specifies the resource types that are accessible with the account SAS.
-
-    :ivar ResourceTypes ResourceTypes.CONTAINER:
-        Access to container-level APIs (e.g., Create/Delete Container,
-        Create/Delete Queue, Create/Delete Share,
-        List Blobs/Files and Directories)
-    :ivar ResourceTypes ResourceTypes.OBJECT:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :ivar ResourceTypes ResourceTypes.SERVICE:
-        Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
-    """
-
-    SERVICE = None  # type: ResourceTypes
-    CONTAINER = None  # type: ResourceTypes
-    OBJECT = None  # type: ResourceTypes
-
-    def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
-        """
-        :param bool service:
-            Access to service-level APIs (e.g., Get/Set Service Properties,
-            Get Service Stats, List Containers/Queues/Shares)
-        :param bool container:
-            Access to container-level APIs (e.g., Create/Delete Container,
-            Create/Delete Queue, Create/Delete Share,
-            List Blobs/Files and Directories)
-        :param bool object:
-            Access to object-level APIs for blobs, queue messages, and
-            files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-        :param str _str:
-            A string representing the resource types.
-        """
-        if not _str:
-            _str = ''
-        self.service = service or ('s' in _str)
-        self.container = container or ('c' in _str)
-        self.object = object or ('o' in _str)
-
-    def __or__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __str__(self):
-        return (('s' if self.service else '') +
-                ('c' if self.container else '') +
-                ('o' if self.object else ''))
-
-
-ResourceTypes.SERVICE = ResourceTypes(service=True)
-ResourceTypes.CONTAINER = ResourceTypes(container=True)
-ResourceTypes.OBJECT = ResourceTypes(object=True)
-
-
-class AccountPermissions(object):
-    """
-    :class:`~ResourceTypes` class to be used with generate_shared_access_signature
-    method and for the AccessPolicies used with set_*_acl. There are two types of
-    SAS which may be used to grant resource access. One is to grant access to a
-    specific resource (resource-specific). Another is to grant access to the
-    entire service for a specific account and allow certain operations based on
-    perms found here.
-
-    :ivar AccountPermissions AccountPermissions.ADD:
-        Valid for the following Object resource types only: queue messages and append blobs.
-    :ivar AccountPermissions AccountPermissions.CREATE:
-        Valid for the following Object resource types only: blobs and files. Users
-        can create new blobs or files, but may not overwrite existing blobs or files.
-    :ivar AccountPermissions AccountPermissions.DELETE:
-        Valid for Container and Object resource types, except for queue messages.
-    :ivar AccountPermissions AccountPermissions.LIST:
-        Valid for Service and Container resource types only.
-    :ivar AccountPermissions AccountPermissions.PROCESS:
-        Valid for the following Object resource type only: queue messages.
-    :ivar AccountPermissions AccountPermissions.READ:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type.
-    :ivar AccountPermissions AccountPermissions.UPDATE:
-        Valid for the following Object resource types only: queue messages.
-    :ivar AccountPermissions AccountPermissions.WRITE:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type.
-    """
-
-    READ = None  # type: AccountPermissions
-    WRITE = None  # type: AccountPermissions
-    DELETE = None  # type: AccountPermissions
-    LIST = None  # type: AccountPermissions
-    ADD = None  # type: AccountPermissions
-    CREATE = None  # type: AccountPermissions
-    UPDATE = None  # type: AccountPermissions
-    PROCESS = None  # type: AccountPermissions
-
-    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, _str=None):
-        """
-        :param bool read:
-            Valid for all signed resources types (Service, Container, and Object).
-            Permits read permissions to the specified resource type.
-        :param bool write:
-            Valid for all signed resources types (Service, Container, and Object).
-            Permits write permissions to the specified resource type.
-        :param bool delete:
-            Valid for Container and Object resource types, except for queue messages.
-        :param bool list:
-            Valid for Service and Container resource types only.
-        :param bool add:
-            Valid for the following Object resource types only: queue messages, and append blobs.
-        :param bool create:
-            Valid for the following Object resource types only: blobs and files.
-            Users can create new blobs or files, but may not overwrite existing
-            blobs or files.
-        :param bool update:
-            Valid for the following Object resource types only: queue messages.
-        :param bool process:
-            Valid for the following Object resource type only: queue messages.
-        :param str _str:
-            A string representing the permissions.
-        """
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.update = update or ('u' in _str)
-        self.process = process or ('p' in _str)
-
-    def __or__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
-
-    def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('u' if self.update else '') +
-                ('p' if self.process else ''))
-
-
-AccountPermissions.READ = AccountPermissions(read=True)
-AccountPermissions.WRITE = AccountPermissions(write=True)
-AccountPermissions.DELETE = AccountPermissions(delete=True)
-AccountPermissions.LIST = AccountPermissions(list=True)
-AccountPermissions.ADD = AccountPermissions(add=True)
-AccountPermissions.CREATE = AccountPermissions(create=True)
-AccountPermissions.UPDATE = AccountPermissions(update=True)
-AccountPermissions.PROCESS = AccountPermissions(process=True)
 
 
 class ContainerPermissions(object):

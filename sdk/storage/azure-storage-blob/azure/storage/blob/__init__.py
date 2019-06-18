@@ -4,14 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 
-__version__ = "3.0.0a8"
-
-from .common import BlobType, StorageErrorCode, LocationMode
+from .version import __version__
 from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
-from ._policies import ExponentialRetry, LinearRetry, NoRetry
+from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
+from ._shared.models import(
+    LocationMode,
+    ResourceTypes,
+    AccountPermissions,
+    StorageErrorCode
+)
+from ._blob_models import (
+    BlobType,
+    BlockState,
+    StandardBlobTier,
+    PremiumPageBlobTier,
+    SequenceNumberAction,
+    PublicAccess,
+    Logging,
+    Metrics,
+    RetentionPolicy,
+    StaticWebsite,
+    CorsRule,
+    ContainerProperties,
+    ContainerPropertiesPaged,
+    BlobProperties,
+    BlobPropertiesPaged,
+    BlobPrefix,
+    LeaseProperties,
+    ContentSettings,
+    CopyProperties,
+    BlobBlock,
+    PageRange,
+    AccessPolicy,
+    ContainerPermissions,
+    BlobPermissions,
+)
 
 
 __all__ = [
@@ -24,5 +54,30 @@ __all__ = [
     'ExponentialRetry',
     'LinearRetry',
     'NoRetry',
-    'LocationMode'
+    'LocationMode',
+    'BlockState',
+    'StandardBlobTier',
+    'PremiumPageBlobTier',
+    'SequenceNumberAction',
+    'PublicAccess',
+    'Logging',
+    'Metrics',
+    'RetentionPolicy',
+    'StaticWebsite',
+    'CorsRule',
+    'ContainerProperties',
+    'ContainerPropertiesPaged',
+    'BlobProperties',
+    'BlobPropertiesPaged',
+    'BlobPrefix',
+    'LeaseProperties',
+    'ContentSettings',
+    'CopyProperties',
+    'BlobBlock',
+    'PageRange',
+    'AccessPolicy',
+    'ContainerPermissions',
+    'BlobPermissions',
+    'ResourceTypes',
+    'AccountPermissions',
 ]

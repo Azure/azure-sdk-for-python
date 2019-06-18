@@ -43,9 +43,9 @@ from azure.core.exceptions import (
     DecodeError)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
-from .common import StorageErrorCode, LocationMode
+from .models import LocationMode, StorageErrorCode
 from .authentication import SharedKeyCredentialPolicy
-from ._policies import (
+from .policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
@@ -54,19 +54,13 @@ from ._policies import (
     StorageLoggingPolicy,
     StorageHosts,
     ExponentialRetry)
-from ._generated import AzureBlobStorage
-from ._generated.models import (
-    LeaseAccessConditions,
-    ModifiedAccessConditions,
-    SequenceNumberAccessConditions
-)
+
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from azure.core.exceptions import AzureError
-    from .lease import LeaseClient
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -159,7 +153,6 @@ class StorageAccountHostsMixin(object):
 
         self._config, self._pipeline = create_pipeline(
             configuration, self.credential, hosts=self._hosts, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
 
     def __enter__(self):
         self._client.__enter__()
@@ -477,11 +470,6 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.location_mode, deserialized
 
 
-def create_client(url, pipeline):
-    # type: (str, Pipeline) -> AzureBlobStorage
-    return AzureBlobStorage(url, pipeline=pipeline)
-
-
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     if 'connection_timeout' not in kwargs:
@@ -551,6 +539,15 @@ def is_credential_sastoken(credential):
     return False
 
 
+def add_metadata_headers(metadata):
+    # type: (Dict[str, str]) -> Dict[str, str]
+    headers = {}
+    if metadata:
+        for key, value in metadata.items():
+            headers['x-ms-meta-{}'.format(key)] = value
+    return headers
+
+
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
@@ -605,53 +602,3 @@ def process_storage_error(storage_error):
     error.error_code = error_code
     error.additional_info = additional_data
     raise error
-
-
-def add_metadata_headers(metadata):
-    # type: (Dict[str, str]) -> Dict[str, str]
-    headers = {}
-    if metadata:
-        for key, value in metadata.items():
-            headers['x-ms-meta-{}'.format(key)] = value
-    return headers
-
-
-def get_access_conditions(lease):
-    # type: (Optional[Union[LeaseClient, str]]) -> Union[LeaseAccessConditions, None]
-    try:
-        lease_id = lease.id
-    except AttributeError:
-        lease_id = lease
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
-
-
-def get_sequence_conditions(
-        if_sequence_number_lte=None, # type: Optional[int]
-        if_sequence_number_lt=None, # type: Optional[int]
-        if_sequence_number_eq=None, # type: Optional[int]
-    ):
-    # type: (...) -> Union[SequenceNumberAccessConditions, None]
-    if any([if_sequence_number_lte, if_sequence_number_lt, if_sequence_number_eq]):
-        return SequenceNumberAccessConditions(
-            if_sequence_number_less_than_or_equal_to=if_sequence_number_lte,
-            if_sequence_number_less_than=if_sequence_number_lt,
-            if_sequence_number_equal_to=if_sequence_number_eq
-        )
-    return None
-
-
-def get_modification_conditions(
-        if_modified_since=None,  # type: Optional[datetime]
-        if_unmodified_since=None,  # type: Optional[datetime]
-        if_match=None,  # type: Optional[str]
-        if_none_match=None  # type: Optional[str]
-    ):
-    # type: (...) -> Union[ModifiedAccessConditions, None]
-    if any([if_modified_since, if_unmodified_since, if_match, if_none_match]):
-        return ModifiedAccessConditions(
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match
-        )
-    return None

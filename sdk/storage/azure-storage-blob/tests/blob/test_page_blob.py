@@ -11,27 +11,23 @@ import pytest
 import os
 import unittest
 from datetime import datetime, timedelta
-from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from azure.storage.blob.common import (
-    BlobType,
-    PremiumPageBlobTier,
-    SequenceNumberAction)
-from azure.storage.blob.models import BlobProperties, BlobPermissions
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    BlobProperties,
+    BlobPermissions,
+    BlobType,
+    PremiumPageBlobTier,
+    SequenceNumberAction,
     StorageErrorCode)
 
 from tests.testcase import (
     StorageTestCase,
     TestMode,
     record,
-)
-from azure.common import (
-    AzureException,
 )
 
 #------------------------------------------------------------------------------

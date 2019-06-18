@@ -37,7 +37,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.policies.base import RequestHistory
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from .common import LocationMode
+from .models import LocationMode
 
 try:
     _unicode_type = unicode

@@ -8,15 +8,12 @@
 import unittest
 
 from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-)
-from azure.storage.blob.models import (
     Logging,
     Metrics,
     CorsRule,
