@@ -12,6 +12,7 @@ jobs:
     parameters:
       ServiceDirectory: ''
       TestMarkArgument: $(TestMarkArgument)
+      BuildTargetingString: $(BuildTargetingString)
       BeforeBuildJobPublishBuildArtifacts:
         - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
           displayName: 'Tag The Build'
