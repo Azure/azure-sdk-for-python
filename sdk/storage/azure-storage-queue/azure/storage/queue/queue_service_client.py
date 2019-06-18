@@ -9,6 +9,20 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
+
+from .queue_client import QueueClient
+from ._utils import (
+    create_client,
+    create_pipeline,
+    create_configuration,
+    parse_connection_str,
+    process_storage_error,
+    basic_error_map
+)
+from .models import StorageServiceProperties, StorageErrorException
+from ._generated.models import ListQueuesIncludeType
+from ._shared_access_signature import QueueSharedAccessSignature
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -38,6 +52,21 @@ class QueueServiceClient(object):
         :param configuration: Optional pipeline configuration settings.
         :type configuration: ~azure.core.configuration.Configuration
         """
+        parsed_url = urlparse(account_url.rstrip('/'))
+        self.scheme = parsed_url.scheme
+        self.account = parsed_url.hostname.split(".queue.core.")[0]
+        self.credentials = credentials
+        self.url = account_url if not parsed_url.path else "{}://{}".format(
+            self.scheme,
+            parsed_url.hostname
+        )
+
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
+
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._client = create_client(self.url, self._pipeline)
 
     @classmethod
     def from_connection_string(
@@ -54,6 +83,19 @@ class QueueServiceClient(object):
         :param configuration: Optional pipeline configuration settings.
         :type configuration: ~azure.core.configuration.Configuration
         """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
+
+    @staticmethod
+    def create_configuration(**kwargs):
+        # type: (**Any) -> Configuration
+        """
+        Get an HTTP Pipeline Configuration with all default policies for the Blob
+        Storage service.
+        :rtype: ~azure.core.configuration.Configuration
+        """
+        return create_configuration(**kwargs)
+
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -101,9 +143,15 @@ class QueueServiceClient(object):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+            raise ValueError("No account SAS key available.")
 
-    def get_service_stats(self, timeout=None):
-        # type: (Optional[int]) -> Dict[str, Any]
+        sas = SharedAccessSignature(self.account, self.credentials.account_key)
+        return sas.generate_account(resource_types, permission,
+                                    expiry, start=start, ip=ip, protocol=protocol)
+
+    def get_service_stats(self, timeout=None, **kwargs):
+        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """
         Retrieves statistics related to replication for the Queue service. It is
         only available when read-access geo-redundant replication is enabled for
@@ -125,9 +173,13 @@ class QueueServiceClient(object):
         :return: The queue service stats.
         :rtype: ~azure.storage.queue._generated.models.StorageServiceStats
         """
+        try:
+            return self._client.service.get_statistics(timeout=timeout, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def get_service_properties(self, timeout=None):
-        # type(Optional[int]) -> Dict[str, Any]
+    def get_service_properties(self, timeout=None, **kwargs):
+        # type(Optional[int], Optional[Any]) -> Dict[str, Any]
         """
         Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
@@ -135,6 +187,13 @@ class QueueServiceClient(object):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models.StorageServiceProperties
         """
+        try:
+            return self._client.service.get_properties(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def set_service_properties(
             self, logging=None,  # type: Optional[Union[Logging, Dict[str, Any]]]
@@ -172,8 +231,22 @@ class QueueServiceClient(object):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        props = StorageServiceProperties(
+            logging=logging,
+            hour_metrics=hour_metrics,
+            minute_metrics=minute_metrics,
+            cors=cors
+        )
+        try:
+            return self._client.service.set_properties(
+                props,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def list_queues(self, prefix=None, include_metadata=False, timeout=None):
+    def list_queues(self, prefix=None, include_metadata=None, timeout=None, **kwargs):
         """
         Returns an auto-paging iterable of dict-like QueueProperties.
         :param str prefix:
@@ -186,6 +259,18 @@ class QueueServiceClient(object):
             calls to the service in which case the timeout value specified will be 
             applied to each individual call.
         """
+        if include_metadata and not isinstance(include_metadata, list):
+            include_metadata = [include_metadata]
+        try:
+            return self._client.service.list_queues_segment(
+                prefix=prefix,
+                include=include_metadata,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def get_queue_client(self, queue_name):
         # type: (str) -> QueueClient
@@ -197,3 +282,8 @@ class QueueServiceClient(object):
         :returns: A QueueClient.
         :rtype: ~azure.core.queue.queue_client.QueueClient
         """
+        return QueueClient(
+            self.url, queue_name=queue_name, credentials=self.credentials,
+            configuration=self._config, _pipeline=self._pipeline,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
