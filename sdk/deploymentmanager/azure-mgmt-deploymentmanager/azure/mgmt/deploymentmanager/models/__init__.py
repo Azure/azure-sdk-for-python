@@ -10,116 +10,116 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .identity_py3 import Identity
-    from .pre_post_step_py3 import PrePostStep
-    from .step_py3 import Step
-    from .rollout_request_py3 import RolloutRequest
-    from .artifact_source_py3 import ArtifactSource
-    from .authentication_py3 import Authentication
-    from .artifact_source_properties_model_py3 import ArtifactSourcePropertiesModel
-    from .sas_authentication_py3 import SasAuthentication
-    from .cloud_error_body_py3 import CloudErrorBody
-    from .rollout_operation_info_py3 import RolloutOperationInfo
-    from .step_operation_info_py3 import StepOperationInfo
-    from .resource_operation_py3 import ResourceOperation
-    from .message_py3 import Message
-    from .rollout_step_py3 import RolloutStep
-    from .service_unit_py3 import ServiceUnit
-    from .service_py3 import Service
-    from .rollout_py3 import Rollout
-    from .rollout_properties_model_py3 import RolloutPropertiesModel
-    from .service_topology_resource_py3 import ServiceTopologyResource
-    from .service_topology_properties_py3 import ServiceTopologyProperties
-    from .service_resource_py3 import ServiceResource
-    from .service_properties_py3 import ServiceProperties
-    from .service_unit_resource_py3 import ServiceUnitResource
-    from .service_unit_artifacts_py3 import ServiceUnitArtifacts
-    from .service_unit_properties_py3 import ServiceUnitProperties
-    from .operation_detail_py3 import OperationDetail
-    from .operation_py3 import Operation
-    from .step_properties_py3 import StepProperties
-    from .step_resource_py3 import StepResource
-    from .wait_step_attributes_py3 import WaitStepAttributes
-    from .wait_step_properties_py3 import WaitStepProperties
-    from .proxy_resource_py3 import ProxyResource
-    from .azure_entity_resource_py3 import AzureEntityResource
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
+    from ._models_py3 import ArtifactSource
+    from ._models_py3 import ArtifactSourcePropertiesModel
+    from ._models_py3 import Authentication
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import CloudErrorBody
+    from ._models_py3 import Identity
+    from ._models_py3 import Message
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDetail
+    from ._models_py3 import PrePostStep
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceOperation
+    from ._models_py3 import Rollout
+    from ._models_py3 import RolloutOperationInfo
+    from ._models_py3 import RolloutPropertiesModel
+    from ._models_py3 import RolloutRequest
+    from ._models_py3 import RolloutStep
+    from ._models_py3 import SasAuthentication
+    from ._models_py3 import Service
+    from ._models_py3 import ServiceProperties
+    from ._models_py3 import ServiceResource
+    from ._models_py3 import ServiceTopologyProperties
+    from ._models_py3 import ServiceTopologyResource
+    from ._models_py3 import ServiceUnit
+    from ._models_py3 import ServiceUnitArtifacts
+    from ._models_py3 import ServiceUnitProperties
+    from ._models_py3 import ServiceUnitResource
+    from ._models_py3 import Step
+    from ._models_py3 import StepOperationInfo
+    from ._models_py3 import StepProperties
+    from ._models_py3 import StepResource
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import WaitStepAttributes
+    from ._models_py3 import WaitStepProperties
 except (SyntaxError, ImportError):
-    from .identity import Identity
-    from .pre_post_step import PrePostStep
-    from .step import Step
-    from .rollout_request import RolloutRequest
-    from .artifact_source import ArtifactSource
-    from .authentication import Authentication
-    from .artifact_source_properties_model import ArtifactSourcePropertiesModel
-    from .sas_authentication import SasAuthentication
-    from .cloud_error_body import CloudErrorBody
-    from .rollout_operation_info import RolloutOperationInfo
-    from .step_operation_info import StepOperationInfo
-    from .resource_operation import ResourceOperation
-    from .message import Message
-    from .rollout_step import RolloutStep
-    from .service_unit import ServiceUnit
-    from .service import Service
-    from .rollout import Rollout
-    from .rollout_properties_model import RolloutPropertiesModel
-    from .service_topology_resource import ServiceTopologyResource
-    from .service_topology_properties import ServiceTopologyProperties
-    from .service_resource import ServiceResource
-    from .service_properties import ServiceProperties
-    from .service_unit_resource import ServiceUnitResource
-    from .service_unit_artifacts import ServiceUnitArtifacts
-    from .service_unit_properties import ServiceUnitProperties
-    from .operation_detail import OperationDetail
-    from .operation import Operation
-    from .step_properties import StepProperties
-    from .step_resource import StepResource
-    from .wait_step_attributes import WaitStepAttributes
-    from .wait_step_properties import WaitStepProperties
-    from .proxy_resource import ProxyResource
-    from .azure_entity_resource import AzureEntityResource
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-from .deployment_manager_client_enums import (
+    from ._models import ArtifactSource
+    from ._models import ArtifactSourcePropertiesModel
+    from ._models import Authentication
+    from ._models import AzureEntityResource
+    from ._models import CloudErrorBody
+    from ._models import Identity
+    from ._models import Message
+    from ._models import Operation
+    from ._models import OperationDetail
+    from ._models import PrePostStep
+    from ._models import ProxyResource
+    from ._models import Resource
+    from ._models import ResourceOperation
+    from ._models import Rollout
+    from ._models import RolloutOperationInfo
+    from ._models import RolloutPropertiesModel
+    from ._models import RolloutRequest
+    from ._models import RolloutStep
+    from ._models import SasAuthentication
+    from ._models import Service
+    from ._models import ServiceProperties
+    from ._models import ServiceResource
+    from ._models import ServiceTopologyProperties
+    from ._models import ServiceTopologyResource
+    from ._models import ServiceUnit
+    from ._models import ServiceUnitArtifacts
+    from ._models import ServiceUnitProperties
+    from ._models import ServiceUnitResource
+    from ._models import Step
+    from ._models import StepOperationInfo
+    from ._models import StepProperties
+    from ._models import StepResource
+    from ._models import TrackedResource
+    from ._models import WaitStepAttributes
+    from ._models import WaitStepProperties
+from ._deployment_manager_client_enums import (
     DeploymentMode,
 )
 
 __all__ = [
-    'Identity',
-    'PrePostStep',
-    'Step',
-    'RolloutRequest',
     'ArtifactSource',
-    'Authentication',
     'ArtifactSourcePropertiesModel',
-    'SasAuthentication',
+    'Authentication',
+    'AzureEntityResource',
     'CloudErrorBody',
-    'RolloutOperationInfo',
-    'StepOperationInfo',
-    'ResourceOperation',
+    'Identity',
     'Message',
-    'RolloutStep',
-    'ServiceUnit',
-    'Service',
+    'Operation',
+    'OperationDetail',
+    'PrePostStep',
+    'ProxyResource',
+    'Resource',
+    'ResourceOperation',
     'Rollout',
+    'RolloutOperationInfo',
     'RolloutPropertiesModel',
-    'ServiceTopologyResource',
-    'ServiceTopologyProperties',
-    'ServiceResource',
+    'RolloutRequest',
+    'RolloutStep',
+    'SasAuthentication',
+    'Service',
     'ServiceProperties',
-    'ServiceUnitResource',
+    'ServiceResource',
+    'ServiceTopologyProperties',
+    'ServiceTopologyResource',
+    'ServiceUnit',
     'ServiceUnitArtifacts',
     'ServiceUnitProperties',
-    'OperationDetail',
-    'Operation',
+    'ServiceUnitResource',
+    'Step',
+    'StepOperationInfo',
     'StepProperties',
     'StepResource',
+    'TrackedResource',
     'WaitStepAttributes',
     'WaitStepProperties',
-    'ProxyResource',
-    'AzureEntityResource',
-    'Resource',
-    'TrackedResource',
     'DeploymentMode',
 ]

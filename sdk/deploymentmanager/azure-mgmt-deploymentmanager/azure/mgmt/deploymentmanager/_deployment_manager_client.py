@@ -11,50 +11,16 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.service_topologies_operations import ServiceTopologiesOperations
-from .operations.services_operations import ServicesOperations
-from .operations.service_units_operations import ServiceUnitsOperations
-from .operations.steps_operations import StepsOperations
-from .operations.rollouts_operations import RolloutsOperations
-from .operations.artifact_sources_operations import ArtifactSourcesOperations
-from .operations.operations import Operations
+
+from ._configuration import DeploymentManagerClientConfiguration
+from .operations import ServiceTopologiesOperations
+from .operations import ServicesOperations
+from .operations import ServiceUnitsOperations
+from .operations import StepsOperations
+from .operations import RolloutsOperations
+from .operations import ArtifactSourcesOperations
+from .operations import Operations
 from . import models
-
-
-class DeploymentManagerClientConfiguration(AzureConfiguration):
-    """Configuration for DeploymentManagerClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(DeploymentManagerClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-deploymentmanager/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class DeploymentManagerClient(SDKClient):

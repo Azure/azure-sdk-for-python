@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_topologies_operations import ServiceTopologiesOperations
-from .services_operations import ServicesOperations
-from .service_units_operations import ServiceUnitsOperations
-from .steps_operations import StepsOperations
-from .rollouts_operations import RolloutsOperations
-from .artifact_sources_operations import ArtifactSourcesOperations
-from .operations import Operations
+from ._service_topologies_operations import ServiceTopologiesOperations
+from ._services_operations import ServicesOperations
+from ._service_units_operations import ServiceUnitsOperations
+from ._steps_operations import StepsOperations
+from ._rollouts_operations import RolloutsOperations
+from ._artifact_sources_operations import ArtifactSourcesOperations
+from ._operations import Operations
 
 __all__ = [
     'ServiceTopologiesOperations',
