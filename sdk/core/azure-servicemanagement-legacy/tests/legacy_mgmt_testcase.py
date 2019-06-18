@@ -93,7 +93,7 @@ class LegacyMgmtTestCase(RecordingTestCase):
         session = Session()
         service = service_class(
             "https://{}.blob.core.windows.net".format(account_name_arg),
-            credentials=ccount_key_arg
+            credentials=account_key_arg
         )
         self._set_service_options(service, settings)
         return service
