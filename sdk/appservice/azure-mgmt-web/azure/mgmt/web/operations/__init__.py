@@ -9,20 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
-from .certificate_registration_provider_operations import CertificateRegistrationProviderOperations
-from .domains_operations import DomainsOperations
-from .top_level_domains_operations import TopLevelDomainsOperations
-from .domain_registration_provider_operations import DomainRegistrationProviderOperations
-from .certificates_operations import CertificatesOperations
-from .deleted_web_apps_operations import DeletedWebAppsOperations
-from .diagnostics_operations import DiagnosticsOperations
-from .provider_operations import ProviderOperations
-from .recommendations_operations import RecommendationsOperations
-from .web_apps_operations import WebAppsOperations
-from .app_service_environments_operations import AppServiceEnvironmentsOperations
-from .app_service_plans_operations import AppServicePlansOperations
-from .resource_health_metadata_operations import ResourceHealthMetadataOperations
+from ._app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
+from ._certificate_registration_provider_operations import CertificateRegistrationProviderOperations
+from ._domains_operations import DomainsOperations
+from ._top_level_domains_operations import TopLevelDomainsOperations
+from ._domain_registration_provider_operations import DomainRegistrationProviderOperations
+from ._certificates_operations import CertificatesOperations
+from ._deleted_web_apps_operations import DeletedWebAppsOperations
+from ._diagnostics_operations import DiagnosticsOperations
+from ._provider_operations import ProviderOperations
+from ._recommendations_operations import RecommendationsOperations
+from ._web_apps_operations import WebAppsOperations
+from ._app_service_environments_operations import AppServiceEnvironmentsOperations
+from ._app_service_plans_operations import AppServicePlansOperations
+from ._resource_health_metadata_operations import ResourceHealthMetadataOperations
+from ._web_site_management_client_operations import WebSiteManagementClientOperationsMixin
 
 __all__ = [
     'AppServiceCertificateOrdersOperations',
@@ -39,4 +40,5 @@ __all__ = [
     'AppServiceEnvironmentsOperations',
     'AppServicePlansOperations',
     'ResourceHealthMetadataOperations',
+    'WebSiteManagementClientOperationsMixin',
 ]
