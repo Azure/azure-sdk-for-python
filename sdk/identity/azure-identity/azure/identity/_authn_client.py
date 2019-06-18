@@ -59,7 +59,7 @@ class AuthnClientBase(object):
             expires_in = int(payload.get("expires_in", 0))
             if expires_in != 0:
                 payload["expires_in"] = expires_in
-            if payload.get("ext_expires_in"):
+            if "ext_expires_in" in payload:
                 payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
             self._cache.add({"response": payload, "scope": scopes})
@@ -67,12 +67,14 @@ class AuthnClientBase(object):
             # AccessToken contains the token's expires_on time. There are four cases for setting it:
             # 1. response has expires_on -> AccessToken uses it
             # 2. response has expires_on and expires_in -> AccessToken uses expires_on
-            # 3. response has only expires_in -> AccessToken uses expires_in + current time
+            # 3. response has only expires_in -> AccessToken uses expires_in + time of request
             # 4. response has neither expires_on or expires_in -> AccessToken sets expires_on = 0
             #    (not expecting this case; if it occurs, the token is effectively single-use)
             expires_on = payload.get("expires_on", 0)
             return AccessToken(token, expires_on or expires_in + request_time)
         except KeyError:
+            if "access_token" in payload:
+                payload["access_token"] = "****"
             raise AuthenticationError("Unexpected authentication response: {}".format(payload))
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
