@@ -40,6 +40,9 @@ from typing import (
     cast
 )
 
+__all__ = (
+    'Container',
+)
 
 class Container:
     """ An Azure Cosmos DB container.

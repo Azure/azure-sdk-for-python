@@ -37,6 +37,9 @@ from typing import (
     cast
 )
 
+__all__ = (
+    'CosmosClient',
+)
 
 class CosmosClient:
     """

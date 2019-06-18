@@ -41,6 +41,9 @@ from typing import (
     cast
 )
 
+__all__ = (
+    'Database',
+)
 
 class Database(object):
     """ Represents an Azure Cosmos DB SQL API database.
