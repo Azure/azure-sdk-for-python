@@ -38,6 +38,13 @@ def get_credentials(**kwargs):
     #    'user@myaddomain.onmicrosoft.com',
     #    'Password'
     #)
+    # note that UserCredential does not work any longer. Must use a ServicePrincipal. 
+    # for deprecated APIs I believe will still work.
+    # return ServicePrincipalCredentials(
+    #     client_id = '<AAD App client id>',
+    #     secret = '<secret for the aad app>',
+    #     tenant = '<microsoft aad tenant id>'
+    # )
     # Needed to play recorded tests
     return BasicTokenAuthentication(
         token = {

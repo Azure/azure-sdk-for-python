@@ -52,9 +52,6 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.bsc = BlobServiceClient(
             url, credential=self.settings.STORAGE_ACCOUNT_KEY, configuration=self.config)
 
-        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
-        #self.pbs = self._create_storage_service(PageBlobService, self.settings)
-        #self.abs = self._create_storage_service(AppendBlobService, self.settings)
         self.container_name = self.get_resource_name('utcontainer')
 
     def tearDown(self):
