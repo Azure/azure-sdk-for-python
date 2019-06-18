@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import CognitiveServicesManagementClientConfiguration
+from .operations import CognitiveServicesManagementClientOperationsMixin
 from .operations import AccountsOperations
 from .operations import ResourceSkusOperations
 from .operations import Operations
@@ -20,7 +21,7 @@ from .operations import CheckSkuAvailabilityOperations
 from . import models
 
 
-class CognitiveServicesManagementClient(SDKClient):
+class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperationsMixin, SDKClient):
     """Cognitive Services Management Client
 
     :ivar config: Configuration for client.

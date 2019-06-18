@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CheckDomainAvailabilityParameter
+    from ._models_py3 import CheckDomainAvailabilityResult
     from ._models_py3 import CheckSkuAvailabilityParameter
     from ._models_py3 import CheckSkuAvailabilityResult
     from ._models_py3 import CheckSkuAvailabilityResultList
@@ -35,6 +37,8 @@ try:
     from ._models_py3 import UsagesResult
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import CheckDomainAvailabilityParameter
+    from ._models import CheckDomainAvailabilityResult
     from ._models import CheckSkuAvailabilityParameter
     from ._models import CheckSkuAvailabilityResult
     from ._models import CheckSkuAvailabilityResultList
@@ -75,6 +79,8 @@ from ._cognitive_services_management_client_enums import (
 )
 
 __all__ = [
+    'CheckDomainAvailabilityParameter',
+    'CheckDomainAvailabilityResult',
     'CheckSkuAvailabilityParameter',
     'CheckSkuAvailabilityResult',
     'CheckSkuAvailabilityResultList',

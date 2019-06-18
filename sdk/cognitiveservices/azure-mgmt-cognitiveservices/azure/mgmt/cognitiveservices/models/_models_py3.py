@@ -13,6 +13,62 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class CheckDomainAvailabilityParameter(Model):
+    """Check Domain availability parameter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param subdomain_name: Required. The subdomain name to use.
+    :type subdomain_name: str
+    :param type: Required. The Type of the resource.
+    :type type: str
+    """
+
+    _validation = {
+        'subdomain_name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'subdomain_name': {'key': 'subdomainName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, subdomain_name: str, type: str, **kwargs) -> None:
+        super(CheckDomainAvailabilityParameter, self).__init__(**kwargs)
+        self.subdomain_name = subdomain_name
+        self.type = type
+
+
+class CheckDomainAvailabilityResult(Model):
+    """Check Domain availability result.
+
+    :param is_subdomain_available: Indicates the given SKU is available or
+     not.
+    :type is_subdomain_available: bool
+    :param reason: Reason why the SKU is not available.
+    :type reason: str
+    :param subdomain_name: The subdomain name to use.
+    :type subdomain_name: str
+    :param type: The Type of the resource.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'is_subdomain_available': {'key': 'isSubdomainAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'subdomain_name': {'key': 'subdomainName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, is_subdomain_available: bool=None, reason: str=None, subdomain_name: str=None, type: str=None, **kwargs) -> None:
+        super(CheckDomainAvailabilityResult, self).__init__(**kwargs)
+        self.is_subdomain_available = is_subdomain_available
+        self.reason = reason
+        self.subdomain_name = subdomain_name
+        self.type = type
+
+
 class CheckSkuAvailabilityParameter(Model):
     """Check SKU availability parameter.
 
