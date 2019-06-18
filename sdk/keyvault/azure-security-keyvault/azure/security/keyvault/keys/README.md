@@ -1,9 +1,9 @@
 # Azure Key Vault Key client library for Python
-Azure Key Vault allows you to create and store keys in the Key Vault. Azure Key Vault supports RSA keys and elliptic curve keys, each with corresponding support in hardware security modules (HSM).
+Azure Key Vault allows you to create and store keys in the Key Vault. Azure Key Vault client supports RSA keys and elliptic curve keys, each with corresponding support in hardware security modules (HSM).
 
  Multiple keys, and multiple versions of the same key, can be kept in the Key Vault. Cryptographic keys in Key Vault are represented as [JSON Web Key [JWK]](https://tools.ietf.org/html/rfc7517) objects. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the keys and its versions.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys/samples)
+[Source code](/azure/security/keyvault/keys) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](/azure/security/keyvault/keys/samples)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
@@ -64,13 +64,13 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI for example "<https://myvault.vault.azure.net>", you can create the [KeyClient](TODO-rst-docs):
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.security.keyvault import KeyClient
+from azure.identity import DefaultAzureCredential
+from azure.security.keyvault import KeyClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    # Create a new Key client using the default credential
-    key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
+# Create a new Key client using the default credential
+key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 ### Key
@@ -86,73 +86,77 @@ The Key client performs the interactions with the Azure Key Vault service for ge
 
 ## Examples
 The following section provides several code snippets using the above created `key_client`, covering some of the most common Azure Key Vault Key service related tasks, including:
-* [Create a Key](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#create-a-key)
-* [Retrieve a Key](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#retrieve-a-key)
-* [Update an existing Key](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#update-an-existing-key)
-* [Delete a Key](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#delete-a-key)
-* [List Keys](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#list-keys)
-* [Async create a Key](https://github.com/samvaity/azure-sdk-for-python/tree/keys-track2-readme/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys#async-create-a-key)
-* [Async list Keys](https://github.com/samvaity/azure-sdk-for-python/tree/keys-track2-readme/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys#async-list-keys)
+* [Create a Key](#create-a-key)
+* [Retrieve a Key](#retrieve-a-key)
+* [Update an existing Key](#update-an-existing-key)
+* [Delete a Key](#delete-a-key)
+* [List Keys](#list-keys)
+* [Async create a Key](#async-create-a-key)
+* [Async list Keys](#async-list-keys)
 
 ### Create a Key
 `create_key` creates a Key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 ```python
 
-    # Create a key of any type
-    key = key_client.create_key("key-name", "RSA-HSM")
+# Create a key of any type
+key = key_client.create_key("key-name", "RSA-HSM")
 
-    # Create an RSA key with size specification (optional)
-    rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+# Create an RSA key with size specification (optional)
+rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
 
-    # Create an EC key with curve specification and using HSM
-    ec_key = key_client.create_key("ec-key-name", hsm=True)
+# Create an EC key with curve specification and using HSM
+ec_key = key_client.create_key("ec-key-name", hsm=True)
 
-    print(key.name)
-    print(key.value)
-    print(key.version)
-    print(key.key_material.kty)
+print(key.name)
+print(key.key_material.kty)
+
+print(rsa_key.name)
+print(rsa_key.key_material.kty)
+
+print(ec_key.name)
+print(ec_key.key_material.kty)
 ```
 
 ### Retrieve a Key
 `get_key` retrieves a key previously stored in the Key Vault.
 ```python
-    key = key_client.get_key("key-name")
+key = key_client.get_key("key-name")
 
-    print(key.name)
-    print(key.value)
+print(key.name)
+print(key.value)
 ```
 
 ### Update an existing Key
 `update_key` updates a key previously stored in the Key Vault.
 ```python
-    # Clients may specify additional application-specific metadata in the form of tags.
-    tags = {"foo": "updated tag"}
+# Clients may specify additional application-specific metadata in the form of tags.
+tags = {"foo": "updated tag"}
 
-    updated_key = key_client.update_key("key-name", tags=tags)
+updated_key = key_client.update_key("key-name", tags=tags)
 
-    print(updated_key.name)
-    print(updated_key.version)
-    print(updated_key.updated)
-    print(updated_key.tags)
+print(updated_key.name)
+print(updated_key.version)
+print(updated_key.updated)
+print(updated_key.tags)
 
 ```
 
 ### Delete a Key
 `delete_key` deletes a key previously stored in the Key Vault. When [soft-delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete) is not enabled for the Key Vault, this operation permanently deletes the key.
 ```python
-    key = key_client.delete_key("key-name")
+deleted_key = key_client.delete_key("key-name")
 
-    print(deleted_key.name)
-    print(deleted_key.deleted_date)
+print(deleted_key.name)
+print(deleted_key.deleted_date)
 ```
 ### List keys
 This example lists all the keys in the specified Key Vault.
 ```python
-    keys = key_client.list_keys()
+keys = key_client.list_keys()
 
-    for key in keys:
-        # the list doesn't include values or versions of the keys
-        print(key.name)
+for key in keys:
+    # the list doesn't include values or versions of the keys
+    print(key.name)
 ```
 
 ### Async operations
@@ -164,29 +168,28 @@ The following examples provide code snippets for performing async operations in 
 ### Async create a Key
 This example creates a key in the Key Vault with the specified optional arguments.
 ```python
-    from azure.identity import AsyncDefaultAzureCredential
-    from azure.security.keyvault.aio import KeyClient
+from azure.identity import AsyncDefaultAzureCredential
+from azure.security.keyvault.aio import KeyClient
 
-    # for async operations use AsyncDefaultAzureCredential
-    credential = AsyncDefaultAzureCredential()
-    # Create a new Key client using the default credential
-    key_client = KeyClient(vault_url=vault_url, credential=credential)
+# for async operations use AsyncDefaultAzureCredential
+credential = AsyncDefaultAzureCredential()
+# Create a new Key client using the default credential
+key_client = KeyClient(vault_url=vault_url, credential=credential)
 
-    key = await key_client.set_key("key-name", "key-value", enabled=True)
+key = await key_client.set_key("key-name", "key-value", enabled=True)
 
-    print(key.name)
-    print(key.value)
-    print(key.version)
-    print(key.enabled)
+print(key.name)
+print(key.version)
+print(key.enabled)
 ```
 ### Async list keys
 This example lists all the keys in the specified Key Vault.
 ```python
-    keys = key_client.list_keys()
+keys = key_client.list_keys()
 
-    async for key in keys:
-        # the list doesn't include values or versions of the keys
-        print(key.name)
+async for key in keys:
+    # the list doesn't include versions of the keys
+    print(key.name)
 ```
 
 ## Troubleshooting
@@ -202,14 +205,30 @@ except ResourceNotFoundError as e:
 
 Output: "Key not found:deleted_key"
 ```
-### Logging [TODO]
-This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
+### Logging
+This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
 ```python
+import sys
 import logging
-logging.basicConfig(level=logging.DEBUG)
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# Configure a file output
+file_handler = logging.FileHandler(filename)
+logger.addHandler(file_handler)
 ```
-Http request and response details are printed to stdout with this logging config.
+The logger can also be enabled per operation.
+
+```python
+key = key_client.get_key("key-name", logging_enable=True)
+```
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
