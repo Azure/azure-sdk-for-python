@@ -22,7 +22,7 @@ pip install azure-security-keyvault
     ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient](TODO-rst-docs) class. You would need a **vault url** and **client key credentials (client id, client key, tenant id)** to instantiate a client object. Client key credential way of authentication is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client key, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` way of authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client key credentials.
