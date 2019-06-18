@@ -3,6 +3,11 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import binascii
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
 
 from .constants import Endpoints
@@ -25,7 +30,9 @@ class ClientSecretCredentialBase(object):
         if not secret:
             raise ValueError("secret should be an Azure Active Directory application's client secret")
         if not tenant_id:
-            raise ValueError("tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')")
+            raise ValueError(
+                "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
+            )
         self._form_data = {"client_id": client_id, "client_secret": secret, "grant_type": "client_credentials"}
         super(ClientSecretCredentialBase, self).__init__()
 
@@ -35,14 +42,23 @@ class CertificateCredentialBase(object):
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not certificate_path:
             # TODO: support PFX
-            raise ValueError("certificate_path must be the path to a PEM-encoded private key file")
+            raise ValueError(
+                "certificate_path must be the path to a PEM file containing an "
+                "x509 certificate and its private key, not protected with a password"
+            )
 
         super(CertificateCredentialBase, self).__init__()
         auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
 
-        with open(certificate_path) as pem:
-            private_key = pem.read()
-        signer = JwtSigner(private_key, "RS256")
+        with open(certificate_path, "rb") as f:
+            pem_bytes = f.read()
+
+        # TODO: support pem password
+        private_key = serialization.load_pem_private_key(pem_bytes, password=None, backend=default_backend())
+        cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
+        fingerprint = cert.fingerprint(hashes.SHA1())
+
+        signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
         client_assertion = signer.sign_assertion(audience=auth_url, issuer=client_id)
         self._form_data = {
             "client_assertion": client_assertion,
