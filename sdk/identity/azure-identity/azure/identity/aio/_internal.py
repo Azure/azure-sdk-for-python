@@ -8,6 +8,7 @@ from typing import Any, Optional
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -38,10 +39,12 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
             try:
                 await self._client.request_token(scopes, method="GET", connection_timeout=0.3)
                 self._endpoint_available = True
-            except AuthenticationError:
-                # received a response that couldn't be deserialized (because it was an error response)
+            except (AuthenticationError, HttpResponseError):
+                # received a response a pipeline policy choked on (HttpResponseError)
+                # or that couldn't be deserialized by AuthnClient (AuthenticationError)
                 self._endpoint_available = True
             except Exception:  # pylint:disable=broad-except
+                # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
 
         if not self._endpoint_available:
