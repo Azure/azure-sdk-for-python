@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 from ._authn_client import AsyncAuthnClient
 from ._internal import AsyncImdsCredential, AsyncMsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..constants import Endpoints, EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
+from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import TokenCredentialChain
 from ..exceptions import AuthenticationError
 
@@ -92,16 +92,21 @@ class AsyncManagedIdentityCredential(object):
     """factory for MSI and IMDS credentials"""
 
     def __new__(cls, *args, **kwargs):
-        if os.environ.get(MSI_SECRET) and os.environ.get(MSI_ENDPOINT):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             return AsyncMsiCredential(*args, **kwargs)
         return AsyncImdsCredential(*args, **kwargs)
 
-    @staticmethod
-    def create_config(**kwargs: Dict[str, Any]) -> Configuration:
+    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
+    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
+    def __init__(self, client_id: Optional[str] = None, config: Optional[Configuration] = None, **kwargs: Any) -> None:
         pass
 
+    @staticmethod
+    def create_config(**kwargs: Dict[str, Any]) -> Configuration:
+        return Configuration()
+
     async def get_token(self, *scopes: str) -> AccessToken:
-        pass
+        return AccessToken()
 
 
 class AsyncTokenCredentialChain(TokenCredentialChain):
