@@ -79,6 +79,7 @@ class AuthnClientBase(object):
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
 
+    # TODO: public, factor out of request_token
     def _prepare_request(self, method="POST", headers=None, form_data=None, params=None):
         # type: (Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> HttpRequest
         request = HttpRequest(method, self._auth_url, headers=headers)
@@ -102,11 +103,11 @@ class AuthnClient(AuthnClientBase):
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
-    def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None):
-        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> AccessToken
+    def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None, **kwargs):
+        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]], Any) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
-        response = self._pipeline.run(request, stream=False)
+        response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response, scopes, request_time)
         return token
 
@@ -115,5 +116,5 @@ class AuthnClient(AuthnClientBase):
         # type: (Mapping[str, Any]) -> Configuration
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
+        config.retry_policy = RetryPolicy(**kwargs)
         return config

@@ -17,10 +17,11 @@ from azure.identity import (
     AsyncClientSecretCredential,
     AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
+    AsyncManagedIdentityCredential,
     AsyncTokenCredentialChain,
 )
-from azure.identity.aio._internal import AsyncImdsCredential, AsyncMsiCredential
-from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
+from azure.identity.aio._internal import AsyncImdsCredential
+from azure.identity.constants import EnvironmentVariables
 
 
 @pytest.mark.asyncio
@@ -191,7 +192,7 @@ async def test_imds_credential_cache():
     credential = AsyncImdsCredential(transport=Mock(send=asyncio.coroutine(mock_send)))
     token = await credential.get_token(scope)
     assert token.token == expired
-    assert mock_send.call_count == 1
+    assert mock_send.call_count == 2  # first request was probing for endpoint availability
 
     # calling get_token again should provoke another HTTP request
     good_for_an_hour = "this token's good for an hour"
@@ -200,12 +201,12 @@ async def test_imds_credential_cache():
     token_payload["access_token"] = good_for_an_hour
     token = await credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
+    assert mock_send.call_count == 3
 
     # get_token should return the cached token now
     token = await credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
+    assert mock_send.call_count == 3
 
 
 @pytest.mark.asyncio
@@ -218,8 +219,9 @@ async def test_imds_credential_retries():
     )
     mock_send = Mock(return_value=mock_response)
 
-    retry_total = 1
-    credential = AsyncImdsCredential(retry_total=retry_total, transport=Mock(send=asyncio.coroutine(mock_send)))
+    credential = AsyncImdsCredential(
+        transport=Mock(send=asyncio.coroutine(mock_send), sleep=asyncio.coroutine(lambda _: None))
+    )
 
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
@@ -227,27 +229,49 @@ async def test_imds_credential_retries():
             await credential.get_token("scope")
         except AuthenticationError:
             pass
-        assert mock_send.call_count is 1 + retry_total
+        # first call was availability probe, second the original request; there should be at least one retry thereafter
+        assert mock_send.call_count > 2
         mock_send.reset_mock()
 
 
 @pytest.mark.asyncio
-async def test_msi_credential(monkeypatch):
+async def test_managed_identity_app_service(monkeypatch):
+    # in App Service, MSI_SECRET and MSI_ENDPOINT are set
     msi_secret = "secret"
-    monkeypatch.setenv(MSI_SECRET, msi_secret)
-    monkeypatch.setenv(MSI_ENDPOINT, "https://foo.bar")
+    monkeypatch.setenv(EnvironmentVariables.MSI_SECRET, msi_secret)
+    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, "https://foo.bar")
 
     success_message = "test passed"
 
     async def validate_request(req, *args, **kwargs):
-        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
         assert req.headers["secret"] == msi_secret
         exception = Exception()
         exception.message = success_message
         raise exception
 
     with pytest.raises(Exception) as ex:
-        await AsyncMsiCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+        await AsyncManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+    assert ex.value.message is success_message
+
+
+@pytest.mark.asyncio
+async def test_managed_identity_cloud_shell(monkeypatch):
+    # in Cloud Shell, only MSI_ENDPOINT is set
+    msi_endpoint = "https://localhost:50432"
+    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, msi_endpoint)
+
+    success_message = "test passed"
+
+    async def validate_request(req, *args, **kwargs):
+        assert req.headers["Metadata"] == "true"
+        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
+        exception = Exception()
+        exception.message = success_message
+        raise exception
+
+    with pytest.raises(Exception) as ex:
+        await AsyncManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
     assert ex.value.message is success_message
 
 
