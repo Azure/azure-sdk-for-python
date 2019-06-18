@@ -25,6 +25,15 @@ class WebhookReceiver(Model):
     :param use_common_alert_schema: Required. Indicates whether to use common
      alert schema.
     :type use_common_alert_schema: bool
+    :param use_aad_auth: Indicates whether or not use AAD authentication.
+     Default value: False .
+    :type use_aad_auth: bool
+    :param object_id: Indicates the webhook app object Id for aad auth.
+    :type object_id: str
+    :param identifier_uri: Indicates the identifier uri for aad auth.
+    :type identifier_uri: str
+    :param tenant_id: Indicates the tenant id for aad auth.
+    :type tenant_id: str
     """
 
     _validation = {
@@ -37,10 +46,18 @@ class WebhookReceiver(Model):
         'name': {'key': 'name', 'type': 'str'},
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
         'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        'use_aad_auth': {'key': 'useAadAuth', 'type': 'bool'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'identifier_uri': {'key': 'identifierUri', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, service_uri: str, use_common_alert_schema: bool, **kwargs) -> None:
+    def __init__(self, *, name: str, service_uri: str, use_common_alert_schema: bool, use_aad_auth: bool=False, object_id: str=None, identifier_uri: str=None, tenant_id: str=None, **kwargs) -> None:
         super(WebhookReceiver, self).__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri
         self.use_common_alert_schema = use_common_alert_schema
+        self.use_aad_auth = use_aad_auth
+        self.object_id = object_id
+        self.identifier_uri = identifier_uri
+        self.tenant_id = tenant_id
