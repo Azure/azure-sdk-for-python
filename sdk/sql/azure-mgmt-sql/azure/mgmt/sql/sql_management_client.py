@@ -93,6 +93,8 @@ from .operations.recoverable_managed_databases_operations import RecoverableMana
 from .operations.managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations.server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from .operations.managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
+from .operations.instance_pools_operations import InstancePoolsOperations
+from .operations.usages_operations import UsagesOperations
 from . import models
 
 
@@ -295,6 +297,10 @@ class SqlManagementClient(SDKClient):
     :vartype server_vulnerability_assessments: azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
     :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabels operations
     :vartype managed_database_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
+    :ivar instance_pools: InstancePools operations
+    :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.sql.operations.UsagesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -474,4 +480,8 @@ class SqlManagementClient(SDKClient):
         self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.instance_pools = InstancePoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
