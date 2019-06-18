@@ -128,6 +128,7 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
       - template: ../steps/publish-coverage.yml
 
@@ -158,3 +159,4 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
