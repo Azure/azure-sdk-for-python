@@ -32,6 +32,9 @@ class AutomationRunbookReceiver(Model):
     :type name: str
     :param service_uri: The URI where webhooks should be sent.
     :type service_uri: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     """
 
     _validation = {
@@ -39,6 +42,7 @@ class AutomationRunbookReceiver(Model):
         'runbook_name': {'required': True},
         'webhook_resource_id': {'required': True},
         'is_global_runbook': {'required': True},
+        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -48,6 +52,7 @@ class AutomationRunbookReceiver(Model):
         'is_global_runbook': {'key': 'isGlobalRunbook', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -58,3 +63,4 @@ class AutomationRunbookReceiver(Model):
         self.is_global_runbook = kwargs.get('is_global_runbook', None)
         self.name = kwargs.get('name', None)
         self.service_uri = kwargs.get('service_uri', None)
+        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)

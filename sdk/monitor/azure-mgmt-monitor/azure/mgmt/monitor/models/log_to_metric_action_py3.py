@@ -19,8 +19,8 @@ class LogToMetricAction(Action):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param criteria: Required. Severity of the alert
-    :type criteria: ~azure.mgmt.monitor.models.Criteria
+    :param criteria: Required. Criteria of Metric
+    :type criteria: list[~azure.mgmt.monitor.models.Criteria]
     """
 
     _validation = {
@@ -30,7 +30,7 @@ class LogToMetricAction(Action):
 
     _attribute_map = {
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
-        'criteria': {'key': 'criteria', 'type': 'Criteria'},
+        'criteria': {'key': 'criteria', 'type': '[Criteria]'},
     }
 
     def __init__(self, *, criteria, **kwargs) -> None:

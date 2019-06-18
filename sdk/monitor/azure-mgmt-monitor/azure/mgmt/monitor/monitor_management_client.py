@@ -28,6 +28,7 @@ from .operations.tenant_activity_logs_operations import TenantActivityLogsOperat
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
 from .operations.metric_baseline_operations import MetricBaselineOperations
+from .operations.baselines_operations import BaselinesOperations
 from .operations.metric_alerts_operations import MetricAlertsOperations
 from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
 from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
@@ -104,6 +105,8 @@ class MonitorManagementClient(SDKClient):
     :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
     :ivar metric_baseline: MetricBaseline operations
     :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
+    :ivar baselines: Baselines operations
+    :vartype baselines: azure.mgmt.monitor.operations.BaselinesOperations
     :ivar metric_alerts: MetricAlerts operations
     :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
     :ivar metric_alerts_status: MetricAlertsStatus operations
@@ -162,6 +165,8 @@ class MonitorManagementClient(SDKClient):
         self.metrics = MetricsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_baseline = MetricBaselineOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.baselines = BaselinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_alerts = MetricAlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)

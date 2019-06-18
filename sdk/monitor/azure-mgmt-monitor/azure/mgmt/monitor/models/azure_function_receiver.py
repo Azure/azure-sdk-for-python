@@ -28,6 +28,9 @@ class AzureFunctionReceiver(Model):
     :param http_trigger_url: Required. The http trigger url where http request
      sent to.
     :type http_trigger_url: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     """
 
     _validation = {
@@ -35,6 +38,7 @@ class AzureFunctionReceiver(Model):
         'function_app_resource_id': {'required': True},
         'function_name': {'required': True},
         'http_trigger_url': {'required': True},
+        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -42,6 +46,7 @@ class AzureFunctionReceiver(Model):
         'function_app_resource_id': {'key': 'functionAppResourceId', 'type': 'str'},
         'function_name': {'key': 'functionName', 'type': 'str'},
         'http_trigger_url': {'key': 'httpTriggerUrl', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -50,3 +55,4 @@ class AzureFunctionReceiver(Model):
         self.function_app_resource_id = kwargs.get('function_app_resource_id', None)
         self.function_name = kwargs.get('function_name', None)
         self.http_trigger_url = kwargs.get('http_trigger_url', None)
+        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)

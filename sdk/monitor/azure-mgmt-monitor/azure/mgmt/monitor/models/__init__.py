@@ -88,6 +88,11 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
+    from .metric_single_dimension_py3 import MetricSingleDimension
+    from .single_baseline_py3 import SingleBaseline
+    from .baseline_metadata_py3 import BaselineMetadata
+    from .time_series_baseline_py3 import TimeSeriesBaseline
+    from .single_metric_baseline_py3 import SingleMetricBaseline
     from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
     from .metric_alert_resource_py3 import MetricAlertResource
@@ -95,11 +100,13 @@ try:
     from .metric_alert_status_properties_py3 import MetricAlertStatusProperties
     from .metric_alert_status_py3 import MetricAlertStatus
     from .metric_alert_status_collection_py3 import MetricAlertStatusCollection
-    from .metric_dimension_py3 import MetricDimension
     from .metric_criteria_py3 import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
+    from .metric_dimension_py3 import MetricDimension
     from .multi_metric_criteria_py3 import MultiMetricCriteria
     from .metric_alert_multiple_resource_multiple_metric_criteria_py3 import MetricAlertMultipleResourceMultipleMetricCriteria
+    from .dynamic_threshold_failing_periods_py3 import DynamicThresholdFailingPeriods
+    from .dynamic_metric_criteria_py3 import DynamicMetricCriteria
     from .source_py3 import Source
     from .schedule_py3 import Schedule
     from .action_py3 import Action
@@ -199,6 +206,11 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
+    from .metric_single_dimension import MetricSingleDimension
+    from .single_baseline import SingleBaseline
+    from .baseline_metadata import BaselineMetadata
+    from .time_series_baseline import TimeSeriesBaseline
+    from .single_metric_baseline import SingleMetricBaseline
     from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
     from .metric_alert_resource import MetricAlertResource
@@ -206,11 +218,13 @@ except (SyntaxError, ImportError):
     from .metric_alert_status_properties import MetricAlertStatusProperties
     from .metric_alert_status import MetricAlertStatus
     from .metric_alert_status_collection import MetricAlertStatusCollection
-    from .metric_dimension import MetricDimension
     from .metric_criteria import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
+    from .metric_dimension import MetricDimension
     from .multi_metric_criteria import MultiMetricCriteria
     from .metric_alert_multiple_resource_multiple_metric_criteria import MetricAlertMultipleResourceMultipleMetricCriteria
+    from .dynamic_threshold_failing_periods import DynamicThresholdFailingPeriods
+    from .dynamic_metric_criteria import DynamicMetricCriteria
     from .source import Source
     from .schedule import Schedule
     from .action import Action
@@ -240,6 +254,7 @@ from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
 from .event_data_paged import EventDataPaged
 from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
+from .single_metric_baseline_paged import SingleMetricBaselinePaged
 from .metric_alert_resource_paged import MetricAlertResourcePaged
 from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
 from .metric_namespace_paged import MetricNamespacePaged
@@ -258,6 +273,7 @@ from .monitor_management_client_enums import (
     Unit,
     AggregationType,
     Sensitivity,
+    BaselineSensitivity,
     Enabled,
     ProvisioningState,
     QueryType,
@@ -348,6 +364,11 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
+    'MetricSingleDimension',
+    'SingleBaseline',
+    'BaselineMetadata',
+    'TimeSeriesBaseline',
+    'SingleMetricBaseline',
     'MetricAlertAction',
     'MetricAlertCriteria',
     'MetricAlertResource',
@@ -355,11 +376,13 @@ __all__ = [
     'MetricAlertStatusProperties',
     'MetricAlertStatus',
     'MetricAlertStatusCollection',
-    'MetricDimension',
     'MetricCriteria',
     'MetricAlertSingleResourceMultipleMetricCriteria',
+    'MetricDimension',
     'MultiMetricCriteria',
     'MetricAlertMultipleResourceMultipleMetricCriteria',
+    'DynamicThresholdFailingPeriods',
+    'DynamicMetricCriteria',
     'Source',
     'Schedule',
     'Action',
@@ -389,6 +412,7 @@ __all__ = [
     'EventDataPaged',
     'LocalizableStringPaged',
     'MetricDefinitionPaged',
+    'SingleMetricBaselinePaged',
     'MetricAlertResourcePaged',
     'LogSearchRuleResourcePaged',
     'MetricNamespacePaged',
@@ -406,6 +430,7 @@ __all__ = [
     'Unit',
     'AggregationType',
     'Sensitivity',
+    'BaselineSensitivity',
     'Enabled',
     'ProvisioningState',
     'QueryType',
