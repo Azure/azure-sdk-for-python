@@ -63,7 +63,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -112,7 +112,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -215,7 +215,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -317,7 +317,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -398,7 +398,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -639,7 +639,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -704,7 +704,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -753,7 +753,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -842,7 +842,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -947,7 +947,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1012,7 +1012,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1061,7 +1061,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1162,7 +1162,7 @@ class DatabaseAccountsOperations(object):
         # Construct URL
         url = self.check_name_exists.metadata['url']
         path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1227,7 +1227,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1302,7 +1302,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1374,7 +1374,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1445,7 +1445,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1515,7 +1515,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1565,7 +1565,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1673,7 +1673,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1774,7 +1774,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1824,7 +1824,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1949,7 +1949,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -2022,7 +2022,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'containerName': self._serialize.url("container_name", container_name, 'str')
         }
@@ -2073,7 +2073,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'containerName': self._serialize.url("container_name", container_name, 'str')
         }
@@ -2185,7 +2185,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'containerName': self._serialize.url("container_name", container_name, 'str')
         }
@@ -2292,7 +2292,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'containerName': self._serialize.url("container_name", container_name, 'str')
         }
@@ -2343,7 +2343,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'containerName': self._serialize.url("container_name", container_name, 'str')
         }
@@ -2470,7 +2470,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -2540,7 +2540,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2590,7 +2590,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2698,7 +2698,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2799,7 +2799,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2849,7 +2849,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2974,7 +2974,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -3047,7 +3047,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
@@ -3098,7 +3098,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
@@ -3210,7 +3210,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
@@ -3317,7 +3317,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
@@ -3368,7 +3368,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
@@ -3494,7 +3494,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -3564,7 +3564,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3614,7 +3614,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3722,7 +3722,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3823,7 +3823,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3873,7 +3873,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3996,7 +3996,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -4066,7 +4066,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4116,7 +4116,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4224,7 +4224,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4325,7 +4325,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4375,7 +4375,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4500,7 +4500,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -4573,7 +4573,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
@@ -4624,7 +4624,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
@@ -4736,7 +4736,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
@@ -4843,7 +4843,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
@@ -4894,7 +4894,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
             'tableName': self._serialize.url("table_name", table_name, 'str')
         }
@@ -5021,7 +5021,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -5091,7 +5091,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5141,7 +5141,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5249,7 +5249,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5350,7 +5350,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5400,7 +5400,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5525,7 +5525,7 @@ class DatabaseAccountsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -5598,7 +5598,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
@@ -5649,7 +5649,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
@@ -5761,7 +5761,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
@@ -5868,7 +5868,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
@@ -5919,7 +5919,7 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
