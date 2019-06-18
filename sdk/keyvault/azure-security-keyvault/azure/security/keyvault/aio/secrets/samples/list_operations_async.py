@@ -18,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault
+# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
 #
 # 1. Create secret (set_secret)
 #

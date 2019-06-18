@@ -51,12 +51,12 @@ def run_sample():
         print("Backup created for secret with name '{0}'.".format(secret.name))
 
         # The storage account secret is no longer in use, so you delete it.
-        # If the vault is soft-delete enabled, then you need to purge the secret as well, for permanent deletion.
         client.delete_secret(secret.name)
 
         # To ensure secret is deleted on the server side.
         print("\nDeleting secret...")
         time.sleep(20)
+        print("Deleted Secret with name '{0}'".format(secret.name))
 
         # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
         print("\n3. Restore the secret using the backed up secret bytes")

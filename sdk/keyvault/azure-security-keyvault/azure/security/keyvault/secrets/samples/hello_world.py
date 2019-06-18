@@ -29,7 +29,6 @@ from azure.core.exceptions import HttpResponseError
 #
 # 4. Delete a secret (delete_secret)
 #
-# 5. Purge a secret(purge_deleted_secret)
 # ----------------------------------------------------------------------------------------------------------
 def run_sample():
     # Instantiate a secret client that will be used to call the service.
@@ -71,15 +70,7 @@ def run_sample():
         print("\n4. Delete Secret")
         deleted_secret = client.delete_secret(secret.name)
         print("Deleting Secret..")
-        print("Secret with name '{0}' was deleted on {1}".format(deleted_secret.name, deleted_secret.deleted_date))
-
-        # To ensure secret is deleted on the server side.
-        time.sleep(20)
-
-        # If the Key Vault has soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
-        print("\n5. Purge Secret")
-        client.purge_deleted_secret(secret.name)
-        print("Secret has been permanently deleted.")
+        print("Secret with name '{0}' was deleted.".format(deleted_secret.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

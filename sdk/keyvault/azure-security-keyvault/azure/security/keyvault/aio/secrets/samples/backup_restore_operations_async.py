@@ -26,8 +26,6 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (delete_secret)
 #
-# 4. Purge a deleted secret (purge_deleted_secret)
-#
 # 5. Restore a secret (restore_secret)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
@@ -51,7 +49,6 @@ async def run_sample():
         print("Backup created for secret with name '{0}'.".format(secret.name))
 
         # The storage account secret is no longer in use, so you delete it.
-        # If the vault is soft-delete enabled, then you need to purge the secret as well, for permanent deletion.
         await client.delete_secret(secret.name)
 
         # To ensure secret is deleted on the server side.

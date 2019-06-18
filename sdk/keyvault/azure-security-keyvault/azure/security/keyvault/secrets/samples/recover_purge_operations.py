@@ -58,6 +58,7 @@ def run_sample():
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
         # Let's delete storage account now.
+        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
         client.delete_secret(storage_secret.name)
 
         # To ensure secret is deleted on the server side.
@@ -65,7 +66,6 @@ def run_sample():
         time.sleep(20)
 
         # To ensure permanent deletion, we might need to purge the secret.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
         print("\n4. Purge Deleted Secret")
         client.purge_deleted_secret(bank_secret.name)
         print("Secret has been permanently deleted.")
