@@ -1557,7 +1557,8 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param temp_disk: Specifies whether to reimage temp disk. Default
-         value: false.
+         value: false. Note: This temp disk reimage parameter is only supported
+         for VM/VMSS with Ephemeral OS disk.
         :type temp_disk: bool
         :param instance_ids: The virtual machine scale set instance ids.
          Omitting the virtual machine scale set instance ids will result in the
