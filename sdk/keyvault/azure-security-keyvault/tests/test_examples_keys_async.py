@@ -128,6 +128,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
+
+        for i in range(4):
+            await key_client.create_ec_key("key{}".format(i), hsm=False)
+        for i in range(4):
+            await key_client.create_rsa_key("key{}".format(i), hsm=False)
+
         # [START list_keys]
 
         # list keys
@@ -137,7 +143,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.id)
             print(key.created)
             print(key.name)
-            print(key.key_material.kty)
+            print(key.updated)
+            print(key.enabled)
 
         # [END list_keys]
         # [START list_key_versions]
@@ -158,6 +165,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_keys = key_client.list_deleted_keys()
 
         async for key in deleted_keys:
+            print(key.id)
             print(key.name)
             print(key.scheduled_purge_date)
             print(key.recovery_id)

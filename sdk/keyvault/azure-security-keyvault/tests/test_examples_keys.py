@@ -134,6 +134,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
+
+        for i in range(4):
+            key_client.create_ec_key("key{}".format(i), hsm=False)
+        for i in range(4):
+            key_client.create_rsa_key("key{}".format(i), hsm=False)
+
         # [START list_keys]
 
         # get an iterator of keys
@@ -142,7 +148,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for key in keys:
             print(key.id)
             print(key.name)
-            print(key.key_material.kty)
+            print(key.created)
+            print(key.updated)
+            print(key.enabled)
 
         # [END list_keys]
 
@@ -153,8 +161,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for key in key_versions:
             print(key.id)
+            print(key.updated)
             print(key.version)
-            print(key.key_material.kty)
+            print(key.expires)
 
         # [END list_key_versions]
 
@@ -166,6 +175,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for key in deleted_keys:
             print(key.id)
             print(key.name)
+            print(key.scheduled_purge_date)
+            print(key.recovery_id)
+            print(key.deleted_date)
 
         # [END list_deleted_keys]
 
