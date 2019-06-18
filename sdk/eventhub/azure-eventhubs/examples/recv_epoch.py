@@ -15,7 +15,7 @@ import logging
 import asyncio
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub import EventHubSharedKeyCredential
+from azure.eventhub import EventHubSharedKeyCredential, EventPosition
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -31,7 +31,7 @@ PARTITION = "0"
 
 
 async def pump(client, exclusive_receiver_priority):
-    receiver = client.create_receiver(partition_id=PARTITION, exclusive_receiver_priority=exclusive_receiver_priority)
+    receiver = client.create_receiver(partition_id=PARTITION, event_position=EventPosition("-1"), exclusive_receiver_priority=exclusive_receiver_priority)
     async with receiver:
         total = 0
         start_time = time.time()

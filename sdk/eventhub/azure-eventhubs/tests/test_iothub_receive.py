@@ -8,14 +8,14 @@ import os
 import pytest
 import time
 
-from azure.eventhub import EventData, EventHubClient
+from azure.eventhub import EventData, EventPosition, EventHubClient
 
 
 @pytest.mark.liveTest
 def test_iothub_receive_sync(iot_connection_str, device_id):
     pytest.skip("current code will cause ErrorCodes.LinkRedirect")
     client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
-    receiver = client.create_receiver(partition_id="0", operation='/messages/events')
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     receiver._open()
     try:
         partitions = client.get_properties()

@@ -23,7 +23,7 @@ def test_client_secret_credential(aad_credential, live_eventhub):
                             credential=credential,
                             user_agent='customized information')
     sender = client.create_sender(partition_id='0')
-    receiver = client.create_receiver(partition_id='0', event_position=EventPosition.new_events_only())
+    receiver = client.create_receiver(partition_id='0', event_position=EventPosition.latest())
 
     with receiver:
         received = receiver.receive(timeout=1)

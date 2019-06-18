@@ -205,7 +205,7 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
 def test_receive_batch(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -234,7 +234,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             yield ed
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -256,7 +256,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
 def test_receive_over_websocket_sync(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
 
     event_list = []
     for i in range(20):

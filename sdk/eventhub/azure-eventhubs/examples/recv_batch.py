@@ -34,7 +34,7 @@ last_offset = "-1"
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
 
 try:
-    receiver = client.create_receiver(partition_id=PARTITION, prefetch=100, event_position=EVENT_POSITION)
+    receiver = client.create_receiver(partition_id=PARTITION, event_position=EVENT_POSITION, prefetch=100)
     with receiver:
         batched_events = receiver.receive(max_batch_size=10)
         for event_data in batched_events:

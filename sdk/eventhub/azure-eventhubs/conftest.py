@@ -176,7 +176,7 @@ def connstr_receivers(connection_str):
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
-        receiver = client.create_receiver(partition_id=p, prefetch=500, event_position=EventPosition("-1"))
+        receiver = client.create_receiver(partition_id=p, event_position=EventPosition("-1"), prefetch=500)
         receiver._open()
         receivers.append(receiver)
     yield connection_str, receivers

@@ -33,7 +33,7 @@ client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=Even
                         network_tracing=False)
 
 try:
-    receiver = client.create_receiver(partition_id=PARTITION, prefetch=5000, event_position=EVENT_POSITION)
+    receiver = client.create_receiver(partition_id=PARTITION, event_position=EVENT_POSITION, prefetch=5000)
     with receiver:
         start_time = time.time()
         batch = receiver.receive(timeout=5000)

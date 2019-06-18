@@ -11,7 +11,7 @@ An example to show receiving events from an IoT Hub partition.
 import os
 import logging
 
-from azure.eventhub import EventHubClient
+from azure.eventhub import EventHubClient, EventPosition
 
 
 logger = logging.getLogger('azure.eventhub')
@@ -19,7 +19,7 @@ logger = logging.getLogger('azure.eventhub')
 iot_connection_str = 'HostName=iothubfortrack2py.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=glF9a2n0D9fgmWpfTqjjmvkYt0WaTNqZx9GV/UKwDkQ=' #  os.environ['IOTHUB_CONNECTION_STR']
 
 client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
-receiver = client.create_receiver(partition_id="0", operation='/messages/events')
+receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
 with receiver:
     received = receiver.receive(timeout=5)
     print(received)

@@ -188,7 +188,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(),
+            self, partition_id, event_position, consumer_group="$Default",
             exclusive_receiver_priority=None, operation=None, prefetch=None,
     ):
         # type: (str, str, EventPosition, int, str, int) -> EventReceiver

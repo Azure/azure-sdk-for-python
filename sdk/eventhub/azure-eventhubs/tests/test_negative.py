@@ -32,7 +32,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=True)
-    receiver = client.create_receiver(partition_id="0")
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver._open()
 
@@ -49,7 +49,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
 @pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=True)
-    receiver = client.create_receiver(partition_id="0")
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver._open()
 
@@ -66,7 +66,7 @@ def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
 @pytest.mark.liveTest
 def test_receive_with_invalid_policy_sync(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=True)
-    receiver = client.create_receiver(partition_id="0")
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver._open()
 
@@ -96,7 +96,7 @@ def test_non_existing_entity_sender(connection_str):
 @pytest.mark.liveTest
 def test_non_existing_entity_receiver(connection_str):
     client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
-    receiver = client.create_receiver(partition_id="0")
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver._open()
 
@@ -106,7 +106,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
         client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
-        receiver = client.create_receiver(partition_id=p)
+        receiver = client.create_receiver(partition_id=p, event_position=EventPosition("-1"))
         try:
             with pytest.raises(ConnectError):
                 receiver.receive(timeout=10)

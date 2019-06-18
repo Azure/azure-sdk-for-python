@@ -68,7 +68,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
     # Create a receiver.
     receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
     # Create an exclusive receiver object.
-    exclusive_receiver = client.create_receiver(partition_id="0", exclusive_receiver_priority=1)
+    exclusive_receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=1)
     # [END create_eventhub_client_receiver]
 
     client = EventHubClient.from_connection_string(connection_str)

@@ -147,7 +147,7 @@ async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
 async def test_receive_batch_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -179,8 +179,8 @@ async def test_exclusive_receiver_async(connstr_senders):
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_receiver(partition_id="0", exclusive_receiver_priority=10, prefetch=5)
-    receiver2 = client.create_receiver(partition_id="0", exclusive_receiver_priority=20, prefetch=10)
+    receiver1 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=10, prefetch=5)
+    receiver2 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=20, prefetch=10)
     try:
         await pump(receiver1)
         output2 = await pump(receiver2)
@@ -203,7 +203,7 @@ async def test_multiple_receiver_async(connstr_senders):
     assert partitions["partition_ids"] == ["0", "1"]
     receivers = []
     for i in range(2):
-        receivers.append(client.create_receiver(partition_id="0", prefetch=10))
+        receivers.append(client.create_receiver(partition_id="0", event_position=EventPosition("-1"), prefetch=10))
     try:
         more_partitions = await client.get_properties()
         assert more_partitions["partition_ids"] == ["0", "1"]
@@ -224,8 +224,8 @@ async def test_exclusive_receiver_after_non_exclusive_receiver_async(connstr_sen
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_receiver(partition_id="0", prefetch=10)
-    receiver2 = client.create_receiver(partition_id="0", exclusive_receiver_priority=15, prefetch=10)
+    receiver1 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), prefetch=10)
+    receiver2 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=15, prefetch=10)
     try:
         await pump(receiver1)
         output2 = await pump(receiver2)
@@ -244,8 +244,8 @@ async def test_non_exclusive_receiver_after_exclusive_receiver_async(connstr_sen
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_receiver(partition_id="0", exclusive_receiver_priority=15, prefetch=10)
-    receiver2 = client.create_receiver(partition_id="0", prefetch=10)
+    receiver1 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=15, prefetch=10)
+    receiver2 = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), prefetch=10)
     try:
         output1 = await pump(receiver1)
         with pytest.raises(ConnectError):
@@ -275,18 +275,17 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
             yield ed
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    async with receiver:
+        received = await receiver.receive(timeout=5)
+        assert len(received) == 0
 
-    received = await receiver.receive(timeout=5)
-    assert len(received) == 0
+        senders[0].send(batched())
 
-    senders[0].send(batched())
+        await asyncio.sleep(1)
 
-    await asyncio.sleep(1)
-
-    received = await receiver.receive(max_batch_size=15, timeout=5)
-    assert len(received) == 15
-    await receiver.close()
+        received = await receiver.receive(max_batch_size=15, timeout=5)
+        assert len(received) == 15
 
     for index, message in enumerate(received):
         assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
@@ -299,21 +298,20 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
 async def test_receive_over_websocket_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
 
     event_list = []
     for i in range(20):
         event_list.append(EventData("Event Number {}".format(i)))
 
-    received = await receiver.receive(timeout=5)
-    assert len(received) == 0
+    async with receiver:
+        received = await receiver.receive(timeout=5)
+        assert len(received) == 0
 
-    with senders[0]:
-        senders[0].send(event_list)
+        with senders[0]:
+            senders[0].send(event_list)
 
-    time.sleep(1)
+        time.sleep(1)
 
-    received = await receiver.receive(max_batch_size=50, timeout=5)
-    assert len(received) == 20
-
-    await receiver.close()
+        received = await receiver.receive(max_batch_size=50, timeout=5)
+        assert len(received) == 20
