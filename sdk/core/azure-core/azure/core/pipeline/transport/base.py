@@ -33,7 +33,7 @@ try:
     binary_type = str
     from urlparse import urljoin, urlparse # type: ignore
 except ImportError:
-    binary_type = bytes
+    binary_type = bytes # type: ignore
     from urllib.parse import urljoin, urlparse
 import xml.etree.ElementTree as ET
 
