@@ -14,7 +14,7 @@ from azure.eventhub import EventData, EventHubClient, EventPosition, TransportTy
 
 # def test_receive_without_events(connstr_senders):
 #     connection_str, senders = connstr_senders
-#     client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+#     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
 #     receiver = client.create_receiver("$default", "0", event_position=EventPosition('@latest'))
 #     finish = datetime.datetime.now() + datetime.timedelta(seconds=240)
 #     count = 0

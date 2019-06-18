@@ -19,7 +19,7 @@ logger = logging.getLogger('azure.eventhub')
 iot_device_id = os.environ['IOTHUB_DEVICE']
 iot_connection_str = os.environ['IOTHUB_CONNECTION_STR']
 
-client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
+client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=False)
 try:
     sender = client.create_sender(operation='/messages/devicebound')
     with sender:

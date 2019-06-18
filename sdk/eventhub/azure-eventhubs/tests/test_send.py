@@ -165,7 +165,7 @@ def test_send_partition_batch(connstr_receivers):
 @pytest.mark.liveTest
 def test_send_array_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     with sender:
         sender.send(EventData([b"A", b"B", b"C"]))

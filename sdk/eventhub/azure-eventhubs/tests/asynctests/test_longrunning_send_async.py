@@ -89,7 +89,7 @@ async def test_long_running_partition_send_async(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            event_hub_path=args.eventhub, network_tracing=True)
+            event_hub_path=args.eventhub, network_tracing=False)
     elif args.address:
         client = EventHubClient(host=args.address,
                                 event_hub_path=args.eventhub,

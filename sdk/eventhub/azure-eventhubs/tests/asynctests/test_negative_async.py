@@ -26,7 +26,7 @@ from azure.eventhub.aio import EventHubClient
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=True)
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_sender()
     with pytest.raises(AuthenticationError):
         await sender._open()
@@ -35,7 +35,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_hostname_async(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=True)
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await sender._open()
@@ -54,7 +54,7 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_key_async(invalid_key):
-    client = EventHubClient.from_connection_string(invalid_key, network_tracing=True)
+    client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
     sender = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await sender._open()
@@ -73,7 +73,7 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_policy_async(invalid_policy):
-    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=True)
+    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
     sender = client.create_receiver(partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await sender._open()
@@ -83,7 +83,7 @@ async def test_receive_with_invalid_policy_async(invalid_policy):
 @pytest.mark.asyncio
 async def test_send_partition_key_with_partition_async(connection_str):
     pytest.skip("Skipped tentatively. Confirm whether to throw ValueError or just warn users")
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender(partition_id="1")
     try:
         data = EventData(b"Data")
@@ -117,7 +117,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
 async def test_receive_from_invalid_partitions_async(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
-        client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+        client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
         receiver = client.create_receiver(partition_id=p, event_position=EventPosition("-1"))
         try:
             with pytest.raises(ConnectError):
@@ -184,7 +184,7 @@ async def pump(receiver):
 @pytest.mark.asyncio
 async def test_max_receivers_async(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receivers = []
     for i in range(6):
         receivers.append(client.create_receiver(partition_id="0", prefetch=1000, event_position=EventPosition('@latest')))

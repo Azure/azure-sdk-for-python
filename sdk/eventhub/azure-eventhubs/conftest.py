@@ -172,7 +172,7 @@ def aad_credential():
 
 @pytest.fixture()
 def connstr_receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
@@ -187,7 +187,7 @@ def connstr_receivers(connection_str):
 
 @pytest.fixture()
 def connstr_senders(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     partitions = client.get_partition_ids()
 
     senders = []

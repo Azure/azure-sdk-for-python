@@ -198,7 +198,7 @@ async def test_multiple_receiver_async(connstr_senders):
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Receiving only a single event"))
 
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     partitions = await client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
     receivers = []
