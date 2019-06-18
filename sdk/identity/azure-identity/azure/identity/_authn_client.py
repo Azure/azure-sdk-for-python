@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from time import time
+import time
 
 from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
@@ -41,12 +41,12 @@ class AuthnClientBase(object):
         for token in tokens:
             if all((scope in token["target"] for scope in scopes)):
                 expires_on = int(token["expires_on"])
-                if expires_on - 300 > int(time()):
+                if expires_on - 300 > int(time.time()):
                     return AccessToken(token["secret"], expires_on)
         return None
 
-    def _deserialize_and_cache_token(self, response, scopes):
-        # type: (PipelineResponse, Iterable[str]) -> str
+    def _deserialize_and_cache_token(self, response, scopes, request_time):
+        # type: (PipelineResponse, Iterable[str], int) -> str
         try:
             if "deserialized_data" in response.context:
                 payload = response.context["deserialized_data"]
@@ -56,13 +56,22 @@ class AuthnClientBase(object):
 
             # these values are strings in IMDS responses but msal.TokenCache requires they be integers
             # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
-            if payload.get("expires_in"):
-                payload["expires_in"] = int(payload["expires_in"])
+            expires_in = int(payload.get("expires_in", 0))
+            if expires_in != 0:
+                payload["expires_in"] = expires_in
             if payload.get("ext_expires_in"):
                 payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
             self._cache.add({"response": payload, "scope": scopes})
-            return AccessToken(token, int(payload["expires_on"]))
+
+            # AccessToken contains the token's expires_on time. There are four cases for setting it:
+            # 1. response has expires_on -> AccessToken uses it
+            # 2. response has expires_on and expires_in -> AccessToken uses expires_on
+            # 3. response has only expires_in -> AccessToken uses expires_in + current time
+            # 4. response has neither expires_on or expires_in -> AccessToken sets expires_on = 0
+            #    (not expecting this case; if it occurs, the token is effectively single-use)
+            expires_on = payload.get("expires_on", 0)
+            return AccessToken(token, expires_on or expires_in + request_time)
         except KeyError:
             raise AuthenticationError("Unexpected authentication response: {}".format(payload))
         except Exception as ex:
@@ -94,8 +103,9 @@ class AuthnClient(AuthnClientBase):
     def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None):
         # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
+        request_time = int(time.time())
         response = self._pipeline.run(request, stream=False)
-        token = self._deserialize_and_cache_token(response, scopes)
+        token = self._deserialize_and_cache_token(response, scopes, request_time)
         return token
 
     @staticmethod

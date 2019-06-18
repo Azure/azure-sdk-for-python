@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 from azure.core import Configuration
@@ -42,8 +43,9 @@ class AsyncAuthnClient(AuthnClientBase):
         params: Optional[Dict[str, str]] = None,
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
+        request_time = int(time.time())
         response = await self._pipeline.run(request, stream=False)
-        token = self._deserialize_and_cache_token(response, scopes)
+        token = self._deserialize_and_cache_token(response, scopes, request_time)
         return token
 
     @staticmethod
