@@ -20,6 +20,7 @@ from ._utils import (
     basic_error_map
 )
 from .models import StorageServiceProperties, StorageErrorException
+from ._generated.models import ListQueuesIncludeType
 from ._shared_access_signature import QueueSharedAccessSignature
 
 try:
@@ -84,6 +85,17 @@ class QueueServiceClient(object):
         """
         account_url, creds = parse_connection_str(conn_str, credentials)
         return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
+
+    @staticmethod
+    def create_configuration(**kwargs):
+        # type: (**Any) -> Configuration
+        """
+        Get an HTTP Pipeline Configuration with all default policies for the Blob
+        Storage service.
+        :rtype: ~azure.core.configuration.Configuration
+        """
+        return create_configuration(**kwargs)
+
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -234,7 +246,7 @@ class QueueServiceClient(object):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_queues(self, prefix=None, include_metadata=False, timeout=None, **kwargs):
+    def list_queues(self, prefix=None, include_metadata=None, timeout=None, **kwargs):
         """
         Returns an auto-paging iterable of dict-like QueueProperties.
         :param str prefix:
@@ -247,6 +259,8 @@ class QueueServiceClient(object):
             calls to the service in which case the timeout value specified will be 
             applied to each individual call.
         """
+        if include_metadata and not isinstance(include_metadata, list):
+            include_metadata = [include_metadata]
         try:
             return self._client.service.list_queues_segment(
                 prefix=prefix,
@@ -269,7 +283,7 @@ class QueueServiceClient(object):
         :rtype: ~azure.core.queue.queue_client.QueueClient
         """
         return QueueClient(
-            self.queue_url, queue_name=queue_name, credentials=self.credentials,
+            self.url, queue_name=queue_name, credentials=self.credentials,
             configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

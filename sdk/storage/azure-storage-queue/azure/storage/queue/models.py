@@ -9,6 +9,52 @@ from ._generated.models import StorageServiceProperties
 from ._generated.models import StorageErrorException
 
 
+class DictMixin(object):
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return repr(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def items(self):
+        return self.__dict__.items()
+
+
 class SignedIdentifier(object):
     '''
     Signed Identifier class used by the set and get acl methods in each service.
@@ -104,101 +150,24 @@ class QueueMessageFormat:
     text_xmlencode and text_xmldecode, respectively.
     '''
 
-    @staticmethod
-    def text_base64encode(data):
-        '''
-        Base64 encode unicode text.
-        
-        :param str data: String to encode.
-        :return: Base64 encoded string.
-        :rtype: str
-        '''
-        _validate_message_type_text(data)
-        return b64encode(data.encode('utf-8')).decode('utf-8')
+class QueueProperties(DictMixin):
+    '''
+    Queue Properties.
+     
+    :ivar str name: 
+        The name of the queue.
+    :ivar metadata: 
+        A dict containing name-value pairs associated with the queue as metadata.
+        This var is set to None unless the include=metadata param was included 
+        for the list queues operation. If this parameter was specified but the 
+        queue has no metadata, metadata will be set to an empty dictionary.
+    :vartype metadata: dict(str, str)
+    '''
 
-    @staticmethod
-    def text_base64decode(data):
-        '''
-        Base64 decode to unicode text.
-        
-        :param str data: String data to decode to unicode.
-        :return: Base64 decoded string.
-        :rtype: str
-        '''
-        try:
-            return b64decode(data.encode('utf-8')).decode('utf-8')
-        except (ValueError, TypeError):
-            # ValueError for Python 3, TypeError for Python 2
-            raise ValueError(_ERROR_MESSAGE_NOT_BASE64)
-
-    @staticmethod
-    def binary_base64encode(data):
-        '''
-        Base64 encode byte strings.
-        
-        :param str data: Binary string to encode.
-        :return: Base64 encoded data.
-        :rtype: str
-        '''
-        _validate_message_type_bytes(data)
-        return b64encode(data).decode('utf-8')
-
-    @staticmethod
-    def binary_base64decode(data):
-        '''
-        Base64 decode to byte string.
-        
-        :param str data: Data to decode to a byte string.
-        :return: Base64 decoded data.
-        :rtype: str
-        '''
-        try:
-            return b64decode(data.encode('utf-8'))
-        except (ValueError, TypeError):
-            # ValueError for Python 3, TypeError for Python 2
-            raise ValueError(_ERROR_MESSAGE_NOT_BASE64)
-
-    @staticmethod
-    def text_xmlencode(data):
-        ''' 
-        XML encode unicode text.
-        :param str data: Unicode string to encode
-        :return: XML encoded data.
-        :rtype: str
-        '''
-        _validate_message_type_text(data)
-        return xml_escape(data)
-
-    @staticmethod
-    def text_xmldecode(data):
-        ''' 
-        XML decode to unicode text.
-        :param str data: Data to decode to unicode.
-        :return: XML decoded data.
-        :rtype: str
-        '''
-        return xml_unescape(data)
-
-    @staticmethod
-    def noencode(data):
-        ''' 
-        Do no encoding. 
-        :param str data: Data.
-        :return: The data passed in is returned unmodified.
-        :rtype: str
-        '''
-        return data
-
-    @staticmethod
-    def nodecode(data):
-        '''
-        Do no decoding.
-        
-        :param str data: Data.
-        :return: The data passed in is returned unmodified.
-        :rtype: str        
-        '''
-        return data
+    def __init__(self, **kwargs):
+        self.name = None
+        self.last_modified = kwargs.get('Last-Modified')
+        self.metadata = kwargs.get('metadata')
 
 
 class QueuePermissions(object):

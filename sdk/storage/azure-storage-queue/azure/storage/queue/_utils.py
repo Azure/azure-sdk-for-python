@@ -17,6 +17,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 from azure.core import Configuration
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from .authentication import SharedKeyCredentials
@@ -100,6 +101,22 @@ def parse_connection_str(conn_str, credentials=None):
         raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
 
 # TODO: duplicate from blob
+def normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith('x-ms-'):
+            key = key[5:]
+        normalized[key.lower().replace('-', '_')] = value
+    return normalized
+
+# TODO: duplicate from blob
+def return_response_headers(response, deserialized, response_headers):
+    return normalize_headers(response_headers)
+
+def return_headers_and_deserialized(response, deserialized, response_headers):
+    return normalize_headers(response_headers), deserialized
+
+# TODO: duplicate from blob
 def is_credential_sastoken(credential):
     if credential or not isinstance(credential, six.string_types):
         return False
@@ -145,6 +162,14 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = encode_base64(digest)
     return encoded_diges
+
+def add_metadata_headers(metadata):
+    # type: (Dict[str, str]) -> Dict[str, str]
+    headers = {}
+    if metadata:
+        for key, value in metadata.items():
+            headers['x-ms-meta-{}'.format(key)] = value
+    return headers
 
 def url_quote(url):
     return quote(url)

@@ -16,16 +16,16 @@ class QueueIterator(object):
     """
     
     def __init__(self, timeout=None, **kwargs):
-        self._queue = iter(deque())
+        self._queue = deque()
         self.timeout = timeout
 
     def __iter__(self):
         return self
 
-    def __next__(self, timeout):
+    def __next__(self, timeout=None):
         while True:
             try:
-                yield self.next(timeout)
+                return self.next(timeout)
             except StopIteration:
                 raise
             except StorageErrorException as error:

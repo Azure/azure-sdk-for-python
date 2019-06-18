@@ -17,9 +17,18 @@ from ._utils import (
     is_credential_sastoken,
     parse_connection_str,
     process_storage_error,
-    basic_error_map
+    basic_error_map,
+    add_metadata_headers,
+    return_response_headers,
+    return_headers_and_deserialized
 )
-from .models import SignedIdentifier, StorageErrorException, QueueMessage
+
+from ._deserialize import (
+    deserialize_queue_properties
+)
+
+from .models import SignedIdentifier, QueueMessage
+from ._generated.models import StorageErrorException
 from .queue_iterator import QueueIterator
 
 from azure.core import Configuration
@@ -53,31 +62,25 @@ class QueueClient(object):
          This can be retrieved with :func:`QueueClient.create_configuration()`
         """
         parsed_url = urlparse(queue_url.rstrip('/'))
-        if not parsed_url.path:
-            raise ValueError("Please specify a queue_url.")
-        _, sas_token = parse_query(parsed_url.query)
+        if not parsed_url.path and not queue_name:
+            raise ValueError("Please specify a queue name.")
+        self.queue_name = queue_name or unquote(parsed_url.path.split('/')[1])
 
-        self.queue_name = queue_name
         self.scheme = parsed_url.scheme
-        self.account = parsed_url.hostname.split(".queue.core.")[0]
         self.credentials = credentials
-        self.url = "{}://{}/{}?".format(
+        self.account = parsed_url.hostname.split(".queue.core.")[0]
+        self.queue_url = queue_url if parsed_url.path else "{}://{}/{}".format(
             self.scheme,
             parsed_url.hostname,
-            self.queue_name.replace(' ', '%20').replace('?', '%3F'))
-        if sas_token and not self.credentials:
-            self.url += sas_token
-        elif is_credential_sastoken(credentials):
-            self.url += self.credentials
-            credentials = None
-        self.url = self.url.rstrip('?&')
+            quote(self.queue_name)
+        )
 
         self.require_encryption = kwargs.get('require_encryption', False)
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
+        self._client = create_client(self.queue_url, self._pipeline)
         self._queue_iterator = QueueIterator()
 
     @classmethod
@@ -114,11 +117,15 @@ class QueueClient(object):
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError('The require_encryption flag is set, but encryption is not supported for this method.')
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
         try:
             return self._client.queue.create(
                 metadata=metadata,
                 timeout=timeout,
                 error_map=basic_error_map(),
+                headers=headers,
+                cls=return_response_headers,
                 **kwargs
             )
         except StorageErrorException as error:
@@ -167,6 +174,7 @@ class QueueClient(object):
             queue_props = self._client.queue.get_properties(
                 timeout=timeout,
                 error_map=basic_error_map(),
+                cls=deserialize_queue_properties,
                 **kwargs
             )
         except StorageErrorException as error:
@@ -186,10 +194,11 @@ class QueueClient(object):
             The server timeout, expressed in seconds.
         """
         try:
-            self._client.queue.set_metadata(
+            return self._client.queue.set_metadata(
                 metadata=metadata,
                 timeout=timeout,
                 error_map=basic_error_map(),
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -205,13 +214,17 @@ class QueueClient(object):
         :rtype: dict(str, :class:`~azure.storage.common.models.AccessPolicy`)
         """
         try:
-            queue_acl = self._client.queue.get_access_policy(
+            response, identifiers = self._client.queue.get_access_policy(
                 timeout=timeout,
                 error_map=basic_error_map(),
+                cls=return_headers_and_deserialized,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return queue_acl
+        return {
+            'response': response,
+            'signed_identifiers': identifiers or []
+        }
 
     def set_queue_acl(self, signed_identifiers=None, timeout=None, **kwargs):
         # type: (Optional[List[SignedIdentifier]], Optional[int]) -> None
@@ -236,13 +249,14 @@ class QueueClient(object):
         :param int timeout:
             The server timeout, expressed in seconds.
         """
-        if signed_identifiers and len(signed_identifiers) > 5:
+        if signed_identifiers and len(signed_identifiers) > 15:
             raise ValueError("Too many access policies")
         try:
             self._client.queue.set_access_policy(
                 queue_acl=signed_identifiers,
                 timeout=timeout,
                 error_map=basic_error_map(),
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -285,6 +299,7 @@ class QueueClient(object):
         queue_message = QueueMessage(content=content)
 
         try:
+            self._queue_iterator.put(queue_message)
             self._client.messages.enqueue(
                 queue_message=queue_message,
                 visibilitytimeout=visibility_timeout,
@@ -293,7 +308,6 @@ class QueueClient(object):
                 error_map=basic_error_map(),
                 **kwargs
             )
-            self._queue_iterator.put(queue_message)
             return queue_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -319,14 +333,14 @@ class QueueClient(object):
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
         try:
-            self._client.messages.dequeue(
+            message = self._client.messages.dequeue(
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 error_map=basic_error_map(),
                 **kwargs
             )
             next(self._queue_iterator)
-            return self._queue_iterator
+            return message
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -449,6 +463,7 @@ class QueueClient(object):
         to succeed, the pop_receipt specified on the request must match the 
         pop_receipt returned from the :func:`~get_messages` or :func:`~update_message` 
         operation.
+        
         :param str message:
             The message object identifying the message to delete.
         :param str pop_receipt:
