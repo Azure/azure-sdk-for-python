@@ -1,6 +1,6 @@
 
 
-# Azure Storage Files client library for Python
+# Azure Storage File client library for Python
 
 ## Getting started
 

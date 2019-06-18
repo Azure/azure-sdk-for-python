@@ -12,7 +12,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-storage-files"
+PACKAGE_NAME = "azure-storage-file"
 PACKAGE_PPRINT_NAME = "MyService Management"
 
 # a-b-c => a/b/c

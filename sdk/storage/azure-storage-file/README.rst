@@ -30,4 +30,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-storage-files%2FREADME.png
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-storage-file%2FREADME.png
