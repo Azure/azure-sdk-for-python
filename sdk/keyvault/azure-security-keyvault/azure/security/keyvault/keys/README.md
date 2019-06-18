@@ -205,7 +205,7 @@ except ResourceNotFoundError as e:
 
 Output: "Key not found:deleted_key"
 ```
-### Logging
+### Logging [TODO]
 This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
 ```python
