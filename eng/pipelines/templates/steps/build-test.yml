@@ -6,6 +6,8 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
+  BuildTargetingString: 'azure-*'
+
 
 steps:
   - powershell: |
@@ -35,7 +37,7 @@ steps:
     displayName: 'Setup and Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"azure-*" --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2

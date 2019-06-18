@@ -2,6 +2,7 @@ parameters:
   ServiceDirectory: ''
   BeforeBuildJobPublishBuildArtifacts: []
   TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
 
 jobs:
   - job: 'Build'
@@ -25,7 +26,7 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --service=${{parameters.ServiceDirectory}}'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
@@ -127,6 +128,7 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
       - template: ../steps/publish-coverage.yml
 
@@ -157,3 +159,4 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
