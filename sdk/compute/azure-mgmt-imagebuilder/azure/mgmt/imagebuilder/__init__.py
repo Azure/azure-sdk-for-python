@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_builder_client import ImageBuilderClient
-from .version import VERSION
+from ._configuration import ImageBuilderClientConfiguration
+from ._image_builder_client import ImageBuilderClient
+__all__ = ['ImageBuilderClient', 'ImageBuilderClientConfiguration']
 
-__all__ = ['ImageBuilderClient']
+from .version import VERSION
 
 __version__ = VERSION
 

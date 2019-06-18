@@ -25,3 +25,29 @@ class ImageTemplatePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ImageTemplatePaged, self).__init__(*args, **kwargs)
+class RunOutputPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RunOutput <azure.mgmt.imagebuilder.models.RunOutput>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RunOutput]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RunOutputPaged, self).__init__(*args, **kwargs)
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.imagebuilder.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
