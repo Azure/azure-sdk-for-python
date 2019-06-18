@@ -319,7 +319,7 @@ class EventPosition(object):
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
     @classmethod
-    def first_available_event(cls):
+    def earliest(cls):
         """
         Get the beginning of the event stream.
 
@@ -329,7 +329,7 @@ class EventPosition(object):
         return cls("-1")
 
     @classmethod
-    def new_events_only(cls):
+    def latest(cls):
         """
         Get the end of the event stream.
 
