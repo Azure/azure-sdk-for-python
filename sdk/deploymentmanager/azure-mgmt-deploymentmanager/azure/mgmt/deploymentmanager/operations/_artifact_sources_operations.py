@@ -16,8 +16,10 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class StepsOperations(object):
-    """StepsOperations operations.
+class ArtifactSourcesOperations(object):
+    """ArtifactSourcesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,25 +40,27 @@ class StepsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, step_name, step_info=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a rollout step with the given step properties.
+            self, resource_group_name, artifact_source_name, artifact_source_info=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an artifact source.
 
-        Synchronously creates a new step or updates an existing step.
+        Synchronously creates a new artifact source or updates an existing
+        artifact source.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param step_name: The name of the deployment step.
-        :type step_name: str
-        :param step_info: The step object.
-        :type step_info: ~azure.mgmt.deploymentmanager.models.StepResource
+        :param artifact_source_name: The name of the artifact source.
+        :type artifact_source_name: str
+        :param artifact_source_info: Source object that defines the resource.
+        :type artifact_source_info:
+         ~azure.mgmt.deploymentmanager.models.ArtifactSource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: StepResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.deploymentmanager.models.StepResource or
+        :return: ArtifactSource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.deploymentmanager.models.ArtifactSource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -65,7 +69,7 @@ class StepsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'stepName': self._serialize.url("step_name", step_name, 'str')
+            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,8 +89,8 @@ class StepsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if step_info is not None:
-            body_content = self._serialize.body(step_info, 'StepResource')
+        if artifact_source_info is not None:
+            body_content = self._serialize.body(artifact_source_info, 'ArtifactSource')
         else:
             body_content = None
 
@@ -100,33 +104,32 @@ class StepsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 201:
-            deserialized = self._deserialize('StepResource', response)
+            deserialized = self._deserialize('ArtifactSource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/steps/{stepName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
 
     def get(
-            self, resource_group_name, step_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the step.
+            self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an artifact source.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param step_name: The name of the deployment step.
-        :type step_name: str
+        :param artifact_source_name: The name of the artifact source.
+        :type artifact_source_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: StepResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.deploymentmanager.models.StepResource or
+        :return: ArtifactSource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.deploymentmanager.models.ArtifactSource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -135,7 +138,7 @@ class StepsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'stepName': self._serialize.url("step_name", step_name, 'str')
+            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -163,26 +166,25 @@ class StepsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('StepResource', response)
+            deserialized = self._deserialize('ArtifactSource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/steps/{stepName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
 
     def delete(
-            self, resource_group_name, step_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the step.
+            self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an artifact source.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param step_name: The name of the deployment step.
-        :type step_name: str
+        :param artifact_source_name: The name of the artifact source.
+        :type artifact_source_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -197,7 +199,7 @@ class StepsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'stepName': self._serialize.url("step_name", step_name, 'str')
+            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -226,4 +228,4 @@ class StepsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/steps/{stepName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
