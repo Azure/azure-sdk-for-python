@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import calendar
 import time
 
 from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
-from azure.core.pipeline import Pipeline, PipelineRequest
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from msal import TokenCache
@@ -19,6 +20,7 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
+    from time import struct_time
     from typing import Any, Dict, Iterable, Mapping, Optional
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy
@@ -46,7 +48,7 @@ class AuthnClientBase(object):
         return None
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
-        # type: (PipelineResponse, Iterable[str], int) -> str
+        # type: (PipelineResponse, Iterable[str], int) -> AccessToken
         try:
             if "deserialized_data" in response.context:
                 payload = response.context["deserialized_data"]
@@ -62,15 +64,31 @@ class AuthnClientBase(object):
             if "ext_expires_in" in payload:
                 payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
-            self._cache.add({"response": payload, "scope": scopes})
-
             # AccessToken contains the token's expires_on time. There are four cases for setting it:
             # 1. response has expires_on -> AccessToken uses it
             # 2. response has expires_on and expires_in -> AccessToken uses expires_on
             # 3. response has only expires_in -> AccessToken uses expires_in + time of request
-            # 4. response has neither expires_on or expires_in -> AccessToken sets expires_on = 0
+            # 4. response has neither expires_on nor expires_in -> AccessToken sets expires_on = 0
             #    (not expecting this case; if it occurs, the token is effectively single-use)
             expires_on = payload.get("expires_on", 0)
+            if not isinstance(expires_on, int):
+                # would test for str but that isn't 2/3 compatible and this should be safe because payload was json
+                try:
+                    # maybe it's epoch seconds in a string (likely) or a float (doubtful)
+                    expires_on = int(expires_on)
+                except ValueError:
+                    # probably an App Service MSI response then
+                    try:
+                        t = self._parse_app_service_expires_on(expires_on)
+                        expires_on = calendar.timegm(t)
+                    except ValueError:
+                        # couldn't parse expires_on -> treat the token as single-use
+                        expires_on = request_time
+                # ensure the cache entry gets epoch seconds as an int for expires_on
+                payload["expires_on"] = expires_on
+
+            self._cache.add({"response": payload, "scope": scopes})
+
             return AccessToken(token, expires_on or expires_in + request_time)
         except KeyError:
             if "access_token" in payload:
@@ -78,6 +96,19 @@ class AuthnClientBase(object):
             raise AuthenticationError("Unexpected authentication response: {}".format(payload))
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
+
+    @staticmethod
+    def _parse_app_service_expires_on(expires_on):
+        # type: (str) -> struct_time
+        """
+        Parses expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
+        Expects the time is UTC (i.e. has offset +00:00).
+        """
+        if not expires_on.endswith(" +00:00"):
+            raise ValueError("'{}' doesn't match expected format".format(expires_on))
+
+        # parse the string minus the timezone offset
+        return time.strptime(expires_on[: -len(" +00:00")], "%m/%d/%Y %H:%M:%S")
 
     # TODO: public, factor out of request_token
     def _prepare_request(self, method="POST", headers=None, form_data=None, params=None):
