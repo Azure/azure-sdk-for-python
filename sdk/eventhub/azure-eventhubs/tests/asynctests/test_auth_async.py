@@ -26,8 +26,8 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
                             event_hub_path=live_eventhub['event_hub'],
                             credential=credential,
                             user_agent='customized information')
-    sender = client.create_sender(partition_id='0')
-    receiver = client.create_receiver(partition_id='0', event_position=EventPosition.latest())
+    sender = client.create_producer(partition_id='0')
+    receiver = client.create_consumer(consumer_group="$default", partition_id='0', event_position=EventPosition.latest())
 
     async with receiver:
 

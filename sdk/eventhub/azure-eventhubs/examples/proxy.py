@@ -39,8 +39,8 @@ if not HOSTNAME:
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False, http_proxy=HTTP_PROXY)
 try:
-    sender = client.create_sender(partition_id=PARTITION)
-    receiver = client.create_receiver(partition_id=PARTITION, event_position=EVENT_POSITION)
+    sender = client.create_producer(partition_id=PARTITION)
+    receiver = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION)
 
     receiver.receive(timeout=1)
 

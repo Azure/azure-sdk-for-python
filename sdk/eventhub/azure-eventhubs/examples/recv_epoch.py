@@ -30,8 +30,8 @@ EXCLUSIVE_RECEIVER_PRIORITY = 42
 PARTITION = "0"
 
 
-async def pump(client, exclusive_receiver_priority):
-    receiver = client.create_receiver(partition_id=PARTITION, event_position=EventPosition("-1"), exclusive_receiver_priority=exclusive_receiver_priority)
+async def pump(client, owner_level):
+    receiver = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EventPosition("-1"), owner_level=owner_level)
     async with receiver:
         total = 0
         start_time = time.time()

@@ -178,7 +178,7 @@ async def test_long_running_context_eph(live_eventhub):
     send_client = EventHubClient.from_connection_string(conn_str)
     pumps = []
     for pid in ["0", "1"]:
-        sender = send_client.create_sender(partition_id=pid, send_timeout=0)
+        sender = send_client.create_producer(partition_id=pid, send_timeout=0)
         pumps.append(pump(pid, sender, 15))
     results = await asyncio.gather(*pumps, return_exceptions=True)
     assert not any(results)

@@ -17,7 +17,7 @@ import logging
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClient, EventSender, EventData, EventHubSharedKeyCredential
+from azure.eventhub import EventHubClient, EventHubProducer, EventData, EventHubSharedKeyCredential
 
 
 def get_logger(filename, level=logging.INFO):
@@ -51,7 +51,7 @@ def check_send_successful(outcome, condition):
 
 
 def main(client, args):
-    sender = client.create_sender()
+    sender = client.create_producer()
     deadline = time.time() + args.duration
     total = 0
 

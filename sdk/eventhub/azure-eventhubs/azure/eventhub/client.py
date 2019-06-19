@@ -23,8 +23,8 @@ from uamqp import authentication
 from uamqp import constants
 
 from azure.eventhub import __version__
-from azure.eventhub.sender import EventSender
-from azure.eventhub.receiver import EventReceiver
+from azure.eventhub.sender import EventHubProducer
+from azure.eventhub.receiver import EventHubConsumer
 from azure.eventhub.common import parse_sas_token, EventPosition
 from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
@@ -89,7 +89,7 @@ class EventHubClient(EventHubClientAbstract):
 
         else:  # Azure credential
             get_jwt_token = functools.partial(self.credential.get_token,
-                                              ['https://eventhubs.azure.net//.default'])
+                                              'https://eventhubs.azure.net//.default')
             return authentication.JWTTokenAuth(self.auth_uri, self.auth_uri,
                                                get_jwt_token, http_proxy=http_proxy,
                                                transport_type=transport_type)
@@ -187,29 +187,29 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             mgmt_client.close()
 
-    def create_receiver(
-            self, partition_id, event_position, consumer_group="$Default",
-            exclusive_receiver_priority=None, operation=None, prefetch=None,
+    def create_consumer(
+            self, consumer_group, partition_id, event_position,
+            owner_level=None, operation=None, prefetch=None,
     ):
-        # type: (str, str, EventPosition, int, str, int) -> EventReceiver
+        # type: (str, str, EventPosition, int, str, int) -> EventHubConsumer
         """
         Create a receiver to the client for a particular consumer group and partition.
 
-        :param partition_id: The ID of the partition.
-        :type partition_id: str
         :param consumer_group: The name of the consumer group. Default value is `$Default`.
         :type consumer_group: str
+        :param partition_id: The ID of the partition.
+        :type partition_id: str
         :param event_position: The position from which to start receiving.
         :type event_position: ~azure.eventhub.common.EventPosition
-        :param exclusive_receiver_priority: The priority of the exclusive receiver. The client will create an exclusive
-         receiver if exclusive_receiver_priority is set.
-        :type exclusive_receiver_priority: int
+        :param owner_level: The priority of the exclusive receiver. The client will create an exclusive
+         receiver if owner_level is set.
+        :type owner_level: int
         :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :rtype: ~azure.eventhub.receiver.EventReceiver
+        :rtype: ~azure.eventhub.receiver.EventHubConsumer
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -225,15 +225,15 @@ class EventHubClient(EventHubClientAbstract):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
-        handler = EventReceiver(
-            self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
+        handler = EventHubConsumer(
+            self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch)
         return handler
 
-    def create_sender(self, partition_id=None, operation=None, send_timeout=None):
-        # type: (str, str, float) -> EventSender
+    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
+        # type: (str, str, float) -> EventHubProducer
         """
-        Create a sender to the client to send EventData object to an EventHub.
+        Create a EventHubProducer to send EventData object to an EventHub.
 
         :param partition_id: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
@@ -245,7 +245,7 @@ class EventHubClient(EventHubClientAbstract):
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
-        :rtype: ~azure.eventhub.sender.EventSender
+        :rtype: ~azure.eventhub.sender.EventHubProducer
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -261,6 +261,6 @@ class EventHubClient(EventHubClientAbstract):
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
-        handler = EventSender(
+        handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler

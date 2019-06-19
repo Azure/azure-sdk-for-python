@@ -33,7 +33,7 @@ try:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
-    sender = client.create_sender(partition_id="1")
+    sender = client.create_producer(partition_id="1")
 
     event_list = []
     for i in range(1500):

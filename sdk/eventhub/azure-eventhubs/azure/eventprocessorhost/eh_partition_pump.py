@@ -72,7 +72,7 @@ class EventHubPartitionPump(PartitionPump):
             hostname, event_hub_path, shared_key_cred,
             network_tracing=self.host.eph_options.debug_trace,
             http_proxy=self.host.eph_options.http_proxy)
-        self.partition_receive_handler = self.eh_client.create_receiver(
+        self.partition_receive_handler = self.eh_client.create_consumer(
             partition_id=self.partition_context.partition_id,
             consumer_group=self.partition_context.consumer_group_name,
             event_position=EventPosition(self.partition_context.offset),

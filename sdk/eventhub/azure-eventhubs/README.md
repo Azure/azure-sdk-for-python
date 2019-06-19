@@ -4,12 +4,12 @@ Azure Event Hubs is a big data streaming platform and event ingestion service. I
 
 Use the Event Hubs client library for Python to:
 
-- Publish events to the Event Hubs service through a sender.
-- Read events from the Event Hubs service through a receiver.
+- Publish events to the Event Hubs service through a producer.
+- Read events from the Event Hubs service through a consumer.
 
 On Python 3.5.3 and above, it also includes:
 
-- An async sender and receiver that supports async/await methods.
+- An async producer and consumer that supports async/await methods.
 - An Event Processor Host module that manages the distribution of partition readers.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
@@ -89,7 +89,7 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-sender = client.create_sender(partition_id="0")
+sender = client.create_producer(partition_id="0")
 
 try:
  	event_list = []
@@ -119,7 +119,7 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition.new_events_only())
+receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition.new_events_only())
 
 try:
     logger = logging.getLogger("azure.eventhub")
@@ -148,7 +148,7 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-sender = client.create_sender(partition_id="0")
+sender = client.create_producer(partition_id="0")
 
 try:
  	event_list = []
@@ -179,7 +179,7 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition.new_events_only())
+receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition.new_events_only())
 
 try:
     logger = logging.getLogger("azure.eventhub")

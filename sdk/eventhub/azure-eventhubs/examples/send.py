@@ -33,7 +33,7 @@ try:
 
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-    sender = client.create_sender(partition_id="0")
+    sender = client.create_producer(partition_id="0")
 
     ed = EventData("msg")
 

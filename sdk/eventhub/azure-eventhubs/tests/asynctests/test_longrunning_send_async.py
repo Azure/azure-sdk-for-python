@@ -113,12 +113,12 @@ async def test_long_running_partition_send_async(connection_str):
                 partitions = args.partitions.split(",")
         pumps = []
         for pid in partitions:
-            sender = client.create_sender(partition_id=pid, send_timeout=0)
+            sender = client.create_producer(partition_id=pid, send_timeout=0)
             pumps.append(pump(pid, sender, args, args.duration))
         results = await asyncio.gather(*pumps, return_exceptions=True)
         assert not results
     except Exception as e:
-        logger.error("EventSender failed: {}".format(e))
+        logger.error("EventHubProducer failed: {}".format(e))
 
 
 if __name__ == '__main__':

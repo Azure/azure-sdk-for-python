@@ -124,7 +124,7 @@ async def test_long_running_receive_async(connection_str):
         partitions = args.partitions.split(",")
     pumps = []
     for pid in partitions:
-        receiver = client.create_receiver(
+        receiver = client.create_consumer(consumer_group="$default",
             partition_id=pid,
             event_position=EventPosition(args.offset),
             prefetch=50,

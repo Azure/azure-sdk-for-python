@@ -32,20 +32,20 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
     # [START create_eventhub_client_async_sender]
     client = EventHubClient.from_connection_string(connection_str)
     # Create an async sender.
-    sender = client.create_sender(partition_id="0")
+    sender = client.create_producer(partition_id="0")
     # [END create_eventhub_client_async_sender]
 
     # [START create_eventhub_client_async_receiver]
     client = EventHubClient.from_connection_string(connection_str)
     # Create an async receiver.
-    receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     # Create an exclusive async receiver.
-    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'), exclusive_receiver_priority=1)
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), owner_level=1)
     # [END create_eventhub_client_async_receiver]
 
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_sender(partition_id="0")
-    receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
+    sender = client.create_producer(partition_id="0")
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     await receiver.receive(timeout=1)
 
@@ -76,7 +76,7 @@ async def test_example_eventhub_async_sender_ops(live_eventhub_config, connectio
 
     # [START eventhub_client_async_sender_close]
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_sender(partition_id="0")
+    sender = client.create_producer(partition_id="0")
     try:
         await sender.send(EventData(b"A single event"))
     finally:
@@ -92,7 +92,7 @@ async def test_example_eventhub_async_receiver_ops(live_eventhub_config, connect
 
     # [START eventhub_client_async_receiver_close]
     client = EventHubClient.from_connection_string(connection_str)
-    receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
         # Open and receive
         await receiver.receive(timeout=1)

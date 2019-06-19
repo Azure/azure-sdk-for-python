@@ -31,7 +31,7 @@ EVENT_POSITION = EventPosition.first_available_event()
 
 
 async def pump(client, partition):
-    receiver = client.create_receiver(partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
+    receiver = client.create_consumer(consumer_group="$default", partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
     async with receiver:
         total = 0
         start_time = time.time()

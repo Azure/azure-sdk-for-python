@@ -315,13 +315,13 @@ class EventHubClientAbstract(object):
         self.mgmt_target = redirect_uri
 
     @abstractmethod
-    def create_receiver(
-            self, partition_id, event_position, consumer_group="$Default", exclusive_receiver_priority=None,
+    def create_consumer(
+            self, consumer_group, partition_id, event_position, owner_level=None,
             operation=None,
             prefetch=None,
     ):
         pass
 
     @abstractmethod
-    def create_sender(self, partition_id=None, operation=None, send_timeout=None):
+    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
         pass

@@ -37,7 +37,7 @@ class PartitionReceiverThread(Thread):
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                     network_tracing=False)
-receiver = client.create_receiver(partition_id="0", event_position=EVENT_POSITION)
+receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EVENT_POSITION)
 with receiver:
     thread = PartitionReceiverThread(receiver)
     thread.start()

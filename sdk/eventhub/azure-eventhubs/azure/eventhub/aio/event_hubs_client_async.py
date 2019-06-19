@@ -20,8 +20,8 @@ from azure.eventhub import (
     EventHubError)
 from ..client_abstract import EventHubClientAbstract
 
-from .sender_async import EventSender
-from .receiver_async import EventReceiver
+from .sender_async import EventHubProducer
+from .receiver_async import EventHubConsumer
 
 
 log = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ class EventHubClient(EventHubClientAbstract):
                 transport_type=transport_type)
 
         else:
-            get_jwt_token = functools.partial(self.credential.get_token, ['https://eventhubs.azure.net//.default'])
+            get_jwt_token = functools.partial(self.credential.get_token, 'https://eventhubs.azure.net//.default')
             return authentication.JWTTokenAsync(self.auth_uri, self.auth_uri,
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
@@ -175,28 +175,28 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             await mgmt_client.close_async()
 
-    def create_receiver(
-            self, partition_id, event_position, consumer_group="$Default", exclusive_receiver_priority=None,
+    def create_consumer(
+            self, consumer_group, partition_id, event_position, owner_level=None,
             operation=None, prefetch=None, loop=None):
         """
         Create an async receiver to the client for a particular consumer group and partition.
 
-        :param partition_id: The ID of the partition.
-        :type partition_id: str
         :param consumer_group: The name of the consumer group. Default value is `$Default`.
         :type consumer_group: str
+        :param partition_id: The ID of the partition.
+        :type partition_id: str
         :param event_position: The position from which to start receiving.
         :type event_position: ~azure.eventhub.common.EventPosition
-        :param exclusive_receiver_priority: The priority of the exclusive receiver. The client will create an exclusive
-         receiver if exclusive_receiver_priority is set.
-        :type exclusive_receiver_priority: int
+        :param owner_level: The priority of the exclusive receiver. The client will create an exclusive
+         receiver if owner_level is set.
+        :type owner_level: int
         :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype: ~azure.eventhub.aio.receiver_async.EventReceiver
+        :rtype: ~azure.eventhub.aio.receiver_async.EventHubConsumer
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -212,12 +212,12 @@ class EventHubClient(EventHubClientAbstract):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
-        handler = EventReceiver(
-            self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
+        handler = EventHubConsumer(
+            self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch, loop=loop)
         return handler
 
-    def create_sender(
+    def create_producer(
             self, partition_id=None, operation=None, send_timeout=None, loop=None):
         """
         Create an async sender to the client to send ~azure.eventhub.common.EventData object
@@ -234,7 +234,7 @@ class EventHubClient(EventHubClientAbstract):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype ~azure.eventhub.aio.sender_async.EventSender
+        :rtype ~azure.eventhub.aio.sender_async.EventHubProducer
 
 
         Example:
@@ -252,6 +252,6 @@ class EventHubClient(EventHubClientAbstract):
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
-        handler = EventSender(
+        handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
         return handler

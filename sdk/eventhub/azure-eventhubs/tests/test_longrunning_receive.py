@@ -77,7 +77,7 @@ def pump(receivers, duration):
                                 batch[-1].offset.value))
             print("Total received {}".format(total))
     except Exception as e:
-        print("EventReceiver failed: {}".format(e))
+        print("EventHubConsumer failed: {}".format(e))
         raise
 
 
@@ -119,7 +119,7 @@ def test_long_running_receive(connection_str):
             partitions = args.partitions.split(",")
         pumps = {}
         for pid in partitions:
-            pumps[pid] = client.create_receiver(
+            pumps[pid] = client.create_consumer(consumer_group="$default",
                 partition_id=pid,
                 event_position=EventPosition(args.offset),
                 prefetch=50)

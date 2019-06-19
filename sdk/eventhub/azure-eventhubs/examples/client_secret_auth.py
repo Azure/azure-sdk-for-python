@@ -36,7 +36,7 @@ client = EventHubClient(host=HOSTNAME,
                         event_hub_path=EVENT_HUB,
                         credential=credential)
 try:
-    sender = client.create_sender(partition_id='0')
+    sender = client.create_producer(partition_id='0')
 
     with sender:
         event = EventData(body='A single message')

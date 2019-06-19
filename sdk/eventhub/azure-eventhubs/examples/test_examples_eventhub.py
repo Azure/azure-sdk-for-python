@@ -60,20 +60,20 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
     # [START create_eventhub_client_sender]
     client = EventHubClient.from_connection_string(connection_str)
     # Create a sender.
-    sender = client.create_sender(partition_id="0")
+    sender = client.create_producer(partition_id="0")
     # [END create_eventhub_client_sender]
 
     # [START create_eventhub_client_receiver]
     client = EventHubClient.from_connection_string(connection_str)
     # Create a receiver.
-    receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     # Create an exclusive receiver object.
-    exclusive_receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), exclusive_receiver_priority=1)
+    exclusive_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=1)
     # [END create_eventhub_client_receiver]
 
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_sender(partition_id="0")
-    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
+    sender = client.create_producer(partition_id="0")
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
         receiver.receive(timeout=1)
 
@@ -112,7 +112,7 @@ def test_example_eventhub_sender_ops(live_eventhub_config, connection_str):
 
     # [START eventhub_client_sender_close]
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_sender(partition_id="0")
+    sender = client.create_producer(partition_id="0")
     try:
         sender.send(EventData(b"A single event"))
     finally:
@@ -127,7 +127,7 @@ def test_example_eventhub_receiver_ops(live_eventhub_config, connection_str):
 
     # [START eventhub_client_receiver_close]
     client = EventHubClient.from_connection_string(connection_str)
-    receiver = client.create_receiver(partition_id="0", consumer_group="$default", event_position=EventPosition('@latest'))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
         receiver.receive(timeout=1)
     finally:

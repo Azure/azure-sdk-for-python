@@ -20,15 +20,15 @@ from azure.eventhub.error import EventHubError, ConnectError, \
 log = logging.getLogger(__name__)
 
 
-class EventSender(object):
+class EventHubProducer(object):
     """
-    Implements a EventSender.
+    Implements a EventHubProducer.
 
     """
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
-        Instantiate an EventHub event EventSender handler.
+        Instantiate an EventHub event EventHubProducer handler.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient.
@@ -83,7 +83,7 @@ class EventSender(object):
 
     def _open(self):
         """
-        Open the EventSender using the supplied connection.
+        Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
@@ -138,43 +138,52 @@ class EventSender(object):
             return True
         except errors.AuthenticationException as shutdown:
             if is_reconnect:
-                log.info("EventSender couldn't authenticate. Shutting down. (%r)", shutdown)
+                log.info("EventHubProducer couldn't authenticate. Shutting down. (%r)", shutdown)
                 error = AuthenticationError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("EventSender couldn't authenticate. Attempting reconnect.")
+                log.info("EventHubProducer couldn't authenticate. Attempting reconnect.")
                 return False
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry:
-                log.info("EventSender detached. Attempting reconnect.")
+                log.info("EventHubProducer detached. Attempting reconnect.")
                 return False
             else:
-                log.info("EventSender detached. Shutting down.")
+                log.info("EventHubProducer detached. Shutting down.")
                 error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if is_reconnect:
-                log.info("EventSender detached. Shutting down.")
+                log.info("EventHubProducer detached. Shutting down.")
                 error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("EventSender detached. Attempting reconnect.")
+                log.info("EventHubProducer detached. Attempting reconnect.")
                 return False
         except errors.AMQPConnectionError as shutdown:
             if is_reconnect:
-                log.info("EventSender connection error (%r). Shutting down.", shutdown)
+                log.info("EventHubProducer connection error (%r). Shutting down.", shutdown)
                 error = AuthenticationError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("EventSender couldn't authenticate. Attempting reconnect.")
+                log.info("EventHubProducer couldn't authenticate. Attempting reconnect.")
+                return False
+        except compat.TimeoutException as shutdown:
+            if is_reconnect:
+                log.info("EventHubProducer authentication timed out. Shutting down.")
+                error = AuthenticationError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            else:
+                log.info("EventHubProducer authentication timed out. Attempting reconnect.")
                 return False
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("EventSender Reconnect failed: {}".format(e))
+            error = EventHubError("EventHubProducer failed to connect: {}".format(e))
             self.close(exception=error)
             raise error
 
@@ -225,7 +234,7 @@ class EventSender(object):
                     self._handler.wait()
                     self.unsent_events = self._handler.pending_messages
                 if self._outcome != constants.MessageSendResult.Ok:
-                    EventSender._error(self._outcome, self._condition)
+                    EventHubProducer._error(self._outcome, self._condition)
                 return
             except (errors.MessageAccepted,
                     errors.MessageAlreadySettled,
@@ -241,46 +250,46 @@ class EventSender(object):
                 raise error
             except errors.AuthenticationException as auth_error:
                 if connecting_count < max_retries:
-                    log.info("EventSender disconnected due to token error. Attempting reconnect.")
+                    log.info("EventHubProducer disconnected due to token error. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("EventSender authentication failed. Shutting down.")
+                    log.info("EventHubProducer authentication failed. Shutting down.")
                     error = AuthenticationError(str(auth_error), auth_error)
                     self.close(auth_error)
                     raise error
             except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
                 if shutdown.action.retry:
-                    log.info("EventSender detached. Attempting reconnect.")
+                    log.info("EventHubProducer detached. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("EventSender detached. Shutting down.")
+                    log.info("EventHubProducer detached. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(exception=error)
                     raise error
             except errors.MessageHandlerError as shutdown:
                 if connecting_count < max_retries:
-                    log.info("EventSender detached. Attempting reconnect.")
+                    log.info("EventHubProducer detached. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("EventSender detached. Shutting down.")
+                    log.info("EventHubProducer detached. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
             except errors.AMQPConnectionError as shutdown:
                 if connecting_count < max_retries:
-                    log.info("EventSender connection lost. Attempting reconnect.")
+                    log.info("EventHubProducer connection lost. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("EventSender connection lost. Shutting down.")
+                    log.info("EventHubProducer connection lost. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
             except compat.TimeoutException as shutdown:
                 if connecting_count < max_retries:
-                    log.info("EventSender timed out sending event data. Attempting reconnect.")
+                    log.info("EventHubProducer timed out sending event data. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("EventSender timed out. Shutting down.")
+                    log.info("EventHubProducer timed out. Shutting down.")
                     self.close(shutdown)
                     raise TimeoutError(str(shutdown), shutdown)
             except Exception as e:

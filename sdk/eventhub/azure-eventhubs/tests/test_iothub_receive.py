@@ -15,7 +15,7 @@ from azure.eventhub import EventData, EventPosition, EventHubClient
 def test_iothub_receive_sync(iot_connection_str, device_id):
     pytest.skip("current code will cause ErrorCodes.LinkRedirect")
     client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=False)
-    receiver = client.create_receiver(partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     receiver._open()
     try:
         partitions = client.get_properties()

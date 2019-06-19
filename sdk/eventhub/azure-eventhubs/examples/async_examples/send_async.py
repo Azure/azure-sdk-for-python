@@ -30,7 +30,7 @@ KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
 async def run(client):
-    sender = client.create_sender()
+    sender = client.create_producer()
     await send(sender, 4)
 
 

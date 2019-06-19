@@ -29,7 +29,7 @@ else:
     from azure.eventprocessorhost.partition_pump import PartitionPump
     from azure.eventprocessorhost.partition_manager import PartitionManager
 
-from azure.eventhub import EventHubClient, EventReceiver, EventPosition
+from azure.eventhub import EventHubClient, EventHubConsumer, EventPosition
 
 
 def get_logger(filename, level=logging.INFO):
@@ -176,7 +176,7 @@ def connstr_receivers(connection_str):
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
-        receiver = client.create_receiver(partition_id=p, event_position=EventPosition("-1"), prefetch=500)
+        receiver = client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"), prefetch=500)
         receiver._open()
         receivers.append(receiver)
     yield connection_str, receivers
@@ -192,7 +192,7 @@ def connstr_senders(connection_str):
 
     senders = []
     for p in partitions:
-        sender = client.create_sender(partition_id=p)
+        sender = client.create_producer(partition_id=p)
         senders.append(sender)
     yield connection_str, senders
     for s in senders:

@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0-preview.1 (2019-06-17)
+## 2.0.0b1 (2019-06-25)
 
 - Added more configuration parameters when creating EventHubClient.
 - New error hierarchy
@@ -10,13 +10,13 @@
   - `azure.error.AuthenticationError`
   - `azure.error.EventDataError`
   - `azure.error.EventDataSendError`
-- Renamed Sender/Receiver to EventSender/EventReceiver
-  - New APIs for creating EventSender/EventReceiver.
-  - EventReceiver is now iterable.
+- Renamed Sender/Receiver to EventHubProducer/EventHubConsumer
+  - New APIs for creating EventHubProducer/EventHubConsumer.
+  - EventHubConsumer is now iterable.
 - Rename class azure.eventhub.Offset to azure.eventhub.EventPosition
-- Reorganized connection management, EventHubClient is no longer responsible for opening/closing EventSender/EventReceiver.
-  - Each EventSender/EventReceiver is responsible for its own connection management.
-  - Added support for context manager on EventSender and EventReceiver.
+- Reorganized connection management, EventHubClient is no longer responsible for opening/closing EventHubProducer/EventHubConsumer.
+  - Each EventHubProducer/EventHubConsumer is responsible for its own connection management.
+  - Added support for context manager on EventHubProducer and EventHubConsumer.
 - Reorganized async APIs into "azure.eventhub.aio" namespace and rename to drop the "_async" suffix.
 - Added support for authentication using azure-core credential.
 - Added support for transport using AMQP over WebSocket.

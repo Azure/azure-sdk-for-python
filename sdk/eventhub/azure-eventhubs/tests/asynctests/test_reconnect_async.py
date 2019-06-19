@@ -15,14 +15,14 @@ from azure.eventhub import (
     EventHubError)
 from azure.eventhub.aio import EventHubClient
 
-SLEEP = False
+SLEEP = True
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_sender()
+    sender = client.create_producer()
     try:
         await sender.send(EventData(b"A single event"))
         for _ in range(1):
@@ -59,7 +59,7 @@ def pump(receiver):
 async def test_send_with_forced_conn_close_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_sender()
+    sender = client.create_producer()
     try:
         await sender.send(EventData(b"A single event"))
         if SLEEP:
