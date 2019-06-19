@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import LUISAuthoringClientConfiguration
-from ._luis_authoring_client import LUISAuthoringClient
-__all__ = ['LUISAuthoringClient', 'LUISAuthoringClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class TrainingStatus(str, Enum):
 
+    needs_training = "NeedsTraining"
+    in_progress = "InProgress"
+    trained = "Trained"
+
+
+class OperationStatusType(str, Enum):
+
+    failed = "Failed"
+    failed = "FAILED"
+    success = "Success"
