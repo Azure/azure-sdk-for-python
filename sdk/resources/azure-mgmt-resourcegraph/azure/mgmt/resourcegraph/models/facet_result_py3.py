@@ -30,7 +30,7 @@ class FacetResult(Facet):
     :type count: int
     :param data: Required. A table containing the desired facets. Only present
      if the facet is valid.
-    :type data: ~azure.mgmt.resourcegraph.models.Table
+    :type data: object
     """
 
     _validation = {
@@ -46,7 +46,7 @@ class FacetResult(Facet):
         'result_type': {'key': 'resultType', 'type': 'str'},
         'total_records': {'key': 'totalRecords', 'type': 'long'},
         'count': {'key': 'count', 'type': 'int'},
-        'data': {'key': 'data', 'type': 'Table'},
+        'data': {'key': 'data', 'type': 'object'},
     }
 
     def __init__(self, *, expression: str, total_records: int, count: int, data, **kwargs) -> None:
