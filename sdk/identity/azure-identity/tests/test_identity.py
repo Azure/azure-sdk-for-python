@@ -86,30 +86,6 @@ def test_client_secret_environment_credential(monkeypatch):
     assert str(ex.value) == success_message
 
 
-def test_cert_environment_credential(monkeypatch):
-    client_id = "fake-client-id"
-    pem_path = os.path.join(os.path.dirname(__file__), "private-key.pem")
-    tenant_id = "fake-tenant-id"
-
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, pem_path)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    success_message = "request passed validation"
-
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["grant_type"] == "client_credentials"
-        # raising here makes mocking a transport response unnecessary
-        raise AuthenticationError(success_message)
-
-    credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(AuthenticationError) as ex:
-        credential.get_token("scope")
-    assert str(ex.value) == success_message
-
-
 def test_environment_credential_error():
     with pytest.raises(AuthenticationError):
         EnvironmentCredential().get_token("scope")

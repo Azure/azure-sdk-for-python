@@ -55,7 +55,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
     async def get_token(self, *scopes: str) -> AccessToken:
         token = self._client.get_cached_token(scopes)
         if not token:
-            data = dict(self._form_data, scope=" ".join(scopes))
+            data = self._get_request_data(*scopes)
             token = await self._client.request_token(scopes, form_data=data)
         return token  # type: ignore
 

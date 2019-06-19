@@ -57,7 +57,7 @@ class CertificateCredential(CertificateCredentialBase):
         # type (*str) -> AccessToken
         token = self._client.get_cached_token(scopes)
         if not token:
-            data = dict(self._form_data, scope=" ".join(scopes))
+            data = self._get_request_data(*scopes)
             token = self._client.request_token(scopes, form_data=data)
         return token
 
