@@ -21,6 +21,13 @@ Last but not least, HTTP connection pooling is now enabled by default. You shoul
 1.1.0 (2019-06-11)
 ++++++++++++++++++
 
+**Note**
+
+This version was incorrectly released with breaking changes inside. You should use 1.0 or directly move to 2.0 if want to follow
+semantic versionning closely.
+
+**Breaking changes**
+
 - Result format can be table or objectArray
 
 1.0.0 (2019-03-28)
