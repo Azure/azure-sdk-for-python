@@ -14,9 +14,10 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    ContainerPermissions,
+    BlobPermissions
 )
-from azure.storage.blob.models import ContainerPermissions, BlobPermissions
-from azure.storage.blob._utils import _QueryStringConstants
+from azure.storage.blob._shared.utils import _QueryStringConstants
 
 from tests.testcase import (
     StorageTestCase,

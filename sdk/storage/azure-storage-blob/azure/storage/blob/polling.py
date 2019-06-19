@@ -9,9 +9,9 @@ import time
 
 from azure.core.polling import PollingMethod, LROPoller
 
+from ._shared.utils import process_storage_error
 from ._generated.models import StorageErrorException
-from ._utils import process_storage_error
-from ._deserialize import deserialize_blob_properties
+from ._blob_utils import deserialize_blob_properties
 
 
 logger = logging.getLogger(__name__)

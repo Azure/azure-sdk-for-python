@@ -10,7 +10,7 @@ import pytest
 
 import os
 
-from azure.storage.blob._upload_chunking import _SubStream
+from azure.storage.blob._shared.upload_chunking import _SubStream
 from threading import Lock
 from io import (BytesIO, SEEK_SET)
 

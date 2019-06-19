@@ -10,11 +10,7 @@ import requests
 import time
 import unittest
 from datetime import datetime, timedelta
-from azure.common import (
-    AzureHttpError,
-    AzureMissingResourceHttpError,
-    AzureException,
-)
+
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -26,8 +22,6 @@ from azure.storage.blob import (
     BlobClient,
     BlobType,
     StorageErrorCode,
-)
-from azure.storage.blob.models import (
     BlobPermissions,
     ContainerPermissions,
     ContentSettings,

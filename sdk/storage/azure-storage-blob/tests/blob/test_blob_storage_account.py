@@ -13,8 +13,8 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    StandardBlobTier
 )
-from azure.storage.blob.common import StandardBlobTier
 from tests.testcase import (
     StorageTestCase,
     record,

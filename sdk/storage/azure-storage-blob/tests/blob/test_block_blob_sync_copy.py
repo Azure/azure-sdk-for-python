@@ -11,12 +11,10 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    StorageErrorCode
-)
-from azure.storage.blob.models import (
+    StorageErrorCode,
     BlobPermissions
 )
-from azure.storage.blob._policies import StorageContentValidation
+from azure.storage.blob._shared.policies import StorageContentValidation
 from tests.testcase import (
     StorageTestCase,
     record,

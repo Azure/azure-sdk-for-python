@@ -18,9 +18,8 @@ from os import (
     remove,
 )
 
-from azure.common import AzureException
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob._encryption import (
+from azure.storage.blob._shared.encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
     _generate_AES_CBC_cipher,

@@ -15,8 +15,8 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    ContentSettings
 )
-from azure.storage.blob.models import ContentSettings
 
 if os.sys.version_info >= (3,):
     from io import BytesIO

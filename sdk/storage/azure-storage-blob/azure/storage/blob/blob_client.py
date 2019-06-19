@@ -17,51 +17,51 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
-from azure.core import Configuration
 
-from .common import BlobType
-from .lease import LeaseClient
-from .models import BlobBlock
-from .polling import CopyStatusPoller
-from ._shared_access_signature import BlobSharedAccessSignature
-from ._encryption import _generate_blob_encryption_data
-from ._utils import (
+from ._shared.shared_access_signature import BlobSharedAccessSignature
+from ._shared.encryption import _generate_blob_encryption_data
+from ._shared.upload_chunking import IterStreamer
+from ._shared.utils import (
     StorageAccountHostsMixin,
-    get_access_conditions,
-    get_modification_conditions,
-    get_sequence_conditions,
     return_response_headers,
     add_metadata_headers,
-    process_storage_error,
     encode_base64,
     get_length,
     read_length,
     parse_connection_str,
     parse_query,
-    validate_and_format_range_headers
-)
-from ._deserialize import deserialize_blob_properties
+    process_storage_error,
+    validate_and_format_range_headers)
+from ._generated import AzureBlobStorage
 from ._generated.models import (
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
     StorageErrorException)
-from ._download_chunking import StorageStreamDownloader
-from ._upload_chunking import (
+from ._blob_utils import (
+    deserialize_blob_properties,
+    get_access_conditions,
+    get_modification_conditions,
+    get_sequence_conditions,
+    StorageStreamDownloader,
     upload_block_blob,
     upload_page_blob,
-    upload_append_blob,
-    IterStreamer)
+    upload_append_blob)
+from .models import BlobType, BlobBlock
+from .lease import LeaseClient
+from .polling import CopyStatusPoller
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .common import PremiumPageBlobTier, StandardBlobTier, SequenceNumberAction
     from azure.core.pipeline.policies import HTTPPolicy
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobPermissions,
         ContentSettings,
+        PremiumPageBlobTier,
+        StandardBlobTier,
+        SequenceNumberAction
     )
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -137,6 +137,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self.blob_name = blob or unquote(path_blob)
         self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
         super(BlobClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         container_name = self.container_name

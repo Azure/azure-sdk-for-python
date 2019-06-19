@@ -11,8 +11,6 @@ import datetime
 import os
 import unittest
 
-from azure.common import AzureHttpError
-from azure.storage.blob.models import BlobBlock
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 
 from azure.storage.blob import (
@@ -21,9 +19,8 @@ from azure.storage.blob import (
     BlobClient,
     LeaseClient,
     StorageErrorCode,
-)
-from azure.storage.blob.common import BlobType
-from azure.storage.blob.models import(
+    BlobBlock,
+    BlobType,
     ContentSettings,
     BlobProperties
 )

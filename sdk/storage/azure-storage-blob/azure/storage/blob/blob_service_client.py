@@ -14,29 +14,28 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+from ._shared.shared_access_signature import SharedAccessSignature
+from ._shared.models import LocationMode
+from ._shared.utils import (
+    StorageAccountHostsMixin,
+    return_response_headers,
+    parse_connection_str,
+    process_storage_error,
+    parse_query)
+from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
-from ._shared_access_signature import SharedAccessSignature
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, ContainerPropertiesPaged
-from .common import LocationMode
-from ._utils import (
-    StorageAccountHostsMixin,
-    process_storage_error,
-    return_response_headers,
-    parse_connection_str,
-    parse_query
-)
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
+    from ._shared.models import AccountPermissions, ResourceTypes
     from .lease import LeaseClient
     from .models import (
-        AccountPermissions,
-        ResourceTypes,
         BlobProperties,
         Logging,
         Metrics,
@@ -86,6 +85,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

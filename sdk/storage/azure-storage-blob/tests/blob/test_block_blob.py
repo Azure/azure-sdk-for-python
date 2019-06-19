@@ -9,18 +9,16 @@ import os
 import unittest
 import pytest
 
-#pytestmark = pytest.mark.xfail
-
-from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    BlobType
+    BlobType,
+    ContentSettings,
+    BlobBlock,
+    StandardBlobTier
 )
-from azure.storage.blob.common import StandardBlobTier
-from azure.storage.blob.models import ContentSettings, BlobBlock
 from tests.testcase import (
     StorageTestCase,
     TestMode,
