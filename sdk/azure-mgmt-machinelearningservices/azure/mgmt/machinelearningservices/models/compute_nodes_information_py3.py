@@ -24,9 +24,6 @@ class ComputeNodesInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar nodes: The collection of returned AmlCompute nodes details.
-    :vartype nodes:
-     list[~azure.mgmt.machinelearningservices.models.AmlComputeNodeInformation]
     :ivar next_link: The continuation token.
     :vartype next_link: str
     :param compute_type: Required. Constant filled by server.
@@ -34,13 +31,11 @@ class ComputeNodesInformation(Model):
     """
 
     _validation = {
-        'nodes': {'readonly': True},
         'next_link': {'readonly': True},
         'compute_type': {'required': True},
     }
 
     _attribute_map = {
-        'nodes': {'key': 'nodes', 'type': '[AmlComputeNodeInformation]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
     }
@@ -51,6 +46,5 @@ class ComputeNodesInformation(Model):
 
     def __init__(self, **kwargs) -> None:
         super(ComputeNodesInformation, self).__init__(**kwargs)
-        self.nodes = None
         self.next_link = None
         self.compute_type = None
