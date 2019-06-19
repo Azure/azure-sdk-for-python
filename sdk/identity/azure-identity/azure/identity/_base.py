@@ -48,7 +48,6 @@ class CertificateCredentialBase(object):
             )
 
         super(CertificateCredentialBase, self).__init__()
-        auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
 
         with open(certificate_path, "rb") as f:
             pem_bytes = f.read()
@@ -58,11 +57,16 @@ class CertificateCredentialBase(object):
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())
 
-        signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
-        client_assertion = signer.sign_assertion(audience=auth_url, issuer=client_id)
-        self._form_data = {
-            "client_assertion": client_assertion,
+        self._auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
+        self._client_id = client_id
+        self._signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
+
+    def _get_request_data(self, *scopes):
+        assertion = self._signer.sign_assertion(audience=self._auth_url, issuer=self._client_id)
+        return {
+            "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            "client_id": client_id,
+            "client_id": self._client_id,
             "grant_type": "client_credentials",
+            "scope": " ".join(scopes)
         }
