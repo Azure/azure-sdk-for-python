@@ -807,9 +807,9 @@ class EntityLabel(Model):
     :param end_token_index: Required. The index within the utterance where the
      extracted entity ends.
     :type end_token_index: int
-    :param role: Required. The role.
+    :param role: The role.
     :type role: str
-    :param role_id: Required. The role Id.
+    :param role_id: The role Id.
     :type role_id: str
     """
 
@@ -817,8 +817,6 @@ class EntityLabel(Model):
         'entity_name': {'required': True},
         'start_token_index': {'required': True},
         'end_token_index': {'required': True},
-        'role': {'required': True},
-        'role_id': {'required': True},
     }
 
     _attribute_map = {
@@ -829,7 +827,7 @@ class EntityLabel(Model):
         'role_id': {'key': 'roleId', 'type': 'str'},
     }
 
-    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str, role_id: str, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str=None, role_id: str=None, **kwargs) -> None:
         super(EntityLabel, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_token_index = start_token_index
