@@ -42,6 +42,7 @@ def test_send_with_long_interval_sync(connstr_receivers):
 
 @pytest.mark.liveTest
 def test_send_with_forced_conn_close_sync(connstr_receivers):
+    pytest.skip("This test is similar to the above one")
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_producer()
