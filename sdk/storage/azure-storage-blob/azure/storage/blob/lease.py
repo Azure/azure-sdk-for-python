@@ -23,7 +23,14 @@ if TYPE_CHECKING:
 
 
 class LeaseClient(object):
+    """Creates a new LeaseClient. This client provides lease operations on
+    a BlobClient or ContainerClient.
 
+    :param client: The client to interact with.
+    :type client: ~azure.storage.blob.blob_client.BlobClient or
+        ~azure.storage.blob.container_client.ContainerClient
+    :param str lease_id: A string representing the lease ID.
+    """
     def __init__(self, client, lease_id=None):
         # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
         self.id = lease_id or str(uuid.uuid4())
@@ -73,6 +80,15 @@ class LeaseClient(object):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -102,6 +118,37 @@ class LeaseClient(object):
             **kwargs
         ):
         # type: (...) -> None
+        """Renews the lease. The lease can be renewed if the lease ID specified in the
+        lease client matches that associated with the container or blob. Note that
+        the lease may be renewed even if it has expired as long as the container
+        or blob has not been leased again since the expiration of that lease. When you
+        renew a lease, the lease duration clock resets.
+
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: None
+        """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
@@ -126,6 +173,35 @@ class LeaseClient(object):
             **kwargs
         ):
         # type: (...) -> None
+        """Release the lease. The lease may be released if the lease id specified matches
+        that associated with the container or blob. Releasing the lease allows another client
+        to immediately acquire the lease for the container or blob as soon as the release is complete.
+
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: None
+        """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
@@ -151,6 +227,36 @@ class LeaseClient(object):
             **kwargs
         ):
         # type: (...) -> None
+        """Change the lease ID of an active lease.
+
+        :param str proposed_lease_id:
+            Proposed lease ID, in a GUID string format. The Blob service returns 400
+            (Invalid request) if the proposed lease ID is not in the correct format.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: None
+        """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
@@ -174,8 +280,7 @@ class LeaseClient(object):
             timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> int
-        """
-        Break the lease, if the container or blob has an active lease. Once a lease is
+        """Break the lease, if the container or blob has an active lease. Once a lease is
         broken, it cannot be renewed. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. When a lease
         is broken, the lease break period is allowed to elapse, during which time
