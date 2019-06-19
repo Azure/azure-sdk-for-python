@@ -318,68 +318,6 @@ class EventPosition(object):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
-    @classmethod
-    def earliest(cls):
-        """
-        Get the beginning of the event stream.
-
-        :rtype: azure.eventhub.common.EventPosition
-        """
-
-        return cls("-1")
-
-    @classmethod
-    def latest(cls):
-        """
-        Get the end of the event stream.
-
-        :rtype: azure.eventhub.common.EventPosition
-        """
-
-        return cls("@latest")
-
-    @classmethod
-    def from_offset(cls, offset, inclusive=False):
-        """
-        Get the event position from/after the specified offset.
-
-        :param offset: the offset value
-        :type offset: str
-        :param inclusive: Whether to include the supplied value as the start point.
-        :type inclusive: bool
-        :rtype: azure.eventhub.common.EventPosition
-        """
-
-        return cls(offset, inclusive)
-
-    @classmethod
-    def from_sequence(cls, sequence, inclusive=False):
-        """
-        Get the event position from/after the specified sequence number.
-
-        :param sequence: the sequence number
-        :type sequence: int, long
-        :param inclusive: Whether to include the supplied value as the start point.
-        :type inclusive: bool
-        :rtype: azure.eventhub.common.EventPosition
-        """
-
-        return cls(sequence, inclusive)
-
-    @classmethod
-    def from_enqueued_time(cls, enqueued_time, inclusive=False):
-        """
-        Get the event position from/after the specified enqueue time.
-
-        :param enqueued_time: the enqueue datetime
-        :type enqueued_time: datetime.datetime
-        :param inclusive: Whether to include the supplied value as the start point.
-        :type inclusive: bool
-        :rtype: azure.eventhub.common.EventPosition
-        """
-
-        return cls(enqueued_time, inclusive)
-
 
 # TODO: move some behaviors to these two classes.
 class EventHubSASTokenCredential(object):
