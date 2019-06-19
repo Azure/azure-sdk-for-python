@@ -103,4 +103,4 @@ class ResourcepoolsByPCOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/locations/{regionId}/privateclouds/{pcName}/resourcepools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/resourcePools'}

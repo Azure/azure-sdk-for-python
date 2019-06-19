@@ -34,8 +34,8 @@ class DedicatedCloudNode(Model):
     :vartype availability_zone_name: str
     :ivar cloud_rack_name: VMWare Cloud Rack Name
     :vartype cloud_rack_name: str
-    :param created: date time the resource was created
-    :type created: object
+    :ivar created: date time the resource was created
+    :vartype created: object
     :param nodes_count: Required. count of nodes to create
     :type nodes_count: int
     :param placement_group_id: Required. Placement Group id, e.g. "n1"
@@ -74,6 +74,7 @@ class DedicatedCloudNode(Model):
         'availability_zone_id': {'required': True},
         'availability_zone_name': {'readonly': True},
         'cloud_rack_name': {'readonly': True},
+        'created': {'readonly': True},
         'nodes_count': {'required': True},
         'placement_group_id': {'required': True},
         'placement_group_name': {'readonly': True},
@@ -120,7 +121,7 @@ class DedicatedCloudNode(Model):
         self.availability_zone_id = kwargs.get('availability_zone_id', None)
         self.availability_zone_name = None
         self.cloud_rack_name = None
-        self.created = kwargs.get('created', None)
+        self.created = None
         self.nodes_count = kwargs.get('nodes_count', None)
         self.placement_group_id = kwargs.get('placement_group_id', None)
         self.placement_group_name = None

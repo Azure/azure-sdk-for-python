@@ -27,8 +27,6 @@ class VirtualMachine(Model):
     :type location: str
     :ivar name: {virtualMachineName}
     :vartype name: str
-    :param plan: Virtual machine plan
-    :type plan: ~microsoft.vmwarecloudsimple.models.Plan
     :param amount_of_ram: Required. The amount of memory
     :type amount_of_ram: int
     :ivar controllers: The list of Virtual Disks' Controllers
@@ -50,7 +48,7 @@ class VirtualMachine(Model):
      ~microsoft.vmwarecloudsimple.models.GuestOSType
     :param nics: The list of Virtual NICs
     :type nics: list[~microsoft.vmwarecloudsimple.models.VirtualNic]
-    :param number_of_cores: Required. The number of CPU cores
+    :param number_of_cores: Required. The numnber of CPU cores
     :type number_of_cores: int
     :param password: Password for login
     :type password: str
@@ -107,7 +105,6 @@ class VirtualMachine(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
         'amount_of_ram': {'key': 'properties.amountOfRam', 'type': 'int'},
         'controllers': {'key': 'properties.controllers', 'type': '[VirtualDiskController]'},
         'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
@@ -138,7 +135,6 @@ class VirtualMachine(Model):
         self.id = None
         self.location = kwargs.get('location', None)
         self.name = None
-        self.plan = kwargs.get('plan', None)
         self.amount_of_ram = kwargs.get('amount_of_ram', None)
         self.controllers = None
         self.disks = kwargs.get('disks', None)

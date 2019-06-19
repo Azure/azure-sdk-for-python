@@ -27,8 +27,6 @@ class VirtualMachine(Model):
     :type location: str
     :ivar name: {virtualMachineName}
     :vartype name: str
-    :param plan: Virtual machine plan
-    :type plan: ~microsoft.vmwarecloudsimple.models.Plan
     :param amount_of_ram: Required. The amount of memory
     :type amount_of_ram: int
     :ivar controllers: The list of Virtual Disks' Controllers
@@ -50,7 +48,7 @@ class VirtualMachine(Model):
      ~microsoft.vmwarecloudsimple.models.GuestOSType
     :param nics: The list of Virtual NICs
     :type nics: list[~microsoft.vmwarecloudsimple.models.VirtualNic]
-    :param number_of_cores: Required. The number of CPU cores
+    :param number_of_cores: Required. The numnber of CPU cores
     :type number_of_cores: int
     :param password: Password for login
     :type password: str
@@ -107,7 +105,6 @@ class VirtualMachine(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
         'amount_of_ram': {'key': 'properties.amountOfRam', 'type': 'int'},
         'controllers': {'key': 'properties.controllers', 'type': '[VirtualDiskController]'},
         'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
@@ -133,12 +130,11 @@ class VirtualMachine(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, amount_of_ram: int, guest_os: str, guest_os_type, number_of_cores: int, private_cloud_id: str, plan=None, disks=None, expose_to_guest_vm: bool=None, nics=None, password: str=None, resource_pool=None, template_id: str=None, username: str=None, v_sphere_networks=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, amount_of_ram: int, guest_os: str, guest_os_type, number_of_cores: int, private_cloud_id: str, disks=None, expose_to_guest_vm: bool=None, nics=None, password: str=None, resource_pool=None, template_id: str=None, username: str=None, v_sphere_networks=None, tags=None, **kwargs) -> None:
         super(VirtualMachine, self).__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
-        self.plan = plan
         self.amount_of_ram = amount_of_ram
         self.controllers = None
         self.disks = disks

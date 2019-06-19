@@ -95,4 +95,4 @@ class AvailableOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/microsoft.vmwarecloudsimple/operations'}
+    list.metadata = {'url': '/providers/Microsoft.VMwareCloudSimple/operations'}

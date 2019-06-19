@@ -86,7 +86,7 @@ class VirtualMachineTemplateByPCOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -99,4 +99,4 @@ class VirtualMachineTemplateByPCOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/locations/{regionId}/privateclouds/{pcName}/virtualmachinetemplates/{virtualMachineTemplateName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualMachineTemplates/{virtualMachineTemplateName}'}

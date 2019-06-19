@@ -27,8 +27,6 @@ class DedicatedCloudService(Model):
     :type location: str
     :ivar name: {dedicatedCloudServiceName}
     :vartype name: str
-    :param plan: The plan
-    :type plan: ~microsoft.vmwarecloudsimple.models.Plan
     :param gateway_subnet: Required. gateway Subnet for the account. It will
      collect the subnet address and always treat it as /28
     :type gateway_subnet: str
@@ -60,7 +58,6 @@ class DedicatedCloudService(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
         'gateway_subnet': {'key': 'properties.gatewaySubnet', 'type': 'str'},
         'is_account_onboarded': {'key': 'properties.isAccountOnboarded', 'type': 'OnboardingStatus'},
         'nodes': {'key': 'properties.nodes', 'type': 'int'},
@@ -69,12 +66,11 @@ class DedicatedCloudService(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, gateway_subnet: str, plan=None, nodes: int=None, service_url: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, gateway_subnet: str, nodes: int=None, service_url: str=None, tags=None, **kwargs) -> None:
         super(DedicatedCloudService, self).__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
-        self.plan = plan
         self.gateway_subnet = gateway_subnet
         self.is_account_onboarded = None
         self.nodes = nodes

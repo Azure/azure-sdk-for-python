@@ -18,9 +18,7 @@ try:
     from .csrp_error_py3 import CSRPError, CSRPErrorException
     from .sku_py3 import Sku
     from .dedicated_cloud_node_py3 import DedicatedCloudNode
-    from .plan_py3 import Plan
     from .dedicated_cloud_service_py3 import DedicatedCloudService
-    from .move_resource_request_body_py3 import MoveResourceRequestBody
     from .operation_error_py3 import OperationError
     from .operation_resource_py3 import OperationResource
     from .patch_payload_py3 import PatchPayload
@@ -45,9 +43,7 @@ except (SyntaxError, ImportError):
     from .csrp_error import CSRPError, CSRPErrorException
     from .sku import Sku
     from .dedicated_cloud_node import DedicatedCloudNode
-    from .plan import Plan
     from .dedicated_cloud_service import DedicatedCloudService
-    from .move_resource_request_body import MoveResourceRequestBody
     from .operation_error import OperationError
     from .operation_resource import OperationResource
     from .patch_payload import PatchPayload
@@ -96,9 +92,7 @@ __all__ = [
     'CSRPError', 'CSRPErrorException',
     'Sku',
     'DedicatedCloudNode',
-    'Plan',
     'DedicatedCloudService',
-    'MoveResourceRequestBody',
     'OperationError',
     'OperationResource',
     'PatchPayload',

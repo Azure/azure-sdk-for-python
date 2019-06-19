@@ -99,7 +99,7 @@ class VirtualMachineOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200, 404]:
+            if response.status_code not in [200]:
                 raise models.CSRPErrorException(self._deserialize, response)
 
             return response
@@ -113,7 +113,7 @@ class VirtualMachineOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/virtualmachines'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/virtualMachines'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
@@ -179,7 +179,7 @@ class VirtualMachineOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200, 404]:
+            if response.status_code not in [200]:
                 raise models.CSRPErrorException(self._deserialize, response)
 
             return response
@@ -193,7 +193,7 @@ class VirtualMachineOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines'}
 
     def get(
             self, resource_group_name, virtual_machine_name, custom_headers=None, raw=False, **operation_config):
@@ -243,7 +243,7 @@ class VirtualMachineOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -256,7 +256,7 @@ class VirtualMachineOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}'}
 
 
     def _create_or_update_initial(
@@ -293,7 +293,7 @@ class VirtualMachineOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 404]:
+        if response.status_code not in [200, 201]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -374,7 +374,7 @@ class VirtualMachineOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}'}
 
 
     def _delete_initial(
@@ -406,7 +406,7 @@ class VirtualMachineOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204, 404]:
+        if response.status_code not in [202, 204]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -468,7 +468,7 @@ class VirtualMachineOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}'}
 
 
     def _update_initial(
@@ -506,7 +506,7 @@ class VirtualMachineOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -571,7 +571,7 @@ class VirtualMachineOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}'}
 
 
     def _start_initial(
@@ -603,7 +603,7 @@ class VirtualMachineOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 404]:
+        if response.status_code not in [200, 202]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -665,7 +665,7 @@ class VirtualMachineOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}/start'}
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}/start'}
 
 
     def _stop_initial(
@@ -710,7 +710,7 @@ class VirtualMachineOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 404]:
+        if response.status_code not in [200, 202]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -782,4 +782,4 @@ class VirtualMachineOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/virtualmachines/{virtualMachineName}/stop'}
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/virtualMachines/{virtualMachineName}/stop'}

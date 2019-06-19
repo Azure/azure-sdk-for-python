@@ -189,7 +189,7 @@ class VMwareCloudSimpleClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204, 404]:
+        if response.status_code not in [200, 202, 204]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -261,7 +261,7 @@ class VMwareCloudSimpleClient(SDKClient):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    get_operation_result_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/locations/{regionId}/operationresults/{operationId}'}
+    get_operation_result_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/operationResults/{operationId}'}
 
     def get_private_cloud(
             self, pc_name, custom_headers=None, raw=False, **operation_config):
@@ -309,7 +309,7 @@ class VMwareCloudSimpleClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -322,4 +322,4 @@ class VMwareCloudSimpleClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_private_cloud.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/locations/{regionId}/privateclouds/{pcName}'}
+    get_private_cloud.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}'}

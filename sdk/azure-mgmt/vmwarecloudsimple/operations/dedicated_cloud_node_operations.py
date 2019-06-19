@@ -99,7 +99,7 @@ class DedicatedCloudNodeOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200, 404]:
+            if response.status_code not in [200]:
                 raise models.CSRPErrorException(self._deserialize, response)
 
             return response
@@ -113,7 +113,7 @@ class DedicatedCloudNodeOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
@@ -179,7 +179,7 @@ class DedicatedCloudNodeOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
-            if response.status_code not in [200, 404]:
+            if response.status_code not in [200]:
                 raise models.CSRPErrorException(self._deserialize, response)
 
             return response
@@ -193,7 +193,7 @@ class DedicatedCloudNodeOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes'}
 
     def get(
             self, resource_group_name, dedicated_cloud_node_name, custom_headers=None, raw=False, **operation_config):
@@ -242,7 +242,7 @@ class DedicatedCloudNodeOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -255,7 +255,7 @@ class DedicatedCloudNodeOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes/{dedicatedCloudNodeName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
 
 
     def _create_or_update_initial(
@@ -292,7 +292,7 @@ class DedicatedCloudNodeOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -372,7 +372,7 @@ class DedicatedCloudNodeOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes/{dedicatedCloudNodeName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
 
     def delete(
             self, resource_group_name, dedicated_cloud_node_name, custom_headers=None, raw=False, **operation_config):
@@ -420,7 +420,7 @@ class DedicatedCloudNodeOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 404]:
+        if response.status_code not in [204]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -429,7 +429,7 @@ class DedicatedCloudNodeOperations(object):
                 'Content-Type': 'str',
             })
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes/{dedicatedCloudNodeName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
 
     def update(
             self, resource_group_name, dedicated_cloud_node_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -487,7 +487,7 @@ class DedicatedCloudNodeOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
@@ -500,4 +500,4 @@ class DedicatedCloudNodeOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.vmwarecloudsimple/dedicatedcloudnodes/{dedicatedCloudNodeName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
