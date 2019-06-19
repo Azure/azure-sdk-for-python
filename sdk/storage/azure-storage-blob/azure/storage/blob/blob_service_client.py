@@ -54,24 +54,17 @@ class BlobServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific container or blob, clients for those entities
     can also be retrieved using the `get_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Blob service account. This could be either the
-        primary endpoint, or the secondard endpint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
+    :param str account_url:
+        The URL to the blob storage account. Any other entities included
+        in the URL path (e.g. container or blob) will be discarded. This URL can be optionally
+        authenticated with a SAS token.
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :param ~azure.core.configuration.Configuration configuration:
+        An optional pipeline configuration. This can be retrieved with
+        :func:`BlobServiceClient.create_configuration()`
     """
 
     def __init__(
@@ -81,19 +74,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """A new BlobServiceClient.
-
-        :param str account_url:
-            The URL to the blob storage account. Any other entities included
-            in the URL path (e.g. container or blob) will be discarded. This URL can be optionally
-            authenticated with a SAS token.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, and account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-        :param ~azure.storage.blob.Configuration configuration:
-            An optional pipeline configuration.
-        """
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -291,7 +271,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
         :type delete_retention_policy:
-            :class:`~azure.storage.blob..models.RetentionPolicy`
+            :class:`~azure.storage.blob.models.RetentionPolicy`
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
@@ -372,7 +352,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.models.PublicAccess public_access:
+        :param ~azure.storage.blob.common.PublicAccess public_access:
             Possible values include: container, blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -417,6 +397,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
