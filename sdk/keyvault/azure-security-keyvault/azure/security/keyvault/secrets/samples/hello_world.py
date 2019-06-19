@@ -1,5 +1,4 @@
 import datetime
-import time
 from azure.security.keyvault import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -10,7 +9,7 @@ from azure.core.exceptions import HttpResponseError
 # 1. An Azure Key Vault-
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
-#  2. Microsoft Azure Key Vault PyPi package -
+#  2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-security-keyvault/
 #
 # 3. Microsoft Azure Identity package -

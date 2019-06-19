@@ -1,4 +1,3 @@
-import datetime
 import time
 from azure.security.keyvault import SecretClient
 from azure.identity import DefaultAzureCredential
@@ -10,7 +9,7 @@ from azure.core.exceptions import HttpResponseError
 # 1. An Azure Key Vault-
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
-# 2. Microsoft Azure Key Vault PyPi package -
+# 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-security-keyvault/
 #
 # 3. Microsoft Azure Identity package -
@@ -27,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. List secret versions from the Key Vault (list_secret_versions)
 #
-# 4. List deleted secrets from the Key Vault (list_deleted_secrets). The vault has to be soft-delete enabled to perform this operations.
+# 4. List deleted secrets from the Key Vault (list_deleted_secrets). The vault has to be soft-delete enabled to perform this operation.
 #
 # ----------------------------------------------------------------------------------------------------------
 def run_sample():
@@ -53,7 +52,9 @@ def run_sample():
         secrets = client.list_secrets()
         for secret in secrets:
             retrieved_secret = client.get_secret(secret.name)
-            print("Secret with name '{0}' and value {1} was found.".format(retrieved_secret.name, retrieved_secret.name))
+            print(
+                "Secret with name '{0}' and value {1} was found.".format(retrieved_secret.name, retrieved_secret.name)
+            )
 
         # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the new password.
         # Calling set_secret on an existing secret creates a new version of the secret in the Key Vault with the new value.

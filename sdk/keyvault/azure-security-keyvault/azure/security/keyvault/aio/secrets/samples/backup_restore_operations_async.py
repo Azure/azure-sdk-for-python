@@ -9,7 +9,7 @@ from azure.core.exceptions import HttpResponseError
 # 1. An Azure Key Vault-
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
-#  2. Microsoft Azure Key Vault PyPi package -
+#  2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-security-keyvault/
 #
 # 3. Microsoft Azure Identity package -
@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (delete_secret)
 #
-# 5. Restore a secret (restore_secret)
+# 4. Restore a secret (restore_secret)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a secret client that will be used to call the service.
