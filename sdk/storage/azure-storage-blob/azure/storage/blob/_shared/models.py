@@ -215,16 +215,28 @@ class ResourceTypes(object):
     """
     Specifies the resource types that are accessible with the account SAS.
 
-    :ivar ResourceTypes ResourceTypes.CONTAINER:
+    :cvar ResourceTypes ResourceTypes.CONTAINER:
         Access to container-level APIs (e.g., Create/Delete Container,
         Create/Delete Queue, Create/Delete Share,
         List Blobs/Files and Directories)
-    :ivar ResourceTypes ResourceTypes.OBJECT:
+    :cvar ResourceTypes ResourceTypes.OBJECT:
         Access to object-level APIs for blobs, queue messages, and
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :ivar ResourceTypes ResourceTypes.SERVICE:
+    :cvar ResourceTypes ResourceTypes.SERVICE:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Containers/Queues/Shares)
+    :param bool service:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    :param bool container:
+        Access to container-level APIs (e.g., Create/Delete Container,
+        Create/Delete Queue, Create/Delete Share,
+        List Blobs/Files and Directories)
+    :param bool object:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    :param str _str:
+        A string representing the resource types.
     """
 
     SERVICE = None  # type: ResourceTypes
@@ -232,20 +244,6 @@ class ResourceTypes(object):
     OBJECT = None  # type: ResourceTypes
 
     def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
-        """
-        :param bool service:
-            Access to service-level APIs (e.g., Get/Set Service Properties,
-            Get Service Stats, List Containers/Queues/Shares)
-        :param bool container:
-            Access to container-level APIs (e.g., Create/Delete Container,
-            Create/Delete Queue, Create/Delete Share,
-            List Blobs/Files and Directories)
-        :param bool object:
-            Access to object-level APIs for blobs, queue messages, and
-            files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-        :param str _str:
-            A string representing the resource types.
-        """
         if not _str:
             _str = ''
         self.service = service or ('s' in _str)
@@ -278,25 +276,47 @@ class AccountPermissions(object):
     entire service for a specific account and allow certain operations based on
     perms found here.
 
-    :ivar AccountPermissions AccountPermissions.ADD:
+    :cvar AccountPermissions AccountPermissions.ADD:
         Valid for the following Object resource types only: queue messages and append blobs.
-    :ivar AccountPermissions AccountPermissions.CREATE:
+    :cvar AccountPermissions AccountPermissions.CREATE:
         Valid for the following Object resource types only: blobs and files. Users
         can create new blobs or files, but may not overwrite existing blobs or files.
-    :ivar AccountPermissions AccountPermissions.DELETE:
+    :cvar AccountPermissions AccountPermissions.DELETE:
         Valid for Container and Object resource types, except for queue messages.
-    :ivar AccountPermissions AccountPermissions.LIST:
+    :cvar AccountPermissions AccountPermissions.LIST:
         Valid for Service and Container resource types only.
-    :ivar AccountPermissions AccountPermissions.PROCESS:
+    :cvar AccountPermissions AccountPermissions.PROCESS:
         Valid for the following Object resource type only: queue messages.
-    :ivar AccountPermissions AccountPermissions.READ:
+    :cvar AccountPermissions AccountPermissions.READ:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
-    :ivar AccountPermissions AccountPermissions.UPDATE:
+    :cvar AccountPermissions AccountPermissions.UPDATE:
         Valid for the following Object resource types only: queue messages.
-    :ivar AccountPermissions AccountPermissions.WRITE:
+    :cvar AccountPermissions AccountPermissions.WRITE:
         Valid for all signed resources types (Service, Container, and Object).
         Permits write permissions to the specified resource type.
+    :param bool read:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :param bool write:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    :param bool delete:
+        Valid for Container and Object resource types, except for queue messages.
+    :param bool list:
+        Valid for Service and Container resource types only.
+    :param bool add:
+        Valid for the following Object resource types only: queue messages, and append blobs.
+    :param bool create:
+        Valid for the following Object resource types only: blobs and files.
+        Users can create new blobs or files, but may not overwrite existing
+        blobs or files.
+    :param bool update:
+        Valid for the following Object resource types only: queue messages.
+    :param bool process:
+        Valid for the following Object resource type only: queue messages.
+    :param str _str:
+        A string representing the permissions.
     """
 
     READ = None  # type: AccountPermissions
@@ -310,30 +330,6 @@ class AccountPermissions(object):
 
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  add=False, create=False, update=False, process=False, _str=None):
-        """
-        :param bool read:
-            Valid for all signed resources types (Service, Container, and Object).
-            Permits read permissions to the specified resource type.
-        :param bool write:
-            Valid for all signed resources types (Service, Container, and Object).
-            Permits write permissions to the specified resource type.
-        :param bool delete:
-            Valid for Container and Object resource types, except for queue messages.
-        :param bool list:
-            Valid for Service and Container resource types only.
-        :param bool add:
-            Valid for the following Object resource types only: queue messages, and append blobs.
-        :param bool create:
-            Valid for the following Object resource types only: blobs and files.
-            Users can create new blobs or files, but may not overwrite existing
-            blobs or files.
-        :param bool update:
-            Valid for the following Object resource types only: queue messages.
-        :param bool process:
-            Valid for the following Object resource type only: queue messages.
-        :param str _str:
-            A string representing the permissions.
-        """
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)

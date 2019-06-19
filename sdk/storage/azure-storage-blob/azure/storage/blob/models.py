@@ -120,19 +120,16 @@ class Logging(GeneratedLogging):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of Storage Analytics to configure.
-    :type version: str
-    :param delete: Required. Indicates whether all delete requests should be
+    :param str version: Required. The version of Storage Analytics to configure.
+    :param bool delete: Required. Indicates whether all delete requests should be
      logged.
-    :type delete: bool
-    :param read: Required. Indicates whether all read requests should be
+    :param bool read: Required. Indicates whether all read requests should be
      logged.
-    :type read: bool
-    :param write: Required. Indicates whether all write requests should be
+    :param bool write: Required. Indicates whether all write requests should be
      logged.
-    :type write: bool
-    :param retention_policy: Required.
-    :type retention_policy: ~blob.models.RetentionPolicy
+    :param retention_policy: Required. Determines how long the associated data should
+     persist.
+    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -144,21 +141,19 @@ class Logging(GeneratedLogging):
 
 
 class Metrics(GeneratedMetrics):
-    """a summary of request statistics grouped by API in hour or minute aggregates
+    """A summary of request statistics grouped by API in hour or minute aggregates
     for blobs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: The version of Storage Analytics to configure.
-    :type version: str
-    :param enabled: Required. Indicates whether metrics are enabled for the
+    :param str version: The version of Storage Analytics to configure.
+    :param bool enabled: Required. Indicates whether metrics are enabled for the
      Blob service.
-    :type enabled: bool
-    :param include_ap_is: Indicates whether metrics should generate summary
+    :param bool include_ap_is: Indicates whether metrics should generate summary
      statistics for called API operations.
-    :type include_ap_is: bool
-    :param retention_policy:
-    :type retention_policy: ~blob.models.RetentionPolicy
+    :param retention_policy: Required. Determines how long the associated data should
+     persist.
+    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -169,18 +164,16 @@ class Metrics(GeneratedMetrics):
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
-    """the retention policy which determines how long the associated data should
+    """The retention policy which determines how long the associated data should
     persist.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether a retention policy is enabled
+    :param bool enabled: Required. Indicates whether a retention policy is enabled
      for the storage service
-    :type enabled: bool
-    :param days: Indicates the number of days that metrics or logging or
+    :param int days: Indicates the number of days that metrics or logging or
      soft-deleted data should be retained. All data older than this value will
-     be deleted
-    :type days: int
+     be deleted.
     """
 
     def __init__(self, enabled=False, days=None):
@@ -195,14 +188,11 @@ class StaticWebsite(GeneratedStaticWebsite):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether this account is hosting a
-     static website
-    :type enabled: bool
-    :param index_document: The default name of the index page under each
-     directory
-    :type index_document: str
-    :param error_document404_path: The absolute path of the custom 404 page
-    :type error_document404_path: str
+    :param bool enabled: Required. Indicates whether this account is hosting a
+     static website.
+    :param str index_document: The default name of the index page under each
+     directory.
+    :param str error_document404_path: The absolute path of the custom 404 page.
     """
 
     def __init__(self, **kwargs):
@@ -224,29 +214,25 @@ class CorsRule(GeneratedCorsRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins:
+    :param list(str) allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :type allowed_origins: list(str)
-    :param allowed_methods:
+    :param list(str) allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :type allowed_methods: list(str)
-    :param int max_age_in_seconds:
-        The number of seconds that the client/browser should cache a
-        preflight response.
-    :param exposed_headers:
-        Defaults to an empty list. A list of response headers to expose to CORS
-        clients. Limited to 64 defined headers and two prefixed headers. Each
-        header can be up to 256 characters.
-    :type exposed_headers: list(str)
-    :param allowed_headers:
+    :param list(str) allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
-    :type allowed_headers: list(str)
+    :param list(str) exposed_headers:
+        Defaults to an empty list. A list of response headers to expose to CORS
+        clients. Limited to 64 defined headers and two prefixed headers. Each
+        header can be up to 256 characters.
+    :param int max_age_in_seconds:
+        The number of seconds that the client/browser should cache a
+        preflight response.
     """
 
     def __init__(self, allowed_origins, allowed_methods, **kwargs):
@@ -258,20 +244,23 @@ class CorsRule(GeneratedCorsRule):
 
 
 class ContainerProperties(DictMixin):
-    """
-    Blob container's properties class.
+    """Blob container's properties class.
 
-    :ivar datetime last_modified:
+    :param datetime last_modified:
         A datetime object representing the last time the container was modified.
-    :ivar str etag:
+    :param str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :ivar LeaseProperties lease:
+    :param ~azure.storage.blob.models.LeaseProperties lease:
         Stores all the lease information for the container.
-    :ivar bool has_immutability_policy:
+    :param str public_access: Specifies whether data in the container may be accessed
+        publicly and the level of access.
+    :param bool has_immutability_policy:
         Represents whether the container has an immutability policy.
-    :ivar bool has_legal_hold:
+    :param bool has_legal_hold:
         Represents whether the container has a legal hold.
+    :param dict metadata: A dict with name_value pairs to associate with the
+        container as metadata.
     """
 
     def __init__(self, **kwargs):
@@ -299,7 +288,15 @@ class ContainerProperties(DictMixin):
 
 
 class ContainerPropertiesPaged(Paged):
+    """Container properties paged.
 
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only containers whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of container names to retrieve per
+        call.
+    :param str marker: An opaque continuation token.
+    """
     def __init__(self, command, prefix=None, results_per_page=None, marker=None):
         super(ContainerPropertiesPaged, self).__init__(command, None)
         self.service_endpoint = None
@@ -350,10 +347,18 @@ class ContainerPropertiesPaged(Paged):
 
 class BlobProperties(DictMixin):
     """
-    Blob Properties
+    Blob Properties.
 
+    :ivar str name:
+        The name of the blob.
+    :ivar container:
+        The container in which the blob resides.
+    :ivar datetime snapshot:
+        Datetime value that uniquely identifies the blob snapshot.
     :ivar str blob_type:
         String indicating this blob's type.
+    :ivar dict metadata:
+        Name-value pairs associated with the blob as metadata.
     :ivar datetime last_modified:
         A datetime object representing the last time the blob was modified.
     :ivar str etag:
@@ -391,12 +396,16 @@ class BlobProperties(DictMixin):
     :ivar bool blob_tier_inferred:
         Indicates whether the access tier was inferred by the service.
         If false, it indicates that the tier was set explicitly.
+    :ivar bool deleted:
+        Whether this blob was deleted.
     :ivar datetime deleted_time:
         A datetime object representing the time at which the blob was deleted.
     :ivar int remaining_retention_days:
         The number of days that the blob will be retained before being permanently deleted by the service.
     :ivar datetime creation_time:
         Indicates when the blob was created, in UTC.
+    :ivar archive_status:
+        Archive status of blob.
     """
 
     def __init__(self, **kwargs):
@@ -452,7 +461,22 @@ class BlobProperties(DictMixin):
 
 
 class BlobPropertiesPaged(Paged):
+    """Blob properties paged.
 
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only blobs whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of blobs to retrieve per
+        call.
+    :param str marker: An opaque continuation token.
+    :param str delimiter:
+        Used to capture blobs whose names begin with the same substring up to
+        the appearance of the delimiter character. The delimiter may be a single
+        character or a string.
+    :param location_mode: Specifies the location the request should be sent to.
+        This mode only applies for RA-GRS accounts which allow secondary read access.
+        Options include 'primary' or 'secondary'.
+    """
     def __init__(
             self, command,
             container=None,
@@ -520,7 +544,11 @@ class BlobPropertiesPaged(Paged):
 
 
 class BlobPrefix(BlobPropertiesPaged, DictMixin):
+    """Returned from list_blobs when a delimiter is used.
+    Can be thought of as virtual blob directories.
 
+    :ivar name: The prefix name of the blob.
+    """
     def __init__(self, *args, **kwargs):
         super(BlobPrefix, self).__init__(*args, **kwargs)
         self.name = self.prefix
@@ -572,13 +600,11 @@ class LeaseProperties(DictMixin):
     """
     Blob Lease Properties.
 
-    :ivar str status:
-        The lease status of the blob.
-        Possible values: locked|unlocked
-    :ivar str state:
-        Lease state of the blob.
-        Possible values: available|leased|expired|breaking|broken
-    :ivar str duration:
+    :param str status:
+        The lease status of the blob. Possible values: locked|unlocked
+    :param str state:
+        Lease state of the blob. Possible values: available|leased|expired|breaking|broken
+    :param str duration:
         When a blob is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
@@ -651,19 +677,19 @@ class CopyProperties(DictMixin):
     """
     Blob Copy Properties.
 
-    :ivar str id:
+    :param str id:
         String identifier for the last attempted Copy Blob operation where this blob
         was the destination blob. This header does not appear if this blob has never
         been the destination in a Copy Blob operation, or if this blob has been
         modified after a concluded Copy Blob operation using Set Blob Properties,
         Put Blob, or Put Block List.
-    :ivar str source:
+    :param str source:
         URL up to 2 KB in length that specifies the source blob used in the last attempted
         Copy Blob operation where this blob was the destination blob. This header does not
         appear if this blob has never been the destination in a Copy Blob operation, or if
         this blob has been modified after a concluded Copy Blob operation using
         Set Blob Properties, Put Blob, or Put Block List.
-    :ivar str status:
+    :param str status:
         State of the copy operation identified by Copy ID, with these values:
             success:
                 Copy completed successfully.
@@ -674,17 +700,25 @@ class CopyProperties(DictMixin):
                 Copy was ended by Abort Copy Blob.
             failed:
                 Copy failed. See copy_status_description for failure details.
-    :ivar str progress:
+    :param str progress:
         Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy Blob operation where this blob was the destination blob. Can show
         between 0 and Content-Length bytes copied.
-    :ivar datetime completion_time:
+    :param datetime completion_time:
         Conclusion time of the last attempted Copy Blob operation where this blob was the
         destination blob. This value can specify the time of a completed, aborted, or
         failed copy attempt.
-    :ivar str status_description:
-        only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
+    :param str status_description:
+        Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
         or non-fatal copy operation failure.
+    :param bool incremental_copy:
+        Copies the snapshot of the source page blob to a destination page blob.
+        The snapshot is copied such that only the differential changes between
+        the previously copied snapshot are transferred to the destination
+    :param datetime destination_snapshot:
+        Included if the blob is incremental copy blob or incremental copy snapshot,
+        if x-ms-copy-status is success. Snapshot time of the last successful
+        incremental copy snapshot for this blob.
     """
 
     def __init__(self, **kwargs):
@@ -718,8 +752,7 @@ class BlobBlock(DictMixin):
     :ivar str block_id:
         Block id.
     :ivar str state:
-        Block state.
-        Possible valuse: committed|uncommitted
+        Block state. Possible values: committed|uncommitted
     :ivar int size:
         Block size in bytes.
     """
@@ -748,9 +781,6 @@ class PageRange(DictMixin):
         Start of page range in bytes.
     :ivar int end:
         End of page range in bytes.
-    :ivar bool is_cleared:
-        Indicates if a page range is cleared or not. Only applicable
-        for get_page_range_diff API.
     """
 
     def __init__(self, start=None, end=None):
@@ -759,7 +789,7 @@ class PageRange(DictMixin):
 
 
 class AccessPolicy(GenAccessPolicy):
-    '''
+    """
     Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
@@ -778,32 +808,30 @@ class AccessPolicy(GenAccessPolicy):
     fields are missing, the request will fail. Likewise, if a field is specified
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
-    '''
 
+    :param str permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has been
+        specified in an associated stored access policy.
+    :param expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :type expiry: datetime or str
+    :param start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :type start: datetime or str
+    """
     def __init__(self, permission=None, expiry=None, start=None):
-        '''
-        :param str permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        '''
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -814,23 +842,40 @@ class ContainerPermissions(object):
     ContainerPermissions class to be used with
     :func:`~azure.storage.blob.container_client.ContainerClient.generate_shared_access_signature` API and
     for the AccessPolicies used with
-    :func:`~azure.storage.blob.container_client.ContainerClient.set_container_acl`.
+    :func:`~azure.storage.blob.container_client.ContainerClient.set_container_access_policy`.
 
-    :ivar ContainerPermissions ContainerPermissions.DELETE:
+    :cvar ContainerPermissions ContainerPermissions.DELETE:
         Delete any blob in the container. Note: You cannot grant permissions to
         delete a container with a container SAS. Use an account SAS instead.
-    :ivar ContainerPermissions ContainerPermissions.LIST:
+    :cvar ContainerPermissions ContainerPermissions.LIST:
         List blobs in the container.
-    :ivar ContainerPermissions ContainerPermissions.READ:
+    :cvar ContainerPermissions ContainerPermissions.READ:
         Read the content, properties, metadata or block list of any blob in the
         container. Use any blob in the container as the source of a copy operation.
-    :ivar ContainerPermissions ContainerPermissions.WRITE:
+    :cvar ContainerPermissions ContainerPermissions.WRITE:
         For any blob in the container, create or write content, properties,
         metadata, or block list. Snapshot or lease the blob. Resize the blob
         (page blob only). Use the blob as the destination of a copy operation
         within the same account. Note: You cannot grant permissions to read or
         write container properties or metadata, nor to lease a container, with
         a container SAS. Use an account SAS instead.
+    :param bool read:
+        Read the content, properties, metadata or block list of any blob in the
+        container. Use any blob in the container as the source of a copy operation.
+    :param bool write:
+        For any blob in the container, create or write content, properties,
+        metadata, or block list. Snapshot or lease the blob. Resize the blob
+        (page blob only). Use the blob as the destination of a copy operation
+        within the same account. Note: You cannot grant permissions to read or
+        write container properties or metadata, nor to lease a container, with
+        a container SAS. Use an account SAS instead.
+    :param bool delete:
+        Delete any blob in the container. Note: You cannot grant permissions to
+        delete a container with a container SAS. Use an account SAS instead.
+    :param bool list:
+        List blobs in the container.
+    :param str _str:
+        A string representing the permissions.
     """
 
     DELETE = None  # type: ContainerPermissions
@@ -839,25 +884,6 @@ class ContainerPermissions(object):
     WRITE = None  # type: ContainerPermissions
 
     def __init__(self, read=False, write=False, delete=False, list=False, _str=None):  # pylint: disable=redefined-builtin
-        """
-        :param bool read:
-            Read the content, properties, metadata or block list of any blob in the
-            container. Use any blob in the container as the source of a copy operation.
-        :param bool write:
-            For any blob in the container, create or write content, properties,
-            metadata, or block list. Snapshot or lease the blob. Resize the blob
-            (page blob only). Use the blob as the destination of a copy operation
-            within the same account. Note: You cannot grant permissions to read or
-            write container properties or metadata, nor to lease a container, with
-            a container SAS. Use an account SAS instead.
-        :param bool delete:
-            Delete any blob in the container. Note: You cannot grant permissions to
-            delete a container with a container SAS. Use an account SAS instead.
-        :param bool list:
-            List blobs in the container.
-        :param str _str:
-            A string representing the permissions.
-        """
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)
@@ -889,18 +915,33 @@ class BlobPermissions(object):
     BlobPermissions class to be used with
     :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
 
-    :ivar BlobPermissions BlobPermissions.ADD:
+    :cvar BlobPermissions BlobPermissions.ADD:
         Add a block to an append blob.
-    :ivar BlobPermissions BlobPermissions.CREATE:
+    :cvar BlobPermissions BlobPermissions.CREATE:
         Write a new blob, snapshot a blob, or copy a blob to a new blob.
-    :ivar BlobPermissions BlobPermissions.DELETE:
+    :cvar BlobPermissions BlobPermissions.DELETE:
         Delete the blob.
-    :ivar BlobPermissions BlobPermissions.READ:
+    :cvar BlobPermissions BlobPermissions.READ:
         Read the content, properties, metadata and block list. Use the blob as the source of a copy operation.
-    :ivar BlobPermissions BlobPermissions.WRITE:
+    :cvar BlobPermissions BlobPermissions.WRITE:
         Create or write content, properties, metadata, or block list. Snapshot or lease
         the blob. Resize the blob (page blob only). Use the blob as the destination of a
         copy operation within the same account.
+    :param bool read:
+        Read the content, properties, metadata and block list. Use the blob as
+        the source of a copy operation.
+    :param bool add:
+        Add a block to an append blob.
+    :param bool create:
+        Write a new blob, snapshot a blob, or copy a blob to a new blob.
+    :param bool write:
+        Create or write content, properties, metadata, or block list. Snapshot
+        or lease the blob. Resize the blob (page blob only). Use the blob as the
+        destination of a copy operation within the same account.
+    :param bool delete:
+        Delete the blob.
+    :param str _str:
+        A string representing the permissions.
     """
     ADD = None  # type: BlobPermissions
     CREATE = None  # type: BlobPermissions
@@ -911,23 +952,6 @@ class BlobPermissions(object):
 
     def __init__(self, read=False, add=False, create=False, write=False,
                  delete=False, _str=None):
-        """
-        :param bool read:
-            Read the content, properties, metadata and block list. Use the blob as
-            the source of a copy operation.
-        :param bool add:
-            Add a block to an append blob.
-        :param bool create:
-            Write a new blob, snapshot a blob, or copy a blob to a new blob.
-        :param bool write:
-            Create or write content, properties, metadata, or block list. Snapshot
-            or lease the blob. Resize the blob (page blob only). Use the blob as the
-            destination of a copy operation within the same account.
-        :param bool delete:
-            Delete the blob.
-        :param str _str:
-            A string representing the permissions.
-        """
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)
