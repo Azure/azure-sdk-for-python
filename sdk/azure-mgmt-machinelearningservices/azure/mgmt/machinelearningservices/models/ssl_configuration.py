@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class SslConfiguration(Model):
-    """The SSL configuration for scoring.
+    """The ssl configuration for scoring.
 
-    :param status: Enable or disable SSL for scoring. Possible values include:
+    :param status: Enable or disable ssl for scoring. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or ~azure.mgmt.machinelearningservices.models.enum
     :param cert: Cert data

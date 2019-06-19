@@ -13,24 +13,31 @@ from msrest.serialization import Model
 
 
 class ScaleSettings(Model):
-    """scale settings for BatchAI Compute.
+    """scale settings for AML Compute.
 
-    :param max_node_count: Max number of nodes to use
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_node_count: Required. Max number of nodes to use
     :type max_node_count: int
-    :param min_node_count: Min number of nodes to use
+    :param min_node_count: Min number of nodes to use. Default value: 0 .
     :type min_node_count: int
-    :param auto_scale_enabled: Enable or disable auto scale
-    :type auto_scale_enabled: bool
+    :param node_idle_time_before_scale_down: Node Idle Time before scaling
+     down amlCompute
+    :type node_idle_time_before_scale_down: timedelta
     """
+
+    _validation = {
+        'max_node_count': {'required': True},
+    }
 
     _attribute_map = {
         'max_node_count': {'key': 'maxNodeCount', 'type': 'int'},
         'min_node_count': {'key': 'minNodeCount', 'type': 'int'},
-        'auto_scale_enabled': {'key': 'autoScaleEnabled', 'type': 'bool'},
+        'node_idle_time_before_scale_down': {'key': 'nodeIdleTimeBeforeScaleDown', 'type': 'duration'},
     }
 
-    def __init__(self, *, max_node_count: int=None, min_node_count: int=None, auto_scale_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, max_node_count: int, min_node_count: int=0, node_idle_time_before_scale_down=None, **kwargs) -> None:
         super(ScaleSettings, self).__init__(**kwargs)
         self.max_node_count = max_node_count
         self.min_node_count = min_node_count
-        self.auto_scale_enabled = auto_scale_enabled
+        self.node_idle_time_before_scale_down = node_idle_time_before_scale_down
