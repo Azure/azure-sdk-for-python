@@ -24,6 +24,9 @@ class QueryRequestOptions(Model):
     :param skip: The number of rows to skip from the beginning of the results.
      Overrides the next page offset when ```$skipToken``` property is present.
     :type skip: int
+    :param result_format: Defines in which format query result returned.
+     Possible values include: 'table', 'objectArray'
+    :type result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
     """
 
     _validation = {
@@ -35,6 +38,7 @@ class QueryRequestOptions(Model):
         'skip_token': {'key': '$skipToken', 'type': 'str'},
         'top': {'key': '$top', 'type': 'int'},
         'skip': {'key': '$skip', 'type': 'int'},
+        'result_format': {'key': 'resultFormat', 'type': 'ResultFormat'},
     }
 
     def __init__(self, **kwargs):
@@ -42,3 +46,4 @@ class QueryRequestOptions(Model):
         self.skip_token = kwargs.get('skip_token', None)
         self.top = kwargs.get('top', None)
         self.skip = kwargs.get('skip', None)
+        self.result_format = kwargs.get('result_format', None)

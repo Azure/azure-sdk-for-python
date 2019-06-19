@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.0 (2019-06-11)
+++++++++++++++++++
+
+- Result format can be table or objectArray
+
 1.0.0 (2019-03-28)
 ++++++++++++++++++
 
