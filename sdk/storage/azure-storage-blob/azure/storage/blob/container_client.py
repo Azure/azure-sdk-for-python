@@ -36,7 +36,7 @@ from ._blob_utils import (
     get_access_conditions,
     get_modification_conditions,
     deserialize_container_properties)
-from ._blob_models import (
+from .models import (
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
@@ -48,7 +48,7 @@ from .blob_client import BlobClient
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._blob_models import ContainerPermissions, PublicAccess
+    from .models import ContainerPermissions, PublicAccess
     from datetime import datetime
 
 

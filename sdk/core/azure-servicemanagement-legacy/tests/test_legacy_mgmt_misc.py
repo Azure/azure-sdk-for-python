@@ -41,8 +41,8 @@ from azure.servicemanagement import (
     get_certificate_from_publish_settings,
 )
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.blob import BlobServiceClient
-from azure.storage.blob.common import (
+from azure.storage.blob import (
+    BlobServiceClient,
     BlobType,
     PublicAccess
 )

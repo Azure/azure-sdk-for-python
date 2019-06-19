@@ -37,7 +37,7 @@ from ._generated.models import (
     LeaseAccessConditions,
     SequenceNumberAccessConditions
 )
-from ._blob_models import BlobProperties, ContainerProperties
+from .models import BlobProperties, ContainerProperties
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024

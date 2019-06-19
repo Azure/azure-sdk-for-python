@@ -16,7 +16,7 @@ from ._shared.models import(
     AccountPermissions,
     StorageErrorCode
 )
-from ._blob_models import (
+from .models import (
     BlobType,
     BlockState,
     StandardBlobTier,

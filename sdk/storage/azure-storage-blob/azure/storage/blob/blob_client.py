@@ -38,7 +38,6 @@ from ._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
     StorageErrorException)
-from ._blob_models import BlobType, BlobBlock
 from ._blob_utils import (
     deserialize_blob_properties,
     get_access_conditions,
@@ -48,13 +47,14 @@ from ._blob_utils import (
     upload_block_blob,
     upload_page_blob,
     upload_append_blob)
+from .models import BlobType, BlobBlock
 from .lease import LeaseClient
 from .polling import CopyStatusPoller
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._blob_models import (  # pylint: disable=unused-import
+    from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobPermissions,

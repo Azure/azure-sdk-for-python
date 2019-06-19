@@ -26,16 +26,16 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from .container_client import ContainerClient
 from .blob_client import BlobClient
-from ._blob_models import ContainerProperties, ContainerPropertiesPaged
+from .models import ContainerProperties, ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from .lease import LeaseClient
     from ._shared.models import AccountPermissions, ResourceTypes
-    from ._blob_models import (
+    from .lease import LeaseClient
+    from .models import (
         BlobProperties,
         Logging,
         Metrics,
