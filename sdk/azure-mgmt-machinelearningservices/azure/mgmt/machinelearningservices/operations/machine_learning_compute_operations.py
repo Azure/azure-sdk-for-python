@@ -525,10 +525,10 @@ class MachineLearningComputeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ComputeNodesInformation or ClientRawResponse if raw=true
+        :return: AmlComputeNodesInformation or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.ComputeNodesInformation or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.machinelearningservices.models.AmlComputeNodesInformation
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
@@ -566,7 +566,7 @@ class MachineLearningComputeOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ComputeNodesInformation', response)
+            deserialized = self._deserialize('AmlComputeNodesInformation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
