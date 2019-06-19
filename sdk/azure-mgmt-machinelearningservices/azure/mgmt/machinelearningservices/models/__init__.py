@@ -51,8 +51,8 @@ try:
     from .data_lake_analytics_py3 import DataLakeAnalytics
     from .service_principal_credentials_py3 import ServicePrincipalCredentials
     from .cluster_update_parameters_py3 import ClusterUpdateParameters
-    from .compute_nodes_information_py3 import ComputeNodesInformation
     from .aml_compute_node_information_py3 import AmlComputeNodeInformation
+    from .compute_nodes_information_py3 import ComputeNodesInformation
     from .aml_compute_nodes_information_py3 import AmlComputeNodesInformation
     from .compute_secrets_py3 import ComputeSecrets
     from .aks_compute_secrets_py3 import AksComputeSecrets
@@ -100,8 +100,8 @@ except (SyntaxError, ImportError):
     from .data_lake_analytics import DataLakeAnalytics
     from .service_principal_credentials import ServicePrincipalCredentials
     from .cluster_update_parameters import ClusterUpdateParameters
-    from .compute_nodes_information import ComputeNodesInformation
     from .aml_compute_node_information import AmlComputeNodeInformation
+    from .compute_nodes_information import ComputeNodesInformation
     from .aml_compute_nodes_information import AmlComputeNodesInformation
     from .compute_secrets import ComputeSecrets
     from .aks_compute_secrets import AksComputeSecrets
@@ -163,8 +163,8 @@ __all__ = [
     'DataLakeAnalytics',
     'ServicePrincipalCredentials',
     'ClusterUpdateParameters',
-    'ComputeNodesInformation',
     'AmlComputeNodeInformation',
+    'ComputeNodesInformation',
     'AmlComputeNodesInformation',
     'ComputeSecrets',
     'AksComputeSecrets',
