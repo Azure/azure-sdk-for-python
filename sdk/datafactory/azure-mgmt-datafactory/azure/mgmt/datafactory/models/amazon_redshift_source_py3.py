@@ -31,6 +31,10 @@ class AmazonRedshiftSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param query: Database query. Type: string (or Expression with resultType
@@ -53,13 +57,14 @@ class AmazonRedshiftSource(CopySource):
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
         'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, redshift_unload_settings=None, **kwargs) -> None:
-        super(AmazonRedshiftSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, query=None, redshift_unload_settings=None, **kwargs) -> None:
+        super(AmazonRedshiftSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.query = query
         self.redshift_unload_settings = redshift_unload_settings
         self.type = 'AmazonRedshiftSource'

@@ -38,6 +38,10 @@ class AzureDataExplorerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param ingestion_mapping_name: A name of a pre-created csv mapping that
@@ -62,14 +66,15 @@ class AzureDataExplorerSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'ingestion_mapping_name': {'key': 'ingestionMappingName', 'type': 'object'},
         'ingestion_mapping_as_json': {'key': 'ingestionMappingAsJson', 'type': 'object'},
         'flush_immediately': {'key': 'flushImmediately', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ingestion_mapping_name=None, ingestion_mapping_as_json=None, flush_immediately=None, **kwargs) -> None:
-        super(AzureDataExplorerSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, ingestion_mapping_name=None, ingestion_mapping_as_json=None, flush_immediately=None, **kwargs) -> None:
+        super(AzureDataExplorerSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.ingestion_mapping_name = ingestion_mapping_name
         self.ingestion_mapping_as_json = ingestion_mapping_as_json
         self.flush_immediately = flush_immediately

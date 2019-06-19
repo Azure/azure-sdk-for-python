@@ -29,7 +29,7 @@ class ActivityDependency(Model):
     """
 
     _validation = {
-        'activity': {'required': True},
+        'activity': {'required': True, 'min_length': 1},
         'dependency_conditions': {'required': True},
     }
 

@@ -38,6 +38,10 @@ class OracleSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
@@ -56,11 +60,12 @@ class OracleSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None, **kwargs) -> None:
-        super(OracleSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, pre_copy_script=None, **kwargs) -> None:
+        super(OracleSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.pre_copy_script = pre_copy_script
         self.type = 'OracleSink'

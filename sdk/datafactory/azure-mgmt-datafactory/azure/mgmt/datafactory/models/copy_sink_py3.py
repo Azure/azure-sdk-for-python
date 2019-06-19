@@ -46,6 +46,10 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -61,6 +65,7 @@ class CopySink(Model):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -68,7 +73,7 @@ class CopySink(Model):
         'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, **kwargs) -> None:
         super(CopySink, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.write_batch_size = write_batch_size
@@ -76,4 +81,5 @@ class CopySink(Model):
         self.sink_retry_count = sink_retry_count
         self.sink_retry_wait = sink_retry_wait
         self.max_concurrent_connections = max_concurrent_connections
+        self.disable_metrics_collection = disable_metrics_collection
         self.type = None

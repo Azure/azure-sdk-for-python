@@ -31,6 +31,10 @@ class OracleSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param oracle_reader_query: Oracle reader query. Type: string (or
@@ -58,6 +62,7 @@ class OracleSource(CopySource):
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'oracle_reader_query': {'key': 'oracleReaderQuery', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
@@ -65,8 +70,8 @@ class OracleSource(CopySource):
         'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, oracle_reader_query=None, query_timeout=None, partition_option=None, partition_settings=None, **kwargs) -> None:
-        super(OracleSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, oracle_reader_query=None, query_timeout=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+        super(OracleSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.oracle_reader_query = oracle_reader_query
         self.query_timeout = query_timeout
         self.partition_option = partition_option

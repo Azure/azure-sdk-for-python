@@ -46,6 +46,10 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -61,6 +65,7 @@ class CopySink(Model):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -76,4 +81,5 @@ class CopySink(Model):
         self.sink_retry_count = kwargs.get('sink_retry_count', None)
         self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
         self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.disable_metrics_collection = kwargs.get('disable_metrics_collection', None)
         self.type = None

@@ -31,6 +31,10 @@ class AzureTableSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param azure_table_source_query: Azure Table source query. Type: string
@@ -51,13 +55,14 @@ class AzureTableSource(CopySource):
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'azure_table_source_query': {'key': 'azureTableSourceQuery', 'type': 'object'},
         'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, azure_table_source_query=None, azure_table_source_ignore_table_not_found=None, **kwargs) -> None:
-        super(AzureTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, azure_table_source_query=None, azure_table_source_ignore_table_not_found=None, **kwargs) -> None:
+        super(AzureTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.azure_table_source_query = azure_table_source_query
         self.azure_table_source_ignore_table_not_found = azure_table_source_ignore_table_not_found
         self.type = 'AzureTableSource'

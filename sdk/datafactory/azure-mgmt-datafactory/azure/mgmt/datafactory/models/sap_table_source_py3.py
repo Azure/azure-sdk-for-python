@@ -31,6 +31,10 @@ class SapTableSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param disable_metrics_collection: Specifies whether to disable collecting
+     data source metrics. Type: boolean (or Expression with resultType
+     boolean).
+    :type disable_metrics_collection: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param row_count: The number of rows to be retrieved. Type: integer(or
@@ -73,6 +77,7 @@ class SapTableSource(CopySource):
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'row_count': {'key': 'rowCount', 'type': 'object'},
         'row_skips': {'key': 'rowSkips', 'type': 'object'},
@@ -84,8 +89,8 @@ class SapTableSource(CopySource):
         'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, partition_option=None, partition_settings=None, **kwargs) -> None:
-        super(SapTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, disable_metrics_collection=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+        super(SapTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, **kwargs)
         self.row_count = row_count
         self.row_skips = row_skips
         self.rfc_table_fields = rfc_table_fields
