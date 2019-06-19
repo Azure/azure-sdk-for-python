@@ -70,13 +70,13 @@ def test_receive_with_offset_sync(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-        offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=offset)
-        with offset_receiver:
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 0
-            senders[0].send(EventData(b"Message after offset"))
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 1
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=offset)
+    with offset_receiver:
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message after offset"))
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -97,10 +97,10 @@ def test_receive_with_inclusive_offset(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-        offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset.value, inclusive=True))
-        with offset_receiver:
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 1
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset.value, inclusive=True))
+    with offset_receiver:
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -123,13 +123,13 @@ def test_receive_with_datetime_sync(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-        offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
-        with offset_receiver:
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 0
-            senders[0].send(EventData(b"Message after timestamp"))
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 1
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
+    with offset_receiver:
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message after timestamp"))
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -174,14 +174,14 @@ def test_receive_with_sequence_no(connstr_senders):
         assert len(received) == 1
         offset = received[0].sequence_number
 
-        offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, False))
-        with offset_receiver:
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 0
-            senders[0].send(EventData(b"Message next in sequence"))
-            time.sleep(1)
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 1
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, False))
+    with offset_receiver:
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message next in sequence"))
+        time.sleep(1)
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 1
 
 @pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
@@ -195,10 +195,10 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
         offset = received[0].sequence_number
-        offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
-        with offset_receiver:
-            received = offset_receiver.receive(timeout=5)
-            assert len(received) == 1
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
+    with offset_receiver:
+        received = offset_receiver.receive(timeout=5)
+        assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -266,8 +266,7 @@ def test_receive_over_websocket_sync(connstr_senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 0
 
-        with senders[0] as sender:
-            sender.send(event_list)
+        senders[0].send(event_list)
 
         time.sleep(1)
 
