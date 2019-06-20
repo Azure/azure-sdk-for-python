@@ -8,11 +8,11 @@ from .credentials import (
     AsyncClientSecretCredential,
     AsyncEnvironmentCredential,
     AsyncManagedIdentityCredential,
-    AsyncTokenCredentialChain,
+    AsyncChainedTokenCredential,
 )
 
 
-class AsyncDefaultAzureCredential(AsyncTokenCredentialChain):
+class AsyncDefaultAzureCredential(AsyncChainedTokenCredential):
     """default credential is environment followed by MSI/IMDS"""
 
     def __init__(self, **kwargs):
@@ -25,5 +25,5 @@ __all__ = [
     "AsyncDefaultAzureCredential",
     "AsyncEnvironmentCredential",
     "AsyncManagedIdentityCredential",
-    "AsyncTokenCredentialChain",
+    "AsyncChainedTokenCredential",
 ]
