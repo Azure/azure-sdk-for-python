@@ -79,7 +79,7 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'azure-storage-blob~=1.3',
-        'azure-core>=0.0.1',
+        # 'azure-core>=0.0.1', # will add back here and remove from dev_requirements.txt after azure core is released
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
