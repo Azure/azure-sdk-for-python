@@ -34,7 +34,7 @@ class CapacityPool(Model):
     :vartype pool_id: str
     :param size: Required. size. Provisioned size of the pool (in bytes).
      Allowed values are in 4TiB chunks (value must be multiply of
-     4398046511104). Default value: 4398046511104 .
+     4398046511104).
     :type size: long
     :param service_level: Required. serviceLevel. The service level of the
      file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
@@ -75,6 +75,6 @@ class CapacityPool(Model):
         self.type = None
         self.tags = kwargs.get('tags', None)
         self.pool_id = None
-        self.size = kwargs.get('size', 4398046511104)
+        self.size = kwargs.get('size', None)
         self.service_level = kwargs.get('service_level', "Premium")
         self.provisioning_state = None
