@@ -543,9 +543,9 @@ class PrivateCloud(Model):
     :type private_cloud_properties_type: str
     :param v_sphere_version: e.g. "6.5u2"
     :type v_sphere_version: str
-    :param vcenter_fqdn: FQDN for vcneter access
+    :param vcenter_fqdn: FQDN for vcenter access
     :type vcenter_fqdn: str
-    :param vcenter_refid: Vcenters' ip address
+    :param vcenter_refid: Vcenter ip address
     :type vcenter_refid: str
     :param virtual_machine_templates: The list of Virtual Machine Templates
     :type virtual_machine_templates:
@@ -884,8 +884,8 @@ class VirtualDiskController(Model):
     :vartype id: str
     :ivar name: The display name of Controller
     :vartype name: str
-    :ivar sub_type: dik controller subtype (VMWARE_PARAVIRTUAL, BUS_PARALEL,
-     LSI_PARALEL, LSI_SAS)
+    :ivar sub_type: dik controller subtype (VMWARE_PARAVIRTUAL, BUS_PARALLEL,
+     LSI_PARALLEL, LSI_SAS)
     :vartype sub_type: str
     :ivar type: disk controller type (SCSI)
     :vartype type: str
