@@ -51,49 +51,57 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: InvoiceListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.InvoiceListResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of InvoiceSummary
+        :rtype:
+         ~azure.mgmt.billing.models.InvoiceSummaryPaged[~azure.mgmt.billing.models.InvoiceSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
-        query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_by_billing_account_name.metadata['url']
+                path_format_arguments = {
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+                query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('InvoiceListResult', response)
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.InvoiceSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.InvoiceSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -116,50 +124,58 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: InvoiceListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.InvoiceListResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of InvoiceSummary
+        :rtype:
+         ~azure.mgmt.billing.models.InvoiceSummaryPaged[~azure.mgmt.billing.models.InvoiceSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.list_by_billing_profile.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
-        query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_by_billing_profile.metadata['url']
+                path_format_arguments = {
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+                query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('InvoiceListResult', response)
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.InvoiceSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.InvoiceSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
