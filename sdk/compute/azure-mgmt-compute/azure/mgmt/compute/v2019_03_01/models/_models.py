@@ -153,10 +153,9 @@ class AutomaticOSUpgradePolicy(Model):
     :param enable_automatic_os_upgrade: Indicates whether OS upgrades should
      automatically be applied to scale set instances in a rolling fashion when
      a newer version of the OS image becomes available. Default value is false.
-     If this is set to true for Windows based scale sets, recommendation is to
-     set
+     <br><br> If this is set to true for Windows based scale sets,
      [enableAutomaticUpdates](https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet)
-     to false.
+     is automatically set to false and cannot be set to true.
     :type enable_automatic_os_upgrade: bool
     :param disable_automatic_rollback: Whether OS image rollback feature
      should be disabled. Default value is false.
@@ -4359,7 +4358,8 @@ class VirtualMachineReimageParameters(Model):
     will always be reimaged.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
-     false.
+     false. Note: This temp disk reimage parameter is only supported for
+     VM/VMSS with Ephemeral OS disk.
     :type temp_disk: bool
     """
 
@@ -5241,7 +5241,8 @@ class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters)
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
-     false.
+     false. Note: This temp disk reimage parameter is only supported for
+     VM/VMSS with Ephemeral OS disk.
     :type temp_disk: bool
     """
 
@@ -5257,7 +5258,8 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
-     false.
+     false. Note: This temp disk reimage parameter is only supported for
+     VM/VMSS with Ephemeral OS disk.
     :type temp_disk: bool
     :param instance_ids: The virtual machine scale set instance ids. Omitting
      the virtual machine scale set instance ids will result in the operation
@@ -6400,10 +6402,10 @@ class WindowsConfiguration(Model):
      This will ensure that VM Agent is installed on the VM so that extensions
      can be added to the VM later.
     :type provision_vm_agent: bool
-    :param enable_automatic_updates: Indicates whether virtual machine is
-     enabled for automatic Windows updates. Default value is true. <br><br> For
-     virtual machine scale sets, this property can be updated and updates will
-     take effect on OS reprovisioning.
+    :param enable_automatic_updates: Indicates whether Automatic Updates is
+     enabled for the Windows virtual machine. Default value is true. <br><br>
+     For virtual machine scale sets, this property can be updated and updates
+     will take effect on OS reprovisioning.
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g.
      "Pacific Standard Time"
