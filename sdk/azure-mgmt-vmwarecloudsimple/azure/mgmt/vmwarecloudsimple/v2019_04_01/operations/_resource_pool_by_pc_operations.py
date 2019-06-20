@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ResourcepoolByPCOperations(object):
-    """ResourcepoolByPCOperations operations.
+class ResourcePoolByPCOperations(object):
+    """ResourcePoolByPCOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 

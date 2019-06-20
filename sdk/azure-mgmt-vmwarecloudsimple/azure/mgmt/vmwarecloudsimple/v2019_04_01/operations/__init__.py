@@ -14,8 +14,8 @@ from ._dedicated_cloud_node_operations import DedicatedCloudNodeOperations
 from ._dedicated_cloud_service_operations import DedicatedCloudServiceOperations
 from ._skus_availability_within_region_operations import SkusAvailabilityWithinRegionOperations
 from ._private_cloud_by_region_operations import PrivateCloudByRegionOperations
-from ._resourcepools_by_pc_operations import ResourcepoolsByPCOperations
-from ._resourcepool_by_pc_operations import ResourcepoolByPCOperations
+from ._resource_pools_by_pc_operations import ResourcePoolsByPCOperations
+from ._resource_pool_by_pc_operations import ResourcePoolByPCOperations
 from ._virtual_machine_templates_by_pc_operations import VirtualMachineTemplatesByPCOperations
 from ._virtual_machine_template_by_pc_operations import VirtualMachineTemplateByPCOperations
 from ._virtual_networks_by_pc_operations import VirtualNetworksByPCOperations
@@ -30,8 +30,8 @@ __all__ = [
     'DedicatedCloudServiceOperations',
     'SkusAvailabilityWithinRegionOperations',
     'PrivateCloudByRegionOperations',
-    'ResourcepoolsByPCOperations',
-    'ResourcepoolByPCOperations',
+    'ResourcePoolsByPCOperations',
+    'ResourcePoolByPCOperations',
     'VirtualMachineTemplatesByPCOperations',
     'VirtualMachineTemplateByPCOperations',
     'VirtualNetworksByPCOperations',

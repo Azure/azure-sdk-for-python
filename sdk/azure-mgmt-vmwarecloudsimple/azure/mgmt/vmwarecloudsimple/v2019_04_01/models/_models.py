@@ -351,7 +351,7 @@ class DedicatedCloudService(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedcloudservices/{dedicatedCloudServiceName}
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudServices/{dedicatedCloudServiceName}
     :vartype id: str
     :param location: Required. Azure region
     :type location: str
@@ -680,14 +680,14 @@ class Sku(Model):
 
     :param capacity: The capacity of the SKU
     :type capacity: str
-    :param description: dedicatedcloudnode example: 8 x Ten-Core Intel® Xeon®
+    :param description: dedicatedCloudNode example: 8 x Ten-Core Intel® Xeon®
      Processor E5-2640 v4 2.40GHz 25MB Cache (90W); 12 x 64GB PC4-19200 2400MHz
      DDR4 ECC Registered DIMM, ...
     :type description: str
     :param family: If the service has different generations of hardware, for
      the same SKU, then that can be captured here
     :type family: str
-    :param name: Required. The name of the SKU for VMWare Cloudsimple Node
+    :param name: Required. The name of the SKU for VMWare CloudSimple Node
     :type name: str
     :param tier: The tier of the SKU
     :type tier: str
@@ -719,13 +719,14 @@ class SkuAvailability(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param dedicated_availability_zone_id: CSOS Availability Zone id
+    :param dedicated_availability_zone_id: CloudSimple Availability Zone id
     :type dedicated_availability_zone_id: str
-    :param dedicated_availability_zone_name: CSOS Availability Zone Name
+    :param dedicated_availability_zone_name: CloudSimple Availability Zone
+     Name
     :type dedicated_availability_zone_name: str
-    :param dedicated_placement_group_id: CSOS Placement Group Id
+    :param dedicated_placement_group_id: CloudSimple Placement Group Id
     :type dedicated_placement_group_id: str
-    :param dedicated_placement_group_name: CSOS Placement Group name
+    :param dedicated_placement_group_name: CloudSimple Placement Group name
     :type dedicated_placement_group_name: str
     :param limit: Required. indicates how many resources of a given SKU is
      available in a AZ->PG
@@ -1241,22 +1242,22 @@ class VirtualNic(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param ip_addresses: NIC's ip address
+    :param ip_addresses: NIC ip address
     :type ip_addresses: list[str]
-    :param mac_address: NIC's MAC address
+    :param mac_address: NIC MAC address
     :type mac_address: str
     :param network: The list of Virtual Networks
     :type network:
      ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetwork
-    :param nic_type: Required. NIC's type. Possible values include: 'E1000',
+    :param nic_type: Required. NIC type. Possible values include: 'E1000',
      'E1000E', 'PCNET32', 'VMXNET', 'VMXNET2', 'VMXNET3'
     :type nic_type: str or
      ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.NICType
     :param power_on_boot: Is NIC powered on/off on boot
     :type power_on_boot: bool
-    :param virtual_nic_id: NIC's id
+    :param virtual_nic_id: NIC id
     :type virtual_nic_id: str
-    :ivar virtual_nic_name: NIC's name
+    :ivar virtual_nic_name: NIC name
     :vartype virtual_nic_name: str
     """
 

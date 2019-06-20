@@ -19,8 +19,8 @@ from .operations import DedicatedCloudNodeOperations
 from .operations import DedicatedCloudServiceOperations
 from .operations import SkusAvailabilityWithinRegionOperations
 from .operations import PrivateCloudByRegionOperations
-from .operations import ResourcepoolsByPCOperations
-from .operations import ResourcepoolByPCOperations
+from .operations import ResourcePoolsByPCOperations
+from .operations import ResourcePoolByPCOperations
 from .operations import VirtualMachineTemplatesByPCOperations
 from .operations import VirtualMachineTemplateByPCOperations
 from .operations import VirtualNetworksByPCOperations
@@ -46,10 +46,10 @@ class VMwareCloudSimpleClient(VMwareCloudSimpleClientOperationsMixin, SDKClient)
     :vartype skus_availability_within_region: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.SkusAvailabilityWithinRegionOperations
     :ivar private_cloud_by_region: PrivateCloudByRegion operations
     :vartype private_cloud_by_region: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.PrivateCloudByRegionOperations
-    :ivar resourcepools_by_pc: ResourcepoolsByPC operations
-    :vartype resourcepools_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcepoolsByPCOperations
-    :ivar resourcepool_by_pc: ResourcepoolByPC operations
-    :vartype resourcepool_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcepoolByPCOperations
+    :ivar resource_pools_by_pc: ResourcePoolsByPC operations
+    :vartype resource_pools_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcePoolsByPCOperations
+    :ivar resource_pool_by_pc: ResourcePoolByPC operations
+    :vartype resource_pool_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcePoolByPCOperations
     :ivar virtual_machine_templates_by_pc: VirtualMachineTemplatesByPC operations
     :vartype virtual_machine_templates_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualMachineTemplatesByPCOperations
     :ivar virtual_machine_template_by_pc: VirtualMachineTemplateByPC operations
@@ -96,9 +96,9 @@ class VMwareCloudSimpleClient(VMwareCloudSimpleClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.private_cloud_by_region = PrivateCloudByRegionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.resourcepools_by_pc = ResourcepoolsByPCOperations(
+        self.resource_pools_by_pc = ResourcePoolsByPCOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.resourcepool_by_pc = ResourcepoolByPCOperations(
+        self.resource_pool_by_pc = ResourcePoolByPCOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_templates_by_pc = VirtualMachineTemplatesByPCOperations(
             self._client, self.config, self._serialize, self._deserialize)
