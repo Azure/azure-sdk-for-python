@@ -176,3 +176,14 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+
+class LocationMode(object):
+    """
+    Specifies the location the request should be sent to. This mode only applies
+    for RA-GRS accounts which allow secondary read access. All other account types
+    must use PRIMARY.
+    """
+
+    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
+    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.

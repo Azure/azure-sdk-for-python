@@ -43,10 +43,10 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     DecodeError)
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
-from .models import LocationMode, StorageErrorCode
-from .authentication import SharedKeyCredentialPolicy
-from .policies import (
+from azure.storage.file._shared.constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
+from azure.storage.file._shared.models import LocationMode, StorageErrorCode
+from azure.storage.file._shared.authentication import SharedKeyCredentialPolicy
+from azure.storage.file._shared.policies import (
     StorageFileSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
