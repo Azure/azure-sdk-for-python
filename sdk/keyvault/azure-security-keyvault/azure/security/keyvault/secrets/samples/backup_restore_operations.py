@@ -42,7 +42,7 @@ def run_sample():
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n1. Create Secret")
         secret = client.set_secret("secretName", "secretValue")
-        print("Secret with name '{0}' created with value {1}".format(secret.name, secret.value))
+        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
         # Backups are good to have, if in case secrets gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.

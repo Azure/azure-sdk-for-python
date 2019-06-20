@@ -84,7 +84,7 @@ async def run_sample():
         print("\n3. List deleted secrets from the Key Vault")
         deleted_secrets = client.list_deleted_secrets()
         async for deleted_secret in deleted_secrets:
-            print("Secret with name '{0}' has recovery id {1}".format(deleted_secret.name, deleted_secret.recovery_id))
+            print("Secret with name '{0}' has recovery id '{1}'".format(deleted_secret.name, deleted_secret.recovery_id))
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:

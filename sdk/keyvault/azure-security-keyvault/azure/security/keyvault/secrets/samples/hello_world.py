@@ -1,5 +1,6 @@
 import datetime
 import os
+import pytz
 from azure.security.keyvault import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -42,15 +43,15 @@ def run_sample():
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n1. Create Secret")
-        expires = datetime.datetime.now() + datetime.timedelta(days=365)
+        expires = datetime.datetime.now(pytz.timezone("America/New_York")) + datetime.timedelta(days=365)
         secret = client.set_secret("secretName", "secretValue", expires=expires)
-        print("Secret with name '{0}' created with value {1}".format(secret.name, secret.value))
-        print("Secret with name '{0}' expires on {1}".format(secret.name, secret.expires))
+        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
+        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.expires))
 
         # Let's get the bank secret using its name
         print("\n2. Get a Secret by name")
         bank_secret = client.get_secret(secret.name)
-        print("Secret with name '{0}' was found with value {1}.".format(bank_secret.name, bank_secret.value))
+        print("Secret with name '{0}' was found with value '{1}'.".format(bank_secret.name, bank_secret.value))
 
         # After one year, the bank account is still active, we need to update the expiry time of the secret.
         # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
@@ -58,14 +59,14 @@ def run_sample():
         print("\n3. Update a Secret by name")
         expires = bank_secret.expires + datetime.timedelta(days=365)
         updated_secret = client.update_secret(secret.name, expires=expires)
-        print("Secret with name '{0}' was updated on date {1}".format(secret.name, updated_secret.updated))
-        print("Secret with name '{0}' was updated to expire on {1}".format(secret.name, updated_secret.expires))
+        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret.updated))
+        print("Secret with name '{0}' was updated to expire on '{1}'".format(secret.name, updated_secret.expires))
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the Key Vault.
         # To achieve this, we need to create a new version of the secret in the Key Vault. The update operation cannot
         # change the value of the secret.
         secret = client.set_secret(secret.name, "newSecretValue")
-        print("Secret with name '{0}' created with value {1}".format(secret.name, secret.value))
+        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n4. Delete Secret")
