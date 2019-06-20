@@ -273,7 +273,7 @@ class _BatchSendEventData(EventData):
 
 class EventPosition(object):
     """
-    The position(offset, sequence or timestamp) where a receiver starts. Examples:
+    The position(offset, sequence or timestamp) where a consumer starts. Examples:
 
     Beginning of the event stream:
       >>> event_pos = EventPosition("-1")

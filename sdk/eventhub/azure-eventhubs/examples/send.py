@@ -33,16 +33,16 @@ try:
 
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-    sender = client.create_producer(partition_id="0")
+    producer = client.create_producer(partition_id="0")
 
     ed = EventData("msg")
 
     try:
         start_time = time.time()
-        with sender:
+        with producer:
             for i in range(100):
                 logger.info("Sending message: {}".format(i))
-                sender.send(ed)
+                producer.send(ed)
     except:
         raise
     finally:

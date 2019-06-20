@@ -21,9 +21,9 @@ iot_connection_str = os.environ['IOTHUB_CONNECTION_STR']
 
 client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=False)
 try:
-    sender = client.create_producer(operation='/messages/devicebound')
-    with sender:
-        sender.send(EventData(b"A single event", to_device=iot_device_id))
+    producer = client.create_producer(operation='/messages/devicebound')
+    with producer:
+        producer.send(EventData(b"A single event", to_device=iot_device_id))
 
 except KeyboardInterrupt:
     pass

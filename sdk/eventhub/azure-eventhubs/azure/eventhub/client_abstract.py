@@ -117,7 +117,7 @@ class EventHubClientAbstract(object):
          ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
          transport type is explicitly requested.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
          will return as soon as service returns no new events. Default value is the same as prefetch.
@@ -181,7 +181,7 @@ class EventHubClientAbstract(object):
          ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
          transport type is explicitly requested.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
          will return as soon as service returns no new events. Default value is the same as prefetch.
@@ -237,7 +237,7 @@ class EventHubClientAbstract(object):
          ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
          transport type is explicitly requested.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
          will return as soon as service returns no new events. Default value is the same as prefetch.

@@ -57,25 +57,25 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
 
     from azure.eventhub import EventData, EventPosition
 
-    # [START create_eventhub_client_sender]
+    # [START create_eventhub_client_producer]
     client = EventHubClient.from_connection_string(connection_str)
-    # Create a sender.
-    sender = client.create_producer(partition_id="0")
+    # Create a producer.
+    producer = client.create_producer(partition_id="0")
     # [END create_eventhub_client_sender]
 
     # [START create_eventhub_client_receiver]
     client = EventHubClient.from_connection_string(connection_str)
-    # Create a receiver.
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-    # Create an exclusive receiver object.
-    exclusive_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=1)
+    # Create a consumer.
+    consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    # Create an exclusive consumer object.
+    exclusive_consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=1)
     # [END create_eventhub_client_receiver]
 
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_producer(partition_id="0")
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    producer = client.create_producer(partition_id="0")
+    consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
-        receiver.receive(timeout=1)
+        consumer.receive(timeout=1)
 
         # [START create_event_data]
         event_data = EventData("String data")
@@ -87,16 +87,16 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
         # [END create_event_data]
 
         # [START eventhub_client_sync_send]
-        with sender:
+        with producer:
             event_data = EventData(b"A single event")
-            sender.send(event_data)
+            producer.send(event_data)
         # [END eventhub_client_sync_send]
         time.sleep(1)
 
         # [START eventhub_client_sync_receive]
-        with receiver:
+        with consumer:
             logger = logging.getLogger("azure.eventhub")
-            received = receiver.receive(timeout=5, max_batch_size=1)
+            received = consumer.receive(timeout=5, max_batch_size=1)
             for event_data in received:
                 logger.info("Message received:{}".format(event_data.body_as_str()))
         # [END eventhub_client_sync_receive]
@@ -107,30 +107,30 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
         pass
 
 
-def test_example_eventhub_sender_ops(live_eventhub_config, connection_str):
+def test_example_eventhub_producer_ops(live_eventhub_config, connection_str):
     from azure.eventhub import EventHubClient, EventData
 
     # [START eventhub_client_sender_close]
     client = EventHubClient.from_connection_string(connection_str)
-    sender = client.create_producer(partition_id="0")
+    producer = client.create_producer(partition_id="0")
     try:
-        sender.send(EventData(b"A single event"))
+        producer.send(EventData(b"A single event"))
     finally:
         # Close down the send handler.
-        sender.close()
+        producer.close()
     # [END eventhub_client_sender_close]
 
 
-def test_example_eventhub_receiver_ops(live_eventhub_config, connection_str):
+def test_example_eventhub_consumer_ops(live_eventhub_config, connection_str):
     from azure.eventhub import EventHubClient
     from azure.eventhub import EventPosition
 
     # [START eventhub_client_receiver_close]
     client = EventHubClient.from_connection_string(connection_str)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
-        receiver.receive(timeout=1)
+        consumer.receive(timeout=1)
     finally:
         # Close down the receive handler.
-        receiver.close()
+        consumer.close()
     # [END eventhub_client_receiver_close]

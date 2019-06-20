@@ -28,7 +28,7 @@ class EventHubProducer(object):
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
-        Instantiate an EventHub event EventHubProducer handler.
+        Instantiate an EventHubProducer.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient.
@@ -43,7 +43,7 @@ class EventHubProducer(object):
         :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
          periods of inactivity. The default value is None, i.e. no keep alive pings.
         :type keep_alive: float
-        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+        :param auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
         """
@@ -58,7 +58,7 @@ class EventHubProducer(object):
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
         self.reconnect_backoff = 1
-        self.name = "EHSender-{}".format(uuid.uuid4())
+        self.name = "EHProducer-{}".format(uuid.uuid4())
         self.unsent_events = None
         if partition:
             self.target += "/Partitions/" + partition
@@ -300,7 +300,7 @@ class EventHubProducer(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This sender has been closed. Please create a new sender to send event data.", self.error)
+            raise EventHubError("This producer has been closed. Please create a new producer to send event data.", self.error)
 
     @staticmethod
     def _set_partition_key(event_datas, partition_key):
