@@ -15,6 +15,9 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.workspaces_operations import WorkspacesOperations
+from .operations.usages_operations import UsagesOperations
+from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from .operations.quotas_operations import QuotasOperations
 from .operations.machine_learning_compute_operations import MachineLearningComputeOperations
 from . import models
 
@@ -61,6 +64,12 @@ class AzureMachineLearningWorkspaces(SDKClient):
     :vartype operations: azure.mgmt.machinelearningservices.operations.Operations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.machinelearningservices.operations.WorkspacesOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.machinelearningservices.operations.UsagesOperations
+    :ivar virtual_machine_sizes: VirtualMachineSizes operations
+    :vartype virtual_machine_sizes: azure.mgmt.machinelearningservices.operations.VirtualMachineSizesOperations
+    :ivar quotas: Quotas operations
+    :vartype quotas: azure.mgmt.machinelearningservices.operations.QuotasOperations
     :ivar machine_learning_compute: MachineLearningCompute operations
     :vartype machine_learning_compute: azure.mgmt.machinelearningservices.operations.MachineLearningComputeOperations
 
@@ -79,13 +88,19 @@ class AzureMachineLearningWorkspaces(SDKClient):
         super(AzureMachineLearningWorkspaces, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01-preview'
+        self.api_version = '2019-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.machine_learning_compute = MachineLearningComputeOperations(
             self._client, self.config, self._serialize, self._deserialize)

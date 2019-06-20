@@ -12,8 +12,8 @@
 from .compute_py3 import Compute
 
 
-class BatchAI(Compute):
-    """A Machine Learning compute based on Azure BatchAI.
+class Databricks(Compute):
+    """A DataFactory compute.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,16 +34,20 @@ class BatchAI(Compute):
     :vartype created_on: datetime
     :ivar modified_on: The date and time when the compute was last modified.
     :vartype modified_on: datetime
-    :param resource_id: ARM resource id of the compute
+    :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
     :ivar provisioning_errors: Errors during provisioning
     :vartype provisioning_errors:
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
+    :ivar is_attached_compute: Indicating whether the compute was provisioned
+     by user and brought from outside if true, or machine learning service
+     provisioned it if false.
+    :vartype is_attached_compute: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
-    :param properties: BatchAI properties
+    :param properties:
     :type properties:
-     ~azure.mgmt.machinelearningservices.models.BatchAIProperties
+     ~azure.mgmt.machinelearningservices.models.DatabricksProperties
     """
 
     _validation = {
@@ -51,6 +55,7 @@ class BatchAI(Compute):
         'created_on': {'readonly': True},
         'modified_on': {'readonly': True},
         'provisioning_errors': {'readonly': True},
+        'is_attached_compute': {'readonly': True},
         'compute_type': {'required': True},
     }
 
@@ -62,11 +67,12 @@ class BatchAI(Compute):
         'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
+        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchAIProperties'},
+        'properties': {'key': 'properties', 'type': 'DatabricksProperties'},
     }
 
     def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(BatchAI, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+        super(Databricks, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
         self.properties = properties
-        self.compute_type = 'BatchAI'
+        self.compute_type = 'Databricks'
