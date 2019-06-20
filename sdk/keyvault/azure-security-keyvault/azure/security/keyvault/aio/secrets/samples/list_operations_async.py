@@ -54,7 +54,7 @@ async def run_sample():
         print("\n2. List secrets from the Key Vault")
         secrets = client.list_secrets()
         async for secret in secrets:
-            retrieved_secret = client.get_secret(secret.name)
+            retrieved_secret = await client.get_secret(secret.name)
             print(
                 "Secret with name '{0}' with value '{1}' was found.".format(retrieved_secret.name, retrieved_secret.value)
             )

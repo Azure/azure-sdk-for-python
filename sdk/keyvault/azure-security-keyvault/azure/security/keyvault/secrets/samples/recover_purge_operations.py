@@ -63,7 +63,7 @@ def run_sample():
         client.delete_secret(storage_secret.name)
 
         # To ensure secret is deleted on the server side.
-        print("\nDeleting Secret...")
+        print("\nDeleting Storage Secret...")
         time.sleep(20)
 
         # To ensure permanent deletion, we might need to purge the secret.
