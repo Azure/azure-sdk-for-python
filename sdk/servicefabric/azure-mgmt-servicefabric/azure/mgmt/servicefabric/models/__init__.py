@@ -10,127 +10,127 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .service_type_delta_health_policy_py3 import ServiceTypeDeltaHealthPolicy
-    from .application_delta_health_policy_py3 import ApplicationDeltaHealthPolicy
-    from .service_type_health_policy_py3 import ServiceTypeHealthPolicy
-    from .application_health_policy_py3 import ApplicationHealthPolicy
-    from .available_operation_display_py3 import AvailableOperationDisplay
-    from .azure_active_directory_py3 import AzureActiveDirectory
-    from .certificate_description_py3 import CertificateDescription
-    from .client_certificate_common_name_py3 import ClientCertificateCommonName
-    from .client_certificate_thumbprint_py3 import ClientCertificateThumbprint
-    from .cluster_version_details_py3 import ClusterVersionDetails
-    from .server_certificate_common_name_py3 import ServerCertificateCommonName
-    from .server_certificate_common_names_py3 import ServerCertificateCommonNames
-    from .diagnostics_storage_account_config_py3 import DiagnosticsStorageAccountConfig
-    from .settings_parameter_description_py3 import SettingsParameterDescription
-    from .settings_section_description_py3 import SettingsSectionDescription
-    from .endpoint_range_description_py3 import EndpointRangeDescription
-    from .node_type_description_py3 import NodeTypeDescription
-    from .cluster_health_policy_py3 import ClusterHealthPolicy
-    from .cluster_upgrade_delta_health_policy_py3 import ClusterUpgradeDeltaHealthPolicy
-    from .cluster_upgrade_policy_py3 import ClusterUpgradePolicy
-    from .cluster_py3 import Cluster
-    from .cluster_code_versions_result_py3 import ClusterCodeVersionsResult
-    from .cluster_code_versions_list_result_py3 import ClusterCodeVersionsListResult
-    from .cluster_list_result_py3 import ClusterListResult
-    from .cluster_update_parameters_py3 import ClusterUpdateParameters
-    from .operation_result_py3 import OperationResult
-    from .resource_py3 import Resource
-    from .error_model_error_py3 import ErrorModelError
-    from .error_model_py3 import ErrorModel, ErrorModelException
-    from .application_metric_description_py3 import ApplicationMetricDescription
-    from .application_resource_py3 import ApplicationResource
-    from .application_resource_list_py3 import ApplicationResourceList
-    from .arm_rolling_upgrade_monitoring_policy_py3 import ArmRollingUpgradeMonitoringPolicy
-    from .arm_service_type_health_policy_py3 import ArmServiceTypeHealthPolicy
-    from .arm_application_health_policy_py3 import ArmApplicationHealthPolicy
-    from .application_upgrade_policy_py3 import ApplicationUpgradePolicy
-    from .application_resource_update_py3 import ApplicationResourceUpdate
-    from .application_type_resource_py3 import ApplicationTypeResource
-    from .application_type_resource_list_py3 import ApplicationTypeResourceList
-    from .application_type_version_resource_py3 import ApplicationTypeVersionResource
-    from .application_type_version_resource_list_py3 import ApplicationTypeVersionResourceList
-    from .service_correlation_description_py3 import ServiceCorrelationDescription
-    from .named_partition_scheme_description_py3 import NamedPartitionSchemeDescription
-    from .partition_scheme_description_py3 import PartitionSchemeDescription
-    from .proxy_resource_py3 import ProxyResource
-    from .service_load_metric_description_py3 import ServiceLoadMetricDescription
-    from .service_placement_policy_description_py3 import ServicePlacementPolicyDescription
-    from .service_resource_properties_py3 import ServiceResourceProperties
-    from .service_resource_py3 import ServiceResource
-    from .service_resource_list_py3 import ServiceResourceList
-    from .service_resource_properties_base_py3 import ServiceResourcePropertiesBase
-    from .service_resource_update_properties_py3 import ServiceResourceUpdateProperties
-    from .service_resource_update_py3 import ServiceResourceUpdate
-    from .singleton_partition_scheme_description_py3 import SingletonPartitionSchemeDescription
-    from .stateful_service_properties_py3 import StatefulServiceProperties
-    from .stateful_service_update_properties_py3 import StatefulServiceUpdateProperties
-    from .stateless_service_properties_py3 import StatelessServiceProperties
-    from .stateless_service_update_properties_py3 import StatelessServiceUpdateProperties
-    from .uniform_int64_range_partition_scheme_description_py3 import UniformInt64RangePartitionSchemeDescription
+    from ._models_py3 import ApplicationDeltaHealthPolicy
+    from ._models_py3 import ApplicationHealthPolicy
+    from ._models_py3 import ApplicationMetricDescription
+    from ._models_py3 import ApplicationResource
+    from ._models_py3 import ApplicationResourceList
+    from ._models_py3 import ApplicationResourceUpdate
+    from ._models_py3 import ApplicationTypeResource
+    from ._models_py3 import ApplicationTypeResourceList
+    from ._models_py3 import ApplicationTypeVersionResource
+    from ._models_py3 import ApplicationTypeVersionResourceList
+    from ._models_py3 import ApplicationUpgradePolicy
+    from ._models_py3 import ArmApplicationHealthPolicy
+    from ._models_py3 import ArmRollingUpgradeMonitoringPolicy
+    from ._models_py3 import ArmServiceTypeHealthPolicy
+    from ._models_py3 import AvailableOperationDisplay
+    from ._models_py3 import AzureActiveDirectory
+    from ._models_py3 import CertificateDescription
+    from ._models_py3 import ClientCertificateCommonName
+    from ._models_py3 import ClientCertificateThumbprint
+    from ._models_py3 import Cluster
+    from ._models_py3 import ClusterCodeVersionsListResult
+    from ._models_py3 import ClusterCodeVersionsResult
+    from ._models_py3 import ClusterHealthPolicy
+    from ._models_py3 import ClusterListResult
+    from ._models_py3 import ClusterUpdateParameters
+    from ._models_py3 import ClusterUpgradeDeltaHealthPolicy
+    from ._models_py3 import ClusterUpgradePolicy
+    from ._models_py3 import ClusterVersionDetails
+    from ._models_py3 import DiagnosticsStorageAccountConfig
+    from ._models_py3 import EndpointRangeDescription
+    from ._models_py3 import ErrorModel, ErrorModelException
+    from ._models_py3 import ErrorModelError
+    from ._models_py3 import NamedPartitionSchemeDescription
+    from ._models_py3 import NodeTypeDescription
+    from ._models_py3 import OperationResult
+    from ._models_py3 import PartitionSchemeDescription
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import ServerCertificateCommonName
+    from ._models_py3 import ServerCertificateCommonNames
+    from ._models_py3 import ServiceCorrelationDescription
+    from ._models_py3 import ServiceLoadMetricDescription
+    from ._models_py3 import ServicePlacementPolicyDescription
+    from ._models_py3 import ServiceResource
+    from ._models_py3 import ServiceResourceList
+    from ._models_py3 import ServiceResourceProperties
+    from ._models_py3 import ServiceResourcePropertiesBase
+    from ._models_py3 import ServiceResourceUpdate
+    from ._models_py3 import ServiceResourceUpdateProperties
+    from ._models_py3 import ServiceTypeDeltaHealthPolicy
+    from ._models_py3 import ServiceTypeHealthPolicy
+    from ._models_py3 import SettingsParameterDescription
+    from ._models_py3 import SettingsSectionDescription
+    from ._models_py3 import SingletonPartitionSchemeDescription
+    from ._models_py3 import StatefulServiceProperties
+    from ._models_py3 import StatefulServiceUpdateProperties
+    from ._models_py3 import StatelessServiceProperties
+    from ._models_py3 import StatelessServiceUpdateProperties
+    from ._models_py3 import UniformInt64RangePartitionSchemeDescription
 except (SyntaxError, ImportError):
-    from .service_type_delta_health_policy import ServiceTypeDeltaHealthPolicy
-    from .application_delta_health_policy import ApplicationDeltaHealthPolicy
-    from .service_type_health_policy import ServiceTypeHealthPolicy
-    from .application_health_policy import ApplicationHealthPolicy
-    from .available_operation_display import AvailableOperationDisplay
-    from .azure_active_directory import AzureActiveDirectory
-    from .certificate_description import CertificateDescription
-    from .client_certificate_common_name import ClientCertificateCommonName
-    from .client_certificate_thumbprint import ClientCertificateThumbprint
-    from .cluster_version_details import ClusterVersionDetails
-    from .server_certificate_common_name import ServerCertificateCommonName
-    from .server_certificate_common_names import ServerCertificateCommonNames
-    from .diagnostics_storage_account_config import DiagnosticsStorageAccountConfig
-    from .settings_parameter_description import SettingsParameterDescription
-    from .settings_section_description import SettingsSectionDescription
-    from .endpoint_range_description import EndpointRangeDescription
-    from .node_type_description import NodeTypeDescription
-    from .cluster_health_policy import ClusterHealthPolicy
-    from .cluster_upgrade_delta_health_policy import ClusterUpgradeDeltaHealthPolicy
-    from .cluster_upgrade_policy import ClusterUpgradePolicy
-    from .cluster import Cluster
-    from .cluster_code_versions_result import ClusterCodeVersionsResult
-    from .cluster_code_versions_list_result import ClusterCodeVersionsListResult
-    from .cluster_list_result import ClusterListResult
-    from .cluster_update_parameters import ClusterUpdateParameters
-    from .operation_result import OperationResult
-    from .resource import Resource
-    from .error_model_error import ErrorModelError
-    from .error_model import ErrorModel, ErrorModelException
-    from .application_metric_description import ApplicationMetricDescription
-    from .application_resource import ApplicationResource
-    from .application_resource_list import ApplicationResourceList
-    from .arm_rolling_upgrade_monitoring_policy import ArmRollingUpgradeMonitoringPolicy
-    from .arm_service_type_health_policy import ArmServiceTypeHealthPolicy
-    from .arm_application_health_policy import ArmApplicationHealthPolicy
-    from .application_upgrade_policy import ApplicationUpgradePolicy
-    from .application_resource_update import ApplicationResourceUpdate
-    from .application_type_resource import ApplicationTypeResource
-    from .application_type_resource_list import ApplicationTypeResourceList
-    from .application_type_version_resource import ApplicationTypeVersionResource
-    from .application_type_version_resource_list import ApplicationTypeVersionResourceList
-    from .service_correlation_description import ServiceCorrelationDescription
-    from .named_partition_scheme_description import NamedPartitionSchemeDescription
-    from .partition_scheme_description import PartitionSchemeDescription
-    from .proxy_resource import ProxyResource
-    from .service_load_metric_description import ServiceLoadMetricDescription
-    from .service_placement_policy_description import ServicePlacementPolicyDescription
-    from .service_resource_properties import ServiceResourceProperties
-    from .service_resource import ServiceResource
-    from .service_resource_list import ServiceResourceList
-    from .service_resource_properties_base import ServiceResourcePropertiesBase
-    from .service_resource_update_properties import ServiceResourceUpdateProperties
-    from .service_resource_update import ServiceResourceUpdate
-    from .singleton_partition_scheme_description import SingletonPartitionSchemeDescription
-    from .stateful_service_properties import StatefulServiceProperties
-    from .stateful_service_update_properties import StatefulServiceUpdateProperties
-    from .stateless_service_properties import StatelessServiceProperties
-    from .stateless_service_update_properties import StatelessServiceUpdateProperties
-    from .uniform_int64_range_partition_scheme_description import UniformInt64RangePartitionSchemeDescription
-from .operation_result_paged import OperationResultPaged
-from .service_fabric_management_client_enums import (
+    from ._models import ApplicationDeltaHealthPolicy
+    from ._models import ApplicationHealthPolicy
+    from ._models import ApplicationMetricDescription
+    from ._models import ApplicationResource
+    from ._models import ApplicationResourceList
+    from ._models import ApplicationResourceUpdate
+    from ._models import ApplicationTypeResource
+    from ._models import ApplicationTypeResourceList
+    from ._models import ApplicationTypeVersionResource
+    from ._models import ApplicationTypeVersionResourceList
+    from ._models import ApplicationUpgradePolicy
+    from ._models import ArmApplicationHealthPolicy
+    from ._models import ArmRollingUpgradeMonitoringPolicy
+    from ._models import ArmServiceTypeHealthPolicy
+    from ._models import AvailableOperationDisplay
+    from ._models import AzureActiveDirectory
+    from ._models import CertificateDescription
+    from ._models import ClientCertificateCommonName
+    from ._models import ClientCertificateThumbprint
+    from ._models import Cluster
+    from ._models import ClusterCodeVersionsListResult
+    from ._models import ClusterCodeVersionsResult
+    from ._models import ClusterHealthPolicy
+    from ._models import ClusterListResult
+    from ._models import ClusterUpdateParameters
+    from ._models import ClusterUpgradeDeltaHealthPolicy
+    from ._models import ClusterUpgradePolicy
+    from ._models import ClusterVersionDetails
+    from ._models import DiagnosticsStorageAccountConfig
+    from ._models import EndpointRangeDescription
+    from ._models import ErrorModel, ErrorModelException
+    from ._models import ErrorModelError
+    from ._models import NamedPartitionSchemeDescription
+    from ._models import NodeTypeDescription
+    from ._models import OperationResult
+    from ._models import PartitionSchemeDescription
+    from ._models import ProxyResource
+    from ._models import Resource
+    from ._models import ServerCertificateCommonName
+    from ._models import ServerCertificateCommonNames
+    from ._models import ServiceCorrelationDescription
+    from ._models import ServiceLoadMetricDescription
+    from ._models import ServicePlacementPolicyDescription
+    from ._models import ServiceResource
+    from ._models import ServiceResourceList
+    from ._models import ServiceResourceProperties
+    from ._models import ServiceResourcePropertiesBase
+    from ._models import ServiceResourceUpdate
+    from ._models import ServiceResourceUpdateProperties
+    from ._models import ServiceTypeDeltaHealthPolicy
+    from ._models import ServiceTypeHealthPolicy
+    from ._models import SettingsParameterDescription
+    from ._models import SettingsSectionDescription
+    from ._models import SingletonPartitionSchemeDescription
+    from ._models import StatefulServiceProperties
+    from ._models import StatefulServiceUpdateProperties
+    from ._models import StatelessServiceProperties
+    from ._models import StatelessServiceUpdateProperties
+    from ._models import UniformInt64RangePartitionSchemeDescription
+from ._paged_models import OperationResultPaged
+from ._service_fabric_management_client_enums import (
     ProvisioningState,
     ArmUpgradeFailureAction,
     ServiceCorrelationScheme,
@@ -143,59 +143,59 @@ from .service_fabric_management_client_enums import (
 )
 
 __all__ = [
-    'ServiceTypeDeltaHealthPolicy',
     'ApplicationDeltaHealthPolicy',
-    'ServiceTypeHealthPolicy',
     'ApplicationHealthPolicy',
-    'AvailableOperationDisplay',
-    'AzureActiveDirectory',
-    'CertificateDescription',
-    'ClientCertificateCommonName',
-    'ClientCertificateThumbprint',
-    'ClusterVersionDetails',
-    'ServerCertificateCommonName',
-    'ServerCertificateCommonNames',
-    'DiagnosticsStorageAccountConfig',
-    'SettingsParameterDescription',
-    'SettingsSectionDescription',
-    'EndpointRangeDescription',
-    'NodeTypeDescription',
-    'ClusterHealthPolicy',
-    'ClusterUpgradeDeltaHealthPolicy',
-    'ClusterUpgradePolicy',
-    'Cluster',
-    'ClusterCodeVersionsResult',
-    'ClusterCodeVersionsListResult',
-    'ClusterListResult',
-    'ClusterUpdateParameters',
-    'OperationResult',
-    'Resource',
-    'ErrorModelError',
-    'ErrorModel', 'ErrorModelException',
     'ApplicationMetricDescription',
     'ApplicationResource',
     'ApplicationResourceList',
-    'ArmRollingUpgradeMonitoringPolicy',
-    'ArmServiceTypeHealthPolicy',
-    'ArmApplicationHealthPolicy',
-    'ApplicationUpgradePolicy',
     'ApplicationResourceUpdate',
     'ApplicationTypeResource',
     'ApplicationTypeResourceList',
     'ApplicationTypeVersionResource',
     'ApplicationTypeVersionResourceList',
-    'ServiceCorrelationDescription',
+    'ApplicationUpgradePolicy',
+    'ArmApplicationHealthPolicy',
+    'ArmRollingUpgradeMonitoringPolicy',
+    'ArmServiceTypeHealthPolicy',
+    'AvailableOperationDisplay',
+    'AzureActiveDirectory',
+    'CertificateDescription',
+    'ClientCertificateCommonName',
+    'ClientCertificateThumbprint',
+    'Cluster',
+    'ClusterCodeVersionsListResult',
+    'ClusterCodeVersionsResult',
+    'ClusterHealthPolicy',
+    'ClusterListResult',
+    'ClusterUpdateParameters',
+    'ClusterUpgradeDeltaHealthPolicy',
+    'ClusterUpgradePolicy',
+    'ClusterVersionDetails',
+    'DiagnosticsStorageAccountConfig',
+    'EndpointRangeDescription',
+    'ErrorModel', 'ErrorModelException',
+    'ErrorModelError',
     'NamedPartitionSchemeDescription',
+    'NodeTypeDescription',
+    'OperationResult',
     'PartitionSchemeDescription',
     'ProxyResource',
+    'Resource',
+    'ServerCertificateCommonName',
+    'ServerCertificateCommonNames',
+    'ServiceCorrelationDescription',
     'ServiceLoadMetricDescription',
     'ServicePlacementPolicyDescription',
-    'ServiceResourceProperties',
     'ServiceResource',
     'ServiceResourceList',
+    'ServiceResourceProperties',
     'ServiceResourcePropertiesBase',
-    'ServiceResourceUpdateProperties',
     'ServiceResourceUpdate',
+    'ServiceResourceUpdateProperties',
+    'ServiceTypeDeltaHealthPolicy',
+    'ServiceTypeHealthPolicy',
+    'SettingsParameterDescription',
+    'SettingsSectionDescription',
     'SingletonPartitionSchemeDescription',
     'StatefulServiceProperties',
     'StatefulServiceUpdateProperties',
