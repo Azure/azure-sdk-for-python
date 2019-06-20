@@ -4,8 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
+try:
+    from urllib.parse import urlparse, quote, unquote
+except ImportError:
+    from urlparse import urlparse
+    from urllib2 import quote, unquote
 
-class ShareClient():
+from .directory_client import DirectoryClient
+
+from ._generated import AzureFileStorage
+from ._generated.version import VERSION
+from ._shared.utils import (
+    StorageAccountHostsMixin,
+    parse_query,
+    parse_connection_str)
+
+
+class ShareClient(StorageAccountHostsMixin):
     """
     A client to interact with the share.
     """
@@ -28,11 +43,43 @@ class ShareClient():
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`ShareClient.create_configuration()`
         """
+        try:
+            if not share_url.lower().startswith('http'):
+                share_url = "https://" + share_url
+        except AttributeError:
+            raise ValueError("Share URL must be a string.")
+        parsed_url = urlparse(share_url.rstrip('/'))
+        if not parsed_url.path and not (share_name):
+            raise ValueError("Please specify a share name.")
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(share_url))
+
+        path_share = ""
+        path_snapshot = None
+        if parsed_url.path:
+            path_share, _, _ = parsed_url.path.lstrip('/').partition('/')
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+
+        try:
+            self.snapshot = snapshot.snapshot
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot']
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
+        try:
+            self.share_name = share_name
+        except AttributeError:
+            self.share_name = share_name or unquote(path_share)
+        self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
+        super(ShareClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
     
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
             share_name, # type: Union[str, ShareProperties]
+            credential=None, # type: Optional[Any]
             configuration=None, # type: Optional[Configuration]
             **kwargs # type: Any
         ):
@@ -40,6 +87,10 @@ class ShareClient():
         """
         Create ShareClient from a Connection String.
         """
+        account_url, credential = parse_connection_str(conn_str, credential)
+        return cls(
+            share_url=account_url, share_name=share_name, credential=credential,
+            configuration=configuration, **kwargs)
 
     def get_directory_client(self, directory_name=""):
         """Get a client to interact with the specified directory.
@@ -51,6 +102,7 @@ class ShareClient():
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
         """
+        return DirectoryClient(self.share_name, directory_name, self.credential, self._config)
     
     def create_share(
             self, metadata=None,  # type: Optional[Dict[str, str]]

@@ -13,7 +13,7 @@ class DirectoryClient():
     def __init__(
             self, share_name=None, # type: Optional[Union[str, ShareProperties]]
             directory_path=None, # type: Optional[str]
-            credentials=None, # type: Optional[Any]
+            credential=None, # type: Optional[Any]
             configuration=None # type: Optional[Configuration]
         ):
         # type: (...) -> DirectoryClient
