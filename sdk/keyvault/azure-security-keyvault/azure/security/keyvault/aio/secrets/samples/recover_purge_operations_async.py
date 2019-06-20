@@ -1,4 +1,5 @@
 import asyncio
+import os
 from azure.security.keyvault.aio import SecretClient
 from azure.identity import AsyncDefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -15,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
@@ -33,8 +34,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = AsyncDefaultAzureCredential()
-    client = SecretClient(vault_url=YOUR_VAULT_URL, credential=credential)
+    client = SecretClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.

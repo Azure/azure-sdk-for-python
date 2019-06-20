@@ -1,4 +1,5 @@
 import datetime
+import os
 import asyncio
 from azure.security.keyvault.aio import SecretClient
 from azure.identity import AsyncDefaultAzureCredential
@@ -13,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 # 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-security-keyvault/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
@@ -32,8 +33,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = AsyncDefaultAzureCredential()
-    client = SecretClient(vault_url=YOUR_VAULT_URL, credential=credential)
+    client = SecretClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the key vault, then a new version of the secret is created.

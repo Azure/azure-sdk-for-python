@@ -1,4 +1,5 @@
 import datetime
+import os
 from azure.security.keyvault import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -34,8 +35,9 @@ def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=YOUR_VAULT_URL, credential=credential)
+    client = SecretClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
