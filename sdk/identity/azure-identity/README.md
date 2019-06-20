@@ -93,7 +93,7 @@ credential = EnvironmentCredential()
 
 ## Chaining credentials:
 ```py
-from azure.identity import ClientSecretCredential, ManagedIdentityCredential, TokenCredentialChain
+from azure.identity import ClientSecretCredential, ManagedIdentityCredential, ChainedTokenCredential
 
 first_principal = ClientSecretCredential(client_id, client_secret, tenant_id)
 second_principal = ClientSecretCredential(another_client_id, another_secret, tenant_id)
@@ -101,7 +101,7 @@ credentials = [first_principal, second_principal, ManagedIdentityCredential()]
 
 # when an access token is requested, the chain will try each
 # credential in order, stopping when one provides a token
-credential_chain = TokenCredentialChain(credentials)
+credential_chain = ChainedTokenCredential(credentials)
 
 # the chain can be used anywhere a credential is required
 from azure.security.keyvault import VaultClient
