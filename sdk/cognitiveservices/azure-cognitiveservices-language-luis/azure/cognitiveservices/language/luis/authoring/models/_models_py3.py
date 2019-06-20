@@ -807,7 +807,7 @@ class EntityLabel(Model):
     :param end_token_index: Required. The index within the utterance where the
      extracted entity ends.
     :type end_token_index: int
-    :param role: The role.
+    :param role: The role of the entity within the utterance.
     :type role: str
     :param role_id: The role Id.
     :type role_id: str
@@ -850,7 +850,7 @@ class EntityLabelObject(Model):
     :param end_char_index: Required. The index within the utterance where the
      extracted entity ends.
     :type end_char_index: int
-    :param role: The role.
+    :param role: The role of the entity within the utterance.
     :type role: str
     """
 
@@ -1481,7 +1481,7 @@ class JSONEntity(Model):
     :type end_pos: int
     :param entity: Required. The entity name.
     :type entity: str
-    :param role: The role.
+    :param role: The role of the entity within the utterance.
     :type role: str
     """
 
