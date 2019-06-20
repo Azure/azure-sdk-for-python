@@ -15,17 +15,10 @@ from msrest.serialization import Model
 class QuotaUpdateParameters(Model):
     """Quota update parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: The list for update quota.
-    :vartype value:
+    :param value: The list for update quota.
+    :type value:
      list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
     """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
@@ -33,4 +26,4 @@ class QuotaUpdateParameters(Model):
 
     def __init__(self, **kwargs):
         super(QuotaUpdateParameters, self).__init__(**kwargs)
-        self.value = None
+        self.value = kwargs.get('value', None)

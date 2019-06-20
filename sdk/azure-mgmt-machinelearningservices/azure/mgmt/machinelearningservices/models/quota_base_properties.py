@@ -15,21 +15,13 @@ from msrest.serialization import Model
 class QuotaBaseProperties(Model):
     """The properties for Quota update or retrieval.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Specifies the resource ID.
-    :vartype id: str
-    :ivar type: Specifies the resource type.
-    :vartype type: str
+    :param id: Specifies the resource ID.
+    :type id: str
+    :param type: Specifies the resource type.
+    :type type: str
     :param quota: Quota. The workspace level quota.
     :type quota: int
     """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -39,6 +31,6 @@ class QuotaBaseProperties(Model):
 
     def __init__(self, **kwargs):
         super(QuotaBaseProperties, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
         self.quota = kwargs.get('quota', None)

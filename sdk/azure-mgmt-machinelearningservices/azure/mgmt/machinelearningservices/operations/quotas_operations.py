@@ -41,8 +41,8 @@ class QuotasOperations(object):
 
 
     def _update_initial(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        parameters = None
+            self, location, value=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.QuotaUpdateParameters(value=value)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -89,11 +89,14 @@ class QuotasOperations(object):
         return deserialized
 
     def update(
-            self, location, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, location, value=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update quota for each VM family in workspace.
 
         :param location: The location for update quota is queried.
         :type location: str
+        :param value: The list for update quota.
+        :type value:
+         list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -111,6 +114,7 @@ class QuotasOperations(object):
         """
         raw_result = self._update_initial(
             location=location,
+            value=value,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

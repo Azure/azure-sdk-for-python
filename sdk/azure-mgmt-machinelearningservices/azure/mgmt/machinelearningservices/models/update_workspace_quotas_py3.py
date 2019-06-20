@@ -22,7 +22,7 @@ class UpdateWorkspaceQuotas(Model):
     :vartype id: str
     :ivar type: Specifies the resource type.
     :vartype type: str
-    :param quota: Quota. Quota.
+    :param quota: Quota. The quota of the resource.
     :type quota: int
     :param status: Update Workspace Quota Status. Status of update workspace
      quota. Possible values include: 'Undefined', 'Success', 'Failure'
