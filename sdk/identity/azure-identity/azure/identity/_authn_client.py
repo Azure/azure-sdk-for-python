@@ -50,50 +50,43 @@ class AuthnClientBase(object):
     def _deserialize_and_cache_token(self, response, scopes, request_time):
         # type: (PipelineResponse, Iterable[str], int) -> AccessToken
         try:
-            if "deserialized_data" in response.context:
-                payload = response.context["deserialized_data"]
-            else:
-                payload = response.http_response.text()
+            # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
+            payload = response.context["deserialized_data"]
             token = payload["access_token"]
 
-            # these values are strings in IMDS responses but msal.TokenCache requires they be integers
+            # these values are strings in some responses but msal.TokenCache requires they be integers
             # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
-            expires_in = int(payload.get("expires_in", 0))
-            if expires_in != 0:
-                payload["expires_in"] = expires_in
+            if "expires_in" in payload:
+                payload["expires_in"] = int(payload["expires_in"])
             if "ext_expires_in" in payload:
                 payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
-            # AccessToken contains the token's expires_on time. There are four cases for setting it:
-            # 1. response has expires_on -> AccessToken uses it
-            # 2. response has expires_on and expires_in -> AccessToken uses expires_on
-            # 3. response has only expires_in -> AccessToken uses expires_in + time of request
-            # 4. response has neither expires_on nor expires_in -> AccessToken sets expires_on = 0
-            #    (not expecting this case; if it occurs, the token is effectively single-use)
-            expires_on = payload.get("expires_on", 0)
-            if not isinstance(expires_on, int):
-                # would test for str but that isn't 2/3 compatible and this should be safe because payload was json
+            # this will raise if the payload has neither expires_on nor expires_in
+            # (which is fine because that's unexpected, especially considering the payload contains access_token)
+            expires_on = payload.get("expires_on") or payload["expires_in"] + request_time
+
+            # ensure expires_on is an int
+            try:
+                expires_on = int(expires_on)
+            except ValueError:
+                # probably an App Service MSI response, convert it to epoch seconds
                 try:
-                    # maybe it's epoch seconds in a string (likely) or a float (doubtful)
-                    expires_on = int(expires_on)
+                    t = self._parse_app_service_expires_on(expires_on)
+                    expires_on = calendar.timegm(t)
                 except ValueError:
-                    # probably an App Service MSI response then
-                    try:
-                        t = self._parse_app_service_expires_on(expires_on)
-                        expires_on = calendar.timegm(t)
-                    except ValueError:
-                        # couldn't parse expires_on -> treat the token as single-use
-                        expires_on = request_time
-                # ensure the cache entry gets epoch seconds as an int for expires_on
-                payload["expires_on"] = expires_on
+                    # have a token but don't know when it expires -> treat it as single-use
+                    expires_on = request_time
+
+            # now we have an int expires_on, ensure the cache entry gets it
+            payload["expires_on"] = expires_on
 
             self._cache.add({"response": payload, "scope": scopes})
 
-            return AccessToken(token, expires_on or expires_in + request_time)
+            return AccessToken(token, expires_on)
         except KeyError:
             if "access_token" in payload:
                 payload["access_token"] = "****"
-            raise AuthenticationError("Unexpected authentication response: {}".format(payload))
+            raise AuthenticationError("Unexpected response: {}".format(payload))
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
 
@@ -101,8 +94,8 @@ class AuthnClientBase(object):
     def _parse_app_service_expires_on(expires_on):
         # type: (str) -> struct_time
         """
-        Parses expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
-        Expects the time is UTC (i.e. has offset +00:00).
+        Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
+        Expects the time is given in UTC (i.e. has offset +00:00).
         """
         if not expires_on.endswith(" +00:00"):
             raise ValueError("'{}' doesn't match expected format".format(expires_on))
