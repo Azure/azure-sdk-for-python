@@ -34,9 +34,9 @@ def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    # VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=VAULT_URL, credential=credential)
+    client = SecretClient(vault_url='https://vaultz33a90fd8.vault.azure.net', credential=credential)
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
@@ -68,11 +68,14 @@ def run_sample():
 
         # To ensure permanent deletion, we might need to purge the secret.
         print("\n4. Purge Deleted Secret")
-        client.purge_deleted_secret(bank_secret.name)
+        client.purge_deleted_secret(storage_secret.name)
         print("Secret has been permanently deleted.")
 
     except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
+        if "(NotSupported)" in e.message:
+            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+        else:
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
         print("\nrun_sample done")
