@@ -118,7 +118,7 @@ class ManagedIdentityCredential(object):
         return AccessToken()
 
 
-class TokenCredentialChain(object):
+class ChainedTokenCredential(object):
     """A sequence of token credentials"""
 
     def __init__(self, *credentials):

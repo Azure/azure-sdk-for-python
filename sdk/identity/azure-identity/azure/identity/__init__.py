@@ -9,11 +9,11 @@ from .credentials import (
     ClientSecretCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    TokenCredentialChain,
+    ChainedTokenCredential,
 )
 
 
-class DefaultAzureCredential(TokenCredentialChain):
+class DefaultAzureCredential(ChainedTokenCredential):
     """default credential is environment followed by MSI/IMDS"""
 
     def __init__(self, **kwargs):
@@ -29,7 +29,7 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
-    "TokenCredentialChain",
+    "ChainedTokenCredential",
 ]
 
 try:
@@ -39,7 +39,7 @@ try:
         AsyncDefaultAzureCredential,
         AsyncEnvironmentCredential,
         AsyncManagedIdentityCredential,
-        AsyncTokenCredentialChain,
+        AsyncChainedTokenCredential,
     )
 
     __all__.extend(
@@ -49,7 +49,7 @@ try:
             "AsyncDefaultAzureCredential",
             "AsyncEnvironmentCredential",
             "AsyncManagedIdentityCredential",
-            "AsyncTokenCredentialChain",
+            "AsyncChainedTokenCredential",
         ]
     )
 except (ImportError, SyntaxError):
