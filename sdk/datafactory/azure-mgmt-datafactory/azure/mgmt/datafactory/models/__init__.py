@@ -241,6 +241,7 @@ try:
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
+    from .teradata_table_dataset_py3 import TeradataTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
     from .odata_resource_dataset_py3 import ODataResourceDataset
     from .cosmos_db_mongo_db_api_collection_dataset_py3 import CosmosDbMongoDbApiCollectionDataset
@@ -328,6 +329,8 @@ try:
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
+    from .teradata_partition_settings_py3 import TeradataPartitionSettings
+    from .teradata_source_py3 import TeradataSource
     from .oracle_partition_settings_py3 import OraclePartitionSettings
     from .oracle_source_py3 import OracleSource
     from .azure_data_explorer_source_py3 import AzureDataExplorerSource
@@ -695,6 +698,7 @@ except (SyntaxError, ImportError):
     from .salesforce_object_dataset import SalesforceObjectDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
+    from .teradata_table_dataset import TeradataTableDataset
     from .oracle_table_dataset import OracleTableDataset
     from .odata_resource_dataset import ODataResourceDataset
     from .cosmos_db_mongo_db_api_collection_dataset import CosmosDbMongoDbApiCollectionDataset
@@ -782,6 +786,8 @@ except (SyntaxError, ImportError):
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
+    from .teradata_partition_settings import TeradataPartitionSettings
+    from .teradata_source import TeradataSource
     from .oracle_partition_settings import OraclePartitionSettings
     from .oracle_source import OracleSource
     from .azure_data_explorer_source import AzureDataExplorerSource
@@ -1217,6 +1223,7 @@ __all__ = [
     'SalesforceObjectDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
+    'TeradataTableDataset',
     'OracleTableDataset',
     'ODataResourceDataset',
     'CosmosDbMongoDbApiCollectionDataset',
@@ -1304,6 +1311,8 @@ __all__ = [
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
+    'TeradataPartitionSettings',
+    'TeradataSource',
     'OraclePartitionSettings',
     'OracleSource',
     'AzureDataExplorerSource',
