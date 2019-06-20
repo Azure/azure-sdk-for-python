@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PrivateCloudByRegionOperations(object):
-    """PrivateCloudByRegionOperations operations.
+class UsagesWithinRegionOperations(object):
+    """UsagesWithinRegionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,21 +39,25 @@ class PrivateCloudByRegionOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Implements private cloud list GET method.
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Implements Usages List method.
 
-        Returns list of private clouds in particular region.
+        Returns list of usage in region.
 
+        :param filter: The filter to apply on the list operation. only
+         name.value is allowed here as a filter e.g. $filter=name.value eq
+         'xxxx'
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PrivateCloud
+        :return: An iterator like instance of Usage
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.PrivateCloudPaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.PrivateCloud]
+         ~azure.mgmt.vmwarecloudsimple.models.UsagePaged[~azure.mgmt.vmwarecloudsimple.models.Usage]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -67,6 +71,8 @@ class PrivateCloudByRegionOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -101,7 +107,7 @@ class PrivateCloudByRegionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PrivateCloudPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/usages'}

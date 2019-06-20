@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VirtualMachineTemplatesByPCOperations(object):
-    """VirtualMachineTemplatesByPCOperations operations.
+class AvailableOperations(object):
+    """AvailableOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,42 +39,30 @@ class VirtualMachineTemplatesByPCOperations(object):
         self.config = config
 
     def list(
-            self, pc_name, resource_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Implements list of available VM templates.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Implements list of available operations.
 
-        Returns list of virtual machine templates in region for private cloud.
+        Return list of operations.
 
-        :param pc_name: The private cloud name
-        :type pc_name: str
-        :param resource_pool_name: Resource pool used to derive vSphere
-         cluster which contains VM templates
-        :type resource_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VirtualMachineTemplate
+        :return: An iterator like instance of AvailableOperation
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachineTemplatePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachineTemplate]
+         ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationPaged[~azure.mgmt.vmwarecloudsimple.models.AvailableOperation]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'pcName': self._serialize.url("pc_name", pc_name, 'str'),
-                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['resourcePoolName'] = self._serialize.query("resource_pool_name", resource_pool_name, 'str')
 
             else:
                 url = next_link
@@ -108,7 +96,7 @@ class VirtualMachineTemplatesByPCOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.VirtualMachineTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.AvailableOperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualMachineTemplates'}
+    list.metadata = {'url': '/providers/Microsoft.VMwareCloudSimple/operations'}

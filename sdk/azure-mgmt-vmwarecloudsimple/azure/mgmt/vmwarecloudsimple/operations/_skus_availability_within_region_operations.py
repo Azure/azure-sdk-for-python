@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class UsagesWithinRegionOperations(object):
-    """UsagesWithinRegionOperations operations.
+class SkusAvailabilityWithinRegionOperations(object):
+    """SkusAvailabilityWithinRegionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,25 +39,24 @@ class UsagesWithinRegionOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Implements Usages List method.
+            self, sku_id=None, custom_headers=None, raw=False, **operation_config):
+        """Implements SkuAvailability List method.
 
-        Returns list of usage in region.
+        Returns list of available resources in region.
 
-        :param filter: The filter to apply on the list operation. only
-         name.value is allowed here as a filter e.g. $filter=name.value eq
-         'xxxx'
-        :type filter: str
+        :param sku_id: sku id, if no sku is passed availability for all skus
+         will be returned
+        :type sku_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Usage
+        :return: An iterator like instance of SkuAvailability
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.UsagePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.Usage]
+         ~azure.mgmt.vmwarecloudsimple.models.SkuAvailabilityPaged[~azure.mgmt.vmwarecloudsimple.models.SkuAvailability]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -71,8 +70,8 @@ class UsagesWithinRegionOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if sku_id is not None:
+                    query_parameters['skuId'] = self._serialize.query("sku_id", sku_id, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -107,7 +106,7 @@ class UsagesWithinRegionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.SkuAvailabilityPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/availabilities'}

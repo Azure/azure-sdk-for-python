@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ResourcePoolsByPCOperations(object):
-    """ResourcePoolsByPCOperations operations.
+class PrivateCloudByRegionOperations(object):
+    """PrivateCloudByRegionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,23 +39,21 @@ class ResourcePoolsByPCOperations(object):
         self.config = config
 
     def list(
-            self, pc_name, custom_headers=None, raw=False, **operation_config):
-        """Implements get of resource pools list.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Implements private cloud list GET method.
 
-        Returns list of resource pools in region for private cloud.
+        Returns list of private clouds in particular region.
 
-        :param pc_name: The private cloud name
-        :type pc_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourcePool
+        :return: An iterator like instance of PrivateCloud
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.ResourcePoolPaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.ResourcePool]
+         ~azure.mgmt.vmwarecloudsimple.models.PrivateCloudPaged[~azure.mgmt.vmwarecloudsimple.models.PrivateCloud]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -63,8 +61,7 @@ class ResourcePoolsByPCOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str'),
-                    'pcName': self._serialize.url("pc_name", pc_name, 'str')
+                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -104,7 +101,7 @@ class ResourcePoolsByPCOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ResourcePoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PrivateCloudPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/resourcePools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds'}

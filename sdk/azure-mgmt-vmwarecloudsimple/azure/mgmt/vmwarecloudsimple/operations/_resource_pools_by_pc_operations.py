@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VirtualNetworksByPCOperations(object):
-    """VirtualNetworksByPCOperations operations.
+class ResourcePoolsByPCOperations(object):
+    """ResourcePoolsByPCOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,27 +39,23 @@ class VirtualNetworksByPCOperations(object):
         self.config = config
 
     def list(
-            self, pc_name, resource_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Implements list available virtual networks within a subscription
-        method.
+            self, pc_name, custom_headers=None, raw=False, **operation_config):
+        """Implements get of resource pools list.
 
-        Return list of virtual networks in location for private cloud.
+        Returns list of resource pools in region for private cloud.
 
         :param pc_name: The private cloud name
         :type pc_name: str
-        :param resource_pool_name: Resource pool used to derive vSphere
-         cluster which contains virtual networks
-        :type resource_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VirtualNetwork
+        :return: An iterator like instance of ResourcePool
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetworkPaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetwork]
+         ~azure.mgmt.vmwarecloudsimple.models.ResourcePoolPaged[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -75,7 +71,6 @@ class VirtualNetworksByPCOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['resourcePoolName'] = self._serialize.query("resource_pool_name", resource_pool_name, 'str')
 
             else:
                 url = next_link
@@ -109,7 +104,7 @@ class VirtualNetworksByPCOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.VirtualNetworkPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ResourcePoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualNetworks'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/resourcePools'}

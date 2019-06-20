@@ -18,7 +18,7 @@ class AvailableOperation(Model):
 
     :param display: The list of operations
     :type display:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.AvailableOperationDisplay
+     ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplay
     :param is_data_action: Indicating whether the operation is a data action
      or not. Default value: False .
     :type is_data_action: bool
@@ -27,11 +27,10 @@ class AvailableOperation(Model):
     :type name: str
     :param origin: The origin of operation. Possible values include: 'user',
      'system', 'user,system'
-    :type origin: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.OperationOrigin
+    :type origin: str or ~azure.mgmt.vmwarecloudsimple.models.OperationOrigin
     :param service_specification: The list of specification's service metrics
     :type service_specification:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsList
+     ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsList
     """
 
     _attribute_map = {
@@ -87,7 +86,7 @@ class AvailableOperationDisplayPropertyServiceSpecificationMetricsItem(Model):
     :param aggregation_type: Required. Metric's aggregation type for e.g.
      (Average, Total). Possible values include: 'Average', 'Total'
     :type aggregation_type: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.AggregationType
+     ~azure.mgmt.vmwarecloudsimple.models.AggregationType
     :param display_description: Required. Metric's description
     :type display_description: str
     :param display_name: Required. Human readable metric's name
@@ -128,7 +127,7 @@ class AvailableOperationDisplayPropertyServiceSpecificationMetricsList(Model):
 
     :param metric_specifications: Metric specifications of operation
     :type metric_specifications:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]
+     list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]
     """
 
     _attribute_map = {
@@ -152,8 +151,7 @@ class CSRPError(Model):
     """General error model.
 
     :param error: Error's body
-    :type error:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorBody
+    :type error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
     """
 
     _attribute_map = {
@@ -186,8 +184,7 @@ class CSRPErrorBody(Model):
     :ivar code: Error's code
     :vartype code: str
     :ivar details: Error's details
-    :vartype details:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorBody]
+    :vartype details: list[~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody]
     :ivar message: Error's message
     :vartype message: str
     :param target: Error's target
@@ -259,12 +256,11 @@ class DedicatedCloudNode(Model):
     :type name1: str
     :ivar status: Node status, indicates is private cloud set up on this node
      or not. Possible values include: 'unused', 'used'
-    :vartype status: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.NodeStatus
+    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
     :ivar vmware_cluster_name: VMWare Cluster Name
     :vartype vmware_cluster_name: str
     :param sku: Dedicated Cloud Nodes SKU
-    :type sku: ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.Sku
+    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
     :param tags: Dedicated Cloud Nodes tags
     :type tags: dict[str, str]
     :ivar type: {resourceProviderNamespace}/{resourceType}
@@ -364,7 +360,7 @@ class DedicatedCloudService(Model):
      a given region. Possible values include: 'notOnBoarded', 'onBoarded',
      'onBoardingFailed', 'onBoarding'
     :vartype is_account_onboarded: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.OnboardingStatus
+     ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
     :param nodes: total nodes purchased
     :type nodes: int
     :param service_url: link to a service management web portal
@@ -438,8 +434,7 @@ class OperationResource(Model):
     :ivar end_time: End time of the operation
     :vartype end_time: datetime
     :param error: Error Message if operation failed
-    :type error:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.OperationError
+    :type error: ~azure.mgmt.vmwarecloudsimple.models.OperationError
     :ivar id: Operation Id
     :vartype id: str
     :ivar name: Operation ID
@@ -528,7 +523,7 @@ class PrivateCloud(Model):
     :type private_cloud_id: str
     :param resource_pools: The list of Resource Pools
     :type resource_pools:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.ResourcePool]
+     list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
     :param state: Private Cloud state, e.g. "operational"
     :type state: str
     :param total_cpu_cores: Number of cores
@@ -549,16 +544,16 @@ class PrivateCloud(Model):
     :type vcenter_refid: str
     :param virtual_machine_templates: The list of Virtual Machine Templates
     :type virtual_machine_templates:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachineTemplate]
+     list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
     :param virtual_networks: The list of Virtual Networks
     :type virtual_networks:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetwork]
+     list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
     :param vr_ops_enabled: Is Vrops enabled/disabled
     :type vr_ops_enabled: bool
     :param type: Azure Resource type. Possible values include:
      'Microsoft.VMwareCloudSimple/privateClouds'
     :type type: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.PrivateCloudResourceType
+     ~azure.mgmt.vmwarecloudsimple.models.PrivateCloudResourceType
     """
 
     _attribute_map = {
@@ -779,11 +774,10 @@ class Usage(Model):
      no limit, this value will be -1. Default value: 0 .
     :type limit: int
     :param name: Usage name value and localized name
-    :type name: ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.UsageName
+    :type name: ~azure.mgmt.vmwarecloudsimple.models.UsageName
     :param unit: The usages' unit. Possible values include: 'Count', 'Bytes',
      'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond'
-    :type unit: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.UsageCount
+    :type unit: str or ~azure.mgmt.vmwarecloudsimple.models.UsageCount
     """
 
     _validation = {
@@ -841,7 +835,7 @@ class VirtualDisk(Model):
      Possible values include: 'persistent', 'independent_persistent',
      'independent_nonpersistent'
     :type independence_mode: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DiskIndependenceMode
+     ~azure.mgmt.vmwarecloudsimple.models.DiskIndependenceMode
     :param total_size: Required. Disk's total size
     :type total_size: int
     :param virtual_disk_id: Disk's id
@@ -932,10 +926,9 @@ class VirtualMachine(Model):
     :type amount_of_ram: int
     :ivar controllers: The list of Virtual Disks' Controllers
     :vartype controllers:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualDiskController]
+     list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
     :param disks: The list of Virtual Disks
-    :type disks:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualDisk]
+    :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
     :ivar dnsname: The DNS name of Virtual Machine in VCenter
     :vartype dnsname: str
     :param expose_to_guest_vm: Expose Guest OS or not
@@ -947,10 +940,9 @@ class VirtualMachine(Model):
     :param guest_os_type: Required. The Guest OS type. Possible values
      include: 'linux', 'windows', 'other'
     :type guest_os_type: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.GuestOSType
+     ~azure.mgmt.vmwarecloudsimple.models.GuestOSType
     :param nics: The list of Virtual NICs
-    :type nics:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNic]
+    :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
     :param number_of_cores: Required. The number of CPU cores
     :type number_of_cores: int
     :param password: Password for login
@@ -962,13 +954,12 @@ class VirtualMachine(Model):
     :ivar public_ip: The public ip of Virtual Machine
     :vartype public_ip: str
     :param resource_pool: Virtual Machines Resource Pool
-    :type resource_pool:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.ResourcePool
+    :type resource_pool: ~azure.mgmt.vmwarecloudsimple.models.ResourcePool
     :ivar status: The status of Virtual machine. Possible values include:
      'running', 'suspended', 'poweredoff', 'updating', 'deallocating',
      'deleting'
     :vartype status: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachineStatus
+     ~azure.mgmt.vmwarecloudsimple.models.VirtualMachineStatus
     :param template_id: Virtual Machine Template Id
     :type template_id: str
     :param username: Username for login
@@ -1070,8 +1061,7 @@ class VirtualMachineStopMode(Model):
     :param mode: mode indicates a type of stop operation - reboot, suspend,
      shutdown or power-off. Possible values include: 'reboot', 'suspend',
      'shutdown', 'poweroff'
-    :type mode: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.StopMode
+    :type mode: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
     """
 
     _attribute_map = {
@@ -1101,12 +1091,11 @@ class VirtualMachineTemplate(Model):
     :type amount_of_ram: int
     :param controllers: The list of Virtual Disk Controllers
     :type controllers:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualDiskController]
+     list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
     :param description: The description of Virtual Machine Template
     :type description: str
     :param disks: The list of Virtual Disks
-    :type disks:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualDisk]
+    :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
     :param expose_to_guest_vm: Expose Guest OS or not
     :type expose_to_guest_vm: bool
     :param guest_os: Required. The Guest OS
@@ -1114,8 +1103,7 @@ class VirtualMachineTemplate(Model):
     :param guest_os_type: Required. The Guest OS types
     :type guest_os_type: str
     :param nics: The list of Virtual NICs
-    :type nics:
-     list[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNic]
+    :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
     :param number_of_cores: The number of CPU cores
     :type number_of_cores: int
     :param path: path to folder
@@ -1247,12 +1235,10 @@ class VirtualNic(Model):
     :param mac_address: NIC MAC address
     :type mac_address: str
     :param network: The list of Virtual Networks
-    :type network:
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetwork
+    :type network: ~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork
     :param nic_type: Required. NIC type. Possible values include: 'E1000',
      'E1000E', 'PCNET32', 'VMXNET', 'VMXNET2', 'VMXNET3'
-    :type nic_type: str or
-     ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.NICType
+    :type nic_type: str or ~azure.mgmt.vmwarecloudsimple.models.NICType
     :param power_on_boot: Is NIC powered on/off on boot
     :type power_on_boot: bool
     :param virtual_nic_id: NIC id

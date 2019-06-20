@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SkusAvailabilityWithinRegionOperations(object):
-    """SkusAvailabilityWithinRegionOperations operations.
+class VirtualNetworksByPCOperations(object):
+    """VirtualNetworksByPCOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,24 +39,27 @@ class SkusAvailabilityWithinRegionOperations(object):
         self.config = config
 
     def list(
-            self, sku_id=None, custom_headers=None, raw=False, **operation_config):
-        """Implements SkuAvailability List method.
+            self, pc_name, resource_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Implements list available virtual networks within a subscription
+        method.
 
-        Returns list of available resources in region.
+        Return list of virtual networks in location for private cloud.
 
-        :param sku_id: sku id, if no sku is passed availability for all skus
-         will be returned
-        :type sku_id: str
+        :param pc_name: The private cloud name
+        :type pc_name: str
+        :param resource_pool_name: Resource pool used to derive vSphere
+         cluster which contains virtual networks
+        :type resource_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SkuAvailability
+        :return: An iterator like instance of VirtualNetwork
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.SkuAvailabilityPaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.SkuAvailability]
+         ~azure.mgmt.vmwarecloudsimple.models.VirtualNetworkPaged[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -64,15 +67,15 @@ class SkusAvailabilityWithinRegionOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str')
+                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str'),
+                    'pcName': self._serialize.url("pc_name", pc_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if sku_id is not None:
-                    query_parameters['skuId'] = self._serialize.query("sku_id", sku_id, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['resourcePoolName'] = self._serialize.query("resource_pool_name", resource_pool_name, 'str')
 
             else:
                 url = next_link
@@ -106,7 +109,7 @@ class SkusAvailabilityWithinRegionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SkuAvailabilityPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.VirtualNetworkPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/availabilities'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualNetworks'}

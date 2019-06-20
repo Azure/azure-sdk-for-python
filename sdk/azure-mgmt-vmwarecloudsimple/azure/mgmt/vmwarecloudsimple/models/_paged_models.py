@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AvailableOperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AvailableOperation <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.AvailableOperation>` object
+    A paging container for iterating over a list of :class:`AvailableOperation <azure.mgmt.vmwarecloudsimple.models.AvailableOperation>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class AvailableOperationPaged(Paged):
         super(AvailableOperationPaged, self).__init__(*args, **kwargs)
 class DedicatedCloudNodePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DedicatedCloudNode <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode>` object
+    A paging container for iterating over a list of :class:`DedicatedCloudNode <azure.mgmt.vmwarecloudsimple.models.DedicatedCloudNode>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class DedicatedCloudNodePaged(Paged):
         super(DedicatedCloudNodePaged, self).__init__(*args, **kwargs)
 class DedicatedCloudServicePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DedicatedCloudService <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudService>` object
+    A paging container for iterating over a list of :class:`DedicatedCloudService <azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class DedicatedCloudServicePaged(Paged):
         super(DedicatedCloudServicePaged, self).__init__(*args, **kwargs)
 class SkuAvailabilityPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SkuAvailability <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.SkuAvailability>` object
+    A paging container for iterating over a list of :class:`SkuAvailability <azure.mgmt.vmwarecloudsimple.models.SkuAvailability>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class SkuAvailabilityPaged(Paged):
         super(SkuAvailabilityPaged, self).__init__(*args, **kwargs)
 class PrivateCloudPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PrivateCloud <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.PrivateCloud>` object
+    A paging container for iterating over a list of :class:`PrivateCloud <azure.mgmt.vmwarecloudsimple.models.PrivateCloud>` object
     """
 
     _attribute_map = {
@@ -79,7 +79,7 @@ class PrivateCloudPaged(Paged):
         super(PrivateCloudPaged, self).__init__(*args, **kwargs)
 class ResourcePoolPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourcePool <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.ResourcePool>` object
+    A paging container for iterating over a list of :class:`ResourcePool <azure.mgmt.vmwarecloudsimple.models.ResourcePool>` object
     """
 
     _attribute_map = {
@@ -92,7 +92,7 @@ class ResourcePoolPaged(Paged):
         super(ResourcePoolPaged, self).__init__(*args, **kwargs)
 class VirtualMachineTemplatePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualMachineTemplate <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachineTemplate>` object
+    A paging container for iterating over a list of :class:`VirtualMachineTemplate <azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate>` object
     """
 
     _attribute_map = {
@@ -105,7 +105,7 @@ class VirtualMachineTemplatePaged(Paged):
         super(VirtualMachineTemplatePaged, self).__init__(*args, **kwargs)
 class VirtualNetworkPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualNetwork <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualNetwork>` object
+    A paging container for iterating over a list of :class:`VirtualNetwork <azure.mgmt.vmwarecloudsimple.models.VirtualNetwork>` object
     """
 
     _attribute_map = {
@@ -118,7 +118,7 @@ class VirtualNetworkPaged(Paged):
         super(VirtualNetworkPaged, self).__init__(*args, **kwargs)
 class UsagePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Usage <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.Usage>` object
+    A paging container for iterating over a list of :class:`Usage <azure.mgmt.vmwarecloudsimple.models.Usage>` object
     """
 
     _attribute_map = {
@@ -131,7 +131,7 @@ class UsagePaged(Paged):
         super(UsagePaged, self).__init__(*args, **kwargs)
 class VirtualMachinePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualMachine <azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine>` object
+    A paging container for iterating over a list of :class:`VirtualMachine <azure.mgmt.vmwarecloudsimple.models.VirtualMachine>` object
     """
 
     _attribute_map = {

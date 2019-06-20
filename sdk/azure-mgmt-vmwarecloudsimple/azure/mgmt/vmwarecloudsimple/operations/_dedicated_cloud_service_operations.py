@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class DedicatedCloudNodeOperations(object):
-    """DedicatedCloudNodeOperations operations.
+class DedicatedCloudServiceOperations(object):
+    """DedicatedCloudServiceOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -42,9 +42,10 @@ class DedicatedCloudNodeOperations(object):
 
     def list_by_subscription(
             self, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Implements list of dedicated cloud nodes within subscription method.
+        """Implements list of dedicatedCloudService objects within subscription
+        method.
 
-        Returns list of dedicate cloud nodes within subscription.
+        Returns list of dedicated cloud service within within subscription.
 
         :param filter: The filter to apply on the list operation
         :type filter: str
@@ -57,11 +58,11 @@ class DedicatedCloudNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DedicatedCloudNode
+        :return: An iterator like instance of DedicatedCloudService
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNodePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode]
+         ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudServicePaged[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -114,16 +115,16 @@ class DedicatedCloudNodeOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.DedicatedCloudNodePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.DedicatedCloudServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Implements list of dedicated cloud nodes within RG method.
+        """Implements list of dedicatedCloudService objects within RG method.
 
-        Returns list of dedicate cloud nodes within resource group.
+        Returns list of dedicated cloud service within resource group.
 
         :param resource_group_name: The name of the resource group
         :type resource_group_name: str
@@ -138,11 +139,11 @@ class DedicatedCloudNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DedicatedCloudNode
+        :return: An iterator like instance of DedicatedCloudService
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNodePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode]
+         ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudServicePaged[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -196,44 +197,44 @@ class DedicatedCloudNodeOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.DedicatedCloudNodePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.DedicatedCloudServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices'}
 
     def get(
-            self, resource_group_name, dedicated_cloud_node_name, custom_headers=None, raw=False, **operation_config):
-        """Implements dedicated cloud node GET method.
+            self, resource_group_name, dedicated_cloud_service_name, custom_headers=None, raw=False, **operation_config):
+        """Implements dedicatedCloudService GET method.
 
-        Returns dedicated cloud node.
+        Returns Dedicate Cloud Service.
 
         :param resource_group_name: The name of the resource group
         :type resource_group_name: str
-        :param dedicated_cloud_node_name: dedicated cloud node name
-        :type dedicated_cloud_node_name: str
+        :param dedicated_cloud_service_name: dedicated cloud Service name
+        :type dedicated_cloud_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DedicatedCloudNode or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode or
+        :return: DedicatedCloudService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'dedicatedCloudNodeName': self._serialize.url("dedicated_cloud_node_name", dedicated_cloud_node_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -254,24 +255,46 @@ class DedicatedCloudNodeOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DedicatedCloudNode', response)
+            deserialized = self._deserialize('DedicatedCloudService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices/{dedicatedCloudServiceName}'}
 
+    def create_or_update(
+            self, resource_group_name, dedicated_cloud_service_name, dedicated_cloud_service_request, custom_headers=None, raw=False, **operation_config):
+        """Implements dedicated cloud service PUT method.
 
-    def _create_or_update_initial(
-            self, resource_group_name, dedicated_cloud_node_name, dedicated_cloud_node_request, custom_headers=None, raw=False, **operation_config):
+        Create dedicate cloud service.
+
+        :param resource_group_name: The name of the resource group
+        :type resource_group_name: str
+        :param dedicated_cloud_service_name: dedicated cloud Service name
+        :type dedicated_cloud_service_name: str
+        :param dedicated_cloud_service_request: Create Dedicated Cloud Service
+         request
+        :type dedicated_cloud_service_request:
+         ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DedicatedCloudService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
+        """
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'dedicatedCloudNodeName': self._serialize.url("dedicated_cloud_node_name", dedicated_cloud_node_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -287,12 +310,11 @@ class DedicatedCloudNodeOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Referer'] = self._serialize.header("self.config.referer", self.config.referer, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(dedicated_cloud_node_request, 'DedicatedCloudNode')
+        body_content = self._serialize.body(dedicated_cloud_service_request, 'DedicatedCloudService')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -302,110 +324,25 @@ class DedicatedCloudNodeOperations(object):
             raise models.CSRPErrorException(self._deserialize, response)
 
         deserialized = None
-        header_dict = {}
-
         if response.status_code == 200:
-            deserialized = self._deserialize('DedicatedCloudNode', response)
-            header_dict = {
-                'Azure-AsyncOperation': 'str',
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
+            deserialized = self._deserialize('DedicatedCloudService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices/{dedicatedCloudServiceName}'}
 
-    def create_or_update(
-            self, resource_group_name, dedicated_cloud_node_name, dedicated_cloud_node_request, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Implements dedicated cloud node PUT method.
 
-        Returns dedicated cloud node by its name.
-
-        :param resource_group_name: The name of the resource group
-        :type resource_group_name: str
-        :param dedicated_cloud_node_name: dedicated cloud node name
-        :type dedicated_cloud_node_name: str
-        :param dedicated_cloud_node_request: Create Dedicated Cloud Node
-         request
-        :type dedicated_cloud_node_request:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DedicatedCloudNode or
-         ClientRawResponse<DedicatedCloudNode> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode]]
-        :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
-        """
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            dedicated_cloud_node_name=dedicated_cloud_node_name,
-            dedicated_cloud_node_request=dedicated_cloud_node_request,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            header_dict = {
-                'Azure-AsyncOperation': 'str',
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-            deserialized = self._deserialize('DedicatedCloudNode', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
-
-    def delete(
-            self, resource_group_name, dedicated_cloud_node_name, custom_headers=None, raw=False, **operation_config):
-        """Implements dedicated cloud node DELETE method.
-
-        Delete dedicated cloud node.
-
-        :param resource_group_name: The name of the resource group
-        :type resource_group_name: str
-        :param dedicated_cloud_node_name: dedicated cloud node name
-        :type dedicated_cloud_node_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
-        """
+    def _delete_initial(
+            self, resource_group_name, dedicated_cloud_service_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'dedicatedCloudNodeName': self._serialize.url("dedicated_cloud_node_name", dedicated_cloud_node_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -431,22 +368,69 @@ class DedicatedCloudNodeOperations(object):
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
+            header_dict = {
                 'Content-Type': 'str',
-            })
+            }
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
 
-    def update(
-            self, resource_group_name, dedicated_cloud_node_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Implements dedicated cloud node PATCH method.
+    def delete(
+            self, resource_group_name, dedicated_cloud_service_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Implements dedicatedCloudService DELETE method.
 
-        Patches dedicated node properties.
+        Delete dedicate cloud service.
 
         :param resource_group_name: The name of the resource group
         :type resource_group_name: str
-        :param dedicated_cloud_node_name: dedicated cloud node name
-        :type dedicated_cloud_node_name: str
+        :param dedicated_cloud_service_name: dedicated cloud service name
+        :type dedicated_cloud_service_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            dedicated_cloud_service_name=dedicated_cloud_service_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'Content-Type': 'str',
+                })
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices/{dedicatedCloudServiceName}'}
+
+    def update(
+            self, resource_group_name, dedicated_cloud_service_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Implements dedicatedCloudService PATCH method.
+
+        Patch dedicated cloud service's properties.
+
+        :param resource_group_name: The name of the resource group
+        :type resource_group_name: str
+        :param dedicated_cloud_service_name: dedicated cloud service name
+        :type dedicated_cloud_service_name: str
         :param tags: The tags key:value pairs
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -454,21 +438,20 @@ class DedicatedCloudNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DedicatedCloudNode or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.DedicatedCloudNode or
+        :return: DedicatedCloudService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
-        dedicated_cloud_node_request = models.PatchPayload(tags=tags)
+        dedicated_cloud_service_request = models.PatchPayload(tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'dedicatedCloudNodeName': self._serialize.url("dedicated_cloud_node_name", dedicated_cloud_node_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -488,7 +471,7 @@ class DedicatedCloudNodeOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(dedicated_cloud_node_request, 'PatchPayload')
+        body_content = self._serialize.body(dedicated_cloud_service_request, 'PatchPayload')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -499,11 +482,11 @@ class DedicatedCloudNodeOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DedicatedCloudNode', response)
+            deserialized = self._deserialize('DedicatedCloudService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudNodes/{dedicatedCloudNodeName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareCloudSimple/dedicatedCloudServices/{dedicatedCloudServiceName}'}

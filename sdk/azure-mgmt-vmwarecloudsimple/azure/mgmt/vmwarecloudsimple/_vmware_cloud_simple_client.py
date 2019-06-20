@@ -37,31 +37,31 @@ class VMwareCloudSimpleClient(VMwareCloudSimpleClientOperationsMixin, SDKClient)
     :vartype config: VMwareCloudSimpleClientConfiguration
 
     :ivar available_operations: AvailableOperations operations
-    :vartype available_operations: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.AvailableOperations
+    :vartype available_operations: azure.mgmt.vmwarecloudsimple.operations.AvailableOperations
     :ivar dedicated_cloud_node: DedicatedCloudNode operations
-    :vartype dedicated_cloud_node: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.DedicatedCloudNodeOperations
+    :vartype dedicated_cloud_node: azure.mgmt.vmwarecloudsimple.operations.DedicatedCloudNodeOperations
     :ivar dedicated_cloud_service: DedicatedCloudService operations
-    :vartype dedicated_cloud_service: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.DedicatedCloudServiceOperations
+    :vartype dedicated_cloud_service: azure.mgmt.vmwarecloudsimple.operations.DedicatedCloudServiceOperations
     :ivar skus_availability_within_region: SkusAvailabilityWithinRegion operations
-    :vartype skus_availability_within_region: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.SkusAvailabilityWithinRegionOperations
+    :vartype skus_availability_within_region: azure.mgmt.vmwarecloudsimple.operations.SkusAvailabilityWithinRegionOperations
     :ivar private_cloud_by_region: PrivateCloudByRegion operations
-    :vartype private_cloud_by_region: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.PrivateCloudByRegionOperations
+    :vartype private_cloud_by_region: azure.mgmt.vmwarecloudsimple.operations.PrivateCloudByRegionOperations
     :ivar resource_pools_by_pc: ResourcePoolsByPC operations
-    :vartype resource_pools_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcePoolsByPCOperations
+    :vartype resource_pools_by_pc: azure.mgmt.vmwarecloudsimple.operations.ResourcePoolsByPCOperations
     :ivar resource_pool_by_pc: ResourcePoolByPC operations
-    :vartype resource_pool_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.ResourcePoolByPCOperations
+    :vartype resource_pool_by_pc: azure.mgmt.vmwarecloudsimple.operations.ResourcePoolByPCOperations
     :ivar virtual_machine_templates_by_pc: VirtualMachineTemplatesByPC operations
-    :vartype virtual_machine_templates_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualMachineTemplatesByPCOperations
+    :vartype virtual_machine_templates_by_pc: azure.mgmt.vmwarecloudsimple.operations.VirtualMachineTemplatesByPCOperations
     :ivar virtual_machine_template_by_pc: VirtualMachineTemplateByPC operations
-    :vartype virtual_machine_template_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualMachineTemplateByPCOperations
+    :vartype virtual_machine_template_by_pc: azure.mgmt.vmwarecloudsimple.operations.VirtualMachineTemplateByPCOperations
     :ivar virtual_networks_by_pc: VirtualNetworksByPC operations
-    :vartype virtual_networks_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualNetworksByPCOperations
+    :vartype virtual_networks_by_pc: azure.mgmt.vmwarecloudsimple.operations.VirtualNetworksByPCOperations
     :ivar virtual_network_by_pc: VirtualNetworkByPC operations
-    :vartype virtual_network_by_pc: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualNetworkByPCOperations
+    :vartype virtual_network_by_pc: azure.mgmt.vmwarecloudsimple.operations.VirtualNetworkByPCOperations
     :ivar usages_within_region: UsagesWithinRegion operations
-    :vartype usages_within_region: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.UsagesWithinRegionOperations
+    :vartype usages_within_region: azure.mgmt.vmwarecloudsimple.operations.UsagesWithinRegionOperations
     :ivar virtual_machine: VirtualMachine operations
-    :vartype virtual_machine: azure.mgmt.vmwarecloudsimple.v2019_04_01.operations.VirtualMachineOperations
+    :vartype virtual_machine: azure.mgmt.vmwarecloudsimple.operations.VirtualMachineOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

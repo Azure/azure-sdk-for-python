@@ -32,11 +32,10 @@ class VMwareCloudSimpleClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: OperationResource or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.OperationResource or
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.OperationResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         # Construct URL
         url = self.get_operation_result_by_region.metadata['url']
@@ -101,10 +100,10 @@ class VMwareCloudSimpleClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateCloud or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.PrivateCloud
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.PrivateCloud or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         # Construct URL
         url = self.get_private_cloud.metadata['url']

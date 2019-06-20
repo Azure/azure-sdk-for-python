@@ -59,9 +59,9 @@ class VirtualMachineOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of VirtualMachine
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachinePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]
+         ~azure.mgmt.vmwarecloudsimple.models.VirtualMachinePaged[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -140,9 +140,9 @@ class VirtualMachineOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of VirtualMachine
         :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachinePaged[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]
+         ~azure.mgmt.vmwarecloudsimple.models.VirtualMachinePaged[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -217,11 +217,10 @@ class VirtualMachineOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VirtualMachine or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine or
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.VirtualMachine or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -336,7 +335,7 @@ class VirtualMachineOperations(object):
         :param virtual_machine_request: Create or Update Virtual Machine
          request
         :type virtual_machine_request:
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine
+         ~azure.mgmt.vmwarecloudsimple.models.VirtualMachine
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -345,11 +344,11 @@ class VirtualMachineOperations(object):
         :return: An instance of LROPoller that returns VirtualMachine or
          ClientRawResponse<VirtualMachine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -446,7 +445,7 @@ class VirtualMachineOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -546,11 +545,11 @@ class VirtualMachineOperations(object):
         :return: An instance of LROPoller that returns VirtualMachine or
          ClientRawResponse<VirtualMachine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.VirtualMachine]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -643,7 +642,7 @@ class VirtualMachineOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         raw_result = self._start_initial(
             resource_group_name=resource_group_name,
@@ -743,13 +742,11 @@ class VirtualMachineOperations(object):
         :type virtual_machine_name: str
         :param mode: query stop mode parameter (reboot, shutdown, etc...).
          Possible values include: 'reboot', 'suspend', 'shutdown', 'poweroff'
-        :type mode: str or
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.StopMode
+        :type mode: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
         :param mode1: mode indicates a type of stop operation - reboot,
          suspend, shutdown or power-off. Possible values include: 'reboot',
          'suspend', 'shutdown', 'poweroff'
-        :type mode1: str or
-         ~azure.mgmt.vmwarecloudsimple.v2019_04_01.models.StopMode
+        :type mode1: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -760,7 +757,7 @@ class VirtualMachineOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.v2019_04_01.models.CSRPErrorException>`
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
         """
         raw_result = self._stop_initial(
             resource_group_name=resource_group_name,
