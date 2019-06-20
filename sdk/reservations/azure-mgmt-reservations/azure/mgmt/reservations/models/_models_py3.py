@@ -411,9 +411,9 @@ class Patch(Model):
     :type name: str
     :param renew:
     :type renew: bool
-    :param renew_request_properties:
-    :type renew_request_properties:
-     ~azure.mgmt.reservations.models.PurchaseRequest
+    :param renew_properties:
+    :type renew_properties:
+     ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
     """
 
     _attribute_map = {
@@ -422,17 +422,33 @@ class Patch(Model):
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
         'name': {'key': 'properties.name', 'type': 'str'},
         'renew': {'key': 'properties.renew', 'type': 'bool'},
-        'renew_request_properties': {'key': 'properties.renewRequestProperties', 'type': 'PurchaseRequest'},
+        'renew_properties': {'key': 'properties.renewProperties', 'type': 'PatchPropertiesRenewProperties'},
     }
 
-    def __init__(self, *, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, name: str=None, renew: bool=None, renew_request_properties=None, **kwargs) -> None:
+    def __init__(self, *, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, name: str=None, renew: bool=None, renew_properties=None, **kwargs) -> None:
         super(Patch, self).__init__(**kwargs)
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
         self.instance_flexibility = instance_flexibility
         self.name = name
         self.renew = renew
-        self.renew_request_properties = renew_request_properties
+        self.renew_properties = renew_properties
+
+
+class PatchPropertiesRenewProperties(Model):
+    """PatchPropertiesRenewProperties.
+
+    :param purchase_properties:
+    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    """
+
+    _attribute_map = {
+        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
+    }
+
+    def __init__(self, *, purchase_properties=None, **kwargs) -> None:
+        super(PatchPropertiesRenewProperties, self).__init__(**kwargs)
+        self.purchase_properties = purchase_properties
 
 
 class PurchaseRequest(Model):

@@ -411,9 +411,9 @@ class Patch(Model):
     :type name: str
     :param renew:
     :type renew: bool
-    :param renew_request_properties:
-    :type renew_request_properties:
-     ~azure.mgmt.reservations.models.PurchaseRequest
+    :param renew_properties:
+    :type renew_properties:
+     ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
     """
 
     _attribute_map = {
@@ -422,7 +422,7 @@ class Patch(Model):
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
         'name': {'key': 'properties.name', 'type': 'str'},
         'renew': {'key': 'properties.renew', 'type': 'bool'},
-        'renew_request_properties': {'key': 'properties.renewRequestProperties', 'type': 'PurchaseRequest'},
+        'renew_properties': {'key': 'properties.renewProperties', 'type': 'PatchPropertiesRenewProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -432,7 +432,23 @@ class Patch(Model):
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
         self.name = kwargs.get('name', None)
         self.renew = kwargs.get('renew', None)
-        self.renew_request_properties = kwargs.get('renew_request_properties', None)
+        self.renew_properties = kwargs.get('renew_properties', None)
+
+
+class PatchPropertiesRenewProperties(Model):
+    """PatchPropertiesRenewProperties.
+
+    :param purchase_properties:
+    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    """
+
+    _attribute_map = {
+        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PatchPropertiesRenewProperties, self).__init__(**kwargs)
+        self.purchase_properties = kwargs.get('purchase_properties', None)
 
 
 class PurchaseRequest(Model):

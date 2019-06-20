@@ -24,6 +24,7 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResponse
     from ._models_py3 import Patch
+    from ._models_py3 import PatchPropertiesRenewProperties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import RenewPropertiesResponse
@@ -52,6 +53,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import OperationResponse
     from ._models import Patch
+    from ._models import PatchPropertiesRenewProperties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import RenewPropertiesResponse
@@ -92,6 +94,7 @@ __all__ = [
     'OperationDisplay',
     'OperationResponse',
     'Patch',
+    'PatchPropertiesRenewProperties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'RenewPropertiesResponse',
