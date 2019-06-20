@@ -17,7 +17,8 @@ class ComputeSecrets(Model):
     of compute.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AksComputeSecrets, VirtualMachineSecrets
+    sub-classes are: AksComputeSecrets, VirtualMachineSecrets,
+    DatabricksComputeSecrets
 
     All required parameters must be populated in order to send to Azure.
 
@@ -34,7 +35,7 @@ class ComputeSecrets(Model):
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AksComputeSecrets', 'VirtualMachine': 'VirtualMachineSecrets'}
+        'compute_type': {'AKS': 'AksComputeSecrets', 'VirtualMachine': 'VirtualMachineSecrets', 'Databricks': 'DatabricksComputeSecrets'}
     }
 
     def __init__(self, **kwargs):

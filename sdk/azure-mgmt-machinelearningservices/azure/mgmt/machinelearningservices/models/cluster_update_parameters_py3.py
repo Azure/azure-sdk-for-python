@@ -12,26 +12,19 @@
 from msrest.serialization import Model
 
 
-class BatchAIProperties(Model):
-    """BatchAI properties.
+class ClusterUpdateParameters(Model):
+    """AmlCompute update parameters.
 
-    :param vm_size: Virtual Machine Size
-    :type vm_size: str
-    :param vm_priority: Virtual Machine priority
-    :type vm_priority: str
-    :param scale_settings: Scale settings for BatchAI
+    :param scale_settings: Scale settings. Desired scale settings for the
+     amlCompute.
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'vm_priority': {'key': 'vmPriority', 'type': 'str'},
-        'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
+        'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
     }
 
-    def __init__(self, *, vm_size: str=None, vm_priority: str=None, scale_settings=None, **kwargs) -> None:
-        super(BatchAIProperties, self).__init__(**kwargs)
-        self.vm_size = vm_size
-        self.vm_priority = vm_priority
+    def __init__(self, *, scale_settings=None, **kwargs) -> None:
+        super(ClusterUpdateParameters, self).__init__(**kwargs)
         self.scale_settings = scale_settings

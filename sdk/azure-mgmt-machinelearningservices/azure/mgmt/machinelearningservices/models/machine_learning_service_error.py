@@ -16,9 +16,16 @@ from msrest.exceptions import HttpOperationError
 class MachineLearningServiceError(Model):
     """Wrapper for error response to follow ARM guidelines.
 
-    :param error: The error response.
-    :type error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
     """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorResponse'},
@@ -26,7 +33,7 @@ class MachineLearningServiceError(Model):
 
     def __init__(self, **kwargs):
         super(MachineLearningServiceError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = None
 
 
 class MachineLearningServiceErrorException(HttpOperationError):

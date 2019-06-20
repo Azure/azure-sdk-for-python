@@ -40,9 +40,6 @@ class Workspace(Resource):
     :ivar creation_time: The creation time of the machine learning workspace
      in ISO8601 format.
     :vartype creation_time: datetime
-    :param batchai_workspace: ARM id of the Batch AI workspace associated with
-     this workspace. This cannot be changed once the workspace has been created
-    :type batchai_workspace: str
     :param key_vault: ARM id of the key vault associated with this workspace.
      This cannot be changed once the workspace has been created
     :type key_vault: str
@@ -89,7 +86,6 @@ class Workspace(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'batchai_workspace': {'key': 'properties.batchaiWorkspace', 'type': 'str'},
         'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
@@ -98,13 +94,12 @@ class Workspace(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, description: str=None, friendly_name: str=None, batchai_workspace: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, description: str=None, friendly_name: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, **kwargs) -> None:
         super(Workspace, self).__init__(location=location, tags=tags, **kwargs)
         self.workspace_id = None
         self.description = description
         self.friendly_name = friendly_name
         self.creation_time = None
-        self.batchai_workspace = batchai_workspace
         self.key_vault = key_vault
         self.application_insights = application_insights
         self.container_registry = container_registry
