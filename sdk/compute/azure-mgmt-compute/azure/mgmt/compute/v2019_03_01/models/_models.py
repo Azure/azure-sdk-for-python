@@ -4291,6 +4291,10 @@ class VirtualMachineInstanceView(Model):
     :param os_version: The version of Operating System running on the virtual
      machine.
     :type os_version: str
+    :param hyper_vgeneration: Specifies the HyperVGeneration Type associated
+     with a resource. Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_03_01.models.HyperVGenerationType
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
@@ -4322,6 +4326,7 @@ class VirtualMachineInstanceView(Model):
         'computer_name': {'key': 'computerName', 'type': 'str'},
         'os_name': {'key': 'osName', 'type': 'str'},
         'os_version': {'key': 'osVersion', 'type': 'str'},
+        'hyper_vgeneration': {'key': 'hyperVGeneration', 'type': 'str'},
         'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
         'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
         'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
@@ -4338,6 +4343,7 @@ class VirtualMachineInstanceView(Model):
         self.computer_name = kwargs.get('computer_name', None)
         self.os_name = kwargs.get('os_name', None)
         self.os_version = kwargs.get('os_version', None)
+        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
         self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
         self.vm_agent = kwargs.get('vm_agent', None)
         self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
