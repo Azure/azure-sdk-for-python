@@ -22,15 +22,34 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
 
     @staticmethod
     def create_config(**kwargs: Any) -> Configuration:  # type: ignore
+        """
+        Build a default configuration for the credential's HTTP pipeline.
+
+        :rtype: :class:`azure.core.configuration`
+        """
         return _ManagedIdentityBase.create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
 class AsyncImdsCredential(_AsyncManagedIdentityBase):
+    """
+    Asynchronously authenticates with a managed identity via the IMDS endpoint.
+
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
+
     def __init__(self, config: Optional[Configuration] = None, **kwargs: Any) -> None:
         super().__init__(endpoint=Endpoints.IMDS, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
     async def get_token(self, *scopes: str) -> AccessToken:
+        """
+        Asynchronously request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`identity.exceptions.AuthenticationError`
+        """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (missing a required header),
@@ -65,6 +84,13 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
 
 
 class AsyncMsiCredential(_AsyncManagedIdentityBase):
+    """
+    Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
+
     def __init__(self, config: Optional[Configuration] = None, **kwargs: Any) -> None:
         endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         self._endpoint_available = endpoint is not None
@@ -72,6 +98,13 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
             super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
     async def get_token(self, *scopes: str) -> AccessToken:
+        """
+        Asynchronously request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`identity.exceptions.AuthenticationError`
+        """
         if not self._endpoint_available:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")
 

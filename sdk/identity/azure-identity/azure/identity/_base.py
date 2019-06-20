@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 import binascii
 
 from cryptography import x509
@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredentialBase(object):
+    """Sans I/O base for client secret credentials"""
+
     def __init__(self, client_id, secret, tenant_id, **kwargs):
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not client_id:
@@ -38,6 +40,8 @@ class ClientSecretCredentialBase(object):
 
 
 class CertificateCredentialBase(object):
+    """Sans I/O base for certificate credentials"""
+
     def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not certificate_path:
