@@ -20,7 +20,7 @@ pip install azure-security-keyvault
     ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object. Client secret credential way of authentication is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
+In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` way of authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
@@ -84,13 +84,13 @@ The Secret client performs the interactions with the Azure Key Vault service for
 
 ## Examples
 The following section provides several code snippets using the above created `secret_client`, covering some of the most common Azure Key Vault Secret service related tasks, including:
-* [Create a Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#create-a-secret)
-* [Retrieve a Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#retrieve-a-secret)
-* [Update an existing Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#update-an-existing-secret)
-* [Delete a Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#delete-a-secret)
-* [List Secrets](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#list-secrets)
-* [Async create a Secret](https://github.com/samvaity/azure-sdk-for-python/tree/secrets-track2-readme/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#async-create-a-secret)
-* [Async list Secrets](https://github.com/samvaity/azure-sdk-for-python/tree/secrets-track2-readme/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#async-list-secrets)
+* [Create a Secret](#create-a-secret)
+* [Retrieve a Secret](#retrieve-a-secret)
+* [Update an existing Secret](#update-an-existing-secret)
+* [Delete a Secret](#delete-a-secret)
+* [List Secrets](#list-secrets)
+* [Async create a Secret](#async-create-a-secret)
+* [Async list Secrets](#async-list-secrets)
 
 ### Create a Secret
 `set_secret` creates a Secret to be stored in the Azure Key Vault. If a secret with the same name already exists, then a new version of the secret is created.
@@ -149,7 +149,7 @@ This example lists all the secrets in the specified Key Vault.
 ```
 
 ### Async operations
-Python’s [asyncio package](https://pypi.org/project/asyncio/) (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+Python’s [asyncio package](https://pypi.org/project/asyncio/) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The package supports async API on Python 3.5+ and is identical to synchronous API. 
 
 The following examples provide code snippets for performing async operations in the Secret Client library:
@@ -162,6 +162,7 @@ This example creates a secret in the Key Vault with the specified optional argum
 
     # for async operations use AsyncDefaultAzureCredential
     credential = AsyncDefaultAzureCredential()
+    
     # Create a new secret client using the default credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 

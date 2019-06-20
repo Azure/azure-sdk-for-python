@@ -1,9 +1,9 @@
 # Azure Key Vault Key client library for Python
 Azure Key Vault allows you to create and store keys in the Key Vault. Azure Key Vault client supports RSA keys and elliptic curve keys, each with corresponding support in hardware security modules (HSM).
 
- Multiple keys, and multiple versions of the same key, can be kept in the Key Vault. Cryptographic keys in Key Vault are represented as [JSON Web Key [JWK]](https://tools.ietf.org/html/rfc7517) objects. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the keys and its versions.
+Multiple keys, and multiple versions of the same key, can be kept in the Key Vault. Cryptographic keys in Key Vault are represented as [JSON Web Key [JWK]](https://tools.ietf.org/html/rfc7517) objects. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the keys and its versions.
 
-[Source code](/azure/security/keyvault/keys) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](/azure/security/keyvault/keys/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys/samples)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
@@ -160,7 +160,7 @@ for key in keys:
 ```
 
 ### Async operations
-Python’s [asyncio package](https://pypi.org/project/asyncio/)and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+Python’s [asyncio package](https://pypi.org/project/asyncio/) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The package supports async API on Python 3.5+ and is identical to synchronous API.
 
 The following examples provide code snippets for performing async operations in the Key Client library:
@@ -173,6 +173,7 @@ from azure.security.keyvault.aio import KeyClient
 
 # for async operations use AsyncDefaultAzureCredential
 credential = AsyncDefaultAzureCredential()
+
 # Create a new Key client using the default credential
 key_client = KeyClient(vault_url=vault_url, credential=credential)
 
