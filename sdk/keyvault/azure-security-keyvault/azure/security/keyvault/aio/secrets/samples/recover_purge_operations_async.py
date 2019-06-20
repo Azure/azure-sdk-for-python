@@ -72,7 +72,10 @@ async def run_sample():
         print("Secret has been permanently deleted.")
 
     except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
+        if "(NotSupported)" in e.message:
+            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+        else:
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
         print("\nrun_sample done")
