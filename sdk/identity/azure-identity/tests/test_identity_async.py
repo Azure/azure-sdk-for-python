@@ -18,7 +18,7 @@ from azure.identity import (
     AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
     AsyncManagedIdentityCredential,
-    AsyncTokenCredentialChain,
+    AsyncChainedTokenCredential,
 )
 from azure.identity.aio._internal import AsyncImdsCredential
 from azure.identity.constants import EnvironmentVariables
@@ -58,31 +58,6 @@ async def test_client_secret_credential_cache():
     token = await credential.get_token(*scopes)
     assert token == expired_token
     assert mock_send.call_count == 2
-
-
-@pytest.mark.asyncio
-async def test_cert_environment_credential(monkeypatch):
-    client_id = "fake-client-id"
-    pem_path = os.path.join(os.path.dirname(__file__), "private-key.pem")
-    tenant_id = "fake-tenant-id"
-
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, pem_path)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    success_message = "request passed validation"
-
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["grant_type"] == "client_credentials"
-        # raising here makes mocking a transport response unnecessary
-        raise AuthenticationError(success_message)
-
-    credential = AsyncEnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(AuthenticationError) as ex:
-        await credential.get_token("scope")
-    assert str(ex.value) == success_message
 
 
 @pytest.mark.asyncio
@@ -127,7 +102,7 @@ async def test_credential_chain_error_message():
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
     with pytest.raises(AuthenticationError) as ex:
-        await AsyncTokenCredentialChain(first_credential, second_credential).get_token("scope")
+        await AsyncChainedTokenCredential(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -146,7 +121,7 @@ async def test_chain_attempts_all_credentials():
         Mock(get_token=asyncio.coroutine(lambda _: expected_token)),
     ]
 
-    token = await AsyncTokenCredentialChain(*credentials).get_token("scope")
+    token = await AsyncChainedTokenCredential(*credentials).get_token("scope")
     assert token is expected_token
 
     for credential in credentials[:-1]:
@@ -159,7 +134,7 @@ async def test_chain_returns_first_token():
     first_credential = Mock(get_token=asyncio.coroutine(lambda _: expected_token))
     second_credential = Mock(get_token=Mock())
 
-    aggregate = AsyncTokenCredentialChain(first_credential, second_credential)
+    aggregate = AsyncChainedTokenCredential(first_credential, second_credential)
     credential = await aggregate.get_token("scope")
 
     assert credential is expected_token
