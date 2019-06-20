@@ -29,7 +29,7 @@ class EventHubProducer(object):
             self, client, target, partition=None, send_timeout=60,
             keep_alive=None, auto_reconnect=True, loop=None):
         """
-        Instantiate an EventHub event SenderAsync handler.
+        Instantiate an async EventHubProducer.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
@@ -44,7 +44,7 @@ class EventHubProducer(object):
         :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
          periods of inactivity. The default value is `None`, i.e. no keep alive pings.
         :type keep_alive: float
-        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
+        :param auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
         :param loop: An event loop. If not specified the default event loop will be used.
@@ -59,7 +59,7 @@ class EventHubProducer(object):
         self.timeout = send_timeout
         self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
         self.reconnect_backoff = 1
-        self.name = "EHSender-{}".format(uuid.uuid4())
+        self.name = "EHProducer-{}".format(uuid.uuid4())
         self.unsent_events = None
         self.redirected = None
         self.error = None
@@ -305,7 +305,7 @@ class EventHubProducer(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This sender has been closed. Please create a new sender to send event data.",
+            raise EventHubError("This producer has been closed. Please create a new producer to send event data.",
                                 self.error)
 
     @staticmethod

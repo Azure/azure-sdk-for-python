@@ -193,7 +193,7 @@ class EventHubClient(EventHubClientAbstract):
     ):
         # type: (str, str, EventPosition, int, str, int) -> EventHubConsumer
         """
-        Create a receiver to the client for a particular consumer group and partition.
+        Create a consumer to the client for a particular consumer group and partition.
 
         :param consumer_group: The name of the consumer group. Default value is `$Default`.
         :type consumer_group: str
@@ -201,13 +201,13 @@ class EventHubClient(EventHubClientAbstract):
         :type partition_id: str
         :param event_position: The position from which to start receiving.
         :type event_position: ~azure.eventhub.common.EventPosition
-        :param owner_level: The priority of the exclusive receiver. The client will create an exclusive
-         receiver if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
+         consumer if owner_level is set.
         :type owner_level: int
         :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :rtype: ~azure.eventhub.receiver.EventHubConsumer
 
@@ -217,7 +217,7 @@ class EventHubClient(EventHubClientAbstract):
                 :end-before: [END create_eventhub_client_receiver]
                 :language: python
                 :dedent: 4
-                :caption: Add a receiver to the client for a particular consumer group and partition.
+                :caption: Add a consumer to the client for a particular consumer group and partition.
 
         """
         prefetch = self.config.prefetch if prefetch is None else prefetch
@@ -253,7 +253,7 @@ class EventHubClient(EventHubClientAbstract):
                 :end-before: [END create_eventhub_client_sender]
                 :language: python
                 :dedent: 4
-                :caption: Add a sender to the client to send EventData object to an EventHub.
+                :caption: Add a producer to the client to send EventData object to an EventHub.
 
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)

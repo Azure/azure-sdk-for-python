@@ -98,7 +98,7 @@ class EventHubClient(EventHubClientAbstract):
         """
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
-            "password":self._auth_config.get("iot_password")}
+            "password": self._auth_config.get("iot_password")}
         try:
             mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
@@ -114,12 +114,12 @@ class EventHubClient(EventHubClientAbstract):
             output = {}
             if eh_info:
                 output['path'] = eh_info[b'name'].decode('utf-8')
-                output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at'])/1000)
+                output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
         finally:
             await mgmt_client.close_async()
-    
+
     async def get_partition_ids(self):
         """
         Get partition ids of the specified EventHub async.
@@ -179,7 +179,7 @@ class EventHubClient(EventHubClientAbstract):
             self, consumer_group, partition_id, event_position, owner_level=None,
             operation=None, prefetch=None, loop=None):
         """
-        Create an async receiver to the client for a particular consumer group and partition.
+        Create an async consumer to the client for a particular consumer group and partition.
 
         :param consumer_group: The name of the consumer group. Default value is `$Default`.
         :type consumer_group: str
@@ -187,13 +187,13 @@ class EventHubClient(EventHubClientAbstract):
         :type partition_id: str
         :param event_position: The position from which to start receiving.
         :type event_position: ~azure.eventhub.common.EventPosition
-        :param owner_level: The priority of the exclusive receiver. The client will create an exclusive
-         receiver if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
+         consumer if owner_level is set.
         :type owner_level: int
         :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.receiver_async.EventHubConsumer
@@ -204,7 +204,7 @@ class EventHubClient(EventHubClientAbstract):
                 :end-before: [END create_eventhub_client_async_receiver]
                 :language: python
                 :dedent: 4
-                :caption: Add an async receiver to the client for a particular consumer group and partition.
+                :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
         prefetch = self.config.prefetch if prefetch is None else prefetch
@@ -220,7 +220,7 @@ class EventHubClient(EventHubClientAbstract):
     def create_producer(
             self, partition_id=None, operation=None, send_timeout=None, loop=None):
         """
-        Create an async sender to the client to send ~azure.eventhub.common.EventData object
+        Create an async producer to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
 
         :param partition_id: Optionally specify a particular partition to send to.
@@ -243,7 +243,7 @@ class EventHubClient(EventHubClientAbstract):
                 :end-before: [END create_eventhub_client_async_sender]
                 :language: python
                 :dedent: 4
-                :caption: Add an async sender to the client to
+                :caption: Add an async producer to the client to
                  send ~azure.eventhub.common.EventData object to an EventHub.
 
         """

@@ -33,10 +33,10 @@ client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=Even
                         network_tracing=False)
 
 try:
-    receiver = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION, prefetch=5000)
-    with receiver:
+    consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION, prefetch=5000)
+    with consumer:
         start_time = time.time()
-        batch = receiver.receive(timeout=5000)
+        batch = consumer.receive(timeout=5000)
         while batch:
             for event_data in batch:
                 last_offset = event_data.offset
@@ -44,7 +44,7 @@ try:
                 print("Received: {}, {}".format(last_offset.value, last_sn))
                 print(event_data.body_as_str())
                 total += 1
-            batch = receiver.receive(timeout=5000)
+            batch = consumer.receive(timeout=5000)
 
         end_time = time.time()
         run_time = end_time - start_time

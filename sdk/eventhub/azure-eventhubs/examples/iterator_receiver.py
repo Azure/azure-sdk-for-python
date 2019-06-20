@@ -25,20 +25,20 @@ KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 EVENT_POSITION = EventPosition.first_available_event()
 
 
-class PartitionReceiverThread(Thread):
-    def __init__(self, receiver):
+class PartitionConsumerThread(Thread):
+    def __init__(self, consumer):
         Thread.__init__(self)
-        self.receiver = receiver
+        self.consumer = consumer
 
     def run(self):
-        for item in self.receiver:
+        for item in self.consumer:
             print(item)
 
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                     network_tracing=False)
-receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EVENT_POSITION)
-with receiver:
-    thread = PartitionReceiverThread(receiver)
+consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EVENT_POSITION)
+with consumer:
+    thread = PartitionConsumerThread(consumer)
     thread.start()
     thread.join(2)  # stop after 2 seconds

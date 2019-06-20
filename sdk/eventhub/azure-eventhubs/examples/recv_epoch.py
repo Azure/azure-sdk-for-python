@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition as an epoch receiver.
+An example to show receiving events from an Event Hub partition as an epoch consumer.
 """
 
 import os
@@ -26,16 +26,15 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EXCLUSIVE_RECEIVER_PRIORITY = 42
 PARTITION = "0"
 
 
 async def pump(client, owner_level):
-    receiver = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EventPosition("-1"), owner_level=owner_level)
-    async with receiver:
+    consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EventPosition("-1"), owner_level=owner_level)
+    async with consumer:
         total = 0
         start_time = time.time()
-        for event_data in await receiver.receive(timeout=5):
+        for event_data in await consumer.receive(timeout=5):
             last_offset = event_data.offset
             last_sn = event_data.sequence_number
             total += 1

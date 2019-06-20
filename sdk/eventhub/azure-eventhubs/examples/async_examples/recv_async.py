@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running concurrent receivers.
+An example to show running concurrent consumers.
 """
 
 import os
@@ -31,11 +31,11 @@ EVENT_POSITION = EventPosition.first_available_event()
 
 
 async def pump(client, partition):
-    receiver = client.create_consumer(consumer_group="$default", partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
-    async with receiver:
+    consumer = client.create_consumer(consumer_group="$default", partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
+    async with consumer:
         total = 0
         start_time = time.time()
-        for event_data in await receiver.receive(timeout=10):
+        for event_data in await consumer.receive(timeout=10):
             last_offset = event_data.offset
             last_sn = event_data.sequence_number
             print("Received: {}, {}".format(last_offset.value, last_sn))

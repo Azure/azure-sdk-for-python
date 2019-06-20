@@ -28,7 +28,7 @@ class EventHubConsumer(object):
             self, client, source, event_position=None, prefetch=300, owner_level=None,
             keep_alive=None, auto_reconnect=True, loop=None):
         """
-        Instantiate an async receiver.
+        Instantiate an async consumer.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
@@ -39,8 +39,8 @@ class EventHubConsumer(object):
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
-        :param owner_level: The priority of the exclusive receiver. It will an exclusive
-         receiver if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. It will an exclusive
+         consumer if owner_level is set.
         :type owner_level: int
         :param loop: An event loop.
         """
@@ -155,7 +155,7 @@ class EventHubConsumer(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This receiver has been closed. Please create a new receiver to receive event data.",
+            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.",
                                 self.error)
     async def _open(self):
         """

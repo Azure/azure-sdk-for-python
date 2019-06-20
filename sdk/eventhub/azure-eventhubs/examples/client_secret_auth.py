@@ -36,11 +36,11 @@ client = EventHubClient(host=HOSTNAME,
                         event_hub_path=EVENT_HUB,
                         credential=credential)
 try:
-    sender = client.create_producer(partition_id='0')
+    producer = client.create_producer(partition_id='0')
 
-    with sender:
+    with producer:
         event = EventData(body='A single message')
-        sender.send(event)
+        producer.send(event)
 
 except KeyboardInterrupt:
     pass

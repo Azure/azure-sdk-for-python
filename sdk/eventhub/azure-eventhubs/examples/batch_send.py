@@ -33,16 +33,16 @@ try:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
-    sender = client.create_producer(partition_id="1")
+    producer = client.create_producer(partition_id="1")
 
     event_list = []
     for i in range(1500):
         event_list.append('Hello World')
 
-    with sender:
+    with producer:
         start_time = time.time()
         data = EventData(body=event_list)
-        sender.send(data)
+        producer.send(data)
         end_time = time.time()
         run_time = end_time - start_time
         logger.info("Runtime: {} seconds".format(run_time))

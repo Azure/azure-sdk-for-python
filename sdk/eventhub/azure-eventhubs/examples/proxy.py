@@ -39,10 +39,10 @@ if not HOSTNAME:
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False, http_proxy=HTTP_PROXY)
 try:
-    sender = client.create_producer(partition_id=PARTITION)
-    receiver = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION)
+    producer = client.create_producer(partition_id=PARTITION)
+    consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION)
 
-    receiver.receive(timeout=1)
+    consumer.receive(timeout=1)
 
     event_list = []
     for i in range(20):
@@ -50,12 +50,12 @@ try:
 
     print('Start sending events behind a proxy.')
 
-    sender.send(event_list)
+    producer.send(event_list)
 
     print('Start receiving events behind a proxy.')
 
-    received = receiver.receive(max_batch_size=50, timeout=5)
+    received = consumer.receive(max_batch_size=50, timeout=5)
 finally:
-    sender.close()
-    receiver.close()
+    producer.close()
+    consumer.close()
 

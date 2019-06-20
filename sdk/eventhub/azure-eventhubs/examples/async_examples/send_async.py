@@ -30,16 +30,16 @@ KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
 async def run(client):
-    sender = client.create_producer()
-    await send(sender, 4)
+    producer = client.create_producer()
+    await send(producer, 4)
 
 
-async def send(sender, count):
-    async with sender:
+async def send(producer, count):
+    async with producer:
         for i in range(count):
             logger.info("Sending message: {}".format(i))
             data = EventData(str(i))
-            await sender.send(data)
+            await producer.send(data)
 
 try:
     if not HOSTNAME:
