@@ -4,10 +4,11 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
-import asyncio
-import time
 import datetime
 import functools
+import asyncio
+from typing import Any, List, Dict, Union
+
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (
@@ -16,8 +17,6 @@ from uamqp import (
 )
 
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
-from azure.eventhub import (
-    EventHubError)
 from ..client_abstract import EventHubClientAbstract
 
 from .sender_async import EventHubProducer
@@ -86,6 +85,7 @@ class EventHubClient(EventHubClientAbstract):
                                                 transport_type=transport_type)
 
     async def get_properties(self):
+        # type:() -> Dict[str, Any]
         """
         Get properties of the specified EventHub async.
         Keys in the details dictionary include:
@@ -121,6 +121,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     async def get_partition_ids(self):
+        # type:() -> List[str]
         """
         Get partition ids of the specified EventHub async.
 
@@ -129,6 +130,7 @@ class EventHubClient(EventHubClientAbstract):
         return (await self.get_properties())['partition_ids']
 
     async def get_partition_properties(self, partition):
+        # type:(str) -> Dict[str, str]
         """
         Get properties of the specified partition async.
         Keys in the details dictionary include:
@@ -178,6 +180,7 @@ class EventHubClient(EventHubClientAbstract):
     def create_consumer(
             self, consumer_group, partition_id, event_position, owner_level=None,
             operation=None, prefetch=None, loop=None):
+        # type: (str, str, EventPosition, int, str, int, asyncio.AbstractEventLoop) -> EventHubConsumer
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
@@ -219,6 +222,7 @@ class EventHubClient(EventHubClientAbstract):
 
     def create_producer(
             self, partition_id=None, operation=None, send_timeout=None, loop=None):
+        # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
         """
         Create an async producer to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.

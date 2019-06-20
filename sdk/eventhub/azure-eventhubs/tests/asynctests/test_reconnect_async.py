@@ -15,7 +15,7 @@ from azure.eventhub import (
     EventHubError)
 from azure.eventhub.aio import EventHubClient
 
-SLEEP = True
+SLEEP = False
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio

@@ -6,11 +6,12 @@
 import asyncio
 import uuid
 import logging
+from typing import List
 
 from uamqp import errors, types, compat
 from uamqp import ReceiveClientAsync, Source
 
-from azure.eventhub import EventHubError, EventData
+from azure.eventhub import EventData
 from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
 
 log = logging.getLogger(__name__)
@@ -282,6 +283,7 @@ class EventHubConsumer(object):
         return await self._build_connection(is_reconnect=True)
 
     async def close(self, exception=None):
+        # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op. An optional exception can be passed in to
@@ -317,6 +319,7 @@ class EventHubConsumer(object):
 
     @property
     def queue_size(self):
+        # type: () -> int
         """
         The current size of the unprocessed Event queue.
 
@@ -328,6 +331,7 @@ class EventHubConsumer(object):
         return 0
 
     async def receive(self, max_batch_size=None, timeout=None):
+        # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.
 

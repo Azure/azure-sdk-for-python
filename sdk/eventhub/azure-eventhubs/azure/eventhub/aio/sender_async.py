@@ -194,6 +194,7 @@ class EventHubProducer(object):
         return await self._build_connection(is_reconnect=True)
 
     async def close(self, exception=None):
+        # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op. An optional exception can be passed in to
@@ -316,6 +317,7 @@ class EventHubProducer(object):
             yield ed
 
     async def send(self, event_data, partition_key=None):
+        # type:(List[EventData], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.

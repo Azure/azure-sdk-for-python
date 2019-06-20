@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import uuid
 import logging
 import time
+from typing import List
 
 from uamqp import types, errors
 from uamqp import compat
@@ -299,6 +300,7 @@ class EventHubConsumer(object):
         return self._build_connection(is_reconnect=True)
 
     def close(self, exception=None):
+        # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op. An optional exception can be passed in to
@@ -335,6 +337,7 @@ class EventHubConsumer(object):
 
     @property
     def queue_size(self):
+        # type:() -> int
         """
         The current size of the unprocessed Event queue.
 
@@ -346,6 +349,7 @@ class EventHubConsumer(object):
         return 0
 
     def receive(self, max_batch_size=None, timeout=None):
+        # type:(int, float) -> List[EventData]
         """
         Receive events from the EventHub.
 
@@ -377,7 +381,7 @@ class EventHubConsumer(object):
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
 
-        data_batch = []
+        data_batch = []  # type: List[EventData]
         max_retries = self.client.config.max_retries
         connecting_count = 0
         while True:

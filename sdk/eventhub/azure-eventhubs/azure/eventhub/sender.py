@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import uuid
 import logging
 import time
+from typing import Iterator, Generator, List, Union
 
 from uamqp import constants, errors
 from uamqp import compat
@@ -191,6 +192,7 @@ class EventHubProducer(object):
         return self._build_connection(is_reconnect=True)
 
     def close(self, exception=None):
+        # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op. An optional exception can be passed in to
@@ -310,6 +312,7 @@ class EventHubProducer(object):
             yield ed
 
     def send(self, event_data, partition_key=None):
+        # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.

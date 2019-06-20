@@ -6,27 +6,22 @@ from __future__ import unicode_literals
 
 import logging
 import datetime
-import sys
-import uuid
-import time
 import functools
 try:
     from urlparse import urlparse
     from urllib import unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Union
 
 import uamqp
 from uamqp import Message, AMQPClient
 from uamqp import authentication
 from uamqp import constants
 
-from azure.eventhub import __version__
 from azure.eventhub.sender import EventHubProducer
 from azure.eventhub.receiver import EventHubConsumer
 from azure.eventhub.common import parse_sas_token, EventPosition
-from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 
@@ -111,7 +106,7 @@ class EventHubClient(EventHubClientAbstract):
             "password": self._auth_config.get("iot_password")}
         try:
             mgmt_auth = self._create_auth(**alt_creds)
-            mgmt_client = uamqp.AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
+            mgmt_client = uamqp.AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
             mgmt_client.open()
             mgmt_msg = Message(application_properties={'name': self.eh_name})
             response = mgmt_client.mgmt_request(
@@ -140,7 +135,7 @@ class EventHubClient(EventHubClientAbstract):
         return self.get_properties()['partition_ids']
 
     def get_partition_properties(self, partition):
-        # type:(str) -> Dict[str, str]
+        # type:(str) -> Dict[str, Any]
         """
         Get properties of the specified partition.
         Keys in the details dictionary include:
