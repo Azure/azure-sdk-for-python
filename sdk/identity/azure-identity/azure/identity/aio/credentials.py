@@ -14,7 +14,7 @@ from ._authn_client import AsyncAuthnClient
 from ._internal import AsyncImdsCredential, AsyncMsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
-from ..credentials import TokenCredentialChain
+from ..credentials import ChainedTokenCredential
 from ..exceptions import AuthenticationError
 
 # pylint:disable=too-few-public-methods
@@ -109,7 +109,7 @@ class AsyncManagedIdentityCredential(object):
         return AccessToken()
 
 
-class AsyncTokenCredentialChain(TokenCredentialChain):
+class AsyncChainedTokenCredential(ChainedTokenCredential):
     """A sequence of token credentials"""
 
     async def get_token(self, *scopes: str) -> AccessToken:  # type: ignore

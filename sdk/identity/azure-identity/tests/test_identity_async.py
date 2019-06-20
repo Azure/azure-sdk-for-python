@@ -18,7 +18,7 @@ from azure.identity import (
     AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
     AsyncManagedIdentityCredential,
-    AsyncTokenCredentialChain,
+    AsyncChainedTokenCredential,
 )
 from azure.identity.aio._internal import AsyncImdsCredential
 from azure.identity.constants import EnvironmentVariables
@@ -102,7 +102,7 @@ async def test_credential_chain_error_message():
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
     with pytest.raises(AuthenticationError) as ex:
-        await AsyncTokenCredentialChain(first_credential, second_credential).get_token("scope")
+        await AsyncChainedTokenCredential(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -121,7 +121,7 @@ async def test_chain_attempts_all_credentials():
         Mock(get_token=asyncio.coroutine(lambda _: expected_token)),
     ]
 
-    token = await AsyncTokenCredentialChain(*credentials).get_token("scope")
+    token = await AsyncChainedTokenCredential(*credentials).get_token("scope")
     assert token is expected_token
 
     for credential in credentials[:-1]:
@@ -134,7 +134,7 @@ async def test_chain_returns_first_token():
     first_credential = Mock(get_token=asyncio.coroutine(lambda _: expected_token))
     second_credential = Mock(get_token=Mock())
 
-    aggregate = AsyncTokenCredentialChain(first_credential, second_credential)
+    aggregate = AsyncChainedTokenCredential(first_credential, second_credential)
     credential = await aggregate.get_token("scope")
 
     assert credential is expected_token

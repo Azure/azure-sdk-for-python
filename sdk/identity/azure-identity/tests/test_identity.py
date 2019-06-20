@@ -21,7 +21,7 @@ from azure.identity import (
     DefaultAzureCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    TokenCredentialChain,
+    ChainedTokenCredential,
 )
 from azure.identity._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
@@ -101,7 +101,7 @@ def test_credential_chain_error_message():
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
     with pytest.raises(AuthenticationError) as ex:
-        TokenCredentialChain(first_credential, second_credential).get_token("scope")
+        ChainedTokenCredential(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -120,7 +120,7 @@ def test_chain_attempts_all_credentials():
         Mock(get_token=Mock(return_value=expected_token)),
     ]
 
-    token = TokenCredentialChain(*credentials).get_token("scope")
+    token = ChainedTokenCredential(*credentials).get_token("scope")
     assert token is expected_token
 
     for credential in credentials:
@@ -132,7 +132,7 @@ def test_chain_returns_first_token():
     first_credential = Mock(get_token=lambda _: expected_token)
     second_credential = Mock(get_token=Mock())
 
-    aggregate = TokenCredentialChain(first_credential, second_credential)
+    aggregate = ChainedTokenCredential(first_credential, second_credential)
     credential = aggregate.get_token("scope")
 
     assert credential is expected_token
