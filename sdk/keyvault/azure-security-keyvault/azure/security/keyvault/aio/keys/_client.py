@@ -67,7 +67,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any],
+        **kwargs: Mapping[str, Any]
     ) -> Key:
         """Creates a new key, stores it, then returns the key to the client.
 
@@ -125,7 +125,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             curve=curve,
-            **kwargs,
+            **kwargs
         )
         return Key._from_key_bundle(bundle)
 
@@ -139,7 +139,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any],
+        **kwargs: Mapping[str, Any]
     ) -> Key:
         """Creates a new RSA type key, stores it, then returns the key to the client.
 
@@ -188,7 +188,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
             expires=expires,
             not_before=not_before,
             tags=tags,
-            **kwargs,
+            **kwargs
         )
 
     async def create_ec_key(
@@ -201,7 +201,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any],
+        **kwargs: Mapping[str, Any]
     ) -> Key:
         """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
 
@@ -252,7 +252,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
             expires=expires,
             not_before=not_before,
             tags=tags,
-            **kwargs,
+            **kwargs
         )
 
     async def update_key(
@@ -264,7 +264,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any],
+        **kwargs: Mapping[str, Any]
     ) -> Key:
         """The update key operation changes specified attributes of a stored key
         and can be applied to any key type and key version stored in Azure Key
@@ -578,7 +578,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any],
+        **kwargs: Mapping[str, Any]
     ) -> Key:
         """Imports an externally created key, stores it, and returns the key to the client.
 
