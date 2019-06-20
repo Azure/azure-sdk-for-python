@@ -4,8 +4,31 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import functools
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, Iterable, Dict, List,
+    TYPE_CHECKING
+)
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
-class FileServiceClient():
+from .share_client import ShareClient
+from ._shared.shared_access_signature import SharedAccessSignature
+from ._shared.utils import (
+    StorageAccountHostsMixin,
+    return_response_headers,
+    parse_connection_str,
+    process_storage_error,
+    parse_query)
+
+from .models import SharePropertiesPaged
+from ._generated import AzureFileStorage
+from ._generated.models import StorageErrorException, StorageServiceProperties
+from ._generated.version import VERSION
+
+class FileServiceClient(StorageAccountHostsMixin):
     """ A client interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -35,7 +58,7 @@ class FileServiceClient():
 
     def __init__(
             self, account_url,  # type: str
-            credentials=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Any]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
@@ -47,21 +70,37 @@ class FileServiceClient():
             in the URL path (e.g. share or file) will be discarded. This URL can be optionally
             authenticated with a SAS token.
         :param credential:
-            The credentials with which to authenticate. This is optional if the
+            The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, and account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
         :param ~azure.storage.file.Configuration configuration:
             An optional pipeline configuration.
         """
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+
+        _, sas_token = parse_query(parsed_url.query)
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(FileServiceClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        self.url = account_url if not parsed_url.path else self._format_url(parsed_url.hostname)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
+            credential=None, # type: Optional[Any]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
@@ -70,7 +109,7 @@ class FileServiceClient():
         :param str conn_str:
             A connection string to an Azure Storage account.
         :param credential:
-            The credentials with which to authenticate. This is optional if the
+            The credential with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
@@ -78,6 +117,8 @@ class FileServiceClient():
             Optional pipeline configuration settings.
         :type configuration: ~azure.core.configuration.Configuration
         """
+        account_url, credential = parse_connection_str(conn_str, credential)
+        return cls(account_url, credential=credential, configuration=configuration, **kwargs)
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -126,40 +167,12 @@ class FileServiceClient():
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
+            raise ValueError("No account SAS key available.")
 
-    def get_account_information(self, **kwargs):
-        # type: (Optional[int]) -> Dict[str, str]
-        """Gets information related to the storage account.
-        The information can also be retrieved if the user has a SAS to a share or file.
-
-        :returns: A dict of account information (SKU and account type).
-        :rtype: dict(str, str)
-        """
-
-    def get_service_stats(self, timeout=None, **kwargs):
-        # type: (Optional[int], **Any) -> Dict[str, Any]
-        """Retrieves statistics related to replication for the File service. It is
-        only available when read-access geo-redundant replication is enabled for
-        the storage account.
-
-        With geo-redundant replication, Azure Storage maintains your data durable
-        in two locations. In both locations, Azure Storage constantly maintains
-        multiple healthy replicas of your data. The location where you read,
-        create, update, or delete data is the primary storage account location.
-        The primary location exists in the region you choose at the time you
-        create an account via the Azure Management Azure classic portal, for
-        example, North Central US. The location to which your data is replicated
-        is the secondary location. The secondary location is automatically
-        determined based on the location of the primary; it is in a second data
-        center that resides in the same region as the primary location. Read-only
-        access is available from the secondary location, if read-access geo-redundant
-        replication is enabled for your storage account.
-
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
-        :return: The file service stats.
-        :rtype: ~azure.storage.file._generated.models.StorageServiceStats
-        """
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        return sas.generate_account(resource_types, permission,
+                                    expiry, start=start, ip=ip, protocol=protocol)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
@@ -170,6 +183,10 @@ class FileServiceClient():
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
         """
+        try:
+            return self._client.service.get_properties(timeout=timeout, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def set_service_properties(
             self, logging=None,  # type: Optional[Logging]
@@ -220,6 +237,16 @@ class FileServiceClient():
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        props = StorageServiceProperties(
+            logging=logging,
+            hour_metrics=hour_metrics,
+            minute_metrics=minute_metrics,
+            cors=cors
+        )
+        try:
+            self._client.service.set_properties(props, timeout=timeout, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def list_shares(
             self, prefix=None,  # type: Optional[str]
@@ -245,6 +272,14 @@ class FileServiceClient():
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.file.models.SharePropertiesPaged
         """
+        include = 'metadata' if include_metadata else None
+        command = functools.partial(
+            self._client.service.list_shares_segment,
+            prefix=prefix,
+            include=include,
+            timeout=timeout,
+            **kwargs)
+        return SharePropertiesPaged(command, prefix=prefix, **kwargs)
 
     def create_share(
             self, share_name,  # type: str
@@ -269,6 +304,9 @@ class FileServiceClient():
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.share_client.ShareClient
         """
+        share = self.get_share_client(share_name)
+        share.create_share(metadata, quota, timeout, **kwargs)
+        return share
 
     def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
@@ -291,6 +329,8 @@ class FileServiceClient():
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        share = self.get_share_client(share_name)
+        share.delete_share(delete_snapshots, timeout, **kwargs)
 
     def get_share_client(self, share_name, snapshot=None):
         # type: (Union[ShareProperties, str],Optional[Union[SnapshotProperties, str]]) -> ShareClient
@@ -304,3 +344,6 @@ class FileServiceClient():
         :returns: A ShareClient.
         :rtype: ~azure.core.file.share_client.ShareClient
         """
+        return ShareClient(
+            self.url, share_name=share_name, snapshot=snapshot,
+            credential=self.credential, configuration=self._config)

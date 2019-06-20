@@ -13,7 +13,7 @@ class ShareClient():
             self, share_url,  # type: str
             share_name=None,  # type: Optional[Union[str, ShareProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credentials=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Any]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):

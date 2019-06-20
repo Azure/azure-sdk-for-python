@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 import base64
 import hashlib
 import hmac
+import sys
 import logging
 from os import fstat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
@@ -64,6 +65,19 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+if sys.version_info < (3,):
+    def _str(value):
+        if isinstance(value, str):
+            return value.encode('utf-8')
+
+        return str(value)
+else:
+    _str = str
+
+
+def _to_str(value):
+    return _str(value) if value is not None else None
 
 
 class _QueryStringConstants(object):
@@ -235,17 +249,23 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credentials=None):
+def parse_connection_str(conn_str, credential=None):
     conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
+    if not credential:
+        try:
+            credential = {
+                'account_name': conn_settings['AccountName'],
+                'account_key': conn_settings['AccountKey']
+            }
+        except KeyError:
+            credential = conn_settings.get('SharedAccessSignature')
     try:
         account_url = "{}://{}.file.{}".format(
             conn_settings['DefaultEndpointsProtocol'],
             conn_settings['AccountName'],
             conn_settings['EndpointSuffix']
         )
-        creds = credentials or SharedKeyCredentials(
-            conn_settings['AccountName'], conn_settings['AccountKey'])
-        return account_url, creds
+        return account_url, credential
     except KeyError as error:
         raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
 
