@@ -23,15 +23,40 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class UsageUnit(str, Enum):
+
+    count = "Count"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
 
 
+class VmPriority(str, Enum):
+
+    dedicated = "Dedicated"
+    low_priority = "LowPriority"
+
+
+class AllocationState(str, Enum):
+
+    steady = "Steady"
+    resizing = "Resizing"
+
+
 class ComputeType(str, Enum):
 
     aks = "AKS"
-    batch_ai = "BatchAI"
+    aml_compute = "AmlCompute"
     data_factory = "DataFactory"
     virtual_machine = "VirtualMachine"
     hd_insight = "HDInsight"
+    databricks = "Databricks"
+    data_lake_analytics = "DataLakeAnalytics"
+
+
+class UnderlyingResourceAction(str, Enum):
+
+    delete = "Delete"
+    detach = "Detach"

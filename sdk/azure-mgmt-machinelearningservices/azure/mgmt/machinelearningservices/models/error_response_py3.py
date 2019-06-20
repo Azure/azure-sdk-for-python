@@ -15,20 +15,22 @@ from msrest.serialization import Model
 class ErrorResponse(Model):
     """Error response information.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message.
-    :type message: str
-    :param details: An array of error detail objects.
-    :type details:
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar details: An array of error detail objects.
+    :vartype details:
      list[~azure.mgmt.machinelearningservices.models.ErrorDetail]
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'details': {'readonly': True},
     }
 
     _attribute_map = {
@@ -37,8 +39,8 @@ class ErrorResponse(Model):
         'details': {'key': 'details', 'type': '[ErrorDetail]'},
     }
 
-    def __init__(self, *, code: str, message: str, details=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.details = details
+        self.code = None
+        self.message = None
+        self.details = None
