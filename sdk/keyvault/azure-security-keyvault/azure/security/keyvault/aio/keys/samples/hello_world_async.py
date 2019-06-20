@@ -1,5 +1,7 @@
 import datetime
 import asyncio
+import os
+import pytz
 from azure.security.keyvault.aio import KeyClient
 from azure.identity import AsyncDefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -16,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys#createget-credentials)
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(key) resource for Azure Key Vault
@@ -36,8 +38,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = AsyncDefaultAzureCredential()
-    client = KeyClient(vault_url='https://vaultb4dd0c0a.vault.azure.net', credential=credential)
+    client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create an RSA key with size 2048, hsm disabled and optional key_operations of encrypt, decrypt.
         # if the key already exists in the Key Vault, then a new version of the key is created.
@@ -64,7 +67,7 @@ async def run_sample():
         # Let's say we want to update the expiration time for the EC key and disable the key to be useable for cryptographic operations.
         # The update method allows the user to modify the metadata (key attributes) associated with a key previously stored within Key Vault.
         print("\n3. Update a Key by name")
-        expires = datetime.datetime.now() + datetime.timedelta(days=365)
+        expires = datetime.datetime.now(pytz.timezone("America/New_York")) + datetime.timedelta(days=365)
         updated_ec_key = await client.update_key(ec_key.name, ec_key.version, expires=expires, enabled=False)
         print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.updated))
         print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.expires))
