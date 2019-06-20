@@ -9,6 +9,7 @@ import pytest
 import logging
 import sys
 import uuid
+import warnings
 from logging.handlers import RotatingFileHandler
 
 # Ignore async tests for Python < 3.5
@@ -109,8 +110,11 @@ def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
         live_eventhub_config['event_hub'] = hub_name
         yield live_eventhub_config
     finally:
-        cleanup_eventhub(live_eventhub_config, hub_name, client=client)
-        print("Deleted EventHub {}".format(hub_name))
+        try:
+            cleanup_eventhub(live_eventhub_config, hub_name, client=client)
+            print("Deleted EventHub {}".format(hub_name))
+        except:
+            warnings.warn(UserWarning("eventhub teardown failed"))
 
 
 @pytest.fixture()
@@ -214,7 +218,10 @@ def storage_clm(eph):
         storage_clm.storage_client.create_container(container)
         yield storage_clm
     finally:
-        storage_clm.storage_client.delete_container(container)
+        try:
+            storage_clm.storage_client.delete_container(container)
+        except:
+            warnings.warn(UserWarning("storage container teardown failed"))
 
 
 @pytest.fixture()
