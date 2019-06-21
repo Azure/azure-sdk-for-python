@@ -15,18 +15,17 @@ from azure.eventhub import (
     EventHubError)
 from azure.eventhub.aio import EventHubClient
 
-SLEEP = True
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_long_interval_async(connstr_receivers):
+async def test_send_with_long_interval_async(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_producer()
     try:
         await sender.send(EventData(b"A single event"))
         for _ in range(1):
-            if SLEEP:
+            if sleep:
                 await asyncio.sleep(300)
             else:
                 sender._handler._connection._conn.destroy()
@@ -36,7 +35,7 @@ async def test_send_with_long_interval_async(connstr_receivers):
 
     received = []
     for r in receivers:
-        if not SLEEP:  # if sender sleeps, the receivers will be disconnected. destroy connection to simulate
+        if not sleep:  # if sender sleeps, the receivers will be disconnected. destroy connection to simulate
             r._handler._connection._conn.destroy()
         received.extend(r.receive(timeout=1))
     assert len(received) == 2
@@ -56,20 +55,20 @@ def pump(receiver):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_forced_conn_close_async(connstr_receivers):
+async def test_send_with_forced_conn_close_async(connstr_receivers, sleep):
     pytest.skip("This test is similar to the above one")
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_producer()
     try:
         await sender.send(EventData(b"A single event"))
-        if SLEEP:
+        if sleep:
             await asyncio.sleep(300)
         else:
             sender._handler._connection._conn.destroy()
         await sender.send(EventData(b"A single event"))
         await sender.send(EventData(b"A single event"))
-        if SLEEP:
+        if sleep:
             await asyncio.sleep(300)
         else:
             sender._handler._connection._conn.destroy()
@@ -80,7 +79,7 @@ async def test_send_with_forced_conn_close_async(connstr_receivers):
     
     received = []
     for r in receivers:
-        if not SLEEP:
+        if not sleep:
             r._handler._connection._conn.destroy()
         received.extend(pump(r))
     assert len(received) == 5

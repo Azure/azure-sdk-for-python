@@ -33,6 +33,18 @@ else:
 from azure.eventhub import EventHubClient, EventHubConsumer, EventPosition
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--sleep", action="store", default="True", help="sleep on reconnect test: True or False"
+    )
+
+
+@pytest.fixture
+def sleep(request):
+    sleep = request.config.getoption("--sleep")
+    return sleep.lower() in ('true', 'yes', '1', 'y')
+
+
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
     azure_logger.setLevel(level)

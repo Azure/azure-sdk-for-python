@@ -14,17 +14,15 @@ from azure.eventhub import (
     EventHubError,
     EventHubClient)
 
-SLEEP = True
-
 @pytest.mark.liveTest
-def test_send_with_long_interval_sync(connstr_receivers):
+def test_send_with_long_interval_sync(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_producer()
     with sender:
         sender.send(EventData(b"A single event"))
         for _ in range(1):
-            if SLEEP:
+            if sleep:
                 time.sleep(300)
             else:
                 sender._handler._connection._conn.destroy()
@@ -32,7 +30,7 @@ def test_send_with_long_interval_sync(connstr_receivers):
 
     received = []
     for r in receivers:
-        if not SLEEP:
+        if not sleep:
             r._handler._connection._conn.destroy()
         received.extend(r.receive(timeout=3))
 
@@ -41,7 +39,7 @@ def test_send_with_long_interval_sync(connstr_receivers):
 
 
 @pytest.mark.liveTest
-def test_send_with_forced_conn_close_sync(connstr_receivers):
+def test_send_with_forced_conn_close_sync(connstr_receivers, sleep):
     pytest.skip("This test is similar to the above one")
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
@@ -49,13 +47,13 @@ def test_send_with_forced_conn_close_sync(connstr_receivers):
     with sender:
         sender.send(EventData(b"A single event"))
         sender._handler._connection._conn.destroy()
-        if SLEEP:
+        if sleep:
             time.sleep(300)
         else:
             sender._handler._connection._conn.destroy()
         sender.send(EventData(b"A single event"))
         sender.send(EventData(b"A single event"))
-        if SLEEP:
+        if sleep:
             time.sleep(300)
         else:
             sender._handler._connection._conn.destroy()
@@ -64,7 +62,7 @@ def test_send_with_forced_conn_close_sync(connstr_receivers):
     
     received = []
     for r in receivers:
-        if not SLEEP:
+        if not sleep:
             r._handler._connection._conn.destroy()
         received.extend(r.receive(timeout=1))
     assert len(received) == 5
