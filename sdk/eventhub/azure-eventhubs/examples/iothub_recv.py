@@ -18,7 +18,7 @@ logger = logging.getLogger('azure.eventhub')
 
 iot_connection_str = 'HostName=iothubfortrack2py.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=glF9a2n0D9fgmWpfTqjjmvkYt0WaTNqZx9GV/UKwDkQ=' #  os.environ['IOTHUB_CONNECTION_STR']
 
-client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=False)
+client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
 consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
 with consumer:
     received = consumer.receive(timeout=5)

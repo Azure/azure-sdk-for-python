@@ -321,7 +321,7 @@ class EventHubProducer(object):
         :type event_data: ~azure.eventhub.common.EventData
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
-        :type batching_label: str
+        :type partition_key: str
         :raises: ~azure.eventhub.common.EventHubError if the message fails to
          send.
         :return: None

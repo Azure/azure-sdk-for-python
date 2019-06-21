@@ -38,7 +38,7 @@ def create_eventhub_client_from_iothub_connection_string(live_eventhub_config):
     from azure.eventhub import EventHubClient
 
     iot_connection_str = os.environ['IOTHUB_CONNECTION_STR']
-    client = EventHubClient.from_iothub_connection_string(iot_connection_str)
+    client = EventHubClient.from_connection_string(iot_connection_str)
     # [END create_eventhub_client_iot_connstr]
 
 

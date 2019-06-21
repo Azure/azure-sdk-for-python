@@ -210,17 +210,21 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
-        address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = event_hub_path or entity
-        left_slash_pos = address.find("//")
-        if left_slash_pos != -1:
-            host = address[left_slash_pos + 2:]
+        is_iot_conn_str = conn_str.lower().startswith("hostname")
+        if not is_iot_conn_str:
+            address, policy, key, entity = _parse_conn_str(conn_str)
+            entity = event_hub_path or entity
+            left_slash_pos = address.find("//")
+            if left_slash_pos != -1:
+                host = address[left_slash_pos + 2:]
+            else:
+                host = address
+            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
-            host = address
-        return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+            return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @classmethod
-    def from_iothub_connection_string(cls, conn_str, **kwargs):
+    def _from_iothub_connection_string(cls, conn_str, **kwargs):
         """
         Create an EventHubClient from an IoTHub connection string.
 
