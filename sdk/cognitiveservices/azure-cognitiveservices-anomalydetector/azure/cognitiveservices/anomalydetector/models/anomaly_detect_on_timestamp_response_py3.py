@@ -51,6 +51,9 @@ class AnomalyDetectOnTimestampResponse(Model):
      positive anomaly means the point is detected as an anomaly and its real
      value is larger than the expected one.
     :type is_positive_anomaly: bool
+    :param confidence_score: Required. Confidence score of the anomaly,
+     significiant anomalies will get higher score.
+    :type confidence_score: float
     """
 
     _validation = {
@@ -63,6 +66,7 @@ class AnomalyDetectOnTimestampResponse(Model):
         'is_anomaly': {'required': True},
         'is_negative_anomaly': {'required': True},
         'is_positive_anomaly': {'required': True},
+        'confidence_score': {'required': True},
     }
 
     _attribute_map = {
@@ -75,9 +79,10 @@ class AnomalyDetectOnTimestampResponse(Model):
         'is_anomaly': {'key': 'isAnomaly', 'type': 'bool'},
         'is_negative_anomaly': {'key': 'isNegativeAnomaly', 'type': 'bool'},
         'is_positive_anomaly': {'key': 'isPositiveAnomaly', 'type': 'bool'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
-    def __init__(self, *, period: int, timestamp, value: float, expected_value: float, upper_margin: float, lower_margin: float, is_anomaly: bool, is_negative_anomaly: bool, is_positive_anomaly: bool, **kwargs) -> None:
+    def __init__(self, *, period: int, timestamp, value: float, expected_value: float, upper_margin: float, lower_margin: float, is_anomaly: bool, is_negative_anomaly: bool, is_positive_anomaly: bool, confidence_score: float, **kwargs) -> None:
         super(AnomalyDetectOnTimestampResponse, self).__init__(**kwargs)
         self.period = period
         self.timestamp = timestamp
@@ -88,3 +93,4 @@ class AnomalyDetectOnTimestampResponse(Model):
         self.is_anomaly = is_anomaly
         self.is_negative_anomaly = is_negative_anomaly
         self.is_positive_anomaly = is_positive_anomaly
+        self.confidence_score = confidence_score

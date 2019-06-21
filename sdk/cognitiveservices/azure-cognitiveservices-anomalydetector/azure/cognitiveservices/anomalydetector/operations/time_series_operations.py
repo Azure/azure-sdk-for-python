@@ -46,9 +46,8 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TimeSeries or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.anomalydetector.models.TimeSeries or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -73,13 +72,15 @@ class TimeSeriesOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('TimeSeries', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -106,8 +107,9 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: APIError or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.anomalydetector.models.APIError or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -124,6 +126,7 @@ class TimeSeriesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -132,15 +135,22 @@ class TimeSeriesOperations(object):
         body_content = self._serialize.body(body, 'TimeSeriesCreateRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201, 204, 409]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 409:
+            deserialized = self._deserialize('APIError', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     create.metadata = {'url': '/timeseries/{timeSeriesId}'}
 
     def delete(
@@ -181,7 +191,7 @@ class TimeSeriesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             raise models.APIErrorException(self._deserialize, response)
 
         if raw:
@@ -260,8 +270,9 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: APIError or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.anomalydetector.models.APIError or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -278,6 +289,7 @@ class TimeSeriesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -286,15 +298,22 @@ class TimeSeriesOperations(object):
         body_content = self._serialize.body(body, '[Point]')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     write.metadata = {'url': '/timeseries/{timeSeriesId}/write'}
 
     def detect_on_timestamp(
@@ -318,11 +337,8 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AnomalyDetectOnTimestampResponse or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectOnTimestampResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -351,13 +367,15 @@ class TimeSeriesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('AnomalyDetectOnTimestampResponse', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -384,11 +402,8 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChangePointDetectOnTimestampResponse or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectOnTimestampResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -417,13 +432,15 @@ class TimeSeriesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('ChangePointDetectOnTimestampResponse', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -452,8 +469,9 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: APIError or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.anomalydetector.models.APIError or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -470,6 +488,7 @@ class TimeSeriesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -481,12 +500,19 @@ class TimeSeriesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     label.metadata = {'url': '/timeseries/{timeSeriesId}/label'}
 
     def query(
@@ -503,10 +529,8 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TimeSeriesQueryResponse or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.TimeSeriesQueryResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
@@ -535,13 +559,15 @@ class TimeSeriesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('TimeSeriesQueryResponse', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -550,63 +576,65 @@ class TimeSeriesOperations(object):
         return deserialized
     query.metadata = {'url': '/timeseries/{timeSeriesId}/query'}
 
-    def list_groups(
-            self, time_series_id, next=None, custom_headers=None, raw=False, **operation_config):
-        """List TimeSeriesGroups that a TimeSeries belongs to.
+    def inconsistency_detect(
+            self, body, custom_headers=None, raw=False, **operation_config):
+        """Detect inconsistent time series from a group of similar time series.
 
-        List TimeSeriesGroups that a TimeSeries belongs to. One TimeSeries
-        could belong to multiple TimeSeriesGroups.
+        This operation helps detect the inconsistent series among a group
+        series with similar trend.
 
-        :param time_series_id: Unique id for time series.
-        :type time_series_id: str
-        :param next: Use "next" as query parameter to get next page data.
-        :type next: str
+        :param body: Timestamp is necessary, and a parameter called epsilon is
+         needed to tune the result. Epsilon should be within 0 and 1. A list of
+         time series ids need to be provided to the service.
+        :type body:
+         ~azure.cognitiveservices.anomalydetector.models.InconsistencyDetectRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TimeSeriesGroupList or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.TimeSeriesGroupList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
         # Construct URL
-        url = self.list_groups.metadata['url']
+        url = self.inconsistency_detect.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'timeSeriesId': self._serialize.url("time_series_id", time_series_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if next is not None:
-            query_parameters['next'] = self._serialize.query("next", next, 'str')
 
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(body, 'InconsistencyDetectRequest')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TimeSeriesGroupList', response)
+            deserialized = self._deserialize('Inconsistency', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('APIError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_groups.metadata = {'url': '/timeseries/{timeSeriesId}/timeseriesgroups'}
+    inconsistency_detect.metadata = {'url': '/timeseries/inconsistency/detect'}

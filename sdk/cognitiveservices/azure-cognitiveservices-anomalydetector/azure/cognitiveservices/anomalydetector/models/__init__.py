@@ -18,12 +18,8 @@ try:
     from .time_series_py3 import TimeSeries
     from .time_series_create_request_py3 import TimeSeriesCreateRequest
     from .time_series_list_py3 import TimeSeriesList
-    from .time_series_group_py3 import TimeSeriesGroup
-    from .time_series_group_create_request_py3 import TimeSeriesGroupCreateRequest
-    from .time_series_group_list_py3 import TimeSeriesGroupList
     from .inconsistency_detect_request_py3 import InconsistencyDetectRequest
     from .inconsistency_py3 import Inconsistency
-    from .inconsistency_query_request_py3 import InconsistencyQueryRequest
     from .change_point_detect_request_py3 import ChangePointDetectRequest
     from .change_point_detect_response_py3 import ChangePointDetectResponse
     from .change_point_detect_on_timestamp_request_py3 import ChangePointDetectOnTimestampRequest
@@ -42,12 +38,8 @@ except (SyntaxError, ImportError):
     from .time_series import TimeSeries
     from .time_series_create_request import TimeSeriesCreateRequest
     from .time_series_list import TimeSeriesList
-    from .time_series_group import TimeSeriesGroup
-    from .time_series_group_create_request import TimeSeriesGroupCreateRequest
-    from .time_series_group_list import TimeSeriesGroupList
     from .inconsistency_detect_request import InconsistencyDetectRequest
     from .inconsistency import Inconsistency
-    from .inconsistency_query_request import InconsistencyQueryRequest
     from .change_point_detect_request import ChangePointDetectRequest
     from .change_point_detect_response import ChangePointDetectResponse
     from .change_point_detect_on_timestamp_request import ChangePointDetectOnTimestampRequest
@@ -73,12 +65,8 @@ __all__ = [
     'TimeSeries',
     'TimeSeriesCreateRequest',
     'TimeSeriesList',
-    'TimeSeriesGroup',
-    'TimeSeriesGroupCreateRequest',
-    'TimeSeriesGroupList',
     'InconsistencyDetectRequest',
     'Inconsistency',
-    'InconsistencyQueryRequest',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
     'ChangePointDetectOnTimestampRequest',

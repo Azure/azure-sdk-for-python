@@ -24,7 +24,8 @@ class LabelRequest(Model):
     :param type: Required. Possible values include: 'changePoint', 'anomaly'
     :type type: str or
      ~azure.cognitiveservices.anomalydetector.models.LabelType
-    :param value: Required. Possible values include: 'true', 'false'
+    :param value: Required. Possible values include: 'positiveAnomaly',
+     'negativeAnomaly', 'positiveChangePoint', 'negativeChangePoint'
     :type value: str or
      ~azure.cognitiveservices.anomalydetector.models.LabelValue
     """

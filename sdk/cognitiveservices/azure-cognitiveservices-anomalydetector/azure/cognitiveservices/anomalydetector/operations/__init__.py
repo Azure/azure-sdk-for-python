@@ -10,9 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .time_series_operations import TimeSeriesOperations
-from .time_series_group_operations import TimeSeriesGroupOperations
 
 __all__ = [
     'TimeSeriesOperations',
-    'TimeSeriesGroupOperations',
 ]

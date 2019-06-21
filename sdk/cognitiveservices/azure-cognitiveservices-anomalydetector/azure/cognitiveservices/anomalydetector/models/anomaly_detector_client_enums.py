@@ -43,5 +43,7 @@ class LabelType(str, Enum):
 
 class LabelValue(str, Enum):
 
-    true = "true"
-    false = "false"
+    positive_anomaly = "positiveAnomaly"
+    negative_anomaly = "negativeAnomaly"
+    positive_change_point = "positiveChangePoint"
+    negative_change_point = "negativeChangePoint"

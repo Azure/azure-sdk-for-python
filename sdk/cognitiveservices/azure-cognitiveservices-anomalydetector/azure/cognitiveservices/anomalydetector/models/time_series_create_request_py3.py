@@ -23,18 +23,12 @@ class TimeSeriesCreateRequest(Model):
      'daily', 'hourly', 'minutely'
     :type granularity: str or
      ~azure.cognitiveservices.anomalydetector.models.Granularity
-    :param dimensions: Property of a time series
-    :type dimensions: dict[str, str]
     :param custom_interval: Custom Interval is used to set non-standard time
      interval, for example, if the series is 5 minutes, request can be set as
      {"granularity":"minutely", "customInterval":5}.
     :type custom_interval: int
     :param retention_duration_in_hours: Hours that the data is kept.
     :type retention_duration_in_hours: int
-    :param description: Description for the time series.
-    :type description: str
-    :param name: Name of the time series.
-    :type name: str
     """
 
     _validation = {
@@ -43,18 +37,12 @@ class TimeSeriesCreateRequest(Model):
 
     _attribute_map = {
         'granularity': {'key': 'granularity', 'type': 'Granularity'},
-        'dimensions': {'key': 'dimensions', 'type': '{str}'},
         'custom_interval': {'key': 'customInterval', 'type': 'int'},
         'retention_duration_in_hours': {'key': 'retentionDurationInHours', 'type': 'int'},
-        'description': {'key': 'description', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, granularity, dimensions=None, custom_interval: int=None, retention_duration_in_hours: int=None, description: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, granularity, custom_interval: int=None, retention_duration_in_hours: int=None, **kwargs) -> None:
         super(TimeSeriesCreateRequest, self).__init__(**kwargs)
         self.granularity = granularity
-        self.dimensions = dimensions
         self.custom_interval = custom_interval
         self.retention_duration_in_hours = retention_duration_in_hours
-        self.description = description
-        self.name = name

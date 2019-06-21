@@ -23,28 +23,25 @@ class Inconsistency(Model):
     :param confidence_scores: Required. Scores of inconsistent series in the
      time series group.
     :type confidence_scores: list[float]
-    :param timestamp: Required. Inconsistency detect timestamp.
-    :type timestamp: datetime
-    :param epsilon: Parameter to be tuned to get inconsistency.
-    :type epsilon: float
+    :param principle_trend: Required. The principle trend of the group of time
+     series.
+    :type principle_trend: list[float]
     """
 
     _validation = {
         'inconsistent_series_ids': {'required': True},
         'confidence_scores': {'required': True},
-        'timestamp': {'required': True},
+        'principle_trend': {'required': True},
     }
 
     _attribute_map = {
         'inconsistent_series_ids': {'key': 'inconsistentSeriesIds', 'type': '[str]'},
         'confidence_scores': {'key': 'confidenceScores', 'type': '[float]'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'epsilon': {'key': 'epsilon', 'type': 'float'},
+        'principle_trend': {'key': 'principleTrend', 'type': '[float]'},
     }
 
-    def __init__(self, *, inconsistent_series_ids, confidence_scores, timestamp, epsilon: float=None, **kwargs) -> None:
+    def __init__(self, *, inconsistent_series_ids, confidence_scores, principle_trend, **kwargs) -> None:
         super(Inconsistency, self).__init__(**kwargs)
         self.inconsistent_series_ids = inconsistent_series_ids
         self.confidence_scores = confidence_scores
-        self.timestamp = timestamp
-        self.epsilon = epsilon
+        self.principle_trend = principle_trend

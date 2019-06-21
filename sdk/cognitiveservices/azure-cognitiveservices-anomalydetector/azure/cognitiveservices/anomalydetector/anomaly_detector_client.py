@@ -14,7 +14,6 @@ from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from .operations.time_series_operations import TimeSeriesOperations
-from .operations.time_series_group_operations import TimeSeriesGroupOperations
 from . import models
 
 
@@ -56,8 +55,6 @@ class AnomalyDetectorClient(SDKClient):
 
     :ivar time_series: TimeSeries operations
     :vartype time_series: azure.cognitiveservices.anomalydetector.operations.TimeSeriesOperations
-    :ivar time_series_group: TimeSeriesGroup operations
-    :vartype time_series_group: azure.cognitiveservices.anomalydetector.operations.TimeSeriesGroupOperations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -79,8 +76,6 @@ class AnomalyDetectorClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.time_series = TimeSeriesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.time_series_group = TimeSeriesGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def entire_detect(
