@@ -364,7 +364,7 @@ class PipelineClientBase(object):
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip('/')
                 base = self._base_url.format(**kwargs).rstrip('/')
-                url = PipelineClientBase._urljoin(base + '/', url)
+                url = PipelineClientBase._urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
         return url
