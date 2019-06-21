@@ -52,7 +52,7 @@ class AnomalyDetectOnTimestampResponse(Model):
      value is larger than the expected one.
     :type is_positive_anomaly: bool
     :param confidence_score: Required. Confidence score of the anomaly,
-     significiant anomalies will get higher score.
+     significant anomalies will get higher score.
     :type confidence_score: float
     """
 
