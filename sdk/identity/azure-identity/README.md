@@ -144,8 +144,16 @@ client = SecretClient(vault_url, credential)
 ```
 
 # Troubleshooting
+## General
+Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail to
+authenticate. `ClientAuthenticationError.message` describes why authentication failed.
+When raised by `ChainedTokenCredential`, the message includes error messages from each
+credential in the chain.
 
 # Next steps
+## Provide Feedback
+If you encounter bugs or have suggestions, please
+[open an issue](https://github.com/Azure/azure-sdk-for-python/issues).
 
 # Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
