@@ -9,7 +9,7 @@
 try:
     import tests.settings_real as settings
 except ImportError:
-    settings = None
+    import tests.settings_fake as settings
 
 
 class TestCommonBlobSamples(object):
