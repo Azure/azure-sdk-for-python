@@ -9,11 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class ReceiverStatus(str, Enum):
 
+    not_specified = "NotSpecified"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class Sensitivity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"

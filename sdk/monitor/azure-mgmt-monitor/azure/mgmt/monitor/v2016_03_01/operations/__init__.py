@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from ._alert_rule_incidents_operations import AlertRuleIncidentsOperations
+from ._alert_rules_operations import AlertRulesOperations
+from ._log_profiles_operations import LogProfilesOperations
+from ._metric_definitions_operations import MetricDefinitionsOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'AlertRuleIncidentsOperations',
+    'AlertRulesOperations',
+    'LogProfilesOperations',
+    'MetricDefinitionsOperations',
+]

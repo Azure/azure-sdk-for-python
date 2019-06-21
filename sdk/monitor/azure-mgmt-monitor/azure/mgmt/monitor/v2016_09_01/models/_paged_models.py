@@ -9,11 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from msrest.paging import Paged
 
-from .version import VERSION
 
-__version__ = VERSION
+class MetricPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Metric <azure.mgmt.monitor.v2016_09_01.models.Metric>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Metric]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MetricPaged, self).__init__(*args, **kwargs)

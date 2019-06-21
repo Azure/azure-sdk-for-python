@@ -9,11 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class OnboardingStatus(str, Enum):
 
+    onboarded = "onboarded"
+    not_onboarded = "notOnboarded"
+    unknown = "unknown"
+
+
+class DataStatus(str, Enum):
+
+    present = "present"
+    not_present = "notPresent"
