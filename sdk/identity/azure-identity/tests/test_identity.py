@@ -183,22 +183,24 @@ def test_imds_credential_cache():
 
 def test_imds_credential_retries():
     mock_response = Mock(
-        text=lambda: b"",
+        text=lambda: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
         content_type=["application/json"],
     )
     mock_send = Mock(return_value=mock_response)
 
-    credential = ImdsCredential(transport=Mock(send=mock_send))
+    total_retries = ImdsCredential.create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
         mock_response.status_code = status_code
         try:
+            ImdsCredential(transport=Mock(send=mock_send)).get_token("scope")
         except ClientAuthenticationError:
             pass
-        # first call was availability probe, second the original request; there should be at least one retry thereafter
-        assert mock_send.call_count > 2
+        # first call was availability probe, second the original request;
+        # credential should have then exhausted retries for each of these status codes
+        assert mock_send.call_count == 2 + total_retries
 
 
 def test_managed_identity_app_service(monkeypatch):

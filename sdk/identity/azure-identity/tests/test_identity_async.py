@@ -187,25 +187,26 @@ async def test_imds_credential_cache():
 @pytest.mark.asyncio
 async def test_imds_credential_retries():
     mock_response = Mock(
-        text=lambda: b"",
+        text=lambda: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
-        status_code=200,
         content_type=["application/json"],
     )
     mock_send = Mock(return_value=mock_response)
 
-    credential = AsyncImdsCredential(
-        transport=Mock(send=asyncio.coroutine(mock_send), sleep=asyncio.coroutine(lambda _: None))
-    )
+    total_retries = AsyncImdsCredential.create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
+        mock_send.reset_mock()
         mock_response.status_code = status_code
         try:
+            await AsyncImdsCredential(
+                transport=Mock(send=asyncio.coroutine(mock_send), sleep=asyncio.coroutine(lambda _: None))
+            ).get_token("scope")
         except ClientAuthenticationError:
             pass
-        # first call was availability probe, second the original request; there should be at least one retry thereafter
-        assert mock_send.call_count > 2
-        mock_send.reset_mock()
+        # first call was availability probe, second the original request;
+        # credential should have then exhausted retries for each of these status codes
+        assert mock_send.call_count == 2 + total_retries
 
 
 @pytest.mark.asyncio
