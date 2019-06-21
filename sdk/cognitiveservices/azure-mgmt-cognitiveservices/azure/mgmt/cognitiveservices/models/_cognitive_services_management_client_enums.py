@@ -29,6 +29,18 @@ class ProvisioningState(str, Enum):
     failed = "Failed"
 
 
+class NetworkRuleBypassOptions(str, Enum):
+
+    azure_services = "AzureServices"
+    none = "None"
+
+
+class NetworkRuleAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class KeyName(str, Enum):
 
     key1 = "Key1"
