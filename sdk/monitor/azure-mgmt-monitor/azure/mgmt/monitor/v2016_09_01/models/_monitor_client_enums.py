@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class Unit(str, Enum):
 
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    percent = "Percent"
+    milli_seconds = "MilliSeconds"
