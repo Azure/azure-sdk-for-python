@@ -230,7 +230,7 @@ class KeyClient(_KeyVaultClientBase):
 
     def delete_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
-        """Deletes a key from the Key Vault
+        """Deletes a key from the Key Vault.
 
         The delete key operation cannot be used to remove individual versions
         of a key. This operation removes the cryptographic material associated
@@ -256,7 +256,7 @@ class KeyClient(_KeyVaultClientBase):
 
     def get_key(self, name, version=None, **kwargs):
         # type: (str, Optional[str], Mapping[str, Any]) -> Key
-        """Gets the specified stored key from the Key Vault
+        """Gets the public part of a stored key.
 
         The get key operation is applicable to all key types. If the requested
         key is symmetric, then no key material is released in the response.
