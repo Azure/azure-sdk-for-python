@@ -12,7 +12,6 @@ from typing import Iterator, Generator, List, Union
 from uamqp import constants, errors
 from uamqp import compat
 from uamqp import SendClient
-from uamqp.constants import MessageSendResult
 
 from azure.eventhub.common import EventData, _BatchSendEventData
 from azure.eventhub.error import EventHubError, ConnectError, \
@@ -363,5 +362,5 @@ class EventHubProducer(object):
 
     @staticmethod
     def _error(outcome, condition):
-        if outcome != MessageSendResult.Ok:
+        if outcome != constants.MessageSendResult.Ok:
             raise condition

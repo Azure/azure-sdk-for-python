@@ -10,8 +10,6 @@ import logging
 from uamqp import constants, errors, compat
 from uamqp import SendClientAsync
 
-from azure.eventhub import MessageSendResult
-from azure.eventhub import EventHubError
 from azure.eventhub.common import EventData, _BatchSendEventData
 from azure.eventhub.error import EventHubError, ConnectError, \
     AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
@@ -368,5 +366,5 @@ class EventHubProducer(object):
 
     @staticmethod
     def _error(outcome, condition):
-        if outcome != MessageSendResult.Ok:
+        if outcome != constants.MessageSendResult.Ok:
             raise condition
