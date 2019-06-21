@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from ._configuration import AzureMetricsClientConfiguration
+from ._azure_metrics_client import AzureMetricsClient
+__all__ = ['AzureMetricsClient', 'AzureMetricsClientConfiguration']
 
 from .version import VERSION
 

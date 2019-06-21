@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MonitorManagementClientConfiguration
-from ._monitor_management_client import MonitorManagementClient
-__all__ = ['MonitorManagementClient', 'MonitorManagementClientConfiguration']
+from ._configuration import MonitorClientConfiguration
+from ._monitor_client import MonitorClient
+__all__ = ['MonitorClient', 'MonitorClientConfiguration']
 
 from .version import VERSION
 
