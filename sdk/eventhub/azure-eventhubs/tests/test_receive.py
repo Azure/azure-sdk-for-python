@@ -70,7 +70,7 @@ def test_receive_with_offset_sync(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=offset)
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -97,7 +97,7 @@ def test_receive_with_inclusive_offset(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset.value, inclusive=True))
+    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
