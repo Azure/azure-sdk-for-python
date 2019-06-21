@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .constants import TransportType
+from azure.eventhub import TransportType
 
 
 class Configuration(object):
