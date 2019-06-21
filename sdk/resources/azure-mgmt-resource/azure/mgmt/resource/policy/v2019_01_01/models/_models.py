@@ -181,7 +181,8 @@ class PolicyDefinition(Model):
      'NotSpecified', 'BuiltIn', 'Custom'
     :type policy_type: str or
      ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyType
-    :param mode: The policy definition mode.
+    :param mode: The policy definition mode. Some examples are All, Indexed,
+     Microsoft.KeyVault.Data.
     :type mode: str
     :param display_name: The display name of the policy definition.
     :type display_name: str
