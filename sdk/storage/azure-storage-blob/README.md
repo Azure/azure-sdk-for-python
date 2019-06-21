@@ -42,7 +42,7 @@ Interaction with Storage Blobs starts with an instance of the BlobServiceClient 
 To authenticate the client you have a few options:
 1. Use a SAS token string 
 2. Use an account shared access key
-3. Use a token credential from azure.identity
+3. Use a token credential from [azure.identity](TODO)
 
 Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#create-client-with-conn-string).
 
@@ -117,12 +117,10 @@ service = BlobServiceClient.from_connection_string(conn_str="my_connection_strin
 Upload a blob to your container.
 
 ```python
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 
-service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
-container = service.get_container_client(container="mycontainer")
+blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
 
-blob = container.get_blob_client("my_blob")
 with open("./SampleSource.txt", "rb") as data:
     blob.upload_blob(data)
 ```
@@ -130,12 +128,10 @@ with open("./SampleSource.txt", "rb") as data:
 Download a blob from your container.
 
 ```python
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 
-service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
-container = service.get_container_client(container="mycontainer")
+blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
 
-blob = container.get_blob_client("my_blob")
 with open("./BlockDestination.txt", "wb") as my_blob:
     my_blob.writelines(blob.download_blob())
 ```
@@ -144,10 +140,9 @@ with open("./BlockDestination.txt", "wb") as my_blob:
 List the blob in your container.
 
 ```python
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import ContainerClient
 
-service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
-container = service.get_container_client(container="mycontainer")
+container = ContainerClient.from_connection_string("my_connection_string", container="mycontainer")
 
 blob_list = container.list_blobs()
 for blob in blob_list:
