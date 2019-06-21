@@ -220,3 +220,29 @@ class GalleryImageVersionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(GalleryImageVersionPaged, self).__init__(*args, **kwargs)
+class GalleryApplicationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`GalleryApplication <azure.mgmt.compute.v2019_03_01.models.GalleryApplication>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GalleryApplication]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(GalleryApplicationPaged, self).__init__(*args, **kwargs)
+class GalleryApplicationVersionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`GalleryApplicationVersion <azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersion>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GalleryApplicationVersion]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(GalleryApplicationVersionPaged, self).__init__(*args, **kwargs)
