@@ -10,134 +10,141 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .storage_sync_error_details_py3 import StorageSyncErrorDetails
-    from .storage_sync_api_error_py3 import StorageSyncApiError
-    from .storage_sync_error_py3 import StorageSyncError, StorageSyncErrorException
-    from .subscription_state_py3 import SubscriptionState
-    from .storage_sync_service_py3 import StorageSyncService
-    from .sync_group_py3 import SyncGroup
-    from .cloud_endpoint_py3 import CloudEndpoint
-    from .recall_action_parameters_py3 import RecallActionParameters
-    from .storage_sync_service_create_parameters_py3 import StorageSyncServiceCreateParameters
-    from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
-    from .cloud_endpoint_create_parameters_py3 import CloudEndpointCreateParameters
-    from .server_endpoint_create_parameters_py3 import ServerEndpointCreateParameters
-    from .trigger_rollover_request_py3 import TriggerRolloverRequest
-    from .registered_server_create_parameters_py3 import RegisteredServerCreateParameters
-    from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
-    from .files_not_syncing_error_py3 import FilesNotSyncingError
-    from .sync_session_status_py3 import SyncSessionStatus
-    from .sync_activity_status_py3 import SyncActivityStatus
-    from .server_endpoint_sync_status_py3 import ServerEndpointSyncStatus
-    from .server_endpoint_py3 import ServerEndpoint
-    from .registered_server_py3 import RegisteredServer
-    from .resources_move_info_py3 import ResourcesMoveInfo
-    from .workflow_py3 import Workflow
-    from .operation_display_info_py3 import OperationDisplayInfo
-    from .operation_entity_py3 import OperationEntity
-    from .operation_display_resource_py3 import OperationDisplayResource
-    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .restore_file_spec_py3 import RestoreFileSpec
-    from .post_restore_request_py3 import PostRestoreRequest
-    from .pre_restore_request_py3 import PreRestoreRequest
-    from .backup_request_py3 import BackupRequest
-    from .post_backup_response_py3 import PostBackupResponse
-    from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
-    from .tracked_resource_py3 import TrackedResource
-    from .azure_entity_resource_py3 import AzureEntityResource
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import BackupRequest
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CloudEndpoint
+    from ._models_py3 import CloudEndpointCreateParameters
+    from ._models_py3 import FilesNotSyncingError
+    from ._models_py3 import OperationDisplayInfo
+    from ._models_py3 import OperationDisplayResource
+    from ._models_py3 import OperationEntity
+    from ._models_py3 import OperationStatus
+    from ._models_py3 import PostBackupResponse
+    from ._models_py3 import PostRestoreRequest
+    from ._models_py3 import PreRestoreRequest
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import RecallActionParameters
+    from ._models_py3 import RegisteredServer
+    from ._models_py3 import RegisteredServerCreateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourcesMoveInfo
+    from ._models_py3 import RestoreFileSpec
+    from ._models_py3 import ServerEndpoint
+    from ._models_py3 import ServerEndpointCreateParameters
+    from ._models_py3 import ServerEndpointSyncStatus
+    from ._models_py3 import ServerEndpointUpdateParameters
+    from ._models_py3 import StorageSyncApiError
+    from ._models_py3 import StorageSyncError, StorageSyncErrorException
+    from ._models_py3 import StorageSyncErrorDetails
+    from ._models_py3 import StorageSyncService
+    from ._models_py3 import StorageSyncServiceCreateParameters
+    from ._models_py3 import StorageSyncServiceUpdateParameters
+    from ._models_py3 import SubscriptionState
+    from ._models_py3 import SyncActivityStatus
+    from ._models_py3 import SyncGroup
+    from ._models_py3 import SyncGroupCreateParameters
+    from ._models_py3 import SyncSessionStatus
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TriggerChangeDetectionParameters
+    from ._models_py3 import TriggerRolloverRequest
+    from ._models_py3 import Workflow
 except (SyntaxError, ImportError):
-    from .storage_sync_error_details import StorageSyncErrorDetails
-    from .storage_sync_api_error import StorageSyncApiError
-    from .storage_sync_error import StorageSyncError, StorageSyncErrorException
-    from .subscription_state import SubscriptionState
-    from .storage_sync_service import StorageSyncService
-    from .sync_group import SyncGroup
-    from .cloud_endpoint import CloudEndpoint
-    from .recall_action_parameters import RecallActionParameters
-    from .storage_sync_service_create_parameters import StorageSyncServiceCreateParameters
-    from .sync_group_create_parameters import SyncGroupCreateParameters
-    from .cloud_endpoint_create_parameters import CloudEndpointCreateParameters
-    from .server_endpoint_create_parameters import ServerEndpointCreateParameters
-    from .trigger_rollover_request import TriggerRolloverRequest
-    from .registered_server_create_parameters import RegisteredServerCreateParameters
-    from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
-    from .files_not_syncing_error import FilesNotSyncingError
-    from .sync_session_status import SyncSessionStatus
-    from .sync_activity_status import SyncActivityStatus
-    from .server_endpoint_sync_status import ServerEndpointSyncStatus
-    from .server_endpoint import ServerEndpoint
-    from .registered_server import RegisteredServer
-    from .resources_move_info import ResourcesMoveInfo
-    from .workflow import Workflow
-    from .operation_display_info import OperationDisplayInfo
-    from .operation_entity import OperationEntity
-    from .operation_display_resource import OperationDisplayResource
-    from .check_name_availability_parameters import CheckNameAvailabilityParameters
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .restore_file_spec import RestoreFileSpec
-    from .post_restore_request import PostRestoreRequest
-    from .pre_restore_request import PreRestoreRequest
-    from .backup_request import BackupRequest
-    from .post_backup_response import PostBackupResponse
-    from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
-    from .tracked_resource import TrackedResource
-    from .azure_entity_resource import AzureEntityResource
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-from .operation_entity_paged import OperationEntityPaged
-from .storage_sync_service_paged import StorageSyncServicePaged
-from .sync_group_paged import SyncGroupPaged
-from .cloud_endpoint_paged import CloudEndpointPaged
-from .server_endpoint_paged import ServerEndpointPaged
-from .registered_server_paged import RegisteredServerPaged
-from .workflow_paged import WorkflowPaged
-from .storage_sync_management_client_enums import (
+    from ._models import AzureEntityResource
+    from ._models import BackupRequest
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CloudEndpoint
+    from ._models import CloudEndpointCreateParameters
+    from ._models import FilesNotSyncingError
+    from ._models import OperationDisplayInfo
+    from ._models import OperationDisplayResource
+    from ._models import OperationEntity
+    from ._models import OperationStatus
+    from ._models import PostBackupResponse
+    from ._models import PostRestoreRequest
+    from ._models import PreRestoreRequest
+    from ._models import ProxyResource
+    from ._models import RecallActionParameters
+    from ._models import RegisteredServer
+    from ._models import RegisteredServerCreateParameters
+    from ._models import Resource
+    from ._models import ResourcesMoveInfo
+    from ._models import RestoreFileSpec
+    from ._models import ServerEndpoint
+    from ._models import ServerEndpointCreateParameters
+    from ._models import ServerEndpointSyncStatus
+    from ._models import ServerEndpointUpdateParameters
+    from ._models import StorageSyncApiError
+    from ._models import StorageSyncError, StorageSyncErrorException
+    from ._models import StorageSyncErrorDetails
+    from ._models import StorageSyncService
+    from ._models import StorageSyncServiceCreateParameters
+    from ._models import StorageSyncServiceUpdateParameters
+    from ._models import SubscriptionState
+    from ._models import SyncActivityStatus
+    from ._models import SyncGroup
+    from ._models import SyncGroupCreateParameters
+    from ._models import SyncSessionStatus
+    from ._models import TrackedResource
+    from ._models import TriggerChangeDetectionParameters
+    from ._models import TriggerRolloverRequest
+    from ._models import Workflow
+from ._paged_models import CloudEndpointPaged
+from ._paged_models import OperationEntityPaged
+from ._paged_models import RegisteredServerPaged
+from ._paged_models import ServerEndpointPaged
+from ._paged_models import StorageSyncServicePaged
+from ._paged_models import SyncGroupPaged
+from ._paged_models import WorkflowPaged
+from ._storage_sync_management_client_enums import (
     Reason,
+    ChangeDetectionMode,
     NameAvailabilityReason,
 )
 
 __all__ = [
-    'StorageSyncErrorDetails',
-    'StorageSyncApiError',
-    'StorageSyncError', 'StorageSyncErrorException',
-    'SubscriptionState',
-    'StorageSyncService',
-    'SyncGroup',
-    'CloudEndpoint',
-    'RecallActionParameters',
-    'StorageSyncServiceCreateParameters',
-    'SyncGroupCreateParameters',
-    'CloudEndpointCreateParameters',
-    'ServerEndpointCreateParameters',
-    'TriggerRolloverRequest',
-    'RegisteredServerCreateParameters',
-    'ServerEndpointUpdateParameters',
-    'FilesNotSyncingError',
-    'SyncSessionStatus',
-    'SyncActivityStatus',
-    'ServerEndpointSyncStatus',
-    'ServerEndpoint',
-    'RegisteredServer',
-    'ResourcesMoveInfo',
-    'Workflow',
-    'OperationDisplayInfo',
-    'OperationEntity',
-    'OperationDisplayResource',
+    'AzureEntityResource',
+    'BackupRequest',
     'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
-    'RestoreFileSpec',
+    'CloudEndpoint',
+    'CloudEndpointCreateParameters',
+    'FilesNotSyncingError',
+    'OperationDisplayInfo',
+    'OperationDisplayResource',
+    'OperationEntity',
+    'OperationStatus',
+    'PostBackupResponse',
     'PostRestoreRequest',
     'PreRestoreRequest',
-    'BackupRequest',
-    'PostBackupResponse',
-    'StorageSyncServiceUpdateParameters',
-    'TrackedResource',
-    'AzureEntityResource',
-    'Resource',
     'ProxyResource',
+    'RecallActionParameters',
+    'RegisteredServer',
+    'RegisteredServerCreateParameters',
+    'Resource',
+    'ResourcesMoveInfo',
+    'RestoreFileSpec',
+    'ServerEndpoint',
+    'ServerEndpointCreateParameters',
+    'ServerEndpointSyncStatus',
+    'ServerEndpointUpdateParameters',
+    'StorageSyncApiError',
+    'StorageSyncError', 'StorageSyncErrorException',
+    'StorageSyncErrorDetails',
+    'StorageSyncService',
+    'StorageSyncServiceCreateParameters',
+    'StorageSyncServiceUpdateParameters',
+    'SubscriptionState',
+    'SyncActivityStatus',
+    'SyncGroup',
+    'SyncGroupCreateParameters',
+    'SyncSessionStatus',
+    'TrackedResource',
+    'TriggerChangeDetectionParameters',
+    'TriggerRolloverRequest',
+    'Workflow',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
     'SyncGroupPaged',
@@ -146,5 +153,6 @@ __all__ = [
     'RegisteredServerPaged',
     'WorkflowPaged',
     'Reason',
+    'ChangeDetectionMode',
     'NameAvailabilityReason',
 ]
