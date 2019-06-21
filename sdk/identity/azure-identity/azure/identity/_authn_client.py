@@ -8,12 +8,11 @@ import time
 
 from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from msal import TokenCache
-
-from .exceptions import AuthenticationError
 
 try:
     from typing import TYPE_CHECKING
@@ -49,46 +48,43 @@ class AuthnClientBase(object):
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
         # type: (PipelineResponse, Iterable[str], int) -> AccessToken
-        try:
-            # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
-            payload = response.context["deserialized_data"]
-            token = payload["access_token"]
 
-            # these values are strings in some responses but msal.TokenCache requires they be integers
-            # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
-            if "expires_in" in payload:
-                payload["expires_in"] = int(payload["expires_in"])
-            if "ext_expires_in" in payload:
-                payload["ext_expires_in"] = int(payload["ext_expires_in"])
+        # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
+        payload = response.context[ContentDecodePolicy.CONTEXT_NAME]
 
-            # this will raise if the payload has neither expires_on nor expires_in
-            # (which is fine because that's unexpected, especially considering the payload contains access_token)
-            expires_on = payload.get("expires_on") or payload["expires_in"] + request_time
-
-            # ensure expires_on is an int
-            try:
-                expires_on = int(expires_on)
-            except ValueError:
-                # probably an App Service MSI response, convert it to epoch seconds
-                try:
-                    t = self._parse_app_service_expires_on(expires_on)
-                    expires_on = calendar.timegm(t)
-                except ValueError:
-                    # have a token but don't know when it expires -> treat it as single-use
-                    expires_on = request_time
-
-            # now we have an int expires_on, ensure the cache entry gets it
-            payload["expires_on"] = expires_on
-
-            self._cache.add({"response": payload, "scope": scopes})
-
-            return AccessToken(token, expires_on)
-        except KeyError:
-            if "access_token" in payload:
+        if not payload or "access_token" not in payload or not ("expires_in" in payload or "expires_on" in payload):
+            if payload and "access_token" in payload:
                 payload["access_token"] = "****"
-            raise AuthenticationError("Unexpected response: {}".format(payload))
-        except Exception as ex:
-            raise AuthenticationError("Authentication failed: {}".format(str(ex)))
+            raise ClientAuthenticationError(message="Unexpected response '{}'".format(payload))
+
+        token = payload["access_token"]
+
+        # these values are strings in some responses but msal.TokenCache requires they be integers
+        # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
+        if "expires_in" in payload:
+            payload["expires_in"] = int(payload["expires_in"])
+        if "ext_expires_in" in payload:
+            payload["ext_expires_in"] = int(payload["ext_expires_in"])
+
+        # AccessToken wants expires_on as an int
+        expires_on = payload.get("expires_on") or payload["expires_in"] + request_time
+        try:
+            expires_on = int(expires_on)
+        except ValueError:
+            # probably an App Service MSI response, convert it to epoch seconds
+            try:
+                t = self._parse_app_service_expires_on(expires_on)
+                expires_on = calendar.timegm(t)
+            except ValueError:
+                # have a token but don't know when it expires -> treat it as single-use
+                expires_on = request_time
+
+        # now we have an int expires_on, ensure the cache entry gets it
+        payload["expires_on"] = expires_on
+
+        self._cache.add({"response": payload, "scope": scopes})
+
+        return AccessToken(token, expires_on)
 
     @staticmethod
     def _parse_app_service_expires_on(expires_on):

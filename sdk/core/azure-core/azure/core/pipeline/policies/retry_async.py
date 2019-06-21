@@ -30,7 +30,7 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import logging
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ClientAuthenticationError
 from .base import HTTPPolicy
 from .base_async import AsyncHTTPPolicy
 from .retry import RetryPolicy
@@ -127,6 +127,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raise: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        :raise: ~azure.core.exceptions.ClientAuthenticationError if authentication fails
         """
         retry_active = True
         response = None
@@ -140,6 +141,10 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                         await self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
+            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+                # the authentication policy failed such that the client's request can't
+                # succeed--we'll never have a response to it, so propagate the exception
+                raise
             except AzureError as err:
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)

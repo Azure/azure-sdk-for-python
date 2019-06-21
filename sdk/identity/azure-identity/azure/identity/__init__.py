@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .exceptions import AuthenticationError
 from .credentials import (
     CertificateCredential,
     ClientSecretCredential,
@@ -23,7 +22,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
 
 __all__ = [
-    "AuthenticationError",
     "CertificateCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",
