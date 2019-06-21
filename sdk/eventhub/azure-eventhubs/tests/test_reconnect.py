@@ -14,7 +14,7 @@ from azure.eventhub import (
     EventHubError,
     EventHubClient)
 
-SLEEP = False
+SLEEP = True
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers):
