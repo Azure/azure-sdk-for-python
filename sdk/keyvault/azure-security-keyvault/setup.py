@@ -53,6 +53,7 @@ setup(
     version=VERSION,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + HISTORY,
+    long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",

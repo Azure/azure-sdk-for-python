@@ -1,4 +1,4 @@
-﻿# coding=utf-8
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -9,9 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient
+from ._configuration import NetworkManagementClientConfiguration
+from ._network_management_client import NetworkManagementClient
+__all__ = ['NetworkManagementClient', 'NetworkManagementClientConfiguration']
+
 from .version import VERSION
 
-__all__ = ['NetworkManagementClient']
-
 __version__ = VERSION
+

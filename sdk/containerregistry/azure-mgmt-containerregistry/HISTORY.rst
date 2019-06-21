@@ -3,6 +3,27 @@
 Release History
 ===============
 
+3.0.0rc2 (2019-06-12)
++++++++++++++++++++++
+
+**Features**
+
+- Model Run has a new parameter timer_trigger
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes while using imports.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ContainerRegistryManagementClient cannot be imported from `azure.mgmt.containerregistry.containerregistry_management_client` anymore (import from `azure.mgmt.containerregistry` works like before)
+- ContainerRegistryManagementClientConfiguration import has been moved from `azure.mgmt.containerregistry.containerregistry_management_client` to `azure.mgmt.containerregistry`
+- ContainerRegistryManagementClient cannot be imported from `azure.mgmt.containerregistry.v20xx_yy_zz.containerregistry_management_client` anymore (import from `azure.mgmt.containerregistry.v20xx_yy_zz` works like before)
+- ContainerRegistryManagementClientConfiguration import has been moved from `azure.mgmt.containerregistry.v20xx_yy_zz.containerregistry_management_client` to `azure.mgmt.containerregistry.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.containerregistry.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.containerregistry.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.containerregistry.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.containerregistry.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one containerregistry mgmt client per process.
+
 3.0.0rc1 (2019-05-24)
 +++++++++++++++++++++
 

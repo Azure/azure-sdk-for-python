@@ -10,143 +10,143 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .deployment_extended_filter_py3 import DeploymentExtendedFilter
-    from .generic_resource_filter_py3 import GenericResourceFilter
-    from .resource_group_filter_py3 import ResourceGroupFilter
-    from .template_link_py3 import TemplateLink
-    from .parameters_link_py3 import ParametersLink
-    from .debug_setting_py3 import DebugSetting
-    from .on_error_deployment_py3 import OnErrorDeployment
-    from .deployment_properties_py3 import DeploymentProperties
-    from .deployment_py3 import Deployment
-    from .deployment_export_result_py3 import DeploymentExportResult
-    from .resource_management_error_with_details_py3 import ResourceManagementErrorWithDetails
-    from .alias_path_type_py3 import AliasPathType
-    from .alias_type_py3 import AliasType
-    from .provider_resource_type_py3 import ProviderResourceType
-    from .provider_py3 import Provider
-    from .basic_dependency_py3 import BasicDependency
-    from .dependency_py3 import Dependency
-    from .on_error_deployment_extended_py3 import OnErrorDeploymentExtended
-    from .deployment_properties_extended_py3 import DeploymentPropertiesExtended
-    from .deployment_validate_result_py3 import DeploymentValidateResult
-    from .deployment_extended_py3 import DeploymentExtended
-    from .plan_py3 import Plan
-    from .sku_py3 import Sku
-    from .identity_py3 import Identity
-    from .generic_resource_py3 import GenericResource
-    from .resource_group_properties_py3 import ResourceGroupProperties
-    from .resource_group_py3 import ResourceGroup
-    from .resource_group_patchable_py3 import ResourceGroupPatchable
-    from .resources_move_info_py3 import ResourcesMoveInfo
-    from .export_template_request_py3 import ExportTemplateRequest
-    from .tag_count_py3 import TagCount
-    from .tag_value_py3 import TagValue
-    from .tag_details_py3 import TagDetails
-    from .target_resource_py3 import TargetResource
-    from .http_message_py3 import HttpMessage
-    from .deployment_operation_properties_py3 import DeploymentOperationProperties
-    from .deployment_operation_py3 import DeploymentOperation
-    from .resource_provider_operation_display_properties_py3 import ResourceProviderOperationDisplayProperties
-    from .resource_py3 import Resource
-    from .sub_resource_py3 import SubResource
-    from .resource_group_export_result_py3 import ResourceGroupExportResult
+    from ._models_py3 import AliasPathType
+    from ._models_py3 import AliasType
+    from ._models_py3 import BasicDependency
+    from ._models_py3 import DebugSetting
+    from ._models_py3 import Dependency
+    from ._models_py3 import Deployment
+    from ._models_py3 import DeploymentExportResult
+    from ._models_py3 import DeploymentExtended
+    from ._models_py3 import DeploymentExtendedFilter
+    from ._models_py3 import DeploymentOperation
+    from ._models_py3 import DeploymentOperationProperties
+    from ._models_py3 import DeploymentProperties
+    from ._models_py3 import DeploymentPropertiesExtended
+    from ._models_py3 import DeploymentValidateResult
+    from ._models_py3 import ExportTemplateRequest
+    from ._models_py3 import GenericResource
+    from ._models_py3 import GenericResourceFilter
+    from ._models_py3 import HttpMessage
+    from ._models_py3 import Identity
+    from ._models_py3 import OnErrorDeployment
+    from ._models_py3 import OnErrorDeploymentExtended
+    from ._models_py3 import ParametersLink
+    from ._models_py3 import Plan
+    from ._models_py3 import Provider
+    from ._models_py3 import ProviderResourceType
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceGroup
+    from ._models_py3 import ResourceGroupExportResult
+    from ._models_py3 import ResourceGroupFilter
+    from ._models_py3 import ResourceGroupPatchable
+    from ._models_py3 import ResourceGroupProperties
+    from ._models_py3 import ResourceManagementErrorWithDetails
+    from ._models_py3 import ResourceProviderOperationDisplayProperties
+    from ._models_py3 import ResourcesMoveInfo
+    from ._models_py3 import Sku
+    from ._models_py3 import SubResource
+    from ._models_py3 import TagCount
+    from ._models_py3 import TagDetails
+    from ._models_py3 import TagValue
+    from ._models_py3 import TargetResource
+    from ._models_py3 import TemplateLink
 except (SyntaxError, ImportError):
-    from .deployment_extended_filter import DeploymentExtendedFilter
-    from .generic_resource_filter import GenericResourceFilter
-    from .resource_group_filter import ResourceGroupFilter
-    from .template_link import TemplateLink
-    from .parameters_link import ParametersLink
-    from .debug_setting import DebugSetting
-    from .on_error_deployment import OnErrorDeployment
-    from .deployment_properties import DeploymentProperties
-    from .deployment import Deployment
-    from .deployment_export_result import DeploymentExportResult
-    from .resource_management_error_with_details import ResourceManagementErrorWithDetails
-    from .alias_path_type import AliasPathType
-    from .alias_type import AliasType
-    from .provider_resource_type import ProviderResourceType
-    from .provider import Provider
-    from .basic_dependency import BasicDependency
-    from .dependency import Dependency
-    from .on_error_deployment_extended import OnErrorDeploymentExtended
-    from .deployment_properties_extended import DeploymentPropertiesExtended
-    from .deployment_validate_result import DeploymentValidateResult
-    from .deployment_extended import DeploymentExtended
-    from .plan import Plan
-    from .sku import Sku
-    from .identity import Identity
-    from .generic_resource import GenericResource
-    from .resource_group_properties import ResourceGroupProperties
-    from .resource_group import ResourceGroup
-    from .resource_group_patchable import ResourceGroupPatchable
-    from .resources_move_info import ResourcesMoveInfo
-    from .export_template_request import ExportTemplateRequest
-    from .tag_count import TagCount
-    from .tag_value import TagValue
-    from .tag_details import TagDetails
-    from .target_resource import TargetResource
-    from .http_message import HttpMessage
-    from .deployment_operation_properties import DeploymentOperationProperties
-    from .deployment_operation import DeploymentOperation
-    from .resource_provider_operation_display_properties import ResourceProviderOperationDisplayProperties
-    from .resource import Resource
-    from .sub_resource import SubResource
-    from .resource_group_export_result import ResourceGroupExportResult
-from .deployment_extended_paged import DeploymentExtendedPaged
-from .provider_paged import ProviderPaged
-from .generic_resource_paged import GenericResourcePaged
-from .resource_group_paged import ResourceGroupPaged
-from .tag_details_paged import TagDetailsPaged
-from .deployment_operation_paged import DeploymentOperationPaged
-from .resource_management_client_enums import (
+    from ._models import AliasPathType
+    from ._models import AliasType
+    from ._models import BasicDependency
+    from ._models import DebugSetting
+    from ._models import Dependency
+    from ._models import Deployment
+    from ._models import DeploymentExportResult
+    from ._models import DeploymentExtended
+    from ._models import DeploymentExtendedFilter
+    from ._models import DeploymentOperation
+    from ._models import DeploymentOperationProperties
+    from ._models import DeploymentProperties
+    from ._models import DeploymentPropertiesExtended
+    from ._models import DeploymentValidateResult
+    from ._models import ExportTemplateRequest
+    from ._models import GenericResource
+    from ._models import GenericResourceFilter
+    from ._models import HttpMessage
+    from ._models import Identity
+    from ._models import OnErrorDeployment
+    from ._models import OnErrorDeploymentExtended
+    from ._models import ParametersLink
+    from ._models import Plan
+    from ._models import Provider
+    from ._models import ProviderResourceType
+    from ._models import Resource
+    from ._models import ResourceGroup
+    from ._models import ResourceGroupExportResult
+    from ._models import ResourceGroupFilter
+    from ._models import ResourceGroupPatchable
+    from ._models import ResourceGroupProperties
+    from ._models import ResourceManagementErrorWithDetails
+    from ._models import ResourceProviderOperationDisplayProperties
+    from ._models import ResourcesMoveInfo
+    from ._models import Sku
+    from ._models import SubResource
+    from ._models import TagCount
+    from ._models import TagDetails
+    from ._models import TagValue
+    from ._models import TargetResource
+    from ._models import TemplateLink
+from ._paged_models import DeploymentExtendedPaged
+from ._paged_models import DeploymentOperationPaged
+from ._paged_models import GenericResourcePaged
+from ._paged_models import ProviderPaged
+from ._paged_models import ResourceGroupPaged
+from ._paged_models import TagDetailsPaged
+from ._resource_management_client_enums import (
     DeploymentMode,
     OnErrorDeploymentType,
     ResourceIdentityType,
 )
 
 __all__ = [
-    'DeploymentExtendedFilter',
-    'GenericResourceFilter',
-    'ResourceGroupFilter',
-    'TemplateLink',
-    'ParametersLink',
-    'DebugSetting',
-    'OnErrorDeployment',
-    'DeploymentProperties',
-    'Deployment',
-    'DeploymentExportResult',
-    'ResourceManagementErrorWithDetails',
     'AliasPathType',
     'AliasType',
-    'ProviderResourceType',
-    'Provider',
     'BasicDependency',
+    'DebugSetting',
     'Dependency',
-    'OnErrorDeploymentExtended',
+    'Deployment',
+    'DeploymentExportResult',
+    'DeploymentExtended',
+    'DeploymentExtendedFilter',
+    'DeploymentOperation',
+    'DeploymentOperationProperties',
+    'DeploymentProperties',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
-    'DeploymentExtended',
-    'Plan',
-    'Sku',
-    'Identity',
-    'GenericResource',
-    'ResourceGroupProperties',
-    'ResourceGroup',
-    'ResourceGroupPatchable',
-    'ResourcesMoveInfo',
     'ExportTemplateRequest',
-    'TagCount',
-    'TagValue',
-    'TagDetails',
-    'TargetResource',
+    'GenericResource',
+    'GenericResourceFilter',
     'HttpMessage',
-    'DeploymentOperationProperties',
-    'DeploymentOperation',
-    'ResourceProviderOperationDisplayProperties',
+    'Identity',
+    'OnErrorDeployment',
+    'OnErrorDeploymentExtended',
+    'ParametersLink',
+    'Plan',
+    'Provider',
+    'ProviderResourceType',
     'Resource',
-    'SubResource',
+    'ResourceGroup',
     'ResourceGroupExportResult',
+    'ResourceGroupFilter',
+    'ResourceGroupPatchable',
+    'ResourceGroupProperties',
+    'ResourceManagementErrorWithDetails',
+    'ResourceProviderOperationDisplayProperties',
+    'ResourcesMoveInfo',
+    'Sku',
+    'SubResource',
+    'TagCount',
+    'TagDetails',
+    'TagValue',
+    'TargetResource',
+    'TemplateLink',
     'DeploymentExtendedPaged',
     'ProviderPaged',
     'GenericResourcePaged',
