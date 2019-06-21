@@ -8,6 +8,7 @@ from typing import Any, Dict, Mapping, Optional, Union
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -15,7 +16,6 @@ from ._internal import AsyncImdsCredential, AsyncMsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import ChainedTokenCredential
-from ..exceptions import AuthenticationError
 
 # pylint:disable=too-few-public-methods
 
@@ -84,7 +84,7 @@ class AsyncEnvironmentCredential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
             )
-            raise AuthenticationError(message)
+            raise ClientAuthenticationError(message=message)
         return await self._credential.get_token(*scopes)
 
 
@@ -120,9 +120,9 @@ class AsyncChainedTokenCredential(ChainedTokenCredential):
         for credential in self._credentials:
             try:
                 return await credential.get_token(*scopes)
-            except AuthenticationError as ex:
+            except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
                 history.append((credential, str(ex)))
         error_message = self._get_error_message(history)
-        raise AuthenticationError(error_message)
+        raise ClientAuthenticationError(message=error_message)
