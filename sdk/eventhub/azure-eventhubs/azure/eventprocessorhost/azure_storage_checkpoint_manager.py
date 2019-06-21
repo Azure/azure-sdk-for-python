@@ -12,7 +12,7 @@ import functools
 import asyncio
 import requests
 
-from azure.storage.blob import BlockBlobService
+from .vendor.storage.blob import BlockBlobService
 from azure.eventprocessorhost.azure_blob_lease import AzureBlobLease
 from azure.eventprocessorhost.checkpoint import Checkpoint
 from azure.eventprocessorhost.abstract_lease_manager import AbstractLeaseManager
