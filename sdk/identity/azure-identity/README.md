@@ -67,9 +67,9 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 
 # Azure SDK clients accept credentials as a parameter
-from azure.security.keyvault import VaultClient
+from azure.security.keyvault import SecretClient
 
-client = VaultClient(vault_url, credential)
+client = SecretClient(vault_url, credential)
 ```
 
 ## Authenticating as a service principal:
@@ -107,9 +107,9 @@ second_principal = ClientSecretCredential(another_client_id, another_secret, ten
 credential_chain = ChainedTokenCredential(first_principal, second_principal)
 
 # the chain can be used anywhere a credential is required
-from azure.security.keyvault import VaultClient
+from azure.security.keyvault import SecretClient
 
-client = VaultClient(vault_url, credential=credential_chain)
+client = SecretClient(vault_url, credential=credential_chain)
 ```
 
 # Troubleshooting
