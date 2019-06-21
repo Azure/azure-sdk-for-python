@@ -429,6 +429,10 @@ def main(input_str, default_api=None):
 
     last_api_path = client_folder / last_api_version
 
+    # In case we are transitioning from a single api generation, clean old folders
+    shutil.rmtree(str(client_folder / "operations"), ignore_errors=True)
+    shutil.rmtree(str(client_folder / "models"), ignore_errors=True)
+
     shutil.copy(
         str(client_folder / last_api_version / "_configuration.py"),
         str(client_folder / "_configuration.py"),
