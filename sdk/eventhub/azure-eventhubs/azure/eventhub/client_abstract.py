@@ -27,11 +27,10 @@ if TYPE_CHECKING:
 
 from azure.eventhub import __version__
 from azure.eventhub.configuration import Configuration
-from azure.eventhub import constants
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
 log = logging.getLogger(__name__)
-
+MAX_USER_AGENT_LENGTH = 512
 
 def _parse_conn_str(conn_str):
     endpoint = None
@@ -99,7 +98,7 @@ class EventHubClientAbstract(object):
         """
         Constructs a new EventHubClient.
 
-        :param host: The hostname URI string of the the Event Hub.
+        :param host: The hostname of the the Event Hub.
         :type host: str
         :param event_hub_path: The path/name of the Event Hub
         :type event_hub_path: str
@@ -306,10 +305,10 @@ class EventHubClientAbstract(object):
         if user_agent:
             final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
 
-        if len(final_user_agent) > constants.MAX_USER_AGENT_LENGTH:
+        if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
             raise ValueError("The user-agent string cannot be more than {} in length."
                              "Current user_agent string is: {} with length: {}".format(
-                                constants.MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)))
+                                MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)))
 
         properties["user-agent"] = final_user_agent
         return properties

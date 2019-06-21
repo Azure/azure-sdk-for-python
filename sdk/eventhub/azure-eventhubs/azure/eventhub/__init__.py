@@ -11,12 +11,12 @@ from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import EventHubProducer
 from azure.eventhub.receiver import EventHubConsumer
-from .constants import MessageSendResult
-from .constants import TransportType
+from uamqp import constants
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
+TransportType = constants.TransportType
+
 __all__ = [
-    "__version__",
     "EventData",
     "EventHubError",
     "ConnectError",
@@ -28,7 +28,6 @@ __all__ = [
     "EventHubClient",
     "EventHubProducer",
     "EventHubConsumer",
-    "MessageSendResult",
     "TransportType",
     "EventHubSharedKeyCredential",
     "EventHubSASTokenCredential",
