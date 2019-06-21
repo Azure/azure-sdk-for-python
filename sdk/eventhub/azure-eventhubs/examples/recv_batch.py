@@ -24,7 +24,7 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EVENT_POSITION = EventPosition.first_available_event()
+EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
 
 
@@ -38,7 +38,7 @@ try:
     with consumer:
         batched_events = consumer.receive(max_batch_size=10)
         for event_data in batched_events:
-            last_offset = event_data.offset.value
+            last_offset = event_data.offset
             last_sn = event_data.sequence_number
             total += 1
             print("Partition {}, Received {}, sn={} offset={}".format(

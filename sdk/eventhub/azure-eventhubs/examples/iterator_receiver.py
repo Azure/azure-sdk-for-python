@@ -22,7 +22,7 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EVENT_POSITION = EventPosition.first_available_event()
+EVENT_POSITION = EventPosition("-1")
 
 
 class PartitionConsumerThread(Thread):
