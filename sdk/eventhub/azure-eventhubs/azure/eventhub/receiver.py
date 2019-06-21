@@ -13,7 +13,7 @@ from uamqp import types, errors
 from uamqp import compat
 from uamqp import ReceiveClient, Source
 
-from azure.eventhub.common import EventData
+from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
 
 
@@ -97,7 +97,7 @@ class EventHubConsumer(object):
                     self.messages_iter = self._handler.receive_messages_iter()
                 message = next(self.messages_iter)
                 event_data = EventData(message=message)
-                self.offset = event_data.offset
+                self.offset = EventPosition(event_data.offset, inclusive=False)
                 return event_data
             except errors.AuthenticationException as auth_error:
                 if connecting_count < max_retries:

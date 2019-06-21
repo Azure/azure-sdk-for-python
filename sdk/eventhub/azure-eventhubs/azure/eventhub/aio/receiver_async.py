@@ -11,7 +11,7 @@ from typing import List
 from uamqp import errors, types, compat
 from uamqp import ReceiveClientAsync, Source
 
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
 
 log = logging.getLogger(__name__)
@@ -100,7 +100,7 @@ class EventHubConsumer(object):
                     self.messages_iter = self._handler.receive_messages_iter_async()
                 message = await self.messages_iter.__anext__()
                 event_data = EventData(message=message)
-                self.offset = event_data.offset
+                self.offset = EventPosition(event_data.offset, inclusive=False)
                 return event_data
             except errors.AuthenticationException as auth_error:
                 if connecting_count < max_retries:
