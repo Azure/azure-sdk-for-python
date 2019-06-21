@@ -22,7 +22,7 @@ pip install azure-security-keyvault
     ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` way of authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
@@ -41,7 +41,7 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
         "tenant": "tenant-ID"
     }
     ```
-* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables. The following example shows a way to do this in Bash:
+* Use the credentials returned above to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables. The following example shows a way to do this in Bash:
   ```Bash
    export AZURE_CLIENT_ID="generated-app-ID"
    export AZURE_CLIENT_SECRET="random-password"
@@ -74,7 +74,8 @@ key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 ### Key
-  Azure Key Vault supports multiple key types and algorithms, and enables the use of Hardware Security Modules (HSM) for high value keys. In addition to the key value, the following attributes may be specified:
+  Azure Key Vault supports multiple key types and algorithms, and enables the use of Hardware Security Modules
+  (HSM) for high value keys. In addition to the key value, the following attributes may be specified:
 * enabled: Specifies whether the key is enabled and useable for cryptographic operations.
 * not_before: Identifies the time before which the key must not be used for cryptographic operations.
 * expires: Identifies the expiration time on or after which the key MUST NOT be used for cryptographic operation.
@@ -82,7 +83,7 @@ key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
 * updated: Indicates when this version of the key was updated.
 
 ### Key Client:
-The Key client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting, and listing keys and its versions. An asynchronous and synchronous, KeyClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a Key, you can interact with the primary resource types in Key Vault.
+The Key client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting,and listing keys and its versions. An asynchronous and synchronous, KeyClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a Key, you can interact with the primary resource types in Key Vault.
 
 ## Examples
 The following section provides several code snippets using the above created `key_client`, covering some of the most common Azure Key Vault Key service related tasks, including:
@@ -98,14 +99,14 @@ The following section provides several code snippets using the above created `ke
 `create_key` creates a Key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 ```python
 
-# Create a key of any type
+# Create a key
 key = key_client.create_key("key-name", "RSA-HSM")
 
 # Create an RSA key with size specification (optional)
 rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
 
 # Create an EC key with curve specification and using HSM
-ec_key = key_client.create_key("ec-key-name", hsm=True)
+ec_key = key_client.create_key("ec-key-name", hsm=True, curve="P-256")
 
 print(key.name)
 print(key.key_material.kty)
