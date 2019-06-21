@@ -9,8 +9,8 @@ from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient
-from azure.eventhub.sender import EventHubProducer
-from azure.eventhub.receiver import EventHubConsumer
+from azure.eventhub.producer import EventHubProducer
+from azure.eventhub.consumer import EventHubConsumer
 from uamqp import constants
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 

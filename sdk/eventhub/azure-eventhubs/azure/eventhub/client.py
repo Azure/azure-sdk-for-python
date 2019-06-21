@@ -19,8 +19,8 @@ from uamqp import Message, AMQPClient
 from uamqp import authentication
 from uamqp import constants
 
-from azure.eventhub.sender import EventHubProducer
-from azure.eventhub.receiver import EventHubConsumer
+from azure.eventhub.producer import EventHubProducer
+from azure.eventhub.consumer import EventHubConsumer
 from azure.eventhub.common import parse_sas_token, EventPosition
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential

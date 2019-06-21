@@ -19,8 +19,8 @@ from uamqp import (
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
-from .sender_async import EventHubProducer
-from .receiver_async import EventHubConsumer
+from .producer_async import EventHubProducer
+from .consumer_async import EventHubConsumer
 
 
 log = logging.getLogger(__name__)
