@@ -8,12 +8,11 @@ import time
 
 from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from msal import TokenCache
-
-from .exceptions import AuthenticationError
 
 try:
     from typing import TYPE_CHECKING
@@ -86,9 +85,9 @@ class AuthnClientBase(object):
         except KeyError:
             if "access_token" in payload:
                 payload["access_token"] = "****"
-            raise AuthenticationError("Unexpected response: {}".format(payload))
+            raise ClientAuthenticationError("Unexpected response: {}".format(payload))
         except Exception as ex:
-            raise AuthenticationError("Authentication failed: {}".format(str(ex)))
+            raise ClientAuthenticationError("Authentication failed: {}".format(str(ex)))
 
     @staticmethod
     def _parse_app_service_expires_on(expires_on):

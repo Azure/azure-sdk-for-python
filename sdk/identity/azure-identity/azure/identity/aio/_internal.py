@@ -8,12 +8,11 @@ from typing import Any, Optional
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
 from ..constants import Endpoints, EnvironmentVariables
-from ..exceptions import AuthenticationError
 from .._internal import _ManagedIdentityBase
 
 
@@ -37,9 +36,9 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
             # we send a request it would immediately reject (missing a required header),
             # setting a short timeout.
             try:
-                await self._client.request_token(scopes, method="GET", connection_timeout=0.3)
+                await self._client.request_token(scopes, method="GET", connection_timeout=0.3, retry_total=0)
                 self._endpoint_available = True
-            except (AuthenticationError, HttpResponseError):
+            except (ClientAuthenticationError, HttpResponseError):
                 # received a response a pipeline policy choked on (HttpResponseError)
                 # or that couldn't be deserialized by AuthnClient (AuthenticationError)
                 self._endpoint_available = True
@@ -48,7 +47,7 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            raise AuthenticationError("IMDS endpoint unavailable")
+            raise ClientAuthenticationError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports one scope per request")
@@ -74,7 +73,7 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
 
     async def get_token(self, *scopes: str) -> AccessToken:
         if not self._endpoint_available:
-            raise AuthenticationError("MSI endpoint unavailable")
+            raise ClientAuthenticationError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports only one scope per request")

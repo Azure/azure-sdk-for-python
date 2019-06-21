@@ -7,13 +7,13 @@ import os
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ._internal import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
-from .exceptions import AuthenticationError
 
 try:
     from typing import TYPE_CHECKING
@@ -90,7 +90,7 @@ class EnvironmentCredential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
             )
-            raise AuthenticationError(message)
+            raise ClientAuthenticationError(message=message)
         return self._credential.get_token(*scopes)
 
 
@@ -136,12 +136,12 @@ class ChainedTokenCredential(object):
         for credential in self._credentials:
             try:
                 return credential.get_token(*scopes)
-            except AuthenticationError as ex:
+            except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
                 history.append((credential, str(ex)))
         error_message = self._get_error_message(history)
-        raise AuthenticationError(error_message)
+        raise ClientAuthenticationError(message=error_message)
 
     @staticmethod
     def _get_error_message(history):

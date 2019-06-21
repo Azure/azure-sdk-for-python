@@ -12,8 +12,8 @@ import uuid
 
 import pytest
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import (
-    AuthenticationError,
     AsyncClientSecretCredential,
     AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
@@ -77,31 +77,31 @@ async def test_client_secret_environment_credential(monkeypatch):
         assert request.data["client_id"] == client_id
         assert request.data["client_secret"] == secret
         # raising here makes mocking a transport response unnecessary
-        raise AuthenticationError(success_message)
+        raise ClientAuthenticationError(success_message)
 
     credential = AsyncEnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(AuthenticationError) as ex:
+    with pytest.raises(ClientAuthenticationError) as ex:
         await credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
 @pytest.mark.asyncio
 async def test_environment_credential_error():
-    with pytest.raises(AuthenticationError):
+    with pytest.raises(ClientAuthenticationError):
         await AsyncEnvironmentCredential().get_token("scope")
 
 
 @pytest.mark.asyncio
 async def test_credential_chain_error_message():
     def raise_authn_error(message):
-        raise AuthenticationError(message)
+        raise ClientAuthenticationError(message)
 
     first_error = "first_error"
     first_credential = Mock(spec=AsyncClientSecretCredential, get_token=lambda _: raise_authn_error(first_error))
     second_error = "second_error"
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
-    with pytest.raises(AuthenticationError) as ex:
+    with pytest.raises(ClientAuthenticationError) as ex:
         await AsyncChainedTokenCredential(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
@@ -112,7 +112,7 @@ async def test_credential_chain_error_message():
 @pytest.mark.asyncio
 async def test_chain_attempts_all_credentials():
     async def raise_authn_error(message="it didn't work"):
-        raise AuthenticationError(message)
+        raise ClientAuthenticationError(message)
 
     expected_token = AccessToken("expected_token", 0)
     credentials = [
@@ -201,8 +201,7 @@ async def test_imds_credential_retries():
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
         try:
-            await credential.get_token("scope")
-        except AuthenticationError:
+        except ClientAuthenticationError:
             pass
         # first call was availability probe, second the original request; there should be at least one retry thereafter
         assert mock_send.call_count > 2
