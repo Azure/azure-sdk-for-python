@@ -149,7 +149,7 @@ This example lists all the secrets in the specified Key Vault.
 ```
 
 ### Async operations
-Python’s [asyncio package](https://pypi.org/project/asyncio/) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+Python’s [asyncio package](https://docs.python.org/3/library/asyncio.html) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The package supports async API on Python 3.5+ and is identical to synchronous API. 
 
 The following examples provide code snippets for performing async operations in the Secret Client library:
@@ -196,7 +196,7 @@ except ResourceNotFoundError as e:
 Output: "Secret not found:deleted_secret"
 ```
 ### Logging
-This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
+Network trace logging is disabled by default for this library. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
  ```python
 import sys
@@ -219,7 +219,7 @@ config.logging_policy = NetworkTraceLoggingPolicy(logging_enable=True, **kwargs)
 The logger can also be enabled per operation.
 
  ```python
-key = secret_client.get_secret("secret-name", logging_enable=True)
+secret = secret_client.get_secret("secret-name", logging_enable=True)
 ```
 
 ## Next steps

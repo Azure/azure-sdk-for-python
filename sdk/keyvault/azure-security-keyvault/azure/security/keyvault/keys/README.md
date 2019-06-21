@@ -160,7 +160,7 @@ for key in keys:
 ```
 
 ### Async operations
-Python’s [asyncio package](https://pypi.org/project/asyncio/) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+Python’s [asyncio package](https://docs.python.org/3/library/asyncio.html) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The package supports async API on Python 3.5+ and is identical to synchronous API.
 
 The following examples provide code snippets for performing async operations in the Key Client library:

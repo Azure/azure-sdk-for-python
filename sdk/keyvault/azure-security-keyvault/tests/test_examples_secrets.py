@@ -149,9 +149,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_name = created_secret.name
         # [START backup_secret]
         # backup secret
+        # returns the raw bytes of the backed up secret
         secret_backup = secret_client.backup_secret("secret-name")
 
-        # returns the raw bytes of the backed up secret
         print(secret_backup)
 
         # [END backup_secret]

@@ -36,7 +36,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
             the secret is returned.
         :returns: An instance of Secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if client failed to retrieve the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
