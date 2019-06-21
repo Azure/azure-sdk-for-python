@@ -210,7 +210,7 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
-        is_iot_conn_str = conn_str.lower().startswith("hostname")
+        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         if not is_iot_conn_str:
             address, policy, key, entity = _parse_conn_str(conn_str)
             entity = event_hub_path or entity
