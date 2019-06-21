@@ -239,7 +239,7 @@ class EventHubClient(EventHubClientAbstract):
         :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: int
+        :type send_timeout: float
         :rtype: ~azure.eventhub.sender.EventHubProducer
 
         Example:

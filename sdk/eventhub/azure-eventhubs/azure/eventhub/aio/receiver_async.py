@@ -345,7 +345,7 @@ class EventHubConsumer(object):
          from an Event Hub. Results will be returned after timeout. If combined
          with max_batch_size, it will return after either the count of received events
          reaches the max_batch_size or the operation has timed out.
-        :type timeout: int
+        :type timeout: float
         :rtype: list[~azure.eventhub.common.EventData]
 
         Example:
