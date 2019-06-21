@@ -196,13 +196,13 @@ except ResourceNotFoundError as e:
 Output: "Secret not found:deleted_secret"
 ```
 ### Logging
-Network trace logging is disabled by default for this library. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
+Network trace logging is disabled by default for this library. When enabled, this will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
  ```python
 import sys
 import logging
  # Create a logger for the 'azure' SDK
-logger = logging.getLogger("azure.security.keyvault")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
  # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
@@ -213,8 +213,8 @@ logger.addHandler(file_handler)
 
 # Enable network trace logging. This will be logged at DEBUG level.
 # By default, network trace logging is disabled.
-config = SecretClient.create_config()
-config.logging_policy = NetworkTraceLoggingPolicy(logging_enable=True, **kwargs)
+config = SecretClient.create_config(credential, logging_enable=True)
+client = SecretClient(url, credential, config=config)
 ```
 The logger can also be enabled per operation.
 

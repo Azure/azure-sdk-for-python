@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
-        # TODO: we still want to pass adn why written in quotes down?
 
 
 class VaultClient(_AsyncKeyVaultClientBase):

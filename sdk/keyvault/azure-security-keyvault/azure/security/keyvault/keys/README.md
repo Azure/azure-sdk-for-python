@@ -207,14 +207,14 @@ except ResourceNotFoundError as e:
 Output: "Key not found:deleted_key"
 ```
 ### Logging
-This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
+Network trace logging is disabled by default for this library. When enabled, this will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
 ```python
 import sys
 import logging
 
 # Create a logger for the 'azure' SDK
-logger = logging.getLogger("azure")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -227,8 +227,8 @@ logger.addHandler(file_handler)
 
 # Enable network trace logging. This will be logged at DEBUG level.
 # By default, network tracing logging is disabled.
-config = KeyClient.create_config()
-config.logging_policy = NetworkTraceLoggingPolicy(logging_enable=True, **kwargs)
+config = KeyClient.create_config(credential, logging_enable=True)
+client = KeyClient(url, credential, config=config)
 ```
 The logger can also be enabled per operation.
 
