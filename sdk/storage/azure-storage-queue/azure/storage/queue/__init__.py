@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .version import __version__
+from .version import VERSION
 from .queue_client import QueueClient
 from .queue_service_client import QueueServiceClient
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
@@ -36,6 +36,8 @@ from .models import (
     CorsRule,
     RetentionPolicy,
 )
+
+__version__ = VERSION
 
 __all__ = [
     'QueueClient',

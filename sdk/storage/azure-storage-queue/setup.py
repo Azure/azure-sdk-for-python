@@ -72,16 +72,20 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
-        'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.storage',
+        'tests',
+        'tests.queue',
+        'tests.common'
     ]),
     install_requires=[
         'msrest>=0.5.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
+        #'azure-core~=0.0.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-storage-nspkg'],
     }
 )

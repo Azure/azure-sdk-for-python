@@ -29,7 +29,7 @@ from azure.storage.queue._shared.encryption import (
 )
 
 from azure.storage.queue import (
-    __version__,
+    VERSION,
     QueueServiceClient,
     QueueClient,
     BinaryBase64EncodePolicy,
@@ -393,7 +393,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
             b64decode(encryption_data['ContentEncryptionIV'].encode(encoding='utf-8')),
             encryption_agent,
             wrapped_content_key,
-            {'EncryptionLibrary': __version__})
+            {'EncryptionLibrary': VERSION})
 
         message = message['EncryptedMessageContents']
         content_encryption_key = kek.unwrap_key(

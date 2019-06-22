@@ -494,7 +494,7 @@ def create_pipeline(credential, **kwargs):
     elif credential is not None:
         raise TypeError("Unsupported credential: {}".format(credential))
 
-    config = create_configuration(**kwargs)
+    config = kwargs.get('_configuration') or create_configuration(**kwargs)
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
