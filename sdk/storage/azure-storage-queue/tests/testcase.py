@@ -57,6 +57,17 @@ class TestMode(object):
         return mode == TestMode.run_live_no_record or mode == TestMode.record
 
 
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self, token):
+        self.token = token
+
+    def get_token(self, *args):
+        return self.token
+
+
 class StorageTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -158,14 +169,23 @@ class StorageTestCase(unittest.TestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def _get_shared_key_credentials(self):
-        return self.settings.STORAGE_ACCOUNT_NAME, self.settings.STORAGE_ACCOUNT_KEY
+    def _get_shared_key_credential(self):
+        return {
+            "account_name": self.settings.STORAGE_ACCOUNT_NAME,
+            "account_key": self.settings.STORAGE_ACCOUNT_KEY
+        }
 
-    def _get_premium_shared_key_credentials(self):
-        return self.settings.PREMIUM_STORAGE_ACCOUNT_NAME, self.settings.PREMIUM_STORAGE_ACCOUNT_KEY,
+    def _get_premium_shared_key_credential(self):
+        return {
+            "account_name": self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
+            "account_key": self.settings.PREMIUM_STORAGE_ACCOUNT_KEY
+        }
 
-    def _get_remote_shared_key_credentials(self):
-        return self.settings.REMOTE_STORAGE_ACCOUNT_NAME, self.settings.REMOTE_STORAGE_ACCOUNT_KEY,
+    def _get_remote_shared_key_credential(self):
+        return {
+            "account_name": self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
+            "account_key": self.settings.REMOTE_STORAGE_ACCOUNT_KEY
+        }
 
     def _get_account_url(self):
         return "{}://{}.blob.core.windows.net".format(
@@ -390,16 +410,16 @@ class StorageTestCase(unittest.TestCase):
         return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
 
     def generate_oauth_token(self):
-        context = adal.AuthenticationContext(
-            str.format("https://login.microsoftonline.com/{}", self.settings.ACTIVE_DIRECTORY_TENANT_ID),
-            api_version=None, validate_authority=True)
+        try:
+            from azure.identity import ClientSecretCredential
 
-        token = context.acquire_token_with_client_credentials(
-            "https://storage.azure.com",
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET)
-
-        return token["accessToken"]
+            return ClientSecretCredential(
+                self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+                self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+                self.settings.ACTIVE_DIRECTORY_TENANT_ID
+            )
+        except ImportError:
+            return FakeTokenCredential('initial token')
 
 def record(test):
     def recording_test(self):

@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from azure.core.exceptions import map_error
 
@@ -91,7 +92,10 @@ class MessageIdOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
         # Construct body
-        body_content = self._serialize.body(queue_message, 'QueueMessage')
+        if queue_message is not None:
+            body_content = self._serialize.body(queue_message, 'QueueMessage')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

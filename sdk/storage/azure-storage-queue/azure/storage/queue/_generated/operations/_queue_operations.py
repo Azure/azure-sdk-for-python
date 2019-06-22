@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from azure.core.exceptions import map_error
 
@@ -402,8 +403,10 @@ class QueueOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
         # Construct body
+        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifier', 'wrapped': True}}
         if queue_acl is not None:
-            body_content = self._serialize.body(queue_acl, '[SignedIdentifier]')
+            body_content = self._serialize.serialize_iter(queue_acl, 'SignedIdentifier',
+                                                          serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
 

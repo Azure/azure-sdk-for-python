@@ -7,13 +7,19 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from azure.common import (
-    AzureHttpError,
-    AzureException,
-)
+from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
+from azure.storage.queue import (
+    QueueClient,
+    QueueServiceClient,
+    TextBase64EncodePolicy,
+    TextBase64DecodePolicy,
+    BinaryBase64EncodePolicy,
+    BinaryBase64DecodePolicy,
+    TextXMLEncodePolicy,
+    TextXMLDecodePolicy,
+    NoEncodePolicy,
+    NoDecodePolicy)
 
-from azure.storage.queue.queue_client import QueueClient
-from azure.storage.queue.queue_service_client import QueueServiceClient
 from tests.testcase import (
     StorageTestCase,
     record,
@@ -29,38 +35,47 @@ class StorageQueueEncodingTest(StorageTestCase):
     def setUp(self):
         super(StorageQueueEncodingTest, self).setUp()
 
-        self.qs = self._create_storage_service(QueueClient, self.settings)
+        queue_url = self._get_queue_url()
+        credentials = self._get_shared_key_credential()
+        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials)
         self.test_queues = []
 
     def tearDown(self):
         if not self.is_playback():
-            for queue_name in self.test_queues:
+            for queue in self.test_queues:
                 try:
-                    self.qs.delete_queue(queue_name)
+                    self.qsc.delete_queue(queue.queue_name)
                 except:
                     pass
         return super(StorageQueueEncodingTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self):
-        queue_name = self.get_resource_name(TEST_QUEUE_PREFIX + str(len(self.test_queues)))
-        self.test_queues.append(queue_name)
-        return queue_name
+    def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
+        queue_name = self.get_resource_name(prefix)
+        queue = self.qsc.get_queue_client(queue_name)
+        self.test_queues.append(queue)
+        return queue
 
-    def _create_queue(self):
-        queue_name = self._get_queue_reference()
-        self.qs.create_queue(queue_name)
-        return queue_name
+    def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
+        queue = self._get_queue_reference(prefix)
+        try:
+            created = queue.create_queue()
+        except ResourceExistsError:
+            pass
+        return queue
 
-    def _validate_encoding(self, qs, message):
+    def _validate_encoding(self, queue, message):
         # Arrange
-        queue_name = self._create_queue()
+        try:
+            created = queue.create_queue()
+        except ResourceExistsError:
+            pass
 
         # Action.
-        qs.put_message(queue_name, message)
+        queue.enqueue_message(message)
 
         # Asserts
-        messages = qs.get_messages(queue_name)
+        messages = next(queue.dequeue_messages())
         self.assertEqual(message, messages[0].content)
 
     # --------------------------------------------------------------------------
@@ -69,103 +84,121 @@ class StorageQueueEncodingTest(StorageTestCase):
     def test_message_text_xml(self):
         # Arrange.
         message = u'<message1>'
+        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        self._validate_encoding(self.qs, message)
+        self._validate_encoding(queue, message)
 
     @record
     def test_message_text_xml_whitespace(self):
         # Arrange.
         message = u'  mess\t age1\n'
+        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        self._validate_encoding(self.qs, message)
+        self._validate_encoding(queue, message)
 
     @record
     def test_message_text_xml_invalid_chars(self):
         # Action.
-        queue_name = self._get_queue_reference()
+        queue = self._get_queue_reference()
         message = u'\u0001'
 
         # Asserts
-        with self.assertRaises(AzureHttpError):
-            self.qs.put_message(queue_name, message)
+        with self.assertRaises(HttpResponseError):
+            queue.enqueue_message(message)
 
     @record
     def test_message_text_base64(self):
         # Arrange.
-        qs2 = self._create_storage_service(QueueService, self.settings)
-        qs2.encode_function = QueueMessageFormat.text_base64encode
-        qs2.decode_function = QueueMessageFormat.text_base64decode
+        queue_url = self._get_queue_url()
+        credentials = self._get_shared_key_credential()
+        queue = QueueClient(
+            queue_url=queue_url,
+            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            credential=credentials,
+            message_encode_policy=TextBase64EncodePolicy(),
+            message_decode_policy=TextBase64DecodePolicy())
+
         message = u'\u0001'
 
         # Asserts
-        self._validate_encoding(qs2, message)
+        self._validate_encoding(queue, message)
 
     @record
     def test_message_bytes_base64(self):
         # Arrange.
-        qs2 = self._create_storage_service(QueueService, self.settings)
-        qs2.encode_function = QueueMessageFormat.binary_base64encode
-        qs2.decode_function = QueueMessageFormat.binary_base64decode
+        queue_url = self._get_queue_url()
+        credentials = self._get_shared_key_credential()
+        queue = QueueClient(
+            queue_url=queue_url,
+            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            credential=credentials,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy())
+
         message = b'xyz'
 
         # Asserts
-        self._validate_encoding(qs2, message)
+        self._validate_encoding(queue, message)
 
     @record
     def test_message_bytes_fails(self):
         # Arrange
-        queue_name = self._get_queue_reference()
+        queue = self._get_queue_reference()
 
         # Action.
-        try:
+        with self.assertRaises(TypeError) as e:
             message = b'xyz'
-            self.qs.put_message(queue_name, message)
-            self.fail('Passing binary to text encoder should fail.')
-        except TypeError as e:
-            self.assertTrue(str(e).startswith('message should be of type'))
+            queue.enqueue_message(message)
 
-            # Asserts
+        # Asserts
+        self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
     @record
     def test_message_text_fails(self):
         # Arrange
-        qs2 = self._create_storage_service(QueueService, self.settings)
-        qs2.encode_function = QueueMessageFormat.binary_base64encode
-        qs2.decode_function = QueueMessageFormat.binary_base64decode
-
-        queue_name = self._get_queue_reference()
+        queue_url = self._get_queue_url()
+        credentials = self._get_shared_key_credential()
+        queue = QueueClient(
+            queue_url=queue_url,
+            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            credential=credentials,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy())
 
         # Action.
-        try:
+        with self.assertRaises(TypeError) as e:
             message = u'xyz'
-            qs2.put_message(queue_name, message)
-            self.fail('Passing text to binary encoder should fail.')
-        except TypeError as e:
-            self.assertEqual(str(e), 'message should be of type bytes.')
+            queue.enqueue_message(message)
 
-            # Asserts
+        # Asserts
+        self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
     @record
     def test_message_base64_decode_fails(self):
         # Arrange
-        qs2 = self._create_storage_service(QueueService, self.settings)
-        qs2.encode_function = QueueMessageFormat.text_xmlencode
-        qs2.decode_function = QueueMessageFormat.binary_base64decode
-
-        queue_name = self._create_queue()
+        queue_url = self._get_queue_url()
+        credentials = self._get_shared_key_credential()
+        queue = QueueClient(
+            queue_url=queue_url,
+            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            credential=credentials,
+            message_encode_policy=TextXMLEncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy())
+        try:
+            queue.create_queue()
+        except ResourceExistsError:
+            pass
         message = u'xyz'
-        qs2.put_message(queue_name, message)
+        queue.enqueue_message(message)
 
         # Action.
-        try:
-            qs2.peek_messages(queue_name)
-            self.fail('Decoding unicode string as base64 should fail.')
-        except AzureException as e:
-            self.assertNotEqual(-1, str(e).find('message is not a valid base64 value.'))
+        with self.assertRaises(DecodeError) as e:
+            queue.peek_messages()
 
-            # Asserts
+        # Asserts
+        self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
 
 
 # ------------------------------------------------------------------------------

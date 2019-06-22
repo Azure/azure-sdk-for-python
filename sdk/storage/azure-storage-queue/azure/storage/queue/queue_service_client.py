@@ -7,95 +7,118 @@
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
-    TYPE_CHECKING
-)
-
-from .queue_client import QueueClient
-from ._utils import (
-    create_client,
-    create_pipeline,
-    create_configuration,
-    parse_connection_str,
-    process_storage_error,
-    basic_error_map
-)
-from .models import StorageServiceProperties, StorageErrorException
-from ._generated.models import ListQueuesIncludeType
-from ._shared_access_signature import QueueSharedAccessSignature
-
+    TYPE_CHECKING)
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+
+from ._shared.shared_access_signature import SharedAccessSignature
+from ._shared.models import LocationMode, Services
+from ._shared.utils import (
+    StorageAccountHostsMixin,
+    parse_query,
+    parse_connection_str,
+    process_storage_error)
+from ._generated import AzureQueueStorage
+from ._generated.models import StorageServiceProperties, StorageErrorException
+
+from .models import QueuePropertiesPaged
+from .queue_client import QueueClient
 
 if TYPE_CHECKING:
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
 
 
-class QueueServiceClient(object):
+class QueueServiceClient(StorageAccountHostsMixin):
+    """ A client interact with the Queue Service at the account level.
+
+    This client provides operations to retrieve and configure the account properties
+    as well as list, create and delete queues within the account.
+    For operations relating to a specific queue, a client for this entity
+    can be retrieved using the `get_queue_client` function.
+
+    :ivar str url:
+        The full endpoint URL to the Queue service account. This could be either the
+        primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
+    """
 
     def __init__(
             self, account_url,  # type: str
-            credentials=None,  # type: Optional[HTTPPolicy]
-            configuration=None, # type: Optional[Configuration]
+            credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        """A new QueueServiceClient.
+
+        :param str account_url:
+            The URL to the queue storage account. Any other entities included
+            in the URL path (e.g. queue) will be discarded. This URL can be optionally
+            authenticated with a SAS token.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, and account
+            shared access key, or an instance of a TokenCredentials class from azure.identity.
         """
-        :param str account_name:
-            The storage account name. This is used to authenticate requests 
-            signed with an account key and to construct the storage endpoint. It 
-            is required unless a connection string is given.
-        :param credentials: Optional credentials object to override the SAS key as provided
-         in the connection string.
-        :param configuration: Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
-        """
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
-        self.scheme = parsed_url.scheme
-        self.account = parsed_url.hostname.split(".queue.core.")[0]
-        self.credentials = credentials
-        self.url = account_url if not parsed_url.path else "{}://{}".format(
-            self.scheme,
-            parsed_url.hostname
-        )
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(QueueServiceClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
+        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credentials=None,  # type: Optional[HTTPPolicy]
-            configuration=None, # type: Optional[Configuration]
+            credential=None,  # type: Optional[HTTPPolicy]
             **kwargs  # type: Any
         ):
-        """
-        Create QueueServiceClient from a Connection String.
-        :param str conn_str: A connection string to an Azure Storage account.
-        :param credentials: Optional credentials object to override the SAS key as provided
-         in the connection string.
-        :param configuration: Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
-        """
-        account_url, creds = parse_connection_str(conn_str, credentials)
-        return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
+        """Create QueueServiceClient from a Connection String.
 
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
         """
-        Get an HTTP Pipeline Configuration with all default policies for the Blob
-        Storage service.
-        :rtype: ~azure.core.configuration.Configuration
-        """
-        return create_configuration(**kwargs)
-
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, 'queue')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -105,9 +128,10 @@ class QueueServiceClient(object):
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
         ):
-        """
-        Generates a shared access signature for the queue service.
+        """Generates a shared access signature for the queue service.
+
         Use the returned signature with the sas_token parameter of any QueueService.
+
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
         :param AccountPermissions permission:
@@ -143,18 +167,18 @@ class QueueServiceClient(object):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
-        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
 
-        sas = SharedAccessSignature(self.account, self.credentials.account_key)
-        return sas.generate_account(resource_types, permission,
-                                    expiry, start=start, ip=ip, protocol=protocol)
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        return sas.generate_account(
+            Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
 
     def get_service_stats(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
-        """
-        Retrieves statistics related to replication for the Queue service. It is
-        only available when read-access geo-redundant replication is enabled for
+        """Retrieves statistics related to replication for the Queue service.
+
+        It is only available when read-access geo-redundant replication is enabled for
         the storage account.
         With geo-redundant replication, Azure Storage maintains your data durable
         in two locations. In both locations, Azure Storage constantly maintains
@@ -168,63 +192,64 @@ class QueueServiceClient(object):
         center that resides in the same region as the primary location. Read-only
         access is available from the secondary location, if read-access geo-redundant
         replication is enabled for your storage account.
+
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
         :rtype: ~azure.storage.queue._generated.models.StorageServiceStats
         """
         try:
-            return self._client.service.get_statistics(timeout=timeout, **kwargs)
+            return self._client.service.get_statistics(
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int], Optional[Any]) -> Dict[str, Any]
-        """
-        Gets the properties of a storage account's Queue service, including
+        """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
+
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models.StorageServiceProperties
         """
         try:
-            return self._client.service.get_properties(
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs)
+            return self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     def set_service_properties(
-            self, logging=None,  # type: Optional[Union[Logging, Dict[str, Any]]]
-            hour_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
-            minute_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
-            cors=None,  # type: Optional[List[Union[CorsRule, Dict[str, Any]]]]
+            self, logging=None,  # type: Optional[Logging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
+            cors=None,  # type: Optional[List[CorsRule]]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
-        """
-        Sets the properties of a storage account's Queue service, including
-        Azure Storage Analytics. If an element (e.g. Logging) is left as None, the 
+        """Sets the properties of a storage account's Queue service, including
+        Azure Storage Analytics.
+
+        If an element (e.g. Logging) is left as None, the
         existing settings on the service for that functionality are preserved.
+
         :param logging:
             Groups the Azure Analytics Logging settings.
         :type logging:
             :class:`~azure.storage.queue.models.Logging`
         :param hour_metrics:
-            The hour metrics settings provide a summary of request 
+            The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
         :type hour_metrics:
             :class:`~azure.storage.queue.models.Metrics`
         :param minute_metrics:
-            The minute metrics settings provide request statistics 
+            The minute metrics settings provide request statistics
             for each minute for queues.
         :type minute_metrics:
             :class:`~azure.storage.queue.models.Metrics`
         :param cors:
-            You can include up to five CorsRule elements in the 
-            list. If an empty list is specified, all CORS rules will be deleted, 
+            You can include up to five CorsRule elements in the
+            list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.queue.models.CorsRule`)
         :param int timeout:
@@ -238,52 +263,116 @@ class QueueServiceClient(object):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(
-                props,
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs)
+            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_queues(self, prefix=None, include_metadata=None, timeout=None, **kwargs):
-        """
-        Returns an auto-paging iterable of dict-like QueueProperties.
-        :param str prefix:
-            Filters the results to return only queues with names that begin
-            with the specified prefix.
+    def list_queues(
+            self, name_starts_with=None,  # type: Optional[str]
+            include_metadata=False,  # type: Optional[bool]
+            marker=None,  # type: Optional[str]
+            results_per_page=None,  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> QueuePropertiesPaged
+        """Returns a generator to list the queues under the specified account.
+        The generator will lazily follow the continuation tokens returned by
+        the service and stop when all queues have been returned.
+
+        :param str name_starts_with:
+            Filters the results to return only queues whose names
+            begin with the specified prefix.
         :param bool include_metadata:
-            Specifies that container metadata be returned in the response.
+            Specifies that queue metadata be returned in the response.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int results_per_page:
+            The maximum number of queue names to retrieve per API
+            call. If the request does not specify the server will return up to 5,000 items.
         :param int timeout:
-            The server timeout, expressed in seconds. This function may make multiple 
-            calls to the service in which case the timeout value specified will be 
+            The server timeout, expressed in seconds. This function may make multiple
+            calls to the service in which case the timeout value specified will be
             applied to each individual call.
+        :returns: An iterable (auto-paging) of QueueProperties.
+        :rtype: ~azure.core.queue.models.QueuePropertiesPaged
         """
-        if include_metadata and not isinstance(include_metadata, list):
-            include_metadata = [include_metadata]
-        try:
-            return self._client.service.list_queues_segment(
-                prefix=prefix,
-                include=include_metadata,
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs
-            )
-        except StorageErrorException as error:
-            process_storage_error(error)
+        include = ['metadata'] if include_metadata else None
+        command = functools.partial(
+            self._client.service.list_queues_segment,
+            prefix=name_starts_with,
+            include=include,
+            timeout=timeout,
+            **kwargs)
+        return QueuePropertiesPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def get_queue_client(self, queue_name):
-        # type: (str) -> QueueClient
+    def create_queue(
+            self, name,  # type: str
+            metadata=None,  # type: Optional[Dict[str, str]]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> ContainerClient
+        """Creates a new queue under the specified account. If a queue
+        with the same name already exists, the operation fails. Returns a client with
+        which to interact with the newly created queue.
+
+        :param str name: The name of the queue to create.
+        :param metadata:
+            A dict with name_value pairs to associate with the
+            queue as metadata. Example:{'Category':'test'}
+        :type metadata: dict(str, str)
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.queue.queue_client.QueueClient
         """
-        Get a client to interact with the specified queue.
+        queue = self.get_queue_client(name)
+        queue.create_queue(
+            metadata=metadata, timeout=timeout, **kwargs)
+        return queue
+
+    def delete_queue(
+            self, queue,  # type: Union[QueueProperties, str]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> None
+        """Deletes the specified queue and any messages it contains.
+
+        When a queue is successfully deleted, it is immediately marked for deletion
+        and is no longer accessible to clients. The queue is later removed from
+        the Queue service during garbage collection.
+        Note that deleting a queue is likely to take at least 40 seconds to complete.
+        If an operation is attempted against the queue while it was being deleted,
+        an :class:`HttpResponseError` will be thrown.
+
+        :param queue:
+            The queue to delete. This can either be the name of the queue,
+            or an instance of QueueProperties.
+        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        queue = self.get_queue_client(queue)
+        queue.delete_queue(timeout=timeout, **kwargs)
+
+    def get_queue_client(self, queue, **kwargs):
+        # type: (Union[QueueProperties, str]) -> QueueClient
+        """Get a client to interact with the specified queue.
         The queue need not already exist.
-        :param queue_name: The name of the queue with which to interact.
-        :type queue: str
+
+        :param queue:
+            The queue. This can either be the name of the queue,
+            or an instance of QueueProperties.
+        :type queue: str or ~azure.storage.queue.models.QueueProperties
         :returns: A QueueClient.
         :rtype: ~azure.core.queue.queue_client.QueueClient
         """
         return QueueClient(
-            self.url, queue_name=queue_name, credentials=self.credentials,
-            configuration=self._config, _pipeline=self._pipeline,
+            self.url, queue=queue, credential=self.credential, key_resolver_function=self.key_resolver_function,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

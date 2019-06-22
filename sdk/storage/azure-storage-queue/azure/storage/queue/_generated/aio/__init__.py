@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from ._azure_queue_storage_async import AzureQueueStorage
 from ._configuration_async import AzureQueueStorageConfiguration

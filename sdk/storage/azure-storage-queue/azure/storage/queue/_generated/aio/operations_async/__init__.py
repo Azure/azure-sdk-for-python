@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from ._service_operations_async import ServiceOperations
 from ._queue_operations_async import QueueOperations
