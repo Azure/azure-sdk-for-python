@@ -40,14 +40,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         super(StorageBlobAccessConditionsTest, self).setUp()
 
         url = self._get_account_url()
-
-        # test chunking functionality by reducing the size of each chunk,
-        # otherwise the tests would take too long to execute
-        self.config = BlobServiceClient.create_configuration()
-        self.config.connection.data_block_size = 4 * 1024
-
         self.bsc = BlobServiceClient(
-            url, credential=self.settings.STORAGE_ACCOUNT_KEY, configuration=self.config)
+            url, credential=self.settings.STORAGE_ACCOUNT_KEY)
+        self.config = self.bsc._config
+        self.config.connection.data_block_size = 4 * 1024
 
         self.container_name = self.get_resource_name('utcontainer')
 

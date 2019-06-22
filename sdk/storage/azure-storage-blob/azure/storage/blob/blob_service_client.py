@@ -15,7 +15,7 @@ except ImportError:
     from urlparse import urlparse
 
 from ._shared.shared_access_signature import SharedAccessSignature
-from ._shared.models import LocationMode
+from ._shared.models import LocationMode, Services
 from ._shared.utils import (
     StorageAccountHostsMixin,
     return_response_headers,
@@ -30,7 +30,6 @@ from .models import ContainerProperties, ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core import Configuration
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from ._shared.models import AccountPermissions, ResourceTypes
@@ -61,15 +60,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-    :param ~azure.core.configuration.Configuration configuration:
-        An optional pipeline configuration. This can be retrieved with
-        :func:`BlobServiceClient.create_configuration()`
     """
 
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -84,7 +79,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(BlobServiceClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -97,7 +92,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """Create BlobServiceClient from a Connection String.
@@ -109,14 +103,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :param configuration:
-            Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential)
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, configuration=configuration, **kwargs)
+        return cls(account_url, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -169,8 +160,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             raise ValueError("No account SAS key available.")
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_account(resource_types, permission,
-                                    expiry, start=start, ip=ip, protocol=protocol)
+        return sas.generate_account(
+            Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
 
     def get_account_information(self, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
@@ -434,7 +425,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         return ContainerClient(
             self.url, container=container,
-            credential=self.credential, configuration=self._config,
+            credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
@@ -463,7 +454,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         return BlobClient(
             self.url, container=container, blob=blob, snapshot=snapshot,
-            credential=self.credential, configuration=self._config,
+            credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

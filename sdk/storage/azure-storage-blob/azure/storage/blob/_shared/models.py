@@ -18,6 +18,7 @@ def get_enum_value(value):
 
 class StorageErrorCode(str, Enum):
 
+    # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
     account_is_disabled = "AccountIsDisabled"
@@ -60,6 +61,8 @@ class StorageErrorCode(str, Enum):
     unsupported_xml_node = "UnsupportedXmlNode"
     unsupported_query_parameter = "UnsupportedQueryParameter"
     unsupported_http_verb = "UnsupportedHttpVerb"
+
+    # Blob values
     append_position_condition_not_met = "AppendPositionConditionNotMet"
     blob_already_exists = "BlobAlreadyExists"
     blob_not_found = "BlobNotFound"
@@ -123,6 +126,17 @@ class StorageErrorCode(str, Enum):
     blob_being_rehydrated = "BlobBeingRehydrated"
     blob_archived = "BlobArchived"
     blob_not_archived = "BlobNotArchived"
+
+    # Queue values
+    invalid_marker = "InvalidMarker"
+    message_not_found = "MessageNotFound"
+    message_too_large = "MessageTooLarge"
+    pop_receipt_mismatch = "PopReceiptMismatch"
+    queue_already_exists = "QueueAlreadyExists"
+    queue_being_deleted = "QueueBeingDeleted"
+    queue_disabled = "QueueDisabled"
+    queue_not_empty = "QueueNotEmpty"
+    queue_not_found = "QueueNotFound"
 
 
 class DictMixin(object):
@@ -366,3 +380,50 @@ AccountPermissions.ADD = AccountPermissions(add=True)
 AccountPermissions.CREATE = AccountPermissions(create=True)
 AccountPermissions.UPDATE = AccountPermissions(update=True)
 AccountPermissions.PROCESS = AccountPermissions(process=True)
+
+
+class Services(object):
+    """
+    Specifies the services accessible with the account SAS.
+
+    :cvar Services Services.BLOB: The blob service.
+    :cvar Services Services.FILE: The file service
+    :cvar Services Services.QUEUE: The queue service.
+    :cvar Services Services.TABLE: The table service.
+    :param bool blob:
+        Access to any blob service, for example, the `.BlockBlobService`
+    :param bool queue:
+        Access to the `.QueueService`
+    :param bool file:
+        Access to the `.FileService`
+    :param bool table:
+        Access to the TableService
+    :param str _str:
+        A string representing the services.
+    """
+
+    def __init__(self, blob=False, queue=False, file=False, table=False, _str=None):
+        if not _str:
+            _str = ''
+        self.blob = blob or ('b' in _str)
+        self.queue = queue or ('q' in _str)
+        self.file = file or ('f' in _str)
+        self.table = table or ('t' in _str)
+
+    def __or__(self, other):
+        return Services(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return Services(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('b' if self.blob else '') +
+                ('q' if self.queue else '') +
+                ('t' if self.table else '') +
+                ('f' if self.file else ''))
+
+
+Services.BLOB = Services(blob=True)
+Services.QUEUE = Services(queue=True)
+Services.TABLE = Services(table=True)
+Services.FILE = Services(file=True)

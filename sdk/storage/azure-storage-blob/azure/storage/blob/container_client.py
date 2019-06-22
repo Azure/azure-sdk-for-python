@@ -58,7 +58,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, container_url,  # type: str
             container=None,  # type: Union[ContainerProperties, str]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -77,10 +76,6 @@ class ContainerClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, and account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
-        :param ~azure.core.configuration.Configuration configuration:
-            An optional pipeline configuration. This can be retrieved with
-            :func:`ContainerClient.create_configuration()`
-
         """
         try:
             if not container_url.lower().startswith('http'):
@@ -102,7 +97,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except AttributeError:
             self.container_name = container or unquote(path_container)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(ContainerClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -120,7 +115,6 @@ class ContainerClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             container,  # type: Union[str, ContainerProperties]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """Create ContainerClient from a Connection String.
@@ -135,16 +129,12 @@ class ContainerClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :param configuration:
-            Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential)
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, credential=credential,
-            configuration=configuration, **kwargs)
+            account_url, container=container, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
@@ -835,7 +825,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         return BlobClient(
             self.url, container=self.container_name, blob=blob, snapshot=snapshot,
-            credential=self.credential, configuration=self._config,
+            credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

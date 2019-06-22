@@ -53,6 +53,7 @@ from .policies import (
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
+    QueueMessagePolicy,
     ExponentialRetry)
 
 
@@ -118,8 +119,8 @@ class StorageAccountHostsMixin(object):
 
     def __init__(
             self, parsed_url,  # type: str
+            service, # type: str
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -127,14 +128,16 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get('_hosts')
         self.scheme = parsed_url.scheme
 
-        account = parsed_url.netloc.split(".blob.core.")
+        if service not in ['blob', 'queue', 'file']:
+            raise ValueError("Invalid service: {}".format(service))
+        account = parsed_url.netloc.split(".{}.core.".format(service))
         secondary_hostname = None
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, 'account_name'):
-            secondary_hostname = "{}-secondary.blob.{}".format(
-                self.credential.account_name, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
@@ -151,8 +154,7 @@ class StorageAccountHostsMixin(object):
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
-        self._config, self._pipeline = create_pipeline(
-            configuration, self.credential, hosts=self._hosts, **kwargs)
+        self._config, self._pipeline = create_pipeline(self.credential, hosts=self._hosts, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -195,17 +197,6 @@ class StorageAccountHostsMixin(object):
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
-        """
-        Get an HTTP Pipeline Configuration with all default policies for the Blob
-        Storage service.
-
-        :rtype: ~azure.core.configuration.Configuration
-        """
-        return create_configuration(**kwargs)
-
     def _format_query_string(self, sas_token, credential, snapshot=None):
         query_str = "?"
         if snapshot:
@@ -235,9 +226,17 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential):
+service_connection_params = {
+    'blob': {'primary': 'BlobEndpoint', 'secondary': 'BlobSecondaryEndpoint'},
+    'queue': {'primary': 'QueueEndpoint', 'secondary': 'QueueSecondaryEndpoint'},
+    'file': {'primary': 'FileEndpoint', 'secondary': 'FileSecondaryEndpoint'},
+}
+
+
+def parse_connection_str(conn_str, credential, service):
     conn_str = conn_str.rstrip(';')
     conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension
+    endpoints = service_connection_params[service]
     primary = None
     secondary = None
     if not credential:
@@ -248,21 +247,23 @@ def parse_connection_str(conn_str, credential):
             }
         except KeyError:
             credential = conn_settings.get('SharedAccessSignature')
-    if 'BlobEndpoint' in conn_settings:
-        primary = conn_settings['BlobEndpoint']
-        if 'BlobSecondaryEndpoint' in conn_settings:
-            secondary = conn_settings['BlobSecondaryEndpoint']
+    if endpoints['primary'] in conn_settings:
+        primary = conn_settings[endpoints['primary']]
+        if endpoints['secondary'] in conn_settings:
+            secondary = conn_settings[endpoints['secondary']]
     else:
-        if 'BlobSecondaryEndpoint' in conn_settings:
+        if endpoints['secondary'] in conn_settings:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary = "{}://{}.blob.{}".format(
+            primary = "{}://{}.{}.{}".format(
                 conn_settings['DefaultEndpointsProtocol'],
                 conn_settings['AccountName'],
+                service,
                 conn_settings['EndpointSuffix']
             )
-            secondary = "{}-secondary.blob.{}".format(
+            secondary = "{}-secondary.{}.{}".format(
                 conn_settings['AccountName'],
+                service,
                 conn_settings['EndpointSuffix']
             )
         except KeyError:
@@ -270,8 +271,9 @@ def parse_connection_str(conn_str, credential):
 
     if not primary:
         try:
-            primary = "https://{}.blob.{}".format(
+            primary = "https://{}.{}.{}".format(
                 conn_settings['AccountName'],
+                service,
                 conn_settings.get('EndpointSuffix', SERVICE_HOST_BASE)
             )
         except KeyError:
@@ -333,9 +335,6 @@ def serialize_iso(attr):
     if isinstance(attr, str):
         attr = isodate.parse_datetime(attr)
     try:
-        if not attr.tzinfo:
-            _LOGGER.warning(
-                "Datetime with no tzinfo will be considered UTC.")
         utc = attr.utctimetuple()
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
@@ -485,7 +484,7 @@ def create_configuration(**kwargs):
     return config
 
 
-def create_pipeline(configuration, credential, **kwargs):
+def create_pipeline(credential, **kwargs):
     # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
     credential_policy = None
     if hasattr(credential, 'get_token'):
@@ -495,13 +494,14 @@ def create_pipeline(configuration, credential, **kwargs):
     elif credential is not None:
         raise TypeError("Unsupported credential: {}".format(credential))
 
-    config = configuration or create_configuration(**kwargs)
+    config = kwargs.get('_configuration') or create_configuration(**kwargs)
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
     if not transport:
         transport = RequestsTransport(config)
     policies = [
+        QueueMessagePolicy(),
         config.user_agent_policy,
         config.headers_policy,
         StorageContentValidation(),
@@ -577,6 +577,7 @@ def process_storage_error(storage_error):
                 raise_error = ClientAuthenticationError
             if error_code in [StorageErrorCode.resource_not_found,
                               StorageErrorCode.blob_not_found,
+                              StorageErrorCode.queue_not_found,
                               StorageErrorCode.container_not_found]:
                 raise_error = ResourceNotFoundError
             if error_code in [StorageErrorCode.account_already_exists,
@@ -584,8 +585,10 @@ def process_storage_error(storage_error):
                               StorageErrorCode.resource_already_exists,
                               StorageErrorCode.resource_type_mismatch,
                               StorageErrorCode.blob_already_exists,
+                              StorageErrorCode.queue_already_exists,
                               StorageErrorCode.container_already_exists,
-                              StorageErrorCode.container_being_deleted]:
+                              StorageErrorCode.container_being_deleted,
+                              StorageErrorCode.queue_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

@@ -82,6 +82,22 @@ def is_retry(response, mode):
     return False
 
 
+def urljoin(base_url, stub_url):
+    parsed = urlparse(base_url)
+    parsed = parsed._replace(path=parsed.path + '/' + stub_url)
+    return parsed.geturl()
+
+
+class QueueMessagePolicy(SansIOHTTPPolicy):
+
+    def on_request(self, request, **kwargs):
+        message_id = request.context.options.pop('queue_message_id', None)
+        if message_id:
+            request.http_request.url = urljoin(
+                request.http_request.url,
+                message_id)
+
+
 class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
@@ -91,14 +107,14 @@ class StorageBlobSettings(object):
         # Block blob uploads
         self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = False
+        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
 
         # Page blob uploads
-        self.max_page_size = 4 * 1024 * 1024
+        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
 
         # Blob downloads
-        self.max_single_get_size = 32 * 1024 * 1024
-        self.max_chunk_get_size = 4 * 1024 * 1024
+        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
 
 
 class StorageHeadersPolicy(HeadersPolicy):

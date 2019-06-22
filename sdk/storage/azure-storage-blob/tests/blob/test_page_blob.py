@@ -43,15 +43,17 @@ class StoragePageBlobTest(StorageTestCase):
         super(StoragePageBlobTest, self).setUp()
 
         url = self._get_account_url()
-        self.config = BlobServiceClient.create_configuration()
 
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
-        self.config.connection.data_block_size = 4 * 1024
-        self.config.blob_settings.max_page_size = 4 * 1024
         credential = self._get_shared_key_credential()
 
-        self.bs = BlobServiceClient(url, credential=credential, configuration=self.config)
+        self.bsc = BlobServiceClient(
+            url,
+            credential=credential,
+            connection_data_block_size=4 * 1024,
+            max_page_size=4 * 1024)
+        self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

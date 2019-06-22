@@ -66,12 +66,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.config = BlobServiceClient.create_configuration()
-        self.config.blob_settings.max_single_put_size = 32 * 1024
-        self.config.blob_settings.max_block_size = 4 * 1024
-        self.config.blob_settings.max_page_size = 4 * 1024
-
-        self.bsc = BlobServiceClient(url, credential=credential, configuration=self.config)
+        self.bsc = BlobServiceClient(
+            url,
+            credential=credential,
+            max_single_put_size=32 * 1024,
+            max_block_size=4 * 1024,
+            max_page_size=4 * 1024)
+        self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
 

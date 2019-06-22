@@ -34,11 +34,10 @@ class StorageAppendBlobTest(StorageTestCase):
         super(StorageAppendBlobTest, self).setUp()
 
         url = self._get_account_url()
-        self.config = BlobServiceClient.create_configuration()
-        self.config.blob_settings.max_block_size = 4 * 1024
         credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(url, credential=credential, configuration=self.config)
+        self.bsc = BlobServiceClient(url, credential=credential, max_block_size=4 * 1024)
+        self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

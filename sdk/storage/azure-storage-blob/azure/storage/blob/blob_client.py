@@ -87,8 +87,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-    :param ~azure.core.configuration.Configuration configuration: An optional pipeline configuration.
-        This can be retrieved with :func:`BlobClient.create_configuration()`
     """
     def __init__(
             self, blob_url,  # type: str
@@ -96,7 +94,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -136,7 +133,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
         self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(BlobClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -157,7 +154,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob,  # type: Union[str, BlobProperties]
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """
@@ -178,16 +174,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :param configuration:
-            Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential)
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, blob=blob, snapshot=snapshot,
-            credential=credential, configuration=configuration, **kwargs)
+            account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
