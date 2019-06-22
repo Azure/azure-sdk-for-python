@@ -130,7 +130,7 @@ class ContainerClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
@@ -623,6 +623,7 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
+            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -648,6 +649,12 @@ class ContainerClient(StorageAccountHostsMixin):
         :type name: str or ~azure.storage.blob.models.BlobProperties
         :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
+        :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
+            If True, upload_blob will silently overwrite the existing data. If set to False, the
+            operation will fail with ResourceExistsError. The exception to the above is with Append
+            blob types. In this case, if data already exists, an error will not be raised and
+            the data will be appended to the existing blob. If you set overwrite=True, then the existing
+            blob will be deleted, and a new one created.
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
@@ -716,6 +723,7 @@ class ContainerClient(StorageAccountHostsMixin):
         blob.upload_blob(
             data,
             blob_type=blob_type,
+            overwrite=overwrite,
             length=length,
             metadata=metadata,
             content_settings=content_settings,
@@ -736,8 +744,8 @@ class ContainerClient(StorageAccountHostsMixin):
 
     def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
             delete_snapshots=None,  # type: Optional[str]
+            lease=None,  # type: Optional[Union[str, LeaseClient]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -763,6 +771,10 @@ class ContainerClient(StorageAccountHostsMixin):
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
@@ -798,8 +810,8 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         blob = self.get_blob_client(blob)
         blob.delete_blob(
-            lease=lease,
             delete_snapshots=delete_snapshots,
+            lease=lease,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             if_match=if_match,

@@ -34,6 +34,7 @@ from ._shared.utils import (
     validate_and_format_range_headers)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
+    DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
@@ -175,7 +176,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
@@ -563,7 +564,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
 
     def delete_blob(
-            self, lease=None,  # type: Optional[Union[str, LeaseClient]]
+            self, delete_snapshots=None,  # type: Optional[str]
+            lease=None,  # type: Optional[Union[str, LeaseClient]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -576,8 +578,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Marks the specified blob for deletion.
         The blob is later deleted during garbage collection.
 
-        Note that in order to delete a blob, you must delete all of its snapshots.
-        You can delete the blob's snapshots using the Delete Blob Snapshots API.
+        Note that in order to delete a blob, you must delete all of its
+        snapshots. You can delete both at the same time with the Delete
+        Blob operation.
 
         If a delete retention policy is enabled for the service, then this operation soft deletes the blob
         and retains the blob for a specified number of days.
@@ -585,6 +588,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Soft deleted blob is accessible through List Blobs API specifying include=deleted option.
         Soft-deleted blob can be restored using Undelete API.
 
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -617,78 +624,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if not self.snapshot:
-            kwargs['delete_snapshots'] = "include"
+        if self.snapshot and delete_snapshots:
+            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
+        if delete_snapshots:
+            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         try:
             self._client.blob.delete(
                 timeout=timeout,
+                delete_snapshots=delete_snapshots,
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                **kwargs)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def delete_blob_snapshots(
-            self, lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
-        """
-        Marks the specified blob snapshot for deletion.
-        The blob is later deleted during garbage collection.
-
-        Note that in order to delete a blob, you must delete all of its snapshots.
-
-        If a delete retention policy is enabled for the service, then this operation soft deletes the snapshot
-        and retains the snapshot for specified number of days.
-        After specified number of days, the blob's snapshot is removed from the service during garbage collection.
-        Soft deleted snapshots are accessible through List Blobs API specifying include=deleted option.
-        Soft-deleted snapshots can be restored using Undelete API.
-
-        :param lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :param str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if self.snapshot:
-            raise ValueError("This operation cannot be performed on a snapshot.")
-        try:
-            self._client.blob.delete(
-                timeout=timeout,
-                delete_snapshots="only",
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)

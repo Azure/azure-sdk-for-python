@@ -104,7 +104,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)

@@ -48,12 +48,12 @@ class StoragePageBlobTest(StorageTestCase):
         # otherwise the tests would take too long to execute
         credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(
+        self.bs = BlobServiceClient(
             url,
             credential=credential,
             connection_data_block_size=4 * 1024,
             max_page_size=4 * 1024)
-        self.config = self.bsc._config
+        self.config = self.bs._config
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
