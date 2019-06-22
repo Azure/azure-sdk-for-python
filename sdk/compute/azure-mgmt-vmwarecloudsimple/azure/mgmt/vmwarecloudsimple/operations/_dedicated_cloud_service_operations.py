@@ -45,7 +45,7 @@ class DedicatedCloudServiceOperations(object):
         """Implements list of dedicatedCloudService objects within subscription
         method.
 
-        Returns list of dedicated cloud service within a subscription.
+        Returns list of dedicated cloud services within a subscription.
 
         :param filter: The filter to apply on the list operation
         :type filter: str
