@@ -48,7 +48,7 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -103,7 +103,7 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if not self._endpoint_available:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")

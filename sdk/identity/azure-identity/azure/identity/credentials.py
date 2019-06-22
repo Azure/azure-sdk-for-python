@@ -54,7 +54,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -86,7 +86,7 @@ class CertificateCredential(CertificateCredentialBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -137,7 +137,7 @@ class EnvironmentCredential:
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if not self._credential:
             message = "Missing environment settings. To authenticate with one of the service principal's client secrets, set {}. To authenticate with a certificate, set {}.".format(
@@ -184,7 +184,7 @@ class ManagedIdentityCredential(object):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         return AccessToken()
 
@@ -208,11 +208,11 @@ class ChainedTokenCredential(object):
         # type (*str) -> AccessToken
         """
         Request a token from each chained credential, in order, returning the first token received.
-        If none provides a token, raises :class:`identity.exceptions.AuthenticationError` with an
+        If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
         error message from each credential.
 
         :param str scopes: desired scopes for the token
-        :raises: :class:`identity.exceptions.AuthenticationError`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         history = []
         for credential in self._credentials:
