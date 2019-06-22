@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from xml.sax.saxutils import escape as xml_escape
-
+from datetime import date
 try:
     from xml.etree import cElementTree as ETree
 except ImportError:
@@ -12,6 +12,9 @@ except ImportError:
 from ..common._common_conversion import (
     _encode_base64,
     _str,
+)
+from ..common._serialization import (
+    _to_utc_datetime,
 )
 from ..common._error import (
     _validate_not_none,
@@ -46,7 +49,8 @@ def _get_path(container_name=None, blob_name=None):
 
 
 def _validate_and_format_range_headers(request, start_range, end_range, start_range_required=True,
-                                       end_range_required=True, check_content_md5=False, align_to_page=False):
+                                       end_range_required=True, check_content_md5=False, align_to_page=False,
+                                       range_header_name='x-ms-range'):
     # If end range is provided, start range must be provided
     if start_range_required or end_range is not None:
         _validate_not_none('start_range', start_range)
@@ -63,9 +67,9 @@ def _validate_and_format_range_headers(request, start_range, end_range, start_ra
     # Format based on whether end_range is present
     request.headers = request.headers or {}
     if end_range is not None:
-        request.headers['x-ms-range'] = 'bytes={0}-{1}'.format(start_range, end_range)
+        request.headers[range_header_name] = 'bytes={0}-{1}'.format(start_range, end_range)
     elif start_range is not None:
-        request.headers['x-ms-range'] = "bytes={0}-".format(start_range)
+        request.headers[range_header_name] = "bytes={0}-".format(start_range)
 
     # Content MD5 can only be provided for a complete range less than 4MB in size
     if check_content_md5:
@@ -110,6 +114,37 @@ def _convert_block_list_to_xml(block_id_list):
         ETree.ElementTree(block_list_element).write(stream, xml_declaration=True, encoding='utf-8', method='xml')
     except:
         raise
+    finally:
+        output = stream.getvalue()
+        stream.close()
+
+    # return xml value
+    return output
+
+
+def _convert_delegation_key_info_to_xml(start_time, expiry_time):
+    """
+    <?xml version="1.0" encoding="utf-8"?>
+    <KeyInfo>
+        <Start> String, formatted ISO Date </Start>
+        <Expiry> String, formatted ISO Date </Expiry>
+    </KeyInfo>
+
+    Convert key info to xml to send.
+    """
+    if start_time is None or expiry_time is None:
+        raise ValueError("delegation key start/end times are required")
+
+    key_info_element = ETree.Element('KeyInfo')
+    ETree.SubElement(key_info_element, 'Start').text = \
+        _to_utc_datetime(start_time) if isinstance(start_time, date) else start_time
+    ETree.SubElement(key_info_element, 'Expiry').text = \
+        _to_utc_datetime(expiry_time) if isinstance(expiry_time, date) else expiry_time
+
+    # Add xml declaration and serialize
+    try:
+        stream = BytesIO()
+        ETree.ElementTree(key_info_element).write(stream, xml_declaration=True, encoding='utf-8', method='xml')
     finally:
         output = stream.getvalue()
         stream.close()

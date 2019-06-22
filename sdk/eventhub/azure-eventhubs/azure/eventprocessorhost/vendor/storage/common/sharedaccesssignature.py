@@ -157,43 +157,6 @@ class _SharedAccessHelper(object):
         self._add_query(_QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(_QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
 
-    def add_resource_signature(self, account_name, account_key, service, path):
-        def get_value_to_append(query):
-            return_value = self.query_dict.get(query) or ''
-            return return_value + '\n'
-
-        if path[0] != '/':
-            path = '/' + path
-
-        canonicalized_resource = '/' + service + '/' + account_name + path + '\n'
-
-        # Form the string to sign from shared_access_policy and canonicalized
-        # resource. The order of values is important.
-        string_to_sign = \
-            (get_value_to_append(_QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(_QueryStringConstants.SIGNED_START) +
-             get_value_to_append(_QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource +
-             get_value_to_append(_QueryStringConstants.SIGNED_IDENTIFIER) +
-             get_value_to_append(_QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(_QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(_QueryStringConstants.SIGNED_VERSION))
-
-        if service == 'blob' or service == 'file':
-            string_to_sign += \
-                (get_value_to_append(_QueryStringConstants.SIGNED_CACHE_CONTROL) +
-                 get_value_to_append(_QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
-                 get_value_to_append(_QueryStringConstants.SIGNED_CONTENT_ENCODING) +
-                 get_value_to_append(_QueryStringConstants.SIGNED_CONTENT_LANGUAGE) +
-                 get_value_to_append(_QueryStringConstants.SIGNED_CONTENT_TYPE))
-
-        # remove the trailing newline
-        if string_to_sign[-1] == '\n':
-            string_to_sign = string_to_sign[:-1]
-
-        self._add_query(_QueryStringConstants.SIGNED_SIGNATURE,
-                        _sign_string(account_key, string_to_sign))
-
     def add_account_signature(self, account_name, account_key):
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ''

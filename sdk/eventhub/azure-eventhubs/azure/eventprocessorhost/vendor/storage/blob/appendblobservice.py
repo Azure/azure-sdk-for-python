@@ -33,6 +33,7 @@ from ._deserialization import (
 )
 from ._serialization import (
     _get_path,
+    _validate_and_format_range_headers,
 )
 from ._upload_chunking import (
     _AppendBlobChunkUploader,
@@ -112,7 +113,7 @@ class AppendBlobService(BaseBlobService):
         :param token_credential:
             A token credential used to authenticate HTTPS requests. The token value
             should be updated before its expiration.
-        :type `~..common.TokenCredential`
+        :type `~azure.storage.common.TokenCredential`
         '''
         self.blob_type = _BlobTypes.AppendBlob
         super(AppendBlobService, self).__init__(
@@ -283,6 +284,125 @@ class AppendBlobService(BaseBlobService):
         if validate_content:
             computed_md5 = _get_content_md5(request.body)
             request.headers['Content-MD5'] = _to_str(computed_md5)
+
+        return self._perform_request(request, _parse_append_block)
+
+    def append_block_from_url(self, container_name, blob_name, copy_source_url, source_range_start=None,
+                              source_range_end=None, source_content_md5=None, source_if_modified_since=None,
+                              source_if_unmodified_since=None, source_if_match=None,
+                              source_if_none_match=None, maxsize_condition=None,
+                              appendpos_condition=None, lease_id=None, if_modified_since=None,
+                              if_unmodified_since=None, if_match=None,
+                              if_none_match=None, timeout=None):
+        """
+        Creates a new block to be committed as part of a blob, where the contents are read from a source url.
+
+        :param str container_name:
+            Name of existing container.
+        :param str blob_name:
+            Name of blob.
+        :param str copy_source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param int source_range_end:
+            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param str source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param int maxsize_condition:
+            Optional conditional header. The max length in bytes permitted for
+            the append blob. If the Append Block operation would cause the blob
+            to exceed that limit or if the blob size is already greater than the
+            value specified in this header, the request will fail with
+            MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :param int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the
+            AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :param str lease_id:
+            Required if the blob has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('blob_name', blob_name)
+        _validate_not_none('copy_source_url', copy_source_url)
+
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host_locations = self._get_host_locations()
+        request.path = _get_path(container_name, blob_name)
+        request.query = {
+            'comp': 'appendblock',
+            'timeout': _int_to_str(timeout),
+        }
+        request.headers = {
+            'x-ms-copy-source': copy_source_url,
+            'x-ms-source-content-md5': source_content_md5,
+            'x-ms-source-if-Modified-Since': _datetime_to_utc_string(source_if_modified_since),
+            'x-ms-source-if-Unmodified-Since': _datetime_to_utc_string(source_if_unmodified_since),
+            'x-ms-source-if-Match': _to_str(source_if_match),
+            'x-ms-source-if-None-Match': _to_str(source_if_none_match),
+            'x-ms-blob-condition-maxsize': _to_str(maxsize_condition),
+            'x-ms-blob-condition-appendpos': _to_str(appendpos_condition),
+            'x-ms-lease-id': _to_str(lease_id),
+            'If-Modified-Since': _datetime_to_utc_string(if_modified_since),
+            'If-Unmodified-Since': _datetime_to_utc_string(if_unmodified_since),
+            'If-Match': _to_str(if_match),
+            'If-None-Match': _to_str(if_none_match)
+        }
+
+        _validate_and_format_range_headers(request, source_range_start, source_range_end,
+                                           start_range_required=False,
+                                           end_range_required=False,
+                                           range_header_name="x-ms-source-range")
 
         return self._perform_request(request, _parse_append_block)
 

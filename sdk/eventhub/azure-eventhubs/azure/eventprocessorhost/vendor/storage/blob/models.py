@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from ..common._common_conversion import _to_str
 
 
@@ -670,13 +669,19 @@ class ContainerPermissions(object):
         a container SAS. Use an account SAS instead.
     '''
 
-    def __init__(self, read=False, write=False, delete=False, list=False,
+    def __init__(self, read=False, add=False, create=False, write=False, delete=False, list=False,
                  _str=None):
         '''
         :param bool read:
             Read the content, properties, metadata or block list of any blob in the 
             container. Use any blob in the container as the source of a copy operation.
-        :param bool write: 
+        :param bool add:
+            Add a block to any append blob in the container.
+        :param bool create:
+            Write a new blob to the container, snapshot any blob in the container, or copy a blob to
+            a new blob in the container. Note: You cannot grant permissions to create a container
+            with a container SAS. Use an account SAS to create a container instead.
+        :param bool write:
             For any blob in the container, create or write content, properties, 
             metadata, or block list. Snapshot or lease the blob. Resize the blob 
             (page blob only). Use the blob as the destination of a copy operation 
@@ -694,6 +699,8 @@ class ContainerPermissions(object):
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)
+        self.add = add or ('a' in _str)
+        self.create = create or ('c' in _str)
         self.write = write or ('w' in _str)
         self.delete = delete or ('d' in _str)
         self.list = list or ('l' in _str)
@@ -706,6 +713,8 @@ class ContainerPermissions(object):
 
     def __str__(self):
         return (('r' if self.read else '') +
+                ('a' if self.add else '') +
+                ('c' if self.create else '') +
                 ('w' if self.write else '') +
                 ('d' if self.delete else '') +
                 ('l' if self.list else ''))
@@ -715,6 +724,8 @@ ContainerPermissions.DELETE = ContainerPermissions(delete=True)
 ContainerPermissions.LIST = ContainerPermissions(list=True)
 ContainerPermissions.READ = ContainerPermissions(read=True)
 ContainerPermissions.WRITE = ContainerPermissions(write=True)
+ContainerPermissions.ADD = ContainerPermissions(add=True)
+ContainerPermissions.CREATE = ContainerPermissions(create=True)
 
 
 class PremiumPageBlobTier(object):
@@ -779,3 +790,36 @@ class AccountInformation(object):
     def __init__(self):
         self.sku_name = None
         self.account_kind = None
+
+
+class UserDelegationKey(object):
+    """
+    Represents a user delegation key, provided to the user by Azure Storage
+    based on their Azure Active Directory access token.
+
+    The fields are saved as simple strings since the user does not have to interact with this object;
+    to generate an identify SAS, the user can simply pass it to the right API.
+
+    :ivar str signed_oid:
+        Object ID of this token.
+    :ivar str signed_tid:
+        Tenant ID of the tenant that issued this token.
+    :ivar str signed_start:
+        The datetime this token becomes valid.
+    :ivar str signed_expiry:
+        The datetime this token expires.
+    :ivar str signed_service:
+        What service this key is valid for.
+    :ivar str signed_version:
+        The version identifier of the REST service that created this token.
+    :ivar str value:
+        The user delegation key.
+    """
+    def __init__(self):
+        self.signed_oid = None
+        self.signed_tid = None
+        self.signed_start = None
+        self.signed_expiry = None
+        self.signed_service = None
+        self.signed_version = None
+        self.value = None

@@ -123,8 +123,8 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     except:
         if require_encryption:
             raise ValueError(_ERROR_DATA_NOT_ENCRYPTED)
-        else:
-            return content
+
+        return content
 
     if not (encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256):
         raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM)

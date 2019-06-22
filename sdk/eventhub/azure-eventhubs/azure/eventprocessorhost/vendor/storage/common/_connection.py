@@ -60,9 +60,10 @@ class _ServiceParameters(object):
 
             # Only set the account key if a sas_token is not present to allow sas to be used with the emulator
             self.account_key = DEV_ACCOUNT_KEY if not self.sas_token else None
+            emulator_endpoint = _EMULATOR_ENDPOINTS[service] if custom_domain is None else custom_domain
 
-            self.primary_endpoint = '{}/{}'.format(_EMULATOR_ENDPOINTS[service], DEV_ACCOUNT_NAME)
-            self.secondary_endpoint = '{}/{}'.format(_EMULATOR_ENDPOINTS[service], DEV_ACCOUNT_SECONDARY_NAME)
+            self.primary_endpoint = '{}/{}'.format(emulator_endpoint, DEV_ACCOUNT_NAME)
+            self.secondary_endpoint = '{}/{}'.format(emulator_endpoint, DEV_ACCOUNT_SECONDARY_NAME)
         else:
             # Strip whitespace from the key
             if self.account_key:
@@ -108,7 +109,7 @@ class _ServiceParameters(object):
         if connection_string:
             params = _ServiceParameters._from_connection_string(connection_string, service)
         elif is_emulated:
-            params = _ServiceParameters(service, is_emulated=True)
+            params = _ServiceParameters(service, is_emulated=True, custom_domain=custom_domain)
         elif account_name:
             if protocol.lower() != 'https' and token_credential is not None:
                 raise ValueError("Token credential is only supported with HTTPS.")

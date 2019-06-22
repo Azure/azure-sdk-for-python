@@ -10,7 +10,6 @@ try:
     from xml.etree import cElementTree as ETree
 except ImportError:
     from xml.etree import ElementTree as ETree
-
 from ..common._common_conversion import (
     _decode_base64_to_text,
     _to_str,
@@ -37,6 +36,7 @@ from .models import (
     ResourceProperties,
     BlobPrefix,
     AccountInformation,
+    UserDelegationKey,
 )
 from ._encryption import _decrypt_blob
 from ..common.models import _list
@@ -352,6 +352,77 @@ def _convert_xml_to_blob_list(response):
     return blob_list
 
 
+def _convert_xml_to_blob_name_list(response):
+    '''
+    <?xml version="1.0" encoding="utf-8"?>
+    <EnumerationResults ServiceEndpoint="http://myaccount.blob.core.windows.net/" ContainerName="mycontainer">
+      <Prefix>string-value</Prefix>
+      <Marker>string-value</Marker>
+      <MaxResults>int-value</MaxResults>
+      <Delimiter>string-value</Delimiter>
+      <Blobs>
+        <Blob>
+          <Name>blob-name</name>
+          <Deleted>true</Deleted>
+          <Snapshot>date-time-value</Snapshot>
+          <Properties>
+            <Last-Modified>date-time-value</Last-Modified>
+            <Etag>etag</Etag>
+            <Content-Length>size-in-bytes</Content-Length>
+            <Content-Type>blob-content-type</Content-Type>
+            <Content-Encoding />
+            <Content-Language />
+            <Content-MD5 />
+            <Cache-Control />
+            <x-ms-blob-sequence-number>sequence-number</x-ms-blob-sequence-number>
+            <BlobType>BlockBlob|PageBlob|AppendBlob</BlobType>
+            <LeaseStatus>locked|unlocked</LeaseStatus>
+            <LeaseState>available | leased | expired | breaking | broken</LeaseState>
+            <LeaseDuration>infinite | fixed</LeaseDuration>
+            <CopyId>id</CopyId>
+            <CopyStatus>pending | success | aborted | failed </CopyStatus>
+            <CopySource>source url</CopySource>
+            <CopyProgress>bytes copied/bytes total</CopyProgress>
+            <CopyCompletionTime>datetime</CopyCompletionTime>
+            <CopyStatusDescription>error string</CopyStatusDescription>
+            <AccessTier>P4 | P6 | P10 | P20 | P30 | P40 | P50 | P60 | Archive | Cool | Hot</AccessTier>
+            <AccessTierChangeTime>date-time-value</AccessTierChangeTime>
+            <AccessTierInferred>true</AccessTierInferred>
+            <DeletedTime>datetime</DeletedTime>
+            <RemainingRetentionDays>int</RemainingRetentionDays>
+            <Creation-Time>date-time-value</Creation-Time>
+          </Properties>
+          <Metadata>   
+            <Name>value</Name>
+          </Metadata>
+        </Blob>
+        <BlobPrefix>
+          <Name>blob-prefix</Name>
+        </BlobPrefix>
+      </Blobs>
+      <NextMarker />
+    </EnumerationResults>
+    '''
+    if response is None or response.body is None:
+        return None
+
+    blob_list = _list()
+    list_element = ETree.fromstring(response.body)
+
+    setattr(blob_list, 'next_marker', list_element.findtext('NextMarker'))
+
+    blobs_element = list_element.find('Blobs')
+    blob_prefix_elements = blobs_element.findall('BlobPrefix')
+    if blob_prefix_elements is not None:
+        for blob_prefix_element in blob_prefix_elements:
+            blob_list.append(blob_prefix_element.findtext('Name'))
+
+    for blob_element in blobs_element.findall('Blob'):
+        blob_list.append(blob_element.findtext('Name'))
+
+    return blob_list
+
+
 def _convert_xml_to_block_list(response):
     '''
     <?xml version="1.0" encoding="utf-8"?>
@@ -450,3 +521,36 @@ def _parse_account_information(response):
     account_info.account_kind = response.headers['x-ms-account-kind']
 
     return account_info
+
+
+def _convert_xml_to_user_delegation_key(response):
+    """
+    <?xml version="1.0" encoding="utf-8"?>
+    <UserDelegationKey>
+        <SignedOid> Guid </SignedOid>
+        <SignedTid> Guid </SignedTid>
+        <SignedStart> String, formatted ISO Date </SignedStart>
+        <SignedExpiry> String, formatted ISO Date </SignedExpiry>
+        <SignedService>b</SignedService>
+        <SignedVersion> String, rest api version used to create delegation key </SignedVersion>
+        <Value>Ovg+o0K/0/2V8upg7AwlyAPCriEcOSXKuBu2Gv/PU70Y7aWDW3C2ZRmw6kYWqPWBaM1GosLkcSZkgsobAlT+Sw==</value>
+    </UserDelegationKey >
+
+    Converts xml response to UserDelegationKey class.
+    """
+
+    if response is None or response.body is None:
+        return None
+
+    delegation_key = UserDelegationKey()
+
+    key_element = ETree.fromstring(response.body)
+    delegation_key.signed_oid = key_element.findtext('SignedOid')
+    delegation_key.signed_tid = key_element.findtext('SignedTid')
+    delegation_key.signed_start = key_element.findtext('SignedStart')
+    delegation_key.signed_expiry = key_element.findtext('SignedExpiry')
+    delegation_key.signed_service = key_element.findtext('SignedService')
+    delegation_key.signed_version = key_element.findtext('SignedVersion')
+    delegation_key.value = key_element.findtext('Value')
+
+    return delegation_key
