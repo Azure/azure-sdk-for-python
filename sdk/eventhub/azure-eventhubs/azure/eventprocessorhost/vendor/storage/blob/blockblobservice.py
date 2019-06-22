@@ -39,7 +39,6 @@ from ..common._serialization import (
 from ..common._serialization import (
     _len_plus
 )
-
 from ._deserialization import (
     _convert_xml_to_block_list,
     _parse_base_properties,
@@ -51,6 +50,7 @@ from ._encryption import (
 from ._serialization import (
     _convert_block_list_to_xml,
     _get_path,
+    _validate_and_format_range_headers,
 )
 from ._upload_chunking import (
     _BlockBlobChunkUploader,
@@ -316,8 +316,9 @@ class BlockBlobService(BaseBlobService):
 
         return self._perform_request(request, _convert_xml_to_block_list)
 
-    def put_block_from_url(self, container_name, blob_name, copy_source_url, source_range_start, source_range_end,
-                           block_id, source_content_md5=None, lease_id=None, timeout=None):
+    def put_block_from_url(self, container_name, blob_name, copy_source_url, block_id,
+                           source_range_start=None, source_range_end=None,
+                           source_content_md5=None, lease_id=None, timeout=None):
         """
         Creates a new block to be committed as part of a blob.
 
@@ -349,8 +350,6 @@ class BlockBlobService(BaseBlobService):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('copy_source_url', copy_source_url)
-        _validate_not_none('source_range_start', source_range_start)
-        _validate_not_none('source_range_end', source_range_end)
         _validate_not_none('block_id', block_id)
 
         request = HTTPRequest()
@@ -365,9 +364,16 @@ class BlockBlobService(BaseBlobService):
         request.headers = {
             'x-ms-lease-id': _to_str(lease_id),
             'x-ms-copy-source': copy_source_url,
-            'x-ms-source-range': 'bytes=' + _to_str(source_range_start) + '-' + _to_str(source_range_end),
             'x-ms-source-content-md5': source_content_md5,
         }
+        _validate_and_format_range_headers(
+            request,
+            source_range_start,
+            source_range_end,
+            start_range_required=False,
+            end_range_required=False,
+            range_header_name="x-ms-source-range"
+        )
 
         self._perform_request(request)
 
@@ -880,6 +886,136 @@ class BlockBlobService(BaseBlobService):
         }
 
         self._perform_request(request)
+
+    def copy_blob(self, container_name, blob_name, copy_source,
+                  metadata=None, source_if_modified_since=None,
+                  source_if_unmodified_since=None, source_if_match=None,
+                  source_if_none_match=None, destination_if_modified_since=None,
+                  destination_if_unmodified_since=None, destination_if_match=None,
+                  destination_if_none_match=None, destination_lease_id=None,
+                  source_lease_id=None, timeout=None, requires_sync=None):
+
+        '''
+        Copies a blob. This operation returns a copy operation
+        properties object. The copy operation may be configured to either be an
+        asynchronous, best-effort operation, or a synchronous operation.
+
+        The source must be a block blob if requires_sync is true. Any existing
+        destination blob will be overwritten. The destination blob cannot be
+        modified while a copy operation is in progress.
+
+        When copying from a block blob, all committed blocks and their block IDs are
+        copied. Uncommitted blocks are not copied. At the end of the copy operation,
+        the destination blob will have the same committed block count as the source.
+
+        You can call get_blob_properties on the destination blob to check the status
+        of the copy operation. The final blob will be committed when the copy completes.
+
+        :param str container_name:
+        Name of the destination container. The container must exist.
+        :param str blob_name:
+        Name of the destination blob. If the destination blob exists, it will
+        be overwritten. Otherwise, it will be created.
+        :param str copy_source:
+        A URL of up to 2 KB in length that specifies an Azure file or blob.
+        The value should be URL-encoded as it would appear in a request URI.
+        If the source is in another account, the source must either be public
+        or must be authenticated via a shared access signature. If the source
+        is public, no authentication is required.
+        Examples:
+        https://myaccount.blob.core.windows.net/mycontainer/myblob
+        https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+        https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :param metadata:
+        Name-value pairs associated with the blob as metadata. If no name-value
+        pairs are specified, the operation will copy the metadata from the
+        source blob or file to the destination blob. If one or more name-value
+        pairs are specified, the destination blob is created with the specified
+        metadata, and metadata is not copied from the source blob or file.
+        :type metadata: dict(str, str)
+        :param datetime source_if_modified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this conditional header to copy the blob only if the source
+        blob has been modified since the specified date/time.
+        :param datetime source_if_unmodified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this conditional header to copy the blob only if the source blob
+        has not been modified since the specified date/time.
+        :param ETag source_if_match:
+        An ETag value, or the wildcard character (*). Specify this conditional
+        header to copy the source blob only if its ETag matches the value
+        specified. If the ETag values do not match, the Blob service returns
+        status code 412 (Precondition Failed). This header cannot be specified
+        if the source is an Azure File.
+        :param ETag source_if_none_match:
+        An ETag value, or the wildcard character (*). Specify this conditional
+        header to copy the blob only if its ETag does not match the value
+        specified. If the values are identical, the Blob service returns status
+        code 412 (Precondition Failed). This header cannot be specified if the
+        source is an Azure File.
+        :param datetime destination_if_modified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this conditional header to copy the blob only
+        if the destination blob has been modified since the specified date/time.
+        If the destination blob has not been modified, the Blob service returns
+        status code 412 (Precondition Failed).
+        :param datetime destination_if_unmodified_since:
+        A DateTime value. Azure expects the date value passed in to be UTC.
+        If timezone is included, any non-UTC datetimes will be converted to UTC.
+        If a date is passed in without timezone info, it is assumed to be UTC.
+        Specify this conditional header to copy the blob only
+        if the destination blob has not been modified since the specified
+        date/time. If the destination blob has been modified, the Blob service
+        returns status code 412 (Precondition Failed).
+        :param ETag destination_if_match:
+        An ETag value, or the wildcard character (*). Specify an ETag value for
+        this conditional header to copy the blob only if the specified ETag value
+        matches the ETag value for an existing destination blob. If the ETag for
+        the destination blob does not match the ETag specified for If-Match, the
+        Blob service returns status code 412 (Precondition Failed).
+        :param ETag destination_if_none_match:
+        An ETag value, or the wildcard character (*). Specify an ETag value for
+        this conditional header to copy the blob only if the specified ETag value
+        does not match the ETag value for the destination blob. Specify the wildcard
+        character (*) to perform the operation only if the destination blob does not
+        exist. If the specified condition isn't met, the Blob service returns status
+        code 412 (Precondition Failed).
+        :param str destination_lease_id:
+        The lease ID specified for this header must match the lease ID of the
+        destination blob. If the request does not include the lease ID or it is not
+        valid, the operation fails with status code 412 (Precondition Failed).
+        :param str source_lease_id:
+        Specify this to perform the Copy Blob operation only if
+        the lease ID given matches the active lease ID of the source blob.
+        :param int timeout:
+        The timeout parameter is expressed in seconds.
+        :param bool requires_sync:
+        Enforces that the service will not return a response until the copy is complete.
+        :return: Copy operation properties such as status, source, and ID.
+        :rtype: :class:`~azure.storage.blob.models.CopyProperties`
+        '''
+
+        return self._copy_blob(container_name, blob_name, copy_source,
+                               metadata,
+                               premium_page_blob_tier=None,
+                               source_if_modified_since=source_if_modified_since,
+                               source_if_unmodified_since=source_if_unmodified_since,
+                               source_if_match=source_if_match,
+                               source_if_none_match=source_if_none_match,
+                               destination_if_modified_since=destination_if_modified_since,
+                               destination_if_unmodified_since=destination_if_unmodified_since,
+                               destination_if_match=destination_if_match,
+                               destination_if_none_match=destination_if_none_match,
+                               destination_lease_id=destination_lease_id,
+                               source_lease_id=source_lease_id, timeout=timeout,
+                               incremental_copy=False,
+                               requires_sync=requires_sync)
 
     # -----Helper methods------------------------------------
     def _put_blob(self, container_name, blob_name, blob, content_settings=None,

@@ -151,7 +151,7 @@ class _Retry(object):
                 self._set_next_host_location(context)
 
             # rewind the request body if it is a stream
-            if hasattr(context.request.body, 'read'):
+            if hasattr(context.request, 'body') and hasattr(context.request.body, 'read'):
                 # no position was saved, then retry would not work
                 if context.body_position is None:
                     return None

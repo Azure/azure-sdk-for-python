@@ -10,9 +10,20 @@ from ._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
+import sys
+if sys.version_info >= (3,):
+    from urllib.parse import parse_qsl
+else:
+    from urlparse import parse_qsl
+
 
 import logging
 logger = logging.getLogger(__name__)
+
+from ._error import (
+    AzureSigningError,
+    _wrap_exception,
+)
 
 
 class _StorageSharedKeyAuthentication(object):
@@ -54,9 +65,14 @@ class _StorageSharedKeyAuthentication(object):
         return string_to_sign
 
     def _add_authorization_header(self, request, string_to_sign):
-        signature = _sign_string(self.account_key, string_to_sign)
-        auth_string = 'SharedKey ' + self.account_name + ':' + signature
-        request.headers['Authorization'] = auth_string
+        try:
+            signature = _sign_string(self.account_key, string_to_sign)
+            auth_string = 'SharedKey ' + self.account_name + ':' + signature
+            request.headers['Authorization'] = auth_string
+        except Exception as ex:
+            # Wrap any error that occurred as signing error
+            # Doing so will clarify/locate the source of problem
+            raise _wrap_exception(ex, AzureSigningError)
 
 
 class _StorageSharedKeyAuthentication(_StorageSharedKeyAuthentication):
@@ -100,18 +116,14 @@ class _StorageSASAuthentication(object):
         # ignore ?-prefix (added by tools such as Azure Portal) on sas tokens
         # doing so avoids double question marks when signing
         if sas_token[0] == '?':
-            self.sas_token = sas_token[1:]
-        else:
-            self.sas_token = sas_token
+            sas_token = sas_token[1:]
+
+        self.sas_qs = parse_qsl(sas_token)
 
     def sign_request(self, request):
-        # if 'sig=' is present, then the request has already been signed
+        # if 'sig' is present, then the request has already been signed
         # as is the case when performing retries
-        if 'sig=' in request.path:
+        if 'sig' in request.query:
             return
-        if '?' in request.path:
-            request.path += '&'
-        else:
-            request.path += '?'
 
-        request.path += self.sas_token
+        request.query.update(self.sas_qs)

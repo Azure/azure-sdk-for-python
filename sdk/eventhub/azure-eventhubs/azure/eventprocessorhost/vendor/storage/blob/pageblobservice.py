@@ -6,7 +6,6 @@
 import sys
 from os import path
 
-
 from ..common._common_conversion import (
     _int_to_str,
     _to_str,
@@ -29,7 +28,6 @@ from ..common._serialization import (
     _get_data_bytes_only,
     _add_metadata_headers,
 )
-
 from ._deserialization import (
     _convert_xml_to_page_ranges,
     _parse_page_properties,
@@ -381,6 +379,136 @@ class PageBlobService(BaseBlobService):
             if_none_match=if_none_match,
             timeout=timeout
         )
+
+    def update_page_from_url(self, container_name, blob_name, start_range, end_range, copy_source_url,
+                             source_range_start, source_content_md5=None, source_if_modified_since=None,
+                             source_if_unmodified_since=None, source_if_match=None, source_if_none_match=None,
+                             lease_id=None, if_sequence_number_lte=None, if_sequence_number_lt=None,
+                             if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None,
+                             if_match=None, if_none_match=None, timeout=None):
+        """
+        Updates a range of pages to a page blob where the contents are read from a URL.
+
+        :param str container_name:
+            Name of existing container.
+        :param str blob_name:
+            Name of blob.
+        :param int start_range:
+            Start of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int end_range:
+            End of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param str copy_source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+            The service will read the same number of bytes as the destination range (end_range-start_range).
+        :param str source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param str lease_id:
+            Required if the blob has an active lease.
+        :param int if_sequence_number_lte:
+            If the blob's sequence number is less than or equal to
+            the specified value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_lt:
+            If the blob's sequence number is less than the specified
+            value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_eq:
+            If the blob's sequence number is equal to the specified
+            value, the request proceeds; otherwise it fails.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('blob_name', blob_name)
+        _validate_not_none('copy_source_url', copy_source_url)
+
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host_locations = self._get_host_locations()
+        request.path = _get_path(container_name, blob_name)
+        request.query = {
+            'comp': 'page',
+            'timeout': _int_to_str(timeout),
+        }
+        request.headers = {
+            'x-ms-page-write': 'update',
+            'x-ms-copy-source': copy_source_url,
+            'x-ms-source-content-md5': source_content_md5,
+            'x-ms-source-if-Modified-Since': _datetime_to_utc_string(source_if_modified_since),
+            'x-ms-source-if-Unmodified-Since': _datetime_to_utc_string(source_if_unmodified_since),
+            'x-ms-source-if-Match': _to_str(source_if_match),
+            'x-ms-source-if-None-Match': _to_str(source_if_none_match),
+            'x-ms-lease-id': _to_str(lease_id),
+            'x-ms-if-sequence-number-le': _to_str(if_sequence_number_lte),
+            'x-ms-if-sequence-number-lt': _to_str(if_sequence_number_lt),
+            'x-ms-if-sequence-number-eq': _to_str(if_sequence_number_eq),
+            'If-Modified-Since': _datetime_to_utc_string(if_modified_since),
+            'If-Unmodified-Since': _datetime_to_utc_string(if_unmodified_since),
+            'If-Match': _to_str(if_match),
+            'If-None-Match': _to_str(if_none_match)
+        }
+        _validate_and_format_range_headers(
+            request,
+            start_range,
+            end_range,
+            align_to_page=True)
+        _validate_and_format_range_headers(
+            request,
+            source_range_start,
+            source_range_start+(end_range-start_range),
+            range_header_name="x-ms-source-range")
+
+        return self._perform_request(request, _parse_page_properties)
 
     def clear_page(
             self, container_name, blob_name, start_range, end_range,

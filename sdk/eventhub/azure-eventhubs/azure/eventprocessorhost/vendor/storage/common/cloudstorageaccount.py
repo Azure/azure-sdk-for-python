@@ -19,18 +19,6 @@ from .sharedaccesssignature import (
     SharedAccessSignature,
 )
 
-'''
-from azure.storage.common._error import _validate_not_none
-from azure.storage.common.models import (
-    ResourceTypes,
-    Services,
-    AccountPermissions,
-)
-from azure.storage.common.sharedaccesssignature import (
-    SharedAccessSignature,
-)
-'''
-
 
 class CloudStorageAccount(object):
     """
@@ -39,7 +27,8 @@ class CloudStorageAccount(object):
     use the factory or can construct the appropriate service directly.
     """
 
-    def __init__(self, account_name=None, account_key=None, sas_token=None, is_emulated=None):
+    def __init__(self, account_name=None, account_key=None, sas_token=None,
+                 is_emulated=None, endpoint_suffix=None):
         '''
         :param str account_name:
             The storage account name. This is used to authenticate requests 
@@ -52,13 +41,17 @@ class CloudStorageAccount(object):
              instead of the account key. If account key and sas token are both 
              specified, account key will be used to sign.
         :param bool is_emulated:
-            Whether to use the emulator. Defaults to False. If specified, will 
+            Whether to use the emulator. Defaults to False. If specified, will
             override all other parameters.
+        :param str endpoint_suffix:
+            The host base component of the url, minus the account name. Defaults
+            to Azure (core.windows.net). Override this to use a sovereign cloud.
         '''
         self.account_name = account_name
         self.account_key = account_key
         self.sas_token = sas_token
         self.is_emulated = is_emulated
+        self.endpoint_suffix = endpoint_suffix
 
     def create_block_blob_service(self):
         '''
@@ -72,7 +65,8 @@ class CloudStorageAccount(object):
             from azure.storage.blob.blockblobservice import BlockBlobService
             return BlockBlobService(self.account_name, self.account_key,
                                     sas_token=self.sas_token,
-                                    is_emulated=self.is_emulated)
+                                    is_emulated=self.is_emulated,
+                                    endpoint_suffix=self.endpoint_suffix)
         except ImportError:
             raise Exception('The package azure-storage-blob is required. '
                             + 'Please install it using "pip install azure-storage-blob"')
@@ -89,7 +83,8 @@ class CloudStorageAccount(object):
             from azure.storage.blob.pageblobservice import PageBlobService
             return PageBlobService(self.account_name, self.account_key,
                                    sas_token=self.sas_token,
-                                   is_emulated=self.is_emulated)
+                                   is_emulated=self.is_emulated,
+                                   endpoint_suffix=self.endpoint_suffix)
         except ImportError:
             raise Exception('The package azure-storage-blob is required. '
                             + 'Please install it using "pip install azure-storage-blob"')
@@ -106,7 +101,8 @@ class CloudStorageAccount(object):
             from azure.storage.blob.appendblobservice import AppendBlobService
             return AppendBlobService(self.account_name, self.account_key,
                                      sas_token=self.sas_token,
-                                     is_emulated=self.is_emulated)
+                                     is_emulated=self.is_emulated,
+                                     endpoint_suffix=self.endpoint_suffix)
         except ImportError:
             raise Exception('The package azure-storage-blob is required. '
                             + 'Please install it using "pip install azure-storage-blob"')
@@ -123,7 +119,8 @@ class CloudStorageAccount(object):
             from azure.storage.queue.queueservice import QueueService
             return QueueService(self.account_name, self.account_key,
                                 sas_token=self.sas_token,
-                                is_emulated=self.is_emulated)
+                                is_emulated=self.is_emulated,
+                                endpoint_suffix=self.endpoint_suffix)
         except ImportError:
             raise Exception('The package azure-storage-queue is required. '
                             + 'Please install it using "pip install azure-storage-queue"')
@@ -139,7 +136,8 @@ class CloudStorageAccount(object):
         try:
             from azure.storage.file.fileservice import FileService
             return FileService(self.account_name, self.account_key,
-                               sas_token=self.sas_token)
+                               sas_token=self.sas_token,
+                               endpoint_suffix=self.endpoint_suffix)
         except ImportError:
             raise Exception('The package azure-storage-file is required. '
                             + 'Please install it using "pip install azure-storage-file"')

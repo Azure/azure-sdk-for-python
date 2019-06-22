@@ -4,14 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
+import requests
 from abc import ABCMeta
 import logging
-
-logger = logging.getLogger(__name__)
 from time import sleep
+import sys
 
-import requests
 from azure.common import (
     AzureException,
     AzureHttpError,
@@ -23,10 +21,15 @@ from ._constants import (
     DEFAULT_USER_AGENT_STRING,
     USER_AGENT_STRING_PREFIX,
     USER_AGENT_STRING_SUFFIX,
+    _AUTHORIZATION_HEADER_NAME,
+    _REDACTED_VALUE,
+    _COPY_SOURCE_HEADER_NAME,
 )
 from ._error import (
     _ERROR_DECRYPTION_FAILURE,
     _http_error_handler,
+    _wrap_exception,
+    AzureSigningError,
 )
 from ._http import HTTPError
 from ._http.httpclient import _HTTPClient
@@ -41,6 +44,23 @@ from .models import (
 )
 from .retry import ExponentialRetry
 from io import UnsupportedOperation
+from .sharedaccesssignature import _QueryStringConstants
+
+if sys.version_info >= (3,):
+    from urllib.parse import (
+        urlparse,
+        parse_qsl,
+        urlunparse,
+        urlencode,
+    )
+else:
+    from urlparse import (
+        urlparse,
+        parse_qsl,
+        urlunparse,
+    )
+    from urllib import urlencode
+logger = logging.getLogger(__name__)
 
 
 class StorageClient(object):
@@ -210,6 +230,36 @@ class StorageClient(object):
         else:
             return ""
 
+    @staticmethod
+    def _scrub_headers(headers):
+        # make a copy to avoid contaminating the request
+        clean_headers = headers.copy()
+
+        if _AUTHORIZATION_HEADER_NAME in clean_headers:
+            clean_headers[_AUTHORIZATION_HEADER_NAME] = _REDACTED_VALUE
+
+        # in case of copy operations, there could be a SAS signature present in the header value
+        if _COPY_SOURCE_HEADER_NAME in clean_headers \
+                and _QueryStringConstants.SIGNED_SIGNATURE + "=" in clean_headers[_COPY_SOURCE_HEADER_NAME]:
+            # take the url apart and scrub away the signed signature
+            scheme, netloc, path, params, query, fragment = urlparse(clean_headers[_COPY_SOURCE_HEADER_NAME])
+            parsed_qs = dict(parse_qsl(query))
+            parsed_qs[_QueryStringConstants.SIGNED_SIGNATURE] = _REDACTED_VALUE
+
+            # the SAS needs to be put back together
+            clean_headers[_COPY_SOURCE_HEADER_NAME] = urlunparse(
+                (scheme, netloc, path, params, urlencode(parsed_qs), fragment))
+        return clean_headers
+
+    @staticmethod
+    def _scrub_query_parameters(query):
+        # make a copy to avoid contaminating the request
+        clean_queries = query.copy()
+
+        if _QueryStringConstants.SIGNED_SIGNATURE in clean_queries:
+            clean_queries[_QueryStringConstants.SIGNED_SIGNATURE] = _REDACTED_VALUE
+        return clean_queries
+
     def _perform_request(self, request, parser=None, parser_args=None, operation_context=None, expected_errors=None):
         '''
         Sends the request and return response. Catches HTTPError and hands it
@@ -258,12 +308,14 @@ class StorageClient(object):
                     retry_context.request = request
 
                     # Log the request before it goes out
-                    logger.info("%s Outgoing request: Method=%s, Path=%s, Query=%s, Headers=%s.",
-                                client_request_id_prefix,
-                                request.method,
-                                request.path,
-                                request.query,
-                                str(request.headers).replace('\n', ''))
+                    # Avoid unnecessary scrubbing if the logger is not on
+                    if logger.isEnabledFor(logging.INFO):
+                        logger.info("%s Outgoing request: Method=%s, Path=%s, Query=%s, Headers=%s.",
+                                    client_request_id_prefix,
+                                    request.method,
+                                    request.path,
+                                    self._scrub_query_parameters(request.query),
+                                    str(self._scrub_headers(request.headers)).replace('\n', ''))
 
                     # Perform the request
                     response = self._httpclient.perform_request(request)
@@ -306,21 +358,13 @@ class StorageClient(object):
                     raise ex
                 except Exception as ex:
                     retry_context.exception = ex
-                    if sys.version_info >= (3,):
-                        # Automatic chaining in Python 3 means we keep the trace
-                        raise AzureException(ex.args[0])
-                    else:
-                        # There isn't a good solution in 2 for keeping the stack trace 
-                        # in general, or that will not result in an error in 3
-                        # However, we can keep the previous error type and message
-                        # TODO: In the future we will log the trace
-                        msg = ""
-                        if len(ex.args) > 0:
-                            msg = ex.args[0]
-                        raise AzureException('{}: {}'.format(ex.__class__.__name__, msg))
+                    raise _wrap_exception(ex, AzureException)
 
             except AzureException as ex:
                 # only parse the strings used for logging if logging is at least enabled for CRITICAL
+                exception_str_in_one_line = ''
+                status_code = ''
+                timestamp_and_request_id = ''
                 if logger.isEnabledFor(logging.CRITICAL):
                     exception_str_in_one_line = str(ex).replace('\n', '')
                     status_code = retry_context.response.status if retry_context.response is not None else 'Unknown'
@@ -333,6 +377,11 @@ class StorageClient(object):
                                 client_request_id_prefix,
                                 timestamp_and_request_id,
                                 status_code,
+                                exception_str_in_one_line)
+                    raise ex
+                elif isinstance(ex, AzureSigningError):
+                    logger.info("%s Unable to sign the request: Exception=%s.",
+                                client_request_id_prefix,
                                 exception_str_in_one_line)
                     raise ex
 

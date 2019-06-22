@@ -36,3 +36,4 @@ from .sharedaccesssignature import (
     SharedAccessSignature,
 )
 from .tokencredential import TokenCredential
+from ._error import AzureSigningError

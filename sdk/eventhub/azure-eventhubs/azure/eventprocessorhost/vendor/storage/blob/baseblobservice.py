@@ -37,6 +37,7 @@ from ..common._error import (
     _validate_decryption_required,
     _validate_access_policies,
     _ERROR_PARALLEL_NOT_SEEKABLE,
+    _validate_user_delegation_key,
 )
 from ..common._http import HTTPRequest
 from ..common._serialization import (
@@ -50,7 +51,6 @@ from ..common.models import (
     ListGenerator,
     _OperationContext,
 )
-
 from .sharedaccesssignature import (
     BlobSharedAccessSignature,
 )
@@ -59,12 +59,14 @@ from ._deserialization import (
     _convert_xml_to_containers,
     _parse_blob,
     _convert_xml_to_blob_list,
+    _convert_xml_to_blob_name_list,
     _parse_container,
     _parse_snapshot_blob,
     _parse_lease,
     _convert_xml_to_signed_identifiers_and_access,
     _parse_base_properties,
     _parse_account_information,
+    _convert_xml_to_user_delegation_key,
 )
 from ._download_chunking import _download_blob_chunks
 from ._error import (
@@ -74,6 +76,7 @@ from ._error import (
 from ._serialization import (
     _get_path,
     _validate_and_format_range_headers,
+    _convert_delegation_key_info_to_xml,
 )
 from .models import (
     BlobProperties,
@@ -189,7 +192,7 @@ class BaseBlobService(StorageClient):
         :param token_credential:
             A token credential used to authenticate HTTPS requests. The token value
             should be updated before its expiration.
-        :type `~..common.TokenCredential`
+        :type `~azure.storage.common.TokenCredential`
         '''
         service_params = _ServiceParameters.get_service_parameters(
             'blob',
@@ -327,7 +330,7 @@ class BaseBlobService(StorageClient):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~..common.models.Protocol` for possible values.
+            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
@@ -343,7 +346,7 @@ class BaseBlobService(StorageClient):
                                                    start=None, id=None, ip=None, protocol=None,
                                                    cache_control=None, content_disposition=None,
                                                    content_encoding=None, content_language=None,
-                                                   content_type=None):
+                                                   content_type=None, user_delegation_key=None):
         '''
         Generates a shared access signature for the container.
         Use the returned signature with the sas_token parameter of any BlobService.
@@ -384,7 +387,7 @@ class BaseBlobService(StorageClient):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~..common.models.Protocol` for possible values.
+            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
         :param str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
@@ -400,14 +403,24 @@ class BaseBlobService(StorageClient):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param ~azure.storage.blob.models.UserDelegationKey user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key.
+            When present, the SAS is signed with the user delegation key instead.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('self.account_name', self.account_name)
-        _validate_not_none('self.account_key', self.account_key)
 
-        sas = BlobSharedAccessSignature(self.account_name, self.account_key)
+        if user_delegation_key is not None:
+            _validate_user_delegation_key(user_delegation_key)
+            sas = BlobSharedAccessSignature(self.account_name, user_delegation_key=user_delegation_key)
+        else:
+            _validate_not_none('self.account_key', self.account_key)
+            sas = BlobSharedAccessSignature(self.account_name, account_key=self.account_key)
+
         return sas.generate_container(
             container_name,
             permission,
@@ -424,19 +437,22 @@ class BaseBlobService(StorageClient):
         )
 
     def generate_blob_shared_access_signature(
-            self, container_name, blob_name, permission=None,
+            self, container_name, blob_name, snapshot=None, permission=None,
             expiry=None, start=None, id=None, ip=None, protocol=None,
             cache_control=None, content_disposition=None,
             content_encoding=None, content_language=None,
-            content_type=None):
+            content_type=None, user_delegation_key=None):
         '''
-        Generates a shared access signature for the blob.
+        Generates a shared access signature for the blob or one of its snapshots.
         Use the returned signature with the sas_token parameter of any BlobService.
 
         :param str container_name:
             Name of container.
         :param str blob_name:
             Name of blob.
+        :param str snapshot:
+            The snapshot parameter is an opaque DateTime value that,
+            when present, specifies the blob snapshot to grant permission.
         :param BlobPermissions permission:
             The permissions associated with the shared access signature. The 
             user is restricted to operations allowed by the permissions.
@@ -470,7 +486,7 @@ class BaseBlobService(StorageClient):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~..common.models.Protocol` for possible values.
+            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
         :param str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
@@ -486,20 +502,31 @@ class BaseBlobService(StorageClient):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param ~azure.storage.blob.models.UserDelegationKey user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key.
+            When present, the SAS is signed with the user delegation key instead.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('self.account_name', self.account_name)
-        _validate_not_none('self.account_key', self.account_key)
 
-        sas = BlobSharedAccessSignature(self.account_name, self.account_key)
+        if user_delegation_key is not None:
+            _validate_user_delegation_key(user_delegation_key)
+            sas = BlobSharedAccessSignature(self.account_name, user_delegation_key=user_delegation_key)
+        else:
+            _validate_not_none('self.account_key', self.account_key)
+            sas = BlobSharedAccessSignature(self.account_name, account_key=self.account_key)
+
         return sas.generate_blob(
-            container_name,
-            blob_name,
-            permission,
-            expiry,
+            container_name=container_name,
+            blob_name=blob_name,
+            snapshot=snapshot,
+            permission=permission,
+            expiry=expiry,
             start=start,
             id=id,
             ip=ip,
@@ -510,6 +537,33 @@ class BaseBlobService(StorageClient):
             content_language=content_language,
             content_type=content_type,
         )
+
+    def get_user_delegation_key(self, key_start_time, key_expiry_time, timeout=None):
+        """
+        Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param datetime key_start_time:
+            A DateTime value. Indicates when the key becomes valid.
+        :param datetime key_expiry_time:
+            A DateTime value. Indicates when the key stops being valid.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return:
+        """
+        _validate_not_none('key_start_time', key_start_time)
+        _validate_not_none('key_end_time', key_expiry_time)
+
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host_locations = self._get_host_locations(secondary=True)
+        request.query = {
+            'restype': 'service',
+            'comp': 'userdelegationkey',
+            'timeout': _int_to_str(timeout),
+        }
+        request.body = _get_request_body(_convert_delegation_key_info_to_xml(key_start_time, key_expiry_time))
+        return self._perform_request(request, _convert_xml_to_user_delegation_key)
 
     def list_containers(self, prefix=None, num_results=None, include_metadata=False,
                         marker=None, timeout=None):
@@ -784,7 +838,7 @@ class BaseBlobService(StorageClient):
             A dictionary of access policies to associate with the container. The 
             dictionary may contain up to 5 elements. An empty dictionary 
             will clear the access policies set on the service. 
-        :type signed_identifiers: dict(str, :class:`~..common.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`~azure.storage.common.models.AccessPolicy`)
         :param ~azure.storage.blob.models.PublicAccess public_access:
             Possible values include: container, blob.
         :param str lease_id:
@@ -1244,14 +1298,66 @@ class BaseBlobService(StorageClient):
         args = (container_name,)
         kwargs = {'prefix': prefix, 'marker': marker, 'max_results': num_results,
                   'include': include, 'delimiter': delimiter, 'timeout': timeout,
-                  '_context': operation_context}
+                  '_context': operation_context,
+                  '_converter': _convert_xml_to_blob_list}
+        resp = self._list_blobs(*args, **kwargs)
+
+        return ListGenerator(resp, self._list_blobs, args, kwargs)
+
+    def list_blob_names(self, container_name, prefix=None, num_results=None,
+                        include=None, delimiter=None, marker=None,
+                        timeout=None):
+        '''
+        Returns a generator to list the blob names under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service and stop when all blobs have been returned or num_results is reached.
+
+        If num_results is specified and the account has more than that number of 
+        blobs, the generator will have a populated next_marker field once it 
+        finishes. This marker can be used to create a new generator if more 
+        results are desired.
+
+        :param str container_name:
+            Name of existing container.
+        :param str prefix:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :param int num_results:
+            Specifies the maximum number of blobs to return,
+            including all :class:`BlobPrefix` elements. If the request does not specify
+            num_results or specifies a value greater than 5,000, the server will
+            return up to 5,000 items. Setting num_results to a value less than
+            or equal to zero results in error response code 400 (Bad Request).
+        :param ~azure.storage.blob.models.Include include:
+            Specifies one or more additional datasets to include in the response.
+        :param str delimiter:
+            When the request includes this parameter, the operation
+            returns a :class:`~azure.storage.blob.models.BlobPrefix` element in the
+            result list that acts as a placeholder for all blobs whose names begin
+            with the same substring up to the appearance of the delimiter character.
+            The delimiter may be a single character or a string.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the 
+            next_marker field of a previous generator object if num_results was 
+            specified and that generator has finished enumerating results. If 
+            specified, this generator will begin returning results from the point 
+            where the previous generator stopped.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        '''
+        operation_context = _OperationContext(location_lock=True)
+        args = (container_name,)
+        kwargs = {'prefix': prefix, 'marker': marker, 'max_results': num_results,
+                  'include': include, 'delimiter': delimiter, 'timeout': timeout,
+                  '_context': operation_context,
+                  '_converter': _convert_xml_to_blob_name_list}
         resp = self._list_blobs(*args, **kwargs)
 
         return ListGenerator(resp, self._list_blobs, args, kwargs)
 
     def _list_blobs(self, container_name, prefix=None, marker=None,
                     max_results=None, include=None, delimiter=None, timeout=None,
-                    _context=None):
+                    _context=None, _converter=None):
         '''
         Returns the list of blobs under the specified container.
 
@@ -1320,7 +1426,7 @@ class BaseBlobService(StorageClient):
             'timeout': _int_to_str(timeout),
         }
 
-        return self._perform_request(request, _convert_xml_to_blob_list, operation_context=_context)
+        return self._perform_request(request, _converter, operation_context=_context)
 
     def get_blob_account_information(self, container_name=None, blob_name=None, timeout=None):
         """
@@ -1371,7 +1477,7 @@ class BaseBlobService(StorageClient):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
-        :rtype: :class:`~..common.models.ServiceStats`
+        :rtype: :class:`~azure.storage.common.models.ServiceStats`
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -1396,22 +1502,22 @@ class BaseBlobService(StorageClient):
         :param logging:
             Groups the Azure Analytics Logging settings.
         :type logging:
-            :class:`~..common.models.Logging`
+            :class:`~azure.storage.common.models.Logging`
         :param hour_metrics:
             The hour metrics settings provide a summary of request 
             statistics grouped by API in hourly aggregates for blobs.
         :type hour_metrics:
-            :class:`~..common.models.Metrics`
+            :class:`~azure.storage.common.models.Metrics`
         :param minute_metrics:
             The minute metrics settings provide request statistics 
             for each minute for blobs.
         :type minute_metrics:
-            :class:`~..common.models.Metrics`
+            :class:`~azure.storage.common.models.Metrics`
         :param cors:
             You can include up to five CorsRule elements in the 
             list. If an empty list is specified, all CORS rules will be deleted, 
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~..common.models.CorsRule`)
+        :type cors: list(:class:`~azure.storage.common.models.CorsRule`)
         :param str target_version:
             Indicates the default version to use for requests if an incoming 
             request's version is not specified. 
@@ -1421,13 +1527,18 @@ class BaseBlobService(StorageClient):
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
         :type delete_retention_policy:
-            :class:`~..common.models.DeleteRetentionPolicy`
+            :class:`~azure.storage.common.models.DeleteRetentionPolicy`
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
         :type static_website:
-            :class:`~..common.models.StaticWebsite`
+            :class:`~azure.storage.common.models.StaticWebsite`
         '''
+        if all(parameter is None for parameter in [logging, hour_metrics, minute_metrics, cors, target_version,
+                                                   delete_retention_policy, static_website]):
+
+            raise ValueError("set_blob_service_properties should be called with at least one parameter")
+
         request = HTTPRequest()
         request.method = 'PUT'
         request.host_locations = self._get_host_locations()
@@ -1450,7 +1561,7 @@ class BaseBlobService(StorageClient):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: The blob :class:`~..common.models.ServiceProperties` with an attached
+        :return: The blob :class:`~azure.storage.common.models.ServiceProperties` with an attached
             target_version property.
         '''
         request = HTTPRequest()
@@ -1977,11 +2088,11 @@ class BaseBlobService(StorageClient):
         if max_connections > 1:
             if sys.version_info >= (3,) and not stream.seekable():
                 raise ValueError(_ERROR_PARALLEL_NOT_SEEKABLE)
-            else:
-                try:
-                    stream.seek(stream.tell())
-                except (NotImplementedError, AttributeError):
-                    raise ValueError(_ERROR_PARALLEL_NOT_SEEKABLE)
+
+            try:
+                stream.seek(stream.tell())
+            except (NotImplementedError, AttributeError):
+                raise ValueError(_ERROR_PARALLEL_NOT_SEEKABLE)
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -3071,7 +3182,7 @@ class BaseBlobService(StorageClient):
                                destination_if_none_match,
                                destination_lease_id,
                                source_lease_id, timeout,
-                               False)
+                               False, False)
 
     def _copy_blob(self, container_name, blob_name, copy_source,
                    metadata=None,
@@ -3085,12 +3196,16 @@ class BaseBlobService(StorageClient):
                    destination_if_none_match=None,
                    destination_lease_id=None,
                    source_lease_id=None, timeout=None,
-                   incremental_copy=False):
+                   incremental_copy=False,
+                   requires_sync=None):
         '''
         See copy_blob for more details. This helper method
-        allows for standard copies as well as incremental copies which are only supported for page blobs.
+        allows for standard copies as well as incremental copies which are only supported for page blobs and sync
+        copies which are only supported for block blobs.
         :param bool incremental_copy:
-            The timeout parameter is expressed in seconds.
+            Performs an incremental copy operation on a page blob instead of a standard copy operation.
+        :param bool requires_sync:
+            Enforces that the service will not return a response until the copy is complete.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -3137,8 +3252,10 @@ class BaseBlobService(StorageClient):
             'If-None-Match': _to_str(destination_if_none_match),
             'x-ms-lease-id': _to_str(destination_lease_id),
             'x-ms-source-lease-id': _to_str(source_lease_id),
-            'x-ms-access-tier': _to_str(premium_page_blob_tier)
+            'x-ms-access-tier': _to_str(premium_page_blob_tier),
+            'x-ms-requires-sync': _to_str(requires_sync)
         }
+
         _add_metadata_headers(metadata, request)
 
         return self._perform_request(request, _parse_properties, [BlobProperties]).copy

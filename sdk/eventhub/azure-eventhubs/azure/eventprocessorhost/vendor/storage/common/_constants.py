@@ -7,7 +7,7 @@ import platform
 import sys
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '1.3.0'
+__version__ = '2.0.0'
 
 # UserAgent string sample: 'Azure-Storage/0.37.0-0.38.0 (Python CPython 3.4.2; Windows 8)'
 # First version(0.37.0) is the common package, and the second version(0.38.0) is the service package
@@ -45,3 +45,7 @@ if sys.version_info >= (3, 5):
 
 # Encryption constants
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
+
+_AUTHORIZATION_HEADER_NAME = 'Authorization'
+_COPY_SOURCE_HEADER_NAME = 'x-ms-copy-source'
+_REDACTED_VALUE = 'REDACTED'
