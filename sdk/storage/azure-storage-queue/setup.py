@@ -9,7 +9,7 @@
 import re
 import os.path
 from io import open
-from setuptools import find_packages, setup  # type: ignore
+from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-storage-queue"
@@ -25,7 +25,7 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 try:
     import azure
     try:
-        ver = azure.__version__  # type: ignore
+        ver = azure.__version__
         raise Exception(
             'This package is incompatible with azure=={}. '.format(ver) +
             'Uninstall it with "pip uninstall azure".'
@@ -37,15 +37,15 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.md', encoding='utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.md', encoding='utf-8') as f:
+with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
 setup(
@@ -53,7 +53,7 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -75,6 +75,7 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.storage',
     ]),
     install_requires=[
         'msrest>=0.5.0',
@@ -82,6 +83,6 @@ setup(
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-storage-nspkg'],
     }
 )
