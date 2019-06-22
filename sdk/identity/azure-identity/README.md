@@ -8,8 +8,8 @@ or
 # Getting started
 ## Prerequisites
 - an Azure subscription
-  - if you don't have one, sign up for a
-  [free account](https://azure.microsoft.com/free/) before continuing
+  - if you don't have one, you can sign up for a
+  [free account](https://azure.microsoft.com/free/)
 - Python 2.7 or 3.5.3+
 
 ## Install the package
@@ -20,11 +20,12 @@ pip install azure-identity
 
 # Key concepts
 ## Credentials
-Azure Identity offers a variety of credential classes accepted by Azure SDK
-data plane libraries. Each library documents its Azure Identity integration.
-Azure SDK management libraries do not accept these credentials.
+Azure Identity offers a variety of credential classes in the `azure.identity`
+namespace. These are accepted by Azure SDK data plane clients. Each client
+library documents its Azure Identity integration. Azure SDK management
+libraries do not accept these credentials.
 
-Credentials differ mostly in configuration.
+Credentials differ mostly in configuration:
 
 |credential class|identity|configuration
 |-|-|-
@@ -47,15 +48,14 @@ authenticating as a service principal or managed identity. To authenticate
 as a service principal, provide configuration in environment variables as
 described in the next section.
 
-Authenticating
-as a managed identity requires no configuration, but does require platform
-support. See the
+Authenticating as a managed identity requires no configuration, but does
+require platform support. See the
 [managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
-for details.
+for more information.
 
 ## Environment variables
 
-`DefaultAzureCredential` and `EnvironmentVariable` are configured for service
+`DefaultAzureCredential` and `EnvironmentCredential` are configured for service
 principal authentication with these environment variables:
 
 |variable name|value
@@ -145,10 +145,10 @@ client = SecretClient(vault_url, credential)
 
 # Troubleshooting
 ## General
-Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail to
-authenticate. `ClientAuthenticationError.message` describes why authentication failed.
-When raised by `ChainedTokenCredential`, the message includes error messages from each
-credential in the chain.
+Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail
+to authenticate. `ClientAuthenticationError` has a `message` attribute which
+describes why authentication failed. When raised by `ChainedTokenCredential`,
+the message collects error messages from each credential in the chain.
 
 # Next steps
 ## Provide Feedback
