@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
 import base64
 import hashlib
 import hmac
-import sys
 import logging
 from os import fstat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
@@ -43,17 +42,18 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     DecodeError)
 
-from azure.storage.file._shared.constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
-from azure.storage.file._shared.models import LocationMode, StorageErrorCode
-from azure.storage.file._shared.authentication import SharedKeyCredentialPolicy
-from azure.storage.file._shared.policies import (
-    StorageFileSettings,
+from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
+from .models import LocationMode, StorageErrorCode
+from .authentication import SharedKeyCredentialPolicy
+from .policies import (
+    StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
+    QueueMessagePolicy,
     ExponentialRetry)
 
 
@@ -65,19 +65,6 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
-
-if sys.version_info < (3,):
-    def _str(value):
-        if isinstance(value, str):
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
-
-
-def _to_str(value):
-    return _str(value) if value is not None else None
 
 
 class _QueryStringConstants(object):
@@ -132,8 +119,8 @@ class StorageAccountHostsMixin(object):
 
     def __init__(
             self, parsed_url,  # type: str
+            service, # type: str
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -141,14 +128,16 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get('_hosts')
         self.scheme = parsed_url.scheme
 
-        account = parsed_url.netloc.split(".file.core.")
+        if service not in ['blob', 'queue', 'file']:
+            raise ValueError("Invalid service: {}".format(service))
+        account = parsed_url.netloc.split(".{}.core.".format(service))
         secondary_hostname = None
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, 'account_name'):
-            secondary_hostname = "{}-secondary.file.{}".format(
-                self.credential.account_name, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
@@ -165,8 +154,7 @@ class StorageAccountHostsMixin(object):
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
-        self._config, self._pipeline = create_pipeline(
-            configuration, self.credential, hosts=self._hosts, **kwargs)
+        self._config, self._pipeline = create_pipeline(self.credential, hosts=self._hosts, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -209,17 +197,6 @@ class StorageAccountHostsMixin(object):
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
-        """
-        Get an HTTP Pipeline Configuration with all default policies for the File
-        Storage service.
-
-        :rtype: ~azure.core.configuration.Configuration
-        """
-        return create_configuration(**kwargs)
-
     def _format_query_string(self, sas_token, credential, snapshot=None):
         query_str = "?"
         if snapshot:
@@ -249,8 +226,19 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential=None):
-    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
+service_connection_params = {
+    'blob': {'primary': 'BlobEndpoint', 'secondary': 'BlobSecondaryEndpoint'},
+    'queue': {'primary': 'QueueEndpoint', 'secondary': 'QueueSecondaryEndpoint'},
+    'file': {'primary': 'FileEndpoint', 'secondary': 'FileSecondaryEndpoint'},
+}
+
+
+def parse_connection_str(conn_str, credential, service):
+    conn_str = conn_str.rstrip(';')
+    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension
+    endpoints = service_connection_params[service]
+    primary = None
+    secondary = None
     if not credential:
         try:
             credential = {
@@ -259,15 +247,38 @@ def parse_connection_str(conn_str, credential=None):
             }
         except KeyError:
             credential = conn_settings.get('SharedAccessSignature')
-    try:
-        account_url = "{}://{}.file.{}".format(
-            conn_settings['DefaultEndpointsProtocol'],
-            conn_settings['AccountName'],
-            conn_settings['EndpointSuffix']
-        )
-        return account_url, credential
-    except KeyError as error:
-        raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
+    if endpoints['primary'] in conn_settings:
+        primary = conn_settings[endpoints['primary']]
+        if endpoints['secondary'] in conn_settings:
+            secondary = conn_settings[endpoints['secondary']]
+    else:
+        if endpoints['secondary'] in conn_settings:
+            raise ValueError("Connection string specifies only secondary endpoint.")
+        try:
+            primary = "{}://{}.{}.{}".format(
+                conn_settings['DefaultEndpointsProtocol'],
+                conn_settings['AccountName'],
+                service,
+                conn_settings['EndpointSuffix']
+            )
+            secondary = "{}-secondary.{}.{}".format(
+                conn_settings['AccountName'],
+                service,
+                conn_settings['EndpointSuffix']
+            )
+        except KeyError:
+            pass
+
+    if not primary:
+        try:
+            primary = "https://{}.{}.{}".format(
+                conn_settings['AccountName'],
+                service,
+                conn_settings.get('EndpointSuffix', SERVICE_HOST_BASE)
+            )
+        except KeyError:
+            raise ValueError("Connection string missing required connection details.")
+    return primary, secondary, credential
 
 
 def url_quote(url):
@@ -324,9 +335,6 @@ def serialize_iso(attr):
     if isinstance(attr, str):
         attr = isodate.parse_datetime(attr)
     try:
-        if not attr.tzinfo:
-            _LOGGER.warning(
-                "Datetime with no tzinfo will be considered UTC.")
         utc = attr.utctimetuple()
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
@@ -392,7 +400,7 @@ def read_length(data):
 
 def parse_length_from_content_range(content_range):
     '''
-    Parses the file length from the content range header: bytes 1-3/65537
+    Parses the blob length from the content range header: bytes 1-3/65537
     '''
     if content_range is None:
         return None
@@ -415,10 +423,10 @@ def validate_and_format_range_headers(
     # Page ranges must be 512 aligned
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
-            raise ValueError("Invalid start_range: {0}. "
+            raise ValueError("Invalid page blob start_range: {0}. "
                              "The size must be aligned to a 512-byte boundary.".format(start_range))
         if end_range is not None and end_range % 512 != 511:
-            raise ValueError("Invalid end_range: {0}. "
+            raise ValueError("Invalid page blob end_range: {0}. "
                              "The size must be aligned to a 512-byte boundary.".format(end_range))
 
     # Format based on whether end_range is present
@@ -472,11 +480,11 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.file_settings = StorageFileSettings(**kwargs)
+    config.blob_settings = StorageBlobSettings(**kwargs)
     return config
 
 
-def create_pipeline(configuration, credential, **kwargs):
+def create_pipeline(credential, **kwargs):
     # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
     credential_policy = None
     if hasattr(credential, 'get_token'):
@@ -486,13 +494,14 @@ def create_pipeline(configuration, credential, **kwargs):
     elif credential is not None:
         raise TypeError("Unsupported credential: {}".format(credential))
 
-    config = configuration or create_configuration(**kwargs)
+    config = kwargs.get('_configuration') or create_configuration(**kwargs)
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
     if not transport:
         transport = RequestsTransport(config)
     policies = [
+        QueueMessagePolicy(),
         config.user_agent_policy,
         config.headers_policy,
         StorageContentValidation(),
@@ -568,16 +577,18 @@ def process_storage_error(storage_error):
                 raise_error = ClientAuthenticationError
             if error_code in [StorageErrorCode.resource_not_found,
                               StorageErrorCode.blob_not_found,
-                              StorageErrorCode.container_not_found,
-                              StorageErrorCode.invalid_file_or_directory_path_name]:
+                              StorageErrorCode.queue_not_found,
+                              StorageErrorCode.container_not_found]:
                 raise_error = ResourceNotFoundError
             if error_code in [StorageErrorCode.account_already_exists,
                               StorageErrorCode.account_being_created,
                               StorageErrorCode.resource_already_exists,
                               StorageErrorCode.resource_type_mismatch,
                               StorageErrorCode.blob_already_exists,
+                              StorageErrorCode.queue_already_exists,
                               StorageErrorCode.container_already_exists,
-                              StorageErrorCode.container_being_deleted]:
+                              StorageErrorCode.container_being_deleted,
+                              StorageErrorCode.queue_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

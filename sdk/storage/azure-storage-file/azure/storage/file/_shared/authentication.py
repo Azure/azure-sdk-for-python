@@ -10,12 +10,12 @@ import hmac
 import logging
 import sys
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urllib2 import unquote
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 if sys.version_info < (3,):
@@ -71,7 +71,7 @@ def _wrap_exception(ex, desired_type):
     return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
 
-class AzureSigningError(AzureError):
+class AzureSigningError(ClientAuthenticationError):
     """
     Represents a fatal error when attempting to sign a request.
     In general, the cause of this exception is user error. For example, the given account key is not valid.
