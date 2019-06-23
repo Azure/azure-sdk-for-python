@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import threading
-
+import six
+from io import UnsupportedOperation
 
 def _upload_file_chunks(file_service, share_name, directory_name, file_name,
                         file_size, block_size, stream, max_connections,
@@ -131,3 +132,50 @@ class _FileChunkUploader(object):
         range_id = 'bytes={0}-{1}'.format(chunk_start, chunk_end)
         self._update_progress(len(chunk_data))
         return range_id
+
+
+class IterStreamer(object):
+    """
+    File-like streaming iterator.
+    """
+    def __init__(self, generator, encoding='UTF-8'):
+        self.generator = generator
+        self.iterator = iter(generator)
+        self.leftover = b''
+        self.encoding = encoding
+
+    def __len__(self):
+        return self.generator.__len__()
+
+    def __iter__(self):
+        return self.iterator
+
+    def seekable(self):
+        return False
+
+    def next(self):
+        return next(self.iterator)
+
+    def tell(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator does not support tell.")
+
+    def seek(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator is unseekable.")
+
+    def read(self, size):
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = self.next()
+                if isinstance(chunk, six.text_type):
+                    chunk = chunk.encode(self.encoding)
+                data += chunk
+                count += len(chunk)
+        except StopIteration:
+            pass
+
+        if count > size:
+            self.leftover = data[size:]
+
+        return data[:size]
