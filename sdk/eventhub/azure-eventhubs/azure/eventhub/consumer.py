@@ -22,7 +22,16 @@ log = logging.getLogger(__name__)
 
 class EventHubConsumer(object):
     """
-    Implements a EventHubConsumer.
+    A consumer responsible for reading EventData from a specific Event Hub
+     partition and as a member of a specific consumer group.
+
+    A consumer may be exclusive, which asserts ownership over the partition for the consumer
+     group to ensure that only one consumer from that group is reading the from the partition.
+     These exclusive consumers are sometimes referred to as "Epoch Consumers."
+
+    A consumer may also be non-exclusive, allowing multiple consumers from the same consumer
+     group to be actively reading events from the partition.  These non-exclusive consumers are
+     sometimes referred to as "Non-Epoch Consumers."
 
     """
     timeout = 0
@@ -31,7 +40,8 @@ class EventHubConsumer(object):
     def __init__(self, client, source, event_position=None, prefetch=300, owner_level=None,
                  keep_alive=None, auto_reconnect=True):
         """
-        Instantiate a consumer.
+        Instantiate a consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
+         in EventHubClient.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient
@@ -147,11 +157,10 @@ class EventHubConsumer(object):
                 raise
             except KeyboardInterrupt:
                 log.info("EventHubConsumer stops due to keyboard interrupt")
-                print("EventHubConsumer stopped")
                 self.close()
                 raise
             except Exception as e:
-                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                log.error("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
                 self.close(exception=error)
                 raise error
@@ -291,49 +300,13 @@ class EventHubConsumer(object):
                 log.info("EventHubConsumer authentication timed out. Attempting reconnect.")
                 return False
         except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
+            log.error("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("EventHubConsumer reconnect failed: {}".format(e))
             self.close(exception=error)
             raise error
 
     def _reconnect(self):
         return self._build_connection(is_reconnect=True)
-
-    def close(self, exception=None):
-        # type:(Exception) -> None
-        """
-        Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_receiver_close]
-                :end-before: [END eventhub_client_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
-        """
-        if self.messages_iter:
-            self.messages_iter.close()
-            self.messages_iter = None
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This receive handler is now closed.")
-        self._handler.close()
 
     @property
     def queue_size(self):
@@ -359,10 +332,8 @@ class EventHubConsumer(object):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :param timeout: The timeout time in seconds to receive a batch of events
-         from an Event Hub. Results will be returned after timeout. If combined
-         with max_batch_size, it will return after either the count of received events
-         reaches the max_batch_size or the operation has timed out.
+        :param timeout: The maximum wait time to build up the requested message count for the batch.
+         If not specified, the default wait time specified when the consumer was created will be used.
         :type timeout: float
         :rtype: list[~azure.eventhub.common.EventData]
 
@@ -442,13 +413,48 @@ class EventHubConsumer(object):
                     raise TimeoutError(str(shutdown), shutdown)
             except KeyboardInterrupt:
                 log.info("EventHubConsumer stops due to keyboard interrupt")
-                print("EventHubConsumer stopped")
                 self.close()
                 raise
             except Exception as e:
-                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                log.error("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
                 self.close(exception=error)
                 raise error
+
+    def close(self, exception=None):
+        # type:(Exception) -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_receiver_close]
+                :end-before: [END eventhub_client_receiver_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
+        """
+        if self.messages_iter:
+            self.messages_iter.close()
+            self.messages_iter = None
+        self.running = False
+        if self.error:
+            return
+        if isinstance(exception, errors.LinkRedirect):
+            self.redirected = exception
+        elif isinstance(exception, EventHubError):
+            self.error = exception
+        elif exception:
+            self.error = EventHubError(str(exception))
+        else:
+            self.error = EventHubError("This receive handler is now closed.")
+        self._handler.close()
 
     next = __next__  # for python2.7

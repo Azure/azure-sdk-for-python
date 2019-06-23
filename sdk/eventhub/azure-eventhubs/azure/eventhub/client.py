@@ -12,10 +12,10 @@ try:
     from urllib import unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
-from typing import Any, List, Dict, Union
+from typing import Any, List, Dict
 
 import uamqp
-from uamqp import Message, AMQPClient
+from uamqp import Message
 from uamqp import authentication
 from uamqp import constants
 from uamqp import errors
@@ -194,11 +194,12 @@ class EventHubClient(EventHubClientAbstract):
         """
         Create a consumer to the client for a particular consumer group and partition.
 
-        :param consumer_group: The name of the consumer group. Default value is `$Default`.
+        :param consumer_group: The name of the consumer group this consumer is associated with.
+         Events are read in the context of this group.
         :type consumer_group: str
-        :param partition_id: The ID of the partition.
+        :param partition_id: The identifier of the Event Hub partition from which events will be received.
         :type partition_id: str
-        :param event_position: The position from which to start receiving.
+        :param event_position: The position within the partition where the consumer should begin reading events.
         :type event_position: ~azure.eventhub.common.EventPosition
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
@@ -232,7 +233,7 @@ class EventHubClient(EventHubClientAbstract):
     def create_producer(self, partition_id=None, operation=None, send_timeout=None):
         # type: (str, str, float) -> EventHubProducer
         """
-        Create a EventHubProducer to send EventData object to an EventHub.
+        Create an producer to send EventData object to an EventHub.
 
         :param partition_id: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
@@ -252,7 +253,7 @@ class EventHubClient(EventHubClientAbstract):
                 :end-before: [END create_eventhub_client_sender]
                 :language: python
                 :dedent: 4
-                :caption: Add a producer to the client to send EventData object to an EventHub.
+                :caption: Add a producer to the client to send EventData.
 
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)

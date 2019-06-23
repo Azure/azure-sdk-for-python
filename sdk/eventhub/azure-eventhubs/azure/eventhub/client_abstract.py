@@ -22,8 +22,7 @@ except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Union, List, Dict
-
+    from typing import Union
 
 from azure.eventhub import __version__
 from azure.eventhub.configuration import Configuration
@@ -31,6 +30,7 @@ from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Ad
 
 log = logging.getLogger(__name__)
 MAX_USER_AGENT_LENGTH = 512
+
 
 def _parse_conn_str(conn_str):
     endpoint = None
@@ -100,7 +100,7 @@ class EventHubClientAbstract(object):
 
         :param host: The hostname of the the Event Hub.
         :type host: str
-        :param event_hub_path: The path/name of the Event Hub
+        :param event_hub_path: The path of the specific Event Hub to connect the client to.
         :type event_hub_path: str
         :param network_tracing: Whether to output network trace logs to the logger. Default
          is `False`.
@@ -121,16 +121,15 @@ class EventHubClientAbstract(object):
         :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
          value is 3.
         :type max_retries: int
-        :param transport_type: The transport protocol type - default is ~uamqp.TransportType.Amqp.
-         ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
-         transport type is explicitly requested.
+        :param transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
          will return as soon as service returns no new events. Default value is the same as prefetch.
         :type max_batch_size: int
-        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
+        :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
          Default value is 0 seconds.
         :type receive_timeout: float
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
@@ -162,114 +161,7 @@ class EventHubClientAbstract(object):
         log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
-    def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
-        """Create an EventHubClient from a connection string.
-
-        :param conn_str: The connection string.
-        :type conn_str: str
-        :param event_hub_path: The path/name of the Event Hub, if the EntityName is
-         not included in the connection string.
-        :type event_hub_path: str
-        :param network_tracing: Whether to output network trace logs to the logger. Default
-         is `False`.
-        :type network_tracing: bool
-        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present: 'username', 'password'.
-        :type http_proxy: dict[str, Any]
-        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :type auth_timeout: float
-        :param user_agent: The user agent that needs to be appended to the built in user agent string.
-        :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
-         value is 3.
-        :type max_retries: int
-        :param transport_type: The transport protocol type - default is ~uamqp.TransportType.Amqp.
-         ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
-         transport type is explicitly requested.
-        :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the consumer. Default is 300.
-        :type prefetch: int
-        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
-         will return as soon as service returns no new events. Default value is the same as prefetch.
-        :type max_batch_size: int
-        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds.
-        :type receive_timeout: float
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_connstr]
-                :end-before: [END create_eventhub_client_connstr]
-                :language: python
-                :dedent: 4
-                :caption: Create an EventHubClient from a connection string.
-
-        """
-        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
-        if not is_iot_conn_str:
-            address, policy, key, entity = _parse_conn_str(conn_str)
-            entity = event_hub_path or entity
-            left_slash_pos = address.find("//")
-            if left_slash_pos != -1:
-                host = address[left_slash_pos + 2:]
-            else:
-                host = address
-            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
-        else:
-            return cls._from_iothub_connection_string(conn_str, **kwargs)
-
-    @classmethod
     def _from_iothub_connection_string(cls, conn_str, **kwargs):
-        """
-        Create an EventHubClient from an IoTHub connection string.
-
-        :param conn_str: The connection string.
-        :type conn_str: str
-        :param network_tracing: Whether to output network trace logs to the logger. Default
-         is `False`.
-        :type network_tracing: bool
-        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present: 'username', 'password'.
-        :type http_proxy: dict[str, Any]
-        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :type auth_timeout: float
-        :param user_agent: The user agent that needs to be appended to the built in user agent string.
-        :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
-         value is 3.
-        :type max_retries: int
-        :param transport_type: The transport protocol type - default is ~uamqp.TransportType.Amqp.
-         ~uamqp.TransportType.AmqpOverWebsocket is applied when http_proxy is set or the
-         transport type is explicitly requested.
-        :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the consumer. Default is 300.
-        :type prefetch: int
-        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
-         will return as soon as service returns no new events. Default value is the same as prefetch.
-        :type max_batch_size: int
-        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds.
-        :type receive_timeout: float
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_iot_connstr]
-                :end-before: [END create_eventhub_client_iot_connstr]
-                :language: python
-                :dedent: 4
-                :caption: Create an EventHubClient from an IoTHub connection string.
-
-        """
         address, policy, key, _ = _parse_conn_str(conn_str)
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
@@ -325,6 +217,67 @@ class EventHubClientAbstract(object):
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.eh_name = self.address.path.lstrip('/')
         self.mgmt_target = redirect_uri
+
+    @classmethod
+    def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
+        """Create an EventHubClient from an EventHub/IotHub connection string.
+
+        :param conn_str: The connection string.
+        :type conn_str: str
+        :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is
+         not included in the connection string.
+        :type event_hub_path: str
+        :param network_tracing: Whether to output network trace logs to the logger. Default
+         is `False`.
+        :type network_tracing: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
+        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :type auth_timeout: float
+        :param user_agent: The user agent that needs to be appended to the built in user agent string.
+        :type user_agent: str
+        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+         value is 3.
+        :type max_retries: int
+        :param transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
+        :type transport_type: ~azure.eventhub.TransportType
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
+        :type prefetch: int
+        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
+         will return as soon as service returns no new events. Default value is the same as prefetch.
+        :type max_batch_size: int
+        :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
+         Default value is 0 seconds.
+        :type receive_timeout: float
+        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+        :type send_timeout: float
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START create_eventhub_client_connstr]
+                :end-before: [END create_eventhub_client_connstr]
+                :language: python
+                :dedent: 4
+                :caption: Create an EventHubClient from a connection string.
+
+        """
+        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
+        if not is_iot_conn_str:
+            address, policy, key, entity = _parse_conn_str(conn_str)
+            entity = event_hub_path or entity
+            left_slash_pos = address.find("//")
+            if left_slash_pos != -1:
+                host = address[left_slash_pos + 2:]
+            else:
+                host = address
+            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+        else:
+            return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @abstractmethod
     def create_consumer(

@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
-from uamqp import types, constants, errors
 import six
+
+from uamqp import constants, errors
+
 from azure.core.exceptions import AzureError
 
 _NO_RETRY_ERRORS = (

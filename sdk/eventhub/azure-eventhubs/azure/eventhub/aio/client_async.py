@@ -2,15 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
 import logging
 import datetime
 import functools
 import asyncio
-from typing import Any, List, Dict, Union
+from typing import Any, List, Dict
 
-
-from uamqp import authentication, constants, types, errors
+from uamqp import authentication, constants
 from uamqp import (
     Message,
     AMQPClientAsync,
@@ -188,11 +186,12 @@ class EventHubClient(EventHubClientAbstract):
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
-        :param consumer_group: The name of the consumer group. Default value is `$Default`.
+        :param consumer_group: The name of the consumer group this consumer is associated with.
+         Events are read in the context of this group.
         :type consumer_group: str
-        :param partition_id: The ID of the partition.
+        :param partition_id: The identifier of the Event Hub partition from which events will be received.
         :type partition_id: str
-        :param event_position: The position from which to start receiving.
+        :param event_position: The position within the partition where the consumer should begin reading events.
         :type event_position: ~azure.eventhub.common.EventPosition
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
@@ -228,8 +227,7 @@ class EventHubClient(EventHubClientAbstract):
             self, partition_id=None, operation=None, send_timeout=None, loop=None):
         # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
         """
-        Create an async producer to the client to send ~azure.eventhub.common.EventData object
-        to an EventHub.
+        Create an async producer to send EventData object to an EventHub.
 
         :param partition_id: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
@@ -244,15 +242,13 @@ class EventHubClient(EventHubClientAbstract):
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype ~azure.eventhub.aio.sender_async.EventHubProducer
 
-
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
                 :start-after: [START create_eventhub_client_async_sender]
                 :end-before: [END create_eventhub_client_async_sender]
                 :language: python
                 :dedent: 4
-                :caption: Add an async producer to the client to
-                 send ~azure.eventhub.common.EventData object to an EventHub.
+                :caption: Add an async producer to the client to send EventData.
 
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
