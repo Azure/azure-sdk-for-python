@@ -86,6 +86,6 @@ setup(
         #'azure-core~=0.0.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-storage-nspkg'],
+        ":python_version<'3.0'": ['azure-storage-nspkg==3.1.0'],
     }
 )
