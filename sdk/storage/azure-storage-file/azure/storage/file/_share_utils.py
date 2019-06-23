@@ -86,3 +86,11 @@ def upload_file_helper(
             **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)
+
+class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+
+    def __init__(
+            self, name, share_name, directory_name, service, config, length, validate_content,
+            timeout, require_encryption, key_encryption_key, key_resolver_function, **kwargs
+    ):
+        pass

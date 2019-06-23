@@ -16,18 +16,16 @@ except ImportError:
 from .models import DirectoryPropertiesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, SignedIdentifier, FileHTTPHeaders
+from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.utils import (
     StorageAccountHostsMixin,
-    serialize_iso,
-    return_headers_and_deserialized,
     parse_query,
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
     parse_connection_str)
 from ._shared.encryption import _generate_file_encryption_data
-from ._share_utils import upload_file_helper, deserialize_file_properties
+from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
 from ._upload_chunking import IterStreamer
 from .polling import CopyStatusPoller
 
@@ -281,10 +279,24 @@ class FileClient(StorageAccountHostsMixin):
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-        pass
+
+        return StorageStreamDownloader(
+            name=self.file_name,
+            share_name=self.share_name,
+            directory_name=self.directory_name,
+            service=self._client.file,
+            config=self._config.file_settings,
+            length=length,
+            validate_content=validate_content,
+            timeout=timeout,
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function,
+            **kwargs)
 
     def download_file_to_stream(
-            self, start_range=None,  # type: Optional[int]
+            self, stream, # type: Any
+            start_range=None,  # type: Optional[int]
             end_range=None, # type: Optional[int]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: bool
