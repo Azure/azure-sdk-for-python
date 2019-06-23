@@ -14,8 +14,10 @@ from uamqp import authentication, constants, types, errors
 from uamqp import (
     Message,
     AMQPClientAsync,
+    errors,
 )
 
+from azure.eventhub.error import ConnectError
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
@@ -84,6 +86,36 @@ class EventHubClient(EventHubClientAbstract):
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
 
+    async def _management_request(self, mgmt_msg, op_type):
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")}
+        connect_count = 0
+        while True:
+            connect_count += 1
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
+            try:
+                await mgmt_client.open_async()
+                response = await mgmt_client.mgmt_request_async(
+                    mgmt_msg,
+                    constants.READ_OPERATION,
+                    op_type=op_type,
+                    status_code_field=b'status-code',
+                    description_fields=b'status-description')
+                return response
+            except (errors.AMQPConnectionError, errors.TokenAuthFailure) as failure:
+                if connect_count >= self.config.max_retries:
+                    err = ConnectError(
+                        "Can not connect to EventHubs or get management info from the service. "
+                        "Please make sure the connection string or token is correct and retry. "
+                        "Besides, this method doesn't work if you use an IoT connection string.",
+                        failure
+                    )
+                    raise err
+            finally:
+                await mgmt_client.close_async()
+
     async def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -96,29 +128,15 @@ class EventHubClient(EventHubClientAbstract):
 
         :rtype: dict
         """
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")}
-        try:
-            mgmt_auth = self._create_auth(**alt_creds)
-            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
-            await mgmt_client.open_async()
-            mgmt_msg = Message(application_properties={'name': self.eh_name})
-            response = await mgmt_client.mgmt_request_async(
-                mgmt_msg,
-                constants.READ_OPERATION,
-                op_type=b'com.microsoft:eventhub',
-                status_code_field=b'status-code',
-                description_fields=b'status-description')
-            eh_info = response.get_data()
-            output = {}
-            if eh_info:
-                output['path'] = eh_info[b'name'].decode('utf-8')
-                output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
-                output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
-            return output
-        finally:
-            await mgmt_client.close_async()
+        mgmt_msg = Message(application_properties={'name': self.eh_name})
+        response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
+        output = {}
+        eh_info = response.get_data()
+        if eh_info:
+            output['path'] = eh_info[b'name'].decode('utf-8')
+            output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
+            output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
+        return output
 
     async def get_partition_ids(self):
         # type:() -> List[str]
@@ -147,35 +165,21 @@ class EventHubClient(EventHubClientAbstract):
         :type partition: str
         :rtype: dict
         """
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")}
-        try:
-            mgmt_auth = self._create_auth(**alt_creds)
-            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
-            await mgmt_client.open_async()
-            mgmt_msg = Message(application_properties={'name': self.eh_name,
-                                                       'partition': partition})
-            response = await mgmt_client.mgmt_request_async(
-                mgmt_msg,
-                constants.READ_OPERATION,
-                op_type=b'com.microsoft:partition',
-                status_code_field=b'status-code',
-                description_fields=b'status-description')
-            partition_info = response.get_data()
-            output = {}
-            if partition_info:
-                output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
-                output['id'] = partition_info[b'partition'].decode('utf-8')
-                output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
-                output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
-                output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
-                output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
-                    float(partition_info[b'last_enqueued_time_utc'] / 1000))
-                output['is_empty'] = partition_info[b'is_partition_empty']
-            return output
-        finally:
-            await mgmt_client.close_async()
+        mgmt_msg = Message(application_properties={'name': self.eh_name,
+                                                   'partition': partition})
+        response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
+        partition_info = response.get_data()
+        output = {}
+        if partition_info:
+            output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+            output['id'] = partition_info[b'partition'].decode('utf-8')
+            output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
+            output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
+            output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
+            output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
+                float(partition_info[b'last_enqueued_time_utc'] / 1000))
+            output['is_empty'] = partition_info[b'is_partition_empty']
+        return output
 
     def create_consumer(
             self, consumer_group, partition_id, event_position, owner_level=None,
