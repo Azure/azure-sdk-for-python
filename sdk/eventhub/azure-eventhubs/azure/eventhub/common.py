@@ -4,16 +4,12 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-from enum import Enum
 import datetime
 import calendar
 import json
-
 import six
 
-import uamqp
-from uamqp import BatchMessage
-from uamqp import types, constants, errors
+from uamqp import BatchMessage, Message, types
 from uamqp.message import MessageHeader, MessageProperties
 
 
@@ -31,9 +27,6 @@ def parse_sas_token(sas_token):
         key, value = field.split('=', 1)
         sas_data[key.lower()] = value
     return sas_data
-
-
-Message = uamqp.Message
 
 
 class EventData(object):
@@ -109,7 +102,20 @@ class EventData(object):
             dic['partition_key'] = str(self.partition_key)
         return str(dic)
 
+    def _set_partition_key(self, value):
+        """
+        Set the partition key of the event data object.
 
+        :param value: The partition key to set.
+        :type value: str or bytes
+        """
+        annotations = dict(self._annotations)
+        annotations[self._partition_key] = value
+        header = MessageHeader()
+        header.durable = True
+        self.message.annotations = annotations
+        self.message.header = header
+        self._annotations = annotations
 
     @property
     def sequence_number(self):
@@ -165,22 +171,6 @@ class EventData(object):
             return self._annotations[self._partition_key]
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
-
-    def _set_partition_key(self, value):
-        """
-        Set the partition key of the event data object.
-
-        :param value: The partition key to set.
-        :type value: str or bytes
-        """
-        annotations = dict(self._annotations)
-        annotations[self._partition_key] = value
-        header = MessageHeader()
-        header.durable = True
-        self.message.annotations = annotations
-        self.message.header = header
-        self._annotations = annotations
-
 
     @property
     def application_properties(self):

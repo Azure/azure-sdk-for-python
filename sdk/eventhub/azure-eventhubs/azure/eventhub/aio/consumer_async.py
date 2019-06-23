@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
 import asyncio
 import uuid
 import logging
@@ -19,7 +18,16 @@ log = logging.getLogger(__name__)
 
 class EventHubConsumer(object):
     """
-    Implements the async API of a EventHubConsumer.
+    A consumer responsible for reading EventData from a specific Event Hub
+     partition and as a member of a specific consumer group.
+
+    A consumer may be exclusive, which asserts ownership over the partition for the consumer
+     group to ensure that only one consumer from that group is reading the from the partition.
+     These exclusive consumers are sometimes referred to as "Epoch Consumers."
+
+    A consumer may also be non-exclusive, allowing multiple consumers from the same consumer
+     group to be actively reading events from the partition.  These non-exclusive consumers are
+     sometimes referred to as "Non-Epoch Consumers."
 
     """
     timeout = 0
@@ -29,7 +37,8 @@ class EventHubConsumer(object):
             self, client, source, event_position=None, prefetch=300, owner_level=None,
             keep_alive=None, auto_reconnect=True, loop=None):
         """
-        Instantiate an async consumer.
+        Instantiate an async consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
+         in EventHubClient.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
@@ -158,6 +167,7 @@ class EventHubConsumer(object):
         if self.error:
             raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.",
                                 self.error)
+
     async def _open(self):
         """
         Open the EventHubConsumer using the supplied connection.
@@ -282,41 +292,6 @@ class EventHubConsumer(object):
         a retryable error - attempt to reconnect."""
         return await self._build_connection(is_reconnect=True)
 
-    async def close(self, exception=None):
-        # type: (Exception) -> None
-        """
-        Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_receiver_close]
-                :end-before: [END eventhub_client_async_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
-        """
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = ConnectError(str(exception), exception)
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This receive handler is now closed.")
-        await self._handler.close_async()
-
     @property
     def queue_size(self):
         # type: () -> int
@@ -341,10 +316,8 @@ class EventHubConsumer(object):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
-        :param timeout: The timeout time in seconds to receive a batch of events
-         from an Event Hub. Results will be returned after timeout. If combined
-         with max_batch_size, it will return after either the count of received events
-         reaches the max_batch_size or the operation has timed out.
+        :param timeout: The maximum wait time to build up the requested message count for the batch.
+         If not specified, the default wait time specified when the consumer was created will be used.
         :type timeout: float
         :rtype: list[~azure.eventhub.common.EventData]
 
@@ -357,6 +330,7 @@ class EventHubConsumer(object):
                 :caption: Receives events asynchronously
 
         """
+        self._check_closed()
         await self._open()
 
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
@@ -426,3 +400,38 @@ class EventHubConsumer(object):
                 error = EventHubError("Receive failed: {}".format(e))
                 await self.close(exception=error)
                 raise error
+
+    async def close(self, exception=None):
+        # type: (Exception) -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_client_async_receiver_close]
+                :end-before: [END eventhub_client_async_receiver_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
+        """
+        self.running = False
+        if self.error:
+            return
+        if isinstance(exception, errors.LinkRedirect):
+            self.redirected = exception
+        elif isinstance(exception, EventHubError):
+            self.error = exception
+        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+            self.error = ConnectError(str(exception), exception)
+        elif exception:
+            self.error = EventHubError(str(exception))
+        else:
+            self.error = EventHubError("This receive handler is now closed.")
+        await self._handler.close_async()
