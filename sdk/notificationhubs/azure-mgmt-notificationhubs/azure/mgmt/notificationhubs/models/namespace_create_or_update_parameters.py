@@ -36,10 +36,10 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :param provisioning_state: Provisioning state of the Namespace.
     :type provisioning_state: str
     :param region: Specifies the targeted region in which the namespace should
-     be created. It can be any of the following values: Australia EastAustralia
-     SoutheastCentral USEast USEast US 2West USNorth Central USSouth Central
-     USEast AsiaSoutheast AsiaBrazil SouthJapan EastJapan WestNorth EuropeWest
-     Europe
+     be created. It can be any of the following values: Australia East,
+     Australia Southeast, Central US, East US, East US 2, West US, North
+     Central US, South Central US, East Asia, Southeast Asia, Brazil South,
+     Japan East, Japan West, North Europe, West Europe
     :type region: str
     :ivar metric_id: Identifier for Azure Insights metrics
     :vartype metric_id: str
