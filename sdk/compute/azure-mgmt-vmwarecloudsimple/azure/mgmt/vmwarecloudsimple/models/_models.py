@@ -227,21 +227,24 @@ class DedicatedCloudNode(Model):
     :type location: str
     :ivar name: {dedicatedCloudNodeName}
     :vartype name: str
-    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
-    :type availability_zone_id: str
-    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
-     Zone 1"
-    :vartype availability_zone_name: str
     :ivar cloud_rack_name: VMWare Cloud Rack Name
     :vartype cloud_rack_name: str
     :ivar created: date time the resource was created
     :vartype created: object
+    :param dedicated_availability_zone_id: Required. CloudSimple Availability
+     Zone id, e.g. "az1"
+    :type dedicated_availability_zone_id: str
+    :ivar dedicated_availability_zone_name: CloudSimple Availability Zone
+     name, e.g. "Availability Zone 1"
+    :vartype dedicated_availability_zone_name: str
+    :param dedicated_placement_group_id: Required. CloudSimple Placement Group
+     id, e.g. "n1"
+    :type dedicated_placement_group_id: str
+    :ivar dedicated_placement_group_name: CloudSimple Placement Name, e.g.
+     "Placement Group 1"
+    :vartype dedicated_placement_group_name: str
     :param nodes_count: Required. count of nodes to create
     :type nodes_count: int
-    :param placement_group_id: Required. Placement Group id, e.g. "n1"
-    :type placement_group_id: str
-    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
-    :vartype placement_group_name: str
     :ivar private_cloud_id: Private Cloud Id
     :vartype private_cloud_id: str
     :ivar private_cloud_name: Resource Pool Name
@@ -271,13 +274,13 @@ class DedicatedCloudNode(Model):
         'id': {'readonly': True},
         'location': {'required': True},
         'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
-        'availability_zone_id': {'required': True},
-        'availability_zone_name': {'readonly': True},
         'cloud_rack_name': {'readonly': True},
         'created': {'readonly': True},
+        'dedicated_availability_zone_id': {'required': True},
+        'dedicated_availability_zone_name': {'readonly': True},
+        'dedicated_placement_group_id': {'required': True},
+        'dedicated_placement_group_name': {'readonly': True},
         'nodes_count': {'required': True},
-        'placement_group_id': {'required': True},
-        'placement_group_name': {'readonly': True},
         'private_cloud_id': {'readonly': True},
         'private_cloud_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -293,13 +296,13 @@ class DedicatedCloudNode(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
         'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'object'},
+        'dedicated_availability_zone_id': {'key': 'properties.dedicatedAvailabilityZoneId', 'type': 'str'},
+        'dedicated_availability_zone_name': {'key': 'properties.dedicatedAvailabilityZoneName', 'type': 'str'},
+        'dedicated_placement_group_id': {'key': 'properties.dedicatedPlacementGroupId', 'type': 'str'},
+        'dedicated_placement_group_name': {'key': 'properties.dedicatedPlacementGroupName', 'type': 'str'},
         'nodes_count': {'key': 'properties.nodesCount', 'type': 'int'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
         'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
         'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -318,13 +321,13 @@ class DedicatedCloudNode(Model):
         self.id = None
         self.location = kwargs.get('location', None)
         self.name = None
-        self.availability_zone_id = kwargs.get('availability_zone_id', None)
-        self.availability_zone_name = None
         self.cloud_rack_name = None
         self.created = None
+        self.dedicated_availability_zone_id = kwargs.get('dedicated_availability_zone_id', None)
+        self.dedicated_availability_zone_name = None
+        self.dedicated_placement_group_id = kwargs.get('dedicated_placement_group_id', None)
+        self.dedicated_placement_group_name = None
         self.nodes_count = kwargs.get('nodes_count', None)
-        self.placement_group_id = kwargs.get('placement_group_id', None)
-        self.placement_group_name = None
         self.private_cloud_id = None
         self.private_cloud_name = None
         self.provisioning_state = None
@@ -353,14 +356,14 @@ class DedicatedCloudService(Model):
     :type location: str
     :ivar name: {dedicatedCloudServiceName}
     :vartype name: str
+    :ivar account_onboarding_state: indicates whether account onboarded or not
+     in a given region. Possible values include: 'notOnBoarded', 'onBoarded',
+     'onBoardingFailed', 'onBoarding'
+    :vartype account_onboarding_state: str or
+     ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
     :param gateway_subnet: Required. gateway Subnet for the account. It will
      collect the subnet address and always treat it as /28
     :type gateway_subnet: str
-    :ivar is_account_onboarded: indicates whether account onboarded or not in
-     a given region. Possible values include: 'notOnBoarded', 'onBoarded',
-     'onBoardingFailed', 'onBoarding'
-    :vartype is_account_onboarded: str or
-     ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
     :param nodes: total nodes purchased
     :type nodes: int
     :param service_url: link to a service management web portal
@@ -375,8 +378,8 @@ class DedicatedCloudService(Model):
         'id': {'readonly': True},
         'location': {'required': True},
         'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'account_onboarding_state': {'readonly': True},
         'gateway_subnet': {'required': True},
-        'is_account_onboarded': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -384,8 +387,8 @@ class DedicatedCloudService(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'account_onboarding_state': {'key': 'properties.accountOnboardingState', 'type': 'OnboardingStatus'},
         'gateway_subnet': {'key': 'properties.gatewaySubnet', 'type': 'str'},
-        'is_account_onboarded': {'key': 'properties.isAccountOnboarded', 'type': 'OnboardingStatus'},
         'nodes': {'key': 'properties.nodes', 'type': 'int'},
         'service_url': {'key': 'properties.serviceURL', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -397,8 +400,8 @@ class DedicatedCloudService(Model):
         self.id = None
         self.location = kwargs.get('location', None)
         self.name = None
+        self.account_onboarding_state = None
         self.gateway_subnet = kwargs.get('gateway_subnet', None)
-        self.is_account_onboarded = None
         self.nodes = kwargs.get('nodes', None)
         self.service_url = kwargs.get('service_url', None)
         self.tags = kwargs.get('tags', None)
@@ -498,27 +501,29 @@ class PrivateCloud(Model):
     :type location: str
     :param name: Private cloud name
     :type name: str
-    :param availability_zone_id: Availability Zone id, e.g. "az1"
-    :type availability_zone_id: str
-    :param availability_zone_name: Availability Zone name, e.g. "Availability
-     Zone 1"
-    :type availability_zone_name: str
     :param clusters_number: Number of clusters
     :type clusters_number: int
     :param created_by: User's emails who created cloud
     :type created_by: str
     :param created_on: When private cloud was created
     :type created_on: datetime
+    :param dedicated_availability_zone_id: CloudSimple Availability Zone id,
+     e.g. "az1"
+    :type dedicated_availability_zone_id: str
+    :param dedicated_availability_zone_name: CloudSimple Availability Zone
+     name, e.g. "Availability Zone 1"
+    :type dedicated_availability_zone_name: str
+    :param dedicated_placement_group_id: CloudSimple Placement Group id, e.g.
+     "n1"
+    :type dedicated_placement_group_id: str
+    :param dedicated_placement_group_name: CloudSimple Placement Group name
+    :type dedicated_placement_group_name: str
     :param dns_servers: Array of DNS servers
     :type dns_servers: list[str]
     :param expires: Expiration date of PC
     :type expires: str
     :param nsx_type: Nsx Type, e.g. "Advanced"
     :type nsx_type: str
-    :param placement_group_id: Placement Group id, e.g. "n1"
-    :type placement_group_id: str
-    :param placement_group_name: Placement Group name
-    :type placement_group_name: str
     :param private_cloud_id: Id of a private cloud
     :type private_cloud_id: str
     :param resource_pools: The list of Resource Pools
@@ -560,16 +565,16 @@ class PrivateCloud(Model):
         'id': {'key': 'id', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
         'clusters_number': {'key': 'properties.clustersNumber', 'type': 'int'},
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+        'dedicated_availability_zone_id': {'key': 'properties.dedicatedAvailabilityZoneId', 'type': 'str'},
+        'dedicated_availability_zone_name': {'key': 'properties.dedicatedAvailabilityZoneName', 'type': 'str'},
+        'dedicated_placement_group_id': {'key': 'properties.dedicatedPlacementGroupId', 'type': 'str'},
+        'dedicated_placement_group_name': {'key': 'properties.dedicatedPlacementGroupName', 'type': 'str'},
         'dns_servers': {'key': 'properties.dnsServers', 'type': '[str]'},
         'expires': {'key': 'properties.expires', 'type': 'str'},
         'nsx_type': {'key': 'properties.nsxType', 'type': 'str'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
         'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
         'resource_pools': {'key': 'properties.resourcePools', 'type': '[ResourcePool]'},
         'state': {'key': 'properties.state', 'type': 'str'},
@@ -592,16 +597,16 @@ class PrivateCloud(Model):
         self.id = kwargs.get('id', None)
         self.location = kwargs.get('location', None)
         self.name = kwargs.get('name', None)
-        self.availability_zone_id = kwargs.get('availability_zone_id', None)
-        self.availability_zone_name = kwargs.get('availability_zone_name', None)
         self.clusters_number = kwargs.get('clusters_number', None)
         self.created_by = kwargs.get('created_by', None)
         self.created_on = kwargs.get('created_on', None)
+        self.dedicated_availability_zone_id = kwargs.get('dedicated_availability_zone_id', None)
+        self.dedicated_availability_zone_name = kwargs.get('dedicated_availability_zone_name', None)
+        self.dedicated_placement_group_id = kwargs.get('dedicated_placement_group_id', None)
+        self.dedicated_placement_group_name = kwargs.get('dedicated_placement_group_name', None)
         self.dns_servers = kwargs.get('dns_servers', None)
         self.expires = kwargs.get('expires', None)
         self.nsx_type = kwargs.get('nsx_type', None)
-        self.placement_group_id = kwargs.get('placement_group_id', None)
-        self.placement_group_name = kwargs.get('placement_group_name', None)
         self.private_cloud_id = kwargs.get('private_cloud_id', None)
         self.resource_pools = kwargs.get('resource_pools', None)
         self.state = kwargs.get('state', None)
