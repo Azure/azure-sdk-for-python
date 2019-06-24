@@ -5,6 +5,11 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 from typing import TYPE_CHECKING
+from azure.core import Configuration
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.transport import RequestsTransport
+from ._generated import KeyVaultClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -16,13 +21,6 @@ try:
     import urllib.parse as parse
 except ImportError:
     import urlparse as parse  # pylint: disable=import-error
-
-from azure.core import Configuration
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HTTPPolicy
-from azure.core.pipeline.transport import RequestsTransport
-
-from ._generated import KeyVaultClient
 
 
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])

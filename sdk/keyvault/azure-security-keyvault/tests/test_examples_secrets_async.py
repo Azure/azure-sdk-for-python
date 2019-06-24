@@ -22,7 +22,7 @@ def test_create_secret_client():
     from azure.identity.aio import AsyncDefaultAzureCredential
     from azure.security.keyvault.aio.secrets import SecretClient
 
-    # Create a SecretClient using default Azure credentials
+    # Create a SecretClient using Async default Azure credentials
     credentials = AsyncDefaultAzureCredential()
     secret_client = SecretClient(vault_url, credentials)
 
@@ -44,8 +44,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # create a secret, setting optional arguments
         secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
-        print(secret.version)
-        print(secret.created)
+        print(secret.id)
+        print(secret.name)
         print(secret.enabled)
         print(secret.expires)
 
@@ -85,10 +85,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_secret = await secret_client.delete_secret("secret-name")
 
         print(deleted_secret.name)
-        print(deleted_secret.deleted_date)
 
-        # if the vault has soft-delete enabled, the secret's
+        # if the vault has soft-delete enabled, the secret's deleted_date,
         # scheduled purge date and recovery id are set
+        print(deleted_secret.deleted_date)
         print(deleted_secret.scheduled_purge_date)
         print(deleted_secret.recovery_id)
 
