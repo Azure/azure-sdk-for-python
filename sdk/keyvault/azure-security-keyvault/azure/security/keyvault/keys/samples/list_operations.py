@@ -43,8 +43,8 @@ def run_sample():
         # Let's create keys with RSA and EC type. If the key
         # already exists in the Key Vault, then a new version of the key is created.
         print("\n1. Create Key")
-        rsa_key = client.create_rsa_key("rsaKeyName2", hsm=False)
-        ec_key = client.create_ec_key("ecKeyName2", hsm=True)
+        rsa_key = client.create_rsa_key("rsaKeyName", hsm=False)
+        ec_key = client.create_ec_key("ecKeyName", hsm=False)
         print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
         print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
 
@@ -60,11 +60,11 @@ def run_sample():
                 "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key_material.kty)
             )
 
-        # The rsa key size now should now be a hardware key, support hsm (Hardware Security Module). So you want to update the key in Key Vault to ensure it reflects the new key size.
+        # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure it reflects the new key size.
         # Calling create_rsa_key on an existing key creates a new version of the key in the Key Vault with the new key size.
-        updated_key = client.create_rsa_key(rsa_key.name, hsm=True)
+        updated_key = client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
         print(
-            "Key with name '{0}' was updated with hsm enabled".format(updated_key.name)
+            "New version was created for Key with name '{0}' with the updated size.".format(updated_key.name)
         )
 
          # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.

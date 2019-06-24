@@ -22,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(key) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
 #
-# 1. Create a key (set_key)
+# 1. Create a key (create_key)
 #
 # 2. Delete a key (delete_key)
 #
@@ -43,7 +43,7 @@ async def run_sample():
         # already exists in the Key Vault, then a new version of the key is created.
         print("\n1. Create Key")
         rsa_key = await client.create_rsa_key("rsaKeyName", hsm=False)
-        ec_key = await client.create_ec_key("ecKeyName", hsm=True)
+        ec_key = await client.create_ec_key("ecKeyName", hsm=False)
         print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
         print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
 

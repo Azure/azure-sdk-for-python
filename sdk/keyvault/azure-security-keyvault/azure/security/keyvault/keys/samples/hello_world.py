@@ -1,6 +1,5 @@
 import datetime
 import os
-import pytz
 from azure.security.keyvault import KeyClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -24,11 +23,11 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create a new RSA Key (create_rsa_key)
 #
-# 2. Create a new EC Key (create_rsa_key)
+# 2. Create a new EC Key (create_ec_key)
 #
 # 3. Get an existing key (get_key)
 #
-# 4. Update an existing key (set_key)
+# 4. Update an existing key (update_key)
 #
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
@@ -50,12 +49,12 @@ def run_sample():
         rsa_key = client.create_rsa_key(key_name, size=key_size, hsm=False, key_operations=key_ops)
         print("RSA Key with name '{0}' created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
 
-        # Let's create an Elliptic Curve key with algorithm curve type P-256 and allow it to be processed in an HSM
+        # Let's create an Elliptic Curve key with algorithm curve type P-256.
         # if the key already exists in the Key Vault, then a new version of the key is created.
         print("\n1. Create an EC Key")
         key_curve = "P-256"
         key_name = "ECKeyName"
-        ec_key = client.create_ec_key(key_name, curve=key_curve, hsm=True)
+        ec_key = client.create_ec_key(key_name, curve=key_curve, hsm=False)
         print("EC Key with name '{0}' created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
 
         # Let's get the rsa key details using its name
@@ -66,7 +65,7 @@ def run_sample():
         # Let's say we want to update the expiration time for the EC key and disable the key to be useable for cryptographic operations.
         # The update method allows the user to modify the metadata (key attributes) associated with a key previously stored within Key Vault.
         print("\n3. Update a Key by name")
-        expires = datetime.datetime.now(pytz.timezone("America/New_York")) + datetime.timedelta(days=365)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         updated_ec_key = client.update_key(ec_key.name, ec_key.version, expires=expires, enabled=False)
         print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.updated))
         print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.expires))

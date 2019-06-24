@@ -22,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(key) resource for Azure Key Vault
 #
-# 1. Create a key (set_key)
+# 1. Create a key (create_key)
 #
 # 2. Backup a key (backup_key)
 #
@@ -56,7 +56,6 @@ async def run_sample():
 
          # To ensure key is deleted on the server side.
         print("\nDeleting key...")
-        asyncio.sleep(20)
         print("Deleted Key with name '{0}'".format(key.name))
 
          # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
