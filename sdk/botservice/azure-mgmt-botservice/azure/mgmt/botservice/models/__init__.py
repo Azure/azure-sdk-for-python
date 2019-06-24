@@ -10,109 +10,109 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sku_py3 import Sku
-    from .resource_py3 import Resource
-    from .bot_properties_py3 import BotProperties
-    from .bot_py3 import Bot
-    from .channel_py3 import Channel
-    from .bot_channel_py3 import BotChannel
-    from .facebook_page_py3 import FacebookPage
-    from .facebook_channel_properties_py3 import FacebookChannelProperties
-    from .facebook_channel_py3 import FacebookChannel
-    from .email_channel_properties_py3 import EmailChannelProperties
-    from .email_channel_py3 import EmailChannel
-    from .ms_teams_channel_properties_py3 import MsTeamsChannelProperties
-    from .ms_teams_channel_py3 import MsTeamsChannel
-    from .skype_channel_properties_py3 import SkypeChannelProperties
-    from .skype_channel_py3 import SkypeChannel
-    from .kik_channel_properties_py3 import KikChannelProperties
-    from .kik_channel_py3 import KikChannel
-    from .web_chat_site_py3 import WebChatSite
-    from .web_chat_channel_properties_py3 import WebChatChannelProperties
-    from .web_chat_channel_py3 import WebChatChannel
-    from .direct_line_site_py3 import DirectLineSite
-    from .direct_line_channel_properties_py3 import DirectLineChannelProperties
-    from .direct_line_channel_py3 import DirectLineChannel
-    from .telegram_channel_properties_py3 import TelegramChannelProperties
-    from .telegram_channel_py3 import TelegramChannel
-    from .sms_channel_properties_py3 import SmsChannelProperties
-    from .sms_channel_py3 import SmsChannel
-    from .slack_channel_properties_py3 import SlackChannelProperties
-    from .slack_channel_py3 import SlackChannel
-    from .connection_item_name_py3 import ConnectionItemName
-    from .connection_setting_parameter_py3 import ConnectionSettingParameter
-    from .connection_setting_properties_py3 import ConnectionSettingProperties
-    from .connection_setting_py3 import ConnectionSetting
-    from .service_provider_parameter_py3 import ServiceProviderParameter
-    from .service_provider_properties_py3 import ServiceProviderProperties
-    from .service_provider_py3 import ServiceProvider
-    from .service_provider_response_list_py3 import ServiceProviderResponseList
-    from .error_body_py3 import ErrorBody
-    from .error_py3 import Error, ErrorException
-    from .operation_display_info_py3 import OperationDisplayInfo
-    from .operation_entity_py3 import OperationEntity
-    from .check_name_availability_request_body_py3 import CheckNameAvailabilityRequestBody
-    from .check_name_availability_response_body_py3 import CheckNameAvailabilityResponseBody
-    from .enterprise_channel_check_name_availability_request_py3 import EnterpriseChannelCheckNameAvailabilityRequest
-    from .enterprise_channel_check_name_availability_response_py3 import EnterpriseChannelCheckNameAvailabilityResponse
-    from .enterprise_channel_node_py3 import EnterpriseChannelNode
-    from .enterprise_channel_properties_py3 import EnterpriseChannelProperties
-    from .enterprise_channel_py3 import EnterpriseChannel
+    from ._models_py3 import Bot
+    from ._models_py3 import BotChannel
+    from ._models_py3 import BotProperties
+    from ._models_py3 import Channel
+    from ._models_py3 import CheckNameAvailabilityRequestBody
+    from ._models_py3 import CheckNameAvailabilityResponseBody
+    from ._models_py3 import ConnectionItemName
+    from ._models_py3 import ConnectionSetting
+    from ._models_py3 import ConnectionSettingParameter
+    from ._models_py3 import ConnectionSettingProperties
+    from ._models_py3 import DirectLineChannel
+    from ._models_py3 import DirectLineChannelProperties
+    from ._models_py3 import DirectLineSite
+    from ._models_py3 import EmailChannel
+    from ._models_py3 import EmailChannelProperties
+    from ._models_py3 import EnterpriseChannel
+    from ._models_py3 import EnterpriseChannelCheckNameAvailabilityRequest
+    from ._models_py3 import EnterpriseChannelCheckNameAvailabilityResponse
+    from ._models_py3 import EnterpriseChannelNode
+    from ._models_py3 import EnterpriseChannelProperties
+    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import ErrorBody
+    from ._models_py3 import FacebookChannel
+    from ._models_py3 import FacebookChannelProperties
+    from ._models_py3 import FacebookPage
+    from ._models_py3 import KikChannel
+    from ._models_py3 import KikChannelProperties
+    from ._models_py3 import MsTeamsChannel
+    from ._models_py3 import MsTeamsChannelProperties
+    from ._models_py3 import OperationDisplayInfo
+    from ._models_py3 import OperationEntity
+    from ._models_py3 import Resource
+    from ._models_py3 import ServiceProvider
+    from ._models_py3 import ServiceProviderParameter
+    from ._models_py3 import ServiceProviderProperties
+    from ._models_py3 import ServiceProviderResponseList
+    from ._models_py3 import Sku
+    from ._models_py3 import SkypeChannel
+    from ._models_py3 import SkypeChannelProperties
+    from ._models_py3 import SlackChannel
+    from ._models_py3 import SlackChannelProperties
+    from ._models_py3 import SmsChannel
+    from ._models_py3 import SmsChannelProperties
+    from ._models_py3 import TelegramChannel
+    from ._models_py3 import TelegramChannelProperties
+    from ._models_py3 import WebChatChannel
+    from ._models_py3 import WebChatChannelProperties
+    from ._models_py3 import WebChatSite
 except (SyntaxError, ImportError):
-    from .sku import Sku
-    from .resource import Resource
-    from .bot_properties import BotProperties
-    from .bot import Bot
-    from .channel import Channel
-    from .bot_channel import BotChannel
-    from .facebook_page import FacebookPage
-    from .facebook_channel_properties import FacebookChannelProperties
-    from .facebook_channel import FacebookChannel
-    from .email_channel_properties import EmailChannelProperties
-    from .email_channel import EmailChannel
-    from .ms_teams_channel_properties import MsTeamsChannelProperties
-    from .ms_teams_channel import MsTeamsChannel
-    from .skype_channel_properties import SkypeChannelProperties
-    from .skype_channel import SkypeChannel
-    from .kik_channel_properties import KikChannelProperties
-    from .kik_channel import KikChannel
-    from .web_chat_site import WebChatSite
-    from .web_chat_channel_properties import WebChatChannelProperties
-    from .web_chat_channel import WebChatChannel
-    from .direct_line_site import DirectLineSite
-    from .direct_line_channel_properties import DirectLineChannelProperties
-    from .direct_line_channel import DirectLineChannel
-    from .telegram_channel_properties import TelegramChannelProperties
-    from .telegram_channel import TelegramChannel
-    from .sms_channel_properties import SmsChannelProperties
-    from .sms_channel import SmsChannel
-    from .slack_channel_properties import SlackChannelProperties
-    from .slack_channel import SlackChannel
-    from .connection_item_name import ConnectionItemName
-    from .connection_setting_parameter import ConnectionSettingParameter
-    from .connection_setting_properties import ConnectionSettingProperties
-    from .connection_setting import ConnectionSetting
-    from .service_provider_parameter import ServiceProviderParameter
-    from .service_provider_properties import ServiceProviderProperties
-    from .service_provider import ServiceProvider
-    from .service_provider_response_list import ServiceProviderResponseList
-    from .error_body import ErrorBody
-    from .error import Error, ErrorException
-    from .operation_display_info import OperationDisplayInfo
-    from .operation_entity import OperationEntity
-    from .check_name_availability_request_body import CheckNameAvailabilityRequestBody
-    from .check_name_availability_response_body import CheckNameAvailabilityResponseBody
-    from .enterprise_channel_check_name_availability_request import EnterpriseChannelCheckNameAvailabilityRequest
-    from .enterprise_channel_check_name_availability_response import EnterpriseChannelCheckNameAvailabilityResponse
-    from .enterprise_channel_node import EnterpriseChannelNode
-    from .enterprise_channel_properties import EnterpriseChannelProperties
-    from .enterprise_channel import EnterpriseChannel
-from .bot_paged import BotPaged
-from .bot_channel_paged import BotChannelPaged
-from .operation_entity_paged import OperationEntityPaged
-from .connection_setting_paged import ConnectionSettingPaged
-from .enterprise_channel_paged import EnterpriseChannelPaged
-from .azure_bot_service_enums import (
+    from ._models import Bot
+    from ._models import BotChannel
+    from ._models import BotProperties
+    from ._models import Channel
+    from ._models import CheckNameAvailabilityRequestBody
+    from ._models import CheckNameAvailabilityResponseBody
+    from ._models import ConnectionItemName
+    from ._models import ConnectionSetting
+    from ._models import ConnectionSettingParameter
+    from ._models import ConnectionSettingProperties
+    from ._models import DirectLineChannel
+    from ._models import DirectLineChannelProperties
+    from ._models import DirectLineSite
+    from ._models import EmailChannel
+    from ._models import EmailChannelProperties
+    from ._models import EnterpriseChannel
+    from ._models import EnterpriseChannelCheckNameAvailabilityRequest
+    from ._models import EnterpriseChannelCheckNameAvailabilityResponse
+    from ._models import EnterpriseChannelNode
+    from ._models import EnterpriseChannelProperties
+    from ._models import Error, ErrorException
+    from ._models import ErrorBody
+    from ._models import FacebookChannel
+    from ._models import FacebookChannelProperties
+    from ._models import FacebookPage
+    from ._models import KikChannel
+    from ._models import KikChannelProperties
+    from ._models import MsTeamsChannel
+    from ._models import MsTeamsChannelProperties
+    from ._models import OperationDisplayInfo
+    from ._models import OperationEntity
+    from ._models import Resource
+    from ._models import ServiceProvider
+    from ._models import ServiceProviderParameter
+    from ._models import ServiceProviderProperties
+    from ._models import ServiceProviderResponseList
+    from ._models import Sku
+    from ._models import SkypeChannel
+    from ._models import SkypeChannelProperties
+    from ._models import SlackChannel
+    from ._models import SlackChannelProperties
+    from ._models import SmsChannel
+    from ._models import SmsChannelProperties
+    from ._models import TelegramChannel
+    from ._models import TelegramChannelProperties
+    from ._models import WebChatChannel
+    from ._models import WebChatChannelProperties
+    from ._models import WebChatSite
+from ._paged_models import BotChannelPaged
+from ._paged_models import BotPaged
+from ._paged_models import ConnectionSettingPaged
+from ._paged_models import EnterpriseChannelPaged
+from ._paged_models import OperationEntityPaged
+from ._azure_bot_service_enums import (
     SkuName,
     SkuTier,
     Kind,
@@ -122,54 +122,54 @@ from .azure_bot_service_enums import (
 )
 
 __all__ = [
-    'Sku',
-    'Resource',
-    'BotProperties',
     'Bot',
-    'Channel',
     'BotChannel',
-    'FacebookPage',
-    'FacebookChannelProperties',
-    'FacebookChannel',
-    'EmailChannelProperties',
-    'EmailChannel',
-    'MsTeamsChannelProperties',
-    'MsTeamsChannel',
-    'SkypeChannelProperties',
-    'SkypeChannel',
-    'KikChannelProperties',
-    'KikChannel',
-    'WebChatSite',
-    'WebChatChannelProperties',
-    'WebChatChannel',
-    'DirectLineSite',
-    'DirectLineChannelProperties',
-    'DirectLineChannel',
-    'TelegramChannelProperties',
-    'TelegramChannel',
-    'SmsChannelProperties',
-    'SmsChannel',
-    'SlackChannelProperties',
-    'SlackChannel',
-    'ConnectionItemName',
-    'ConnectionSettingParameter',
-    'ConnectionSettingProperties',
-    'ConnectionSetting',
-    'ServiceProviderParameter',
-    'ServiceProviderProperties',
-    'ServiceProvider',
-    'ServiceProviderResponseList',
-    'ErrorBody',
-    'Error', 'ErrorException',
-    'OperationDisplayInfo',
-    'OperationEntity',
+    'BotProperties',
+    'Channel',
     'CheckNameAvailabilityRequestBody',
     'CheckNameAvailabilityResponseBody',
+    'ConnectionItemName',
+    'ConnectionSetting',
+    'ConnectionSettingParameter',
+    'ConnectionSettingProperties',
+    'DirectLineChannel',
+    'DirectLineChannelProperties',
+    'DirectLineSite',
+    'EmailChannel',
+    'EmailChannelProperties',
+    'EnterpriseChannel',
     'EnterpriseChannelCheckNameAvailabilityRequest',
     'EnterpriseChannelCheckNameAvailabilityResponse',
     'EnterpriseChannelNode',
     'EnterpriseChannelProperties',
-    'EnterpriseChannel',
+    'Error', 'ErrorException',
+    'ErrorBody',
+    'FacebookChannel',
+    'FacebookChannelProperties',
+    'FacebookPage',
+    'KikChannel',
+    'KikChannelProperties',
+    'MsTeamsChannel',
+    'MsTeamsChannelProperties',
+    'OperationDisplayInfo',
+    'OperationEntity',
+    'Resource',
+    'ServiceProvider',
+    'ServiceProviderParameter',
+    'ServiceProviderProperties',
+    'ServiceProviderResponseList',
+    'Sku',
+    'SkypeChannel',
+    'SkypeChannelProperties',
+    'SlackChannel',
+    'SlackChannelProperties',
+    'SmsChannel',
+    'SmsChannelProperties',
+    'TelegramChannel',
+    'TelegramChannelProperties',
+    'WebChatChannel',
+    'WebChatChannelProperties',
+    'WebChatSite',
     'BotPaged',
     'BotChannelPaged',
     'OperationEntityPaged',

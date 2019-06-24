@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .bots_operations import BotsOperations
-from .channels_operations import ChannelsOperations
-from .operations import Operations
-from .bot_connection_operations import BotConnectionOperations
-from .enterprise_channels_operations import EnterpriseChannelsOperations
+from ._bots_operations import BotsOperations
+from ._channels_operations import ChannelsOperations
+from ._operations import Operations
+from ._bot_connection_operations import BotConnectionOperations
+from ._enterprise_channels_operations import EnterpriseChannelsOperations
 
 __all__ = [
     'BotsOperations',
