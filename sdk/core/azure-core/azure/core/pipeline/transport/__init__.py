@@ -35,6 +35,8 @@ __all__ = [
     'RequestsTransportResponse',
 ]
 
+#pylint: disable=unused-import
+
 try:
     from .base_async import AsyncHttpTransport, AsyncHttpResponse
     from .requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse

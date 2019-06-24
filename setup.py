@@ -13,37 +13,37 @@ import copy
 import sys
 import runpy
 
-if "travis_deploy" in sys.argv:
-    from build_package import travis_build_package
-    sys.exit(travis_build_package())
-
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
-packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
-
-# "install" is used by ReadTheDocs, do not install "nspkg"
+# pull in any packages that exist in the root directory
+packages = {('.', os.path.dirname(p)) for p in glob.glob('azure*/setup.py')}
+# Handle the SDK folder as well
+packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/setup.py')})
+# [(base_folder, package_name), ...] to {package_name: base_folder, ...}
+packages = {package_name: base_folder for (base_folder, package_name) in packages}
 
 # Extract nspkg and sort nspkg by number of "-"
-nspkg_packages = [p for p in packages if "nspkg" in p]
+nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Manually push meta-packages at the end, in reverse dependency order
 meta_package = ['azure-mgmt', 'azure']
 
-# So content packages are:
-content_package = [p for p in packages if p not in meta_package+nspkg_packages]
-# Move azure-common at the beginning
+# content packages are packages that are not meta nor nspkg
+content_package = sorted([p for p in packages.keys() if p not in meta_package+nspkg_packages])
+
+# Move azure-common at the beginning, it's important this goes first
 content_package.remove("azure-common")
 content_package.insert(0, "azure-common")
 
 # Package final:
 if "install" in sys.argv:
-    packages = content_package
+    packages_for_installation = content_package
 else:
-    packages = nspkg_packages + content_package + meta_package
+    packages_for_installation = nspkg_packages + content_package + meta_package
 
-for pkg_name in packages:
-    pkg_setup_folder = os.path.join(root_folder, pkg_name)
+for pkg_name in packages_for_installation:
+    pkg_setup_folder = os.path.join(root_folder, packages[pkg_name], pkg_name)
     pkg_setup_path = os.path.join(pkg_setup_folder, 'setup.py')
 
     try:

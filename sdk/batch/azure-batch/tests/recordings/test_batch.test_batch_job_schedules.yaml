@@ -1,0 +1,526 @@
+interactions:
+- request:
+    body: '{"id": "batch_schedule_fe140e2a", "schedule": {"startWindow": "PT1H", "recurrenceInterval":
+      "P1D"}, "jobSpecification": {"onAllTasksComplete": "terminatejob", "constraints":
+      {"maxTaskRetryCount": 2}, "poolInfo": {"poolId": "pool_id"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '235'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+    method: POST
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      etag:
+      - '0x8D6F0359D879316'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      location:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
+      request-id:
+      - a2c80b28-fbfb-4500-895e-0e37b9f14fcc
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+    method: GET
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D6F0359D879316\",\"lastModified\":\"2019-06-13T19:30:38.6344726Z\",\"creationTime\":\"2019-06-13T19:30:38.6344726Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T19:30:38.6344726Z\",\"schedule\":{\r\n
+        \       \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n      },\"jobSpecification\":{\r\n
+        \       \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
+        \         \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \       },\"poolInfo\":{\r\n          \"poolId\":\"pool_id\"\r\n        }\r\n
+        \     },\"executionInfo\":{\r\n        \"nextRunTime\":\"2019-06-14T19:30:38.6344726Z\",\"recentJob\":{\r\n
+        \         \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      request-id:
+      - ebbf8a0a-f6ac-4212-9d91-f41e03f298e7
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+    method: GET
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules/@Element\",\"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D6F0359D879316\",\"lastModified\":\"2019-06-13T19:30:38.6344726Z\",\"creationTime\":\"2019-06-13T19:30:38.6344726Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T19:30:38.6344726Z\",\"schedule\":{\r\n
+        \   \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n  },\"jobSpecification\":{\r\n
+        \   \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
+        \     \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \   },\"poolInfo\":{\r\n      \"poolId\":\"pool_id\"\r\n    }\r\n  },\"executionInfo\":{\r\n
+        \   \"nextRunTime\":\"2019-06-14T19:30:38.6344726Z\",\"recentJob\":{\r\n      \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
+        \   }\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      etag:
+      - '0x8D6F0359D879316'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      request-id:
+      - 48d0980d-1c93-4afd-97f6-32c028227210
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+    method: HEAD
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      etag:
+      - '0x8D6F0359D879316'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      request-id:
+      - 7b47a389-5416-4194-b80a-f3e8529dd94a
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: GET
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/jobs?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobs\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_schedule_fe140e2a:job-1\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"eTag\":\"0x8D6F0359D946451\",\"lastModified\":\"2019-06-13T19:30:38.7184721Z\",\"creationTime\":\"2019-06-13T19:30:38.7034775Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T19:30:38.7184721Z\",\"priority\":0,\"usesTaskDependencies\":false,\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \     },\"poolInfo\":{\r\n        \"poolId\":\"pool_id\"\r\n      },\"executionInfo\":{\r\n
+        \       \"startTime\":\"2019-06-13T19:30:38.7184721Z\",\"poolId\":\"pool_id\"\r\n
+        \     },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      request-id:
+      - c3f01573-3e44-470e-b5ce-49e5d4082779
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: POST
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      etag:
+      - '0x8D6F0359E05E628'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      request-id:
+      - 0a47c545-cdc4-4719-bf18-915489618105
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: POST
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:38 GMT
+      etag:
+      - '0x8D6F0359E19EE91'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      request-id:
+      - 5342024e-400d-4b74-ab6c-163c7bd18595
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"schedule": {"recurrenceInterval": "PT10H"}, "jobSpecification": {"poolInfo":
+      {"poolId": "pool_id"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: PUT
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      etag:
+      - '0x8D6F0359E328297'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      request-id:
+      - 2e5d0c0d-6d8d-4571-bf54-d019caec09ca
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"schedule": {"recurrenceInterval": "PT5H"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: PATCH
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      etag:
+      - '0x8D6F0359E4650AA'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      request-id:
+      - 1740a245-855d-4729-8517-8f60dc9eaa94
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+    method: POST
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      etag:
+      - '0x8D6F0359E5A63AD'
+      last-modified:
+      - Thu, 13 Jun 2019 19:30:40 GMT
+      request-id:
+      - 215094ad-9085-4d9f-a1d2-fe6c284806fc
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
+        azure-batch/7.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jun 2019 19:30:40 GMT
+    method: DELETE
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2019-06-01.9.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jun 2019 19:30:39 GMT
+      request-id:
+      - 9a31cd27-db0e-458f-b179-f37883566742
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+version: 1

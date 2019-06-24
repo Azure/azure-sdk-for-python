@@ -76,18 +76,19 @@ class FormRecognizerClient(SDKClient):
             self, source, custom_headers=None, raw=False, **operation_config):
         """Train Model.
 
-        The train request must include a source parameter that is either an
-        externally accessible Azure Storage blob container Uri (preferably a
-        Shared Access Signature Uri) or valid path to a data folder in a
-        locally mounted drive. When local paths are specified, they must follow
-        the Linux/Unix path format and be an absolute path rooted to the input
-        mount configuration
+        Create and train a custom model. The train request must include a
+        source parameter that is either an externally accessible Azure Storage
+        blob container Uri (preferably a Shared Access Signature Uri) or valid
+        path to a data folder in a locally mounted drive. When local paths are
+        specified, they must follow the Linux/Unix path format and be an
+        absolute path rooted to the input mount configuration
         setting value e.g., if '{Mounts:Input}' configuration setting value is
         '/input' then a valid source path would be '/input/contosodataset'. All
-        data to be trained are expected to be under the source. Models are
-        trained using documents that are of the following content type -
-        'application/pdf', 'image/jpeg' and 'image/png'."
-        Other content is ignored when training a model.
+        data to be trained is expected to be directly under the source folder.
+        Subfolders are not supported. Models are trained using documents that
+        are of the following content type - 'application/pdf', 'image/jpeg' and
+        'image/png'."
+        Other type of content is ignored.
 
         :param source: Get or set source path.
         :type source: str
@@ -147,8 +148,8 @@ class FormRecognizerClient(SDKClient):
             self, id, custom_headers=None, raw=False, **operation_config):
         """Get Keys.
 
-        Use the API to retrieve the keys that were
-        extracted by the specified model.
+        Retrieve the keys that were
+        extracted during the training of the specified model.
 
         :param id: Model identifier.
         :type id: str
@@ -203,7 +204,7 @@ class FormRecognizerClient(SDKClient):
             self, custom_headers=None, raw=False, **operation_config):
         """Get Models.
 
-        Get information about all trained models.
+        Get information about all trained custom models.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -356,10 +357,9 @@ class FormRecognizerClient(SDKClient):
             self, id, form_stream, keys=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Form.
 
-        The document to analyze must be of a supported content type -
-        'application/pdf', 'image/jpeg' or 'image/png'. The response contains
-        not just the extracted information of the analyzed form but also
-        information about content that was not extracted along with a reason.
+        Extract key-value pairs from a given document. The input document must
+        be of one of the supported content types - 'application/pdf',
+        'image/jpeg' or 'image/png'. A success response is returned in JSON.
 
         :param id: Model Identifier to analyze the document with.
         :type id: str

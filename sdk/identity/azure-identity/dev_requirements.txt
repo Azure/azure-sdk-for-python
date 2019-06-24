@@ -1,0 +1,5 @@
+-e ../../core/azure-core
+typing_extensions>=3.7.2
+httpretty
+pytest
+pytest-asyncio;python_full_version>="3.5.2"

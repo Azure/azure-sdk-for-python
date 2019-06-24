@@ -25,10 +25,10 @@
 # --------------------------------------------------------------------------
 
 from .base import HTTPPolicy, SansIOHTTPPolicy
-from .credentials import CredentialsPolicy
+from .authentication import BearerTokenCredentialPolicy
+from .custom_hook import CustomHookPolicy
 from .redirect import RedirectPolicy
 from .retry import RetryPolicy
-from .custom_hook import CustomHookPolicy
 from .universal import (
     HeadersPolicy,
     UserAgentPolicy,
@@ -40,7 +40,7 @@ from .universal import (
 __all__ = [
     'HTTPPolicy',
     'SansIOHTTPPolicy',
-    'CredentialsPolicy',
+    'BearerTokenCredentialPolicy',
     'HeadersPolicy',
     'UserAgentPolicy',
     'NetworkTraceLoggingPolicy',
@@ -51,14 +51,16 @@ __all__ = [
     'CustomHookPolicy'
 ]
 
+#pylint: disable=unused-import
+
 try:
     from .base_async import AsyncHTTPPolicy
-    from .credentials_async import AsyncCredentialsPolicy
+    from .authentication_async import AsyncBearerTokenCredentialPolicy
     from .redirect_async import AsyncRedirectPolicy
     from .retry_async import AsyncRetryPolicy
     __all__.extend([
         'AsyncHTTPPolicy',
-        'AsyncCredentialsPolicy',
+        'AsyncBearerTokenCredentialPolicy',
         'AsyncRedirectPolicy',
         'AsyncRetryPolicy'
     ])

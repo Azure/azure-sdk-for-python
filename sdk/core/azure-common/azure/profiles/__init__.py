@@ -158,7 +158,10 @@ class KnownProfiles(Enum):
                 None: "2015-07-01"
             },
             "azure.mgmt.compute.ComputeManagementClient": {
-                None: "2017-12-01"
+                None: "2017-12-01",
+                'resource_skus': '2017-09-01',
+                'disks': '2017-03-30',
+                'snapshots': '2017-03-30'
             },
             "azure.mgmt.keyvault.KeyVaultManagementClient":{
                 None: "2016-10-01"
