@@ -365,7 +365,7 @@ class EventHubConsumer(object):
                     timeout=timeout_ms)
                 for message in message_batch:
                     event_data = EventData(message=message)
-                    self.offset = event_data.offset
+                    self.offset = EventPosition(event_data.offset)
                     data_batch.append(event_data)
                 return data_batch
             except errors.AuthenticationException as auth_error:
