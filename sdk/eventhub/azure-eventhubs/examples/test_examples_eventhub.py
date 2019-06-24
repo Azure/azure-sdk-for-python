@@ -100,7 +100,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
             for event_data in received:
                 logger.info("Message received:{}".format(event_data.body_as_str()))
         # [END eventhub_client_sync_receive]
-            assert len(received) == 1
+            assert len(received) > 0
             assert received[0].body_as_str() == "A single event"
             assert list(received[-1].body)[0] == b"A single event"
     finally:
