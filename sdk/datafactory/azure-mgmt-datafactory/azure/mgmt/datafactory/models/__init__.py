@@ -239,6 +239,13 @@ try:
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
+    from .sybase_table_dataset_py3 import SybaseTableDataset
+    from .sap_bw_cube_dataset_py3 import SapBwCubeDataset
+    from .postgre_sql_table_dataset_py3 import PostgreSqlTableDataset
+    from .my_sql_table_dataset_py3 import MySqlTableDataset
+    from .odbc_table_dataset_py3 import OdbcTableDataset
+    from .db2_table_dataset_py3 import Db2TableDataset
+    from .amazon_redshift_table_dataset_py3 import AmazonRedshiftTableDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
     from .teradata_table_dataset_py3 import TeradataTableDataset
@@ -292,6 +299,7 @@ try:
     from .responsys_source_py3 import ResponsysSource
     from .salesforce_marketing_cloud_source_py3 import SalesforceMarketingCloudSource
     from .vertica_source_py3 import VerticaSource
+    from .netezza_partition_settings_py3 import NetezzaPartitionSettings
     from .netezza_source_py3 import NetezzaSource
     from .zoho_source_py3 import ZohoSource
     from .xero_source_py3 import XeroSource
@@ -351,6 +359,13 @@ try:
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
+    from .odata_source_py3 import ODataSource
+    from .sybase_source_py3 import SybaseSource
+    from .sap_bw_source_py3 import SapBwSource
+    from .postgre_sql_source_py3 import PostgreSqlSource
+    from .my_sql_source_py3 import MySqlSource
+    from .odbc_source_py3 import OdbcSource
+    from .db2_source_py3 import Db2Source
     from .relational_source_py3 import RelationalSource
     from .dynamics_source_py3 import DynamicsSource
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
@@ -696,6 +711,13 @@ except (SyntaxError, ImportError):
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
+    from .sybase_table_dataset import SybaseTableDataset
+    from .sap_bw_cube_dataset import SapBwCubeDataset
+    from .postgre_sql_table_dataset import PostgreSqlTableDataset
+    from .my_sql_table_dataset import MySqlTableDataset
+    from .odbc_table_dataset import OdbcTableDataset
+    from .db2_table_dataset import Db2TableDataset
+    from .amazon_redshift_table_dataset import AmazonRedshiftTableDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
     from .teradata_table_dataset import TeradataTableDataset
@@ -749,6 +771,7 @@ except (SyntaxError, ImportError):
     from .responsys_source import ResponsysSource
     from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
     from .vertica_source import VerticaSource
+    from .netezza_partition_settings import NetezzaPartitionSettings
     from .netezza_source import NetezzaSource
     from .zoho_source import ZohoSource
     from .xero_source import XeroSource
@@ -808,6 +831,13 @@ except (SyntaxError, ImportError):
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
+    from .odata_source import ODataSource
+    from .sybase_source import SybaseSource
+    from .sap_bw_source import SapBwSource
+    from .postgre_sql_source import PostgreSqlSource
+    from .my_sql_source import MySqlSource
+    from .odbc_source import OdbcSource
+    from .db2_source import Db2Source
     from .relational_source import RelationalSource
     from .dynamics_source import DynamicsSource
     from .document_db_collection_source import DocumentDbCollectionSource
@@ -1221,6 +1251,13 @@ __all__ = [
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
     'SalesforceObjectDataset',
+    'SybaseTableDataset',
+    'SapBwCubeDataset',
+    'PostgreSqlTableDataset',
+    'MySqlTableDataset',
+    'OdbcTableDataset',
+    'Db2TableDataset',
+    'AmazonRedshiftTableDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
     'TeradataTableDataset',
@@ -1274,6 +1311,7 @@ __all__ = [
     'ResponsysSource',
     'SalesforceMarketingCloudSource',
     'VerticaSource',
+    'NetezzaPartitionSettings',
     'NetezzaSource',
     'ZohoSource',
     'XeroSource',
@@ -1333,6 +1371,13 @@ __all__ = [
     'SapEccSource',
     'SapCloudForCustomerSource',
     'SalesforceSource',
+    'ODataSource',
+    'SybaseSource',
+    'SapBwSource',
+    'PostgreSqlSource',
+    'MySqlSource',
+    'OdbcSource',
+    'Db2Source',
     'RelationalSource',
     'DynamicsSource',
     'DocumentDbCollectionSource',
