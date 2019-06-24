@@ -35,6 +35,11 @@ class Status(str, Enum):
     failure = "Failure"
 
 
+class QuotaUnit(str, Enum):
+
+    count = "Count"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"

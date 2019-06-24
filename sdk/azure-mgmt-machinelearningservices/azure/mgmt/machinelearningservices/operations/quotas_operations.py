@@ -12,8 +12,6 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -39,9 +37,27 @@ class QuotasOperations(object):
 
         self.config = config
 
-
-    def _update_initial(
+    def update(
             self, location, value=None, custom_headers=None, raw=False, **operation_config):
+        """Update quota for each VM family in workspace.
+
+        :param location: The location for update quota is queried.
+        :type location: str
+        :param value: The list for update quota.
+        :type value:
+         list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpdateWorkspaceQuotasResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
         parameters = models.QuotaUpdateParameters(value=value)
 
         # Construct URL
@@ -87,55 +103,6 @@ class QuotasOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def update(
-            self, location, value=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update quota for each VM family in workspace.
-
-        :param location: The location for update quota is queried.
-        :type location: str
-        :param value: The list for update quota.
-        :type value:
-         list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         UpdateWorkspaceQuotasResult or
-         ClientRawResponse<UpdateWorkspaceQuotasResult> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult]]
-        :raises:
-         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
-        """
-        raw_result = self._update_initial(
-            location=location,
-            value=value,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('UpdateWorkspaceQuotasResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/updateQuotas'}
 
     def list(

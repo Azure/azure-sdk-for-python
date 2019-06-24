@@ -24,17 +24,18 @@ class ResourceQuota(Model):
     :vartype type: str
     :ivar name: Name of the resource.
     :vartype name: ~azure.mgmt.machinelearningservices.models.ResourceName
-    :ivar quota: Quota. Quota assigned to the resource.
-    :vartype quota: int
-    :ivar unit: The units used to represent the quota.
-    :vartype unit: str
+    :ivar limit: Limit. The maximum permitted quota of the resource.
+    :vartype limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'quota': {'readonly': True},
+        'limit': {'readonly': True},
         'unit': {'readonly': True},
     }
 
@@ -42,7 +43,7 @@ class ResourceQuota(Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'ResourceName'},
-        'quota': {'key': 'quota', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'long'},
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
@@ -51,5 +52,5 @@ class ResourceQuota(Model):
         self.id = None
         self.type = None
         self.name = None
-        self.quota = None
+        self.limit = None
         self.unit = None

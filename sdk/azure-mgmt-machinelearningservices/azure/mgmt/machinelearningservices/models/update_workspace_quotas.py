@@ -22,8 +22,8 @@ class UpdateWorkspaceQuotas(Model):
     :vartype id: str
     :ivar type: Specifies the resource type.
     :vartype type: str
-    :param quota: Quota. The quota of the resource.
-    :type quota: int
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
     :param status: Update Workspace Quota Status. Status of update workspace
      quota. Possible values include: 'Undefined', 'Success', 'Failure'
     :type status: str or ~azure.mgmt.machinelearningservices.models.Status
@@ -37,7 +37,7 @@ class UpdateWorkspaceQuotas(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'quota': {'key': 'quota', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'long'},
         'status': {'key': 'status', 'type': 'str'},
     }
 
@@ -45,5 +45,5 @@ class UpdateWorkspaceQuotas(Model):
         super(UpdateWorkspaceQuotas, self).__init__(**kwargs)
         self.id = None
         self.type = None
-        self.quota = kwargs.get('quota', None)
+        self.limit = kwargs.get('limit', None)
         self.status = kwargs.get('status', None)

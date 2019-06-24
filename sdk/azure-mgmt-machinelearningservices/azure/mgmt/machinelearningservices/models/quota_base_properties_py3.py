@@ -19,18 +19,18 @@ class QuotaBaseProperties(Model):
     :type id: str
     :param type: Specifies the resource type.
     :type type: str
-    :param quota: Quota. The workspace level quota.
-    :type quota: int
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'quota': {'key': 'quota', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'long'},
     }
 
-    def __init__(self, *, id: str=None, type: str=None, quota: int=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, type: str=None, limit: int=None, **kwargs) -> None:
         super(QuotaBaseProperties, self).__init__(**kwargs)
         self.id = id
         self.type = type
-        self.quota = quota
+        self.limit = limit
