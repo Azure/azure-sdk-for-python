@@ -3,7 +3,7 @@ import os
 import pytz
 import asyncio
 from azure.security.keyvault.aio import SecretClient
-from azure.identity import AsyncDefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ async def run_sample():
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
     VAULT_URL = os.environ["VAULT_URL"]
-    credential = AsyncDefaultAzureCredential()
+    credential = DefaultAzureCredential()
     client = SecretClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a secret holding bank account credentials valid for 1 year.

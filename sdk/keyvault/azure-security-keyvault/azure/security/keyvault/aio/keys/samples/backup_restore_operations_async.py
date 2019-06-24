@@ -1,7 +1,7 @@
 import asyncio
 import os
 from azure.security.keyvault.aio import KeyClient
-from azure.identity import AsyncDefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
  # ----------------------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ async def run_sample():
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
     VAULT_URL = os.environ["VAULT_URL"]
-    credential = AsyncDefaultAzureCredential()
+    credential = DefaultAzureCredential()
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a Key of type RSA.
