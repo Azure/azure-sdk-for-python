@@ -19,7 +19,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 else:
-    sys.path.append(os.path.join(os.path.dirname(__file__), "tests"))
     from tests.asynctests.mock_event_processor import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost
     from azure.eventprocessorhost import EventHubPartitionPump
