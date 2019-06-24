@@ -74,7 +74,7 @@ def pump(receivers, duration):
                                 pid,
                                 total,
                                 batch[-1].sequence_number,
-                                batch[-1].offset.value))
+                                batch[-1].offset))
             print("Total received {}".format(total))
     except Exception as e:
         print("EventHubConsumer failed: {}".format(e))
