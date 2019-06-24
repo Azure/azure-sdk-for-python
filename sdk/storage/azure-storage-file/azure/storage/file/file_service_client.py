@@ -40,7 +40,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the File service account. This could be either the
-        primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:

@@ -10,15 +10,13 @@ from datetime import datetime, timedelta
 import requests
 from azure.core.exceptions import (
     HttpResponseError,
-    ResourceModifiedError,
     ResourceNotFoundError,
-)
+    ResourceExistsError)
 
-from azure.storage.file import (
-    FileServiceClient,
-    SharePermissions,
-    AccessPolicy,
-)
+from azure.storage.file.file_service_client import FileServiceClient
+from azure.storage.file.directory_client import DirectoryClient
+from azure.storage.file.file_client import FileClient
+from azure.storage.file.share_client import ShareClient
 
 from tests.testcase import (
     StorageTestCase,
@@ -37,14 +35,16 @@ class StorageShareTest(StorageTestCase):
     def setUp(self):
         super(StorageShareTest, self).setUp()
 
-        self.fs = self._create_storage_service(FileService, self.settings)
+        file_url = self._get_file_account_url()
+        credentials = self._get_shared_key_credential()
+        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def tearDown(self):
         if not self.is_playback():
             for share_name in self.test_shares:
                 try:
-                    self.fs.delete_share(share_name, delete_snapshots='include')
+                    self.fsc.delete_share(share_name, delete_snapshots=DeleteSnapshot.Include)
                 except:
                     pass
         return super(StorageShareTest, self).tearDown()
@@ -52,13 +52,14 @@ class StorageShareTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
-        self.test_shares.append(share_name)
-        return share_name
+        share = self.fsc.get_share_client(share_name)
+        self.test_shares.append(share)
+        return share
 
     def _create_share(self, prefix=TEST_SHARE_PREFIX):
-        share_name = self._get_share_reference(prefix)
-        self.fs.create_share(share_name)
-        return share_name
+        share_client = self._get_share_reference(prefix)
+        share = share_client.create_share()
+        return share
 
     # --Test cases for shares -----------------------------------------
     @record
@@ -67,7 +68,7 @@ class StorageShareTest(StorageTestCase):
         share_name = self._get_share_reference()
 
         # Act
-        created = self.fs.create_share(share_name)
+        created = share_name.create_share()
 
         # Assert
         self.assertTrue(created)
@@ -78,15 +79,14 @@ class StorageShareTest(StorageTestCase):
         share_name = self._get_share_reference()
 
         # Act
-        created = self.fs.create_share(share_name)
-        snapshot = self.fs.snapshot_share(share_name)
-
+        created = share_name.create_share()
+        snapshot = share_name.create_snapshot()
+        print(snapshot)
         # Assert
         self.assertTrue(created)
-        self.assertIsNotNone(snapshot.snapshot)
-        self.assertIsNotNone(snapshot.name)
-        self.assertIsNotNone(snapshot.properties.etag)
-        self.assertIsNotNone(snapshot.properties.last_modified)
+        self.assertIsNotNone(snapshot['snapshot'])
+        self.assertIsNotNone(snapshot['etag'])
+        self.assertIsNotNone(snapshot['last_modified'])
 
     @record
     def test_create_snapshot_with_metadata(self):
@@ -96,34 +96,27 @@ class StorageShareTest(StorageTestCase):
         metadata2 = {"test100": "foo100", "test200": "bar200"}
 
         # Act
-        created = self.fs.create_share(share_name, metadata=metadata)
-        snapshot = self.fs.snapshot_share(share_name, metadata=metadata2)
-        share_metadata = self.fs.get_share_metadata(share_name)
-        snapshot_metadata = self.fs.get_share_metadata(share_name, snapshot=snapshot.snapshot)
-
+        created = share_name.create_share(metadata=metadata)
+        snapshot = share_name.create_snapshot(metadata=metadata2)
         # Assert
         self.assertTrue(created)
-        self.assertIsNotNone(snapshot.snapshot)
-        self.assertIsNotNone(snapshot.name)
-        self.assertIsNotNone(snapshot.properties.etag)
-        self.assertIsNotNone(snapshot.properties.last_modified)
-        self.assertDictEqual(share_metadata, metadata)
-        self.assertDictEqual(snapshot_metadata, metadata2)
+        self.assertIsNotNone(snapshot['snapshot'])
+        self.assertIsNotNone(snapshot['etag'])
+        self.assertIsNotNone(snapshot['last_modified'])
 
     @record
     def test_delete_share_with_snapshots(self):
         # Arrange
         share_name = self._get_share_reference()
-        self.fs.create_share(share_name)
-        snapshot = self.fs.snapshot_share(share_name)
+        share_name.create_share()
+        snapshot = share_name.create_snapshot()
 
         # Act
-        with self.assertRaises(AzureHttpError,):
-            self.fs.delete_share(share_name)
+        with self.assertRaises(HttpResponseError):
+            share_name.delete_share()
 
-        self.fs.delete_share(share_name, delete_snapshots='include')
-        self.assertFalse(self.fs.exists(share_name))
-        self.assertFalse(self.fs.exists(share_name, snapshot=snapshot.snapshot))
+        deleted = share_name.delete_share(delete_snapshots=True)
+        self.assertIsNone(deleted)
 
     @record
     def test_delete_snapshot(self):
