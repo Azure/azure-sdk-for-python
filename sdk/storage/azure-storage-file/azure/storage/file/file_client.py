@@ -66,12 +66,17 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a share and file name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(file_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
         path_share, path_file = "", ""
         path_snapshot = None
         if parsed_url.path:
             path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
         try:
             self.snapshot = snapshot.snapshot
         except AttributeError:

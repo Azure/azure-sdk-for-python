@@ -83,8 +83,13 @@ class FileServiceClient(StorageAccountHostsMixin):
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
         _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(FileServiceClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)

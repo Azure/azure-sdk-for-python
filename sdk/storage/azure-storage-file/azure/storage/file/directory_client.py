@@ -64,11 +64,16 @@ class DirectoryClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(directory_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
         share, path_dir = "", ""
         if parsed_url.path:
             share, _, path_dir = parsed_url.path.lstrip('/').partition('/')
         _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
         try:
             self.share_name = share.name
         except AttributeError:
