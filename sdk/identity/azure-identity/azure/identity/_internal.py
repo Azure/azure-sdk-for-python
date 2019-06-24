@@ -24,6 +24,8 @@ from .constants import Endpoints, EnvironmentVariables
 
 
 class _ManagedIdentityBase(object):
+    """Sans I/O base for managed identity credentials"""
+
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
@@ -34,6 +36,11 @@ class _ManagedIdentityBase(object):
     @staticmethod
     def create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
+        """
+        Build a default configuration for the credential's HTTP pipeline.
+
+        :rtype: :class:`azure.core.configuration`
+        """
         timeout = kwargs.pop("connection_timeout", 2)
         config = Configuration(connection_timeout=timeout, **kwargs)
 
@@ -61,7 +68,12 @@ class _ManagedIdentityBase(object):
 
 
 class ImdsCredential(_ManagedIdentityBase):
-    """Authenticates with a managed identity via the IMDS endpoint"""
+    """
+    Authenticates with a managed identity via the IMDS endpoint.
+
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
 
     def __init__(self, config=None, **kwargs):
         # type: (Optional[Configuration], Any) -> None
@@ -70,6 +82,13 @@ class ImdsCredential(_ManagedIdentityBase):
 
     def get_token(self, *scopes):
         # type: (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (missing a required header),
@@ -103,7 +122,12 @@ class ImdsCredential(_ManagedIdentityBase):
 
 
 class MsiCredential(_ManagedIdentityBase):
-    """Authenticates via the MSI endpoint in App Service or Cloud Shell"""
+    """
+    Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
 
     def __init__(self, config=None, **kwargs):
         # type: (Optional[Configuration], Mapping[str, Any]) -> None
@@ -116,6 +140,14 @@ class MsiCredential(_ManagedIdentityBase):
 
     def get_token(self, *scopes):
         # type: (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+
         if not self._endpoint_available:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")
 

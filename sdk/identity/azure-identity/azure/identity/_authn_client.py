@@ -112,7 +112,17 @@ class AuthnClientBase(object):
 
 
 class AuthnClient(AuthnClientBase):
-    """Synchronous authentication client"""
+    """
+    Synchronous authentication client.
+
+    :param str auth_url:
+    :param config: Optional configuration for the HTTP pipeline.
+    :type config: :class:`azure.core.configuration`
+    :param policies: Optional policies for the HTTP pipeline.
+    :type policies:
+    :param transport: Optional HTTP transport.
+    :type transport:
+    """
 
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
