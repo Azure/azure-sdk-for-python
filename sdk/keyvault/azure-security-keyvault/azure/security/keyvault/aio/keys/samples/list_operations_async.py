@@ -62,9 +62,9 @@ async def run_sample():
 
         # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure it reflects the new key size.
         # Calling create_rsa_key on an existing key creates a new version of the key in the Key Vault with the new key size.
-        updated_key = await client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
+        new_key = await client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
         print(
-            "New version was created for Key with name '{0}' with the updated size.".format(updated_key.name)
+            "New version was created for Key with name '{0}' with the updated size.".format(new_key.name)
         )
 
          # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.
