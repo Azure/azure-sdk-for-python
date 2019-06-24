@@ -13,6 +13,8 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
+import six
+
 from .models import DirectoryPropertiesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
@@ -38,20 +40,19 @@ class FileClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, file_url,  # type: str
-            share_name=None,  # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
+            share=None,  # type: Optional[Union[str, ShareProperties]]
+            file_path=None,  # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> FileClient
         """ Creates a new FileClient. This client represents interaction with a specific
         file, although that file may not yet exist.
         :param str file_url: The full URI to the file.
-        :param share_name: The share with which to interact. If specified, this value will override
+        :param share: The share with which to interact. If specified, this value will override
          a share value specified in the share URL.
-        :type share_name: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.models.ShareProperties
         :param credentials:
         :param configuration: A optional pipeline configuration.
         """
@@ -61,45 +62,66 @@ class FileClient(StorageAccountHostsMixin):
         except AttributeError:
             raise ValueError("File URL must be a string.")
         parsed_url = urlparse(file_url.rstrip('/'))
-        if not parsed_url.path and not (share_name and directory_path):
-            raise ValueError("Please specify a directory_path and share_name.")
+        if not parsed_url.path and not (share and file_path):
+            raise ValueError("Please specify a share and file name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(file_url))
 
-        path_share = ""
+        path_share, path_file = "", ""
+        path_snapshot = None
         if parsed_url.path:
             path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
-        _, sas_token = parse_query(parsed_url.query)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+        try:
+            self.snapshot = snapshot.snapshot
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot']
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
 
         try:
-            self.share_name = share_name.name
+            self.share_name = share.name
         except AttributeError:
-            self.share_name = share_name or unquote(path_share)
-        self.file_name = unquote(path_file.split('/')[-1]) or ""
-        self.directory_name = unquote(path_file.split('/')[-2]) if directory_path else ""
+            self.share_name = share or unquote(path_share)
+        self.file_path = file_path or path_file
+
+        split_path = self.file_path.split('/')
+        self.file_name = unquote(split_path[-1])
+        self.directory_path = unquote("/".join(split_path[:-1]))
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(FileClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(FileClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-    
+
+    def _format_url(self, hostname):
+        share_name = self.share_name
+        if isinstance(share_name, six.text_type):
+            share_name = share_name.encode('UTF-8')
+        return "{}://{}/{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(share_name),
+            quote(self.file_path, safe='~'),
+            self._query_str)
+
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share_name=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
-            file_name=None, # type: Optional[str]
+            share=None, # type: Optional[Union[str, ShareProperties]]
+            file_path=None, # type: Optional[str]
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs # type: Any
         ):
         # type: (...) -> FileClient
         """
         Create FileClient from a Connection String.
         """
-        account_url, credential = parse_connection_str(conn_str, credential)
-
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, share_name=share_name, directory_path=directory_path,
-            credential=credential, configuration=configuration, **kwargs)
+            account_url, share=share, file_path=file_path, credential=credential, **kwargs)
+    
 
     def create_file(
             self, size=None, # type: Optional[int]

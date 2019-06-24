@@ -8,20 +8,16 @@
 import unittest
 from datetime import datetime, timedelta
 import requests
-from azure.common import (
-    AzureHttpError,
-    AzureConflictHttpError,
-    AzureMissingResourceHttpError,
-    AzureException,
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
 )
 
-from azure.storage.common import (
-    AccessPolicy,
-)
 from azure.storage.file import (
-    FileService,
+    FileServiceClient,
     SharePermissions,
-    DeleteSnapshot,
+    AccessPolicy,
 )
 
 from tests.testcase import (
@@ -48,7 +44,7 @@ class StorageShareTest(StorageTestCase):
         if not self.is_playback():
             for share_name in self.test_shares:
                 try:
-                    self.fs.delete_share(share_name, delete_snapshots=DeleteSnapshot.Include)
+                    self.fs.delete_share(share_name, delete_snapshots='include')
                 except:
                     pass
         return super(StorageShareTest, self).tearDown()
@@ -125,7 +121,7 @@ class StorageShareTest(StorageTestCase):
         with self.assertRaises(AzureHttpError,):
             self.fs.delete_share(share_name)
 
-        self.fs.delete_share(share_name, delete_snapshots=DeleteSnapshot.Include)
+        self.fs.delete_share(share_name, delete_snapshots='include')
         self.assertFalse(self.fs.exists(share_name))
         self.assertFalse(self.fs.exists(share_name, snapshot=snapshot.snapshot))
 

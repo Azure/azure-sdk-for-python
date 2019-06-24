@@ -11,22 +11,16 @@ import unittest
 from datetime import datetime, timedelta
 
 import requests
-from azure.common import (
-    AzureHttpError,
-    AzureMissingResourceHttpError,
-)
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
-from azure.storage.common import (
+from azure.storage.file import (
+    FileClient,
+    FileServiceClient,
+    ContentSettings,
+    FilePermissions,
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-)
-from azure.storage.file import (
-    File,
-    FileService,
-    ContentSettings,
-    FilePermissions,
-    DeleteSnapshot,
 )
 from tests.testcase import (
     StorageTestCase,
@@ -69,13 +63,13 @@ class StorageFileTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.fs.delete_share(self.share_name, delete_snapshots=DeleteSnapshot.Include)
+                self.fs.delete_share(self.share_name, delete_snapshots='include')
             except:
                 pass
 
             if self.remote_share_name:
                 try:
-                    self.fs2.delete_share(self.remote_share_name, delete_snapshots=DeleteSnapshot.Include)
+                    self.fs2.delete_share(self.remote_share_name, delete_snapshots='include')
                 except:
                     pass
 

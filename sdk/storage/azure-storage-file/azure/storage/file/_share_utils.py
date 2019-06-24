@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .models import ShareProperties, DirectoryProperties, FileProperty
+from .models import ShareProperties, DirectoryProperties, FileProperties
 from ._shared.utils import return_response_headers
 from ._upload_chunking import _upload_file_chunks
 from ._generated.models import StorageErrorException
@@ -33,7 +33,7 @@ def deserialize_directory_properties(response, obj, headers):
 
 def deserialize_file_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
-    file_properties = FileProperty(
+    file_properties = FileProperties(
         metadata=metadata,
         **headers
     )

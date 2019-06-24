@@ -9,12 +9,11 @@ import base64
 import os
 import unittest
 
-from azure.common import AzureHttpError
+from azure.core.exceptions import HttpResponseError
 
 from azure.storage.file import (
-    File,
-    FileService,
-    DeleteSnapshot,
+    FileClient,
+    FileServiceClient,
 )
 from tests.testcase import (
     StorageTestCase,
@@ -57,7 +56,7 @@ class StorageGetFileTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.fs.delete_share(self.share_name, delete_snapshots=DeleteSnapshot.Include)
+                self.fs.delete_share(self.share_name, delete_snapshots='include')
             except:
                 pass
 

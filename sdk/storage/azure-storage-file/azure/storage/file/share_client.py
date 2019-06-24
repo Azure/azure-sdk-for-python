@@ -10,6 +10,8 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
+import six
+
 from .directory_client import DirectoryClient
 
 from ._generated import AzureFileStorage
@@ -34,10 +36,9 @@ class ShareClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, share_url,  # type: str
-            share_name=None,  # type: Optional[Union[str, ShareProperties]]
+            share=None,  # type: Optional[Union[str, ShareProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> ShareClient
@@ -48,8 +49,6 @@ class ShareClient(StorageAccountHostsMixin):
          a share value specified in the share URL.
         :type share_name: str or ~azure.storage.file.models.ShareProperties
         :param credential:
-        :param configuration: A optional pipeline configuration.
-         This can be retrieved with :func:`ShareClient.create_configuration()`
         """
         try:
             if not share_url.lower().startswith('http'):
@@ -57,7 +56,7 @@ class ShareClient(StorageAccountHostsMixin):
         except AttributeError:
             raise ValueError("Share URL must be a string.")
         parsed_url = urlparse(share_url.rstrip('/'))
-        if not parsed_url.path and not (share_name):
+        if not parsed_url.path and not share:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(share_url))
@@ -65,9 +64,8 @@ class ShareClient(StorageAccountHostsMixin):
         path_share = ""
         path_snapshot = None
         if parsed_url.path:
-            path_share, _, _ = parsed_url.path.lstrip('/').partition('/')
+            path_share = parsed_url.path.lstrip('/').partition('/')[0]
         path_snapshot, sas_token = parse_query(parsed_url.query)
-
         try:
             self.snapshot = snapshot.snapshot
         except AttributeError:
@@ -76,29 +74,40 @@ class ShareClient(StorageAccountHostsMixin):
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
         try:
-            self.share_name = share_name
+            self.share_name = share.name
         except AttributeError:
-            self.share_name = share_name or unquote(path_share)
+            self.share_name = share or unquote(path_share)
         self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
-        super(ShareClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(ShareClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    def _format_url(self, hostname):
+        share_name = self.share_name
+        if isinstance(share_name, six.text_type):
+            share_name = share_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(share_name),
+            self._query_str)
 
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share_name, # type: Union[str, ShareProperties]
+            share, # type: Union[str, ShareProperties]
+            snapshot=None,  # type: Optional[str]
             credential=None, # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs # type: Any
         ):
         # type: (...) -> ShareClient
         """
         Create ShareClient from a Connection String.
         """
-        account_url, credential = parse_connection_str(conn_str, credential)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
         return cls(
-            share_url=account_url, share_name=share_name, credential=credential,
-            configuration=configuration, **kwargs)
+            account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
     def get_directory_client(self, directory_name=""):
         """Get a client to interact with the specified directory.

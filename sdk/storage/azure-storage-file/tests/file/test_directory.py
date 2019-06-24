@@ -7,14 +7,10 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from azure.common import (
-    AzureConflictHttpError,
-    AzureMissingResourceHttpError,
-)
+from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError
 
 from azure.storage.file import (
-    FileService,
-    DeleteSnapshot,
+    FileServiceClient,
 )
 from tests.testcase import (
     StorageTestCase,
@@ -39,7 +35,7 @@ class StorageDirectoryTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.fs.delete_share(self.share_name, delete_snapshots=DeleteSnapshot.Include)
+                self.fs.delete_share(self.share_name, delete_snapshots='include')
             except:
                 pass
 
