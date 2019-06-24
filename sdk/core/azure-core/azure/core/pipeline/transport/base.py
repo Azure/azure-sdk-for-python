@@ -358,13 +358,13 @@ class PipelineClientBase(object):
 
         :param str url_template: The request URL to be formatted if necessary.
         """
-        url = PipelineClientBase._format_url_section(url_template, **kwargs)
+        url = self._format_url_section(url_template, **kwargs)
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip('/')
                 base = self._base_url.format(**kwargs).rstrip('/')
-                url = PipelineClientBase._urljoin(base, url)
+                url = self._urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
         return url
