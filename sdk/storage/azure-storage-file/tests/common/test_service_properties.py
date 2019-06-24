@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from azure.common import AzureHttpError
+from azure.core.exceptions import HttpResponseError
 
 from azure.storage.file import (
     FileServiceClient,
@@ -30,7 +30,9 @@ class ServicePropertiesTest(StorageTestCase):
     def setUp(self):
         super(ServicePropertiesTest, self).setUp()
 
-        self.fs = self._create_storage_service(FileService, self.settings)
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
+        self.fsc = FileServiceClient(url, credential=credential)
 
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
@@ -69,12 +71,12 @@ class ServicePropertiesTest(StorageTestCase):
         # Arrange
 
         # Act
-        resp = self.fs.set_file_service_properties(hour_metrics=Metrics(),
-                                                   minute_metrics=Metrics(), cors=list())
+        resp = self.fsc.set_service_properties(
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list())
 
         # Assert
         self.assertIsNone(resp)
-        props = self.fs.get_file_service_properties()
+        props = self.fsc.get_service_properties()
         self._assert_metrics_equal(props.hour_metrics, Metrics())
         self._assert_metrics_equal(props.minute_metrics, Metrics())
         self._assert_cors_equal(props.cors, list())
@@ -86,10 +88,10 @@ class ServicePropertiesTest(StorageTestCase):
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.fs.set_blob_service_properties(hour_metrics=hour_metrics)
+        self.fsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        received_props = self.fs.get_blob_service_properties()
+        received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     @record
@@ -99,10 +101,10 @@ class ServicePropertiesTest(StorageTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.fs.set_blob_service_properties(minute_metrics=minute_metrics)
+        self.fsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        received_props = self.fs.get_blob_service_properties()
+        received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     @record
@@ -115,16 +117,20 @@ class ServicePropertiesTest(StorageTestCase):
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = CorsRule(allowed_origins, allowed_methods, max_age_in_seconds,
-                              exposed_headers, allowed_headers)
+        cors_rule2 = CorsRule(
+            allowed_origins,
+            allowed_methods,
+            max_age_in_seconds=max_age_in_seconds,
+            exposed_headers=exposed_headers,
+            allowed_headers=allowed_headers)
 
         cors = [cors_rule1, cors_rule2]
 
         # Act
-        self.fs.set_blob_service_properties(cors=cors)
+        self.fsc.set_service_properties(cors=cors)
 
         # Assert
-        received_props = self.fs.get_blob_service_properties()
+        received_props = self.fsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
     # --Test cases for errors ---------------------------------------
@@ -143,20 +149,9 @@ class ServicePropertiesTest(StorageTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(AzureHttpError,
-                          self.fs.set_blob_service_properties,
-                          None, None, None, cors)
-
-    @record
-    def test_retention_too_long(self):
-        # Arrange
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=366))
-
-        # Assert
-        self.assertRaises(AzureHttpError,
-                          self.fs.set_blob_service_properties,
-                          None, None, minute_metrics)
+        self.assertRaises(HttpResponseError,
+                          self.fsc.set_service_properties,
+                          None, None, cors)
 
 
 # ------------------------------------------------------------------------------

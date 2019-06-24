@@ -191,8 +191,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def set_service_properties(
-            self, logging=None,  # type: Optional[Logging]
-            hour_metrics=None,  # type: Optional[Metrics]
+            self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
             timeout=None,  # type: Optional[int]
