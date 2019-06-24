@@ -41,6 +41,7 @@ except (SyntaxError, ImportError):
     from ._models import Tags
 from ._paged_models import HanaInstancePaged
 from ._paged_models import OperationPaged
+from ._paged_models import SapMonitorPaged
 from ._hana_management_client_enums import (
     HanaHardwareTypeNamesEnum,
     HanaInstanceSizeNamesEnum,
@@ -65,6 +66,7 @@ __all__ = [
     'Tags',
     'OperationPaged',
     'HanaInstancePaged',
+    'SapMonitorPaged',
     'HanaHardwareTypeNamesEnum',
     'HanaInstanceSizeNamesEnum',
     'HanaInstancePowerStateEnum',
