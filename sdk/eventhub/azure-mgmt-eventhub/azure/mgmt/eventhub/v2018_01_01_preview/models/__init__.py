@@ -10,51 +10,53 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .cluster_sku_py3 import ClusterSku
-    from .cluster_py3 import Cluster
-    from .available_clusters_list_py3 import AvailableClustersList
-    from .cluster_quota_configuration_properties_py3 import ClusterQuotaConfigurationProperties
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .eh_namespace_id_container_py3 import EHNamespaceIdContainer
-    from .eh_namespace_id_list_result_py3 import EHNamespaceIdListResult
-    from .sku_py3 import Sku
-    from .eh_namespace_py3 import EHNamespace
-    from .ip_filter_rule_py3 import IpFilterRule
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .subnet_py3 import Subnet
-    from .nw_rule_set_ip_rules_py3 import NWRuleSetIpRules
-    from .nw_rule_set_virtual_network_rules_py3 import NWRuleSetVirtualNetworkRules
-    from .network_rule_set_py3 import NetworkRuleSet
+    from ._models_py3 import AvailableCluster
+    from ._models_py3 import AvailableClustersList
+    from ._models_py3 import Cluster
+    from ._models_py3 import ClusterQuotaConfigurationProperties
+    from ._models_py3 import ClusterSku
+    from ._models_py3 import EHNamespace
+    from ._models_py3 import EHNamespaceIdContainer
+    from ._models_py3 import EHNamespaceIdListResult
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import IpFilterRule
+    from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import NWRuleSetIpRules
+    from ._models_py3 import NWRuleSetVirtualNetworkRules
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import Subnet
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .cluster_sku import ClusterSku
-    from .cluster import Cluster
-    from .available_clusters_list import AvailableClustersList
-    from .cluster_quota_configuration_properties import ClusterQuotaConfigurationProperties
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .eh_namespace_id_container import EHNamespaceIdContainer
-    from .eh_namespace_id_list_result import EHNamespaceIdListResult
-    from .sku import Sku
-    from .eh_namespace import EHNamespace
-    from .ip_filter_rule import IpFilterRule
-    from .virtual_network_rule import VirtualNetworkRule
-    from .subnet import Subnet
-    from .nw_rule_set_ip_rules import NWRuleSetIpRules
-    from .nw_rule_set_virtual_network_rules import NWRuleSetVirtualNetworkRules
-    from .network_rule_set import NetworkRuleSet
-from .operation_paged import OperationPaged
-from .cluster_paged import ClusterPaged
-from .eh_namespace_paged import EHNamespacePaged
-from .ip_filter_rule_paged import IpFilterRulePaged
-from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .event_hub2018_preview_management_client_enums import (
+    from ._models import AvailableCluster
+    from ._models import AvailableClustersList
+    from ._models import Cluster
+    from ._models import ClusterQuotaConfigurationProperties
+    from ._models import ClusterSku
+    from ._models import EHNamespace
+    from ._models import EHNamespaceIdContainer
+    from ._models import EHNamespaceIdListResult
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import IpFilterRule
+    from ._models import NetworkRuleSet
+    from ._models import NWRuleSetIpRules
+    from ._models import NWRuleSetVirtualNetworkRules
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import Subnet
+    from ._models import TrackedResource
+    from ._models import VirtualNetworkRule
+from ._paged_models import ClusterPaged
+from ._paged_models import EHNamespacePaged
+from ._paged_models import IpFilterRulePaged
+from ._paged_models import OperationPaged
+from ._paged_models import VirtualNetworkRulePaged
+from ._event_hub2018_preview_management_client_enums import (
     SkuName,
     SkuTier,
     IPAction,
@@ -63,25 +65,26 @@ from .event_hub2018_preview_management_client_enums import (
 )
 
 __all__ = [
-    'OperationDisplay',
-    'Operation',
-    'ClusterSku',
-    'Cluster',
+    'AvailableCluster',
     'AvailableClustersList',
+    'Cluster',
     'ClusterQuotaConfigurationProperties',
-    'ErrorResponse', 'ErrorResponseException',
-    'TrackedResource',
-    'Resource',
+    'ClusterSku',
+    'EHNamespace',
     'EHNamespaceIdContainer',
     'EHNamespaceIdListResult',
-    'Sku',
-    'EHNamespace',
+    'ErrorResponse', 'ErrorResponseException',
     'IpFilterRule',
-    'VirtualNetworkRule',
-    'Subnet',
+    'NetworkRuleSet',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
-    'NetworkRuleSet',
+    'Operation',
+    'OperationDisplay',
+    'Resource',
+    'Sku',
+    'Subnet',
+    'TrackedResource',
+    'VirtualNetworkRule',
     'OperationPaged',
     'ClusterPaged',
     'EHNamespacePaged',

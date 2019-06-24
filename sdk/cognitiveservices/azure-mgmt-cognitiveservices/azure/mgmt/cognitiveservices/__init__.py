@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from ._configuration import CognitiveServicesManagementClientConfiguration
+from ._cognitive_services_management_client import CognitiveServicesManagementClient
+__all__ = ['CognitiveServicesManagementClient', 'CognitiveServicesManagementClientConfiguration']
 
-__all__ = ['CognitiveServicesManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

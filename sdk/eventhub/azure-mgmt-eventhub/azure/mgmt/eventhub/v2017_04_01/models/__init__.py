@@ -10,63 +10,63 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .sku_py3 import Sku
-    from .eh_namespace_py3 import EHNamespace
-    from .authorization_rule_py3 import AuthorizationRule
-    from .access_keys_py3 import AccessKeys
-    from .regenerate_access_key_parameters_py3 import RegenerateAccessKeyParameters
-    from .destination_py3 import Destination
-    from .capture_description_py3 import CaptureDescription
-    from .eventhub_py3 import Eventhub
-    from .consumer_group_py3 import ConsumerGroup
-    from .check_name_availability_parameter_py3 import CheckNameAvailabilityParameter
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .arm_disaster_recovery_py3 import ArmDisasterRecovery
-    from .messaging_regions_properties_py3 import MessagingRegionsProperties
-    from .messaging_regions_py3 import MessagingRegions
-    from .messaging_plan_py3 import MessagingPlan
-    from .subnet_py3 import Subnet
-    from .nw_rule_set_ip_rules_py3 import NWRuleSetIpRules
-    from .nw_rule_set_virtual_network_rules_py3 import NWRuleSetVirtualNetworkRules
-    from .network_rule_set_py3 import NetworkRuleSet
+    from ._models_py3 import AccessKeys
+    from ._models_py3 import ArmDisasterRecovery
+    from ._models_py3 import AuthorizationRule
+    from ._models_py3 import CaptureDescription
+    from ._models_py3 import CheckNameAvailabilityParameter
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import ConsumerGroup
+    from ._models_py3 import Destination
+    from ._models_py3 import EHNamespace
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Eventhub
+    from ._models_py3 import MessagingPlan
+    from ._models_py3 import MessagingRegions
+    from ._models_py3 import MessagingRegionsProperties
+    from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import NWRuleSetIpRules
+    from ._models_py3 import NWRuleSetVirtualNetworkRules
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import RegenerateAccessKeyParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import Subnet
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .sku import Sku
-    from .eh_namespace import EHNamespace
-    from .authorization_rule import AuthorizationRule
-    from .access_keys import AccessKeys
-    from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
-    from .destination import Destination
-    from .capture_description import CaptureDescription
-    from .eventhub import Eventhub
-    from .consumer_group import ConsumerGroup
-    from .check_name_availability_parameter import CheckNameAvailabilityParameter
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .arm_disaster_recovery import ArmDisasterRecovery
-    from .messaging_regions_properties import MessagingRegionsProperties
-    from .messaging_regions import MessagingRegions
-    from .messaging_plan import MessagingPlan
-    from .subnet import Subnet
-    from .nw_rule_set_ip_rules import NWRuleSetIpRules
-    from .nw_rule_set_virtual_network_rules import NWRuleSetVirtualNetworkRules
-    from .network_rule_set import NetworkRuleSet
-from .operation_paged import OperationPaged
-from .eh_namespace_paged import EHNamespacePaged
-from .authorization_rule_paged import AuthorizationRulePaged
-from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
-from .eventhub_paged import EventhubPaged
-from .consumer_group_paged import ConsumerGroupPaged
-from .messaging_regions_paged import MessagingRegionsPaged
-from .event_hub_management_client_enums import (
+    from ._models import AccessKeys
+    from ._models import ArmDisasterRecovery
+    from ._models import AuthorizationRule
+    from ._models import CaptureDescription
+    from ._models import CheckNameAvailabilityParameter
+    from ._models import CheckNameAvailabilityResult
+    from ._models import ConsumerGroup
+    from ._models import Destination
+    from ._models import EHNamespace
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Eventhub
+    from ._models import MessagingPlan
+    from ._models import MessagingRegions
+    from ._models import MessagingRegionsProperties
+    from ._models import NetworkRuleSet
+    from ._models import NWRuleSetIpRules
+    from ._models import NWRuleSetVirtualNetworkRules
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import RegenerateAccessKeyParameters
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import Subnet
+    from ._models import TrackedResource
+from ._paged_models import ArmDisasterRecoveryPaged
+from ._paged_models import AuthorizationRulePaged
+from ._paged_models import ConsumerGroupPaged
+from ._paged_models import EHNamespacePaged
+from ._paged_models import EventhubPaged
+from ._paged_models import MessagingRegionsPaged
+from ._paged_models import OperationPaged
+from ._event_hub_management_client_enums import (
     SkuName,
     SkuTier,
     AccessRights,
@@ -81,30 +81,30 @@ from .event_hub_management_client_enums import (
 )
 
 __all__ = [
-    'TrackedResource',
-    'Resource',
-    'Sku',
-    'EHNamespace',
-    'AuthorizationRule',
     'AccessKeys',
-    'RegenerateAccessKeyParameters',
-    'Destination',
+    'ArmDisasterRecovery',
+    'AuthorizationRule',
     'CaptureDescription',
-    'Eventhub',
-    'ConsumerGroup',
     'CheckNameAvailabilityParameter',
     'CheckNameAvailabilityResult',
-    'OperationDisplay',
-    'Operation',
+    'ConsumerGroup',
+    'Destination',
+    'EHNamespace',
     'ErrorResponse', 'ErrorResponseException',
-    'ArmDisasterRecovery',
-    'MessagingRegionsProperties',
-    'MessagingRegions',
+    'Eventhub',
     'MessagingPlan',
-    'Subnet',
+    'MessagingRegions',
+    'MessagingRegionsProperties',
+    'NetworkRuleSet',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
-    'NetworkRuleSet',
+    'Operation',
+    'OperationDisplay',
+    'RegenerateAccessKeyParameters',
+    'Resource',
+    'Sku',
+    'Subnet',
+    'TrackedResource',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',

@@ -3,6 +3,38 @@
 Release History
 ===============
 
+4.0.0 (2019-06-12)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter azure_files_identity_based_authentication
+- Model StorageAccountCreateParameters has a new parameter azure_files_identity_based_authentication
+- Model StorageAccountUpdateParameters has a new parameter azure_files_identity_based_authentication
+
+**Breaking changes**
+
+- Model StorageAccount no longer has parameter enable_azure_files_aad_integration
+- Model StorageAccountCreateParameters no longer has parameter enable_azure_files_aad_integration
+- Model StorageAccountUpdateParameters no longer has parameter enable_azure_files_aad_integration
+
+**Breaking changes**
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes while using imports.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- StorageManagementClient cannot be imported from `azure.mgmt.storage.storage_management_client` anymore (import from `azure.mgmt.storage` works like before)
+- StorageManagementClientConfiguration import has been moved from `azure.mgmt.storage.network_management_client` to `azure.mgmt.storage`
+- StorageManagementClient cannot be imported from `azure.mgmt.storage.v20xx_yy_zz.network_management_client` anymore (import from `azure.mgmt.storage.v20xx_yy_zz` works like before)
+- StorageManagementClientConfiguration import has been moved from `azure.mgmt.storage.v20xx_yy_zz.network_management_client` to `azure.mgmt.storage.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.storage.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.storage.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.storage.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.storage.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one storage mgmt client per process.
+
+
 3.3.0 (2019-04-22)
 ++++++++++++++++++
 

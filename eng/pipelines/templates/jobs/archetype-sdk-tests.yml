@@ -1,0 +1,42 @@
+parameters:
+  ServiceDirectory: ''
+  EnvVars: {}
+  MaxParallel: 0
+  BeforeTestSteps: []
+  Matrix:
+    Linux_Python35:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.5'
+    MacOs_Python37:
+      OSName: 'MacOS'
+      OSVmImage: 'macOS-10.14'
+      PythonVersion: '3.7'
+    Windows_Python27:
+      OSName: 'Windows'
+      OSVmImage: 'vs2017-win2016'
+      PythonVersion: '2.7'
+
+jobs:
+  - job: 'Test'
+    variables:
+      skipComponentGovernanceDetection: true
+
+    timeoutInMinutes: 120
+    strategy:
+      maxParallel: ${{ parameters.MaxParallel }}
+      matrix: ${{ parameters.Matrix }}
+    continueOnError: false
+
+    pool:
+      vmImage: $(OSVmImage)
+
+    steps:
+      - template: ../steps/build-test.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          AdditionalTestArgs: '--disablecov'
+          EnvVars: ${{ parameters.EnvVars }}
+          BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+          PythonVersion: $(PythonVersion)
+          OSName: $(OSName)

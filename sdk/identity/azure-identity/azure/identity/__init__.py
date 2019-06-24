@@ -2,42 +2,61 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-from .exceptions import AuthenticationError
+# -------------------------------------------------------------------------
 from .credentials import (
     CertificateCredential,
     ClientSecretCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    TokenCredentialChain,
+    ChainedTokenCredential,
 )
 
+
+class DefaultAzureCredential(ChainedTokenCredential):
+    """
+    A default credential capable of handling most Azure SDK authentication scenarios.
+
+    When environment variable configuration is present, it authenticates as a service principal
+    using :class:`identity.EnvironmentCredential`.
+
+    When environment configuration is not present, it authenticates with a managed identity
+    using :class:`identity.ManagedIdentityCredential`.
+    """
+
+    def __init__(self, **kwargs):
+        super(DefaultAzureCredential, self).__init__(
+            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
+        )
+
+
 __all__ = [
-    "AuthenticationError",
     "CertificateCredential",
     "ClientSecretCredential",
+    "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
-    "TokenCredentialChain",
+    "ChainedTokenCredential",
 ]
 
 try:
     from .aio import (
         AsyncCertificateCredential,
         AsyncClientSecretCredential,
+        AsyncDefaultAzureCredential,
         AsyncEnvironmentCredential,
         AsyncManagedIdentityCredential,
-        AsyncTokenCredentialChain,
+        AsyncChainedTokenCredential,
     )
 
     __all__.extend(
         [
             "AsyncCertificateCredential",
             "AsyncClientSecretCredential",
+            "AsyncDefaultAzureCredential",
             "AsyncEnvironmentCredential",
             "AsyncManagedIdentityCredential",
-            "AsyncTokenCredentialChain",
+            "AsyncChainedTokenCredential",
         ]
     )
-except SyntaxError:
+except (ImportError, SyntaxError):
     pass

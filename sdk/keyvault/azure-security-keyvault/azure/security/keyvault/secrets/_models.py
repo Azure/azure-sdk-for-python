@@ -189,7 +189,10 @@ class DeletedSecret(SecretAttributes):
         return cls(
             deleted_secret_bundle.attributes,
             deleted_secret_bundle.id,
+            deleted_date=deleted_secret_bundle.deleted_date,
             content_type=deleted_secret_bundle.content_type,
+            recovery_id=deleted_secret_bundle.recovery_id,
+            scheduled_purge_date=deleted_secret_bundle.scheduled_purge_date,
             key_id=deleted_secret_bundle.kid,
             managed=deleted_secret_bundle.managed,
             tags=deleted_secret_bundle.tags,

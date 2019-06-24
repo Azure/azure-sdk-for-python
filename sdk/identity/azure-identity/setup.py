@@ -78,6 +78,7 @@ setup(
     ),
     install_requires=[
         # "azure-core~=1.0.0", TODO: commented until azure-core is published
+        "cryptography>=2.1.4",
         "msal~=0.3.1"
     ],
     extras_require={":python_version<'3.0'": ["azure-nspkg"]},

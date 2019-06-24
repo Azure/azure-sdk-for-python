@@ -37,6 +37,12 @@ class GeoRedundantBackup(str, Enum):
     disabled = "Disabled"
 
 
+class StorageAutogrow(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class SkuTier(str, Enum):
 
     basic = "Basic"

@@ -46,7 +46,8 @@ else:
 class Paged(AsyncPagedMixin, Iterator):
     """A container for paged REST responses.
 
-    :param HttpResponse response: server response object.
+    :param response: server response object.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
     :param callable command: Function to retrieve the next page of items.
     :param Deserializer deserializer: a Deserializer instance to use
     """

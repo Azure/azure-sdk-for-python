@@ -75,23 +75,6 @@ Indices and tables
   quickstart_authentication
   multicloud
   exceptions
-
-.. toctree::
-  :glob:
-  :caption: Management Documentation
-
-  resourcemanagement*
-  sample_azure-mgmt-*
   Service Management (Legacy) <servicemanagement>
-
-.. toctree::
-  :glob:
-  :caption: Runtime Documentation
-
-  batch
-  sample_azure-monitor
-  sample_azure-keyvault
-  graphrbac
-  servicebus
 
 .. include:: autorest_generated_packages.rst
