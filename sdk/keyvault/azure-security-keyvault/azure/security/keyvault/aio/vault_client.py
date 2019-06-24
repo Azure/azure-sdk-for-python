@@ -3,21 +3,22 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    try:
-        from azure.core.credentials import TokenCredential
-    except ImportError:
-        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
-        pass
-
+from typing import Any, TYPE_CHECKING
 from azure.core import Configuration
 from azure.core.pipeline.transport import HttpTransport
 
 from ._internal import _AsyncKeyVaultClientBase
 from .keys._client import KeyClient
 from .secrets._client import SecretClient
+
+
+if TYPE_CHECKING:
+    try:
+        # pylint:disable=unused-import
+        from azure.core.credentials import TokenCredential
+    except ImportError:
+        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
+        pass
 
 
 class VaultClient(_AsyncKeyVaultClientBase):
@@ -58,7 +59,7 @@ class VaultClient(_AsyncKeyVaultClientBase):
     @property
     def keys(self):
         """
-        :rtype:`azure.security.keyvault.aio.keys.KeyClient`
+        :rtype: ~azure.security.keyvault.aio.keys.KeyClient
         """
         return self._keys
 

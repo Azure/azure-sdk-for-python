@@ -75,7 +75,7 @@ class KeyClientTests(KeyVaultTestCase):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
         key_ops = ["decrypt", "encrypt"]
-        key_bundle = client.update_key(key.name, key.version, key_operations=key_ops, expires=expires, tags=tags)
+        key_bundle = client.update_key(key.name, key_operations=key_ops, expires=expires, tags=tags)
         self.assertEqual(tags, key_bundle.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.updated, key_bundle.updated)
