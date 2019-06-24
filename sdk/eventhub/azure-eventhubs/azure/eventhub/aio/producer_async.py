@@ -5,6 +5,7 @@
 import uuid
 import asyncio
 import logging
+from typing import Iterator, Generator, List, Union
 
 from uamqp import constants, errors, compat
 from uamqp import SendClientAsync
@@ -187,8 +188,8 @@ class EventHubProducer(object):
                 log.info("EventHubProducer authentication timed out. Attempting reconnect.")
                 return False
         except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("EventHubProducer Reconnect failed: {}".format(e))
+            log.info("Unexpected error occurred when building connection (%r). Shutting down.", e)
+            error = EventHubError("Unexpected error occurred when building connection", e)
             await self.close(exception=error)
             raise error
 
@@ -217,7 +218,7 @@ class EventHubProducer(object):
                     errors.MessageContentTooLarge) as msg_error:
                 raise EventDataError(str(msg_error), msg_error)
             except errors.MessageException as failed:
-                log.info("Send event data error (%r)", failed)
+                log.error("Send event data error (%r)", failed)
                 error = EventDataSendError(str(failed), failed)
                 await self.close(exception=error)
                 raise error
@@ -264,10 +265,10 @@ class EventHubProducer(object):
                 else:
                     log.info("EventHubProducer timed out. Shutting down.")
                     await self.close(shutdown)
-                    raise TimeoutError(str(shutdown), shutdown)
+                    raise ConnectionLostError(str(shutdown), shutdown)
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Send failed: {}".format(e))
+                error = EventHubError("Send failed: {}".format(e), e)
                 await self.close(exception=error)
                 raise error
 
@@ -301,18 +302,18 @@ class EventHubProducer(object):
             yield ed
 
     async def send(self, event_data, partition_key=None):
-        # type:(List[EventData], Union[str, bytes]) -> None
+        # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
 
-        :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.common.EventData
+        :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
+        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
         :type partition_key: str
-        :raises: ~azure.eventhub.common.EventHubError if the message fails to
-         send.
+        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
+                ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
         :rtype: None
 
@@ -331,8 +332,9 @@ class EventHubProducer(object):
                 event_data._set_partition_key(partition_key)
             wrapper_event_data = event_data
         else:
+            event_data_with_pk = self._set_partition_key(event_data, partition_key)
             wrapper_event_data = _BatchSendEventData(
-                self._set_partition_key(event_data, partition_key),
+                event_data_with_pk,
                 partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]

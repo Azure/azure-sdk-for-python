@@ -5,7 +5,7 @@
 from uamqp.constants import TransportType
 
 
-class Configuration(object):
+class _Configuration(object):
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")
         self.max_retries = kwargs.get("max_retries", 3)

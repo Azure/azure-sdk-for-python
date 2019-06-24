@@ -152,7 +152,7 @@ class EventHubConsumer(object):
                 else:
                     log.info("EventHubConsumer timed out. Shutting down.")
                     self.close(shutdown)
-                    raise TimeoutError(str(shutdown), shutdown)
+                    raise ConnectionLostError(str(shutdown), shutdown)
             except StopIteration:
                 raise
             except KeyboardInterrupt:
@@ -161,7 +161,7 @@ class EventHubConsumer(object):
                 raise
             except Exception as e:
                 log.error("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Receive failed: {}".format(e))
+                error = EventHubError("Receive failed: {}".format(e), e)
                 self.close(exception=error)
                 raise error
 
@@ -300,8 +300,8 @@ class EventHubConsumer(object):
                 log.info("EventHubConsumer authentication timed out. Attempting reconnect.")
                 return False
         except Exception as e:
-            log.error("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("EventHubConsumer reconnect failed: {}".format(e))
+            log.error("Unexpected error occurred when building connection (%r). Shutting down.", e)
+            error = EventHubError("Unexpected error occurred when building connection", e)
             self.close(exception=error)
             raise error
 
@@ -336,7 +336,8 @@ class EventHubConsumer(object):
          If not specified, the default wait time specified when the consumer was created will be used.
         :type timeout: float
         :rtype: list[~azure.eventhub.common.EventData]
-
+        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
+                ~azure.eventhub.EventHubError
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sync_receive]
@@ -410,14 +411,14 @@ class EventHubConsumer(object):
                 else:
                     log.info("EventHubConsumer timed out. Shutting down.")
                     self.close(shutdown)
-                    raise TimeoutError(str(shutdown), shutdown)
+                    raise ConnectionLostError(str(shutdown), shutdown)
             except KeyboardInterrupt:
                 log.info("EventHubConsumer stops due to keyboard interrupt")
                 self.close()
                 raise
             except Exception as e:
                 log.error("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Receive failed: {}".format(e))
+                error = EventHubError("Receive failed: {}".format(e), e)
                 self.close(exception=error)
                 raise error
 

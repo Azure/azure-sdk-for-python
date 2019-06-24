@@ -135,7 +135,7 @@ def test_send_non_ascii(connstr_receivers):
     with sender:
         sender.send(EventData(u"é,è,à,ù,â,ê,î,ô,û"))
         sender.send(EventData(json.dumps({"foo": u"漢字"})))
-
+    time.sleep(1)
     partition_0 = receivers[0].receive(timeout=2)
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == u"é,è,à,ù,â,ê,î,ô,û"

@@ -58,8 +58,6 @@ class EventHubError(AzureError):
         self.error = None
         self.message = message
         self.details = details
-        if isinstance(message, constants.MessageSendResult):
-            self.message = "Message send failed with result: {}".format(message)
         if details and isinstance(details, Exception):
             try:
                 condition = details.condition.value.decode('UTF-8')
@@ -131,12 +129,3 @@ class EventDataSendError(EventHubError):
 
     """
     pass
-
-'''
-class ConnectionTimeoutError(ConnectError):
-    """Time out when accessing event hub service
-    Should retry?
-
-    """
-'''
-

@@ -125,7 +125,7 @@ async def test_send_non_ascii_async(connstr_receivers):
     async with sender:
         await sender.send(EventData("é,è,à,ù,â,ê,î,ô,û"))
         await sender.send(EventData(json.dumps({"foo": "漢字"})))
-
+    await asyncio.sleep(1)
     partition_0 = receivers[0].receive(timeout=2)
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == "é,è,à,ù,â,ê,î,ô,û"

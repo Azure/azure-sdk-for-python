@@ -14,6 +14,7 @@ from uamqp import (
     AMQPClientAsync,
     errors,
 )
+from uamqp import compat
 
 from azure.eventhub.error import ConnectError
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -102,7 +103,7 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except (errors.AMQPConnectionError, errors.TokenAuthFailure) as failure:
+            except (errors.AMQPConnectionError, errors.TokenAuthFailure, compat.TimeoutException) as failure:
                 if connect_count >= self.config.max_retries:
                     err = ConnectError(
                         "Can not connect to EventHubs or get management info from the service. "
@@ -125,6 +126,7 @@ class EventHubClient(EventHubClientAbstract):
             -'partition_ids'
 
         :rtype: dict
+        :raises: ~azure.eventhub.ConnectError
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
@@ -142,6 +144,7 @@ class EventHubClient(EventHubClientAbstract):
         Get partition ids of the specified EventHub async.
 
         :rtype: list[str]
+        :raises: ~azure.eventhub.ConnectError
         """
         return (await self.get_properties())['partition_ids']
 
@@ -162,6 +165,7 @@ class EventHubClient(EventHubClientAbstract):
         :param partition: The target partition id.
         :type partition: str
         :rtype: dict
+        :raises: ~azure.eventhub.ConnectError
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
@@ -187,7 +191,7 @@ class EventHubClient(EventHubClientAbstract):
         Create an async consumer to the client for a particular consumer group and partition.
 
         :param consumer_group: The name of the consumer group this consumer is associated with.
-         Events are read in the context of this group.
+         Events are read in the context of this group. The default consumer_group for an event hub is "$Default".
         :type consumer_group: str
         :param partition_id: The identifier of the Event Hub partition from which events will be received.
         :type partition_id: str

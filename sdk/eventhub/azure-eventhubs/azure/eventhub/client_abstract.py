@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from typing import Union
 
 from azure.eventhub import __version__
-from azure.eventhub.configuration import Configuration
+from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
 log = logging.getLogger(__name__)
@@ -155,7 +155,7 @@ class EventHubClientAbstract(object):
         self.mgmt_target = "amqps://{}/{}".format(self.host, self.eh_name)
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.get_auth = functools.partial(self._create_auth)
-        self.config = Configuration(**kwargs)
+        self.config = _Configuration(**kwargs)
         self.debug = self.config.network_tracing
 
         log.info("%r: Created the Event Hub client", self.container_id)
@@ -222,7 +222,7 @@ class EventHubClientAbstract(object):
     def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
         """Create an EventHubClient from an EventHub/IotHub connection string.
 
-        :param conn_str: The connection string.
+        :param conn_str: The connection string of an eventhub or IoT hub
         :type conn_str: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is
          not included in the connection string.
