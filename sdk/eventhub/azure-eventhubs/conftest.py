@@ -19,7 +19,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 else:
-    from tests.asynctests.mock_event_processor import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost
     from azure.eventprocessorhost import EventHubPartitionPump
     from azure.eventprocessorhost import AzureStorageCheckpointLeaseManager
@@ -233,29 +232,6 @@ def storage_clm(eph):
             storage_clm.storage_client.delete_container(container)
         except:
             warnings.warn(UserWarning("storage container teardown failed"))
-
-
-@pytest.fixture()
-def eph():
-    try:
-        storage_clm = AzureStorageCheckpointLeaseManager(
-            os.environ['AZURE_STORAGE_ACCOUNT'],
-            os.environ['AZURE_STORAGE_ACCESS_KEY'],
-            "lease")
-        NAMESPACE = os.environ.get('EVENT_HUB_NAMESPACE')
-        EVENTHUB = os.environ.get('EVENT_HUB_NAME')
-        USER = os.environ.get('EVENT_HUB_SAS_POLICY')
-        KEY = os.environ.get('EVENT_HUB_SAS_KEY')
-
-        eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
-        host = EventProcessorHost(
-            MockEventProcessor,
-            eh_config,
-            storage_clm)
-    except KeyError:
-        pytest.skip("Live EventHub configuration not found.")
-    return host
-
 
 @pytest.fixture()
 def eh_partition_pump(eph):
