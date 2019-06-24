@@ -336,12 +336,12 @@ class PipelineClientBase(object):
                 components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
                 template = "/".join(components)
         # No URL sections left - returning None
-        
+
     @staticmethod
     def _urljoin(base_url, stub_url):
         # type: (str, str) -> str
         """Append to end of base URL without losing query parameters.
-        
+
         :param str base_url: The base URL.
         :param str stub_url: Section to append to the end of the URL path.
         :returns: The updated URL.
