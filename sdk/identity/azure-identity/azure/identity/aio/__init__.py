@@ -13,7 +13,15 @@ from .credentials import (
 
 
 class AsyncDefaultAzureCredential(AsyncChainedTokenCredential):
-    """default credential is environment followed by MSI/IMDS"""
+    """
+    A default credential capable of handling most Azure SDK authentication scenarios.
+
+    When environment variable configuration is present, it authenticates as a service principal
+    using :class:`identity.aio.AsyncEnvironmentCredential`.
+
+    When environment configuration is not present, it authenticates with a managed identity
+    using :class:`identity.aio.AsyncManagedIdentityCredential`.
+    """
 
     def __init__(self, **kwargs):
         super().__init__(AsyncEnvironmentCredential(**kwargs), AsyncManagedIdentityCredential(**kwargs))
