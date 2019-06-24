@@ -37,8 +37,10 @@ class TeradataSource(CopySource):
      string).
     :type query: object
     :param partition_option: The partition mechanism that will be used for
-     teradata read in parallel.
-    :type partition_option: object
+     teradata read in parallel. Possible values include: 'None', 'Hash',
+     'DynamicRange'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.TeradataPartitionOption
     :param partition_settings: The settings that will be leveraged for
      teradata source partitioning.
     :type partition_settings:
@@ -56,7 +58,7 @@ class TeradataSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
     }
 

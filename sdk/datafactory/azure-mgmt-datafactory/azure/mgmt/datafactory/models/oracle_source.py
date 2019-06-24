@@ -41,8 +41,10 @@ class OracleSource(CopySource):
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
     :param partition_option: The partition mechanism that will be used for
-     oracle read in parallel.
-    :type partition_option: object
+     oracle read in parallel. Possible values include: 'None',
+     'PhysicalPartitionsOfTable', 'DynamicRange'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.OraclePartitionOption
     :param partition_settings: The settings that will be leveraged for oracle
      source partitioning.
     :type partition_settings:
@@ -61,7 +63,7 @@ class OracleSource(CopySource):
         'type': {'key': 'type', 'type': 'str'},
         'oracle_reader_query': {'key': 'oracleReaderQuery', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
     }
 

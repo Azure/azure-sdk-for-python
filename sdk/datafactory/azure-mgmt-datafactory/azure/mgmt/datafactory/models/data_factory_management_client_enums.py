@@ -340,6 +340,41 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
+class NetezzaPartitionOption(str, Enum):
+
+    none = "None"
+    data_slice = "DataSlice"
+    dynamic_range = "DynamicRange"
+
+
+class CassandraSourceReadConsistencyLevels(str, Enum):
+
+    all = "ALL"
+    each_quorum = "EACH_QUORUM"
+    quorum = "QUORUM"
+    local_quorum = "LOCAL_QUORUM"
+    one = "ONE"
+    two = "TWO"
+    three = "THREE"
+    local_one = "LOCAL_ONE"
+    serial = "SERIAL"
+    local_serial = "LOCAL_SERIAL"
+
+
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
+
+
+class OraclePartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -351,6 +386,21 @@ class StoredProcedureParameterType(str, Enum):
     date_enum = "Date"
 
 
+class SapTablePartitionOption(str, Enum):
+
+    none = "None"
+    partition_on_int = "PartitionOnInt"
+    partition_on_calendar_year = "PartitionOnCalendarYear"
+    partition_on_calendar_month = "PartitionOnCalendarMonth"
+    partition_on_calendar_date = "PartitionOnCalendarDate"
+
+
+class SalesforceSourceReadBehavior(str, Enum):
+
+    query = "Query"
+    query_all = "QueryAll"
+
+
 class HDInsightActivityDebugInfoOption(str, Enum):
 
     none = "None"
@@ -358,10 +408,28 @@ class HDInsightActivityDebugInfoOption(str, Enum):
     failure = "Failure"
 
 
+class SalesforceSinkWriteBehavior(str, Enum):
+
+    insert = "Insert"
+    upsert = "Upsert"
+
+
+class AzureSearchIndexWriteBehaviorType(str, Enum):
+
+    merge = "Merge"
+    upload = "Upload"
+
+
 class PolybaseSettingsRejectType(str, Enum):
 
     value = "value"
     percentage = "percentage"
+
+
+class SapCloudForCustomerSinkWriteBehavior(str, Enum):
+
+    insert = "Insert"
+    update = "Update"
 
 
 class WebHookActivityMethod(str, Enum):

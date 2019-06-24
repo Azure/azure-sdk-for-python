@@ -37,8 +37,10 @@ class NetezzaSource(CopySource):
      Expression with resultType string).
     :type query: object
     :param partition_option: The partition mechanism that will be used for
-     Netezza read in parallel.
-    :type partition_option: object
+     Netezza read in parallel. Possible values include: 'None', 'DataSlice',
+     'DynamicRange'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.NetezzaPartitionOption
     :param partition_settings: The settings that will be leveraged for Netezza
      source partitioning.
     :type partition_settings:
@@ -56,7 +58,7 @@ class NetezzaSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
     }
 
