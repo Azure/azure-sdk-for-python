@@ -5,11 +5,11 @@
 # -------------------------------------------------------------------------
 import pytest
 
-from azure.identity.aio._internal import AsyncImdsCredential
+from azure.identity.aio._internal import ImdsCredential
 
 
 @pytest.mark.asyncio
 async def test_imds_credential_async():
-    credential = AsyncImdsCredential()
+    credential = ImdsCredential()
     token = await credential.get_token("https://management.azure.com/.default")
     assert token
