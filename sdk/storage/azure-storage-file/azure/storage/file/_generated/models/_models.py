@@ -21,10 +21,13 @@ class AccessPolicy(Model):
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601'},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
-        'permission': {'key': 'Permission', 'type': 'str'},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
+        'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
+    _xml_map = {
+    }
+
 
     def __init__(self, **kwargs):
         super(AccessPolicy, self).__init__(**kwargs)
@@ -73,11 +76,13 @@ class CorsRule(Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
+        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str', 'xml': {'name': 'AllowedOrigins'}},
+        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str', 'xml': {'name': 'AllowedMethods'}},
+        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str', 'xml': {'name': 'AllowedHeaders'}},
+        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str', 'xml': {'name': 'ExposedHeaders'}},
+        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int', 'xml': {'name': 'MaxAgeInSeconds'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -103,7 +108,9 @@ class DirectoryItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -135,12 +142,14 @@ class FileHTTPHeaders(Model):
     """
 
     _attribute_map = {
-        'file_content_type': {'key': '', 'type': 'str'},
-        'file_content_encoding': {'key': '', 'type': 'str'},
-        'file_content_language': {'key': '', 'type': 'str'},
-        'file_cache_control': {'key': '', 'type': 'str'},
-        'file_content_md5': {'key': '', 'type': 'bytearray'},
-        'file_content_disposition': {'key': '', 'type': 'str'},
+        'file_cache_control': {'key': '', 'type': 'str', 'xml': {'name': 'file_cache_control'}},
+        'file_content_type': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_type'}},
+        'file_content_md5': {'key': '', 'type': 'bytearray', 'xml': {'name': 'file_content_md5'}},
+        'file_content_encoding': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_encoding'}},
+        'file_content_language': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_language'}},
+        'file_content_disposition': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_disposition'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -170,8 +179,11 @@ class FileItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'FileProperty'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'properties': {'key': 'Properties', 'type': 'FileProperty', 'xml': {'name': 'Properties'}},
+    }
+    _xml_map = {
+        'name': 'File'
     }
 
     def __init__(self, **kwargs):
@@ -403,12 +415,15 @@ class ListSharesResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'share_items': {'key': 'ShareItems', 'type': '[ShareItem]'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'share_items': {'key': 'ShareItems', 'type': '[ShareItem]', 'xml': {'name': 'Shares', 'itemsName': 'Shares', 'wrapped': True}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, **kwargs):
@@ -431,9 +446,9 @@ class Metrics(Model):
     :param enabled: Required. Indicates whether metrics are enabled for the
      File service.
     :type enabled: bool
-    :param include_ap_is: Indicates whether metrics should generate summary
+    :param include_apis: Indicates whether metrics should generate summary
      statistics for called API operations.
-    :type include_ap_is: bool
+    :type include_apis: bool
     :param retention_policy:
     :type retention_policy: ~file.models.RetentionPolicy
     """
@@ -444,17 +459,19 @@ class Metrics(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'include_ap_is': {'key': 'IncludeAPIs', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
         super(Metrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', None)
         self.enabled = kwargs.get('enabled', None)
-        self.include_ap_is = kwargs.get('include_ap_is', None)
+        self.include_apis = kwargs.get('include_apis', None)
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -475,8 +492,11 @@ class Range(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long'},
-        'end': {'key': 'End', 'type': 'long'},
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'Range'
     }
 
     def __init__(self, **kwargs):
@@ -506,8 +526,10 @@ class RetentionPolicy(Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'days': {'key': 'Days', 'type': 'int'},
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+        'days': {'key': 'Days', 'type': 'int', 'xml': {'name': 'Days'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -537,10 +559,13 @@ class ShareItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'snapshot': {'key': 'Snapshot', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'ShareProperties'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
+        'properties': {'key': 'Properties', 'type': 'ShareProperties', 'xml': {'name': 'Properties'}},
+        'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
+    }
+    _xml_map = {
+        'name': 'Share'
     }
 
     def __init__(self, **kwargs):
@@ -599,7 +624,9 @@ class ShareStats(Model):
     }
 
     _attribute_map = {
-        'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int'},
+        'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int', 'xml': {'name': 'ShareUsageBytes'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -623,8 +650,10 @@ class SignedIdentifier(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
+        'id': {'key': 'Id', 'type': 'str', 'xml': {'name': 'Id'}},
+        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy', 'xml': {'name': 'AccessPolicy'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -641,7 +670,9 @@ class StorageError(Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):
@@ -679,9 +710,11 @@ class StorageServiceProperties(Model):
     """
 
     _attribute_map = {
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]'},
+        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
+        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, **kwargs):

@@ -82,10 +82,39 @@ def is_retry(response, mode):
     return False
 
 
-class StorageFileSettings(object):
+def urljoin(base_url, stub_url):
+    parsed = urlparse(base_url)
+    parsed = parsed._replace(path=parsed.path + '/' + stub_url)
+    return parsed.geturl()
+
+
+class QueueMessagePolicy(SansIOHTTPPolicy):
+
+    def on_request(self, request, **kwargs):
+        message_id = request.context.options.pop('queue_message_id', None)
+        if message_id:
+            request.http_request.url = urljoin(
+                request.http_request.url,
+                message_id)
+
+
+class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
-        pass
+        self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
+        self.copy_polling_interval = 15
+
+        # Block blob uploads
+        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
+        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
+        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
+
+        # Page blob uploads
+        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
+
+        # Blob downloads
+        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -135,6 +164,7 @@ class StorageHosts(SansIOHTTPPolicy):
 
 class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     """A policy that logs HTTP request and response to the DEBUG logger.
+
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
 
@@ -266,6 +296,7 @@ class StorageResponseHook(HTTPPolicy):
 class StorageContentValidation(SansIOHTTPPolicy):
     """A simple policy that sends the given headers
     with the request.
+
     This will overwrite any headers already defined in the request.
     """
     header_name = 'Content-MD5'
@@ -332,6 +363,7 @@ class StorageRetryPolicy(HTTPPolicy):
     def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
         """
         A function which sets the next host location on the request, if applicable.
+
         :param ~azure.storage.models.RetryContext context:
             The retry context containing the previous host location and the request
             to evaluate and possibly modify.
@@ -372,6 +404,7 @@ class StorageRetryPolicy(HTTPPolicy):
     def get_backoff_time(self, settings):  # pylint: disable=unused-argument,no-self-use
         """ Formula for computing the current backoff.
         Should be calculated by child class.
+
         :rtype: float
         """
         return 0
@@ -393,9 +426,11 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
+
         :param response: A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
+
         :return: Whether the retry attempts are exhausted.
         """
         settings['total'] -= 1
@@ -495,6 +530,7 @@ class ExponentialRetry(StorageRetryPolicy):
         increment_power^retry_count seconds. For example, by default the first retry
         occurs after 15 seconds, the second after (15+3^1) = 18 seconds, and the
         third after (15+3^2) = 24 seconds.
+
         :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.
         :param int increment_base:
@@ -519,6 +555,7 @@ class ExponentialRetry(StorageRetryPolicy):
     def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
+
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -537,6 +574,7 @@ class LinearRetry(StorageRetryPolicy):
     def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
         """
         Constructs a Linear retry object.
+
         :param int backoff:
             The backoff interval, in seconds, between retries.
         :param int max_attempts:
@@ -557,6 +595,7 @@ class LinearRetry(StorageRetryPolicy):
     def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
+
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

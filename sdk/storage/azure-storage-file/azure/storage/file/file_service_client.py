@@ -16,6 +16,7 @@ except ImportError:
 
 from .share_client import ShareClient
 from ._shared.shared_access_signature import SharedAccessSignature
+from ._shared.models import LocationMode, Services
 from ._shared.utils import (
     StorageAccountHostsMixin,
     return_response_headers,
@@ -27,6 +28,7 @@ from .models import SharePropertiesPaged
 from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
+
 
 class FileServiceClient(StorageAccountHostsMixin):
     """ A client interact with the File Service at the account level.
@@ -59,7 +61,6 @@ class FileServiceClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -73,8 +74,6 @@ class FileServiceClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, and account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
-        :param ~azure.storage.file.Configuration configuration:
-            An optional pipeline configuration.
         """
         try:
             if not account_url.lower().startswith('http'):
@@ -84,11 +83,15 @@ class FileServiceClient(StorageAccountHostsMixin):
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
         _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(FileServiceClient, self).__init__(parsed_url, credential, configuration, **kwargs)
-        self.url = account_url if not parsed_url.path else self._format_url(parsed_url.hostname)
+        super(FileServiceClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -113,12 +116,11 @@ class FileServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :param configuration:
-            Optional pipeline configuration settings.
-        :type configuration: ~azure.core.configuration.Configuration
         """
-        account_url, credential = parse_connection_str(conn_str, credential)
-        return cls(account_url, credential=credential, configuration=configuration, **kwargs)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -171,8 +173,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             raise ValueError("No account SAS key available.")
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_account(resource_types, permission,
-                                    expiry, start=start, ip=ip, protocol=protocol)
+        return sas.generate_account(
+            Services.FILE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
@@ -189,8 +191,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def set_service_properties(
-            self, logging=None,  # type: Optional[Logging]
-            hour_metrics=None,  # type: Optional[Metrics]
+            self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
             timeout=None,  # type: Optional[int]
@@ -201,10 +202,6 @@ class FileServiceClient(StorageAccountHostsMixin):
         Azure Storage Analytics. If an element (e.g. Logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
-        :param logging:
-            Groups the Azure Analytics Logging settings.
-        :type logging:
-            :class:`~azure.storage.file.models.Logging`
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for files.
@@ -220,25 +217,11 @@ class FileServiceClient(StorageAccountHostsMixin):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.file.models.CorsRule`)
-        :param str target_version:
-            Indicates the default version to use for requests if an incoming
-            request's version is not specified.
-        :param delete_retention_policy:
-            The delete retention policy specifies whether to retain deleted files.
-            It also specifies the number of days and versions of file to keep.
-        :type delete_retention_policy:
-            :class:`~azure.storage.file..models.RetentionPolicy`
-        :param static_website:
-            Specifies whether the static website feature is enabled,
-            and if yes, indicates the index document and 404 error document to use.
-        :type static_website:
-            :class:`~azure.storage.file.models.StaticWebsite`
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
         props = StorageServiceProperties(
-            logging=logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors

@@ -12,6 +12,8 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
+import six
+
 from .file_client import FileClient
 
 from .models import DirectoryPropertiesPaged
@@ -30,61 +32,74 @@ from ._shared.utils import (
 
 from ._share_utils import deserialize_directory_properties
 
+
 class DirectoryClient(StorageAccountHostsMixin):
     """
     A client to interact with the sirectory.
     """
 
     def __init__(
-            self, share_name=None, # type: Optional[Union[str, ShareProperties]]
+            self, directory_url,  # type: str
+            share=None, # type: Optional[Union[str, ShareProperties]]
             directory_path=None, # type: Optional[str]
             credential=None, # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs, # type: Optional[Any]
         ):
         # type: (...) -> DirectoryClient
         """Creates a new DirectoryClient. This client represents interaction with a specific
         directory, although it may not yet exist.
-        :param share_name: The directory with which to interact. If specified, this value will override
+        :param share: The directory with which to interact. If specified, this value will override
          a directory value specified in the directory URL.
-        :type share_name: str or ~azure.storage.file.models.DirectoryProperties
-        :param str directory_path: The full URI to the directory.
+        :type share: str or ~azure.storage.file.models.DirectoryProperties
+        :param str directory: The full URI to the directory.
         :param credential:
-        :param configuration: A optional pipeline configuration.
-         This can be retrieved with :func:`DirectoryClient.create_configuration()`
         """
         try:
-            if not directory_path.lower().startswith('http'):
-                directory_path = "https://" + directory_path
+            if not directory_url.lower().startswith('http'):
+                directory_url = "https://" + directory_url
         except AttributeError:
-            raise ValueError("directory_path must be a string.")
-        parsed_url = urlparse(directory_path.rstrip('/'))
-        if not parsed_url.path and not share_name:
+            raise ValueError("Share URL must be a string.")
+        parsed_url = urlparse(directory_url.rstrip('/'))
+        if not parsed_url.path and not share:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(directory_path))
+            raise ValueError("Invalid URL: {}".format(directory_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
         share, path_dir = "", ""
         if parsed_url.path:
             share, _, path_dir = parsed_url.path.lstrip('/').partition('/')
         _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
         try:
-            self.share_name = share_name.name
+            self.share_name = share.name
         except AttributeError:
-            self.share_name = share_name or unquote(share)
-        
-        self.directory_path = path_dir or ""
+            self.share_name = share or unquote(share)
+        self.directory_path = directory_path or path_dir
 
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(DirectoryClient, self).__init__(parsed_url, credential, configuration, **kwargs)
+        super(DirectoryClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    def _format_url(self, hostname):
+        share_name = self.share_name
+        if isinstance(share_name, six.text_type):
+            share_name = share_name.encode('UTF-8')
+        return "{}://{}/{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(share_name),
+            quote(self.directory_path, safe='~'),
+            self._query_str)
 
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share_name=None, # type: Optional[Union[str, ShareProperties]]
+            share=None, # type: Optional[Union[str, ShareProperties]]
             directory_path=None, # type: Optional[str]
-            configuration=None, # type: Optional[Configuration]
             credential=None, # type: Optiona[Any]
             **kwargs # type: Any
         ):
@@ -92,8 +107,11 @@ class DirectoryClient(StorageAccountHostsMixin):
         """
         Create DirectoryClient from a Connection String.
         """
-        _, credential = parse_connection_str(conn_str, credential)
-        return cls(share_name, directory_path, credential=credential, configuration=configuration, **kwargs)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
     
     def get_file_client(self, file_name):
         """Get a client to interact with the specified file.

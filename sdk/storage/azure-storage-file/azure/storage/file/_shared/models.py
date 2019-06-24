@@ -18,6 +18,7 @@ def get_enum_value(value):
 
 class StorageErrorCode(str, Enum):
 
+    # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
     account_is_disabled = "AccountIsDisabled"
@@ -60,6 +61,8 @@ class StorageErrorCode(str, Enum):
     unsupported_xml_node = "UnsupportedXmlNode"
     unsupported_query_parameter = "UnsupportedQueryParameter"
     unsupported_http_verb = "UnsupportedHttpVerb"
+
+    # Blob values
     append_position_condition_not_met = "AppendPositionConditionNotMet"
     blob_already_exists = "BlobAlreadyExists"
     blob_not_found = "BlobNotFound"
@@ -123,9 +126,18 @@ class StorageErrorCode(str, Enum):
     blob_being_rehydrated = "BlobBeingRehydrated"
     blob_archived = "BlobArchived"
     blob_not_archived = "BlobNotArchived"
-    cannot_delete_file_or_directory = "CannotDeleteFileOrDirectory"
-    file_lock_conflict = "FileLockConflict"
-    invalid_file_or_directory_path_name = "InvalidFileOrDirectoryPathName"
+
+    # Queue values
+    invalid_marker = "InvalidMarker"
+    message_not_found = "MessageNotFound"
+    message_too_large = "MessageTooLarge"
+    pop_receipt_mismatch = "PopReceiptMismatch"
+    queue_already_exists = "QueueAlreadyExists"
+    queue_being_deleted = "QueueBeingDeleted"
+    queue_disabled = "QueueDisabled"
+    queue_not_empty = "QueueNotEmpty"
+    queue_not_found = "QueueNotFound"
+
 
 class DictMixin(object):
 
@@ -178,6 +190,30 @@ class DictMixin(object):
         return default
 
 
+class ModifiedAccessConditions(object):
+    """Additional parameters for a set of operations.
+
+    :param if_modified_since: Specify this header value to operate only on a
+     blob if it has been modified since the specified date/time.
+    :type if_modified_since: datetime
+    :param if_unmodified_since: Specify this header value to operate only on a
+     blob if it has not been modified since the specified date/time.
+    :type if_unmodified_since: datetime
+    :param if_match: Specify an ETag value to operate only on blobs with a
+     matching value.
+    :type if_match: str
+    :param if_none_match: Specify an ETag value to operate only on blobs
+     without a matching value.
+    :type if_none_match: str
+    """
+
+    def __init__(self, **kwargs):
+        self.if_modified_since = kwargs.get('if_modified_since', None)
+        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
+        self.if_match = kwargs.get('if_match', None)
+        self.if_none_match = kwargs.get('if_none_match', None)
+
+
 class LocationMode(object):
     """
     Specifies the location the request should be sent to. This mode only applies
@@ -187,3 +223,207 @@ class LocationMode(object):
 
     PRIMARY = 'primary'  #: Requests should be sent to the primary location.
     SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
+class ResourceTypes(object):
+    """
+    Specifies the resource types that are accessible with the account SAS.
+
+    :cvar ResourceTypes ResourceTypes.CONTAINER:
+        Access to container-level APIs (e.g., Create/Delete Container,
+        Create/Delete Queue, Create/Delete Share,
+        List Blobs/Files and Directories)
+    :cvar ResourceTypes ResourceTypes.OBJECT:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    :cvar ResourceTypes ResourceTypes.SERVICE:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    :param bool service:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    :param bool container:
+        Access to container-level APIs (e.g., Create/Delete Container,
+        Create/Delete Queue, Create/Delete Share,
+        List Blobs/Files and Directories)
+    :param bool object:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    :param str _str:
+        A string representing the resource types.
+    """
+
+    SERVICE = None  # type: ResourceTypes
+    CONTAINER = None  # type: ResourceTypes
+    OBJECT = None  # type: ResourceTypes
+
+    def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
+        if not _str:
+            _str = ''
+        self.service = service or ('s' in _str)
+        self.container = container or ('c' in _str)
+        self.object = object or ('o' in _str)
+
+    def __or__(self, other):
+        return ResourceTypes(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return ResourceTypes(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('s' if self.service else '') +
+                ('c' if self.container else '') +
+                ('o' if self.object else ''))
+
+
+ResourceTypes.SERVICE = ResourceTypes(service=True)
+ResourceTypes.CONTAINER = ResourceTypes(container=True)
+ResourceTypes.OBJECT = ResourceTypes(object=True)
+
+
+class AccountPermissions(object):
+    """
+    :class:`~ResourceTypes` class to be used with generate_shared_access_signature
+    method and for the AccessPolicies used with set_*_acl. There are two types of
+    SAS which may be used to grant resource access. One is to grant access to a
+    specific resource (resource-specific). Another is to grant access to the
+    entire service for a specific account and allow certain operations based on
+    perms found here.
+
+    :cvar AccountPermissions AccountPermissions.ADD:
+        Valid for the following Object resource types only: queue messages and append blobs.
+    :cvar AccountPermissions AccountPermissions.CREATE:
+        Valid for the following Object resource types only: blobs and files. Users
+        can create new blobs or files, but may not overwrite existing blobs or files.
+    :cvar AccountPermissions AccountPermissions.DELETE:
+        Valid for Container and Object resource types, except for queue messages.
+    :cvar AccountPermissions AccountPermissions.LIST:
+        Valid for Service and Container resource types only.
+    :cvar AccountPermissions AccountPermissions.PROCESS:
+        Valid for the following Object resource type only: queue messages.
+    :cvar AccountPermissions AccountPermissions.READ:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :cvar AccountPermissions AccountPermissions.UPDATE:
+        Valid for the following Object resource types only: queue messages.
+    :cvar AccountPermissions AccountPermissions.WRITE:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    :param bool read:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :param bool write:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    :param bool delete:
+        Valid for Container and Object resource types, except for queue messages.
+    :param bool list:
+        Valid for Service and Container resource types only.
+    :param bool add:
+        Valid for the following Object resource types only: queue messages, and append blobs.
+    :param bool create:
+        Valid for the following Object resource types only: blobs and files.
+        Users can create new blobs or files, but may not overwrite existing
+        blobs or files.
+    :param bool update:
+        Valid for the following Object resource types only: queue messages.
+    :param bool process:
+        Valid for the following Object resource type only: queue messages.
+    :param str _str:
+        A string representing the permissions.
+    """
+
+    READ = None  # type: AccountPermissions
+    WRITE = None  # type: AccountPermissions
+    DELETE = None  # type: AccountPermissions
+    LIST = None  # type: AccountPermissions
+    ADD = None  # type: AccountPermissions
+    CREATE = None  # type: AccountPermissions
+    UPDATE = None  # type: AccountPermissions
+    PROCESS = None  # type: AccountPermissions
+
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
+                 add=False, create=False, update=False, process=False, _str=None):
+        if not _str:
+            _str = ''
+        self.read = read or ('r' in _str)
+        self.write = write or ('w' in _str)
+        self.delete = delete or ('d' in _str)
+        self.list = list or ('l' in _str)
+        self.add = add or ('a' in _str)
+        self.create = create or ('c' in _str)
+        self.update = update or ('u' in _str)
+        self.process = process or ('p' in _str)
+
+    def __or__(self, other):
+        return AccountPermissions(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return AccountPermissions(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('r' if self.read else '') +
+                ('w' if self.write else '') +
+                ('d' if self.delete else '') +
+                ('l' if self.list else '') +
+                ('a' if self.add else '') +
+                ('c' if self.create else '') +
+                ('u' if self.update else '') +
+                ('p' if self.process else ''))
+
+
+AccountPermissions.READ = AccountPermissions(read=True)
+AccountPermissions.WRITE = AccountPermissions(write=True)
+AccountPermissions.DELETE = AccountPermissions(delete=True)
+AccountPermissions.LIST = AccountPermissions(list=True)
+AccountPermissions.ADD = AccountPermissions(add=True)
+AccountPermissions.CREATE = AccountPermissions(create=True)
+AccountPermissions.UPDATE = AccountPermissions(update=True)
+AccountPermissions.PROCESS = AccountPermissions(process=True)
+
+
+class Services(object):
+    """
+    Specifies the services accessible with the account SAS.
+
+    :cvar Services Services.BLOB: The blob service.
+    :cvar Services Services.FILE: The file service
+    :cvar Services Services.QUEUE: The queue service.
+    :cvar Services Services.TABLE: The table service.
+    :param bool blob:
+        Access to any blob service, for example, the `.BlockBlobService`
+    :param bool queue:
+        Access to the `.QueueService`
+    :param bool file:
+        Access to the `.FileService`
+    :param bool table:
+        Access to the TableService
+    :param str _str:
+        A string representing the services.
+    """
+
+    def __init__(self, blob=False, queue=False, file=False, table=False, _str=None):
+        if not _str:
+            _str = ''
+        self.blob = blob or ('b' in _str)
+        self.queue = queue or ('q' in _str)
+        self.file = file or ('f' in _str)
+        self.table = table or ('t' in _str)
+
+    def __or__(self, other):
+        return Services(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return Services(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('b' if self.blob else '') +
+                ('q' if self.queue else '') +
+                ('t' if self.table else '') +
+                ('f' if self.file else ''))
+
+
+Services.BLOB = Services(blob=True)
+Services.QUEUE = Services(queue=True)
+Services.TABLE = Services(table=True)
+Services.FILE = Services(file=True)
