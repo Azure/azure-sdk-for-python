@@ -38,8 +38,8 @@ Credentials differ mostly in configuration:
 Credentials can be chained and tried in turn until one succeeds; see
 [chaining credentials](#chaining-credentials) for details.
 
-All credentials have an async equivalent in `azure.identity.aio`, with an
-`Async` prefix. These are supported on Python 3.5.3+. See the
+All credentials have an async equivalent in the `azure.identity.aio` namespace.
+These are supported on Python 3.5.3+. See the
 [async credentials](#async-credentials) example for details.
 
 ## DefaultAzureCredential
@@ -127,15 +127,15 @@ client = SecretClient(vault_url, credential=credential_chain)
 ## Async credentials:
 ```py
 # all credentials have async equivalents supported on Python 3.5.3+
-from azure.identity.aio import AsyncDefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
-default_credential = AsyncDefaultAzureCredential()
+default_credential = DefaultAzureCredential()
 
 # async credentials have the same API and configuration as
 # their synchronous counterparts...
-from azure.identity.aio import AsyncClientSecretCredential
+from azure.identity.aio import ClientSecretCredential
 
-credential = AsyncClientSecretCredential(client_id, client_secret, tenant_id)
+credential = ClientSecretCredential(client_id, client_secret, tenant_id)
 
 # ...and are used with async Azure SDK clients in the same way
 from azure.security.keyvault.aio import SecretClient
