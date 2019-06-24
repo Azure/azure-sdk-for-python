@@ -5,7 +5,8 @@
 
 import logging
 import asyncio
-from azure.eventhub import Offset, EventHubClientAsync
+from azure.eventhub import EventPosition, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubClient
 from azure.eventprocessorhost.partition_pump import PartitionPump
 
 
@@ -48,7 +49,6 @@ class EventHubPartitionPump(PartitionPump):
         if self.pump_status == "Opening":
             loop = asyncio.get_event_loop()
             self.set_pump_status("Running")
-            await self.eh_client.run_async()
             self.running = loop.create_task(self.partition_receiver.run())
 
         if self.pump_status in ["OpenFailed", "Errored"]:
@@ -64,17 +64,19 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
-        self.eh_client = EventHubClientAsync(
-            self.host.eh_config.client_address,
-            debug=self.host.eph_options.debug_trace,
+        hostname = "{}.{}".format(self.host.eh_config.sb_name, self.host.eh_config.namespace_suffix)
+        event_hub_path = self.host.eh_config.eh_name
+        shared_key_cred = EventHubSharedKeyCredential(self.host.eh_config.policy, self.host.eh_config.sas_key)
+
+        self.eh_client = EventHubClient(
+            hostname, event_hub_path, shared_key_cred,
+            network_tracing=self.host.eph_options.debug_trace,
             http_proxy=self.host.eph_options.http_proxy)
-        self.partition_receive_handler = self.eh_client.add_async_receiver(
-            self.partition_context.consumer_group_name,
-            self.partition_context.partition_id,
-            Offset(self.partition_context.offset),
+        self.partition_receive_handler = self.eh_client.create_consumer(
+            partition_id=self.partition_context.partition_id,
+            consumer_group=self.partition_context.consumer_group_name,
+            event_position=EventPosition(self.partition_context.offset),
             prefetch=self.host.eph_options.prefetch_count,
-            keep_alive=self.host.eph_options.keep_alive_interval,
-            auto_reconnect=self.host.eph_options.auto_reconnect_on_error,
             loop=self.loop)
         self.partition_receiver = PartitionReceiver(self)
 
@@ -84,7 +86,7 @@ class EventHubPartitionPump(PartitionPump):
         """
         if self.partition_receiver:
             if self.eh_client:
-                await self.eh_client.stop_async()
+                await self.partition_receive_handler.close()
                 self.partition_receiver = None
                 self.partition_receive_handler = None
                 self.eh_client = None

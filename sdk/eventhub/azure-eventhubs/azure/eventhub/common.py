@@ -7,43 +7,10 @@ from __future__ import unicode_literals
 import datetime
 import calendar
 import json
-
 import six
 
-from uamqp import Message, BatchMessage
-from uamqp import types, constants, errors
+from uamqp import BatchMessage, Message, types
 from uamqp.message import MessageHeader, MessageProperties
-
-_NO_RETRY_ERRORS = (
-    b"com.microsoft:argument-out-of-range",
-    b"com.microsoft:entity-disabled",
-    b"com.microsoft:auth-failed",
-    b"com.microsoft:precondition-failed",
-    b"com.microsoft:argument-error"
-)
-
-def _error_handler(error):
-    """
-    Called internally when an event has failed to send so we
-    can parse the error to determine whether we should attempt
-    to retry sending the event again.
-    Returns the action to take according to error type.
-
-    :param error: The error received in the send attempt.
-    :type error: Exception
-    :rtype: ~uamqp.errors.ErrorAction
-    """
-    if error.condition == b'com.microsoft:server-busy':
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b'com.microsoft:timeout':
-        return errors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b'com.microsoft:operation-cancelled':
-        return errors.ErrorAction(retry=True)
-    if error.condition == b"com.microsoft:container-close":
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition in _NO_RETRY_ERRORS:
-        return errors.ErrorAction(retry=False)
-    return errors.ErrorAction(retry=True)
 
 
 def parse_sas_token(sas_token):
@@ -83,7 +50,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, batch=None, to_device=None, message=None):
+    def __init__(self, body=None, to_device=None, message=None):
         """
         Initialize EventData.
 
@@ -102,15 +69,13 @@ class EventData(object):
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties)
-        elif message:
+        if message:
             self.message = message
             self.msg_properties = message.properties
             self._annotations = message.annotations
             self._app_properties = message.application_properties
         else:
-            if isinstance(body, list) and body:
+            if body and isinstance(body, list):
                 self.message = Message(body[0], properties=self.msg_properties)
                 for more in body[1:]:
                     self.message._body.append(more)  # pylint: disable=protected-access
@@ -118,6 +83,39 @@ class EventData(object):
                 raise ValueError("EventData cannot be None.")
             else:
                 self.message = Message(body, properties=self.msg_properties)
+
+    def __str__(self):
+        dic = {
+            'body': self.body_as_str(),
+            'application_properties': str(self.application_properties)
+        }
+
+        if self.sequence_number:
+            dic['sequence_number'] = str(self.sequence_number)
+        if self.offset:
+            dic['offset'] = str(self.offset)
+        if self.enqueued_time:
+            dic['enqueued_time'] = str(self.enqueued_time)
+        if self.device_id:
+            dic['device_id'] = str(self.device_id)
+        if self.partition_key:
+            dic['partition_key'] = str(self.partition_key)
+        return str(dic)
+
+    def _set_partition_key(self, value):
+        """
+        Set the partition key of the event data object.
+
+        :param value: The partition key to set.
+        :type value: str or bytes
+        """
+        annotations = dict(self._annotations)
+        annotations[self._partition_key] = value
+        header = MessageHeader()
+        header.durable = True
+        self.message.annotations = annotations
+        self.message.header = header
+        self._annotations = annotations
 
     @property
     def sequence_number(self):
@@ -133,10 +131,10 @@ class EventData(object):
         """
         The offset of the event data object.
 
-        :rtype: ~azure.eventhub.common.Offset
+        :rtype: str
         """
         try:
-            return Offset(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
+            return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
         except (KeyError, AttributeError):
             return None
 
@@ -174,22 +172,6 @@ class EventData(object):
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    @partition_key.setter
-    def partition_key(self, value):
-        """
-        Set the partition key of the event data object.
-
-        :param value: The partition key to set.
-        :type value: str or bytes
-        """
-        annotations = dict(self._annotations)
-        annotations[self._partition_key] = value
-        header = MessageHeader()
-        header.durable = True
-        self.message.annotations = annotations
-        self.message.header = header
-        self._annotations = annotations
-
     @property
     def application_properties(self):
         """
@@ -208,7 +190,7 @@ class EventData(object):
         :type value: dict
         """
         self._app_properties = value
-        properties = dict(self._app_properties)
+        properties = None if value is None else dict(self._app_properties)
         self.message.application_properties = properties
 
     @property
@@ -258,38 +240,61 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
+    def encode_message(self):
+        return self.message.encode_message()
 
-class Offset(object):
+
+class _BatchSendEventData(EventData):
+    def __init__(self, batch_event_data, partition_key=None):
+        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+        self._set_partition_key(partition_key)
+
+    def _set_partition_key(self, value):
+        if value:
+            annotations = self.message.annotations
+            if annotations is None:
+                annotations = dict()
+            annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
+            header = MessageHeader()
+            header.durable = True
+            self.message.annotations = annotations
+            self.message.header = header
+
+
+class EventPosition(object):
     """
-    The offset (position or timestamp) where a receiver starts. Examples:
+    The position(offset, sequence or timestamp) where a consumer starts. Examples:
 
     Beginning of the event stream:
-      >>> offset = Offset("-1")
+      >>> event_pos = EventPosition("-1")
     End of the event stream:
-      >>> offset = Offset("@latest")
+      >>> event_pos = EventPosition("@latest")
     Events after the specified offset:
-      >>> offset = Offset("12345")
+      >>> event_pos = EventPosition("12345")
     Events from the specified offset:
-      >>> offset = Offset("12345", True)
+      >>> event_pos = EventPosition("12345", True)
     Events after a datetime:
-      >>> offset = Offset(datetime.datetime.utcnow())
+      >>> event_pos = EventPosition(datetime.datetime.utcnow())
     Events after a specific sequence number:
-      >>> offset = Offset(1506968696002)
+      >>> event_pos = EventPosition(1506968696002)
     """
 
     def __init__(self, value, inclusive=False):
         """
-        Initialize Offset.
+        Initialize EventPosition.
 
-        :param value: The offset value.
+        :param value: The event position value.
         :type value: ~datetime.datetime or int or str
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
-        self.value = value
+        self.value = value if value is not None else "-1"
         self.inclusive = inclusive
 
-    def selector(self):
+    def __str__(self):
+        return str(self.value)
+
+    def _selector(self):
         """
         Creates a selector expression of the offset.
 
@@ -299,58 +304,49 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        if isinstance(self.value, six.integer_types):
+        elif isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
 
-class EventHubError(Exception):
+# TODO: move some behaviors to these two classes.
+class EventHubSASTokenCredential(object):
     """
-    Represents an error happened in the client.
-
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar error: The error condition, if available.
-    :vartype error: str
-    :ivar details: The error details, if included in the
-     service response.
-    :vartype details: dict[str, str]
+    SAS token used for authentication.
     """
+    def __init__(self, token):
+        """
+        :param token: A SAS token or function that returns a SAS token. If a function is supplied,
+         it will be used to retrieve subsequent tokens in the case of token expiry. The function should
+         take no arguments.
+        :type token: str or callable
+        """
+        self.token = token
 
-    def __init__(self, message, details=None):
-        self.error = None
-        self.message = message
-        self.details = details
-        if isinstance(message, constants.MessageSendResult):
-            self.message = "Message send failed with result: {}".format(message)
-        if details and isinstance(details, Exception):
-            try:
-                condition = details.condition.value.decode('UTF-8')
-            except AttributeError:
-                condition = details.condition.decode('UTF-8')
-            _, _, self.error = condition.partition(':')
-            self.message += "\nError: {}".format(self.error)
-            try:
-                self._parse_error(details.description)
-                for detail in self.details:
-                    self.message += "\n{}".format(detail)
-            except:  # pylint: disable=bare-except
-                self.message += "\n{}".format(details)
-        super(EventHubError, self).__init__(self.message)
+    def get_sas_token(self):
+        if callable(self.token):
+            return self.token()
+        else:
+            return self.token
 
-    def _parse_error(self, error_list):
-        details = []
-        self.message = error_list if isinstance(error_list, six.text_type) else error_list.decode('UTF-8')
-        details_index = self.message.find(" Reference:")
-        if details_index >= 0:
-            details_msg = self.message[details_index + 1:]
-            self.message = self.message[0:details_index]
 
-            tracking_index = details_msg.index(", TrackingId:")
-            system_index = details_msg.index(", SystemTracker:")
-            timestamp_index = details_msg.index(", Timestamp:")
-            details.append(details_msg[:tracking_index])
-            details.append(details_msg[tracking_index + 2: system_index])
-            details.append(details_msg[system_index + 2: timestamp_index])
-            details.append(details_msg[timestamp_index + 2:])
-            self.details = details
+class EventHubSharedKeyCredential(object):
+    """
+    The shared access key credential used for authentication.
+    """
+    def __init__(self, policy, key):
+        """
+        :param policy: The name of the shared access policy.
+        :type policy: str
+        :param key: The shared access key.
+        :type key: str
+        """
+
+        self.policy = policy
+        self.key = key
+
+
+class _Address(object):
+    def __init__(self, hostname=None, path=None):
+        self.hostname = hostname
+        self.path = path

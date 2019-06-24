@@ -1,10 +1,29 @@
-.. :changelog:
+# Release History
 
-Release History
-===============
+## 2.0.0b1 (2019-06-25)
 
-1.3.1 (2019-02-28)
-------------------
+- Added more configuration parameters when creating EventHubClient.
+- New error hierarchy
+  - `azure.error.EventHubError`
+  - `azure.error.ConnectionLostError`
+  - `azure.error.ConnectError`
+  - `azure.error.AuthenticationError`
+  - `azure.error.EventDataError`
+  - `azure.error.EventDataSendError`
+- Renamed Sender/Receiver to EventHubProducer/EventHubConsumer
+  - New APIs for creating EventHubProducer/EventHubConsumer.
+  - EventHubConsumer is now iterable.
+- Rename class azure.eventhub.Offset to azure.eventhub.EventPosition
+- Reorganized connection management, EventHubClient is no longer responsible for opening/closing EventHubProducer/EventHubConsumer.
+  - Each EventHubProducer/EventHubConsumer is responsible for its own connection management.
+  - Added support for context manager on EventHubProducer and EventHubConsumer.
+- Reorganized async APIs into "azure.eventhub.aio" namespace and rename to drop the "_async" suffix.
+- Added support for authentication using azure-core credential.
+- Added support for transport using AMQP over WebSocket.
+- Updated uAMQP dependency to 1.2.0
+
+
+## 1.3.1 (2019-02-28)
 
 **BugFixes**
 
@@ -12,38 +31,33 @@ Release History
 - Fixed stackoverflow error in continuous connection reconnect attempts.
 
 
-1.3.0 (2019-01-29)
-------------------
+## 1.3.0 (2019-01-29)
 
-**Bugfixes**
+**BugFixes**
 
 - Added support for auto reconnect on token expiration and other auth errors (issue #89).
 
 **Features**
 
 - Added ability to create ServiceBusClient from an existing SAS auth token, including
-  provding a function to auto-renew that token on expiry.
+  providing a function to auto-renew that token on expiry.
 - Added support for storing a custom EPH context value in checkpoint (PR #84, thanks @konstantinmiller)
 
 
-1.2.0 (2018-11-29)
-------------------
+## 1.2.0 (2018-11-29)
 
 - Support for Python 2.7 in azure.eventhub module (azure.eventprocessorhost will not support Python 2.7).
 - Parse EventData.enqueued_time as a UTC timestamp (issue #72, thanks @vjrantal)
 
 
-1.1.1 (2018-10-03)
-------------------
+## 1.1.1 (2018-10-03)
 
 - Fixed bug in Azure namespace package.
 
 
-1.1.0 (2018-09-21)
-------------------
+## 1.1.0 (2018-09-21)
 
 - Changes to `AzureStorageCheckpointLeaseManager` parameters to support other connection options (issue #61):
-
   - The `storage_account_name`, `storage_account_key` and `lease_container_name` arguments are now optional keyword arguments.
   - Added a `sas_token` argument that must be specified with `storage_account_name` in place of `storage_account_key`.
   - Added an `endpoint_suffix` argument to support storage endpoints in National Clouds.
@@ -54,8 +68,7 @@ Release History
 - Added convenience methods `body_as_str` and `body_as_json` to EventData object for easier processing of message data.
 
 
-1.0.0 (2018-08-22)
-------------------
+## 1.0.0 (2018-08-22)
 
 - API stable.
 - Renamed internal `_async` module to `async_ops` for docs generation.
@@ -66,8 +79,7 @@ Release History
 - Reformatted logging for performance.
 
 
-0.2.0 (2018-08-06)
-------------------
+## 0.2.0 (2018-08-06)
 
 - Stability improvements for EPH.
 - Updated uAMQP version.
@@ -82,8 +94,7 @@ Release History
   - `EPHOptions.auto_reconnect_on_error`
 
 
-0.2.0rc2 (2018-07-29)
----------------------
+## 0.2.0rc2 (2018-07-29)
 
 - **Breaking change** `EventData.offset` will now return an object of type `~uamqp.common.Offset` rather than str.
   The original string value can be retrieved from `~uamqp.common.Offset.value`.
@@ -95,8 +106,7 @@ Release History
 - Added keep-alive thread for maintaining an unused connection.
 
 
-0.2.0rc1 (2018-07-06)
----------------------
+## 0.2.0rc1 (2018-07-06)
 
 - **Breaking change** Restructured library to support Python 3.7. Submodule `async` has been renamed and all classes from
   this module can now be imported from azure.eventhub directly.
@@ -110,8 +120,7 @@ Release History
 - Dropped Python 2.7 wheel support.
 
 
-0.2.0b2 (2018-05-29)
---------------------
+## 0.2.0b2 (2018-05-29)
 
 - Added `namespace_suffix` to EventHubConfig() to support national clouds.
 - Added `device_id` attribute to EventData to support IoT Hub use cases.
@@ -119,20 +128,17 @@ Release History
 - Updated uAMQP dependency to vRC1.
 
 
-0.2.0b1 (2018-04-20)
---------------------
+## 0.2.0b1 (2018-04-20)
 
 - Updated uAMQP to latest version.
 - Further testing and minor bug fixes.
 
 
-0.2.0a2 (2018-04-02)
---------------------
+## 0.2.0a2 (2018-04-02)
 
 - Updated uAQMP dependency.
 
 
-0.2.0a1 (unreleased)
---------------------
+## 0.2.0a1 (unreleased)
 
 - Swapped out Proton dependency for uAMQP.
