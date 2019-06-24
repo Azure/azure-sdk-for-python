@@ -55,6 +55,32 @@ PipelineType = TypeVar("PipelineType")
 _LOGGER = logging.getLogger(__name__)
 
 
+def _format_url_section(template, **kwargs):
+    components = template.split("/")
+    while components:
+        try:
+            return template.format(**kwargs)
+        except KeyError as key:
+            formatted_components = template.split("/")
+            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+            template = "/".join(components)
+    # No URL sections left - returning None
+
+
+def _urljoin(base_url, stub_url):
+    # type: (str, str) -> str
+    """Append to end of base URL without losing query parameters.
+
+    :param str base_url: The base URL.
+    :param str stub_url: Section to append to the end of the URL path.
+    :returns: The updated URL.
+    :rtype: str
+    """
+    parsed = urlparse(base_url)
+    parsed = parsed._replace(path=parsed.path + '/' + stub_url)
+    return parsed.geturl()
+
+
 class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
     """An http sender ABC.
     """
@@ -325,32 +351,6 @@ class PipelineClientBase(object):
 
         return request
 
-    @staticmethod
-    def _format_url_section(template, **kwargs):
-        components = template.split("/")
-        while components:
-            try:
-                return template.format(**kwargs)
-            except KeyError as key:
-                formatted_components = template.split("/")
-                components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
-                template = "/".join(components)
-        # No URL sections left - returning None
-
-    @staticmethod
-    def _urljoin(base_url, stub_url):
-        # type: (str, str) -> str
-        """Append to end of base URL without losing query parameters.
-
-        :param str base_url: The base URL.
-        :param str stub_url: Section to append to the end of the URL path.
-        :returns: The updated URL.
-        :rtype: str
-        """
-        parsed = urlparse(base_url)
-        parsed = parsed._replace(path=parsed.path + '/' + stub_url)
-        return parsed.geturl()
-
     def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
@@ -358,13 +358,13 @@ class PipelineClientBase(object):
 
         :param str url_template: The request URL to be formatted if necessary.
         """
-        url = self._format_url_section(url_template, **kwargs)
+        url = _format_url_section(url_template, **kwargs)
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip('/')
                 base = self._base_url.format(**kwargs).rstrip('/')
-                url = self._urljoin(base, url)
+                url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
         return url
