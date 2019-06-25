@@ -7,6 +7,8 @@
 
 """
 An example to show sending events to an Event Hub partition.
+This is just an example of sending EventData, not performance optimal.
+To have the best performance, send a batch EventData with one send() call.
 """
 
 # pylint: disable=C0111
@@ -35,12 +37,12 @@ try:
                             network_tracing=False)
     producer = client.create_producer(partition_id="0")
 
-    ed = EventData("msg")
-
     try:
         start_time = time.time()
         with producer:
+            # not performance optimal, but works. Please do send events in batch to get much better performance.
             for i in range(100):
+                ed = EventData("msg")
                 logger.info("Sending message: {}".format(i))
                 producer.send(ed)
     except:
