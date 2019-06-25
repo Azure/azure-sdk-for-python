@@ -90,10 +90,6 @@ class ManagedInstanceUpdate(Model):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
-    :param maintenance_window_settings: Specifies maintenance window settings
-     for a managed instance.
-    :type maintenance_window_settings:
-     ~azure.mgmt.sql.models.MaintenanceWindowSettings
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -124,7 +120,6 @@ class ManagedInstanceUpdate(Model):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
-        'maintenance_window_settings': {'key': 'properties.maintenanceWindowSettings', 'type': 'MaintenanceWindowSettings'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -149,5 +144,4 @@ class ManagedInstanceUpdate(Model):
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
-        self.maintenance_window_settings = kwargs.get('maintenance_window_settings', None)
         self.tags = kwargs.get('tags', None)

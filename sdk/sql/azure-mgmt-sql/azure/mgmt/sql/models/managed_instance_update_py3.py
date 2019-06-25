@@ -90,10 +90,6 @@ class ManagedInstanceUpdate(Model):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
-    :param maintenance_window_settings: Specifies maintenance window settings
-     for a managed instance.
-    :type maintenance_window_settings:
-     ~azure.mgmt.sql.models.MaintenanceWindowSettings
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -124,11 +120,10 @@ class ManagedInstanceUpdate(Model):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
-        'maintenance_window_settings': {'key': 'properties.maintenanceWindowSettings', 'type': 'MaintenanceWindowSettings'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, maintenance_window_settings=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, tags=None, **kwargs) -> None:
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.managed_instance_create_mode = managed_instance_create_mode
@@ -149,5 +144,4 @@ class ManagedInstanceUpdate(Model):
         self.proxy_override = proxy_override
         self.timezone_id = timezone_id
         self.instance_pool_id = instance_pool_id
-        self.maintenance_window_settings = maintenance_window_settings
         self.tags = tags

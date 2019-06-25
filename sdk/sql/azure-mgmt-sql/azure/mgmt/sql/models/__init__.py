@@ -163,7 +163,6 @@ try:
     from .instance_pool_update_py3 import InstancePoolUpdate
     from .name_py3 import Name
     from .usage_py3 import Usage
-    from .maintenance_window_settings_py3 import MaintenanceWindowSettings
     from .managed_instance_py3 import ManagedInstance
     from .managed_instance_update_py3 import ManagedInstanceUpdate
 except (SyntaxError, ImportError):
@@ -320,7 +319,6 @@ except (SyntaxError, ImportError):
     from .instance_pool_update import InstancePoolUpdate
     from .name import Name
     from .usage import Usage
-    from .maintenance_window_settings import MaintenanceWindowSettings
     from .managed_instance import ManagedInstance
     from .managed_instance_update import ManagedInstanceUpdate
 from .recoverable_database_paged import RecoverableDatabasePaged
@@ -468,7 +466,6 @@ from .sql_management_client_enums import (
     ManagedServerCreateMode,
     ManagedInstanceLicenseType,
     ManagedInstanceProxyOverride,
-    MaintenanceWindowFrequency,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -629,7 +626,6 @@ __all__ = [
     'InstancePoolUpdate',
     'Name',
     'Usage',
-    'MaintenanceWindowSettings',
     'ManagedInstance',
     'ManagedInstanceUpdate',
     'RecoverableDatabasePaged',
@@ -776,7 +772,6 @@ __all__ = [
     'ManagedServerCreateMode',
     'ManagedInstanceLicenseType',
     'ManagedInstanceProxyOverride',
-    'MaintenanceWindowFrequency',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',

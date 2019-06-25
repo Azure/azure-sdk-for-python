@@ -684,14 +684,6 @@ class ManagedInstanceProxyOverride(str, Enum):
     default = "Default"
 
 
-class MaintenanceWindowFrequency(str, Enum):
-
-    non_recurrent = "NonRecurrent"
-    weekly = "Weekly"
-    monthly = "Monthly"
-    flexible = "Flexible"
-
-
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"
