@@ -56,13 +56,10 @@ try:
     from .partner_info_py3 import PartnerInfo
     from .failover_group_py3 import FailoverGroup
     from .failover_group_update_py3 import FailoverGroupUpdate
-    from .resource_identity_py3 import ResourceIdentity
-    from .sku_py3 import Sku
-    from .managed_instance_py3 import ManagedInstance
-    from .managed_instance_update_py3 import ManagedInstanceUpdate
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .server_key_py3 import ServerKey
+    from .resource_identity_py3 import ResourceIdentity
     from .server_py3 import Server
     from .server_update_py3 import ServerUpdate
     from .sync_agent_py3 import SyncAgent
@@ -90,6 +87,7 @@ try:
     from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
+    from .sku_py3 import Sku
     from .job_agent_py3 import JobAgent
     from .job_agent_update_py3 import JobAgentUpdate
     from .job_credential_py3 import JobCredential
@@ -163,6 +161,10 @@ try:
     from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
     from .instance_pool_py3 import InstancePool
     from .instance_pool_update_py3 import InstancePoolUpdate
+    from .name_py3 import Name
+    from .usage_py3 import Usage
+    from .managed_instance_py3 import ManagedInstance
+    from .managed_instance_update_py3 import ManagedInstanceUpdate
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -210,13 +212,10 @@ except (SyntaxError, ImportError):
     from .partner_info import PartnerInfo
     from .failover_group import FailoverGroup
     from .failover_group_update import FailoverGroupUpdate
-    from .resource_identity import ResourceIdentity
-    from .sku import Sku
-    from .managed_instance import ManagedInstance
-    from .managed_instance_update import ManagedInstanceUpdate
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .server_key import ServerKey
+    from .resource_identity import ResourceIdentity
     from .server import Server
     from .server_update import ServerUpdate
     from .sync_agent import SyncAgent
@@ -244,6 +243,7 @@ except (SyntaxError, ImportError):
     from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
     from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
     from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
+    from .sku import Sku
     from .job_agent import JobAgent
     from .job_agent_update import JobAgentUpdate
     from .job_credential import JobCredential
@@ -317,6 +317,10 @@ except (SyntaxError, ImportError):
     from .server_vulnerability_assessment import ServerVulnerabilityAssessment
     from .instance_pool import InstancePool
     from .instance_pool_update import InstancePoolUpdate
+    from .name import Name
+    from .usage import Usage
+    from .managed_instance import ManagedInstance
+    from .managed_instance_update import ManagedInstanceUpdate
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -341,7 +345,6 @@ from .server_usage_paged import ServerUsagePaged
 from .database_usage_paged import DatabaseUsagePaged
 from .encryption_protector_paged import EncryptionProtectorPaged
 from .failover_group_paged import FailoverGroupPaged
-from .managed_instance_paged import ManagedInstancePaged
 from .operation_paged import OperationPaged
 from .server_key_paged import ServerKeyPaged
 from .sync_agent_paged import SyncAgentPaged
@@ -383,6 +386,8 @@ from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
 from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
 from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
 from .instance_pool_paged import InstancePoolPaged
+from .usage_paged import UsagePaged
+from .managed_instance_paged import ManagedInstancePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -416,11 +421,8 @@ from .sql_management_client_enums import (
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
-    IdentityType,
-    ManagedServerCreateMode,
-    ManagedInstanceLicenseType,
-    ManagedInstanceProxyOverride,
     OperationOrigin,
+    IdentityType,
     SyncAgentState,
     SyncMemberDbType,
     SyncGroupLogType,
@@ -461,6 +463,9 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
+    ManagedServerCreateMode,
+    ManagedInstanceLicenseType,
+    ManagedInstanceProxyOverride,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -514,13 +519,10 @@ __all__ = [
     'PartnerInfo',
     'FailoverGroup',
     'FailoverGroupUpdate',
-    'ResourceIdentity',
-    'Sku',
-    'ManagedInstance',
-    'ManagedInstanceUpdate',
     'OperationDisplay',
     'Operation',
     'ServerKey',
+    'ResourceIdentity',
     'Server',
     'ServerUpdate',
     'SyncAgent',
@@ -548,6 +550,7 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
     'DatabaseVulnerabilityAssessment',
+    'Sku',
     'JobAgent',
     'JobAgentUpdate',
     'JobCredential',
@@ -621,6 +624,10 @@ __all__ = [
     'ServerVulnerabilityAssessment',
     'InstancePool',
     'InstancePoolUpdate',
+    'Name',
+    'Usage',
+    'ManagedInstance',
+    'ManagedInstanceUpdate',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -645,7 +652,6 @@ __all__ = [
     'DatabaseUsagePaged',
     'EncryptionProtectorPaged',
     'FailoverGroupPaged',
-    'ManagedInstancePaged',
     'OperationPaged',
     'ServerKeyPaged',
     'SyncAgentPaged',
@@ -687,6 +693,8 @@ __all__ = [
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
     'InstancePoolPaged',
+    'UsagePaged',
+    'ManagedInstancePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -719,11 +727,8 @@ __all__ = [
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
-    'IdentityType',
-    'ManagedServerCreateMode',
-    'ManagedInstanceLicenseType',
-    'ManagedInstanceProxyOverride',
     'OperationOrigin',
+    'IdentityType',
     'SyncAgentState',
     'SyncMemberDbType',
     'SyncGroupLogType',
@@ -764,6 +769,9 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
+    'ManagedServerCreateMode',
+    'ManagedInstanceLicenseType',
+    'ManagedInstanceProxyOverride',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',

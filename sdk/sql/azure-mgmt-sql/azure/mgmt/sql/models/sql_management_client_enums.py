@@ -325,34 +325,15 @@ class FailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
-class ManagedServerCreateMode(str, Enum):
-
-    default = "Default"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class ManagedInstanceLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class ManagedInstanceProxyOverride(str, Enum):
-
-    proxy = "Proxy"
-    redirect = "Redirect"
-    default = "Default"
-
-
 class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class SyncAgentState(str, Enum):
@@ -682,6 +663,25 @@ class InstancePoolLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
     base_price = "BasePrice"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
