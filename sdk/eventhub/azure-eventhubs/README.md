@@ -119,14 +119,14 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition.new_events_only())
+receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
     logger = logging.getLogger("azure.eventhub")
     with receiver:
         received = receiver.receive(max_batch_size=100, timeout=5)
         for event_data in received:
-            logger.info("Message received:{}".format(event_data.body_as_str()))
+            logger.info("Message received:{}".format(event_data))
 except:
     raise
 finally:
@@ -179,14 +179,14 @@ connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};En
     os.environ['EVENT_HUB_SAS_KEY'],
     os.environ['EVENT_HUB_NAME'])
 client = EventHubClient.from_connection_string(connection_str)
-receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition.new_events_only())
+receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
     logger = logging.getLogger("azure.eventhub")
     async with receiver:
         received = await receiver.receive(max_batch_size=100, timeout=5)
         for event_data in received:
-            logger.info("Message received:{}".format(event_data.body_as_str()))
+            logger.info("Message received:{}".format(event_data))
 except:
     raise
 finally:
