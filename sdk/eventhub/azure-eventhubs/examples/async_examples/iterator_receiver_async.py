@@ -27,13 +27,13 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EVENT_POSITION = EventPosition.first_available_event()
+EVENT_POSITION = EventPosition("-1")
 
 
 async def iter_consumer(consumer):
     async with consumer:
         async for item in consumer:
-            print(item.body_as_str(), item.offset.value, consumer.name)
+            print(item)
 
 
 async def main():
