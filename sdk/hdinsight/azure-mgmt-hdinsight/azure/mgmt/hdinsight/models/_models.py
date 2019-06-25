@@ -250,6 +250,113 @@ class ApplicationProperties(Model):
         self.marketplace_identifier = None
 
 
+class Autoscale(Model):
+    """The autoscale request parameters.
+
+    :param capacity: Parameters for load-based autoscale
+    :type capacity: ~azure.mgmt.hdinsight.models.AutoscaleCapacity
+    :param recurrence: Parameters for schedule-based autoscale
+    :type recurrence: ~azure.mgmt.hdinsight.models.AutoscaleRecurrence
+    """
+
+    _attribute_map = {
+        'capacity': {'key': 'capacity', 'type': 'AutoscaleCapacity'},
+        'recurrence': {'key': 'recurrence', 'type': 'AutoscaleRecurrence'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Autoscale, self).__init__(**kwargs)
+        self.capacity = kwargs.get('capacity', None)
+        self.recurrence = kwargs.get('recurrence', None)
+
+
+class AutoscaleCapacity(Model):
+    """The load-based autoscale request parameters.
+
+    :param min_instance_count: The minimum instance count of the cluster
+    :type min_instance_count: int
+    :param max_instance_count: The maximum instance count of the cluster
+    :type max_instance_count: int
+    """
+
+    _attribute_map = {
+        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
+        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoscaleCapacity, self).__init__(**kwargs)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.max_instance_count = kwargs.get('max_instance_count', None)
+
+
+class AutoscaleRecurrence(Model):
+    """Schedule-based autoscale request parameters.
+
+    :param time_zone: The time zone for the autoscale schedule times
+    :type time_zone: str
+    :param schedule: Array of schedule-based autoscale rules
+    :type schedule: list[~azure.mgmt.hdinsight.models.AutoscaleSchedule]
+    """
+
+    _attribute_map = {
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': '[AutoscaleSchedule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoscaleRecurrence, self).__init__(**kwargs)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.schedule = kwargs.get('schedule', None)
+
+
+class AutoscaleSchedule(Model):
+    """Parameters for a schedule-based autoscale rule, consisting of an array of
+    days + a time and capacity.
+
+    :param days: Days of the week for a schedule-based autoscale rule
+    :type days: list[str or ~azure.mgmt.hdinsight.models.DaysOfWeek]
+    :param time_and_capacity: Time and capacity for a schedule-based autoscale
+     rule
+    :type time_and_capacity:
+     ~azure.mgmt.hdinsight.models.AutoscaleTimeAndCapacity
+    """
+
+    _attribute_map = {
+        'days': {'key': 'days', 'type': '[DaysOfWeek]'},
+        'time_and_capacity': {'key': 'timeAndCapacity', 'type': 'AutoscaleTimeAndCapacity'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoscaleSchedule, self).__init__(**kwargs)
+        self.days = kwargs.get('days', None)
+        self.time_and_capacity = kwargs.get('time_and_capacity', None)
+
+
+class AutoscaleTimeAndCapacity(Model):
+    """Time and capacity request parameters.
+
+    :param time: 24-hour time in the form xx:xx
+    :type time: str
+    :param min_instance_count: The minimum instance count of the cluster
+    :type min_instance_count: int
+    :param max_instance_count: The maximum instance count of the cluster
+    :type max_instance_count: int
+    """
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'str'},
+        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
+        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoscaleTimeAndCapacity, self).__init__(**kwargs)
+        self.time = kwargs.get('time', None)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.max_instance_count = kwargs.get('max_instance_count', None)
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -1188,6 +1295,8 @@ class Role(Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param autoscale_configuration: The autoscale configurations.
+    :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
     :type hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
     :param os_profile: The operating system profile.
@@ -1206,6 +1315,7 @@ class Role(Model):
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
@@ -1218,6 +1328,7 @@ class Role(Model):
         self.name = kwargs.get('name', None)
         self.min_instance_count = kwargs.get('min_instance_count', None)
         self.target_instance_count = kwargs.get('target_instance_count', None)
+        self.autoscale_configuration = kwargs.get('autoscale_configuration', None)
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.os_profile = kwargs.get('os_profile', None)
         self.virtual_network_profile = kwargs.get('virtual_network_profile', None)

@@ -14,6 +14,11 @@ try:
     from ._models_py3 import ApplicationGetEndpoint
     from ._models_py3 import ApplicationGetHttpsEndpoint
     from ._models_py3 import ApplicationProperties
+    from ._models_py3 import Autoscale
+    from ._models_py3 import AutoscaleCapacity
+    from ._models_py3 import AutoscaleRecurrence
+    from ._models_py3 import AutoscaleSchedule
+    from ._models_py3 import AutoscaleTimeAndCapacity
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
@@ -69,6 +74,11 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGetEndpoint
     from ._models import ApplicationGetHttpsEndpoint
     from ._models import ApplicationProperties
+    from ._models import Autoscale
+    from ._models import AutoscaleCapacity
+    from ._models import AutoscaleRecurrence
+    from ._models import AutoscaleSchedule
+    from ._models import AutoscaleTimeAndCapacity
     from ._models import Cluster
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
@@ -125,6 +135,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import RuntimeScriptActionDetailPaged
 from ._hd_insight_management_client_enums import (
     DirectoryType,
+    DaysOfWeek,
     OSType,
     Tier,
     JsonWebKeyEncryptionAlgorithm,
@@ -138,6 +149,11 @@ __all__ = [
     'ApplicationGetEndpoint',
     'ApplicationGetHttpsEndpoint',
     'ApplicationProperties',
+    'Autoscale',
+    'AutoscaleCapacity',
+    'AutoscaleRecurrence',
+    'AutoscaleSchedule',
+    'AutoscaleTimeAndCapacity',
     'Cluster',
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
@@ -193,6 +209,7 @@ __all__ = [
     'RuntimeScriptActionDetailPaged',
     'OperationPaged',
     'DirectoryType',
+    'DaysOfWeek',
     'OSType',
     'Tier',
     'JsonWebKeyEncryptionAlgorithm',
