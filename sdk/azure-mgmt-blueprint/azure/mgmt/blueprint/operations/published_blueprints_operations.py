@@ -38,7 +38,7 @@ class PublishedBlueprintsOperations(object):
         self.config = config
 
     def create(
-            self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, published_blueprint=None, custom_headers=None, raw=False, **operation_config):
         """Publish a new version of the blueprint definition with the latest
         artifacts. Published blueprint definitions are immutable.
 
@@ -53,6 +53,9 @@ class PublishedBlueprintsOperations(object):
         :type blueprint_name: str
         :param version_id: Version of the published blueprint definition.
         :type version_id: str
+        :param published_blueprint: Published Blueprint to create or update.
+        :type published_blueprint:
+         ~azure.mgmt.blueprint.models.PublishedBlueprint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -79,6 +82,7 @@ class PublishedBlueprintsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -86,8 +90,14 @@ class PublishedBlueprintsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if published_blueprint is not None:
+            body_content = self._serialize.body(published_blueprint, 'PublishedBlueprint')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
