@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ClassicAdministrator
     from ._models_py3 import Permission
     from ._models_py3 import ProviderOperation
     from ._models_py3 import ProviderOperationsMetadata
@@ -21,8 +22,8 @@ try:
     from ._models_py3 import RoleAssignmentPropertiesWithScope
     from ._models_py3 import RoleDefinition
     from ._models_py3 import RoleDefinitionFilter
-    from ._models_py3 import RoleDefinitionProperties
 except (SyntaxError, ImportError):
+    from ._models import ClassicAdministrator
     from ._models import Permission
     from ._models import ProviderOperation
     from ._models import ProviderOperationsMetadata
@@ -34,13 +35,14 @@ except (SyntaxError, ImportError):
     from ._models import RoleAssignmentPropertiesWithScope
     from ._models import RoleDefinition
     from ._models import RoleDefinitionFilter
-    from ._models import RoleDefinitionProperties
+from ._paged_models import ClassicAdministratorPaged
 from ._paged_models import PermissionPaged
 from ._paged_models import ProviderOperationsMetadataPaged
 from ._paged_models import RoleAssignmentPaged
 from ._paged_models import RoleDefinitionPaged
 
 __all__ = [
+    'ClassicAdministrator',
     'Permission',
     'ProviderOperation',
     'ProviderOperationsMetadata',
@@ -52,9 +54,9 @@ __all__ = [
     'RoleAssignmentPropertiesWithScope',
     'RoleDefinition',
     'RoleDefinitionFilter',
-    'RoleDefinitionProperties',
     'PermissionPaged',
+    'RoleDefinitionPaged',
     'ProviderOperationsMetadataPaged',
     'RoleAssignmentPaged',
-    'RoleDefinitionPaged',
+    'ClassicAdministratorPaged',
 ]

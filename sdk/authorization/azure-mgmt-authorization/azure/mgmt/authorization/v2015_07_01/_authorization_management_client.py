@@ -14,10 +14,11 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import AuthorizationManagementClientConfiguration
 from .operations import PermissionsOperations
-from .operations import ProviderOperationsMetadataOperations
-from .operations import RoleAssignmentsOperations
 from .operations import RoleDefinitionsOperations
-from .operations import ElevateAccessOperations
+from .operations import ProviderOperationsMetadataOperations
+from .operations import GlobalAdministratorOperations
+from .operations import RoleAssignmentsOperations
+from .operations import ClassicAdministratorsOperations
 from . import models
 
 
@@ -29,14 +30,16 @@ class AuthorizationManagementClient(SDKClient):
 
     :ivar permissions: Permissions operations
     :vartype permissions: azure.mgmt.authorization.v2015_07_01.operations.PermissionsOperations
-    :ivar provider_operations_metadata: ProviderOperationsMetadata operations
-    :vartype provider_operations_metadata: azure.mgmt.authorization.v2015_07_01.operations.ProviderOperationsMetadataOperations
-    :ivar role_assignments: RoleAssignments operations
-    :vartype role_assignments: azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
     :vartype role_definitions: azure.mgmt.authorization.v2015_07_01.operations.RoleDefinitionsOperations
-    :ivar elevate_access: ElevateAccess operations
-    :vartype elevate_access: azure.mgmt.authorization.v2015_07_01.operations.ElevateAccessOperations
+    :ivar provider_operations_metadata: ProviderOperationsMetadata operations
+    :vartype provider_operations_metadata: azure.mgmt.authorization.v2015_07_01.operations.ProviderOperationsMetadataOperations
+    :ivar global_administrator: GlobalAdministrator operations
+    :vartype global_administrator: azure.mgmt.authorization.v2015_07_01.operations.GlobalAdministratorOperations
+    :ivar role_assignments: RoleAssignments operations
+    :vartype role_assignments: azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations
+    :ivar classic_administrators: ClassicAdministrators operations
+    :vartype classic_administrators: azure.mgmt.authorization.v2015_07_01.operations.ClassicAdministratorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -59,11 +62,13 @@ class AuthorizationManagementClient(SDKClient):
 
         self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.role_definitions = RoleDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.provider_operations_metadata = ProviderOperationsMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.global_administrator = GlobalAdministratorOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.role_assignments = RoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.role_definitions = RoleDefinitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.elevate_access = ElevateAccessOperations(
+        self.classic_administrators = ClassicAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
