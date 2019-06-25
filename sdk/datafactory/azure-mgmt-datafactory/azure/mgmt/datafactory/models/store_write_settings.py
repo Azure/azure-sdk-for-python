@@ -9,32 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_source import CopySource
+from msrest.serialization import Model
 
 
-class ParquetSource(CopySource):
-    """A copy activity Parquet source.
+class StoreWriteSettings(Model):
+    """Connector write settings.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param source_retry_count: Source retry count. Type: integer (or
-     Expression with resultType integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression
-     with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :param type: Required. The write setting type.
+    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param store_settings: Parquet store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
     """
 
     _validation = {
@@ -43,14 +36,14 @@ class ParquetSource(CopySource):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(ParquetSource, self).__init__(**kwargs)
-        self.store_settings = kwargs.get('store_settings', None)
-        self.type = 'ParquetSource'
+        super(StoreWriteSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = kwargs.get('type', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.copy_behavior = kwargs.get('copy_behavior', None)

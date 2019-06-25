@@ -41,7 +41,7 @@ class ParquetSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Parquet store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.ConnectorWriteSetting
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
     """
 
     _validation = {
@@ -56,7 +56,7 @@ class ParquetSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'ConnectorWriteSetting'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
     }
 
     def __init__(self, **kwargs):
