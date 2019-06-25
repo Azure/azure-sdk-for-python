@@ -4,8 +4,8 @@
 # ------------------------------------
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
-from async_preparer import AsyncVaultClientPreparer
-from async_test_case import AsyncKeyVaultTestCase
+from keys_async_preparer import AsyncVaultClientPreparer
+from keys_async_test_case import AsyncKeyVaultTestCase
 
 
 def print(*args):

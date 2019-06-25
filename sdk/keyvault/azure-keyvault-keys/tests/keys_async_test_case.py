@@ -5,7 +5,7 @@
 import asyncio
 import functools
 
-from test_case import KeyVaultTestCase
+from keys_test_case import KeyVaultTestCase
 
 
 class AsyncKeyVaultTestCase(KeyVaultTestCase):

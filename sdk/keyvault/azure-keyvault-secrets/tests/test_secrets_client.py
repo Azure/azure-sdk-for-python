@@ -7,8 +7,8 @@ from dateutil import parser as date_parse
 import time
 
 from devtools_testutils import ResourceGroupPreparer
-from preparer import VaultClientPreparer
-from test_case import KeyVaultTestCase
+from secrets_preparer import VaultClientPreparer
+from secrets_test_case import KeyVaultTestCase
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
