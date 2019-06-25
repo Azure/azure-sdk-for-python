@@ -21,12 +21,13 @@ class InconsistencyDetectRequest(Model):
     :type timestamp: datetime
     :param epsilon: Parameter to be tuned to get inconsistency.
     :type epsilon: float
-    :param time_series_ids: IDs of time series need to be detected.
+    :param time_series_ids: Required. IDs of time series need to be detected.
     :type time_series_ids: list[str]
     """
 
     _validation = {
         'timestamp': {'required': True},
+        'time_series_ids': {'required': True},
     }
 
     _attribute_map = {
@@ -35,7 +36,7 @@ class InconsistencyDetectRequest(Model):
         'time_series_ids': {'key': 'timeSeriesIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, timestamp, epsilon: float=None, time_series_ids=None, **kwargs) -> None:
+    def __init__(self, *, timestamp, time_series_ids, epsilon: float=None, **kwargs) -> None:
         super(InconsistencyDetectRequest, self).__init__(**kwargs)
         self.timestamp = timestamp
         self.epsilon = epsilon
