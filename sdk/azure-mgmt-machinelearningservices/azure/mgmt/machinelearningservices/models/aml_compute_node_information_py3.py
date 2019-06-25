@@ -20,26 +20,47 @@ class AmlComputeNodeInformation(Model):
 
     :ivar node_id: Node ID. ID of the compute node.
     :vartype node_id: str
-    :ivar ip_address: IP address. Public IP address of the compute node.
-    :vartype ip_address: str
+    :ivar private_address: Private IP address. Private IP address of the
+     compute node.
+    :vartype private_address: str
+    :ivar public_address: Public IP address. Public IP address of the compute
+     node.
+    :vartype public_address: str
     :ivar port: Port. SSH port number of the node.
     :vartype port: float
+    :ivar node_state: State of the compute node. Values are idle, running,
+     preparing, unusable, leaving and preempted. Possible values include:
+     'idle', 'running', 'preparing', 'unusable', 'leaving', 'preempted'
+    :vartype node_state: str or
+     ~azure.mgmt.machinelearningservices.models.NodeState
+    :ivar run_id: Run ID. ID of the Experiment running on the node, if any
+     else null.
+    :vartype run_id: str
     """
 
     _validation = {
         'node_id': {'readonly': True},
-        'ip_address': {'readonly': True},
+        'private_address': {'readonly': True},
+        'public_address': {'readonly': True},
         'port': {'readonly': True},
+        'node_state': {'readonly': True},
+        'run_id': {'readonly': True},
     }
 
     _attribute_map = {
         'node_id': {'key': 'nodeId', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'private_address': {'key': 'privateAddress', 'type': 'str'},
+        'public_address': {'key': 'publicAddress', 'type': 'str'},
         'port': {'key': 'port', 'type': 'float'},
+        'node_state': {'key': 'nodeState', 'type': 'str'},
+        'run_id': {'key': 'runId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(AmlComputeNodeInformation, self).__init__(**kwargs)
         self.node_id = None
-        self.ip_address = None
+        self.private_address = None
+        self.public_address = None
         self.port = None
+        self.node_state = None
+        self.run_id = None

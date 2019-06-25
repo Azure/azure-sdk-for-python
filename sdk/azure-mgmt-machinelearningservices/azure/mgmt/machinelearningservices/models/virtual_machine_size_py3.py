@@ -27,6 +27,9 @@ class VirtualMachineSize(Model):
     :ivar v_cp_us: Number of vPUs. The number of vCPUs supported by the
      virtual machine size.
     :vartype v_cp_us: int
+    :ivar gpus: Number of gPUs. The number of gPUs supported by the virtual
+     machine size.
+    :vartype gpus: int
     :ivar os_vhd_size_mb: OS VHD Disk size. The OS VHD disk size, in MB,
      allowed by the virtual machine size.
     :vartype os_vhd_size_mb: int
@@ -48,6 +51,7 @@ class VirtualMachineSize(Model):
         'name': {'readonly': True},
         'family': {'readonly': True},
         'v_cp_us': {'readonly': True},
+        'gpus': {'readonly': True},
         'os_vhd_size_mb': {'readonly': True},
         'max_resource_volume_mb': {'readonly': True},
         'memory_gb': {'readonly': True},
@@ -59,6 +63,7 @@ class VirtualMachineSize(Model):
         'name': {'key': 'name', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'v_cp_us': {'key': 'vCPUs', 'type': 'int'},
+        'gpus': {'key': 'gpus', 'type': 'int'},
         'os_vhd_size_mb': {'key': 'osVhdSizeMB', 'type': 'int'},
         'max_resource_volume_mb': {'key': 'maxResourceVolumeMB', 'type': 'int'},
         'memory_gb': {'key': 'memoryGB', 'type': 'float'},
@@ -71,6 +76,7 @@ class VirtualMachineSize(Model):
         self.name = None
         self.family = None
         self.v_cp_us = None
+        self.gpus = None
         self.os_vhd_size_mb = None
         self.max_resource_volume_mb = None
         self.memory_gb = None

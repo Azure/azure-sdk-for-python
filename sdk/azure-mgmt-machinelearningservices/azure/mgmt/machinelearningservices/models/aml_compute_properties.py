@@ -34,6 +34,17 @@ class AmlComputeProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :ivar remote_login_port_public_access: Close remote Login Access Port.
+     State of the public SSH port. Possible values are: Disabled - Indicates
+     that the public ssh port is closed on all nodes of the cluster. Enabled -
+     Indicates that the public ssh port is open on all nodes of the cluster.
+     NotSpecified - Indicates that the public ssh port is closed on all nodes
+     of the cluster if VNet is defined, else is open all public nodes. It can
+     be default only during cluster creation time, after creation it will be
+     either enabled or disabled. Possible values include: 'Enabled',
+     'Disabled', 'NotSpecified'. Default value: "NotSpecified" .
+    :vartype remote_login_port_public_access: str or
+     ~azure.mgmt.machinelearningservices.models.RemoteLoginPortPublicAccess
     :ivar allocation_state: Allocation state. Allocation state of the compute.
      Possible values are: steady - Indicates that the compute is not resizing.
      There are no changes to the number of compute nodes in the compute in
@@ -67,6 +78,7 @@ class AmlComputeProperties(Model):
     """
 
     _validation = {
+        'remote_login_port_public_access': {'readonly': True},
         'allocation_state': {'readonly': True},
         'allocation_state_transition_time': {'readonly': True},
         'errors': {'readonly': True},
@@ -81,6 +93,7 @@ class AmlComputeProperties(Model):
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'remote_login_port_public_access': {'key': 'remoteLoginPortPublicAccess', 'type': 'str'},
         'allocation_state': {'key': 'allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
@@ -96,6 +109,7 @@ class AmlComputeProperties(Model):
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
         self.subnet = kwargs.get('subnet', None)
+        self.remote_login_port_public_access = None
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
