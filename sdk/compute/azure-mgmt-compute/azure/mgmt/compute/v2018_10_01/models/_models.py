@@ -1698,8 +1698,9 @@ class ProximityPlacementGroup(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param proximity_placement_group_type: Specifies the type of the proximity
-     placement group. <br><br> Possible values are: <br><br> **Standard**
-     <br><br> **Ultra**. Possible values include: 'Standard', 'Ultra'
+     placement group. <br><br> Possible values are: <br><br> **Standard** :
+     Co-locate resources within an Azure region or Availability Zone. <br><br>
+     **Ultra** : For future use. Possible values include: 'Standard', 'Ultra'
     :type proximity_placement_group_type: str or
      ~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroupType
     :ivar virtual_machines: A list of references to all virtual machines in
