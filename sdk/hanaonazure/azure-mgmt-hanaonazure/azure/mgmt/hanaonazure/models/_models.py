@@ -477,8 +477,8 @@ class SapMonitor(Resource):
     :type location: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
-    :ivar hana_subnet: Specifies the SAP monitor unique ID.
-    :vartype hana_subnet: str
+    :param hana_subnet: Specifies the SAP monitor unique ID.
+    :type hana_subnet: str
     :param hana_hostname: Hostname of the HANA instance.
     :type hana_hostname: str
     :param hana_db_name: Database name of the HANA instance.
@@ -501,7 +501,6 @@ class SapMonitor(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
-        'hana_subnet': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -522,7 +521,7 @@ class SapMonitor(Resource):
 
     def __init__(self, **kwargs):
         super(SapMonitor, self).__init__(**kwargs)
-        self.hana_subnet = None
+        self.hana_subnet = kwargs.get('hana_subnet', None)
         self.hana_hostname = kwargs.get('hana_hostname', None)
         self.hana_db_name = kwargs.get('hana_db_name', None)
         self.hana_db_sql_port = kwargs.get('hana_db_sql_port', None)

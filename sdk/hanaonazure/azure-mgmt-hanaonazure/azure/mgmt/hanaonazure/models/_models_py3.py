@@ -477,8 +477,8 @@ class SapMonitor(Resource):
     :type location: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
-    :ivar hana_subnet: Specifies the SAP monitor unique ID.
-    :vartype hana_subnet: str
+    :param hana_subnet: Specifies the SAP monitor unique ID.
+    :type hana_subnet: str
     :param hana_hostname: Hostname of the HANA instance.
     :type hana_hostname: str
     :param hana_db_name: Database name of the HANA instance.
@@ -501,7 +501,6 @@ class SapMonitor(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
-        'hana_subnet': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -520,9 +519,9 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(location=location, **kwargs)
-        self.hana_subnet = None
+        self.hana_subnet = hana_subnet
         self.hana_hostname = hana_hostname
         self.hana_db_name = hana_db_name
         self.hana_db_sql_port = hana_db_sql_port
