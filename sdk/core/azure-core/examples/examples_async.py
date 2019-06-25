@@ -28,24 +28,105 @@ import pytest
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline_client_async import AsyncPipelineClient
-from azure.core.pipeline.policies import SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy, AsyncRetryPolicy
-from azure.core.pipeline.transport import (
-    AsyncHttpTransport,
-    HttpRequest,
-    AsyncioRequestsTransport
-)
+from azure.core.pipeline.policies import UserAgentPolicy, AsyncRedirectPolicy
+from azure.core.pipeline.transport import HttpRequest
+
+import trio
+
+@pytest.mark.asyncio
+async def test_example_trio():
+
+    async def req():
+        config = Configuration()
+        request = HttpRequest("GET", "https://bing.com/")
+        policies = [
+            UserAgentPolicy("myuseragent"),
+            AsyncRedirectPolicy()
+        ]
+        # [START trio]
+        from azure.core.pipeline.transport import TrioRequestsTransport
+
+        async with AsyncPipeline(TrioRequestsTransport(config), policies=policies) as pipeline:
+            return await pipeline.run(request)
+        # [END trio]
+    response = trio.run(req)
+    assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_example_asyncio():
+
+    config = Configuration()
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy()
+    ]
+    # [START asyncio]
+    from azure.core.pipeline.transport import AsyncioRequestsTransport
+
+    async with AsyncPipeline(AsyncioRequestsTransport(config), policies=policies) as pipeline:
+        response = await pipeline.run(request)
+    # [END asyncio]
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_example_aiohttp():
+
+    config = Configuration()
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy()
+    ]
+    # [START aiohttp]
+    from azure.core.pipeline.transport import AioHttpTransport
+
+    async with AsyncPipeline(AioHttpTransport(config), policies=policies) as pipeline:
+        response = await pipeline.run(request)
+    # [END aiohttp]
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_example_async_pipeline():
+    # [START build_async_pipeline]
+    from azure.core.pipeline import AsyncPipeline
+    from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
+    from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
+
+    # example: create request and policies
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy()
+    ]
+
+    # run the pipeline
+    async with AsyncPipeline(transport=AioHttpTransport(), policies=policies) as pipeline:
+        response = await pipeline.run(request)
+    # [END build_async_pipeline]
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline_client():
 
-    conf = Configuration()
-    request = HttpRequest("GET", "https://bing.com")
-    conf.user_agent_policy = UserAgentPolicy("myusergant")
-    conf.redirect_policy = AsyncRedirectPolicy()
+    url = "https://bing.com"
 
     # [START build_async_pipeline_client]
-    async with AsyncPipelineClient(base_url="https://bing.com", config=conf) as client:
+    from azure.core import Configuration, AsyncPipelineClient
+    from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
+    from azure.core.pipeline.transport import HttpRequest
+
+    # example configuration with some policies
+    request = HttpRequest("GET", url)
+    config = Configuration()
+    config.user_agent_policy = UserAgentPolicy("myuseragent")
+    config.redirect_policy = AsyncRedirectPolicy()
+
+    async with AsyncPipelineClient(base_url=url, config=config) as client:
         response = await client._pipeline.run(request)
     # [END build_async_pipeline_client]
 
@@ -56,9 +137,11 @@ async def test_example_async_pipeline_client():
 @pytest.mark.asyncio
 async def test_example_async_redirect_policy():
     url = "https://bing.com"
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", url)
 
     # [START async_redirect_policy]
+    from azure.core.pipeline.policies import AsyncRedirectPolicy
+
     config = Configuration()
     config.redirect_policy = AsyncRedirectPolicy()
 
@@ -89,6 +172,8 @@ async def test_example_async_retry_policy():
     config.redirect_policy = AsyncRedirectPolicy()
 
     # [START async_retry_policy]
+    from azure.core.pipeline.policies import AsyncRetryPolicy
+
     config.retry_policy = AsyncRetryPolicy()
 
     # Total number of retries to allow. Takes precedence over other counts.

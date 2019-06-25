@@ -1,8 +1,13 @@
+parameters:
+  ServiceDirectory: ''
+  BeforeBuildJobPublishBuildArtifacts: []
+  TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
+
 jobs:
   - job: 'Build'
     variables:
     - template: ../variables/globals.yml
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     pool:
       vmImage: 'ubuntu-16.04'
@@ -21,11 +26,13 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --service=${{parameters.ServiceDirectory}}'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
         displayName: 'Verify Readme'
+
+      - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
 
       - task: PublishBuildArtifacts@1
         condition: succeededOrFailed()
@@ -35,8 +42,7 @@ jobs:
 
   - job: 'Analyze'
     variables:
-    - template: ../variables/globals.yml  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -52,7 +58,7 @@ jobs:
 
       - script: |
           pip install setuptools wheel Jinja2
-          pip install doc-warden
+          pip install doc-warden==0.3.0
           ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
         displayName: 'Verify Readmes'
 
@@ -77,8 +83,6 @@ jobs:
   - job: 'Generic_Tests'
     variables:
     - template: ../variables/globals.yml
-  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     dependsOn:
       - 'Build'
@@ -118,88 +122,41 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - powershell: |
-            Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
-            -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
-        workingDirectory: '$(Build.BinariesDirectory)'
-        displayName: 'Download Tools Archive From Github Release and Extract it'
+      - template: ../steps/build-test.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          OSName: $(OSName)
+          PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
+      - template: ../steps/publish-coverage.yml
 
-      - task: PythonScript@0
-        displayName: 'Run VerifyAgentOS script'
-        inputs:
-          scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
-          arguments: $(OSName)
 
-      - script: |
-          pip install pathlib twine codecov beautifulsoup4
-        displayName: 'Prep Environment'
+# Run PyPy tests without coverage
+  - job: 'Test_PyPy'
 
-      - task: PythonScript@0
-        displayName: 'Setup and Run Tests'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}" --mark_arg="${{parameters.TestMarkArgument}}"'
-
-      - task: PublishTestResults@2
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFiles: 'junit/test-results.xml'
-          testRunTitle: '$(OSName) Python $(PythonVersion)'
-
-      - script: |
-          coverage xml
-        displayName: 'Generate Coverage XML'
-        continueOnError: true
-
-      - script: |
-          codecov -t $(codecov-python-repository-token)
-        displayName: 'Publish Code Cov'
-        continueOnError: true
-        condition: ne(variables['codecov-python-repository-token'], '')
-
-      - task: PublishCodeCoverageResults@1
-        displayName: 'Publish Code Coverage to DevOps'
-        continueOnError: true
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-
-  - job: Test_PyPy
     variables:
-    - template: ../variables/globals.yml
+      - template: ../variables/globals.yml
+      - name: OSName
+        value: 'Linux'
+      - name: PythonVersion
+        value: 'pypy3'
+      - name: OSVmImage
+        value: ubuntu-16.04
 
-    timeoutInMinutes: 90
-
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-    
     dependsOn:
       - 'Build'
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: $(OSVmImage)
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          pip install pathlib twine
-        displayName: 'Prep Environment'
-
-      - script: |
-          cd ~/
-          wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-          tar xf pypy3-v6.0.0-linux64.tar.bz2
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
-          pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}} --mark_arg="${{parameters.TestMarkArgument}}"
-        displayName: 'Setup and Run Filtered Tests PyPy3'
-        continueOnError: true
+      - template: ../steps/build-test.yml
+        parameters:
+          AdditionalTestArgs: '--disablecov'
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          OSName: $(OSName)
+          PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}

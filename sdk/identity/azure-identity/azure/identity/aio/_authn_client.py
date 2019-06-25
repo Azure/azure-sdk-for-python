@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+import time
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
@@ -39,17 +41,17 @@ class AsyncAuthnClient(AuthnClientBase):
         headers: Optional[Mapping[str, str]] = None,
         form_data: Optional[Mapping[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
-    ) -> str:
+        **kwargs: Any
+    ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
-        response = await self._pipeline.run(request, stream=False)
-        token = self._deserialize_and_cache_token(response, scopes)
+        request_time = int(time.time())
+        response = await self._pipeline.run(request, stream=False, **kwargs)
+        token = self._deserialize_and_cache_token(response, scopes, request_time)
         return token
 
     @staticmethod
     def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = AsyncRetryPolicy(
-            retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs
-        )
+        config.retry_policy = AsyncRetryPolicy(**kwargs)
         return config

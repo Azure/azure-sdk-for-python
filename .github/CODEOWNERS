@@ -5,7 +5,7 @@
 
 # Service team
 /sdk/applicationinsights/ @alexeldeib
-/sdk/batch/ @matthchr
+/sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
 /sdk/keyvault/ @schaabs @chlowell
 /sdk/loganalytics/ @alexeldeib

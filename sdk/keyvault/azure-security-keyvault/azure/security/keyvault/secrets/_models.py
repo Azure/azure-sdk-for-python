@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime
+import datetime
 from typing import Any, Dict, Mapping, Optional
 from .._generated.v7_0 import models
 from .._internal import _parse_vault_id
@@ -26,7 +26,7 @@ class SecretAttributes(object):
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
         # type: (models.SecretBundle) -> SecretAttributes
-        """Construct a Secret from an autorest-generated SecretBundle"""
+        """Construct a SecretAttributes from an autorest-generated SecretBundle"""
         return cls(
             secret_bundle.attributes,
             secret_bundle.id,
@@ -39,7 +39,7 @@ class SecretAttributes(object):
     @classmethod
     def _from_secret_item(cls, secret_item):
         # type: (models.SecretItem) -> SecretAttributes
-        """Construct a Secret from an autorest-generated SecretItem"""
+        """Construct a SecretAttributes from an autorest-generated SecretItem"""
         return cls(
             secret_item.attributes,
             secret_item.id,

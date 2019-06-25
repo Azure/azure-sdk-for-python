@@ -59,6 +59,14 @@ class AioHttpTransport(AsyncHttpTransport):
     :param session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
+
+    Example:
+        .. literalinclude:: ../examples/examples_async.py
+            :start-after: [START aiohttp]
+            :end-before: [END aiohttp]
+            :language: python
+            :dedent: 4
+            :caption: Asynchronous transport with aiohttp.
     """
     def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
         self._loop = loop

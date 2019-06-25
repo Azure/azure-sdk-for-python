@@ -3,6 +3,14 @@
 Release History
 ===============
 
+7.0.0 (2019-6-11)
+++++++++++++++++++
+
+- Using REST API version 2019-06-01.9.0.
+    * **Breaking** Replaced `AccountOperations.list_node_agent_skus` with `AccountOperations.list_supported_images`. `list_supported_images` contains all of the same information originally available in `list_node_agent_skus` but in a clearer format. New non-verified images are also now returned. Additional information about `capabilities` and `batch_support_end_of_life` is accessible on the `ImageInformation` object returned by `list_supported_images`.
+    * Now support network security rules blocking network access to a `CloudPool` based on the source port of the traffic. This is done via the `source_port_ranges` property on `network_security_group_rules`.
+    * When running a container, Batch now supports executing the task in the container working directory or in the Batch task working directory. This is controlled by the `working_directory` property on `TaskContainerSettings`.
+
 6.0.1 (2019-2-26)
 ++++++++++++++++++
 

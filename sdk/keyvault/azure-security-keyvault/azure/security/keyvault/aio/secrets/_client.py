@@ -11,8 +11,6 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from .._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
 from ...secrets._models import Secret, DeletedSecret, SecretAttributes
 
-# TODO: update all returns and raises
-
 
 class SecretClient(_AsyncKeyVaultClientBase):
     """SecretClient is a high-level interface for managing a vault's secrets.
@@ -25,6 +23,8 @@ class SecretClient(_AsyncKeyVaultClientBase):
             :caption: Creates a new instance of the Secret client
     """
 
+    # pylint:disable=protected-access
+
     async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Secret:
         """Get a specified secret from the vault.
 
@@ -36,8 +36,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
             the secret is returned.
         :returns: An instance of Secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if client failed to retrieve the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -46,7 +45,9 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Get secret from the key vault
         """
-        bundle = await self._client.get_secret(self.vault_url, name, version or "", error_map={404: ResourceNotFoundError})
+        bundle = await self._client.get_secret(
+            self.vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return Secret._from_secret_bundle(bundle)
 
     async def set_secret(
@@ -79,9 +80,8 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises:{
-        :class:`azure.core.HttpRequestError`
-                Example:
+
+        Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START set_secret]
                 :end-before: [END set_secret]
@@ -93,7 +93,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags
+            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -127,7 +127,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -148,6 +148,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
             tags=tags,
             secret_attributes=attributes,
             error_map={404: ResourceNotFoundError},
+            **kwargs
         )
         return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
@@ -162,8 +163,6 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :returns: An iterator like instance of Secrets
         :rtype:
          typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
-        :raises:
-         :class:`HttpRequestError<azure.core.HttpRequestError>`
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -177,9 +176,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, SecretAttributes._from_secret_item)
         return iterable
 
-    def list_secret_versions(
-        self, name: str, **kwargs: Mapping[str, Any]
-    ) -> AsyncIterable[SecretAttributes]:
+    def list_secret_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[SecretAttributes]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response.
@@ -187,18 +184,16 @@ class SecretClient(_AsyncKeyVaultClientBase):
         secrets/list permission.
 
         :param str name: The name of the secret.
-        :returns: An iterator like instance of Secret
+        :returns: An iterator like instance of SecretAttributes
         :rtype:
          typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
-        :raises:
-         :class:`HttpRequestError<azure.core.HttpRequestError>`
 
         Example:
-        .. literalinclude:: ../tests/test_examples_secrets_async.py
-            :start-after: [START list_secret_versions]
-            :end-before: [END list_secret_versions]
-            :language: python
-            :caption: List all versions of the specified secret
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
+                :start-after: [START list_secret_versions]
+                :end-before: [END list_secret_versions]
+                :language: python
+                :caption: List all versions of the specified secret
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secret_versions(self.vault_url, name, maxresults=max_results)
@@ -215,8 +210,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :param str name: The name of the secret.
         :returns: The raw bytes of the secret backup.
         :rtype: bytes
-        :raises:
-         :class:azure.core.HttpRequestError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
          Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -225,7 +219,9 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Backs up the specified secret
         """
-        backup_result = await self._client.backup_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        backup_result = await self._client.backup_secret(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return backup_result.value
 
     async def restore_secret(self, backup: bytes, **kwargs: Mapping[str, Any]) -> SecretAttributes:
@@ -237,8 +233,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises:
-         :class:azure.core.HttpRequestError
+        :raises: ~azure.core.exceptions.ResourceExistsError, if client failed to restore the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -247,7 +242,9 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Restores a backed up secret to the vault
         """
-        bundle = await self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError})
+        bundle = await self._client.restore_secret(
+            self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs
+        )
         return SecretAttributes._from_secret_bundle(bundle)
 
     async def delete_secret(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedSecret:
@@ -269,7 +266,9 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Deletes a secret
         """
-        bundle = await self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        bundle = await self._client.delete_secret(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     async def get_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedSecret:
@@ -281,7 +280,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets._models.DeletedSecret
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to get the deleted secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -290,7 +289,9 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Gets the deleted secret
         """
-        bundle = await self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        bundle = await self._client.get_deleted_secret(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def list_deleted_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedSecret]:
@@ -312,7 +313,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :caption: Lists the deleted secrets of the vault
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results)
+        pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results, **kwargs)
         iterable = AsyncPagingAdapter(pages, DeletedSecret._from_deleted_secret_item)
         return iterable
 
@@ -325,7 +326,6 @@ class SecretClient(_AsyncKeyVaultClientBase):
 
         :param str name: The name of the secret
         :returns: None
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to return the purged secret
 
         Example:
             .. code-block:: python
@@ -335,7 +335,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 await secret_client.purge_deleted_secret("secret-name")
 
         """
-        await self._client.purge_deleted_secret(self.vault_url, name)
+        await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     async def recover_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> SecretAttributes:
         """Recovers the deleted secret to the latest version.
@@ -347,7 +347,6 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :returns: The recovered deleted secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to recover the deleted secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets_async.py
@@ -356,5 +355,5 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :language: python
                 :caption: Restores a backed up secret to the vault
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_url, name)
+        bundle = await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         return SecretAttributes._from_secret_bundle(bundle)

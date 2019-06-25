@@ -35,7 +35,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = await client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags)
+        created_key = await client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_operations=key_ops, tags=tags)
         self.assertTrue(created_key.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.tags)
         key_type = "RSA-HSM" if hsm else "RSA"
@@ -77,7 +77,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     async def _update_key(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key(key.name, key.version, expires=expires, tags=tags)
+        key_bundle = await client.update_key(key.name, expires=expires, tags=tags)
         self.assertEqual(tags, key_bundle.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.updated, key_bundle.updated)
@@ -245,6 +245,12 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         await self._poll_until_no_exception(
             client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
         )
+
+        # validate list deleted keys with attributes
+        async for deleted_key in client.list_deleted_keys():
+            self.assertIsNotNone(deleted_key.deleted_date)
+            self.assertIsNotNone(deleted_key.scheduled_purge_date)
+            self.assertIsNotNone(deleted_key.recovery_id)
 
         # validate all our deleted keys are returned by list_deleted_keys
         result = client.list_deleted_keys()

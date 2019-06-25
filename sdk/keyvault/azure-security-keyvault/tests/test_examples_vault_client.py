@@ -21,11 +21,11 @@ def test_create_vault_client():
     try:
         # [START create_async_vault_client]
 
-        from azure.identity.aio import AsyncDefaultAzureCredential
+        from azure.identity.aio import DefaultAzureCredential
         from azure.security.keyvault.aio import VaultClient
 
         # Create a VaultClient using default Azure credentials
-        credential = AsyncDefaultAzureCredential()
+        credential = DefaultAzureCredential()
         vault_client = VaultClient(vault_url, credential)
 
         # [END create_async_vault_client]

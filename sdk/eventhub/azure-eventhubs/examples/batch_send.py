@@ -1,54 +1,49 @@
 #!/usr/bin/env python
 
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 """
 An example to show batch sending events to an Event Hub.
 """
 
 # pylint: disable=C0111
 
-import sys
 import logging
-import datetime
 import time
 import os
 
-from azure.eventhub import EventHubClient, Sender, EventData
+from azure.eventhub import EventData, EventHubClient, EventHubSharedKeyCredential
+
 
 import examples
 logger = examples.get_logger(logging.INFO)
 
-# Address can be in either of these formats:
-# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
-# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
+HOSTNAME = os.environ.get('EVENT_HUB_HOSTNAME')  # <mynamespace>.servicebus.windows.net
+EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 
-# SAS policy and key are not required if they are encoded in the URL
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
-def data_generator():
-    for i in range(1500):
-        logger.info("Yielding message {}".format(i))
-        yield b"Hello world"
-
-
 try:
-    if not ADDRESS:
+    if not HOSTNAME:
         raise ValueError("No EventHubs URL supplied.")
 
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-    sender = client.add_sender(partition="1")
-    client.run()
-    try:
+    client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
+    producer = client.create_producer(partition_id="1")
+
+    event_list = []
+    for i in range(1500):
+        event_list.append('Hello World')
+
+    with producer:
         start_time = time.time()
-        data = EventData(batch=data_generator())
-        sender.send(data)
-    except:
-        raise
-    finally:
+        data = EventData(body=event_list)
+        producer.send(data)
         end_time = time.time()
-        client.stop()
         run_time = end_time - start_time
         logger.info("Runtime: {} seconds".format(run_time))
 

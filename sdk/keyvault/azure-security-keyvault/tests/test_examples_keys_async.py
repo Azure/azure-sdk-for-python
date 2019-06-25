@@ -18,11 +18,11 @@ def test_create_key_client():
     # pylint:disable=unused-variable
     # [START create_key_client]
 
-    from azure.identity.aio import AsyncDefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.security.keyvault.aio import KeyClient
 
     # Create a KeyClient using default Azure credentials
-    credential = AsyncDefaultAzureCredential()
+    credential = DefaultAzureCredential()
     key_client = KeyClient(vault_url, credential)
 
     # [END create_key_client]
@@ -44,11 +44,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # create a key with optional arguments
         key = await key_client.create_key(
-            "key-name", "RSA", size=key_size, key_ops=key_ops, enabled=True, expires=expires
+            "key-name", "RSA", size=key_size, key_operations=key_ops, expires=expires
         )
 
         print(key.id)
-        print(key.version)
+        print(key.name)
         print(key.key_material.kty)
         print(key.enabled)
         print(key.expires)
@@ -57,12 +57,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START create_rsa_key]
 
         # create an rsa key in a hardware security module
-        key = await key_client.create_rsa_key("key-name", hsm=True, size=2048, enabled=True, key_ops=key_ops)
+        key = await key_client.create_rsa_key("key-name", hsm=True, size=2048)
 
         print(key.id)
-        print(key.version)
+        print(key.name)
         print(key.key_material.kty)
-        print(key.key_material.key_ops)
 
         # [END create_rsa_key]
         # [START create_ec_key]
@@ -72,7 +71,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         ec_key = await key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
 
         print(ec_key.id)
-        print(ec_key.version)
+        print(ec_key.name)
         print(ec_key.key_material.kty)
         print(ec_key.key_material.crv)
 
@@ -98,8 +97,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # update attributes of an existing key
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_version = key.version
-        updated_key = await key_client.update_key(key.name, key_version, expires=expires, tags=tags)
+        updated_key = await key_client.update_key(key.name, expires=expires, tags=tags)
 
         print(updated_key.version)
         print(updated_key.updated)
@@ -114,10 +112,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_key = await key_client.delete_key("key-name")
 
         print(deleted_key.name)
-        print(deleted_key.deleted_date)
 
         # if the vault has soft-delete enabled, the key's
-        # scheduled purge date and recovery id are set
+        # scheduled purge date, deleted_date and recovery id are set
+        print(deleted_key.deleted_date)
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
 
@@ -128,6 +126,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
+
+        for i in range(4):
+            await key_client.create_ec_key("key{}".format(i), hsm=False)
+        for i in range(4):
+            await key_client.create_rsa_key("key{}".format(i), hsm=False)
+
         # [START list_keys]
 
         # list keys
@@ -137,7 +141,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.id)
             print(key.created)
             print(key.name)
-            print(key.key_material.kty)
+            print(key.updated)
+            print(key.enabled)
 
         # [END list_keys]
         # [START list_key_versions]
@@ -158,6 +163,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_keys = key_client.list_deleted_keys()
 
         async for key in deleted_keys:
+            print(key.id)
             print(key.name)
             print(key.scheduled_purge_date)
             print(key.recovery_id)

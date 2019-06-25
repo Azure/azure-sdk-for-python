@@ -4,26 +4,34 @@
 # license information.
 # ------------------------------------------------------------------------
 from .credentials import (
-    AsyncCertificateCredential,
-    AsyncClientSecretCredential,
-    AsyncEnvironmentCredential,
-    AsyncManagedIdentityCredential,
-    AsyncTokenCredentialChain,
+    CertificateCredential,
+    ChainedTokenCredential,
+    ClientSecretCredential,
+    EnvironmentCredential,
+    ManagedIdentityCredential,
 )
 
 
-class AsyncDefaultAzureCredential(AsyncTokenCredentialChain):
-    """default credential is environment followed by MSI/IMDS"""
+class DefaultAzureCredential(ChainedTokenCredential):
+    """
+    A default credential capable of handling most Azure SDK authentication scenarios.
+
+    When environment variable configuration is present, it authenticates as a service principal
+    using :class:`identity.aio.EnvironmentCredential`.
+
+    When environment configuration is not present, it authenticates with a managed identity
+    using :class:`identity.aio.ManagedIdentityCredential`.
+    """
 
     def __init__(self, **kwargs):
-        super().__init__(AsyncEnvironmentCredential(**kwargs), AsyncManagedIdentityCredential(**kwargs))
+        super().__init__(EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs))
 
 
 __all__ = [
-    "AsyncCertificateCredential",
-    "AsyncClientSecretCredential",
-    "AsyncDefaultAzureCredential",
-    "AsyncEnvironmentCredential",
-    "AsyncManagedIdentityCredential",
-    "AsyncTokenCredentialChain",
+    "CertificateCredential",
+    "ClientSecretCredential",
+    "DefaultAzureCredential",
+    "EnvironmentCredential",
+    "ManagedIdentityCredential",
+    "ChainedTokenCredential",
 ]

@@ -75,7 +75,7 @@ class KeyClientTests(KeyVaultTestCase):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
         key_ops = ["decrypt", "encrypt"]
-        key_bundle = client.update_key(key.name, key.version, key_operations=key_ops, expires=expires, tags=tags)
+        key_bundle = client.update_key(key.name, key_operations=key_ops, expires=expires, tags=tags)
         self.assertEqual(tags, key_bundle.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.updated, key_bundle.updated)
@@ -247,6 +247,35 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.id]
                 self._assert_key_attributes_equal(expected_key, key)
         self.assertEqual(0, len(expected))
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_list_deleted_keys(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+
+        expected = {}
+
+        # create keys
+        for i in range(self.list_test_size):
+            key_name = "key{}".format(i)
+            key_value = "value{}".format(i)
+            expected[key_name] = client.create_key(key_name, "RSA")
+
+        # delete them
+        for key_name in expected.keys():
+            client.delete_key(key_name)
+        for key_name in expected.keys():
+            self._poll_until_no_exception(functools.partial(client.get_deleted_key, key_name), ResourceNotFoundError)
+
+        # validate list deleted keys with attributes
+        for deleted_key in client.list_deleted_keys():
+            self.assertIsNotNone(deleted_key.deleted_date)
+            self.assertIsNotNone(deleted_key.scheduled_purge_date)
+            self.assertIsNotNone(deleted_key.recovery_id)
+
+        # validate all the deleted keys are returned by list_deleted_keys
+        self._validate_key_list(client.list_deleted_keys(), expected)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)

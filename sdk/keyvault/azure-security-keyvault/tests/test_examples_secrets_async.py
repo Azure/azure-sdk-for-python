@@ -19,11 +19,11 @@ def test_create_secret_client():
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
-    from azure.identity.aio import AsyncDefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.security.keyvault.aio.secrets import SecretClient
 
     # Create a SecretClient using default Azure credentials
-    credentials = AsyncDefaultAzureCredential()
+    credentials = DefaultAzureCredential()
     secret_client = SecretClient(vault_url, credentials)
 
     # [END create_secret_client]
@@ -44,8 +44,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # create a secret, setting optional arguments
         secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
-        print(secret.version)
-        print(secret.created)
+        print(secret.id)
+        print(secret.name)
         print(secret.enabled)
         print(secret.expires)
 
@@ -85,10 +85,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_secret = await secret_client.delete_secret("secret-name")
 
         print(deleted_secret.name)
-        print(deleted_secret.deleted_date)
 
-        # if the vault has soft-delete enabled, the secret's
+        # if the vault has soft-delete enabled, the secret's deleted_date,
         # scheduled purge date and recovery id are set
+        print(deleted_secret.deleted_date)
         print(deleted_secret.scheduled_purge_date)
         print(deleted_secret.recovery_id)
 
@@ -100,6 +100,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
 
+        for i in range(7):
+            await secret_client.set_secret("key{}".format(i), "value{}".format(i))
+
         # [START list_secrets]
 
         # gets a list of secrets in the vault
@@ -109,6 +112,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # the list doesn't include values or versions of the secrets
             print(secret.id)
             print(secret.name)
+            print(secret.enabled)
 
         # [END list_secrets]
         # [START list_secret_versions]
@@ -119,7 +123,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         async for secret in secret_versions:
             # the list doesn't include the versions' values
             print(secret.id)
-            print(secret.name)
+            print(secret.enabled)
+            print(secret.updated)
 
         # [END list_secret_versions]
         # [START list_deleted_secrets]
@@ -131,6 +136,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # the list doesn't include values or versions of the deleted secrets
             print(secret.id)
             print(secret.name)
+            print(secret.scheduled_purge_date)
+            print(secret.recovery_id)
+            print(secret.deleted_date)
 
         # [END list_deleted_secrets]
 
