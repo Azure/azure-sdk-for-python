@@ -38,7 +38,7 @@ class JitNetworkAccessRequestPort(Model):
     :type status_reason: str or ~azure.mgmt.security.models.StatusReason
     :param mapped_port: The port which is mapped to this port's `number` in
      the Azure Firewall, if applicable
-    :type mapped_port: object
+    :type mapped_port: int
     """
 
     _validation = {
@@ -55,7 +55,7 @@ class JitNetworkAccessRequestPort(Model):
         'end_time_utc': {'key': 'endTimeUtc', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'status_reason': {'key': 'statusReason', 'type': 'str'},
-        'mapped_port': {'key': 'mappedPort', 'type': 'object'},
+        'mapped_port': {'key': 'mappedPort', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
