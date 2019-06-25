@@ -12,12 +12,12 @@ from azure.core.exceptions import HttpResponseError
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
 #  2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-security-keyvault/
+#    https://pypi.python.org/pypi/azure-keyvault-keys/
 #
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/keys#createget-credentials)
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(key) resource for Azure Key Vault
