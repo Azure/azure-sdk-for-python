@@ -20,6 +20,7 @@ class SecretClient(_KeyVaultClientBase):
             :end-before: [END create_secret_client]
             :language: python
             :caption: Creates a new instance of the Secret client
+            :dedent: 4
     """
 
     # pylint:disable=protected-access
@@ -44,6 +45,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END get_secret]
                 :language: python
                 :caption: Get secret from the key vault
+                :dedent: 8
         """
         bundle = self._client.get_secret(
             self._vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
@@ -80,6 +82,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END set_secret]
                 :language: python
                 :caption: Set a secret in the key vault
+                :dedent: 8
 
         """
         if enabled is not None or not_before is not None or expires is not None:
@@ -122,6 +125,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END update_secret]
                 :language: python
                 :caption: Updates the attributes associated with a specified secret in the key vault
+                :dedent: 8
 
         """
         if enabled is not None or not_before is not None or expires is not None:
@@ -159,6 +163,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END list_secrets]
                 :language: python
                 :caption: Lists all the secrets in the vault
+                :dedent: 8
 
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -184,6 +189,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END list_secret_versions]
                 :language: python
                 :caption: List all versions of the specified secret
+                :dedent: 8
 
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -209,6 +215,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END backup_secret]
                 :language: python
                 :caption: Backs up the specified secret
+                :dedent: 8
 
         """
         backup_result = self._client.backup_secret(
@@ -234,6 +241,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END restore_secret]
                 :language: python
                 :caption: Restores a backed up secret to the vault
+                :dedent: 8
 
         """
         bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
@@ -258,6 +266,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END delete_secret]
                 :language: python
                 :caption: Deletes a secret
+                :dedent: 8
 
         """
         bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
@@ -281,6 +290,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END get_deleted_secret]
                 :language: python
                 :caption: Gets the deleted secret
+                :dedent: 8
 
         """
         bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
@@ -304,6 +314,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END list_deleted_secrets]
                 :language: python
                 :caption: Lists the deleted secrets of the vault
+                :dedent: 8
 
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -351,6 +362,7 @@ class SecretClient(_KeyVaultClientBase):
                 :end-before: [END recover_deleted_secret]
                 :language: python
                 :caption: Restores a backed up secret to the vault
+                :dedent: 8
 
         """
         bundle = self._client.recover_deleted_secret(self.vault_url, name, **kwargs)

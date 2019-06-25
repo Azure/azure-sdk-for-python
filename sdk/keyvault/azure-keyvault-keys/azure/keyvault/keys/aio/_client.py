@@ -20,6 +20,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
             :end-before: [END create_key_client]
             :language: python
             :caption: Creates a new instance of the Key client
+            :dedent: 4
     """
 
     # pylint:disable=protected-access
@@ -46,6 +47,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END get_key]
                 :language: python
                 :caption: Retrieves a key from the key vault
+                :dedent: 8
         """
         if version is None:
             version = ""
@@ -109,6 +111,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END create_key]
                 :language: python
                 :caption: Creates a key in the key vault
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -175,6 +178,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END create_rsa_key]
                 :language: python
                 :caption: Creates an RSA key in the key vault
+                :dedent: 8
         """
         key_type = "RSA-HSM" if hsm else "RSA"
 
@@ -239,6 +243,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END create_ec_key]
                 :language: python
                 :caption: Creates an EC key in the key vault
+                :dedent: 8
         """
         key_type = "EC-HSM" if hsm else "EC"
 
@@ -300,6 +305,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END update_key]
                 :language: python
                 :caption: Updates a key in the key vault
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -338,6 +344,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_keys]
                 :language: python
                 :caption: List all keys in the vault
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_keys(self.vault_url, maxresults=max_results, **kwargs)
@@ -362,6 +369,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_key_versions]
                 :language: python
                 :caption: List all versions of the specified key
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_key_versions(self.vault_url, name, maxresults=max_results, **kwargs)
@@ -398,6 +406,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END backup_key]
                 :language: python
                 :caption: Backs up the specified key to the key vault
+                :dedent: 8
         """
         backup_result = await self._client.backup_key(
             self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
@@ -434,6 +443,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END restore_key]
                 :language: python
                 :caption: Restores a backed up key to the vault
+                :dedent: 8
         """
         bundle = await self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
         return Key._from_key_bundle(bundle)
@@ -459,6 +469,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END delete_key]
                 :language: python
                 :caption: Deletes a key in the key vault
+                :dedent: 8
         """
         bundle = await self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
@@ -483,6 +494,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END get_deleted_key]
                 :language: python
                 :caption: Retrieves a deleted key from the key vault
+                :dedent: 8
         """
         bundle = await self._client.get_deleted_key(
             self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
@@ -510,6 +522,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_deleted_keys]
                 :language: python
                 :caption: List all the deleted keys in the vault
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_deleted_keys(self.vault_url, maxresults=max_results, **kwargs)
@@ -560,6 +573,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
                 :end-before: [END recover_deleted_key]
                 :language: python
                 :caption: Recovers the specified soft-deleted key
+                :dedent: 8
         """
         bundle = await self._client.recover_deleted_key(self.vault_url, name, **kwargs)
         return Key._from_key_bundle(bundle)

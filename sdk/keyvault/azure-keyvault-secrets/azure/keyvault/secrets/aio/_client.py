@@ -20,6 +20,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
             :end-before: [END create_secret_client]
             :language: python
             :caption: Creates a new instance of the Secret client
+            :dedent: 4
     """
 
     # pylint:disable=protected-access
@@ -43,6 +44,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END get_secret]
                 :language: python
                 :caption: Get secret from the key vault
+                :dedent: 8
         """
         bundle = await self._client.get_secret(
             self.vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
@@ -86,6 +88,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END set_secret]
                 :language: python
                 :caption: Get secret from the key vault
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -134,6 +137,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END update_secret]
                 :language: python
                 :caption: Updates the attributes associated with a specified secret in the key vault
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -169,6 +173,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_secrets]
                 :language: python
                 :caption: Lists all the secrets in the vault
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secrets(self.vault_url, maxresults=max_results)
@@ -193,6 +198,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_secret_versions]
                 :language: python
                 :caption: List all versions of the specified secret
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secret_versions(self.vault_url, name, maxresults=max_results)
@@ -217,6 +223,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END backup_secret]
                 :language: python
                 :caption: Backs up the specified secret
+                :dedent: 8
         """
         backup_result = await self._client.backup_secret(
             self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
@@ -240,6 +247,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END restore_secret]
                 :language: python
                 :caption: Restores a backed up secret to the vault
+                :dedent: 8
         """
         bundle = await self._client.restore_secret(
             self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs
@@ -264,6 +272,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END delete_secret]
                 :language: python
                 :caption: Deletes a secret
+                :dedent: 8
         """
         bundle = await self._client.delete_secret(
             self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
@@ -287,6 +296,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END get_deleted_secret]
                 :language: python
                 :caption: Gets the deleted secret
+                :dedent: 8
         """
         bundle = await self._client.get_deleted_secret(
             self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
@@ -310,6 +320,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END list_deleted_secrets]
                 :language: python
                 :caption: Lists the deleted secrets of the vault
+                :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results, **kwargs)
@@ -353,6 +364,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :end-before: [END recover_deleted_secret]
                 :language: python
                 :caption: Restores a backed up secret to the vault
+                :dedent: 8
         """
         bundle = await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         return SecretAttributes._from_secret_bundle(bundle)
