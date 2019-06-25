@@ -1,6 +1,5 @@
 import datetime
 import os
-import pytz
 from azure.keyvault import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -44,7 +43,7 @@ def run_sample():
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n1. Create Secret")
-        expires = datetime.datetime.now(pytz.timezone("America/New_York")) + datetime.timedelta(days=365)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         secret = client.set_secret("secretName", "secretValue", expires=expires)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
         print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.expires))
