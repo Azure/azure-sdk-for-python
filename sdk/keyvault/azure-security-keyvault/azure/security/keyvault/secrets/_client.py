@@ -37,7 +37,7 @@ class SecretClient(_KeyVaultClientBase):
             the secret is returned
         :returns: An instance of Secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to get the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -46,7 +46,9 @@ class SecretClient(_KeyVaultClientBase):
                 :language: python
                 :caption: Get secret from the key vault
         """
-        bundle = self._client.get_secret(self._vault_url, name, version or "", error_map={404: ResourceNotFoundError})
+        bundle = self._client.get_secret(
+            self._vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
@@ -72,7 +74,6 @@ class SecretClient(_KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to create the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -87,7 +88,7 @@ class SecretClient(_KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags
+            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -114,7 +115,7 @@ class SecretClient(_KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to create the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to create the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -136,6 +137,7 @@ class SecretClient(_KeyVaultClientBase):
             tags=tags,
             secret_attributes=attributes,
             error_map={404: ResourceNotFoundError},
+            **kwargs
         )
         return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
@@ -150,7 +152,7 @@ class SecretClient(_KeyVaultClientBase):
 
         :returns: An iterator like instance of Secrets
         :rtype:
-         ~azure.keyvault.secrets._models.SecretAttributesPaged[~azure.keyvault.secrets._models.SecretAttributes]
+         Generator[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -161,7 +163,7 @@ class SecretClient(_KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_secrets(self._vault_url, maxresults=max_page_size)
+        pages = self._client.get_secrets(self._vault_url, maxresults=max_page_size, **kwargs)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def list_secret_versions(self, name, **kwargs):
@@ -175,7 +177,7 @@ class SecretClient(_KeyVaultClientBase):
         :param str name: The name of the secret.
         :returns: An iterator like instance of Secret
         :rtype:
-         ~azure.keyvault.secrets._models.SecretAttributesPaged[~azure.keyvault.secrets._models.SecretAttributes]
+         Generator[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -186,7 +188,7 @@ class SecretClient(_KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_secret_versions(self._vault_url, name, maxresults=max_page_size)
+        pages = self._client.get_secret_versions(self._vault_url, name, maxresults=max_page_size, **kwargs)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def backup_secret(self, name, **kwargs):
@@ -200,7 +202,7 @@ class SecretClient(_KeyVaultClientBase):
         :param str name: The name of the secret.
         :returns: The raw bytes of the secret backup.
         :rtype: bytes
-        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to back up the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to back up the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -210,7 +212,9 @@ class SecretClient(_KeyVaultClientBase):
                 :caption: Backs up the specified secret
 
         """
-        backup_result = self._client.backup_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        backup_result = self._client.backup_secret(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
         return backup_result.value
 
     def restore_secret(self, backup, **kwargs):
@@ -223,7 +227,7 @@ class SecretClient(_KeyVaultClientBase):
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to restore the secret
+        :raises: ~azure.core.exceptions.ResourceExistsError, if client failed to restore the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -233,7 +237,7 @@ class SecretClient(_KeyVaultClientBase):
                 :caption: Restores a backed up secret to the vault
 
         """
-        bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError})
+        bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
         return SecretAttributes._from_secret_bundle(bundle)
 
     def delete_secret(self, name, **kwargs):
@@ -247,7 +251,7 @@ class SecretClient(_KeyVaultClientBase):
         :param str name: The name of the secret
         :return: The deleted secret.
         :rtype: ~azure.keyvault.secrets._models.DeletedSecret
-        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to delete the secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to delete the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -257,7 +261,7 @@ class SecretClient(_KeyVaultClientBase):
                 :caption: Deletes a secret
 
         """
-        bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def get_deleted_secret(self, name, **kwargs):
@@ -270,7 +274,7 @@ class SecretClient(_KeyVaultClientBase):
         :param str name: The name of the secret
         :return: The deleted secret.
         :rtype: ~azure.keyvault.secrets._models.DeletedSecret
-        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to get the deleted secret
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to get the deleted secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -280,7 +284,7 @@ class SecretClient(_KeyVaultClientBase):
                 :caption: Gets the deleted secret
 
         """
-        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def list_deleted_secrets(self, **kwargs):
@@ -293,7 +297,7 @@ class SecretClient(_KeyVaultClientBase):
 
         :returns: An iterator like instance of DeletedSecrets
         :rtype:
-         ~azure.keyvault.secrets._models.DeletedSecretPaged[~azure.keyvault.secrets._models.DeletedSecret]
+         Generator[~azure.keyvault.secrets._models.DeletedSecret]
 
         Example:
             .. literalinclude:: ../tests/test_examples_secrets.py
@@ -304,7 +308,7 @@ class SecretClient(_KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_deleted_secrets(self._vault_url, maxresults=max_page_size)
+        pages = self._client.get_deleted_secrets(self._vault_url, maxresults=max_page_size, **kwargs)
         return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
@@ -327,7 +331,7 @@ class SecretClient(_KeyVaultClientBase):
                 secret_client.purge_deleted_secret("secret-name")
 
         """
-        self._client.purge_deleted_secret(self.vault_url, name)
+        self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     def recover_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> SecretAttributes
@@ -350,5 +354,5 @@ class SecretClient(_KeyVaultClientBase):
                 :caption: Restores a backed up secret to the vault
 
         """
-        bundle = self._client.recover_deleted_secret(self.vault_url, name)
+        bundle = self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         return SecretAttributes._from_secret_bundle(bundle)

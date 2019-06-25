@@ -8,16 +8,16 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
+from ._internal import _KeyVaultClientBase
+from .keys._client import KeyClient
+from .secrets._client import SecretClient
+
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from azure.core import Configuration
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
-    from typing import Any, Mapping, Optional
-
-from ._internal import _KeyVaultClientBase
-from .keys._client import KeyClient
-from .secrets._client import SecretClient
+    from typing import Any, Optional
 
 
 class VaultClient(_KeyVaultClientBase):
@@ -43,20 +43,20 @@ class VaultClient(_KeyVaultClientBase):
     @property
     def secrets(self):
         """
-        :rtype: ~azure.keyvault.secrets.SecretClient
+        :rtype: ~azure.security.keyvault.secrets.SecretClient
         """
         return self._secrets
 
     @property
     def keys(self):
         """
-        :rtype: ~azure.keyvault.keys.KeyClient
+        :rtype: ~azure.security.keyvault.keys.KeyClient
         """
         return self._keys
 
     # @property
     # def certificates(self):
     #     """
-    #     :rtype: ~azure.keyvault.certificates.CertificateClient
+    #     :rtype: ~azure.security.keyvault.certificates.CertificateClient
     #     """
     #     pass

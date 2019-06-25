@@ -30,7 +30,7 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
         return _ManagedIdentityBase.create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
-class AsyncImdsCredential(_AsyncManagedIdentityBase):
+class ImdsCredential(_AsyncManagedIdentityBase):
     """
     Asynchronously authenticates with a managed identity via the IMDS endpoint.
 
@@ -83,7 +83,7 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
         return token
 
 
-class AsyncMsiCredential(_AsyncManagedIdentityBase):
+class MsiCredential(_AsyncManagedIdentityBase):
     """
     Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
