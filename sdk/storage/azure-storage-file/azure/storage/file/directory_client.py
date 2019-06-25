@@ -184,7 +184,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_directies_and_files(self, prefix=None, timeout=None, **kwargs):
+    def list_directories_and_files(self, prefix=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[int]) -> DirectoryProperties
         """
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties

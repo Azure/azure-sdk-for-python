@@ -16,7 +16,7 @@ from .directory_client import DirectoryClient
 
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, SignedIdentifier
+from ._generated.models import StorageErrorException, SignedIdentifier, DeleteSnapshotsOptionType
 from ._shared.utils import (
     StorageAccountHostsMixin,
     serialize_iso,
@@ -124,7 +124,7 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
         """
-        return DirectoryClient(self.share_name, directory_name, self.credential, self._config)
+        return DirectoryClient(self.url, self.share_name, directory_name, self.credential)
 
     def create_share(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -155,6 +155,7 @@ class ShareClient(StorageAccountHostsMixin):
                 metadata=metadata,
                 quota=quota,
                 cls=return_response_headers,
+                headers=headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -219,7 +220,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def delete_share(
-            self, delete_snapshots=False, # type: Optional[bool]
+            self, delete_snapshots=None, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -235,7 +236,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: None
         """
         if delete_snapshots:
-            delete_snapshots = "include"
+            delete_snapshots = DeleteSnapshotsOptionType.include
         try:
             self._client.share.delete(
                 timeout=timeout,
@@ -357,14 +358,13 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-
-    def list_directies_and_files(self, directory_name, prefix=None, timeout=None, **kwargs):
+    def list_directories_and_files(self, directory_name, prefix=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[int]) -> DirectoryProperties
         """
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties 
         """
         directory = self.get_directory_client(directory_name)
-        return directory.list_directies_and_files(prefix, timeout, **kwargs)
+        return directory.list_directories_and_files(prefix, timeout, **kwargs)
 
     def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
         # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
