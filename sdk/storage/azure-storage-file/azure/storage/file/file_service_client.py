@@ -26,7 +26,7 @@ from ._shared.utils import (
 
 from .models import SharePropertiesPaged
 from ._generated import AzureFileStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties
+from ._generated.models import StorageErrorException, StorageServiceProperties, ListSharesIncludeType
 from ._generated.version import VERSION
 
 
@@ -40,7 +40,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the File service account. This could be either the
-        primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
@@ -233,7 +233,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def list_shares(
             self, prefix=None,  # type: Optional[str]
-            include_metadata=False,  # type: Optional[bool]
+            include_metadata=None,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -255,7 +255,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.file.models.SharePropertiesPaged
         """
-        include = 'metadata' if include_metadata else None
+        include = ListSharesIncludeType.metadata if include_metadata else None
         command = functools.partial(
             self._client.service.list_shares_segment,
             prefix=prefix,
@@ -328,5 +328,5 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.file.share_client.ShareClient
         """
         return ShareClient(
-            self.url, share_name=share_name, snapshot=snapshot,
+            self.url, share=share_name, snapshot=snapshot,
             credential=self.credential, configuration=self._config)

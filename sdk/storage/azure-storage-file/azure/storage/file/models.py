@@ -364,7 +364,7 @@ class DirectoryPropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.directory_items
+        self.current_page = self._response.segment.directory_items + self._response.segment.file_items 
         self.next_marker = self._response.next_marker or None
         return self.current_page
 
