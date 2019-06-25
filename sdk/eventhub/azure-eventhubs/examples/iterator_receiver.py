@@ -41,4 +41,3 @@ consumer = client.create_consumer(consumer_group="$default", partition_id="0", e
 with consumer:
     thread = PartitionConsumerThread(consumer)
     thread.start()
-    thread.join(2)  # stop after 2 seconds
