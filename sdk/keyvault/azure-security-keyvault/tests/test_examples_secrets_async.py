@@ -20,7 +20,7 @@ def test_create_secret_client():
     # [START create_secret_client]
 
     from azure.identity.aio import DefaultAzureCredential
-    from azure.security.keyvault.aio.secrets import SecretClient
+    from azure.keyvault.secrets.aio import SecretClient
 
     # Create a SecretClient using default Azure credentials
     credentials = DefaultAzureCredential()

@@ -9,7 +9,7 @@ import functools
 import time
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.security.keyvault._generated.v7_0.models import JsonWebKey
+from azure.keyvault._generated.v7_0.models import JsonWebKey
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
 from devtools_testutils import ResourceGroupPreparer

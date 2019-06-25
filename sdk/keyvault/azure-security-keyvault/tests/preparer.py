@@ -12,7 +12,6 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity import EnvironmentCredential
-from azure.security.keyvault import VaultClient
 
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import (
@@ -31,6 +30,9 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
+
+from vault_client import VaultClient
+
 
 DEFAULT_PERMISSIONS = Permissions(
     keys=[perm.value for perm in KeyPermissions],

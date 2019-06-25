@@ -19,7 +19,7 @@ def test_create_key_client():
     # [START create_key_client]
 
     from azure.identity.aio import DefaultAzureCredential
-    from azure.security.keyvault.aio import KeyClient
+    from azure.keyvault.keys.aio import KeyClient
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()

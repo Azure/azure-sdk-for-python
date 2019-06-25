@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # pylint:disable=missing-docstring
 
 import re
@@ -13,8 +13,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-security-keyvault"
-PACKAGE_PPRINT_NAME = "Key Vault"
+PACKAGE_NAME = "azure-keyvault"
+PACKAGE_PPRINT_NAME = "Azure Key Vault"
 
 # a-b-c => a/b/c
 PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
@@ -64,7 +64,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -76,11 +75,10 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.security",
         ]
     ),
     install_requires=[
         # "azure-core>=0.0.1"
     ],
-    extras_require={":python_version<'3.0'": ["azure-security-nspkg"]},
+    extras_require={":python_version<'3.0'": ["azure-nspkg"]},
 )

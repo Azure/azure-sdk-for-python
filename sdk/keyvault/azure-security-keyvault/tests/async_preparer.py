@@ -8,9 +8,10 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import EnvironmentCredential
-from azure.security.keyvault.aio import VaultClient
 
 from preparer import VaultClientPreparer
+
+from vault_client_async import VaultClient
 
 
 class AsyncVaultClientPreparer(VaultClientPreparer):
