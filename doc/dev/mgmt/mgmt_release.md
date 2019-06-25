@@ -1,16 +1,40 @@
 # Doing a mgmt release
 
+IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests#setting-up-a-test-environment) in your currently loaded virtual environment.
+
 ## Building the code
 
-TODO
+If the automation is doing its job correctly, you should not have to build the SDK, but look for an integration PR for the service in question. This link will give you for instance [the list of all integration PRs](https://github.com/Azure/azure-sdk-for-python/labels/ServicePR).
+
+If you really need to generate the code manually:
+- Checkout the branch
+- Checkout the RestAPI specs repo
+- Call the tool: `python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md` changing the last path to the readme you want to generate.
+
+That's it.
 
 ## Building the packaging information
 
-TODO
+If the automation is doing its job correctly, there is a pipeline called "update PR" that is supposed to update the package on the branch.
+
+If not, you can execute this command (replace the last part by your package name)
+```shell
+python -m packaging_tools --build-conf azure-mgmt-web
+```
+
+If the file sdk_packaging.toml didn't exist, now one is created with default values. Update this file and update the default values to the one from this service. Once it's done, restart the same script.
+
+Your packaging info are up-to-date
 
 ## Building the ChangeLog
 
-For all autorest generated packages, there is a tool that allows you to autobuild the ChangeLog.
+For all packages, you need to update the `HISTORY.rst` file
+
+```
+/azure-mgmt-myservice/HISTORY.rst
+```
+
+For all **autorest generated packages**, there is a tool that allows you to auto-build the ChangeLog.
 
 This works in two steps:
 - Step one: building the code "report", that introspect both the candidate code and the latest code created on PyPI into two report as files
@@ -94,3 +118,10 @@ INFO:__main__:Merged report written to sdk/network/azure-mgmt-network/code_repor
 ```
 
 Usually the merged report is enough, but you might need to select individual code report in some occasions.
+
+## Version
+
+You need to check the version in:
+```
+/azure-mgmt-myservice/azure/mgmt/myservice/version.py
+```
