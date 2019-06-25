@@ -20,8 +20,8 @@ class TimeSeriesList(Model):
     :param series: Required. Array of TimeSeries objects.
     :type series:
      list[~azure.cognitiveservices.anomalydetector.models.TimeSeries]
-    :param next:
-    :type next: str
+    :param next_link:
+    :type next_link: str
     """
 
     _validation = {
@@ -30,10 +30,10 @@ class TimeSeriesList(Model):
 
     _attribute_map = {
         'series': {'key': 'series', 'type': '[TimeSeries]'},
-        'next': {'key': 'next', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, series, next: str=None, **kwargs) -> None:
+    def __init__(self, *, series, next_link: str=None, **kwargs) -> None:
         super(TimeSeriesList, self).__init__(**kwargs)
         self.series = series
-        self.next = next
+        self.next_link = next_link

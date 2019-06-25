@@ -33,6 +33,8 @@ class TimeSeriesField(str, Enum):
     upper_margin = "upperMargin"
     lower_margin = "lowerMargin"
     period = "period"
+    change_point_confidence_score = "changePointConfidenceScore"
+    anomaly_confidence_score = "anomalyConfidenceScore"
 
 
 class LabelType(str, Enum):
