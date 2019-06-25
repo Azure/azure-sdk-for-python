@@ -18,11 +18,11 @@ def test_create_key_client():
     # pylint:disable=unused-variable
     # [START create_key_client]
 
-    from azure.identity.aio import AsyncDefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.security.keyvault.aio import KeyClient
 
     # Create a KeyClient using default Azure credentials
-    credential = AsyncDefaultAzureCredential()
+    credential = DefaultAzureCredential()
     key_client = KeyClient(vault_url, credential)
 
     # [END create_key_client]

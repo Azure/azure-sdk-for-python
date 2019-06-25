@@ -5,10 +5,10 @@
 # -------------------------------------------------------------------------
 from .credentials import (
     CertificateCredential,
+    ChainedTokenCredential,
     ClientSecretCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    ChainedTokenCredential,
 )
 
 
@@ -31,32 +31,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
 __all__ = [
     "CertificateCredential",
+    "ChainedTokenCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
-    "ChainedTokenCredential",
 ]
-
-try:
-    from .aio import (
-        AsyncCertificateCredential,
-        AsyncClientSecretCredential,
-        AsyncDefaultAzureCredential,
-        AsyncEnvironmentCredential,
-        AsyncManagedIdentityCredential,
-        AsyncChainedTokenCredential,
-    )
-
-    __all__.extend(
-        [
-            "AsyncCertificateCredential",
-            "AsyncClientSecretCredential",
-            "AsyncDefaultAzureCredential",
-            "AsyncEnvironmentCredential",
-            "AsyncManagedIdentityCredential",
-            "AsyncChainedTokenCredential",
-        ]
-    )
-except (ImportError, SyntaxError):
-    pass

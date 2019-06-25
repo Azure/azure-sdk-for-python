@@ -19,11 +19,11 @@ def test_create_secret_client():
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
-    from azure.identity.aio import AsyncDefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.security.keyvault.aio.secrets import SecretClient
 
-    # Create a SecretClient using Async default Azure credentials
-    credentials = AsyncDefaultAzureCredential()
+    # Create a SecretClient using default Azure credentials
+    credentials = DefaultAzureCredential()
     secret_client = SecretClient(vault_url, credentials)
 
     # [END create_secret_client]
