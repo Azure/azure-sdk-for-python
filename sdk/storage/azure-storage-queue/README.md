@@ -90,7 +90,7 @@ Once you've initialized a Client, you can use the following operations to work w
 
 The following sections provide several code snippets covering some of the most common Storage Queue tasks, including:
 
-* [Client creation with a connection string](#create-client-with-conn-string)
+* [Client creation with a connection string](#client-creation-with-a-connection-string)
 * [Create a queue](#create-a-queue)
 * [Enqueue messages](#enqueue-messages)
 * [Dequeue messages](#dequeue-messages)
@@ -132,7 +132,7 @@ Dequeue messages from your queue.
 from azure.storage.queue import QueueClient
 
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
-response = queue.dequeue_messages(num_messages=2)
+response = next(queue.dequeue_messages(num_messages=2))
 
 for message in response:
     print(message.content)
