@@ -53,7 +53,7 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
     > --secret-permissions:
     > Accepted values: backup, delete, get, list, purge, recover, restore, set
 
-* Use the above mentioned Key Vault name to retreive details of your Vault which also contains your Key Vault URL:
+* Use the above mentioned Key Vault name to retrieve details of your Vault which also contains your Key Vault URL:
     ```Bash
     az keyvault show --name <your-key-vault-name>
     ```
