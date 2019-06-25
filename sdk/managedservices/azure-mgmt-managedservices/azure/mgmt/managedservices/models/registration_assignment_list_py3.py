@@ -8,24 +8,30 @@
 from msrest.serialization import Model
 
 
-class OperationList(Model):
-    """List of the operations.
+class RegistrationAssignmentList(Model):
+    """List of registration assignments.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: List of Microsoft.ManagedServices operations.
-    :vartype value: list[~azure.mgmt.managedservices.models.Operation]
+    :ivar value: List of registration assignments.
+    :vartype value:
+     list[~azure.mgmt.managedservices.models.RegistrationAssignment]
+    :ivar next_link: Link to next page of registration assignments.
+    :vartype next_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'value': {'key': 'value', 'type': '[RegistrationAssignment]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(OperationList, self).__init__(**kwargs)
+        super(RegistrationAssignmentList, self).__init__(**kwargs)
         self.value = None
+        self.next_link = None
