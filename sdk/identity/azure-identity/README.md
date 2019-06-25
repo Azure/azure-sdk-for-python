@@ -22,8 +22,9 @@ pip install azure-identity
 ## Credentials
 Azure Identity offers a variety of credential classes in the `azure.identity`
 namespace. These are accepted by Azure SDK data plane clients. Each client
-library documents its Azure Identity integration. Azure SDK management
-libraries do not accept these credentials.
+library documents its Azure Identity integration in its README and samples.
+Azure SDK resource management libraries (which have `mgmt` in their names)
+do not accept these credentials.
 
 Credentials differ mostly in configuration:
 
@@ -79,7 +80,7 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 
 # Azure SDK clients accept the credential as a parameter
-from azure.security.keyvault import SecretClient
+from azure.keyvault.secrets import SecretClient
 
 client = SecretClient(vault_url, credential)
 ```
@@ -119,7 +120,7 @@ second_principal = ClientSecretCredential(another_client_id, another_secret, ten
 credential_chain = ChainedTokenCredential(first_principal, second_principal)
 
 # the chain can be used anywhere a credential is required
-from azure.security.keyvault import SecretClient
+from azure.keyvault.secrets import SecretClient
 
 client = SecretClient(vault_url, credential=credential_chain)
 ```
@@ -138,7 +139,7 @@ from azure.identity.aio import ClientSecretCredential
 credential = ClientSecretCredential(client_id, client_secret, tenant_id)
 
 # ...and are used with async Azure SDK clients in the same way
-from azure.security.keyvault.aio import SecretClient
+from azure.keyvault.aio import SecretClient
 
 client = SecretClient(vault_url, credential)
 ```
