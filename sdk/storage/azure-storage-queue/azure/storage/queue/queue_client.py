@@ -45,24 +45,26 @@ if TYPE_CHECKING:
 
 
 class QueueClient(StorageAccountHostsMixin):
+    """Creates a new QueueClient. This client represents interaction with a specific
+    queue, although that queue may not yet exist.
 
+    :param str queue_url: The full URI to the queue. This can also be a URL to the storage
+        account, in which case the queue must also be specified.
+    :param queue: The queue. If specified, this value will override
+        a queue value specified in the blob URL.
+    :type queue: str or ~azure.storage.queue.models.QueueProperties
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+    """
     def __init__(
             self, queue_url,  # type: str
             queue=None,  # type: Optional[str]
-            credential=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """Creates a new QueueClient. This client represents interaction with a specific
-        queue, although that queue may not yet exist.
-
-        :param str queue_url: The full URI to the queue. This can also be a URL to the storage
-         account, in which case the queue must also be specified.
-        :param queue: The queue. If specified, this value will override
-         a queue value specified in the blob URL.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
-        :param credential:
-        """
         try:
             if not queue_url.lower().startswith('http'):
                 queue_url = "https://" + queue_url
@@ -92,6 +94,9 @@ class QueueClient(StorageAccountHostsMixin):
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
         queue_name = self.queue_name
         if isinstance(queue_name, six.text_type):
             queue_name = queue_name.encode('UTF-8')
@@ -109,8 +114,18 @@ class QueueClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """
-        Create QueueClient from a Connection String.
+        """Create QueueClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param queue: The queue. This can either be the name of the queue,
+            or an instance of QueueProperties.
+        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
@@ -126,21 +141,19 @@ class QueueClient(StorageAccountHostsMixin):
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
         ):
-        '''
-        Generates a shared access signature for the queue.
-        Use the returned signature with the sas_token parameter of QueueService.
+        """Generates a shared access signature for the queue.
 
-        :param str queue_name:
-            The name of the queue to create a SAS token for.
-        :param QueuePermissions permission:
+        Use the returned signature with the credential parameter of any Queue Service.
+
+        :param ~azure.storage.queue.models.QueuePermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Required unless an id is given referencing a stored access policy
+            Required unless a policy_id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
         :param expiry:
             The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
+            Required unless a policy_id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
@@ -153,9 +166,9 @@ class QueueClient(StorageAccountHostsMixin):
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
-        :param str id:
+        :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_queue_acl`.
+            stored access policy. To create a stored access policy, use :func:`~set_queue_access_policy`.
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
@@ -164,10 +177,10 @@ class QueueClient(StorageAccountHostsMixin):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+            is https,http.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
         sas = QueueSharedAccessSignature(
@@ -183,8 +196,9 @@ class QueueClient(StorageAccountHostsMixin):
         )
 
     def create_queue(self, metadata=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, Any]], Optional[int]) -> bool
-        """Creates a queue under the given account.
+        # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
+        """Creates a new queue in the storage account.
+        If a queue with the same name already exists, the operation fails.
 
         :param metadata:
             A dict containing name-value pairs to associate with the queue as
@@ -196,7 +210,7 @@ class QueueClient(StorageAccountHostsMixin):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<queue.models.StorageErrorException>`
+            ~azure.storage.queue._generated.models._models.StorageErrorException
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -211,12 +225,13 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def delete_queue(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> bool
+        # type: (Optional[int], Optional[Any]) -> None
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
         and is no longer accessible to clients. The queue is later removed from
         the Queue service during garbage collection.
+
         Note that deleting a queue is likely to take at least 40 seconds to complete.
         If an operation is attempted against the queue while it was being deleted,
         an :class:`HttpResponseError` will be thrown.
@@ -231,15 +246,14 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def get_queue_properties(self, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
-        """
-        Returns all user-defined metadata for the specified queue.
+        # type: (Optional[int], Optional[Any]) -> QueueProperties
+        """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: properties for the specified container within a container object.
+        :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.queue.models.QueueProperties
         """
         try:
@@ -253,14 +267,15 @@ class QueueClient(StorageAccountHostsMixin):
         return response
 
     def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, Any]], Optional[int]) -> None
+        # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
 
-        :param dict(str, str) metadata:
+        :param metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
+        :type metadata: dict(str, str)
         :param int timeout:
             The server timeout, expressed in seconds.
         """
@@ -276,14 +291,14 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def get_queue_access_policy(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
         :param int timeout:
             The server timeout, expressed in seconds.
         :return: A dictionary of access policies associated with the queue.
-        :rtype: dict(str, :class:`~azure.storage.common.models.AccessPolicy`)
+        :rtype: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
         """
         try:
             _, identifiers = self._client.queue.get_access_policy(
@@ -295,7 +310,7 @@ class QueueClient(StorageAccountHostsMixin):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int]) -> None
+        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -304,18 +319,19 @@ class QueueClient(StorageAccountHostsMixin):
         all access policies associated with the queue, modify the access policy
         that you wish to change, and then call this function with the complete
         set of data to perform the update.
+
         When you establish a stored access policy on a queue, it may take up to
         30 seconds to take effect. During this interval, a shared access signature
         that is associated with the stored access policy will throw an
         :class:`HttpResponseError` until the access policy becomes active.
+
         :param signed_identifiers:
-            A list of SignedIdentifier access policies to associate with the queue. The
-            list may contain up to 5 elements. An empty list
+            A list of SignedIdentifier access policies to associate with the queue.
+            The list may contain up to 5 elements. An empty list
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`queue.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
         :param int timeout:
             The server timeout, expressed in seconds.
-        :rtype: dict(str, Any)
         """
         if signed_identifiers:
             if len(signed_identifiers) > 15:
@@ -338,15 +354,17 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def enqueue_message(self, content, visibility_timeout=None, time_to_live=None, timeout=None, **kwargs):
-        # type: (Any, Optional[int], Optional[int], Optional[int]) -> QueueMessage
+        # type: (Any, Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Adds a new message to the back of the message queue.
 
         The visibility timeout specifies the time that the message will be
         invisible. After the timeout expires, the message will become visible.
         If a visibility timeout is not specified, the default value of 0 is used.
+
         The message time-to-live specifies how long a message will remain in the
         queue. The message will be deleted from the queue when the time-to-live
         period expires.
+
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
@@ -371,7 +389,7 @@ class QueueClient(StorageAccountHostsMixin):
             A :class:`~azure.storage.queue.models.QueueMessage` object.
             This object is also populated with the content although it is not
             returned from the service.
-        :rtype: :class:`~azure.storage.queue.models.QueueMessage`
+        :rtype: ~azure.storage.queue.models.QueueMessage
         """
         self._config.message_encode_policy.configure(
             self.require_encryption,
@@ -398,10 +416,18 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def dequeue_messages(self, num_messages=None, visibility_timeout=None, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[int]) -> QueueMessage
-        """
-        Removes one or more messages from top of the queue.
-        Returns message iterator of dict-like Message objects
+        # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
+        """Removes one or more messages from the front of the queue.
+
+        When a message is retrieved from the queue, the response includes the message
+        content and a pop_receipt value, which is required to delete the message.
+        The message is not automatically deleted from the queue, but after it has
+        been retrieved, it is not visible to other clients for the time interval
+        specified by the visibility_timeout parameter.
+
+        If the key-encryption-key or resolver field is set on the local service object, the messages will be
+        decrypted before being returned.
+
         :param int num_messages:
             A nonzero integer value that specifies the number of
             messages to retrieve from the queue, up to a maximum of 32. If
@@ -417,10 +443,10 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A :class:`~azure.storage.queue.models.QueueMessage` object.
-            This object is also populated with the content although it is not
+            Returns a message iterator of dict-like Message objects.
+            Objects are also populated with the content although it is not
             returned from the service.
-        :rtype: :class:`~azure.storage.queue.models.QueueMessage`
+        :rtype: ~azure.storage.queue.models.QueueMessage
         """
         self._config.message_decode_policy.configure(
             self.require_encryption,
@@ -441,39 +467,42 @@ class QueueClient(StorageAccountHostsMixin):
 
     def update_message(self, message, visibility_timeout=None, pop_receipt=None,
                        content=None, timeout=None, **kwargs):
-        # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> List[QueueMessage]
-        """
-        Updates the visibility timeout of a message. You can also use this
+        # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
+        """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
+
         This operation can be used to continually extend the invisibility of a
         queue message. This functionality can be useful if you want a worker role
-        to "lease" a queue message. For example, if a worker role calls get_messages
+        to "lease" a queue message. For example, if a worker role calls :func:`~dequeue_messages()`
         and recognizes that it needs more time to process a message, it can
         continually extend the message's invisibility until it is processed. If
         the worker role were to fail during processing, eventually the message
         would become visible again and another worker role could process it.
+
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
+
         :param str message:
-            The message object or message id identifying the message to update.
-        :param str pop_receipt:
-            A valid pop receipt value returned from an earlier call
-            to the :func:`~get_messages` or :func:`~update_message` operation.
+            The message object or id identifying the message to update.
         :param int visibility_timeout:
             Specifies the new visibility timeout value, in seconds,
             relative to server time. The new value must be larger than or equal
             to 0, and cannot be larger than 7 days. The visibility timeout of a
             message cannot be set to a value later than the expiry time. A
             message can be updated until it has been deleted or has expired.
+            The message object or message id identifying the message to update.
+        :param str pop_receipt:
+            A valid pop receipt value returned from an earlier call
+            to the :func:`~dequeue_messages` or :func:`~update_message` operation.
         :param obj content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A list of :class:`~azure.storage.queue.models.QueueMessage` objects. For convenience,
+            A :class:`~azure.storage.queue.models.QueueMessage` object. For convenience,
             this object is also populated with the content, although it is not returned by the service.
-        :rtype: :class:`~azure.storage.queue.models.QueueMessage`
+        :rtype: ~azure.storage.queue.models.QueueMessage
         """
         try:
             message_id = message.id
@@ -522,19 +551,21 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def peek_messages(self, max_messages=None, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[int]) -> List[QueueMessage]
+        # type: (Optional[int], Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
         Only messages that are visible may be retrieved. When a message is retrieved
-        for the first time with a call to get_messages, its dequeue_count property
+        for the first time with a call to :func:`~dequeue_messages`, its dequeue_count property
         is set to 1. If it is not deleted and is subsequently retrieved again, the
         dequeue_count property is incremented. The client may use this value to
         determine how many times a message has been retrieved. Note that a call
         to peek_messages does not increment the value of DequeueCount, but returns
         this value for the client to read.
-        If the key-encryption-key or resolver field is set on the local service object, the messages will be
-        decrypted before being returned.
+
+        If the key-encryption-key or resolver field is set on the local service object,
+        the messages will be decrypted before being returned.
+
         :param int max_messages:
             A nonzero integer value that specifies the number of
             messages to peek from the queue, up to a maximum of 32. By default,
@@ -567,9 +598,9 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def clear_messages(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> None
-        """
-        Deletes all messages from the specified queue.
+        # type: (Optional[int], Optional[Any]) -> None
+        """Deletes all messages from the specified queue.
+
         :param int timeout:
             The server timeout, expressed in seconds.
         """
@@ -580,23 +611,23 @@ class QueueClient(StorageAccountHostsMixin):
 
     def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs):
         # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
-        """
-        Deletes the specified message.
-        Normally after a client retrieves a message with the get_messages operation,
+        """Deletes the specified message.
+
+        Normally after a client retrieves a message with the dequeue messages operation,
         the client is expected to process and delete the message. To delete the
-        message, you must have two items of data: id and pop_receipt. The
-        id is returned from the previous get_messages operation. The
-        pop_receipt is returned from the most recent :func:`~get_messages` or
+        message, you must have the message object itself, or two items of data: id and pop_receipt.
+        The id is returned from the previous dequeue_messages operation. The
+        pop_receipt is returned from the most recent :func:`~dequeue_messages` or
         :func:`~update_message` operation. In order for the delete_message operation
         to succeed, the pop_receipt specified on the request must match the
-        pop_receipt returned from the :func:`~get_messages` or :func:`~update_message`
+        pop_receipt returned from the :func:`~dequeue_messages` or :func:`~update_message`
         operation.
 
         :param str message:
-            The message object identifying the message to delete.
+            The message object or id identifying the message to delete.
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
-            to the :func:`~get_messages` or :func:`~update_message`.
+            to the :func:`~dequeue_messages` or :func:`~update_message`.
         :param int timeout:
             The server timeout, expressed in seconds.
         """

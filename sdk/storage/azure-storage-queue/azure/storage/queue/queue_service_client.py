@@ -32,31 +32,21 @@ if TYPE_CHECKING:
 
 
 class QueueServiceClient(StorageAccountHostsMixin):
-    """ A client interact with the Queue Service at the account level.
+    """A client interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete queues within the account.
     For operations relating to a specific queue, a client for this entity
-    can be retrieved using the `get_queue_client` function.
+    can be retrieved using the :func:`~get_queue_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the Queue service account. This could be either the
-        primary endpoint, or the secondard endpint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
+    :param str account_url:
+        The URL to the queue storage account. Any other entities included
+        in the URL path (e.g. queue) will be discarded. This URL can be optionally
+        authenticated with a SAS token.
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
     """
 
     def __init__(
@@ -65,17 +55,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """A new QueueServiceClient.
-
-        :param str account_url:
-            The URL to the queue storage account. Any other entities included
-            in the URL path (e.g. queue) will be discarded. This URL can be optionally
-            authenticated with a SAS token.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, and account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-        """
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -101,7 +80,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         """Create QueueServiceClient from a Connection String.
@@ -130,16 +109,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
         ):
         """Generates a shared access signature for the queue service.
 
-        Use the returned signature with the sas_token parameter of any QueueService.
+        Use the returned signature with the credential parameter of any Queue Service.
 
-        :param ResourceTypes resource_types:
+        :param ~azure.storage.queue._shared.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param AccountPermissions permission:
+        :param ~azure.storage.queue._shared.models.AccountPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -163,7 +139,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+            is https,http.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
@@ -180,6 +156,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         It is only available when read-access geo-redundant replication is enabled for
         the storage account.
+
         With geo-redundant replication, Azure Storage maintains your data durable
         in two locations. In both locations, Azure Storage constantly maintains
         multiple healthy replicas of your data. The location where you read,
@@ -196,7 +173,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: ~azure.storage.queue._generated.models.StorageServiceStats
+        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
         """
         try:
             return self._client.service.get_statistics(
@@ -205,13 +182,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int], Optional[Any]) -> Dict[str, Any]
+        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue._generated.models.StorageServiceProperties
+        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
         """
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs)
@@ -235,18 +212,15 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging:
-            :class:`~azure.storage.queue.models.Logging`
+        :type logging: ~azure.storage.queue.models.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
-        :type hour_metrics:
-            :class:`~azure.storage.queue.models.Metrics`
+        :type hour_metrics: ~azure.storage.queue.models.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for queues.
-        :type minute_metrics:
-            :class:`~azure.storage.queue.models.Metrics`
+        :type minute_metrics: ~azure.storage.queue.models.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
@@ -315,7 +289,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> ContainerClient
+        # type: (...) -> QueueClient
         """Creates a new queue under the specified account. If a queue
         with the same name already exists, the operation fails. Returns a client with
         which to interact with the newly created queue.
@@ -323,7 +297,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param str name: The name of the queue to create.
         :param metadata:
             A dict with name_value pairs to associate with the
-            queue as metadata. Example:{'Category':'test'}
+            queue as metadata. Example: {'Category': 'test'}
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -345,6 +319,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         When a queue is successfully deleted, it is immediately marked for deletion
         and is no longer accessible to clients. The queue is later removed from
         the Queue service during garbage collection.
+
         Note that deleting a queue is likely to take at least 40 seconds to complete.
         If an operation is attempted against the queue while it was being deleted,
         an :class:`HttpResponseError` will be thrown.
@@ -361,7 +336,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         queue.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):
-        # type: (Union[QueueProperties, str]) -> QueueClient
+        # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
         """Get a client to interact with the specified queue.
         The queue need not already exist.
 
@@ -369,7 +344,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.models.QueueProperties
-        :returns: A QueueClient.
+        :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
         :rtype: ~azure.core.queue.queue_client.QueueClient
         """
         return QueueClient(
