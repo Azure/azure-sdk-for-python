@@ -15,7 +15,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ._internal import AsyncImdsCredential, AsyncMsiCredential
+from ._internal import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import ChainedTokenCredential
@@ -23,7 +23,7 @@ from ..credentials import ChainedTokenCredential
 # pylint:disable=too-few-public-methods
 
 
-class AsyncClientSecretCredential(ClientSecretCredentialBase):
+class ClientSecretCredential(ClientSecretCredentialBase):
     """
     Authenticates as a service principal using a client ID and client secret.
 
@@ -42,7 +42,7 @@ class AsyncClientSecretCredential(ClientSecretCredentialBase):
         config: Optional[Configuration] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        super(AsyncClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
+        super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
@@ -60,7 +60,7 @@ class AsyncClientSecretCredential(ClientSecretCredentialBase):
         return token  # type: ignore
 
 
-class AsyncCertificateCredential(CertificateCredentialBase):
+class CertificateCredential(CertificateCredentialBase):
     """
     Authenticates as a service principal using a certificate.
 
@@ -79,7 +79,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         config: Optional[Configuration] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
+        super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
@@ -97,7 +97,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         return token  # type: ignore
 
 
-class AsyncEnvironmentCredential:
+class EnvironmentCredential:
     """
     Authenticates as a service principal using a client ID/secret pair or a certificate,
     depending on environment variable settings.
@@ -114,17 +114,17 @@ class AsyncEnvironmentCredential:
     """
 
     def __init__(self, **kwargs: Mapping[str, Any]) -> None:
-        self._credential = None  # type: Optional[Union[AsyncCertificateCredential, AsyncClientSecretCredential]]
+        self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
-            self._credential = AsyncClientSecretCredential(
+            self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
-            self._credential = AsyncCertificateCredential(
+            self._credential = CertificateCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
@@ -147,7 +147,7 @@ class AsyncEnvironmentCredential:
         return await self._credential.get_token(*scopes)
 
 
-class AsyncManagedIdentityCredential(object):
+class ManagedIdentityCredential(object):
     """
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
@@ -158,8 +158,8 @@ class AsyncManagedIdentityCredential(object):
 
     def __new__(cls, *args, **kwargs):
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return AsyncMsiCredential(*args, **kwargs)
-        return AsyncImdsCredential(*args, **kwargs)
+            return MsiCredential(*args, **kwargs)
+        return ImdsCredential(*args, **kwargs)
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
@@ -186,7 +186,7 @@ class AsyncManagedIdentityCredential(object):
         return AccessToken()
 
 
-class AsyncChainedTokenCredential(ChainedTokenCredential):
+class ChainedTokenCredential(ChainedTokenCredential):
     """
     A sequence of credentials that is itself a credential. Its ``get_token`` method calls ``get_token`` on each
     credential in the sequence, in order, returning the first valid token received.

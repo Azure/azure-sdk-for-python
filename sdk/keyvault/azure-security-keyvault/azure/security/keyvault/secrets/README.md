@@ -55,7 +55,7 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
 
 * Use the above mentioned Key Vault name to retreive details of your Vault which also contains your Key Vault URL:
     ```Bash
-    az keyvault show --name <your-key-vault-name> 
+    az keyvault show --name <your-key-vault-name>
     ```
 
 #### Create Secret client
@@ -150,19 +150,18 @@ This example lists all the secrets in the specified Key Vault.
 
 ### Async operations
 Python’s [asyncio package][asyncio_package] and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
-The package supports async API on Python 3.5+ and is identical to synchronous API. 
+The package supports async API on Python 3.5+ and is identical to synchronous API.
 
 The following examples provide code snippets for performing async operations in the Secret Client library:
 
 ### Async create a secret
 This example creates a secret in the Key Vault with the specified optional arguments.
 ```python
-    from azure.identity import AsyncDefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.security.keyvault.aio import SecretClient
 
-    # for async operations use AsyncDefaultAzureCredential
-    credential = AsyncDefaultAzureCredential()
-    
+    # for async operations use DefaultAzureCredential
+    credential = DefaultAzureCredential()
     # Create a new secret client using the default credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
