@@ -10,141 +10,141 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .acl_create_or_update_parameters_py3 import AclCreateOrUpdateParameters
-    from .acl_delete_parameters_py3 import AclDeleteParameters
-    from .acl_py3 import Acl
-    from .data_lake_analytics_catalog_secret_create_or_update_parameters_py3 import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
-    from .data_lake_analytics_catalog_credential_create_parameters_py3 import DataLakeAnalyticsCatalogCredentialCreateParameters
-    from .data_lake_analytics_catalog_credential_delete_parameters_py3 import DataLakeAnalyticsCatalogCredentialDeleteParameters
-    from .data_lake_analytics_catalog_credential_update_parameters_py3 import DataLakeAnalyticsCatalogCredentialUpdateParameters
-    from .usql_secret_py3 import USqlSecret
-    from .usql_external_data_source_py3 import USqlExternalDataSource
-    from .usql_credential_py3 import USqlCredential
-    from .usql_procedure_py3 import USqlProcedure
-    from .usql_table_column_py3 import USqlTableColumn
-    from .usql_directed_column_py3 import USqlDirectedColumn
-    from .usql_distribution_info_py3 import USqlDistributionInfo
-    from .usql_index_py3 import USqlIndex
-    from .ddl_name_py3 import DdlName
-    from .entity_id_py3 import EntityId
-    from .external_table_py3 import ExternalTable
-    from .type_field_info_py3 import TypeFieldInfo
-    from .usql_table_preview_py3 import USqlTablePreview
-    from .usql_table_py3 import USqlTable
-    from .usql_table_fragment_py3 import USqlTableFragment
-    from .usql_table_type_py3 import USqlTableType
-    from .usql_view_py3 import USqlView
-    from .usql_package_py3 import USqlPackage
-    from .usql_table_partition_py3 import USqlTablePartition
-    from .usql_table_statistics_py3 import USqlTableStatistics
-    from .usql_type_py3 import USqlType
-    from .usql_table_valued_function_py3 import USqlTableValuedFunction
-    from .usql_assembly_file_info_py3 import USqlAssemblyFileInfo
-    from .usql_assembly_dependency_info_py3 import USqlAssemblyDependencyInfo
-    from .usql_assembly_py3 import USqlAssembly
-    from .usql_assembly_clr_py3 import USqlAssemblyClr
-    from .usql_schema_py3 import USqlSchema
-    from .usql_database_py3 import USqlDatabase
-    from .catalog_item_py3 import CatalogItem
-    from .catalog_item_list_py3 import CatalogItemList
+    from ._models_py3 import Acl
+    from ._models_py3 import AclCreateOrUpdateParameters
+    from ._models_py3 import AclDeleteParameters
+    from ._models_py3 import CatalogItem
+    from ._models_py3 import CatalogItemList
+    from ._models_py3 import DataLakeAnalyticsCatalogCredentialCreateParameters
+    from ._models_py3 import DataLakeAnalyticsCatalogCredentialDeleteParameters
+    from ._models_py3 import DataLakeAnalyticsCatalogCredentialUpdateParameters
+    from ._models_py3 import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
+    from ._models_py3 import DdlName
+    from ._models_py3 import EntityId
+    from ._models_py3 import ExternalTable
+    from ._models_py3 import TypeFieldInfo
+    from ._models_py3 import USqlAssembly
+    from ._models_py3 import USqlAssemblyClr
+    from ._models_py3 import USqlAssemblyDependencyInfo
+    from ._models_py3 import USqlAssemblyFileInfo
+    from ._models_py3 import USqlCredential
+    from ._models_py3 import USqlDatabase
+    from ._models_py3 import USqlDirectedColumn
+    from ._models_py3 import USqlDistributionInfo
+    from ._models_py3 import USqlExternalDataSource
+    from ._models_py3 import USqlIndex
+    from ._models_py3 import USqlPackage
+    from ._models_py3 import USqlProcedure
+    from ._models_py3 import USqlSchema
+    from ._models_py3 import USqlSecret
+    from ._models_py3 import USqlTable
+    from ._models_py3 import USqlTableColumn
+    from ._models_py3 import USqlTableFragment
+    from ._models_py3 import USqlTablePartition
+    from ._models_py3 import USqlTablePreview
+    from ._models_py3 import USqlTableStatistics
+    from ._models_py3 import USqlTableType
+    from ._models_py3 import USqlTableValuedFunction
+    from ._models_py3 import USqlType
+    from ._models_py3 import USqlView
 except (SyntaxError, ImportError):
-    from .acl_create_or_update_parameters import AclCreateOrUpdateParameters
-    from .acl_delete_parameters import AclDeleteParameters
-    from .acl import Acl
-    from .data_lake_analytics_catalog_secret_create_or_update_parameters import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
-    from .data_lake_analytics_catalog_credential_create_parameters import DataLakeAnalyticsCatalogCredentialCreateParameters
-    from .data_lake_analytics_catalog_credential_delete_parameters import DataLakeAnalyticsCatalogCredentialDeleteParameters
-    from .data_lake_analytics_catalog_credential_update_parameters import DataLakeAnalyticsCatalogCredentialUpdateParameters
-    from .usql_secret import USqlSecret
-    from .usql_external_data_source import USqlExternalDataSource
-    from .usql_credential import USqlCredential
-    from .usql_procedure import USqlProcedure
-    from .usql_table_column import USqlTableColumn
-    from .usql_directed_column import USqlDirectedColumn
-    from .usql_distribution_info import USqlDistributionInfo
-    from .usql_index import USqlIndex
-    from .ddl_name import DdlName
-    from .entity_id import EntityId
-    from .external_table import ExternalTable
-    from .type_field_info import TypeFieldInfo
-    from .usql_table_preview import USqlTablePreview
-    from .usql_table import USqlTable
-    from .usql_table_fragment import USqlTableFragment
-    from .usql_table_type import USqlTableType
-    from .usql_view import USqlView
-    from .usql_package import USqlPackage
-    from .usql_table_partition import USqlTablePartition
-    from .usql_table_statistics import USqlTableStatistics
-    from .usql_type import USqlType
-    from .usql_table_valued_function import USqlTableValuedFunction
-    from .usql_assembly_file_info import USqlAssemblyFileInfo
-    from .usql_assembly_dependency_info import USqlAssemblyDependencyInfo
-    from .usql_assembly import USqlAssembly
-    from .usql_assembly_clr import USqlAssemblyClr
-    from .usql_schema import USqlSchema
-    from .usql_database import USqlDatabase
-    from .catalog_item import CatalogItem
-    from .catalog_item_list import CatalogItemList
-from .usql_credential_paged import USqlCredentialPaged
-from .usql_external_data_source_paged import USqlExternalDataSourcePaged
-from .usql_procedure_paged import USqlProcedurePaged
-from .usql_table_fragment_paged import USqlTableFragmentPaged
-from .usql_table_paged import USqlTablePaged
-from .usql_table_statistics_paged import USqlTableStatisticsPaged
-from .usql_table_type_paged import USqlTableTypePaged
-from .usql_package_paged import USqlPackagePaged
-from .usql_view_paged import USqlViewPaged
-from .usql_table_partition_paged import USqlTablePartitionPaged
-from .usql_type_paged import USqlTypePaged
-from .usql_table_valued_function_paged import USqlTableValuedFunctionPaged
-from .usql_assembly_clr_paged import USqlAssemblyClrPaged
-from .usql_schema_paged import USqlSchemaPaged
-from .acl_paged import AclPaged
-from .usql_database_paged import USqlDatabasePaged
-from .data_lake_analytics_catalog_management_client_enums import (
+    from ._models import Acl
+    from ._models import AclCreateOrUpdateParameters
+    from ._models import AclDeleteParameters
+    from ._models import CatalogItem
+    from ._models import CatalogItemList
+    from ._models import DataLakeAnalyticsCatalogCredentialCreateParameters
+    from ._models import DataLakeAnalyticsCatalogCredentialDeleteParameters
+    from ._models import DataLakeAnalyticsCatalogCredentialUpdateParameters
+    from ._models import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
+    from ._models import DdlName
+    from ._models import EntityId
+    from ._models import ExternalTable
+    from ._models import TypeFieldInfo
+    from ._models import USqlAssembly
+    from ._models import USqlAssemblyClr
+    from ._models import USqlAssemblyDependencyInfo
+    from ._models import USqlAssemblyFileInfo
+    from ._models import USqlCredential
+    from ._models import USqlDatabase
+    from ._models import USqlDirectedColumn
+    from ._models import USqlDistributionInfo
+    from ._models import USqlExternalDataSource
+    from ._models import USqlIndex
+    from ._models import USqlPackage
+    from ._models import USqlProcedure
+    from ._models import USqlSchema
+    from ._models import USqlSecret
+    from ._models import USqlTable
+    from ._models import USqlTableColumn
+    from ._models import USqlTableFragment
+    from ._models import USqlTablePartition
+    from ._models import USqlTablePreview
+    from ._models import USqlTableStatistics
+    from ._models import USqlTableType
+    from ._models import USqlTableValuedFunction
+    from ._models import USqlType
+    from ._models import USqlView
+from ._paged_models import AclPaged
+from ._paged_models import USqlAssemblyClrPaged
+from ._paged_models import USqlCredentialPaged
+from ._paged_models import USqlDatabasePaged
+from ._paged_models import USqlExternalDataSourcePaged
+from ._paged_models import USqlPackagePaged
+from ._paged_models import USqlProcedurePaged
+from ._paged_models import USqlSchemaPaged
+from ._paged_models import USqlTableFragmentPaged
+from ._paged_models import USqlTablePaged
+from ._paged_models import USqlTablePartitionPaged
+from ._paged_models import USqlTableStatisticsPaged
+from ._paged_models import USqlTableTypePaged
+from ._paged_models import USqlTableValuedFunctionPaged
+from ._paged_models import USqlTypePaged
+from ._paged_models import USqlViewPaged
+from ._data_lake_analytics_catalog_management_client_enums import (
     AclType,
     PermissionType,
     FileType,
 )
 
 __all__ = [
+    'Acl',
     'AclCreateOrUpdateParameters',
     'AclDeleteParameters',
-    'Acl',
-    'DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters',
+    'CatalogItem',
+    'CatalogItemList',
     'DataLakeAnalyticsCatalogCredentialCreateParameters',
     'DataLakeAnalyticsCatalogCredentialDeleteParameters',
     'DataLakeAnalyticsCatalogCredentialUpdateParameters',
-    'USqlSecret',
-    'USqlExternalDataSource',
-    'USqlCredential',
-    'USqlProcedure',
-    'USqlTableColumn',
-    'USqlDirectedColumn',
-    'USqlDistributionInfo',
-    'USqlIndex',
+    'DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters',
     'DdlName',
     'EntityId',
     'ExternalTable',
     'TypeFieldInfo',
-    'USqlTablePreview',
-    'USqlTable',
-    'USqlTableFragment',
-    'USqlTableType',
-    'USqlView',
-    'USqlPackage',
-    'USqlTablePartition',
-    'USqlTableStatistics',
-    'USqlType',
-    'USqlTableValuedFunction',
-    'USqlAssemblyFileInfo',
-    'USqlAssemblyDependencyInfo',
     'USqlAssembly',
     'USqlAssemblyClr',
-    'USqlSchema',
+    'USqlAssemblyDependencyInfo',
+    'USqlAssemblyFileInfo',
+    'USqlCredential',
     'USqlDatabase',
-    'CatalogItem',
-    'CatalogItemList',
+    'USqlDirectedColumn',
+    'USqlDistributionInfo',
+    'USqlExternalDataSource',
+    'USqlIndex',
+    'USqlPackage',
+    'USqlProcedure',
+    'USqlSchema',
+    'USqlSecret',
+    'USqlTable',
+    'USqlTableColumn',
+    'USqlTableFragment',
+    'USqlTablePartition',
+    'USqlTablePreview',
+    'USqlTableStatistics',
+    'USqlTableType',
+    'USqlTableValuedFunction',
+    'USqlType',
+    'USqlView',
     'USqlCredentialPaged',
     'USqlExternalDataSourcePaged',
     'USqlProcedurePaged',
