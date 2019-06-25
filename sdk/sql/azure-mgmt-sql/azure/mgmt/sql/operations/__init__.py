@@ -35,7 +35,6 @@ from .database_usages_operations import DatabaseUsagesOperations
 from .database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .encryption_protectors_operations import EncryptionProtectorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
-from .managed_instances_operations import ManagedInstancesOperations
 from .operations import Operations
 from .server_keys_operations import ServerKeysOperations
 from .sync_agents_operations import SyncAgentsOperations
@@ -90,6 +89,8 @@ from .managed_instance_vulnerability_assessments_operations import ManagedInstan
 from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from .instance_pools_operations import InstancePoolsOperations
+from .usages_operations import UsagesOperations
+from .managed_instances_operations import ManagedInstancesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -118,7 +119,6 @@ __all__ = [
     'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
-    'ManagedInstancesOperations',
     'Operations',
     'ServerKeysOperations',
     'SyncAgentsOperations',
@@ -173,4 +173,6 @@ __all__ = [
     'ServerVulnerabilityAssessmentsOperations',
     'ManagedDatabaseSensitivityLabelsOperations',
     'InstancePoolsOperations',
+    'UsagesOperations',
+    'ManagedInstancesOperations',
 ]
