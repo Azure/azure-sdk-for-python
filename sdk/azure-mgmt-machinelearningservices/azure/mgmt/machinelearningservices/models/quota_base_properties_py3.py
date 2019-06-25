@@ -15,18 +15,29 @@ from msrest.serialization import Model
 class QuotaBaseProperties(Model):
     """The properties for Quota update or retrieval.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Specifies the resource ID.
     :type id: str
     :param type: Specifies the resource type.
     :type type: str
     :param limit: Limit. The maximum permitted quota of the resource.
     :type limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
     """
+
+    _validation = {
+        'unit': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
     }
 
     def __init__(self, *, id: str=None, type: str=None, limit: int=None, **kwargs) -> None:
@@ -34,3 +45,4 @@ class QuotaBaseProperties(Model):
         self.id = id
         self.type = type
         self.limit = limit
+        self.unit = None

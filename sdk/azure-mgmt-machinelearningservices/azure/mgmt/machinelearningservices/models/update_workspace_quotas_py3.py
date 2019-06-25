@@ -24,6 +24,9 @@ class UpdateWorkspaceQuotas(Model):
     :vartype type: str
     :param limit: Limit. The maximum permitted quota of the resource.
     :type limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
     :param status: Update Workspace Quota Status. Status of update workspace
      quota. Possible values include: 'Undefined', 'Success', 'Failure'
     :type status: str or ~azure.mgmt.machinelearningservices.models.Status
@@ -32,12 +35,14 @@ class UpdateWorkspaceQuotas(Model):
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'unit': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
     }
 
@@ -46,4 +51,5 @@ class UpdateWorkspaceQuotas(Model):
         self.id = None
         self.type = None
         self.limit = limit
+        self.unit = None
         self.status = status

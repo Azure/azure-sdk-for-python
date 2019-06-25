@@ -28,16 +28,16 @@ class UsageUnit(str, Enum):
     count = "Count"
 
 
+class QuotaUnit(str, Enum):
+
+    count = "Count"
+
+
 class Status(str, Enum):
 
     undefined = "Undefined"
     success = "Success"
     failure = "Failure"
-
-
-class QuotaUnit(str, Enum):
-
-    count = "Count"
 
 
 class ResourceIdentityType(str, Enum):
