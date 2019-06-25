@@ -13,10 +13,10 @@ except ImportError:
 import six
 
 from .directory_client import DirectoryClient
-
+from .file_client import FileClient
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, SignedIdentifier, DeleteSnapshotsOptionType
+from ._generated.models import StorageErrorException, SignedIdentifier
 from ._shared.utils import (
     StorageAccountHostsMixin,
     serialize_iso,
@@ -82,7 +82,8 @@ class ShareClient(StorageAccountHostsMixin):
             self.share_name = share.name
         except AttributeError:
             self.share_name = share or unquote(path_share)
-        self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, share_snapshot=self.snapshot)
         super(ShareClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
@@ -114,7 +115,7 @@ class ShareClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
-    def get_directory_client(self, directory_name=""):
+    def get_directory_client(self, directory_path=None):
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
@@ -124,7 +125,18 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
         """
-        return DirectoryClient(self.url, self.share_name, directory_name, self.credential)
+        return DirectoryClient(
+            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
+
+    def get_file_client(self, file_path):
+        return FileClient(
+            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
 
     def create_share(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -220,7 +232,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def delete_share(
-            self, delete_snapshots=None, # type: Optional[bool]
+            self, delete_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -236,7 +248,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: None
         """
         if delete_snapshots:
-            delete_snapshots = DeleteSnapshotsOptionType.include
+            delete_snapshots = "include"
         try:
             self._client.share.delete(
                 timeout=timeout,
@@ -318,7 +330,7 @@ class ShareClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
-    def set_share_acl(self, signed_identifiers=None, timeout=None, **kwargs):
+    def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int]) -> Dict[str, str]
         """
         :returns: None.

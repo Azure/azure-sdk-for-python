@@ -42,6 +42,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             self, directory_url,  # type: str
             share=None, # type: Optional[Union[str, ShareProperties]]
             directory_path=None, # type: Optional[str]
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
             **kwargs, # type: Optional[Any]
         ):
@@ -70,17 +71,25 @@ class DirectoryClient(StorageAccountHostsMixin):
         share, path_dir = "", ""
         if parsed_url.path:
             share, _, path_dir = parsed_url.path.lstrip('/').partition('/')
-        _, sas_token = parse_query(parsed_url.query)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account key or SAS token when creating a storage service.')
+        try:
+            self.snapshot = snapshot.snapshot
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot']
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
         try:
             self.share_name = share.name
         except AttributeError:
             self.share_name = share or unquote(share)
         self.directory_path = directory_path or path_dir
 
-        self._query_str, credential = self._format_query_string(sas_token, credential)
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, share_snapshot=self.snapshot)
         super(DirectoryClient, self).__init__(parsed_url, 'file', credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
@@ -113,7 +122,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
     
-    def get_file_client(self, file_name):
+    def get_file_client(self, file_name, **kwargs):
         """Get a client to interact with the specified file.
         The file need not already exist.
 
@@ -123,13 +132,11 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: A File Client.
         :rtype: ~azure.core.file.file_client.FileClient
         """
-        file_url = self.directory_path.rstrip('/') + "/" + quote(file_name)
+        file_path = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            file_url=file_url,
-            share_name=self.share_name,
-            directory_path=self.directory_path,
-            credential=self.credential,
-            configuration=self._config)
+            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         """Get a client to interact with the specified subdirectory.
@@ -141,8 +148,11 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
         """
-        directory_path = self.directory_path.rstrip('/') + "/" + quote(directory_name)
-        return DirectoryClient(self.share_name, directory_path, self.credential, self._config, **kwargs)
+        directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+        return DirectoryClient(
+            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _location_mode=self._location_mode, **kwargs)
 
     def create_directory(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -184,7 +194,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_directories_and_files(self, prefix=None, timeout=None, **kwargs):
+    def list_directories_and_files(self, name_starts_with=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[int]) -> DirectoryProperties
         """
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
@@ -192,10 +202,11 @@ class DirectoryClient(StorageAccountHostsMixin):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.directory.list_files_and_directories_segment,
-            prefix=prefix,
+            sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return DirectoryPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+        return DirectoryPropertiesPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties
@@ -236,7 +247,8 @@ class DirectoryClient(StorageAccountHostsMixin):
     def create_subdirectory(
             self, directory_name,  # type: str,
             metadata=None, #type: Optional[Dict[str, Any]]
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> DirectoryClient
         """Creates a new Sub Directory.
@@ -251,10 +263,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: DirectoryClient
         :rtype: DirectoryClient
         """
+        subdir = self.get_subdirectory_client(directory_name)
+        subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
+        return subdir
 
     def delete_subdirectory(
             self, directory_name,  # type: str,
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> None
         """Deletes a Sub Directory.
@@ -265,14 +281,20 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: None
         """
+        subdir = self.get_subdirectory_client(directory_name)
+        subdir.delete_directory(timeout=timeout, **kwargs)
 
-    def create_file(
-            self, file_name,  # type: str,
-            size, # type: int
-            content_settings=None, # type: Any
-            metadata=None, #type: Optional[Dict[str, Any]]
+    def upload_file(
+            self, file_name,  # type: str
+            data, # type: Any
+            length=None, # type: Optional[int]
+            metadata=None,  # type: Optional[Dict[str, str]]
+            content_settings=None, # type: Optional[ContentSettings]
+            validate_content=False,  # type: bool
+            max_connections=1,  # type: Optional[int]
             timeout=None, # type: Optional[int]
-            **kwargs # type: Optional[Any]
+            encoding='UTF-8',  # type: str
+            **kwargs # type: Any
         ):
         # type: (...) -> FileClient
         """Creates a new file.
@@ -293,9 +315,17 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: FileClient
         """
         file_client = self.get_file_client(file_name)
-        file_client.create_file(size, content_settings, metadata, timeout, **kwargs)
+        file_client.upload_file(
+            data,
+            length=length,
+            metadata=metadata,
+            content_settings=content_settings,
+            validate_content=validate_content,
+            max_connections=max_connections,
+            timeout=timeout,
+            encoding=encoding,
+            **kwargs)
         return file_client
-
 
     def delete_file(
             self, file_name,  # type: str,

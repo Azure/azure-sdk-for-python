@@ -26,7 +26,7 @@ from ._shared.utils import (
 
 from .models import SharePropertiesPaged
 from ._generated import AzureFileStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties, ListSharesIncludeType
+from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
 
 
@@ -233,7 +233,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def list_shares(
             self, prefix=None,  # type: Optional[str]
-            include_metadata=None,  # type: Optional[bool]
+            include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -255,7 +255,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.file.models.SharePropertiesPaged
         """
-        include = ListSharesIncludeType.metadata if include_metadata else None
+        include = 'metadata' if include_metadata else None
         command = functools.partial(
             self._client.service.list_shares_segment,
             prefix=prefix,
@@ -293,7 +293,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
-            delete_snapshots=False, # type: Optional[bool]
+            delete_snapshots=None, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -313,9 +313,10 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: None
         """
         share = self.get_share_client(share_name)
-        share.delete_share(delete_snapshots, timeout, **kwargs)
+        share.delete_share(
+            delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
-    def get_share_client(self, share_name, snapshot=None):
+    def get_share_client(self, share, snapshot=None):
         # type: (Union[ShareProperties, str],Optional[Union[SnapshotProperties, str]]) -> ShareClient
         """Get a client to interact with the specified share.
         The share need not already exist.
@@ -328,5 +329,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.file.share_client.ShareClient
         """
         return ShareClient(
-            self.url, share=share_name, snapshot=snapshot,
-            credential=self.credential, configuration=self._config)
+            self.url, share=share, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
