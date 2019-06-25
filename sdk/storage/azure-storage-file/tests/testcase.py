@@ -140,10 +140,22 @@ class StorageTestCase(unittest.TestCase):
             "account_key": self.settings.STORAGE_ACCOUNT_KEY
         }
 
+    def get_remote_shared_key_credential(self):
+        return {
+            "account_name": self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
+            "account_key": self.settings.REMOTE_STORAGE_ACCOUNT_KEY
+        }
+
     def get_file_url(self):
         return "{}://{}.file.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.STORAGE_ACCOUNT_NAME
+        )
+
+    def get_remote_file_url(self):
+        return "{}://{}.file.core.windows.net".format(
+            self.settings.PROTOCOL,
+            self.settings.REMOTE_STORAGE_ACCOUNT_NAME
         )
 
     def get_random_bytes(self, size):
@@ -354,7 +366,7 @@ class StorageTestCase(unittest.TestCase):
         index = 0
         total = None if unknown_size else size
         small_chunk_size = size % max_chunk_size
-        self.assertEqual(len(progress), 1 + math.ceil(size / max_chunk_size))
+        self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
         for i in progress:
             self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
             self.assertEqual(i[1], total)

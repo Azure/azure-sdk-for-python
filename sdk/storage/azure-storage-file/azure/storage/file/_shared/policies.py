@@ -98,7 +98,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
                 message_id)
 
 
-class StorageBlobSettings(object):
+class StorageDataSettings(object):
 
     def __init__(self, **kwargs):
         self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
@@ -111,6 +111,7 @@ class StorageBlobSettings(object):
 
         # Page blob uploads
         self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
+        self.max_range_size = kwargs.get('max_range_size', 4 * 1024 * 1024)
 
         # Blob downloads
         self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)

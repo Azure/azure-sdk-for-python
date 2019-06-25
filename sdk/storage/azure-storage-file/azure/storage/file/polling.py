@@ -20,7 +20,7 @@ class CopyStatusPoller(LROPoller):
 
     def __init__(self, client, copy_id, polling=True, configuration=None, **kwargs):
         if configuration:
-            polling_interval = configuration.file_settings.copy_polling_interval
+            polling_interval = configuration.data_settings.copy_polling_interval
         else:
             polling_interval = 2
         polling_method = CopyFilePolling if polling else CopyFile
@@ -77,7 +77,7 @@ class CopyFile(PollingMethod):
 
     def abort(self):
         try:
-            return self._client._client.file.abort_copy_from_url(  # pylint: disable=protected-access
+            return self._client._client.file.abort_copy(  # pylint: disable=protected-access
                 self.id, **self.kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

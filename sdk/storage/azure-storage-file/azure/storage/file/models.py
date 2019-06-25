@@ -18,6 +18,7 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import DirectoryItem, FileItem
 
 
 class Metrics(GeneratedMetrics):
@@ -308,7 +309,7 @@ class DirectoryProperties(DictMixin):
         self.name = None
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
-        self.is_server_encrypted = kwargs.get('is_server_encrypted')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.metadata = kwargs.get('metadata')
 
     @classmethod
@@ -317,7 +318,7 @@ class DirectoryProperties(DictMixin):
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
-        props.is_server_encrypted = generated.properties.is_server_encrypted
+        props.server_encrypted = generated.properties.server_encrypted
         props.metadata = generated.metadata
         return props
 
@@ -354,6 +355,7 @@ class DirectoryPropertiesPaged(Paged):
         try:
             self.location_mode, self._response = self._get_next(
                 marker=self.next_marker or None,
+                prefix=self.prefix,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
@@ -364,15 +366,18 @@ class DirectoryPropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.directory_items + self._response.segment.file_items 
+        self.current_page = self._response.segment.directory_items
+        self.current_page.extend(self._response.segment.file_items)
         self.next_marker = self._response.next_marker or None
         return self.current_page
 
     def __next__(self):
         item = super(DirectoryPropertiesPaged, self).__next__()
-        if isinstance(item, DirectoryProperties):
-            return item
-        return DirectoryProperties._from_generated(item)  # pylint: disable=protected-access
+        if isinstance(item, DirectoryItem):
+            return {'name': item.name, 'is_directory': True}
+        if isinstance(item, FileItem):
+            return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
+        return item
 
     next = __next__
 
@@ -397,9 +402,20 @@ class FileProperties(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.name = None
-        self.content_length = kwargs.get('content_length')
+        self.name = kwargs.get('name')
+        self.path = None
+        self.share = None
+        self.snapshot = None
+        self.content_length = kwargs.get('Content-Length')
         self.metadata = kwargs.get('metadata')
+        self.file_type = kwargs.get('x-ms-type')
+        self.last_modified = kwargs.get('Last-Modified')
+        self.etag = kwargs.get('ETag')
+        self.size = kwargs.get('Content-Length')
+        self.content_range = kwargs.get('Content-Range')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.copy = CopyProperties(**kwargs)
+        self.content_settings = ContentSettings(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -408,6 +424,78 @@ class FileProperties(DictMixin):
         props.content_length = generated.properties.content_length
         props.metadata = generated.properties.metadata
         return props
+
+
+class CopyProperties(DictMixin):
+    """
+    Blob Copy Properties.
+
+    :param str id:
+        String identifier for the last attempted Copy Blob operation where this blob
+        was the destination blob. This header does not appear if this blob has never
+        been the destination in a Copy Blob operation, or if this blob has been
+        modified after a concluded Copy Blob operation using Set Blob Properties,
+        Put Blob, or Put Block List.
+    :param str source:
+        URL up to 2 KB in length that specifies the source blob used in the last attempted
+        Copy Blob operation where this blob was the destination blob. This header does not
+        appear if this blob has never been the destination in a Copy Blob operation, or if
+        this blob has been modified after a concluded Copy Blob operation using
+        Set Blob Properties, Put Blob, or Put Block List.
+    :param str status:
+        State of the copy operation identified by Copy ID, with these values:
+            success:
+                Copy completed successfully.
+            pending:
+                Copy is in progress. Check copy_status_description if intermittent,
+                non-fatal errors impede copy progress but don't cause failure.
+            aborted:
+                Copy was ended by Abort Copy Blob.
+            failed:
+                Copy failed. See copy_status_description for failure details.
+    :param str progress:
+        Contains the number of bytes copied and the total bytes in the source in the last
+        attempted Copy Blob operation where this blob was the destination blob. Can show
+        between 0 and Content-Length bytes copied.
+    :param datetime completion_time:
+        Conclusion time of the last attempted Copy Blob operation where this blob was the
+        destination blob. This value can specify the time of a completed, aborted, or
+        failed copy attempt.
+    :param str status_description:
+        Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
+        or non-fatal copy operation failure.
+    :param bool incremental_copy:
+        Copies the snapshot of the source page blob to a destination page blob.
+        The snapshot is copied such that only the differential changes between
+        the previously copied snapshot are transferred to the destination
+    :param datetime destination_snapshot:
+        Included if the blob is incremental copy blob or incremental copy snapshot,
+        if x-ms-copy-status is success. Snapshot time of the last successful
+        incremental copy snapshot for this blob.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('x-ms-copy-id')
+        self.source = kwargs.get('x-ms-copy-source')
+        self.status = kwargs.get('x-ms-copy-status')
+        self.progress = kwargs.get('x-ms-copy-progress')
+        self.completion_time = kwargs.get('x-ms-copy-completion_time')
+        self.status_description = kwargs.get('x-ms-copy-status-description')
+        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
+        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        copy = cls()
+        copy.id = generated.properties.copy_id or None
+        copy.status = get_enum_value(generated.properties.copy_status) or None
+        copy.source = generated.properties.copy_source or None
+        copy.progress = generated.properties.copy_progress or None
+        copy.completion_time = generated.properties.copy_completion_time or None
+        copy.status_description = generated.properties.copy_status_description or None
+        copy.incremental_copy = generated.properties.incremental_copy or None
+        copy.destination_snapshot = generated.properties.destination_snapshot or None
+        return copy
 
 
 class FilePermissions(object):

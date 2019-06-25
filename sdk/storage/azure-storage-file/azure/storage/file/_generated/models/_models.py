@@ -210,7 +210,10 @@ class FileProperty(Model):
     }
 
     _attribute_map = {
-        'content_length': {'key': 'Content-Length', 'type': 'long'},
+        'content_length': {'key': 'Content-Length', 'type': 'long', 'xml': {'name': 'Content-Length'}},
+    }
+    _xml_map = {
+        'name': 'Properties'
     }
 
     def __init__(self, **kwargs):
@@ -235,8 +238,11 @@ class FilesAndDirectoriesListSegment(Model):
     }
 
     _attribute_map = {
-        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]'},
-        'file_items': {'key': 'FileItems', 'type': '[FileItem]'},
+        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]', 'xml': {'name': 'Directory', 'itemsName': 'Directory'}},
+        'file_items': {'key': 'FileItems', 'type': '[FileItem]', 'xml': {'name': 'File', 'itemsName': 'File'}},
+    }
+    _xml_map = {
+        'name': 'Entries'
     }
 
     def __init__(self, **kwargs):
@@ -340,15 +346,18 @@ class ListFilesAndDirectoriesSegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'share_name': {'key': 'ShareName', 'type': 'str'},
-        'share_snapshot': {'key': 'ShareSnapshot', 'type': 'str'},
-        'directory_path': {'key': 'DirectoryPath', 'type': 'str'},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'share_name': {'key': 'ShareName', 'type': 'str', 'xml': {'name': 'ShareName', 'attr': True}},
+        'share_snapshot': {'key': 'ShareSnapshot', 'type': 'str', 'xml': {'name': 'ShareSnapshot'}},
+        'directory_path': {'key': 'DirectoryPath', 'type': 'str', 'xml': {'name': 'DirectoryPath'}},
+        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment', 'xml': {'name': 'Segment'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, **kwargs):

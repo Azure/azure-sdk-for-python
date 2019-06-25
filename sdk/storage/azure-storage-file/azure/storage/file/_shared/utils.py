@@ -46,7 +46,7 @@ from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TI
 from .models import LocationMode, StorageErrorCode
 from .authentication import SharedKeyCredentialPolicy
 from .policies import (
-    StorageBlobSettings,
+    StorageDataSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageRequestHook,
@@ -197,10 +197,12 @@ class StorageAccountHostsMixin(object):
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
-    def _format_query_string(self, sas_token, credential, snapshot=None):
+    def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:
             query_str += 'snapshot={}&'.format(self.snapshot)
+        if share_snapshot:
+            query_str += 'sharesnapshot={}&'.format(self.snapshot)
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -480,7 +482,7 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.blob_settings = StorageBlobSettings(**kwargs)
+    config.data_settings = StorageDataSettings(**kwargs)
     return config
 
 
@@ -525,7 +527,8 @@ def parse_query(query_str):
     if sas_params:
         sas_token = '&'.join(sas_params)
 
-    return parsed_query.get('snapshot'), sas_token
+    snapshot = parsed_query.get('snapshot') or parsed_query.get('sharesnapshot')
+    return snapshot, sas_token
 
 
 def is_credential_sastoken(credential):
@@ -578,7 +581,9 @@ def process_storage_error(storage_error):
             if error_code in [StorageErrorCode.resource_not_found,
                               StorageErrorCode.blob_not_found,
                               StorageErrorCode.queue_not_found,
-                              StorageErrorCode.container_not_found]:
+                              StorageErrorCode.container_not_found,
+                              StorageErrorCode.parent_not_found,
+                              StorageErrorCode.share_not_found]:
                 raise_error = ResourceNotFoundError
             if error_code in [StorageErrorCode.account_already_exists,
                               StorageErrorCode.account_being_created,
@@ -588,7 +593,9 @@ def process_storage_error(storage_error):
                               StorageErrorCode.queue_already_exists,
                               StorageErrorCode.container_already_exists,
                               StorageErrorCode.container_being_deleted,
-                              StorageErrorCode.queue_being_deleted]:
+                              StorageErrorCode.queue_being_deleted,
+                              StorageErrorCode.share_already_exists,
+                              StorageErrorCode.share_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

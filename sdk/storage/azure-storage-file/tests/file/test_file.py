@@ -11,6 +11,8 @@ import unittest
 from datetime import datetime, timedelta
 
 import requests
+import pytest
+
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.storage.file import (
@@ -21,6 +23,7 @@ from azure.storage.file import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
+    StorageErrorCode
 )
 from tests.testcase import (
     StorageTestCase,
@@ -43,27 +46,28 @@ class StorageFileTest(StorageTestCase):
     def setUp(self):
         super(StorageFileTest, self).setUp()
 
-        self.fs = self._create_storage_service(FileService, self.settings)
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fs.MAX_RANGE_SIZE = 4 * 1024
-
+        self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024)
         self.share_name = self.get_resource_name('utshare')
-
         if not self.is_playback():
-            self.fs.create_share(self.share_name)
+            self.fsc.create_share(self.share_name)
 
         self.short_byte_data = self.get_random_bytes(1024)
 
-        self.fs2 = self._create_remote_storage_service(FileService, self.settings)
+        remote_url = self.get_remote_file_url()
+        remote_credential = self.get_remote_shared_key_credential()
+        self.fsc2 = FileServiceClient(remote_url, credential=remote_credential)
         self.remote_share_name = None
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.fs.delete_share(self.share_name, delete_snapshots='include')
+                self.fsc.delete_share(self.share_name, delete_snapshots='include')
             except:
                 pass
 
@@ -93,19 +97,25 @@ class StorageFileTest(StorageTestCase):
 
     def _create_file(self):
         file_name = self._get_file_reference()
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, self.short_byte_data)
-        return file_name
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
+        file_client.upload_file(self.short_byte_data)
+        return file_client
 
     def _create_remote_share(self):
         self.remote_share_name = self.get_resource_name('remoteshare')
-        self.fs2.create_share(self.remote_share_name)
+        remote_share = self.fsc2.get_share_client(self.remote_share_name)
+        remote_share.create_share()
+        return remote_share
 
     def _create_remote_file(self, file_data=None):
         if not file_data:
             file_data = b'12345678' * 1024 * 1024
         source_file_name = self._get_file_reference()
-        self.fs2.create_file_from_bytes(self.remote_share_name, None, source_file_name, file_data)
-        return source_file_name
+        remote_share = self.fsc2.get_share_client(self.remote_share_name)
+        remote_file = remote_share.get_file_client(source_file_name)
+        remote_file.upload_file(file_data)
+        return remote_file
 
     def _wait_for_async_copy(self, share_name, dir_name, file_name):
         count = 0
@@ -118,9 +128,9 @@ class StorageFileTest(StorageTestCase):
             file = self.fs.get_file_properties(share_name, dir_name, file_name)
         self.assertEqual(file.properties.copy.status, 'success')
 
-    def assertFileEqual(self, share_name, dir_name, file_name, expected_data):
-        actual_data = self.fs.get_file_to_bytes(share_name, dir_name, file_name)
-        self.assertEqual(actual_data.content, expected_data)
+    def assertFileEqual(self, file_client, expected_data):
+        actual_data = file_client.download_file().content_as_bytes()
+        self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -137,8 +147,11 @@ class StorageFileTest(StorageTestCase):
     def test_make_file_url(self):
         # Arrange
 
+        share = self.fsc.get_share_client("vhds")
+        file_client = share.get_file_client("vhd_dir/my.vhd")
+
         # Act
-        res = self.fs.make_file_url('vhds', 'vhd_dir', 'my.vhd')
+        res = file_client.url
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -147,9 +160,11 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_make_file_url_no_directory(self):
         # Arrange
+        share = self.fsc.get_share_client("vhds")
+        file_client = share.get_file_client("my.vhd")
 
         # Act
-        res = self.fs.make_file_url('vhds', None, 'my.vhd')
+        res = file_client.url
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -158,9 +173,13 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_make_file_url_with_protocol(self):
         # Arrange
+        url = self.get_file_url().replace('https', 'http')
+        fsc = FileServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
+        share = fsc.get_share_client("vhds")
+        file_client = share.get_file_client("vhd_dir/my.vhd")
 
         # Act
-        res = self.fs.make_file_url('vhds', 'vhd_dir', 'my.vhd', protocol='http')
+        res = file_client.url
 
         # Assert
         self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -169,46 +188,68 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_make_file_url_with_sas(self):
         # Arrange
+        sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        file_client = FileClient(
+            self.get_file_url(),
+            share="vhds",
+            file_path="vhd_dir/my.vhd",
+            credential=sas
+        )
 
         # Act
-        res = self.fs.make_file_url(
-            'vhds', 'vhd_dir', 'my.vhd', sas_token='sas')
+        res = file_client.url
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME +
-                         '.file.core.windows.net/vhds/vhd_dir/my.vhd?sas')
+                         '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
     @record
     def test_create_file(self):
         # Arrange
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        self.fs.create_file(self.share_name, None, file_name, 1024)
+        resp = file_client.create_file(1024)
 
         # Assert
-        self.fs.exists(self.share_name, None, file_name)
+        props = file_client.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(props.etag, resp['etag'])
+        self.assertEqual(props.last_modified, resp['last_modified'])
 
     @record
     def test_create_file_with_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        self.fs.create_file(self.share_name, None, file_name, 1024, metadata=metadata)
+        resp = file_client.create_file(1024, metadata=metadata)
 
         # Assert
-        md = self.fs.get_file_metadata(self.share_name, None, file_name)
-        self.assertDictEqual(md, metadata)
+        props = file_client.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(props.etag, resp['etag'])
+        self.assertEqual(props.last_modified, resp['last_modified'])
+        self.assertDictEqual(props.metadata, metadata)
 
     @record
     def test_file_exists(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        exists = self.fs.exists(self.share_name, None, file_name)
+        exists = file_client.get_file_properties()
 
         # Assert
         self.assertTrue(exists)
@@ -217,116 +258,149 @@ class StorageFileTest(StorageTestCase):
     def test_file_not_exists(self):
         # Arrange
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path="missingdir/" + file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        exists = self.fs.exists(self.share_name, 'missingdir', file_name)
+        with self.assertRaises(ResourceNotFoundError):
+            file_client.get_file_properties()
 
         # Assert
-        self.assertFalse(exists)
 
     @record
     def test_file_exists_with_snapshot(self):
         # Arrange
-        file_name = self._create_file()
-        snapshot = self.fs.snapshot_share(self.share_name)
-        self.fs.delete_file(self.share_name, None, file_name)
+        file_client = self._create_file()
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+        file_client.delete_file()
 
         # Act
-        exists = self.fs.exists(self.share_name, None, file_name, snapshot=snapshot.snapshot)
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        props = snapshot_client.get_file_properties()
 
         # Assert
-        self.assertTrue(exists)
+        self.assertTrue(props)
 
     @record
     def test_file_not_exists_with_snapshot(self):
         # Arrange
-        snapshot = self.fs.snapshot_share(self.share_name)
-        file_name = self._create_file()
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+
+        file_client = self._create_file()
 
         # Act
-        exists = self.fs.exists(self.share_name, None, file_name, snapshot=snapshot.snapshot)
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Assert
-        self.assertFalse(exists)
+        with self.assertRaises(ResourceNotFoundError):
+            snapshot_client.get_file_properties()
 
     @record
     def test_resize_file(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        self.fs.resize_file(self.share_name, None, file_name, 5)
+        file_client.resize_file(5)
 
         # Assert
-        file = self.fs.get_file_properties(self.share_name, None, file_name)
-        self.assertEqual(file.properties.content_length, 5)
+        props = file_client.get_file_properties()
+        self.assertEqual(props.size, 5)
 
     @record
     def test_set_file_properties(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline')
-        resp = self.fs.set_file_properties(
-            self.share_name,
-            None,
-            file_name,
-            content_settings=content_settings
-        )
+        resp = file_client.set_http_headers(content_settings=content_settings)
 
         # Assert
-        properties = self.fs.get_file_properties(self.share_name, None, file_name).properties
+        properties = file_client.get_file_properties()
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
 
     @record
     def test_get_file_properties(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        file = self.fs.get_file_properties(self.share_name, None, file_name)
+        properties = file_client.get_file_properties()
 
         # Assert
-        self.assertIsNotNone(file)
-        self.assertEqual(file.properties.content_length, len(self.short_byte_data))
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.size, len(self.short_byte_data))
 
     @record
     def test_get_file_properties_with_snapshot(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
         metadata = {"test1": "foo", "test2": "bar"}
-        self.fs.set_file_metadata(self.share_name, None, file_name, metadata)
-        snapshot = self.fs.snapshot_share(self.share_name)
+        file_client.set_file_metadata(metadata)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+
         metadata2 = {"test100": "foo100", "test200": "bar200"}
-        self.fs.set_file_metadata(self.share_name, None, file_name, metadata2)
+        file_client.set_file_metadata(metadata2)
 
         # Act
-        file = self.fs.get_file_properties(self.share_name, None, file_name)
-        file_snapshot = self.fs.get_file_properties(self.share_name, None, file_name, snapshot=snapshot.snapshot)
+        file_props = file_client.get_file_properties()
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        snapshot_props = snapshot_client.get_file_properties()
 
         # Assert
-        self.assertIsNotNone(file)
-        self.assertIsNotNone(file_snapshot)
-        self.assertEqual(file.properties.content_length, file_snapshot.properties.content_length)
-        self.assertDictEqual(metadata, file_snapshot.metadata)
+        self.assertIsNotNone(file_props)
+        self.assertIsNotNone(snapshot_props)
+        self.assertEqual(file_props.size, snapshot_props.size)
+        self.assertDictEqual(metadata, snapshot_props.metadata)
 
     @record
     def test_get_file_metadata_with_snapshot(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
         metadata = {"test1": "foo", "test2": "bar"}
-        self.fs.set_file_metadata(self.share_name, None, file_name, metadata)
-        snapshot = self.fs.snapshot_share(self.share_name)
+        file_client.set_file_metadata(metadata)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
         metadata2 = {"test100": "foo100", "test200": "bar200"}
-        self.fs.set_file_metadata(self.share_name, None, file_name, metadata2)
+        file_client.set_file_metadata(metadata2)
 
         # Act
-        file_metadata = self.fs.get_file_metadata(self.share_name, None, file_name)
-        file_snapshot_metadata = self.fs.get_file_metadata(self.share_name, None, file_name, snapshot=snapshot.snapshot)
+        file_metadata = file_client.get_file_properties().metadata
+        file_snapshot_metadata = snapshot_client.get_file_properties().metadata
 
         # Assert
         self.assertDictEqual(metadata2, file_metadata)
@@ -336,20 +410,25 @@ class StorageFileTest(StorageTestCase):
     def test_get_file_properties_with_non_existing_file(self):
         # Arrange
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        with self.assertRaises(AzureMissingResourceHttpError):
-            self.fs.get_file_properties(self.share_name, None, file_name)
+        with self.assertRaises(ResourceNotFoundError):
+            file_client.get_file_properties()
 
             # Assert
 
     @record
     def test_get_file_metadata(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        md = self.fs.get_file_metadata(self.share_name, None, file_name)
+        md = file_client.get_file_properties().metadata
 
         # Assert
         self.assertIsNotNone(md)
@@ -359,13 +438,13 @@ class StorageFileTest(StorageTestCase):
     def test_set_file_metadata_with_upper_case(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        self.fs.set_file_metadata(self.share_name, None, file_name, metadata)
+        file_client.set_file_metadata(metadata)
 
         # Assert
-        md = self.fs.get_file_metadata(self.share_name, None, file_name)
+        md = file_client.get_file_properties().metadata
         self.assertEqual(3, len(md))
         self.assertEqual(md['hello'], 'world')
         self.assertEqual(md['number'], '42')
@@ -375,84 +454,100 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_delete_file_with_existing_file(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        self.fs.delete_file(self.share_name, None, file_name)
+        file_client.delete_file()
 
         # Assert
-        self.assertFalse(self.fs.exists(self.share_name, None, file_name))
+        with self.assertRaises(ResourceNotFoundError):
+            file_client.get_file_properties()
 
     @record
     def test_delete_file_with_non_existing_file(self):
         # Arrange
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        with self.assertRaises(AzureMissingResourceHttpError):
-            self.fs.delete_file(self.share_name, None, file_name)
+        with self.assertRaises(ResourceNotFoundError):
+            file_client.delete_file()
 
             # Assert
 
     @record
     def test_update_range(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        self.fs.update_range(self.share_name, None, file_name, data, 0, 511)
+        file_client.upload_range(data, 0, 511)
 
         # Assert
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
-        self.assertEqual(data, file.content[:512])
-        self.assertEqual(self.short_byte_data[512:], file.content[512:])
+        content = file_client.download_file().content_as_bytes()
+        self.assertEqual(data, content[:512])
+        self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @record
     def test_update_range_with_md5(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        self.fs.update_range(self.share_name, None, file_name, data, 0, 511, validate_content=True)
+        file_client.upload_range(data, 0, 511, validate_content=True)
 
         # Assert
 
     @record
     def test_clear_range(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
-        resp = self.fs.clear_range(self.share_name, None, file_name, 0, 511)
+        resp = file_client.clear_range(0, 511)
 
         # Assert
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
-        self.assertEqual(b'\x00' * 512, file.content[:512])
-        self.assertEqual(self.short_byte_data[512:], file.content[512:])
+        content = file_client.download_file().content_as_bytes()
+        self.assertEqual(b'\x00' * 512, content[:512])
+        self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @record
     def test_update_file_unicode(self):
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        with self.assertRaises(TypeError):
-            self.fs.update_range(self.share_name, None, file_name,
-                                 data, 0, 511)
+        file_client.upload_range(data, 0, 511)
 
-            # Assert
+        encoded = data.encode('utf-8')
+
+        # Assert
+        content = file_client.download_file().content_as_bytes()
+        self.assertEqual(encoded, content[:512])
+        self.assertEqual(self.short_byte_data[512:], content[512:])
+
+        # Assert
 
     @record
     def test_list_ranges_none(self):
         # Arrange
         file_name = self._get_file_reference()
-        self.fs.create_file(self.share_name, None, file_name, 1024)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(1024)
 
         # Act
-        ranges = self.fs.list_ranges(self.share_name, None, file_name)
+        ranges = file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -462,33 +557,52 @@ class StorageFileTest(StorageTestCase):
     def test_list_ranges_2(self):
         # Arrange
         file_name = self._get_file_reference()
-        self.fs.create_file(self.share_name, None, file_name, 2048)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
-        resp1 = self.fs.update_range(self.share_name, None, file_name, data, 0, 511)
-        resp2 = self.fs.update_range(self.share_name, None, file_name, data, 1024, 1535)
+        resp1 = file_client.upload_range(data, 0, 511)
+        resp2 = file_client.upload_range(data, 1024, 1535)
 
         # Act
-        ranges = self.fs.list_ranges(self.share_name, None, file_name)
+        ranges = file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 2)
-        self.assertEqual(ranges[0].start, 0)
-        self.assertEqual(ranges[0].end, 511)
-        self.assertEqual(ranges[1].start, 1024)
-        self.assertEqual(ranges[1].end, 1535)
+        self.assertEqual(ranges[0]['start'], 0)
+        self.assertEqual(ranges[0]['end'], 511)
+        self.assertEqual(ranges[1]['start'], 1024)
+        self.assertEqual(ranges[1]['end'], 1535)
 
     @record
     def test_list_ranges_none_from_snapshot(self):
         # Arrange
         file_name = self._get_file_reference()
-        self.fs.create_file(self.share_name, None, file_name, 1024)
-        share_snapshot = self.fs.snapshot_share(self.share_name)
-        self.fs.delete_file(self.share_name, None, file_name)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(1024)
+        
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        file_client.delete_file()
 
         # Act
-        ranges = self.fs.list_ranges(self.share_name, None, file_name, snapshot=share_snapshot.snapshot)
+        ranges = snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -498,165 +612,191 @@ class StorageFileTest(StorageTestCase):
     def test_list_ranges_2_from_snapshot(self):
         # Arrange
         file_name = self._get_file_reference()
-        self.fs.create_file(self.share_name, None, file_name, 2048)
-
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
-        resp1 = self.fs.update_range(self.share_name, None, file_name, data, 0, 511)
-        resp2 = self.fs.update_range(self.share_name, None, file_name, data, 1024, 1535)
-        share_snapshot = self.fs.snapshot_share(self.share_name)
-        self.fs.delete_file(self.share_name, None, file_name)
+        resp1 = file_client.upload_range(data, 0, 511)
+        resp2 = file_client.upload_range(data, 1024, 1535)
+        
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot = share_client.create_snapshot()
+        snapshot_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            snapshot=snapshot,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        file_client.delete_file()
 
         # Act
-        ranges = self.fs.list_ranges(self.share_name, None, file_name, snapshot=share_snapshot.snapshot)
+        ranges = snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 2)
-        self.assertEqual(ranges[0].start, 0)
-        self.assertEqual(ranges[0].end, 511)
-        self.assertEqual(ranges[1].start, 1024)
-        self.assertEqual(ranges[1].end, 1535)
+        self.assertEqual(ranges[0]['start'], 0)
+        self.assertEqual(ranges[0]['end'], 511)
+        self.assertEqual(ranges[1]['start'], 1024)
+        self.assertEqual(ranges[1]['end'], 1535)
 
     @record
     def test_copy_file_with_existing_file(self):
         # Arrange
-        file_name = self._create_file()
+        source_client = self._create_file()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path='file1copy',
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        sourcefile = self.fs.make_file_url(self.share_name, None, file_name)
-        copy = self.fs.copy_file(self.share_name, None, 'file1copy', sourcefile)
+        copy = file_client.copy_file_from_url(source_client.url)
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertEqual(copy.status, 'success')
-        self.assertIsNotNone(copy.id)
-        copy_file = self.fs.get_file_to_bytes(self.share_name, None, 'file1copy')
-        self.assertEqual(copy_file.content, self.short_byte_data)
+        self.assertEqual(copy.status(), 'success')
+        self.assertIsNotNone(copy.copy_id())
+
+        copy_file = file_client.download_file().content_as_bytes()
+        self.assertEqual(copy_file, self.short_byte_data)
 
     @record
     def test_copy_file_async_private_file(self):
         # Arrange
+        pytest.skip("")
         self._create_remote_share()
-        source_file_name = self._create_remote_file()
-        source_file_url = self.fs2.make_file_url(self.remote_share_name, None, source_file_name)
+        source_file = self._create_remote_file()
 
         # Act
         target_file_name = 'targetfile'
-        with self.assertRaises(AzureMissingResourceHttpError):
-            self.fs.copy_file(self.share_name, None, target_file_name, source_file_url)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=target_file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        with self.assertRaises(HttpResponseError) as e:
+            file_client.copy_file_from_url(source_file.url)
 
-            # Assert
+        # Assert
+        self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
     @record
     def test_copy_file_async_private_file_with_sas(self):
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
-        source_file_name = self._create_remote_file(file_data=data)
-
-        sas_token = self.fs2.generate_file_shared_access_signature(
-            self.remote_share_name,
-            None,
-            source_file_name,
+        source_file = self._create_remote_file(file_data=data)
+        sas_token = source_file.generate_shared_access_signature(
             permission=FilePermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-
-        source_file_url = self.fs2.make_file_url(
-            self.remote_share_name,
-            None,
-            source_file_name,
-            sas_token=sas_token,
-        )
+        source_url = source_file.url + '?' + sas_token
 
         # Act
         target_file_name = 'targetfile'
-        copy_resp = self.fs.copy_file(self.share_name, None, target_file_name, source_file_url)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=target_file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        copy_resp = file_client.copy_file_from_url(source_url)
 
         # Assert
-        self.assertEqual(copy_resp.status, 'pending')
-        self._wait_for_async_copy(self.share_name, None, target_file_name)
-        actual_data = self.fs.get_file_to_bytes(self.share_name, None, target_file_name)
-        self.assertEqual(actual_data.content, data)
+        status = copy_resp.status()
+        self.assertTrue(status in ['success', 'pending'])
+        if status == 'pending':
+            copy_resp.wait()
+
+        actual_data = file_client.download_file().content_as_bytes()
+        self.assertEqual(actual_data, data)
 
     @record
     def test_abort_copy_file(self):
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
-        source_file_name = self._create_remote_file(file_data=data)
-
-        sas_token = self.fs2.generate_file_shared_access_signature(
-            self.remote_share_name,
-            None,
-            source_file_name,
+        source_file = self._create_remote_file(file_data=data)
+        sas_token = source_file.generate_shared_access_signature(
             permission=FilePermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-
-        source_file_url = self.fs2.make_file_url(
-            self.remote_share_name,
-            None,
-            source_file_name,
-            sas_token=sas_token,
-        )
+        source_url = source_file.url + '?' + sas_token
 
         # Act
         target_file_name = 'targetfile'
-        copy_resp = self.fs.copy_file(self.share_name, None, target_file_name, source_file_url)
-        self.assertEqual(copy_resp.status, 'pending')
-        self.fs.abort_copy_file(self.share_name, None, 'targetfile', copy_resp.id)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=target_file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        copy_resp = file_client.copy_file_from_url(source_url)
+        self.assertEqual(copy_resp.status(), 'pending')
+        copy_resp.abort()
 
         # Assert
-        target_file = self.fs.get_file_to_bytes(self.share_name, None, target_file_name)
-        self.assertEqual(target_file.content, b'')
+        target_file = file_client.download_file()
+        self.assertEqual(target_file.content_as_bytes(), b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
     @record
     def test_abort_copy_file_with_synchronous_copy_fails(self):
         # Arrange
-        source_file_name = self._create_file()
-        source_file_url = self.fs.make_file_url(self.share_name, None, source_file_name)
+        source_file = self._create_file()
 
         # Act
         target_file_name = 'targetfile'
-        copy_resp = self.fs.copy_file(self.share_name, None, target_file_name, source_file_url)
-        with self.assertRaises(AzureHttpError):
-            self.fs.abort_copy_file(
-                self.share_name,
-                None,
-                target_file_name,
-                copy_resp.id)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=target_file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        copy_resp = file_client.copy_file_from_url(source_file.url)
+
+        with self.assertRaises(HttpResponseError):
+            copy_resp.abort()
 
         # Assert
-        self.assertEqual(copy_resp.status, 'success')
+        self.assertEqual(copy_resp.status(), 'success')
 
     @record
     def test_unicode_get_file_unicode_name(self):
         # Arrange
         file_name = '啊齄丂狛狜'
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, b'hello world')
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.upload_file(b'hello world')
 
         # Act
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
+        content = file_client.download_file().content_as_bytes()
 
         # Assert
-        self.assertIsInstance(file, File)
-        self.assertEqual(file.content, b'hello world')
+        self.assertEqual(content, b'hello world')
 
     @record
     def test_file_unicode_data(self):
         # Arrange
         file_name = self._get_file_reference()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
         data = u'hello world啊齄丂狛狜'.encode('utf-8')
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, data)
+        file_client.upload_file(data)
 
         # Assert
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
-        self.assertIsInstance(file, File)
-        self.assertEqual(file.content, data)
+        content = file_client.download_file().content_as_bytes()
+        self.assertEqual(content, data)
 
     @record
     def test_unicode_get_file_binary_data(self):
@@ -665,14 +805,18 @@ class StorageFileTest(StorageTestCase):
         binary_data = base64.b64decode(base64_data)
 
         file_name = self._get_file_reference()
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, binary_data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.upload_file(binary_data)
 
         # Act
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
+        content = file_client.download_file().content_as_bytes()
 
         # Assert
-        self.assertIsInstance(file, File)
-        self.assertEqual(file.content, binary_data)
+        self.assertEqual(content, binary_data)
 
     def test_create_file_from_bytes_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -682,17 +826,24 @@ class StorageFileTest(StorageTestCase):
         # Arrange
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
         progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-        def callback(current, total):
-            progress.append((current, total))
-
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, data, progress_callback=callback)
+        file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data)
+        self.assertFileEqual(file_client, data)
 
     def test_create_file_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
@@ -703,12 +854,17 @@ class StorageFileTest(StorageTestCase):
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         index = 1024
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, data, index)
+        file_client.upload_file(data[index:], max_connections=2)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[1024:])
+        self.assertFileEqual(file_client, data[1024:])
 
     def test_create_file_from_bytes_with_index_and_count(self):
         # parallel tests introduce random order of requests, can only run live
@@ -720,12 +876,17 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         index = 512
         count = 1024
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        resp = self.fs.create_file_from_bytes(self.share_name, None, file_name, data, index, count)
+        file_client.upload_file(data[index:], length=count, max_connections=2)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[index:index + count])
+        self.assertFileEqual(file_client, data[index:index + count])
 
     def test_create_file_from_path(self):
         # parallel tests introduce random order of requests, can only run live
@@ -737,12 +898,18 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        self.fs.create_file_from_path(self.share_name, None, file_name, INPUT_FILE_PATH)
+        with open(INPUT_FILE_PATH, 'rb') as stream:
+            file_client.upload_file(stream, max_connections=2)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data)
+        self.assertFileEqual(file_client, data)
 
     def test_create_file_from_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -754,19 +921,30 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-        def callback(current, total):
-            progress.append((current, total))
-
-        self.fs.create_file_from_path(self.share_name, None, file_name, INPUT_FILE_PATH,
-                                      progress_callback=callback)
+        with open(INPUT_FILE_PATH, 'rb') as stream:
+            file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data)
-        self.assert_upload_progress(len(data), self.fs.MAX_RANGE_SIZE, progress, unknown_size=False)
+        self.assertFileEqual(file_client, data)
+        self.assert_upload_progress(
+            len(data),
+            self.fsc._config.data_settings.max_range_size,
+            progress, unknown_size=False)
 
     def test_create_file_from_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -778,14 +956,19 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            self.fs.create_file_from_stream(self.share_name, None, file_name, stream, file_size)
+            file_client.upload_file(stream, max_connections=2)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[:file_size])
+        self.assertFileEqual(file_client, data[:file_size])
 
     def test_create_file_from_stream_non_seekable(self):
         # parallel tests introduce random order of requests, can only run live
@@ -797,16 +980,20 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageFileTest.NonSeekableFile(stream)
-            self.fs.create_file_from_stream(self.share_name, None, file_name,
-                                            non_seekable_file, file_size, max_connections=1)
+            file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[:file_size])
+        self.assertFileEqual(file_client, data[:file_size])
 
     def test_create_file_from_stream_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -818,21 +1005,31 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         progress = []
-
-        def callback(current, total):
-            progress.append((current, total))
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            self.fs.create_file_from_stream(self.share_name, None, file_name, stream,
-                                            file_size, progress_callback=callback)
+            file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[:file_size])
-        self.assert_upload_progress(len(data), self.fs.MAX_RANGE_SIZE, progress, unknown_size=False)
+        self.assertFileEqual(file_client, data[:file_size])
+        self.assert_upload_progress(
+            len(data),
+            self.fsc._config.data_settings.max_range_size,
+            progress, unknown_size=False)
 
     def test_create_file_from_stream_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -844,14 +1041,20 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         file_size = len(data) - 512
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            self.fs.create_file_from_stream(self.share_name, None, file_name, stream, file_size)
+            file_client.upload_file(stream, length=file_size, max_connections=2)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[:file_size])
+        self.assertFileEqual(file_client, data[:file_size])
 
     def test_create_file_from_stream_with_progress_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -863,21 +1066,32 @@ class StorageFileTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         progress = []
-
-        def callback(current, total):
-            progress.append((current, total))
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         file_size = len(data) - 5
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            self.fs.create_file_from_stream(self.share_name, None, file_name, stream,
-                                            file_size, progress_callback=callback)
+            file_client.upload_file(stream, length=file_size, max_connections=2, raw_response_hook=callback)
+
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data[:file_size])
-        self.assert_upload_progress(file_size, self.fs.MAX_RANGE_SIZE, progress, unknown_size=False)
+        self.assertFileEqual(file_client, data[:file_size])
+        self.assert_upload_progress(
+            file_size,
+            self.fsc._config.data_settings.max_range_size,
+            progress, unknown_size=False)
 
     @record
     def test_create_file_from_text(self):
@@ -885,12 +1099,18 @@ class StorageFileTest(StorageTestCase):
         file_name = self._get_file_reference()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        self.fs.create_file_from_text(self.share_name, None, file_name, text)
+        file_client.upload_file(text)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data)
+        self.assertFileEqual(file_client, data)
 
     @record
     def test_create_file_from_text_with_encoding(self):
@@ -898,12 +1118,18 @@ class StorageFileTest(StorageTestCase):
         file_name = self._get_file_reference()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        self.fs.create_file_from_text(self.share_name, None, file_name, text, 'utf-16')
+        file_client.upload_file(text, encoding='UTF-16')
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, data)
+        self.assertFileEqual(file_client, data)
 
     def test_create_file_from_text_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
@@ -914,22 +1140,33 @@ class StorageFileTest(StorageTestCase):
         file_name = self._get_file_reference()
         data = self.get_random_text_data(LARGE_FILE_SIZE)
         encoded_data = data.encode('utf-8')
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        self.fs.create_file_from_text(self.share_name, None, file_name, data)
+        file_client.upload_file(data)
 
         # Assert
-        self.assertFileEqual(self.share_name, None, file_name, encoded_data)
+        self.assertFileEqual(file_client, encoded_data)
 
     @record
     def test_create_file_with_md5_small(self):
         # Arrange
         file_name = self._get_file_reference()
         data = self.get_random_bytes(512)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, data,
-                                       validate_content=True)
+        file_client.upload_file(data, validate_content=True)
 
         # Assert
 
@@ -941,10 +1178,15 @@ class StorageFileTest(StorageTestCase):
         # Arrange
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        self.fs.create_file_from_bytes(self.share_name, None, file_name, data,
-                                       validate_content=True)
+        file_client.upload_file(data, validate_content=True, max_connections=2)
 
         # Assert
 
@@ -956,51 +1198,44 @@ class StorageFileTest(StorageTestCase):
             return
 
         # Arrange
-        file_name = self._create_file()
-
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
+        file_client = self._create_file()
+        token = file_client.generate_shared_access_signature(
             permission=FilePermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = FileService(
-            self.settings.STORAGE_ACCOUNT_NAME,
-            sas_token=token,
-            request_session=requests.Session(),
-        )
-        self._set_test_proxy(service, self.settings)
-        result = service.get_file_to_bytes(self.share_name, None, file_name)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            credential=token)
+        content = file_client.download_file().content_as_bytes()
 
         # Assert
-        self.assertEqual(self.short_byte_data, result.content)
+        self.assertEqual(self.short_byte_data, content)
 
     @record
     def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only
+        pytest.skip("")
         if TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        file_name = self._create_file()
+        file_client = self._create_file()
+        share_client = self.fsc.get_share_client(self.share_name)
 
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
         access_policy.permission = FilePermissions.READ
         identifiers = {'testid': access_policy}
+        share_client.set_share_access_policy(identifiers)
 
         resp = self.fs.set_share_acl(self.share_name, identifiers)
 
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
-            id='testid'
-        )
+        token = file_client.generate_shared_access_signature(policy_id='testid')
 
         # Act
         service = FileService(
@@ -1021,22 +1256,21 @@ class StorageFileTest(StorageTestCase):
             return
 
         # Arrange
-        file_name = self._create_file()
-
-        token = self.fs.generate_account_shared_access_signature(
+        file_client = self._create_file()
+        token = self.fsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
             AccountPermissions.READ,
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        url = self.fs.make_file_url(
-            self.share_name,
-            None,
-            file_name,
-            sas_token=token,
-        )
-        response = requests.get(url)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            credential=token)
+
+        response = requests.get(file_client.url)
 
         # Assert
         self.assertTrue(response.ok)
@@ -1049,24 +1283,19 @@ class StorageFileTest(StorageTestCase):
             return
 
         # Arrange
-        file_name = self._create_file()
-
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
+        file_client = self._create_file()
+        token = file_client.generate_shared_access_signature(
             permission=FilePermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        url = self.fs.make_file_url(
-            self.share_name,
-            None,
-            file_name,
-            sas_token=token,
-        )
-        response = requests.get(url)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            credential=token)
+        response = requests.get(file_client.url)
 
         # Assert
         self.assertTrue(response.ok)
@@ -1079,12 +1308,8 @@ class StorageFileTest(StorageTestCase):
             return
 
         # Arrange
-        file_name = self._create_file()
-
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
+        file_client = self._create_file()
+        token = file_client.generate_shared_access_signature(
             permission=FilePermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
@@ -1093,15 +1318,14 @@ class StorageFileTest(StorageTestCase):
             content_language='fr',
             content_type='text',
         )
-        url = self.fs.make_file_url(
-            self.share_name,
-            None,
-            file_name,
-            sas_token=token,
-        )
 
         # Act
-        response = requests.get(url)
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client.file_name,
+            credential=token)
+        response = requests.get(file_client.url)
 
         # Assert
         self.assertEqual(self.short_byte_data, response.content)
@@ -1119,30 +1343,25 @@ class StorageFileTest(StorageTestCase):
 
         # Arrange
         updated_data = b'updated file data'
-        file_name = self._create_file()
-
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
+        file_client_admin = self._create_file()
+        token = file_client_admin.generate_shared_access_signature(
             permission=FilePermissions.WRITE,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        url = self.fs.make_file_url(
-            self.share_name,
-            None,
-            file_name,
-            sas_token=token,
-        )
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client_admin.file_name,
+            credential=token)
 
         # Act
         headers = {'x-ms-range': 'bytes=0-16', 'x-ms-write': 'update'}
-        response = requests.put(url + '&comp=range', headers=headers, data=updated_data)
+        response = requests.put(file_client.url + '&comp=range', headers=headers, data=updated_data)
 
         # Assert
         self.assertTrue(response.ok)
-        file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
-        self.assertEqual(updated_data, file.content[:len(updated_data)])
+        file_content = file_client_admin.download_file().content_as_bytes()
+        self.assertEqual(updated_data, file_content[:len(updated_data)])
 
     @record
     def test_shared_delete_access_file(self):
@@ -1151,29 +1370,24 @@ class StorageFileTest(StorageTestCase):
             return
 
         # Arrange
-        file_name = self._create_file()
-
-        token = self.fs.generate_file_shared_access_signature(
-            self.share_name,
-            None,
-            file_name,
+        file_client_admin = self._create_file()
+        token = file_client_admin.generate_shared_access_signature(
             permission=FilePermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        url = self.fs.make_file_url(
-            self.share_name,
-            None,
-            file_name,
-            sas_token=token,
-        )
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=file_client_admin.file_name,
+            credential=token)
 
         # Act
-        response = requests.delete(url)
+        response = requests.delete(file_client.url)
 
         # Assert
         self.assertTrue(response.ok)
-        with self.assertRaises(AzureMissingResourceHttpError):
-            file = self.fs.get_file_to_bytes(self.share_name, None, file_name)
+        with self.assertRaises(ResourceNotFoundError):
+            file_client_admin.download_file()
 
 
 # ------------------------------------------------------------------------------
