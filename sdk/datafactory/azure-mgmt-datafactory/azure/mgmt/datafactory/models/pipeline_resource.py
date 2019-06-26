@@ -44,6 +44,8 @@ class PipelineResource(SubResource):
     :param annotations: List of tags that can be used for describing the
      Pipeline.
     :type annotations: list[object]
+    :param run_dimensions: Dimensions emitted by Pipeline.
+    :type run_dimensions: dict[str, object]
     :param folder: The folder that this Pipeline is in. If not specified,
      Pipeline will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
@@ -69,6 +71,7 @@ class PipelineResource(SubResource):
         'variables': {'key': 'properties.variables', 'type': '{VariableSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
+        'run_dimensions': {'key': 'properties.runDimensions', 'type': '{object}'},
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
@@ -81,4 +84,5 @@ class PipelineResource(SubResource):
         self.variables = kwargs.get('variables', None)
         self.concurrency = kwargs.get('concurrency', None)
         self.annotations = kwargs.get('annotations', None)
+        self.run_dimensions = kwargs.get('run_dimensions', None)
         self.folder = kwargs.get('folder', None)

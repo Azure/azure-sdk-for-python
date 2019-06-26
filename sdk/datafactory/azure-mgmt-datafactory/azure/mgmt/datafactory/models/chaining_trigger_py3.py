@@ -9,16 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .trigger_py3 import Trigger
 
 
-class Trigger(Model):
-    """Azure data factory nested object which contains information about creating
-    pipeline run.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RerunTumblingWindowTrigger, ChainingTrigger,
-    TumblingWindowTrigger, MultiplePipelineTrigger
+class ChainingTrigger(Trigger):
+    """Trigger that schedules pipeline runs based on dependent pipelines
+    successful completion.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -40,11 +36,25 @@ class Trigger(Model):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
+    :param pipeline: Required. Pipeline for which runs are created when all
+     dependent pipelines complete successfully.
+    :type pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
+    :param depends_on: Required. Dependent Pipelines.
+    :type depends_on: list[~azure.mgmt.datafactory.models.PipelineReference]
+    :param retry_policy: Retry policy that will be applied for failed pipeline
+     runs.
+    :type retry_policy: ~azure.mgmt.datafactory.models.RetryPolicy
+    :param run_dimension: Required. Run Dimenstion property that needs to be
+     emitted by dependent pipelines.
+    :type run_dimension: str
     """
 
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'pipeline': {'required': True},
+        'depends_on': {'required': True},
+        'run_dimension': {'required': True},
     }
 
     _attribute_map = {
@@ -53,16 +63,16 @@ class Trigger(Model):
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[PipelineReference]'},
+        'retry_policy': {'key': 'typeProperties.retryPolicy', 'type': 'RetryPolicy'},
+        'run_dimension': {'key': 'typeProperties.runDimension', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'ChainingTrigger': 'ChainingTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
-    }
-
-    def __init__(self, *, additional_properties=None, description: str=None, annotations=None, **kwargs) -> None:
-        super(Trigger, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.description = description
-        self.runtime_state = None
-        self.annotations = annotations
-        self.type = None
+    def __init__(self, *, pipeline, depends_on, run_dimension: str, additional_properties=None, description: str=None, annotations=None, retry_policy=None, **kwargs) -> None:
+        super(ChainingTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
+        self.pipeline = pipeline
+        self.depends_on = depends_on
+        self.retry_policy = retry_policy
+        self.run_dimension = run_dimension
+        self.type = 'ChainingTrigger'

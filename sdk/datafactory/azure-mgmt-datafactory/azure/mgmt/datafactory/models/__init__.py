@@ -80,12 +80,13 @@ try:
     from .ssis_object_metadata_status_response_py3 import SsisObjectMetadataStatusResponse
     from .exposure_control_request_py3 import ExposureControlRequest
     from .exposure_control_response_py3 import ExposureControlResponse
+    from .retry_policy_py3 import RetryPolicy
+    from .chaining_trigger_py3 import ChainingTrigger
     from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference_py3 import TriggerReference
     from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
     from .trigger_dependency_reference_py3 import TriggerDependencyReference
     from .dependency_reference_py3 import DependencyReference
-    from .retry_policy_py3 import RetryPolicy
     from .tumbling_window_trigger_py3 import TumblingWindowTrigger
     from .blob_events_trigger_py3 import BlobEventsTrigger
     from .blob_trigger_py3 import BlobTrigger
@@ -537,12 +538,13 @@ except (SyntaxError, ImportError):
     from .ssis_object_metadata_status_response import SsisObjectMetadataStatusResponse
     from .exposure_control_request import ExposureControlRequest
     from .exposure_control_response import ExposureControlResponse
+    from .retry_policy import RetryPolicy
+    from .chaining_trigger import ChainingTrigger
     from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference import TriggerReference
     from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
     from .trigger_dependency_reference import TriggerDependencyReference
     from .dependency_reference import DependencyReference
-    from .retry_policy import RetryPolicy
     from .tumbling_window_trigger import TumblingWindowTrigger
     from .blob_events_trigger import BlobEventsTrigger
     from .blob_trigger import BlobTrigger
@@ -1062,12 +1064,13 @@ __all__ = [
     'SsisObjectMetadataStatusResponse',
     'ExposureControlRequest',
     'ExposureControlResponse',
+    'RetryPolicy',
+    'ChainingTrigger',
     'SelfDependencyTumblingWindowTriggerReference',
     'TriggerReference',
     'TumblingWindowTriggerDependencyReference',
     'TriggerDependencyReference',
     'DependencyReference',
-    'RetryPolicy',
     'TumblingWindowTrigger',
     'BlobEventsTrigger',
     'BlobTrigger',

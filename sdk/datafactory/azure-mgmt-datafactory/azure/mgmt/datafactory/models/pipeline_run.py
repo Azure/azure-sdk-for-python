@@ -34,6 +34,8 @@ class PipelineRun(Model):
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
     :vartype parameters: dict[str, str]
+    :ivar run_dimension: Run dimension emitted by Pipeline run.
+    :vartype run_dimension: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
     :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
@@ -57,6 +59,7 @@ class PipelineRun(Model):
         'is_latest': {'readonly': True},
         'pipeline_name': {'readonly': True},
         'parameters': {'readonly': True},
+        'run_dimension': {'readonly': True},
         'invoked_by': {'readonly': True},
         'last_updated': {'readonly': True},
         'run_start': {'readonly': True},
@@ -73,6 +76,7 @@ class PipelineRun(Model):
         'is_latest': {'key': 'isLatest', 'type': 'bool'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
+        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
         'invoked_by': {'key': 'invokedBy', 'type': 'PipelineRunInvokedBy'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'run_start': {'key': 'runStart', 'type': 'iso-8601'},
@@ -90,6 +94,7 @@ class PipelineRun(Model):
         self.is_latest = None
         self.pipeline_name = None
         self.parameters = None
+        self.run_dimension = None
         self.invoked_by = None
         self.last_updated = None
         self.run_start = None

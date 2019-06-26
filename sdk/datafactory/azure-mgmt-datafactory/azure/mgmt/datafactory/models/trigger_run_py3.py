@@ -40,6 +40,10 @@ class TriggerRun(Model):
     :ivar triggered_pipelines: List of pipeline name and run Id triggered by
      the trigger run.
     :vartype triggered_pipelines: dict[str, str]
+    :ivar run_dimension: Run dimention for which trigger was fired.
+    :vartype run_dimension: dict[str, str]
+    :ivar dependency_status: Status of the upstream pipelines.
+    :vartype dependency_status: dict[str, str]
     """
 
     _validation = {
@@ -51,6 +55,8 @@ class TriggerRun(Model):
         'message': {'readonly': True},
         'properties': {'readonly': True},
         'triggered_pipelines': {'readonly': True},
+        'run_dimension': {'readonly': True},
+        'dependency_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,6 +69,8 @@ class TriggerRun(Model):
         'message': {'key': 'message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
+        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
+        'dependency_status': {'key': 'DependencyStatus', 'type': '{str}'},
     }
 
     def __init__(self, *, additional_properties=None, **kwargs) -> None:
@@ -76,3 +84,5 @@ class TriggerRun(Model):
         self.message = None
         self.properties = None
         self.triggered_pipelines = None
+        self.run_dimension = None
+        self.dependency_status = None
