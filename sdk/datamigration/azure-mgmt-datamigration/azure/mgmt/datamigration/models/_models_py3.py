@@ -1744,6 +1744,9 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(Model):
     :ivar validation_errors: Validation errors associated with the task
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
+    :param database_schema_map: Mapping of schemas per database
+    :type database_schema_map:
+     list[~azure.mgmt.datamigration.models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem]
     """
 
     _validation = {
@@ -1758,14 +1761,36 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(Model):
         'databases': {'key': 'databases', 'type': '[str]'},
         'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+        'database_schema_map': {'key': 'databaseSchemaMap', 'type': '[ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, database_schema_map=None, **kwargs) -> None:
         super(ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput, self).__init__(**kwargs)
         self.target_server_version = None
         self.databases = None
         self.target_server_brand_version = None
         self.validation_errors = None
+        self.database_schema_map = database_schema_map
+
+
+class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem(Model):
+    """ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem.
+
+    :param database:
+    :type database: str
+    :param schemas:
+    :type schemas: list[str]
+    """
+
+    _attribute_map = {
+        'database': {'key': 'database', 'type': 'str'},
+        'schemas': {'key': 'schemas', 'type': '[str]'},
+    }
+
+    def __init__(self, *, database: str=None, schemas=None, **kwargs) -> None:
+        super(ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem, self).__init__(**kwargs)
+        self.database = database
+        self.schemas = schemas
 
 
 class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties):
@@ -3252,6 +3277,138 @@ class GetTdeCertificatesSqlTaskProperties(ProjectTaskProperties):
         self.input = input
         self.output = None
         self.task_type = 'GetTDECertificates.Sql'
+
+
+class GetUserTablesOracleTaskInput(Model):
+    """Input for the task that gets the list of tables contained within a provided
+    list of Oracle schemas.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_info: Required. Information for connecting to Oracle
+     source
+    :type connection_info:
+     ~azure.mgmt.datamigration.models.OracleConnectionInfo
+    :param selected_schemas: Required. List of Oracle Schemas for which to
+     collect tables
+    :type selected_schemas: list[str]
+    """
+
+    _validation = {
+        'connection_info': {'required': True},
+        'selected_schemas': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_info': {'key': 'connectionInfo', 'type': 'OracleConnectionInfo'},
+        'selected_schemas': {'key': 'selectedSchemas', 'type': '[str]'},
+    }
+
+    def __init__(self, *, connection_info, selected_schemas, **kwargs) -> None:
+        super(GetUserTablesOracleTaskInput, self).__init__(**kwargs)
+        self.connection_info = connection_info
+        self.selected_schemas = selected_schemas
+
+
+class GetUserTablesOracleTaskOutput(Model):
+    """Output for the task that gets the list of tables contained within a
+    provided list of Oracle schemas.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar schema_name: The schema this result is for
+    :vartype schema_name: str
+    :ivar tables: List of valid tables found for this schema
+    :vartype tables: list[~azure.mgmt.datamigration.models.QueryTable]
+    :ivar validation_errors: Validation errors associated with the task
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    """
+
+    _validation = {
+        'schema_name': {'readonly': True},
+        'tables': {'readonly': True},
+        'validation_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'schema_name': {'key': 'schemaName', 'type': 'str'},
+        'tables': {'key': 'tables', 'type': '[QueryTable]'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(GetUserTablesOracleTaskOutput, self).__init__(**kwargs)
+        self.schema_name = None
+        self.tables = None
+        self.validation_errors = None
+
+
+class GetUserTablesPostgreSqlTaskInput(Model):
+    """Input for the task that gets the list of tables for a provided list of
+    PostgreSQL databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_info: Required. Information for connecting to PostgreSQL
+     source
+    :type connection_info:
+     ~azure.mgmt.datamigration.models.PostgreSqlConnectionInfo
+    :param selected_databases: Required. List of PostgreSQL databases for
+     which to collect tables
+    :type selected_databases: list[str]
+    """
+
+    _validation = {
+        'connection_info': {'required': True},
+        'selected_databases': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_info': {'key': 'connectionInfo', 'type': 'PostgreSqlConnectionInfo'},
+        'selected_databases': {'key': 'selectedDatabases', 'type': '[str]'},
+    }
+
+    def __init__(self, *, connection_info, selected_databases, **kwargs) -> None:
+        super(GetUserTablesPostgreSqlTaskInput, self).__init__(**kwargs)
+        self.connection_info = connection_info
+        self.selected_databases = selected_databases
+
+
+class GetUserTablesPostgreSqlTaskOutput(Model):
+    """Output for the task that gets the list of tables for a provided list of
+    PostgreSQL databases.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar database_name: The database this result is for
+    :vartype database_name: str
+    :ivar tables: List of valid tables found for this database
+    :vartype tables: list[~azure.mgmt.datamigration.models.QueryTable]
+    :ivar validation_errors: Validation errors associated with the task
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    """
+
+    _validation = {
+        'database_name': {'readonly': True},
+        'tables': {'readonly': True},
+        'validation_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'tables': {'key': 'tables', 'type': '[QueryTable]'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(GetUserTablesPostgreSqlTaskOutput, self).__init__(**kwargs)
+        self.database_name = None
+        self.tables = None
+        self.validation_errors = None
 
 
 class GetUserTablesSqlSyncTaskInput(Model):
@@ -9907,6 +10064,26 @@ class QueryExecutionResult(Model):
         self.statements_in_batch = statements_in_batch
         self.source_result = source_result
         self.target_result = target_result
+
+
+class QueryTable(Model):
+    """Information about a single table.
+
+    :param has_rows: Whether the table has any rows
+    :type has_rows: bool
+    :param name: The schema-qualifed table name
+    :type name: str
+    """
+
+    _attribute_map = {
+        'has_rows': {'key': 'hasRows', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, has_rows: bool=None, name: str=None, **kwargs) -> None:
+        super(QueryTable, self).__init__(**kwargs)
+        self.has_rows = has_rows
+        self.name = name
 
 
 class Quota(Model):
