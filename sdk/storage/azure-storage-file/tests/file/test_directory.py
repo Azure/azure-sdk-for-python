@@ -17,6 +17,7 @@ from tests.testcase import (
     StorageTestCase,
     record,
     LogCaptured,
+    TestMode
 )
 
 
@@ -115,6 +116,8 @@ class StorageDirectoryTest(StorageTestCase):
 
     @record
     def test_create_file_in_directory(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         file_data = b'12345678' * 1024 * 1024
         file_name = self.get_resource_name('file')

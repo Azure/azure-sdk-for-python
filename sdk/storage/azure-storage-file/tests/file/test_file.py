@@ -687,6 +687,8 @@ class StorageFileTest(StorageTestCase):
 
     @record
     def test_copy_file_async_private_file_with_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
@@ -717,6 +719,8 @@ class StorageFileTest(StorageTestCase):
 
     @record
     def test_abort_copy_file(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
