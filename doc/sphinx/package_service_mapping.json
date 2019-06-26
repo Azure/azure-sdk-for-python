@@ -186,6 +186,13 @@
     ],
     "service_name": "Alerts Management"
   },
+  "azure-mgmt-apimanagement": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.apimanagement"
+    ],
+    "service_name": "API Management"
+  },
   "azure-mgmt-applicationinsights": {
     "category ": "Management",
     "namespaces": [
