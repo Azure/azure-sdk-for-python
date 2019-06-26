@@ -668,7 +668,6 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_copy_file_async_private_file(self):
         # Arrange
-        pytest.skip("")
         self._create_remote_share()
         source_file = self._create_remote_file()
 
