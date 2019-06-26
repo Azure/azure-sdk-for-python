@@ -6,7 +6,6 @@ import six
 
 from uamqp import constants, errors
 
-from azure.core.exceptions import AzureError
 
 _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-out-of-range",
