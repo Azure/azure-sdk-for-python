@@ -517,8 +517,10 @@ class ShareOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct body
+        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifier', 'wrapped': True}}
         if share_acl is not None:
-            body_content = self._serialize.body(share_acl, '[SignedIdentifier]')
+            body_content = self._serialize.serialize_iter(share_acl, 'SignedIdentifier',
+                                                          serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
 
