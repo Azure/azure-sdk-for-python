@@ -3,7 +3,7 @@ import logging
 import json
 from pathlib import Path
 
-CONFIG_FILE = '../package_service_mapping.json'
+CONFIG_FILE = './package_service_mapping.json'
 GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
 
 _LOGGER = logging.getLogger(__name__)

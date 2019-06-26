@@ -32,6 +32,7 @@
   ./ref/azure.loganalytics.rst
   ./ref/azure.mgmt.advisor.rst
   ./ref/azure.mgmt.alertsmanagement.rst
+  ./ref/azure.mgmt.apimanagement.rst
   ./ref/azure.mgmt.applicationinsights.rst
   ./ref/azure.mgmt.authorization.rst
   ./ref/azure.mgmt.automation.rst
