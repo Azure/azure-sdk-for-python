@@ -58,9 +58,9 @@ def convert_bool(value):
 
     """
     if value in (True, False):
-        return value # type: ignore
+        return value  # type: ignore
 
-    val = value.lower() # type: ignore
+    val = value.lower()  # type: ignore
     if val in ["yes", "1", "on"]:
         return True
     if val in ["no", "0", "off"]:
@@ -97,9 +97,9 @@ def convert_logging(value):
 
     """
     if value in set(_levels.values()):
-        return value # type: ignore
+        return value  # type: ignore
 
-    val = value.upper() # type: ignore
+    val = value.upper()  # type: ignore
     level = _levels.get(val)
     if not level:
         raise ValueError(
@@ -139,8 +139,8 @@ class PrioritizedSetting(object):
     """
 
     def __init__(
-            self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-        ):
+        self, name, env_var=None, system_hook=None, default=_Unset, convert=None
+    ):
 
         self._name = name
         self._env_var = env_var
@@ -206,6 +206,11 @@ class PrioritizedSetting(object):
 
         """
         self._user_value = value
+
+    def unset_value(self):
+        # () -> None
+        """Unset the previous user value such that the priority is reset."""
+        self._user_value = _Unset
 
     @property
     def env_var(self):
@@ -338,7 +343,7 @@ class Settings(object):
         props.update(kwargs)
         return self._config(props)
 
-    def _config(self, props): #pylint: disable=no-self-use
+    def _config(self, props):  # pylint: disable=no-self-use
         Config = namedtuple("Config", list(props.keys()))
         return Config(**props)
 
