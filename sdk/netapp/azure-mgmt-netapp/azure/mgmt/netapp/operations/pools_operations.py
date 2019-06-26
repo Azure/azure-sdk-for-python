@@ -180,12 +180,20 @@ class PoolsOperations(object):
 
 
     def _create_or_update_initial(
-            self, body, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -224,7 +232,7 @@ class PoolsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, body, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or Update the specified capacity pool within the resource group.
 
         Create or Update a capacity pool.
@@ -232,6 +240,12 @@ class PoolsOperations(object):
         :param body: Capacity pool object supplied in the body of the
          operation.
         :type body: ~azure.mgmt.netapp.models.CapacityPool
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -247,6 +261,9 @@ class PoolsOperations(object):
         """
         raw_result = self._create_or_update_initial(
             body=body,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -271,7 +288,7 @@ class PoolsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
     def update(
-            self, body, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         """Update a capacity pool.
 
         Patch the specified capacity pool.
@@ -279,6 +296,12 @@ class PoolsOperations(object):
         :param body: Capacity pool object supplied in the body of the
          operation.
         :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -291,9 +314,17 @@ class PoolsOperations(object):
         """
         # Construct URL
         url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -332,12 +363,20 @@ class PoolsOperations(object):
 
 
     def _delete_initial(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -362,11 +401,17 @@ class PoolsOperations(object):
             return client_raw_response
 
     def delete(
-            self, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a capacity pool.
 
         Delete the specified capacity pool.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -379,6 +424,9 @@ class PoolsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
