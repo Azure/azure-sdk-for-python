@@ -44,7 +44,8 @@ class DynamicsSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :ivar write_behavior: Required. The write behavior for the operation.
-    :vartype write_behavior: object
+     Default value: "Upsert" .
+    :vartype write_behavior: str
     :param ignore_null_values: The flag indicating whether ignore null values
      from input dataset (except key fields) during write operation. Default is
      false. Type: boolean (or Expression with resultType boolean).
@@ -64,11 +65,11 @@ class DynamicsSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
-    write_behavior = None
+    write_behavior = "Upsert"
 
     def __init__(self, **kwargs):
         super(DynamicsSink, self).__init__(**kwargs)

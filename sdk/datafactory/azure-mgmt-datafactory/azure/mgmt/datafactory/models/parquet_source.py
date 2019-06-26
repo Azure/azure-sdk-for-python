@@ -34,7 +34,7 @@ class ParquetSource(CopySource):
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Parquet store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.ConnectorReadSetting
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
     """
 
     _validation = {
@@ -47,7 +47,7 @@ class ParquetSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'ConnectorReadSetting'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
     }
 
     def __init__(self, **kwargs):

@@ -34,10 +34,10 @@ class DelimitedTextSource(CopySource):
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: DelimitedText store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.ConnectorReadSetting
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
     :param format_settings: DelimitedText format settings.
     :type format_settings:
-     ~azure.mgmt.datafactory.models.DelimitedTextReadSetting
+     ~azure.mgmt.datafactory.models.DelimitedTextReadSettings
     """
 
     _validation = {
@@ -50,8 +50,8 @@ class DelimitedTextSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'ConnectorReadSetting'},
-        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextReadSetting'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextReadSettings'},
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, format_settings=None, **kwargs) -> None:

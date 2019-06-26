@@ -55,13 +55,6 @@ class SapTableSource(CopySource):
      function module that will be used to read data from SAP Table. Type:
      string (or Expression with resultType string).
     :type custom_rfc_read_table_function_module: object
-    :param partition_option: The partition mechanism that will be used for SAP
-     table read in parallel.
-    :type partition_option: object
-    :param partition_settings: The settings that will be leveraged for SAP
-     table source partitioning.
-    :type partition_settings:
-     ~azure.mgmt.datafactory.models.SapTablePartitionSettings
     """
 
     _validation = {
@@ -80,11 +73,9 @@ class SapTableSource(CopySource):
         'rfc_table_options': {'key': 'rfcTableOptions', 'type': 'object'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'custom_rfc_read_table_function_module': {'key': 'customRfcReadTableFunctionModule', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
-        'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, **kwargs) -> None:
         super(SapTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.row_count = row_count
         self.row_skips = row_skips
@@ -92,6 +83,4 @@ class SapTableSource(CopySource):
         self.rfc_table_options = rfc_table_options
         self.batch_size = batch_size
         self.custom_rfc_read_table_function_module = custom_rfc_read_table_function_module
-        self.partition_option = partition_option
-        self.partition_settings = partition_settings
         self.type = 'SapTableSource'
