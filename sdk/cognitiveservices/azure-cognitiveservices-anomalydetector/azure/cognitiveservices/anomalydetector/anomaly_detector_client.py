@@ -263,4 +263,4 @@ class AnomalyDetectorClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    change_point_detect.metadata = {'url': '/timeseries/changepoint/detect'}
+    change_point_detect.metadata = {'url': '/timeseries/changePoint/detect'}

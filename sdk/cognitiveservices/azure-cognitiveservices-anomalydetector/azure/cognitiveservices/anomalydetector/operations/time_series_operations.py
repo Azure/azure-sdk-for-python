@@ -447,7 +447,7 @@ class TimeSeriesOperations(object):
             return client_raw_response
 
         return deserialized
-    change_point_detect_on_timestamp.metadata = {'url': '/timeseries/{timeSeriesId}/changepoint/detect'}
+    change_point_detect_on_timestamp.metadata = {'url': '/timeseries/{timeSeriesId}/changePoint/detect'}
 
     def label(
             self, time_series_id, body, custom_headers=None, raw=False, **operation_config):
