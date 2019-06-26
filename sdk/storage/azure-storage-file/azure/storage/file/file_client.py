@@ -15,6 +15,7 @@ except ImportError:
 
 import six
 
+from .models import HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
@@ -631,3 +632,17 @@ class FileClient(StorageAccountHostsMixin):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
+
+    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
+        """
+        :returns: An auto-paging iterable of HandleItems
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        command = functools.partial(
+            self._client.file.list_handles,
+            sharesnapshot=self.snapshot,
+            timeout=timeout,
+            recursive=recursive,
+            **kwargs)
+        return HandlesPaged(
+            command, results_per_page=results_per_page, marker=marker)

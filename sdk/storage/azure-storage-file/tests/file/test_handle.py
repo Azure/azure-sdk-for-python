@@ -31,7 +31,9 @@ TEST_SHARE_NAME = 'test'
 class StorageHandleTest(StorageTestCase):
     def setUp(self):
         super(StorageHandleTest, self).setUp()
-        self.fs = self._create_storage_service(FileService, self.settings)
+        file_url = self.get_file_url()
+        credentials = self.get_shared_key_credential()
+        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
 
     def tearDown(self):
         return super(StorageHandleTest, self).tearDown()
@@ -58,9 +60,11 @@ class StorageHandleTest(StorageTestCase):
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        root = share.get_directory_client()
 
         # Act
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, recursive=True))
+        handles = list(root.list_handles(recursive=True))
 
         # Assert
         self._validate_handles(handles)
@@ -72,10 +76,11 @@ class StorageHandleTest(StorageTestCase):
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
+        share = self.fsc.get_share_client(TEST_SHARE_NAME, snapshot="2019-05-08T23:27:24.0000000Z")
+        root = share.get_directory_client()
 
         # Act
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, recursive=True,
-                                            snapshot="2019-05-08T23:27:24.0000000Z"))
+        handles = list(root.list_handles(recursive=True))
 
         # Assert
         self._validate_handles(handles)
@@ -86,13 +91,16 @@ class StorageHandleTest(StorageTestCase):
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        root = share.get_directory_client()
 
         # Act
-        handle_generator = self.fs.list_handles(TEST_SHARE_NAME, recursive=True, max_results=1)
+        handle_generator = root.list_handles(recursive=True, results_per_page=1)
+        next(handle_generator)
 
         # Assert
         self.assertIsNotNone(handle_generator.next_marker)
-        handles = list(handle_generator)
+        handles = handle_generator.current_page
         self._validate_handles(handles)
 
         # Note down a handle that we saw
@@ -100,7 +108,7 @@ class StorageHandleTest(StorageTestCase):
 
         # Continue listing
         remaining_handles = list(
-            self.fs.list_handles(TEST_SHARE_NAME, recursive=True, marker=handle_generator.next_marker))
+            root.list_handles(recursive=True, marker=handle_generator.next_marker))
         self._validate_handles(handles)
 
         # Make sure the old handle did not appear
@@ -114,15 +122,17 @@ class StorageHandleTest(StorageTestCase):
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        dir = share.get_directory_client('wut')
 
         # Act
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, directory_name='wut', recursive=True))
+        handles = list(dir.list_handles(recursive=True))
 
         # Assert
         self._validate_handles(handles)
 
         # Act
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, directory_name='wut', recursive=False))
+        handles = list(dir.list_handles(recursive=False))
 
         # Assert recursive option is functioning when disabled
         self.assertTrue(len(handles) == 0)
@@ -133,9 +143,11 @@ class StorageHandleTest(StorageTestCase):
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        client = share.get_file_client('wut/bla.txt')
 
         # Act
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, directory_name='wut', file_name='bla.txt'))
+        handles = list(client.list_handles())
 
         # Assert
         self._validate_handles(handles)

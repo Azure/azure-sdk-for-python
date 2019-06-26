@@ -232,9 +232,10 @@ class FileServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def list_shares(
-            self, prefix=None,  # type: Optional[str]
+            self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
+            marker=None,
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -243,9 +244,9 @@ class FileServiceClient(StorageAccountHostsMixin):
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all shares have been returned.
 
-        :param str prefix:
+        :param str name_starts_with:
             Filters the results to return only shares whose names
-            begin with the specified prefix.
+            begin with the specified name_starts_with.
         :param bool include_metadata:
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
@@ -255,14 +256,19 @@ class FileServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.file.models.SharePropertiesPaged
         """
-        include = 'metadata' if include_metadata else None
+        include = []
+        if include_metadata:
+            include.append('metadata')
+        if include_snapshots:
+            include.append('snapshots')
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_shares_segment,
-            prefix=prefix,
             include=include,
             timeout=timeout,
             **kwargs)
-        return SharePropertiesPaged(command, prefix=prefix, **kwargs)
+        return SharePropertiesPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def create_share(
             self, share_name,  # type: str
@@ -293,7 +299,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
-            delete_snapshots=None, # type: Optional[bool]
+            delete_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -330,6 +336,4 @@ class FileServiceClient(StorageAccountHostsMixin):
         """
         return ShareClient(
             self.url, share=share, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)

@@ -16,7 +16,7 @@ import six
 
 from .file_client import FileClient
 
-from .models import DirectoryPropertiesPaged
+from .models import DirectoryPropertiesPaged, HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, SignedIdentifier
@@ -132,9 +132,10 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: A File Client.
         :rtype: ~azure.core.file.file_client.FileClient
         """
-        file_path = self.directory_path.rstrip('/') + "/" + file_name
+        if self.directory_path:
+            file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential,
+            self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, **kwargs)
 
@@ -207,6 +208,20 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs)
         return DirectoryPropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+
+    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
+        """
+        :returns: An auto-paging iterable of HandleItems
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        command = functools.partial(
+            self._client.directory.list_handles,
+            sharesnapshot=self.snapshot,
+            timeout=timeout,
+            recursive=recursive,
+            **kwargs)
+        return HandlesPaged(
+            command, results_per_page=results_per_page, marker=marker)
 
     def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties

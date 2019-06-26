@@ -605,9 +605,12 @@ class ShareProperties(Model):
     }
 
     _attribute_map = {
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'quota': {'key': 'Quota', 'type': 'int'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123', 'xml': {'name': 'Last-Modified'}},
+        'etag': {'key': 'Etag', 'type': 'str', 'xml': {'name': 'Etag'}},
+        'quota': {'key': 'Quota', 'type': 'int', 'xml': {'name': 'Quota'}},
+    }
+    _xml_map = {
+        'name': 'Properties'
     }
 
     def __init__(self, *, last_modified, etag: str, quota: int, **kwargs) -> None:
@@ -636,6 +639,7 @@ class ShareStats(Model):
         'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int', 'xml': {'name': 'ShareUsageBytes'}},
     }
     _xml_map = {
+        'name': 'ShareStats
     }
 
     def __init__(self, *, share_usage_bytes: int, **kwargs) -> None:

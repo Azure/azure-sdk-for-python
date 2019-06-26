@@ -225,8 +225,9 @@ class ShareProperties(DictMixin):
         self.name = None
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
-        self.quota = kwargs.get('quota')
+        self.quota = kwargs.get('x-ms-share-quota')
         self.metadata = kwargs.get('metadata')
+        self.snapshot = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -236,6 +237,7 @@ class ShareProperties(DictMixin):
         props.etag = generated.properties.etag
         props.quota = generated.properties.quota
         props.metadata = generated.metadata
+        props.snapshot = generated.snapshot
         return props
 
 
@@ -292,6 +294,49 @@ class SharePropertiesPaged(Paged):
         return ShareProperties._from_generated(item)  # pylint: disable=protected-access
 
     next = __next__
+
+
+class HandlesPaged(Paged):
+    """Share properties paged.
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only shares whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of share names to retrieve per
+        call.
+    :param str marker: An opaque continuation token.
+    """
+    def __init__(self, command, prefix=None, results_per_page=None, marker=None, **kwargs):
+        super(HandlesPaged, self).__init__(command, None)
+        self.current_marker = None
+        self.results_per_page = results_per_page
+        self.next_marker = marker or ""
+        self.location_mode = None
+
+    def _advance_page(self):
+        # type: () -> List[Model]
+        """Force moving the cursor to the next azure call.
+        This method is for advanced usage, iterator protocol is prefered.
+        :raises: StopIteration if no further page
+        :return: The current page list
+        :rtype: list
+        """
+        if self.next_marker is None:
+            raise StopIteration("End of paging")
+        self._current_page_iter_index = 0
+        try:
+            self.location_mode, self._response = self._get_next(
+                marker=self.next_marker or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        #self.current_marker = self._response.marker
+        #self.results_per_page = self._response.max_results
+        self.current_page = self._response.handle_list
+        self.next_marker = self._response.next_marker or None
+        return self.current_page
 
 
 class DirectoryProperties(DictMixin):
