@@ -41,7 +41,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-class EventHubError(AzureError):
+class EventHubError(Exception):
     """
     Represents an error happened in the client.
 
