@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from ._configuration import PowerBIEmbeddedManagementClientConfiguration
+from ._power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
+__all__ = ['PowerBIEmbeddedManagementClient', 'PowerBIEmbeddedManagementClientConfiguration']
 
-__all__ = ['PowerBIEmbeddedManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
