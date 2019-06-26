@@ -143,7 +143,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :type workspace_id: str
     :param log_analytics_destination_type: A string indicating whether the
      export to Log Analytics should use the default destination type, i.e.
-     AzureDiagnostics, or use a destinatin type constructed as follows:
+     AzureDiagnostics, or use a destination type constructed as follows:
      <normalized service identity>_<normalized category name>. Possible values
      are: Dedicated and null (null is default.)
     :type log_analytics_destination_type: str
