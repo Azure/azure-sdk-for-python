@@ -196,6 +196,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_id, created_collection.id)
         assert isinstance(created_recorder.headers, Mapping)
         assert 'Content-Type' in created_recorder.headers
+        assert isinstance(created_recorder.body, Mapping)
+        assert 'id' in created_recorder.body
 
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])

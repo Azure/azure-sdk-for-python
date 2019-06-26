@@ -83,7 +83,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
@@ -113,7 +113,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 
         return result
 
@@ -150,7 +150,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 
         return result
 
@@ -180,7 +180,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission['id'],
@@ -218,7 +218,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission['id'],
@@ -256,7 +256,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission['id'],
@@ -294,7 +294,7 @@ class User:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission['id'],
@@ -323,11 +323,11 @@ class User:
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
-        self.client_connection.DeletePermission(
+        result = self.client_connection.DeletePermission(
             permission_link=self._get_permission_link(permission),
             options=request_options
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 

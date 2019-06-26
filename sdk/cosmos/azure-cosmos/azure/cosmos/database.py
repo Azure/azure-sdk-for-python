@@ -148,7 +148,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
@@ -240,7 +240,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, data)
 
         return Container(self.client_connection, self.database_link, data["id"], properties=data)
 
@@ -279,9 +279,9 @@ class Database(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
-        self.client_connection.DeleteContainer(collection_link, options=request_options)
+        result = self.client_connection.DeleteContainer(collection_link, options=request_options)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 
     def get_container(
         self,
@@ -359,7 +359,7 @@ class Database(object):
             options=feed_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
 
@@ -407,7 +407,7 @@ class Database(object):
                     options=feed_options,
                 )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def replace_container(
@@ -482,7 +482,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, container_properties)
 
         return Container(
             self.client_connection,
@@ -516,7 +516,7 @@ class Database(object):
             options=feed_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
 
@@ -552,7 +552,7 @@ class Database(object):
             options=feed_options,
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
 
@@ -619,7 +619,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, user)
 
         return User(
             client_connection=self.client_connection,
@@ -656,7 +656,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, user)
 
         return User(
             client_connection=self.client_connection,
@@ -693,7 +693,7 @@ class Database(object):
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, user)
 
         return User(
             client_connection=self.client_connection,
@@ -720,11 +720,11 @@ class Database(object):
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
-        self.client_connection.DeleteUser(
+        result = self.client_connection.DeleteUser(
             user_link=self._get_user_link(user), options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 
     def read_offer(self, response_hook=None):
         # type: (Optional[Callable]) -> Offer
@@ -748,7 +748,7 @@ class Database(object):
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, offers)
 
         return Offer(
             offer_throughput=offers[0]['content']['offerThroughput'],
@@ -786,7 +786,7 @@ class Database(object):
             offer=offers[0]
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, data)
         return Offer(
             offer_throughput=data['content']['offerThroughput'],
             properties=data)
