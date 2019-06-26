@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -56,6 +57,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_on_share(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -72,6 +74,7 @@ class StorageHandleTest(StorageTestCase):
 #
     @record
     def test_list_handles_on_share_snapshot(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -87,6 +90,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_with_marker(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -118,6 +122,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_on_directory(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -139,6 +144,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_on_file(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -154,13 +160,16 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_close_single_handle(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, recursive=True))
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        root = share.get_directory_client()
+        handles = list(root.list_handles(TEST_SHARE_NAME, recursive=True))
         self._validate_handles(handles)
         handle_id = handles[0].handle_id
 
@@ -172,6 +181,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_close_all_handle(self):
+        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
