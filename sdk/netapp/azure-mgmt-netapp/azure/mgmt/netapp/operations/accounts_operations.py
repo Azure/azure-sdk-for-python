@@ -174,19 +174,12 @@ class AccountsOperations(object):
 
 
     def _create_or_update_initial(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, body, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -225,7 +218,7 @@ class AccountsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, body, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a NetApp account.
 
         Create or update the specified NetApp account within the resource
@@ -234,10 +227,6 @@ class AccountsOperations(object):
         :param body: NetApp Account object supplied in the body of the
          operation.
         :type body: ~azure.mgmt.netapp.models.NetAppAccount
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -253,8 +242,6 @@ class AccountsOperations(object):
         """
         raw_result = self._create_or_update_initial(
             body=body,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -280,19 +267,12 @@ class AccountsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -317,15 +297,11 @@ class AccountsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a NetApp account.
 
         Delete the specified NetApp account.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -338,8 +314,6 @@ class AccountsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -360,7 +334,7 @@ class AccountsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
     def update(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, body, custom_headers=None, raw=False, **operation_config):
         """Update a NetApp account.
 
         Patch the specified NetApp account.
@@ -368,10 +342,6 @@ class AccountsOperations(object):
         :param body: NetApp Account object supplied in the body of the
          operation.
         :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -384,16 +354,9 @@ class AccountsOperations(object):
         """
         # Construct URL
         url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
