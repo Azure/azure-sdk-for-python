@@ -38,3 +38,16 @@ class HanaInstancePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(HanaInstancePaged, self).__init__(*args, **kwargs)
+class SapMonitorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SapMonitor <azure.mgmt.hanaonazure.models.SapMonitor>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SapMonitor]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SapMonitorPaged, self).__init__(*args, **kwargs)

@@ -461,6 +461,75 @@ class OSProfile(Model):
         self.ssh_public_key = kwargs.get('ssh_public_key', None)
 
 
+class SapMonitor(Resource):
+    """SAP monitor info on Azure (ARM properties and SAP monitor properties).
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :ivar tags: Resource tags
+    :vartype tags: dict[str, str]
+    :param hana_subnet: Specifies the SAP monitor unique ID.
+    :type hana_subnet: str
+    :param hana_hostname: Hostname of the HANA instance.
+    :type hana_hostname: str
+    :param hana_db_name: Database name of the HANA instance.
+    :type hana_db_name: str
+    :param hana_db_sql_port: Database port of the HANA instance.
+    :type hana_db_sql_port: int
+    :param hana_db_username: Database username of the HANA instance.
+    :type hana_db_username: str
+    :param hana_db_password: Database password of the HANA instance.
+    :type hana_db_password: str
+    :ivar provisioning_state: State of provisioning of the HanaInstance.
+     Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
+     'Succeeded', 'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'hana_subnet': {'key': 'properties.hanaSubnet', 'type': 'str'},
+        'hana_hostname': {'key': 'properties.hanaHostname', 'type': 'str'},
+        'hana_db_name': {'key': 'properties.hanaDbName', 'type': 'str'},
+        'hana_db_sql_port': {'key': 'properties.hanaDbSqlPort', 'type': 'int'},
+        'hana_db_username': {'key': 'properties.hanaDbUsername', 'type': 'str'},
+        'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SapMonitor, self).__init__(**kwargs)
+        self.hana_subnet = kwargs.get('hana_subnet', None)
+        self.hana_hostname = kwargs.get('hana_hostname', None)
+        self.hana_db_name = kwargs.get('hana_db_name', None)
+        self.hana_db_sql_port = kwargs.get('hana_db_sql_port', None)
+        self.hana_db_username = kwargs.get('hana_db_username', None)
+        self.hana_db_password = kwargs.get('hana_db_password', None)
+        self.provisioning_state = None
+
+
 class StorageProfile(Model):
     """Specifies the storage settings for the HANA instance disks.
 

@@ -21,6 +21,7 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OSProfile
     from ._models_py3 import Resource
+    from ._models_py3 import SapMonitor
     from ._models_py3 import StorageProfile
     from ._models_py3 import Tags
 except (SyntaxError, ImportError):
@@ -35,10 +36,12 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OSProfile
     from ._models import Resource
+    from ._models import SapMonitor
     from ._models import StorageProfile
     from ._models import Tags
 from ._paged_models import HanaInstancePaged
 from ._paged_models import OperationPaged
+from ._paged_models import SapMonitorPaged
 from ._hana_management_client_enums import (
     HanaHardwareTypeNamesEnum,
     HanaInstanceSizeNamesEnum,
@@ -58,10 +61,12 @@ __all__ = [
     'Operation',
     'OSProfile',
     'Resource',
+    'SapMonitor',
     'StorageProfile',
     'Tags',
     'OperationPaged',
     'HanaInstancePaged',
+    'SapMonitorPaged',
     'HanaHardwareTypeNamesEnum',
     'HanaInstanceSizeNamesEnum',
     'HanaInstancePowerStateEnum',
