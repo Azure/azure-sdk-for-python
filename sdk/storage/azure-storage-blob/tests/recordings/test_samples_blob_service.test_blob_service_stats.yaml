@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 994b71dc-979d-11e9-896d-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:04:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Tue,
+        25 Jun 2019 23:01:35 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 25 Jun 2019 23:04:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - eb7bf98c-801e-00c2-40aa-2b2a1c000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+version: 1

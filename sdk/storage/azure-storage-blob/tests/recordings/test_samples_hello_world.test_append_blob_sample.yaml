@@ -1,0 +1,362 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 09d27e24-979d-11e9-8476-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/myappendcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 25 Jun 2019 23:00:33 GMT
+      ETag:
+      - '"0x8D6F9C0EE31152F"'
+      Last-Modified:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 7b4e7941-201e-000f-06a9-2b2598000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dolor purus,
+      interdum in turpis ut, ultrices ornare augue. Donec mollis varius sem, et mattis
+      ex gravida eget. Duis nibh magna, ultrices a nisi quis, pretium tristique ligula.
+      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+      himenaeos. Vestibulum in dui arcu. Nunc at orci volutpat, elementum magna eget,
+      pellentesque sem. Etiam id placerat nibh. Vestibulum varius at elit ut mattis.\r\n\r\nSuspendisse
+      ipsum sem, placerat id blandit ac, cursus eget purus. Vestibulum pretium ante
+      eu augue aliquam, ultrices fermentum nibh condimentum. Pellentesque pulvinar
+      feugiat augue vel accumsan. Nulla imperdiet viverra nibh quis rhoncus. Nunc
+      tincidunt sollicitudin urna, eu efficitur elit gravida ut. Quisque eget urna
+      convallis, commodo diam eu, pretium erat. Nullam quis magna a dolor ullamcorper
+      malesuada. Donec bibendum sem lectus, sit amet faucibus nisi sodales eget. Integer
+      lobortis lacus et volutpat dignissim. Suspendisse cras amet."
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 0a079778-979d-11e9-a655-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/myappendcontainer/myappendblob?comp=appendblock
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:7b4e79ae-201e-000f-6ea9-2b2598000000\nTime:2019-06-25T23:00:34.5665671Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '215'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 25 Jun 2019 23:00:33 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - 7b4e79ae-201e-000f-6ea9-2b2598000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-client-request-id:
+      - 0a0ca034-979d-11e9-adf4-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/myappendcontainer/myappendblob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 25 Jun 2019 23:00:33 GMT
+      ETag:
+      - '"0x8D6F9C0EE481FBE"'
+      Last-Modified:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 7b4e79e9-201e-000f-25a9-2b2598000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dolor purus,
+      interdum in turpis ut, ultrices ornare augue. Donec mollis varius sem, et mattis
+      ex gravida eget. Duis nibh magna, ultrices a nisi quis, pretium tristique ligula.
+      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+      himenaeos. Vestibulum in dui arcu. Nunc at orci volutpat, elementum magna eget,
+      pellentesque sem. Etiam id placerat nibh. Vestibulum varius at elit ut mattis.\r\n\r\nSuspendisse
+      ipsum sem, placerat id blandit ac, cursus eget purus. Vestibulum pretium ante
+      eu augue aliquam, ultrices fermentum nibh condimentum. Pellentesque pulvinar
+      feugiat augue vel accumsan. Nulla imperdiet viverra nibh quis rhoncus. Nunc
+      tincidunt sollicitudin urna, eu efficitur elit gravida ut. Quisque eget urna
+      convallis, commodo diam eu, pretium erat. Nullam quis magna a dolor ullamcorper
+      malesuada. Donec bibendum sem lectus, sit amet faucibus nisi sodales eget. Integer
+      lobortis lacus et volutpat dignissim. Suspendisse cras amet."
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 0a1615e4-979d-11e9-82c1-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/myappendcontainer/myappendblob?comp=appendblock
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - CYtMy/ttQYV2KO6ll15P7g==
+      Date:
+      - Tue, 25 Jun 2019 23:00:33 GMT
+      ETag:
+      - '"0x8D6F9C0EE4E3B56"'
+      Last-Modified:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-append-offset:
+      - '0'
+      x-ms-blob-committed-block-count:
+      - '1'
+      x-ms-request-id:
+      - 7b4e7a0d-201e-000f-49a9-2b2598000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 0a1c562e-979d-11e9-8f16-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/myappendcontainer/myappendblob
+  response:
+    body:
+      string: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dolor
+        purus, interdum in turpis ut, ultrices ornare augue. Donec mollis varius sem,
+        et mattis ex gravida eget. Duis nibh magna, ultrices a nisi quis, pretium
+        tristique ligula. Class aptent taciti sociosqu ad litora torquent per conubia
+        nostra, per inceptos himenaeos. Vestibulum in dui arcu. Nunc at orci volutpat,
+        elementum magna eget, pellentesque sem. Etiam id placerat nibh. Vestibulum
+        varius at elit ut mattis.\r\n\r\nSuspendisse ipsum sem, placerat id blandit
+        ac, cursus eget purus. Vestibulum pretium ante eu augue aliquam, ultrices
+        fermentum nibh condimentum. Pellentesque pulvinar feugiat augue vel accumsan.
+        Nulla imperdiet viverra nibh quis rhoncus. Nunc tincidunt sollicitudin urna,
+        eu efficitur elit gravida ut. Quisque eget urna convallis, commodo diam eu,
+        pretium erat. Nullam quis magna a dolor ullamcorper malesuada. Donec bibendum
+        sem lectus, sit amet faucibus nisi sodales eget. Integer lobortis lacus et
+        volutpat dignissim. Suspendisse cras amet."
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1024'
+      Content-Range:
+      - bytes 0-1023/1024
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      ETag:
+      - '"0x8D6F9C0EE4E3B56"'
+      Last-Modified:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-committed-block-count:
+      - '1'
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-creation-time:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 7b4e7a35-201e-000f-6fa9-2b2598000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 0a2a8700-979d-11e9-84c4-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/myappendcontainer/myappendblob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent:
+      - 'false'
+      x-ms-request-id:
+      - 7b4e7a65-201e-000f-1da9-2b2598000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 0a318bda-979d-11e9-bbdd-b831b58100e8
+      x-ms-date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/myappendcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 25 Jun 2019 23:00:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 7b4e7aaa-201e-000f-61a9-2b2598000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
+version: 1
