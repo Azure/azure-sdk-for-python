@@ -113,7 +113,8 @@ class Metric(Model):
     :type name: ~azure.mgmt.monitor.v2018_01_01.models.LocalizableString
     :param unit: Required. the unit of the metric. Possible values include:
      'Count', 'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond',
-     'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified'
+     'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified', 'Cores',
+     'MilliCores', 'NanoCores', 'BitsPerSecond'
     :type unit: str or ~azure.mgmt.monitor.v2018_01_01.models.Unit
     :param timeseries: Required. the time series returned when a data query is
      performed.
@@ -185,7 +186,8 @@ class MetricDefinition(Model):
     :type name: ~azure.mgmt.monitor.v2018_01_01.models.LocalizableString
     :param unit: the unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent',
-     'MilliSeconds', 'ByteSeconds', 'Unspecified'
+     'MilliSeconds', 'ByteSeconds', 'Unspecified', 'Cores', 'MilliCores',
+     'NanoCores', 'BitsPerSecond'
     :type unit: str or ~azure.mgmt.monitor.v2018_01_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value
      defining how to use the values for display. Possible values include:
