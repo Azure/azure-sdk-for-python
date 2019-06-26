@@ -1,0 +1,6 @@
+include *.md
+include azure/__init__.py
+include azure/keyvault/__init__.py
+include azure/keyvault/keys/__init__.py
+include azure/keyvault/keys/_generated/__init__.py
+include azure/keyvault/keys/aio/__init__.py
