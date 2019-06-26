@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.hanaonazure.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
 class HanaInstancePaged(Paged):
     """
     A paging container for iterating over a list of :class:`HanaInstance <azure.mgmt.hanaonazure.models.HanaInstance>` object
@@ -25,3 +38,16 @@ class HanaInstancePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(HanaInstancePaged, self).__init__(*args, **kwargs)
+class SapMonitorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SapMonitor <azure.mgmt.hanaonazure.models.SapMonitor>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SapMonitor]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SapMonitorPaged, self).__init__(*args, **kwargs)
