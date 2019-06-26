@@ -7,8 +7,8 @@ import functools
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
-from preparer import VaultClientPreparer
-from test_case import KeyVaultTestCase
+from secrets_preparer import VaultClientPreparer
+from secrets_test_case import KeyVaultTestCase
 
 
 def print(*args):
