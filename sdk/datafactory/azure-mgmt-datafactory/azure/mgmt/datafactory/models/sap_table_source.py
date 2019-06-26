@@ -55,13 +55,6 @@ class SapTableSource(CopySource):
      function module that will be used to read data from SAP Table. Type:
      string (or Expression with resultType string).
     :type custom_rfc_read_table_function_module: object
-    :param partition_option: The partition mechanism that will be used for SAP
-     table read in parallel.
-    :type partition_option: object
-    :param partition_settings: The settings that will be leveraged for SAP
-     table source partitioning.
-    :type partition_settings:
-     ~azure.mgmt.datafactory.models.SapTablePartitionSettings
     """
 
     _validation = {
@@ -80,8 +73,6 @@ class SapTableSource(CopySource):
         'rfc_table_options': {'key': 'rfcTableOptions', 'type': 'object'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'custom_rfc_read_table_function_module': {'key': 'customRfcReadTableFunctionModule', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
-        'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 
     def __init__(self, **kwargs):
@@ -92,6 +83,4 @@ class SapTableSource(CopySource):
         self.rfc_table_options = kwargs.get('rfc_table_options', None)
         self.batch_size = kwargs.get('batch_size', None)
         self.custom_rfc_read_table_function_module = kwargs.get('custom_rfc_read_table_function_module', None)
-        self.partition_option = kwargs.get('partition_option', None)
-        self.partition_settings = kwargs.get('partition_settings', None)
         self.type = 'SapTableSource'

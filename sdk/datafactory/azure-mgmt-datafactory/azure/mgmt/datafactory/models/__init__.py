@@ -241,7 +241,6 @@ try:
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
-    from .teradata_table_dataset_py3 import TeradataTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
     from .odata_resource_dataset_py3 import ODataResourceDataset
     from .cosmos_db_mongo_db_api_collection_dataset_py3 import CosmosDbMongoDbApiCollectionDataset
@@ -329,9 +328,6 @@ try:
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
-    from .teradata_partition_settings_py3 import TeradataPartitionSettings
-    from .teradata_source_py3 import TeradataSource
-    from .oracle_partition_settings_py3 import OraclePartitionSettings
     from .oracle_source_py3 import OracleSource
     from .azure_data_explorer_source_py3 import AzureDataExplorerSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
@@ -344,7 +340,6 @@ try:
     from .sql_server_source_py3 import SqlServerSource
     from .sql_source_py3 import SqlSource
     from .rest_source_py3 import RestSource
-    from .sap_table_partition_settings_py3 import SapTablePartitionSettings
     from .sap_table_source_py3 import SapTableSource
     from .sap_open_hub_source_py3 import SapOpenHubSource
     from .sap_hana_source_py3 import SapHanaSource
@@ -356,18 +351,18 @@ try:
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
     from .azure_table_source_py3 import AzureTableSource
-    from .format_read_setting_py3 import FormatReadSetting
-    from .delimited_text_read_setting_py3 import DelimitedTextReadSetting
-    from .hdfs_read_setting_py3 import HdfsReadSetting
-    from .http_read_setting_py3 import HttpReadSetting
-    from .sftp_read_setting_py3 import SftpReadSetting
-    from .ftp_read_setting_py3 import FtpReadSetting
-    from .file_server_read_setting_py3 import FileServerReadSetting
-    from .amazon_s3_read_setting_py3 import AmazonS3ReadSetting
-    from .azure_data_lake_store_read_setting_py3 import AzureDataLakeStoreReadSetting
-    from .azure_blob_fs_read_setting_py3 import AzureBlobFSReadSetting
-    from .azure_blob_storage_read_setting_py3 import AzureBlobStorageReadSetting
-    from .connector_read_setting_py3 import ConnectorReadSetting
+    from .format_read_settings_py3 import FormatReadSettings
+    from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
+    from .hdfs_read_settings_py3 import HdfsReadSettings
+    from .http_read_settings_py3 import HttpReadSettings
+    from .sftp_read_settings_py3 import SftpReadSettings
+    from .ftp_read_settings_py3 import FtpReadSettings
+    from .file_server_read_settings_py3 import FileServerReadSettings
+    from .amazon_s3_read_settings_py3 import AmazonS3ReadSettings
+    from .azure_data_lake_store_read_settings_py3 import AzureDataLakeStoreReadSettings
+    from .azure_blob_fs_read_settings_py3 import AzureBlobFSReadSettings
+    from .azure_blob_storage_read_settings_py3 import AzureBlobStorageReadSettings
+    from .store_read_settings_py3 import StoreReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
     from .parquet_source_py3 import ParquetSource
     from .copy_source_py3 import CopySource
@@ -406,17 +401,17 @@ try:
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
-    from .file_server_write_setting_py3 import FileServerWriteSetting
-    from .azure_data_lake_store_write_setting_py3 import AzureDataLakeStoreWriteSetting
-    from .azure_blob_fs_write_setting_py3 import AzureBlobFSWriteSetting
-    from .azure_blob_storage_write_setting_py3 import AzureBlobStorageWriteSetting
-    from .connector_write_setting_py3 import ConnectorWriteSetting
+    from .file_server_write_settings_py3 import FileServerWriteSettings
+    from .azure_data_lake_store_write_settings_py3 import AzureDataLakeStoreWriteSettings
+    from .azure_blob_fs_write_settings_py3 import AzureBlobFSWriteSettings
+    from .azure_blob_storage_write_settings_py3 import AzureBlobStorageWriteSettings
+    from .store_write_settings_py3 import StoreWriteSettings
     from .parquet_sink_py3 import ParquetSink
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
-    from .format_write_setting_py3 import FormatWriteSetting
-    from .delimited_text_write_setting_py3 import DelimitedTextWriteSetting
+    from .format_write_settings_py3 import FormatWriteSettings
+    from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
@@ -698,7 +693,6 @@ except (SyntaxError, ImportError):
     from .salesforce_object_dataset import SalesforceObjectDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
-    from .teradata_table_dataset import TeradataTableDataset
     from .oracle_table_dataset import OracleTableDataset
     from .odata_resource_dataset import ODataResourceDataset
     from .cosmos_db_mongo_db_api_collection_dataset import CosmosDbMongoDbApiCollectionDataset
@@ -786,9 +780,6 @@ except (SyntaxError, ImportError):
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
-    from .teradata_partition_settings import TeradataPartitionSettings
-    from .teradata_source import TeradataSource
-    from .oracle_partition_settings import OraclePartitionSettings
     from .oracle_source import OracleSource
     from .azure_data_explorer_source import AzureDataExplorerSource
     from .azure_my_sql_source import AzureMySqlSource
@@ -801,7 +792,6 @@ except (SyntaxError, ImportError):
     from .sql_server_source import SqlServerSource
     from .sql_source import SqlSource
     from .rest_source import RestSource
-    from .sap_table_partition_settings import SapTablePartitionSettings
     from .sap_table_source import SapTableSource
     from .sap_open_hub_source import SapOpenHubSource
     from .sap_hana_source import SapHanaSource
@@ -813,18 +803,18 @@ except (SyntaxError, ImportError):
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
     from .azure_table_source import AzureTableSource
-    from .format_read_setting import FormatReadSetting
-    from .delimited_text_read_setting import DelimitedTextReadSetting
-    from .hdfs_read_setting import HdfsReadSetting
-    from .http_read_setting import HttpReadSetting
-    from .sftp_read_setting import SftpReadSetting
-    from .ftp_read_setting import FtpReadSetting
-    from .file_server_read_setting import FileServerReadSetting
-    from .amazon_s3_read_setting import AmazonS3ReadSetting
-    from .azure_data_lake_store_read_setting import AzureDataLakeStoreReadSetting
-    from .azure_blob_fs_read_setting import AzureBlobFSReadSetting
-    from .azure_blob_storage_read_setting import AzureBlobStorageReadSetting
-    from .connector_read_setting import ConnectorReadSetting
+    from .format_read_settings import FormatReadSettings
+    from .delimited_text_read_settings import DelimitedTextReadSettings
+    from .hdfs_read_settings import HdfsReadSettings
+    from .http_read_settings import HttpReadSettings
+    from .sftp_read_settings import SftpReadSettings
+    from .ftp_read_settings import FtpReadSettings
+    from .file_server_read_settings import FileServerReadSettings
+    from .amazon_s3_read_settings import AmazonS3ReadSettings
+    from .azure_data_lake_store_read_settings import AzureDataLakeStoreReadSettings
+    from .azure_blob_fs_read_settings import AzureBlobFSReadSettings
+    from .azure_blob_storage_read_settings import AzureBlobStorageReadSettings
+    from .store_read_settings import StoreReadSettings
     from .delimited_text_source import DelimitedTextSource
     from .parquet_source import ParquetSource
     from .copy_source import CopySource
@@ -863,17 +853,17 @@ except (SyntaxError, ImportError):
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
-    from .file_server_write_setting import FileServerWriteSetting
-    from .azure_data_lake_store_write_setting import AzureDataLakeStoreWriteSetting
-    from .azure_blob_fs_write_setting import AzureBlobFSWriteSetting
-    from .azure_blob_storage_write_setting import AzureBlobStorageWriteSetting
-    from .connector_write_setting import ConnectorWriteSetting
+    from .file_server_write_settings import FileServerWriteSettings
+    from .azure_data_lake_store_write_settings import AzureDataLakeStoreWriteSettings
+    from .azure_blob_fs_write_settings import AzureBlobFSWriteSettings
+    from .azure_blob_storage_write_settings import AzureBlobStorageWriteSettings
+    from .store_write_settings import StoreWriteSettings
     from .parquet_sink import ParquetSink
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
-    from .format_write_setting import FormatWriteSetting
-    from .delimited_text_write_setting import DelimitedTextWriteSetting
+    from .format_write_settings import FormatWriteSettings
+    from .delimited_text_write_settings import DelimitedTextWriteSettings
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
@@ -974,9 +964,14 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     AzureFunctionActivityMethod,
     WebActivityMethod,
+    CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
+    SalesforceSourceReadBehavior,
     HDInsightActivityDebugInfoOption,
+    SalesforceSinkWriteBehavior,
+    AzureSearchIndexWriteBehaviorType,
     PolybaseSettingsRejectType,
+    SapCloudForCustomerSinkWriteBehavior,
     WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
@@ -1223,7 +1218,6 @@ __all__ = [
     'SalesforceObjectDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
-    'TeradataTableDataset',
     'OracleTableDataset',
     'ODataResourceDataset',
     'CosmosDbMongoDbApiCollectionDataset',
@@ -1311,9 +1305,6 @@ __all__ = [
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
-    'TeradataPartitionSettings',
-    'TeradataSource',
-    'OraclePartitionSettings',
     'OracleSource',
     'AzureDataExplorerSource',
     'AzureMySqlSource',
@@ -1326,7 +1317,6 @@ __all__ = [
     'SqlServerSource',
     'SqlSource',
     'RestSource',
-    'SapTablePartitionSettings',
     'SapTableSource',
     'SapOpenHubSource',
     'SapHanaSource',
@@ -1338,18 +1328,18 @@ __all__ = [
     'DocumentDbCollectionSource',
     'BlobSource',
     'AzureTableSource',
-    'FormatReadSetting',
-    'DelimitedTextReadSetting',
-    'HdfsReadSetting',
-    'HttpReadSetting',
-    'SftpReadSetting',
-    'FtpReadSetting',
-    'FileServerReadSetting',
-    'AmazonS3ReadSetting',
-    'AzureDataLakeStoreReadSetting',
-    'AzureBlobFSReadSetting',
-    'AzureBlobStorageReadSetting',
-    'ConnectorReadSetting',
+    'FormatReadSettings',
+    'DelimitedTextReadSettings',
+    'HdfsReadSettings',
+    'HttpReadSettings',
+    'SftpReadSettings',
+    'FtpReadSettings',
+    'FileServerReadSettings',
+    'AmazonS3ReadSettings',
+    'AzureDataLakeStoreReadSettings',
+    'AzureBlobFSReadSettings',
+    'AzureBlobStorageReadSettings',
+    'StoreReadSettings',
     'DelimitedTextSource',
     'ParquetSource',
     'CopySource',
@@ -1388,17 +1378,17 @@ __all__ = [
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
-    'FileServerWriteSetting',
-    'AzureDataLakeStoreWriteSetting',
-    'AzureBlobFSWriteSetting',
-    'AzureBlobStorageWriteSetting',
-    'ConnectorWriteSetting',
+    'FileServerWriteSettings',
+    'AzureDataLakeStoreWriteSettings',
+    'AzureBlobFSWriteSettings',
+    'AzureBlobStorageWriteSettings',
+    'StoreWriteSettings',
     'ParquetSink',
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
-    'FormatWriteSetting',
-    'DelimitedTextWriteSetting',
+    'FormatWriteSettings',
+    'DelimitedTextWriteSettings',
     'DelimitedTextSink',
     'CopySink',
     'CopyActivity',
@@ -1498,9 +1488,14 @@ __all__ = [
     'SybaseAuthenticationType',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
+    'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
+    'SalesforceSourceReadBehavior',
     'HDInsightActivityDebugInfoOption',
+    'SalesforceSinkWriteBehavior',
+    'AzureSearchIndexWriteBehaviorType',
     'PolybaseSettingsRejectType',
+    'SapCloudForCustomerSinkWriteBehavior',
     'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
