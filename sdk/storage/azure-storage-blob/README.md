@@ -18,7 +18,7 @@ Blob storage is ideal for:
 Install the Azure Storage Blobs client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-blobs
+pip install azure-storage-blob
 ```
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/en-us/free/), and a
@@ -44,7 +44,7 @@ To authenticate the client you have a few options:
 2. Use an account shared access key
 3. Use a token credential from [azure.identity](TODO)
 
-Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#create-client-with-conn-string).
+Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#client-creation-with-a-connection-string).
 
 You can omit the credential if your account URL already has a SAS token.
 
@@ -98,10 +98,10 @@ For more information about the different types of blobs, see [Understanding Bloc
 
 The following sections provide several code snippets covering some of the most common Storage Blob tasks, including:
 
-* [Client creation with a connection string](#create-client-with-conn-string)
-* [Uploading a blob](#upload-blob)
-* [Downloading a blob](#download-blob)
-* [Enumerating blobs](#enumerate-blobs)
+* [Client creation with a connection string](#client-creation-with-a-connection-string)
+* [Uploading a blob](#uploading-a-blob)
+* [Downloading a blob](#downloading-a-blob)
+* [Enumerating blobs](#enumerating-blobs)
 
 
 ### Client creation with a connection string
