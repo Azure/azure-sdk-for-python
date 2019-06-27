@@ -43,9 +43,9 @@ with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', encoding='utf-8') as f:
+with open('HISTORY.md', encoding='utf-8') as f:
     history = f.read()
 
 setup(
@@ -53,10 +53,10 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='azpysdkhelp@microsoft.com',
+    author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -72,17 +72,20 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
-        'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.storage',
+        'tests',
+        'tests.file',
+        'tests.common'
     ]),
     install_requires=[
+        #'azure-core~=0.0.1',
         'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
-        'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-storage-nspkg'],
-    }
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
+    },
 )

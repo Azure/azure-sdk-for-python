@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
 
-from ..version import __version__
+from ..version import VERSION
 from .authentication import _encode_base64, _decode_base64_to_bytes
 
 
@@ -158,7 +158,7 @@ def _generate_encryption_data_dict(kek, cek, iv):
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
     encryption_data_dict['ContentEncryptionIV'] = _encode_base64(iv)
-    encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + __version__}
+    encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + VERSION}
 
     return encryption_data_dict
 
