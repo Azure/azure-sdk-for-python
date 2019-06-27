@@ -82,6 +82,13 @@ class AlwaysLog(str, Enum):
     all_errors = "allErrors"  #: Always log all erroneous request regardless of sampling settings.
 
 
+class HttpCorrelationProtocol(str, Enum):
+
+    none = "None"  #: Do not read and inject correlation headers.
+    legacy = "Legacy"  #: Inject Request-Id and Request-Context headers with request correlation data. See https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/HttpCorrelationProtocol.md.
+    w3_c = "W3C"  #: Inject Trace Context headers. See https://w3c.github.io/trace-context.
+
+
 class PolicyContentFormat(str, Enum):
 
     xml = "xml"  #: The contents are inline and Content type is an XML document.

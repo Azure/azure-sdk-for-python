@@ -44,6 +44,11 @@ class DiagnosticContract(Resource):
      Headers coming to Api Management Service. Only applicable to Application
      Insights diagnostics. Default is true.
     :type enable_http_correlation_headers: bool
+    :param http_correlation_protocol: Sets correlation protocol to use for
+     Application Insights diagnostics. Possible values include: 'None',
+     'Legacy', 'W3C'
+    :type http_correlation_protocol: str or
+     ~azure.mgmt.apimanagement.models.HttpCorrelationProtocol
     """
 
     _validation = {
@@ -63,9 +68,10 @@ class DiagnosticContract(Resource):
         'frontend': {'key': 'properties.frontend', 'type': 'PipelineDiagnosticSettings'},
         'backend': {'key': 'properties.backend', 'type': 'PipelineDiagnosticSettings'},
         'enable_http_correlation_headers': {'key': 'properties.enableHttpCorrelationHeaders', 'type': 'bool'},
+        'http_correlation_protocol': {'key': 'properties.httpCorrelationProtocol', 'type': 'str'},
     }
 
-    def __init__(self, *, logger_id: str, always_log=None, sampling=None, frontend=None, backend=None, enable_http_correlation_headers: bool=None, **kwargs) -> None:
+    def __init__(self, *, logger_id: str, always_log=None, sampling=None, frontend=None, backend=None, enable_http_correlation_headers: bool=None, http_correlation_protocol=None, **kwargs) -> None:
         super(DiagnosticContract, self).__init__(**kwargs)
         self.always_log = always_log
         self.logger_id = logger_id
@@ -73,3 +79,4 @@ class DiagnosticContract(Resource):
         self.frontend = frontend
         self.backend = backend
         self.enable_http_correlation_headers = enable_http_correlation_headers
+        self.http_correlation_protocol = http_correlation_protocol
