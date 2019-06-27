@@ -97,7 +97,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-05-01'
+        self.api_version = '2019-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -115,15 +115,23 @@ class AzureNetAppFilesManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_name_availability(
-            self, body, location, custom_headers=None, raw=False, **operation_config):
+            self, location, name, type, resource_group, custom_headers=None, raw=False, **operation_config):
         """Check resource name availability.
 
         Check if a resource name is available.
 
-        :param body: Name availability request.
-        :type body: object
         :param location: The location
         :type location: str
+        :param name: Resource name to verify.
+        :type name: str
+        :param type: Resource type used for verification. Possible values
+         include: 'Microsoft.NetApp/netAppAccounts',
+         'Microsoft.NetApp/netAppAccounts/capacityPools',
+         'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
+         'Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots'
+        :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
+        :param resource_group: Resource group name.
+        :type resource_group: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -134,6 +142,8 @@ class AzureNetAppFilesManagementClient(SDKClient):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        body = models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -158,7 +168,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'object')
+        body_content = self._serialize.body(body, 'ResourceNameAvailabilityRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -182,15 +192,23 @@ class AzureNetAppFilesManagementClient(SDKClient):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/checkNameAvailability'}
 
     def check_file_path_availability(
-            self, body, location, custom_headers=None, raw=False, **operation_config):
+            self, location, name, type, resource_group, custom_headers=None, raw=False, **operation_config):
         """Check file path availability.
 
         Check if a file path is available.
 
-        :param body: File path availability request.
-        :type body: object
         :param location: The location
         :type location: str
+        :param name: Resource name to verify.
+        :type name: str
+        :param type: Resource type used for verification. Possible values
+         include: 'Microsoft.NetApp/netAppAccounts',
+         'Microsoft.NetApp/netAppAccounts/capacityPools',
+         'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
+         'Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots'
+        :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
+        :param resource_group: Resource group name.
+        :type resource_group: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -201,6 +219,8 @@ class AzureNetAppFilesManagementClient(SDKClient):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        body = models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
+
         # Construct URL
         url = self.check_file_path_availability.metadata['url']
         path_format_arguments = {
@@ -225,7 +245,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'object')
+        body_content = self._serialize.body(body, 'ResourceNameAvailabilityRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)

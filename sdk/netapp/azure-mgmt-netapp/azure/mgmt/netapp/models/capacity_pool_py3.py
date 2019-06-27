@@ -34,7 +34,7 @@ class CapacityPool(Model):
     :vartype pool_id: str
     :param size: Required. size. Provisioned size of the pool (in bytes).
      Allowed values are in 4TiB chunks (value must be multiply of
-     4398046511104). Default value: 4398046511104 .
+     4398046511104).
     :type size: long
     :param service_level: Required. serviceLevel. The service level of the
      file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
@@ -67,7 +67,7 @@ class CapacityPool(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, size: int=4398046511104, service_level="Premium", **kwargs) -> None:
+    def __init__(self, *, location: str, size: int, tags=None, service_level="Premium", **kwargs) -> None:
         super(CapacityPool, self).__init__(**kwargs)
         self.location = location
         self.id = None

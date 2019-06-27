@@ -51,7 +51,8 @@ class Volume(Model):
     :type protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
-    :param snapshot_id: Snapshot ID. UUID v4 used to identify the Snapshot
+    :param snapshot_id: Snapshot ID. UUID v4 or resource identifier used to
+     identify the Snapshot.
     :type snapshot_id: str
     :ivar baremetal_tenant_id: Baremetal Tenant ID. Unique Baremetal Tenant
      Identifier.
@@ -72,7 +73,7 @@ class Volume(Model):
         'creation_token': {'required': True},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
-        'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'subnet_id': {'required': True},
     }
