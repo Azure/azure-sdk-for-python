@@ -3,6 +3,26 @@
 Release History
 ===============
 
+0.4.0 (2019-06-27)
+++++++++++++++++++
+
+**Features**
+
+- Add "detection_model" to operations when possible. This is a breaking change if you were using positional arguments on some scenarios
+
+**Breaking changes**
+
+- Operation FaceListOperations.add_face_from_stream has a new signature
+- Operation FaceListOperations.add_face_from_url has a new signature
+- Operation FaceOperations.detect_with_stream has a new signature
+- Operation FaceOperations.detect_with_url has a new signature
+- Operation LargeFaceListOperations.add_face_from_stream has a new signature
+- Operation LargeFaceListOperations.add_face_from_url has a new signature
+- Operation LargePersonGroupPersonOperations.add_face_from_stream has a new signature
+- Operation LargePersonGroupPersonOperations.add_face_from_url has a new signature
+- Operation PersonGroupPersonOperations.add_face_from_stream has a new signature
+- Operation PersonGroupPersonOperations.add_face_from_url has a new signature
+
 0.3.0 (2019-03-28)
 ++++++++++++++++++
 
