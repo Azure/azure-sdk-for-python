@@ -2,17 +2,19 @@
 
 ## Create a venv
 
-Windows:
+Windows:<br/>
 `py -3.7 -m venv env3.7`
 
-Linux (or Windows with Python from app store):
+Linux (or Windows with Python from app store):<br/>
 `python3 -m venv env3.7`
 
 ## Setup a venv for development
 
-For all packages: `python ./scripts/dev_setup.py`
+For all packages:<br/>
+`python ./scripts/dev_setup.py`
 
-For a specific package: `python ./scripts/dev_setup.py -p azure-mgmt-servicename`
+For a specific package:<br/>
+`python ./scripts/dev_setup.py -p azure-mgmt-servicename`
 
 ## Generate tags for multi-api Swagger Readme
 
@@ -22,22 +24,26 @@ For a specific package: `python ./scripts/dev_setup.py -p azure-mgmt-servicename
 
 `python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md`
 
-Regenerate multi-api client: `python ./scripts/multiapi_init_gen.py azure-mgmt-myservice`
+Regenerate multi-api client:<br/>
+`python ./scripts/multiapi_init_gen.py azure-mgmt-myservice`
 
-Regenerate multi-api of multi-client package: `python ./scripts/multiapi_init_gen.py azure-mgmt-myservice#subclientname`
+Regenerate multi-api of multi-client package:<br/>
+`python ./scripts/multiapi_init_gen.py azure-mgmt-myservice#subclientname`
 
 ## Update packaging setup.py / MANIFEST / etc.
 
-Locally:
+Locally:<br/>
 `python -m packaging_tools --build-conf azure-mgmt-myservice`
 
-Update a given PR (needs GH_TOKEN env variable set): `python -m packaging_tools.update_pr -v -p 3979`
+Update a given PR (needs GH_TOKEN env variable set):<br/>
+`python -m packaging_tools.update_pr -v -p 3979`
 
 Edit `sdk_packaging.toml` if necesseray and restart the tool.
 
 Available options:
+
 | option name | type | description | example |
-|-|-|-|-|
+| --- | --- | --- | --- |
 | auto_update | bool | If false, disable the bot system | false |
 | package_name | str | package name | azure-mgmt-myservice |
 | package_nspkg | str | namespace package name | azure-mgmt-nspkg |
@@ -48,16 +54,16 @@ Available options:
 
 ## ChangeLog
 
-Generate code report for last version on PyPI: `python -m packaging_tools.code_report --last-pypi azure-mgmt-myservice`
+Generate code report for last version on PyPI:<br/>`python -m packaging_tools.code_report --last-pypi azure-mgmt-myservice`
 
-Generate code report for version installed in current venv: `python -m packaging_tools.code_report azure-mgmt-myservice`
+Generate code report for version installed in current venv:<br/>`python -m packaging_tools.code_report azure-mgmt-myservice`
 
-Generate a markdown changelog: `python -m packaging_tools.change_log ./old_version_report.json ./new_version_report.json`
+Generate a markdown changelog:<br/>`python -m packaging_tools.change_log ./old_version_report.json ./new_version_report.json`
 
 ## Tests
 
 Env variable quick copy/paste for Powershell:
-```shell
+```powershell
 $env:AZURE_TEST_RUN_LIVE='true'
 $env:AZURE_TEST_RUN_LIVE='false'
 Remove-Item Env:\AZURE_TEST_RUN_LIVE
@@ -70,8 +76,8 @@ export AZURE_TEST_RUN_LIVE=false
 unset AZURE_TEST_RUN_LIVE
 ```
 
-Start all tests: `pytest`
+Start all tests:<br/>`pytest`
 
-Start test for a package: `pytest -s sdk/service/azure-mgmt-service`
+Start test for a package:<br/>`pytest -s sdk/service/azure-mgmt-service`
 
-Start a specific test for a package: `pytest -s sdk/service/azure-mgmt-service -k TestFeatureOne`
+Start a specific test for a package:<br/>`pytest -s sdk/service/azure-mgmt-service -k TestFeatureOne`
