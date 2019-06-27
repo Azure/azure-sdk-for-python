@@ -25,3 +25,16 @@ class WorkspaceCollectionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkspaceCollectionPaged, self).__init__(*args, **kwargs)
+class WorkspacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workspace <azure.mgmt.powerbiembedded.models.Workspace>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workspace]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkspacePaged, self).__init__(*args, **kwargs)

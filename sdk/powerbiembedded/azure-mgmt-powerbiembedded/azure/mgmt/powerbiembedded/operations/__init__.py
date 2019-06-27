@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .workspace_collections_operations import WorkspaceCollectionsOperations
-from .workspaces_operations import WorkspacesOperations
+from ._workspace_collections_operations import WorkspaceCollectionsOperations
+from ._workspaces_operations import WorkspacesOperations
+from ._power_bi_embedded_management_client_operations import PowerBIEmbeddedManagementClientOperationsMixin
 
 __all__ = [
     'WorkspaceCollectionsOperations',
     'WorkspacesOperations',
+    'PowerBIEmbeddedManagementClientOperationsMixin',
 ]
