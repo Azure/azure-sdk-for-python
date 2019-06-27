@@ -55,12 +55,12 @@ def convert_bool(value):
     :type value: string
     :returns: int
     :raises ValueError: If conversion to bool fails
-    
+
     """
     if value in (True, False):
-        return value
+        return value  # type: ignore
 
-    val = value.lower()
+    val = value.lower()  # type: ignore
     if val in ["yes", "1", "on"]:
         return True
     if val in ["no", "0", "off"]:
@@ -97,9 +97,9 @@ def convert_logging(value):
 
     """
     if value in set(_levels.values()):
-        return value
+        return value  # type: ignore
 
-    val = value.upper()
+    val = value.upper()  # type: ignore
     level = _levels.get(val)
     if not level:
         raise ValueError(
@@ -207,6 +207,11 @@ class PrioritizedSetting(object):
         """
         self._user_value = value
 
+    def unset_value(self):
+        # () -> None
+        """Unset the previous user value such that the priority is reset."""
+        self._user_value = _Unset
+
     @property
     def env_var(self):
         return self._env_var
@@ -253,14 +258,14 @@ class Settings(object):
 
     Immutable configuration snapshots can be created with the following methods:
 
-    * settings.defaults returns the base defaultsvalues , ignoring any environment or system 
+    * settings.defaults returns the base defaultsvalues , ignoring any environment or system
       or user settings
 
-    * settings.current returns the current computation of settings including prioritizatiom 
-      of configuration sources, unless defaults_only is set to True (in which case the result 
+    * settings.current returns the current computation of settings including prioritizatiom
+      of configuration sources, unless defaults_only is set to True (in which case the result
       is identical to settings.defaults)
 
-    * settings.config can be called with specific values to override what settings.current 
+    * settings.config can be called with specific values to override what settings.current
       would provide
 
     .. code-block:: python
@@ -338,7 +343,7 @@ class Settings(object):
         props.update(kwargs)
         return self._config(props)
 
-    def _config(self, props):
+    def _config(self, props):  # pylint: disable=no-self-use
         Config = namedtuple("Config", list(props.keys()))
         return Config(**props)
 

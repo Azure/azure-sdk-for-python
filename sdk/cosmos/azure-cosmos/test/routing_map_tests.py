@@ -27,6 +27,8 @@ from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 from azure.cosmos.routing import routing_range as routing_range
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos account.
@@ -43,8 +45,6 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)['_self']
 
     @classmethod
     def setUpClass(cls):
@@ -54,6 +54,9 @@ class RoutingMapEndToEndTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)['_self']
 
     def test_read_partition_key_ranges(self):
         partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))

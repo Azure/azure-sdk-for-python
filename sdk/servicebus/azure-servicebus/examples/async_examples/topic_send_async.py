@@ -33,7 +33,7 @@ connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 
 async def main():
-    topic_client = TopicClient.from_connection_string(connection_str, name="pytopic", debug=True)
+    topic_client = TopicClient.from_connection_string(connection_str, name="pytopic", debug=False)
     message = Message(b"sample topic message")
     await topic_client.send(message)
 

@@ -3,17 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.3.1"
+__version__ = "2.0.0b1"
 
-from azure.eventhub.common import EventData, EventHubError, Offset
+from azure.eventhub.common import EventData, EventPosition
+from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
+    AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
+from azure.eventhub.producer import EventHubProducer
+from azure.eventhub.consumer import EventHubConsumer
+from uamqp import constants
+from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
-try:
-    from azure.eventhub.async_ops import (
-        EventHubClientAsync,
-        AsyncSender,
-        AsyncReceiver)
-except (ImportError, SyntaxError):
-    pass  # Python 3 async features not supported
+TransportType = constants.TransportType
+
+__all__ = [
+    "EventData",
+    "EventHubError",
+    "ConnectError",
+    "ConnectionLostError",
+    "EventDataError",
+    "EventDataSendError",
+    "AuthenticationError",
+    "EventPosition",
+    "EventHubClient",
+    "EventHubProducer",
+    "EventHubConsumer",
+    "TransportType",
+    "EventHubSharedKeyCredential",
+    "EventHubSASTokenCredential",
+]

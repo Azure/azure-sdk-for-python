@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 from .base import HTTPPolicy, SansIOHTTPPolicy
-from .credentials import BearerTokenCredentialPolicy
+from .authentication import BearerTokenCredentialPolicy
 from .custom_hook import CustomHookPolicy
 from .redirect import RedirectPolicy
 from .retry import RetryPolicy
@@ -55,7 +55,7 @@ __all__ = [
 
 try:
     from .base_async import AsyncHTTPPolicy
-    from .credentials_async import AsyncBearerTokenCredentialPolicy
+    from .authentication_async import AsyncBearerTokenCredentialPolicy
     from .redirect_async import AsyncRedirectPolicy
     from .retry_async import AsyncRetryPolicy
     __all__.extend([

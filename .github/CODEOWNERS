@@ -5,14 +5,14 @@
 
 # Service team
 /sdk/applicationinsights/ @alexeldeib
-/sdk/batch/ @matthchr
+/sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
 /sdk/keyvault/ @schaabs @chlowell
 /sdk/loganalytics/ @alexeldeib
 /sdk/consumption/ @sandeepnl
 /sdk/containerinstance/ @samkreter @xizhamsft
 /sdk/containerregistry/ @djyou 
-/sdk/containerservice/ @mboersma
+/sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
 /sdk/cosmos/ @dmakwana
 /sdk/datafactory/ @hvermis
 /sdk/datalake/ @ro-joowan

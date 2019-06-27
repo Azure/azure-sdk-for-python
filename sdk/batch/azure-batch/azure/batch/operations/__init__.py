@@ -9,15 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_operations import ApplicationOperations
-from .pool_operations import PoolOperations
-from .account_operations import AccountOperations
-from .job_operations import JobOperations
-from .certificate_operations import CertificateOperations
-from .file_operations import FileOperations
-from .job_schedule_operations import JobScheduleOperations
-from .task_operations import TaskOperations
-from .compute_node_operations import ComputeNodeOperations
+from ._application_operations import ApplicationOperations
+from ._pool_operations import PoolOperations
+from ._account_operations import AccountOperations
+from ._job_operations import JobOperations
+from ._certificate_operations import CertificateOperations
+from ._file_operations import FileOperations
+from ._job_schedule_operations import JobScheduleOperations
+from ._task_operations import TaskOperations
+from ._compute_node_operations import ComputeNodeOperations
 
 __all__ = [
     'ApplicationOperations',
