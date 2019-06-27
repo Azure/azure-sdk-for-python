@@ -9,67 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrest.exceptions import HttpOperationError
-from . import models
+from .. import models
 
 
-class ComputerVisionClientConfiguration(Configuration):
-    """Configuration for ComputerVisionClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/vision/v2.0'
-
-        super(ComputerVisionClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-vision-computervision/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
-
-
-class ComputerVisionClient(SDKClient):
-    """The Computer Vision API provides state-of-the-art algorithms to process images and return information. For example, it can be used to determine if an image contains mature content, or it can be used to find all the faces in an image.  It also has other features like estimating dominant and accent colors, categorizing the content of images, and describing an image with complete English sentences.  Additionally, it can also intelligently generate images thumbnails for displaying large images effectively.
-
-    :ivar config: Configuration for client.
-    :vartype config: ComputerVisionClientConfiguration
-
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        self.config = ComputerVisionClientConfiguration(endpoint, credentials)
-        super(ComputerVisionClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class ComputerVisionClientOperationsMixin(object):
 
     def analyze_image(
             self, url, visual_features=None, details=None, language="en", custom_headers=None, raw=False, **operation_config):
@@ -164,7 +109,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageAnalysis', response)
 
@@ -245,7 +189,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageDescription', response)
 
@@ -309,7 +252,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DetectResult', response)
 
@@ -366,7 +308,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ListModelsResult', response)
 
@@ -445,7 +386,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DomainModelResults', response)
 
@@ -526,7 +466,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OcrResult', response)
 
@@ -605,7 +544,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TagResult', response)
 
@@ -689,10 +627,7 @@ class ComputerVisionClient(SDKClient):
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+        deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -757,7 +692,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AreaOfInterestResult', response)
 
@@ -874,7 +808,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TextOperationResult', response)
 
@@ -988,7 +921,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ReadOperationResult', response)
 
@@ -1095,7 +1027,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageAnalysis', response)
 
@@ -1165,7 +1096,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AreaOfInterestResult', response)
 
@@ -1249,7 +1179,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageDescription', response)
 
@@ -1316,7 +1245,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DetectResult', response)
 
@@ -1398,10 +1326,7 @@ class ComputerVisionClient(SDKClient):
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+        deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1481,7 +1406,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DomainModelResults', response)
 
@@ -1565,7 +1489,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OcrResult', response)
 
@@ -1647,7 +1570,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TagResult', response)
 
