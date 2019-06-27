@@ -25,6 +25,7 @@ from tests.testcase import (
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
+TEST_SHARE_PREFIX = 'share'
 
 
 # ------------------------------------------------------------------------------
@@ -35,9 +36,25 @@ class StorageHandleTest(StorageTestCase):
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
         self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
+        self.test_shares = []
 
     def tearDown(self):
+        if not self.is_playback():
+            for share in self.test_shares:
+                self.fsc.delete_share(share.share_name, delete_snapshots=True)
         return super(StorageHandleTest, self).tearDown()
+
+    # --Helpers-----------------------------------------------------------------
+    def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
+        share_name = self.get_resource_name(prefix)
+        share = self.fsc.get_share_client(share_name)
+        self.test_shares.append(share)
+        return share
+
+    def _create_share(self, prefix=TEST_SHARE_PREFIX):
+        share_client = self._get_share_reference(prefix)
+        share = share_client.create_share()
+        return share_client
 
     def _validate_handles(self, handles):
         # Assert
@@ -160,41 +177,41 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_close_single_handle(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
+        pytest.skip("")
         if not TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        share = self.fsc.get_share_client(TEST_SHARE_NAME)
+        share = self._create_share()
         root = share.get_directory_client()
-        handles = list(root.list_handles(TEST_SHARE_NAME, recursive=True))
+        handles = list(root.list_handles(recursive=True))
         self._validate_handles(handles)
-        handle_id = handles[0].handle_id
 
         # Act
-        num_closed = list(self.fs.close_handles(TEST_SHARE_NAME, handle_id=handle_id))
+        num_closed = root.close_handles(handle=handles[0])
 
         # Assert 1 handle has been closed
-        self.assertEqual(1, num_closed[0])
+        self.assertEqual(1, num_closed.result())
 
     @record
     def test_close_all_handle(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
+        pytest.skip("")
         if not TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        handles = list(self.fs.list_handles(TEST_SHARE_NAME, recursive=True))
+        share = self._create_share()
+        root = share.get_directory_client()
+        handles = list(root.list_handles(recursive=True))
         self._validate_handles(handles)
 
         # Act
-        total_num_handle_closed = 0
-        for num_closed in self.fs.close_handles(TEST_SHARE_NAME, handle_id="*", recursive=True):
-            total_num_handle_closed += num_closed
+        num_closed = root.close_handles()
+        total_num_handle_closed = num_closed.result()
 
         # Assert at least 1 handle has been closed
         self.assertTrue(total_num_handle_closed > 1)

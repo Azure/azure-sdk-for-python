@@ -296,6 +296,58 @@ class SharePropertiesPaged(Paged):
     next = __next__
 
 
+class Handle(DictMixin):
+    """A listed Azure Storage handle item.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param handle_id: Required. XSMB service handle ID
+    :type handle_id: str
+    :param path: Required. File or directory name including full path starting
+     from share root
+    :type path: str
+    :param file_id: Required. FileId uniquely identifies the file or
+     directory.
+    :type file_id: str
+    :param parent_id: ParentId uniquely identifies the parent directory of the
+     object.
+    :type parent_id: str
+    :param session_id: Required. SMB session ID in context of which the file
+     handle was opened
+    :type session_id: str
+    :param client_ip: Required. Client IP that opened the handle
+    :type client_ip: str
+    :param open_time: Required. Time when the session that previously opened
+     the handle has last been reconnected. (UTC)
+    :type open_time: datetime
+    :param last_reconnect_time: Time handle was last connected to (UTC)
+    :type last_reconnect_time: datetime
+    """
+
+    def __init__(self, **kwargs):
+        self.handle_id = kwargs.get('handle_id')
+        self.path = kwargs.get('path')
+        self.file_id = kwargs.get('file_id')
+        self.parent_id = kwargs.get('parent_id')
+        self.session_id = kwargs.get('session_id')
+        self.client_ip = kwargs.get('client_ip')
+        self.open_time = kwargs.get('open_time')
+        self.last_reconnect_time = kwargs.get('last_reconnect_time')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        handle = cls()
+        handle.id = generated.handle_id
+        handle.path = generated.path
+        handle.file_id = generated.file_id
+        handle.parent_id = generated.parent_id
+        handle.session_id = generated.session_id
+        handle.client_ip = generated.client_ip
+        handle.open_time = generated.open_time
+        handle.last_reconnect_time = generated.last_reconnect_time
+        return handle
+
+
 class HandlesPaged(Paged):
     """Share properties paged.
     :param callable command: Function to retrieve the next page of items.
@@ -331,12 +383,17 @@ class HandlesPaged(Paged):
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
-
-        #self.current_marker = self._response.marker
-        #self.results_per_page = self._response.max_results
         self.current_page = self._response.handle_list
         self.next_marker = self._response.next_marker or None
         return self.current_page
+
+    def __next__(self):
+        item = super(HandlesPaged, self).__next__()
+        if isinstance(item, Handle):
+            return item
+        return Handle._from_generated(item)  # pylint: disable=protected-access
+
+    next = __next__
 
 
 class DirectoryProperties(DictMixin):

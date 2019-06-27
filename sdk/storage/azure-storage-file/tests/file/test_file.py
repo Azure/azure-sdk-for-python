@@ -743,7 +743,7 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
     @record
-    def test_abort_no_copy_file_with_synchronous_copy_fails(self):
+    def test_abort_copy_file_with_synchronous_copy_fails(self):
         # Arrange
         source_file = self._create_file()
 

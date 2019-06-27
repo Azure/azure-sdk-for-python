@@ -8,7 +8,7 @@ import time
 
 from azure.core.polling import PollingMethod, LROPoller
 
-from ._shared.utils import process_storage_error
+from ._shared.utils import process_storage_error, return_response_headers
 from ._generated.models import StorageErrorException
 from ._share_utils import deserialize_file_properties
 
@@ -130,3 +130,54 @@ class CopyFilePolling(CopyFile):
         if not self.file:
             self._update_status()
         return self.file
+
+
+class CloseHandles(PollingMethod):
+    """An empty poller that returns the deserialized initial response.
+    """
+    def __init__(self, interval):
+        self._command = None
+        self._status = None
+        self._exception = None
+        self.handles_closed = 0
+        self.polling_interval = interval
+
+    def _update_status(self):
+        try:
+            status = self._command()  # pylint: disable=protected-access
+        except StorageErrorException as error:
+            process_storage_error(error)
+        self._status = status.get('marker')
+        self.handles_closed += status['number_of_handles_closed']
+
+    def initialize(self, command, initial_status, _):  # pylint: disable=arguments-differ
+        # type: (Any, requests.Response, Callable) -> None
+        self._command = command
+        self._status = initial_status['marker']
+        self.handles_closed = initial_status['number_of_handles_closed']
+
+    def run(self):
+        # type: () -> None
+        try:
+            while not self.finished():
+                self._update_status()
+                time.sleep(self.polling_interval)
+        except Exception as e:
+            logger.warning(str(e))
+            raise
+
+    def status(self):
+        self._update_status()
+        return self.handles_closed
+
+    def finished(self):
+        # type: () -> bool
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return self._status == None
+
+    def resource(self):
+        # type: () -> Any
+        self._update_status()
+        return self.handles_closed
