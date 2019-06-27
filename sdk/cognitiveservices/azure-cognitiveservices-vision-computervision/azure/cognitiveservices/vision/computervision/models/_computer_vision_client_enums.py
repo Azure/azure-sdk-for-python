@@ -20,7 +20,7 @@ class Gender(str, Enum):
 
 class TextOperationStatusCodes(str, Enum):
 
-    not_started = "Not Started"
+    not_started = "NotStarted"
     running = "Running"
     failed = "Failed"
     succeeded = "Succeeded"

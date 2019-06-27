@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ComputerVisionClientConfiguration
-from ._computer_vision_client import ComputerVisionClient
-__all__ = ['ComputerVisionClient', 'ComputerVisionClientConfiguration']
+from ._computer_vision_client_operations import ComputerVisionClientOperationsMixin
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'ComputerVisionClientOperationsMixin',
+]

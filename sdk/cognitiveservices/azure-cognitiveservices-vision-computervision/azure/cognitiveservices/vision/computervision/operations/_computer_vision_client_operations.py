@@ -9,67 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrest.exceptions import HttpOperationError
-from . import models
+from .. import models
 
 
-class ComputerVisionClientConfiguration(Configuration):
-    """Configuration for ComputerVisionClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/vision/v2.0'
-
-        super(ComputerVisionClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-vision-computervision/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
-
-
-class ComputerVisionClient(SDKClient):
-    """The Computer Vision API provides state-of-the-art algorithms to process images and return information. For example, it can be used to determine if an image contains mature content, or it can be used to find all the faces in an image.  It also has other features like estimating dominant and accent colors, categorizing the content of images, and describing an image with complete English sentences.  Additionally, it can also intelligently generate images thumbnails for displaying large images effectively.
-
-    :ivar config: Configuration for client.
-    :vartype config: ComputerVisionClientConfiguration
-
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        self.config = ComputerVisionClientConfiguration(endpoint, credentials)
-        super(ComputerVisionClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class ComputerVisionClientOperationsMixin(object):
 
     def analyze_image(
             self, url, visual_features=None, details=None, language="en", custom_headers=None, raw=False, **operation_config):
@@ -164,7 +109,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageAnalysis', response)
 
@@ -245,7 +189,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageDescription', response)
 
@@ -309,7 +252,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DetectResult', response)
 
@@ -366,7 +308,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ListModelsResult', response)
 
@@ -445,7 +386,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DomainModelResults', response)
 
@@ -526,7 +466,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OcrResult', response)
 
@@ -605,7 +544,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TagResult', response)
 
@@ -689,10 +627,7 @@ class ComputerVisionClient(SDKClient):
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+        deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -757,7 +692,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AreaOfInterestResult', response)
 
@@ -874,7 +808,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TextOperationResult', response)
 
@@ -886,18 +819,14 @@ class ComputerVisionClient(SDKClient):
     get_text_operation_result.metadata = {'url': '/textOperations/{operationId}'}
 
     def batch_read_file(
-            self, url, mode, custom_headers=None, raw=False, **operation_config):
+            self, url, custom_headers=None, raw=False, **operation_config):
         """Use this interface to get the result of a Read operation, employing the
         state-of-the-art Optical Character Recognition (OCR) algorithms
         optimized for text-heavy documents. When you use the Read File
-        interface, the response contains a field called "Operation-Location".
-        The "Operation-Location" field contains the URL that you must use for
-        your "Read Operation Result" operation to access OCR results.​.
+        interface, the response contains a field called 'Operation-Location'.
+        The 'Operation-Location' field contains the URL that you must use for
+        your 'GetReadOperationResult' operation to access OCR results.​.
 
-        :param mode: Type of text to recognize. Possible values include:
-         'Handwritten', 'Printed'
-        :type mode: str or
-         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param url: Publicly reachable URL of an image.
         :type url: str
         :param dict custom_headers: headers that will be added to the request
@@ -921,7 +850,6 @@ class ComputerVisionClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
@@ -950,11 +878,11 @@ class ComputerVisionClient(SDKClient):
     def get_read_operation_result(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
         """This interface is used for getting OCR results of Read operation. The
-        URL to this interface should be retrieved from "Operation-Location"
+        URL to this interface should be retrieved from 'Operation-Location'
         field returned from Batch Read File interface.
 
         :param operation_id: Id of read operation returned in the response of
-         the "Batch Read File" interface.
+         the 'Batch Read File' interface.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -993,7 +921,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ReadOperationResult', response)
 
@@ -1100,7 +1027,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageAnalysis', response)
 
@@ -1170,7 +1096,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AreaOfInterestResult', response)
 
@@ -1254,7 +1179,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageDescription', response)
 
@@ -1321,7 +1245,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DetectResult', response)
 
@@ -1403,10 +1326,7 @@ class ComputerVisionClient(SDKClient):
         if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+        deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1486,7 +1406,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DomainModelResults', response)
 
@@ -1570,7 +1489,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OcrResult', response)
 
@@ -1652,7 +1570,6 @@ class ComputerVisionClient(SDKClient):
             raise models.ComputerVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TagResult', response)
 
@@ -1727,21 +1644,17 @@ class ComputerVisionClient(SDKClient):
     recognize_text_in_stream.metadata = {'url': '/recognizeText'}
 
     def batch_read_file_in_stream(
-            self, image, mode, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
         """Use this interface to get the result of a Read Document operation,
         employing the state-of-the-art Optical Character Recognition (OCR)
         algorithms optimized for text-heavy documents. When you use the Read
         Document interface, the response contains a field called
-        "Operation-Location". The "Operation-Location" field contains the URL
-        that you must use for your "Get Read Result operation" to access OCR
+        'Operation-Location'. The 'Operation-Location' field contains the URL
+        that you must use for your 'Get Read Result operation' to access OCR
         results.​.
 
         :param image: An image stream.
         :type image: Generator
-        :param mode: Type of text to recognize. Possible values include:
-         'Handwritten', 'Printed'
-        :type mode: str or
-         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1766,7 +1679,6 @@ class ComputerVisionClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
