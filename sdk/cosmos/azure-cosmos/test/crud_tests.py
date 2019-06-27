@@ -1070,12 +1070,12 @@ class CRUDTests(unittest.TestCase):
                          replaced_user.id,
                          'user id should stay the same')
         # read user
-        user = db.get_user(replaced_user.id)
+        user = db.get_user_client(replaced_user.id)
         self.assertEqual(replaced_user.id, user.id)
         # delete user
         db.delete_user(user.id)
         # read user after deletion
-        deleted_user = db.get_user(user.id)
+        deleted_user = db.get_user_client(user.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            deleted_user.read)
 
@@ -2462,16 +2462,16 @@ class CRUDTests(unittest.TestCase):
         })
 
         # read user with id
-        read_user = created_db.get_user(created_user.id)
+        read_user = created_db.get_user_client(created_user.id)
         self.assertEquals(read_user.id, created_user.id)
 
         # read user with instance
-        read_user = created_db.get_user(created_user)
+        read_user = created_db.get_user_client(created_user)
         self.assertEquals(read_user.id, created_user.id)
 
         # read user with properties
         created_user_properties = created_user.read()
-        read_user = created_db.get_user(created_user_properties)
+        read_user = created_db.get_user_client(created_user_properties)
         self.assertEquals(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({

@@ -556,7 +556,7 @@ class Database(object):
         return result
 
 
-    def get_user(
+    def get_user_client(
             self,
             user,
     ):
