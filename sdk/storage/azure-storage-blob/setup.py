@@ -99,5 +99,6 @@ setup(
     extras_require={
         ":python_version<'3.0'": ['futures'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ['typing']
     },
 )
