@@ -49,7 +49,7 @@ __all__ = [
     'CorsRule',
     'AccessPolicy',
     'FilePermissions',
-    'SharePermissions'
+    'SharePermissions',
     'ShareProperties',
     'SharePropertiesPaged',
     'DirectoryProperties',
