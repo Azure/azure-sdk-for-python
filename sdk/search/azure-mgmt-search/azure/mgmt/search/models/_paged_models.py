@@ -25,3 +25,29 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class QueryKeyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`QueryKey <azure.mgmt.search.models.QueryKey>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[QueryKey]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(QueryKeyPaged, self).__init__(*args, **kwargs)
+class SearchServicePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SearchService <azure.mgmt.search.models.SearchService>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SearchService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SearchServicePaged, self).__init__(*args, **kwargs)
