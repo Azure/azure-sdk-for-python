@@ -44,9 +44,7 @@ def validating_transport(requests, responses):
         raise ValueError("each request must have one response")
 
     sessions = zip(requests, responses)
-    if isinstance(sessions, list):
-        # 2.7's zip returns a list
-        sessions = (s for s in sessions)
+    sessions = (s for s in sessions)  # 2.7's zip returns a list, and nesting a generator doesn't break it for 3.x
 
     def validate_request(request, **kwargs):
         expected_request, response = next(sessions)
@@ -54,3 +52,15 @@ def validating_transport(requests, responses):
         return response
 
     return mock.Mock(send=validate_request)
+
+
+try:
+    import asyncio
+
+    def async_validating_transport(requests, responses):
+        sync_transport = validating_transport(requests, responses)
+        return mock.Mock(send=asyncio.coroutine(sync_transport.send))
+
+
+except ImportError:
+    pass
