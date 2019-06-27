@@ -40,7 +40,6 @@ For the Event Hubs client library to interact with an Event Hub, it will need to
 There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate one way:
 
 ```python
-import os
 from azure.eventhub import EventHubClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
@@ -76,7 +75,6 @@ The following sections provide several code snippets covering some of the most c
 Sends an event data and blocks until acknowledgement is received or operation times out.
 
 ```python
-import os
 from azure.eventhub import EventHubClient, EventData
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
@@ -102,7 +100,6 @@ finally:
 Receive events from the EventHub.
 
 ```python
-import os
 import logging
 from azure.eventhub import EventHubClient, EventData, EventPosition
 
@@ -128,7 +125,6 @@ finally:
 Sends an event data and asynchronously.
 
 ```python
-import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData
 
@@ -155,7 +151,6 @@ finally:
 Receive events asynchronously from the EventHub.
 
 ```python
-import os
 import logging
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData, EventPosition
