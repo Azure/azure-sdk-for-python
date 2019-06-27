@@ -122,7 +122,7 @@ class PartitionKeyTests(unittest.TestCase):
         return authorization
 
     def test_non_partitioned_collection_operations(self):
-        created_container = self.created_db.get_container(self.created_collection_id)
+        created_container = self.created_db.get_container_client(self.created_collection_id)
 
         # Pass partitionKey.Empty as partition key to access documents from a single partition collection with v 2018-12-31 SDK
         read_item = created_container.read_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)

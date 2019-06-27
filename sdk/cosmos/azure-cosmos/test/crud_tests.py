@@ -228,7 +228,7 @@ class CRUDTests(unittest.TestCase):
         # delete collection
         created_db.delete_container(created_collection.id)
         # read collection after deletion
-        created_container = created_db.get_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
 
@@ -269,7 +269,7 @@ class CRUDTests(unittest.TestCase):
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
-        retrieved_collection = created_db.get_container(
+        retrieved_collection = created_db.get_container_client(
             container=created_collection.id
         )
 
@@ -1370,7 +1370,7 @@ class CRUDTests(unittest.TestCase):
         old_client_connection = db.client_connection
         db.client_connection = col1_client.client_connection
         # 1. Success-- Use Col1 Permission to Read
-        success_coll1 = db.get_container(container=entities['coll1'])
+        success_coll1 = db.get_container_client(container=entities['coll1'])
         # 2. Failure-- Use Col1 Permission to delete
         self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                            db.delete_container,
@@ -2234,7 +2234,7 @@ class CRUDTests(unittest.TestCase):
             id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id", kind='Hash'),
         )
-        created_container = created_db.get_container(container=consistent_coll)
+        created_container = created_db.get_container_client(container=consistent_coll)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2244,7 +2244,7 @@ class CRUDTests(unittest.TestCase):
             indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_container = created_db.get_container(container=lazy_coll)
+        created_container = created_db.get_container_client(container=lazy_coll)
         created_container.read(populate_quota_info=True)
         self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2257,7 +2257,7 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_container = created_db.get_container(container=none_coll)
+        created_container = created_db.get_container_client(container=none_coll)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2394,16 +2394,16 @@ class CRUDTests(unittest.TestCase):
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read container with id
-        read_container = created_db.get_container(created_container.id)
+        read_container = created_db.get_container_client(created_container.id)
         self.assertEquals(read_container.id, created_container.id)
 
         # read container with instance
-        read_container = created_db.get_container(created_container)
+        read_container = created_db.get_container_client(created_container)
         self.assertEquals(read_container.id, created_container.id)
 
         # read container with properties
         created_properties = created_container.read()
-        read_container = created_db.get_container(created_properties)
+        read_container = created_db.get_container_client(created_properties)
         self.assertEquals(read_container.id, created_container.id)
 
         created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})

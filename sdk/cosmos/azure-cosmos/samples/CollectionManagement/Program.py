@@ -204,7 +204,7 @@ class ContainerManagement:
         
         try:
             # read the container, so we can get its _self
-            container = db.get_container(container=id)
+            container = db.get_container_client(container=id)
 
             # now use its _self to query for Offers
             offer = container.read_offer()
@@ -230,7 +230,7 @@ class ContainerManagement:
         print("\n4. Get a Container by id")
 
         try:
-            container = db.get_container(id)
+            container = db.get_container_client(id)
             print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
         except errors.HTTPFailure as e:

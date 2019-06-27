@@ -283,7 +283,7 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    def get_container(
+    def get_container_client(
         self,
         container,
     ):
