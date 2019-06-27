@@ -76,7 +76,6 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         'uamqp~=1.2.0',
-        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'python-dateutil>=2.8.0',
         'cryptography>=2.1.4',
