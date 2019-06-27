@@ -719,10 +719,10 @@ class Resource(Model):
 
     :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
     :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -731,8 +731,7 @@ class Resource(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
+        'name': {'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'location': {'required': True},
     }
 
@@ -747,8 +746,8 @@ class Resource(Model):
     def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
-        self.name = None
-        self.type = None
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
 
@@ -763,10 +762,10 @@ class IotHubDescription(Resource):
 
     :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
     :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -783,8 +782,7 @@ class IotHubDescription(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
+        'name': {'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'location': {'required': True},
         'sku': {'required': True},
     }

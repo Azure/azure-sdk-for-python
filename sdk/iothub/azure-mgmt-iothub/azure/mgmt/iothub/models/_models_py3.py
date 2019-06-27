@@ -719,10 +719,10 @@ class Resource(Model):
 
     :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
     :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -731,8 +731,7 @@ class Resource(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
+        'name': {'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'location': {'required': True},
     }
 
@@ -744,11 +743,11 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, name: str=None, type: str=None, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
-        self.name = None
-        self.type = None
+        self.name = name
+        self.type = type
         self.location = location
         self.tags = tags
 
@@ -763,10 +762,10 @@ class IotHubDescription(Resource):
 
     :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
     :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -783,8 +782,7 @@ class IotHubDescription(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
+        'name': {'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'location': {'required': True},
         'sku': {'required': True},
     }
@@ -800,8 +798,8 @@ class IotHubDescription(Resource):
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, etag: str=None, properties=None, **kwargs) -> None:
-        super(IotHubDescription, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, sku, name: str=None, type: str=None, tags=None, etag: str=None, properties=None, **kwargs) -> None:
+        super(IotHubDescription, self).__init__(name=name, type=type, location=location, tags=tags, **kwargs)
         self.etag = etag
         self.properties = properties
         self.sku = sku
