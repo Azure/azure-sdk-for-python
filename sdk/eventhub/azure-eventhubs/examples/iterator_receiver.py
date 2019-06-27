@@ -31,13 +31,14 @@ class PartitionConsumerThread(Thread):
         self.consumer = consumer
 
     def run(self):
-        for item in self.consumer:
-            print(item)
+        with consumer:
+            for item in self.consumer:
+                print(item)
 
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                     network_tracing=False)
 consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EVENT_POSITION)
-with consumer:
-    thread = PartitionConsumerThread(consumer)
-    thread.start()
+
+thread = PartitionConsumerThread(consumer)
+thread.start()

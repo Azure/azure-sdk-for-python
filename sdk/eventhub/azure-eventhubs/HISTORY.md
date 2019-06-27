@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2019-06-25)
+## 5.0.0b1 (2019-06-25)
 
 - Added more configuration parameters when creating EventHubClient.
 - New error hierarchy
