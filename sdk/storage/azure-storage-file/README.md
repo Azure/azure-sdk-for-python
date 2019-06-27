@@ -115,7 +115,7 @@ share = ShareClient.from_connection_string("my_connection_string", share="myshar
 share.create_share()
 ```
 
-### Upload a file to the file share
+### Upload a file
 Upload a file to the share
 
 ```python
