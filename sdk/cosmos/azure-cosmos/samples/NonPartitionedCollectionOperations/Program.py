@@ -97,7 +97,7 @@ class ItemManagement:
             # python 3 compatible: convert data from byte to unicode string
             data = data.decode('utf-8')
         data = json.loads(data)
-        created_collection = db.get_container(data['id'])
+        created_collection = db.get_container_client(data['id'])
 
         # Create a document in the non partitioned collection using the rest API and older version
         resource_url = base_url_split[0] + ":" + base_url_split[1] + ":" + base_url_split[2].split("/")[0] \

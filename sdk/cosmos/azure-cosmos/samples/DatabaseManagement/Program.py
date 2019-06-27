@@ -79,7 +79,7 @@ class DatabaseManagement:
         print("\n3. Get a Database by id")
 
         try:
-            database = client.get_database(id)
+            database = client.get_database_client(id)
             print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
         except errors.HTTPFailure as e:

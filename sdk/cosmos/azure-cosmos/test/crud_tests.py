@@ -124,12 +124,12 @@ class CRUDTests(unittest.TestCase):
                      'number of results for the query should be > 0')
 
         # read database.
-        self.client.get_database(created_db.id)
+        self.client.get_database_client(created_db.id)
 
         # delete database.
         self.client.delete_database(created_db.id)
         # read database after deletion
-        read_db = self.client.get_database(created_db.id)
+        read_db = self.client.get_database_client(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
@@ -228,7 +228,7 @@ class CRUDTests(unittest.TestCase):
         # delete collection
         created_db.delete_container(created_collection.id)
         # read collection after deletion
-        created_container = created_db.get_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
 
@@ -269,7 +269,7 @@ class CRUDTests(unittest.TestCase):
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
-        retrieved_collection = created_db.get_container(
+        retrieved_collection = created_db.get_container_client(
             container=created_collection.id
         )
 
@@ -1070,12 +1070,12 @@ class CRUDTests(unittest.TestCase):
                          replaced_user.id,
                          'user id should stay the same')
         # read user
-        user = db.get_user(replaced_user.id)
+        user = db.get_user_client(replaced_user.id)
         self.assertEqual(replaced_user.id, user.id)
         # delete user
         db.delete_user(user.id)
         # read user after deletion
-        deleted_user = db.get_user(user.id)
+        deleted_user = db.get_user_client(user.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            deleted_user.read)
 
@@ -1370,7 +1370,7 @@ class CRUDTests(unittest.TestCase):
         old_client_connection = db.client_connection
         db.client_connection = col1_client.client_connection
         # 1. Success-- Use Col1 Permission to Read
-        success_coll1 = db.get_container(container=entities['coll1'])
+        success_coll1 = db.get_container_client(container=entities['coll1'])
         # 2. Failure-- Use Col1 Permission to delete
         self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                            db.delete_container,
@@ -2234,7 +2234,7 @@ class CRUDTests(unittest.TestCase):
             id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id", kind='Hash'),
         )
-        created_container = created_db.get_container(container=consistent_coll)
+        created_container = created_db.get_container_client(container=consistent_coll)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2244,7 +2244,7 @@ class CRUDTests(unittest.TestCase):
             indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_container = created_db.get_container(container=lazy_coll)
+        created_container = created_db.get_container_client(container=lazy_coll)
         created_container.read(populate_quota_info=True)
         self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2257,7 +2257,7 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_container = created_db.get_container(container=none_coll)
+        created_container = created_db.get_container_client(container=none_coll)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2380,30 +2380,30 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         # read database with id
-        read_db = self.client.get_database(created_db.id)
+        read_db = self.client.get_database_client(created_db.id)
         self.assertEquals(read_db.id, created_db.id)
 
         # read database with instance
-        read_db = self.client.get_database(created_db)
+        read_db = self.client.get_database_client(created_db)
         self.assertEquals(read_db.id, created_db.id)
 
         # read database with properties
-        read_db = self.client.get_database(created_db.read())
+        read_db = self.client.get_database_client(created_db.read())
         self.assertEquals(read_db.id, created_db.id)
 
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read container with id
-        read_container = created_db.get_container(created_container.id)
+        read_container = created_db.get_container_client(created_container.id)
         self.assertEquals(read_container.id, created_container.id)
 
         # read container with instance
-        read_container = created_db.get_container(created_container)
+        read_container = created_db.get_container_client(created_container)
         self.assertEquals(read_container.id, created_container.id)
 
         # read container with properties
         created_properties = created_container.read()
-        read_container = created_db.get_container(created_properties)
+        read_container = created_db.get_container_client(created_properties)
         self.assertEquals(read_container.id, created_container.id)
 
         created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})
@@ -2462,16 +2462,16 @@ class CRUDTests(unittest.TestCase):
         })
 
         # read user with id
-        read_user = created_db.get_user(created_user.id)
+        read_user = created_db.get_user_client(created_user.id)
         self.assertEquals(read_user.id, created_user.id)
 
         # read user with instance
-        read_user = created_db.get_user(created_user)
+        read_user = created_db.get_user_client(created_user)
         self.assertEquals(read_user.id, created_user.id)
 
         # read user with properties
         created_user_properties = created_user.read()
-        read_user = created_db.get_user(created_user_properties)
+        read_user = created_db.get_user_client(created_user_properties)
         self.assertEquals(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({
