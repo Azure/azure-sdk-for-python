@@ -255,7 +255,7 @@ class MetricValue(Model):
     :type total: float
     :param count: the number of samples in the time range. Can be used to
      determine the number of values that contributed to the average value.
-    :type count: long
+    :type count: float
     """
 
     _validation = {
@@ -268,10 +268,10 @@ class MetricValue(Model):
         'minimum': {'key': 'minimum', 'type': 'float'},
         'maximum': {'key': 'maximum', 'type': 'float'},
         'total': {'key': 'total', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'long'},
+        'count': {'key': 'count', 'type': 'float'},
     }
 
-    def __init__(self, *, time_stamp, average: float=None, minimum: float=None, maximum: float=None, total: float=None, count: int=None, **kwargs) -> None:
+    def __init__(self, *, time_stamp, average: float=None, minimum: float=None, maximum: float=None, total: float=None, count: float=None, **kwargs) -> None:
         super(MetricValue, self).__init__(**kwargs)
         self.time_stamp = time_stamp
         self.average = average
