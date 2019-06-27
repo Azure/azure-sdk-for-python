@@ -87,5 +87,6 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-storage-nspkg==3.1.0'],
+        ":python_version<'3.5'": ['typing']
     }
 )
