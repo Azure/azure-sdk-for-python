@@ -169,7 +169,7 @@ interactions:
       x-ms-client-request-id:
       - b35c888c-9924-11e9-b6b4-b831b58100e8
       x-ms-copy-source:
-      - https://krpraticstorageacc.file.core.windows.net/filesfromurl/sourcefile
+      - https://storagename.file.core.windows.net/filesfromurl/sourcefile
       x-ms-date:
       - Thu, 27 Jun 2019 21:44:11 GMT
       x-ms-version:
