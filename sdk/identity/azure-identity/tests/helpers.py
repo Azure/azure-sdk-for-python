@@ -20,15 +20,19 @@ def mock_response(status_code=200, headers={}, payload=None):
 
 
 class Request:
-    def __init__(self, url, method=None, required_headers={}, required_data={}, required_params={}):
+    def __init__(self, url=None, url_substring=None, method=None, required_headers={}, required_data={}, required_params={}):
         self.method = method
         self.url = url
+        self.url_substring = url_substring
         self.required_headers = required_headers
         self.required_data = required_data
         self.required_params = required_params
 
     def assert_matches(self, request):
-        assert request.url.split("?")[0] == self.url
+        if self.url:
+            assert request.url.split("?")[0] == self.url
+        if self.url_substring:
+            assert self.url_substring in request.url
         if self.method:
             assert request.method == self.method
         for param, expected_value in self.required_params.items():

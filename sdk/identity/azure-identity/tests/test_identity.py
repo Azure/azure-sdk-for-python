@@ -25,6 +25,8 @@ from azure.identity import (
 from azure.identity._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
 
+from helpers import mock_response, Request, validating_transport
+
 
 def test_client_secret_credential_cache():
     expired = "this token's expired"
@@ -61,28 +63,52 @@ def test_client_secret_credential_cache():
     assert mock_send.call_count == 2
 
 
+def test_client_secret_credential():
+    client_id = "fake-client-id"
+    secret = "fake-client-secret"
+    tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+            )
+        ],
+    )
+
+    token = ClientSecretCredential(
+        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
+    ).get_token("scope")
+
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
+
+
 def test_client_secret_environment_credential(monkeypatch):
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+            )
+        ],
+    )
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
 
-    success_message = "request passed validation"
+    token = EnvironmentCredential(transport=transport).get_token("scope")
 
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["client_secret"] == secret
-        # raising here makes mocking a transport response unnecessary
-        raise ClientAuthenticationError(success_message)
-
-    credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
-    assert str(ex.value) == success_message
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
 
 
 def test_environment_credential_error():
@@ -200,45 +226,6 @@ def test_imds_credential_retries():
         # first call was availability probe, second the original request;
         # credential should have then exhausted retries for each of these status codes
         assert mock_send.call_count == 2 + total_retries
-
-
-def test_managed_identity_app_service(monkeypatch):
-    # in App Service, MSI_SECRET and MSI_ENDPOINT are set
-    msi_secret = "secret"
-    monkeypatch.setenv(EnvironmentVariables.MSI_SECRET, msi_secret)
-    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, "https://foo.bar")
-
-    success_message = "test passed"
-
-    def validate_request(req, *args, **kwargs):
-        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
-        assert req.headers["secret"] == msi_secret
-        exception = Exception()
-        exception.message = success_message
-        raise exception
-
-    with pytest.raises(Exception) as ex:
-        ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
-    assert ex.value.message is success_message
-
-
-def test_managed_identity_cloud_shell(monkeypatch):
-    # in Cloud Shell, only MSI_ENDPOINT is set
-    msi_endpoint = "https://localhost:50432"
-    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, msi_endpoint)
-
-    success_message = "test passed"
-
-    def validate_request(req, *args, **kwargs):
-        assert req.headers["Metadata"] == "true"
-        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
-        exception = Exception()
-        exception.message = success_message
-        raise exception
-
-    with pytest.raises(Exception) as ex:
-        ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
-    assert ex.value.message is success_message
 
 
 def test_default_credential():

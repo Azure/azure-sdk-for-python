@@ -22,6 +22,8 @@ from azure.identity.aio import (
 from azure.identity.aio._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
 
+from helpers import mock_response, Request, async_validating_transport
+
 
 @pytest.mark.asyncio
 async def test_client_secret_credential_cache():
@@ -60,28 +62,53 @@ async def test_client_secret_credential_cache():
 
 
 @pytest.mark.asyncio
+async def test_client_secret_credential():
+    client_id = "fake-client-id"
+    secret = "fake-client-secret"
+    tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = async_validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+            )
+        ],
+    )
+
+    token = await ClientSecretCredential(
+        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
+    ).get_token("scope")
+
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
+
+
+@pytest.mark.asyncio
 async def test_client_secret_environment_credential(monkeypatch):
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = async_validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+            )
+        ],
+    )
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
 
-    success_message = "request passed validation"
+    token = await EnvironmentCredential(transport=transport).get_token("scope")
 
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["client_secret"] == secret
-        # raising here makes mocking a transport response unnecessary
-        raise ClientAuthenticationError(success_message)
-
-    credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(ClientAuthenticationError) as ex:
-        await credential.get_token("scope")
-    assert str(ex.value) == success_message
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
 
 
 @pytest.mark.asyncio
