@@ -1,4 +1,4 @@
 # Release History
 
-## 0.0.1
+## 1.0.0b1
 First preview release of the library.
