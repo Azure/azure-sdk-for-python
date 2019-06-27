@@ -27,6 +27,7 @@ from .compliances_operations import CompliancesOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
+from .sub_assessments_operations import SubAssessmentsOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
@@ -50,6 +51,7 @@ __all__ = [
     'InformationProtectionPoliciesOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
+    'SubAssessmentsOperations',
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',

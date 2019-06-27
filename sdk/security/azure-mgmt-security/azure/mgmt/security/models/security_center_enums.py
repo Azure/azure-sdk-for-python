@@ -100,6 +100,24 @@ class AlertsToAdmins(str, Enum):
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
 
 
+class Severity(str, Enum):
+
+    unknown = "Unknown"
+    healthy = "Healthy"
+    off_by_policy = "OffByPolicy"
+    not_applicable = "NotApplicable"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class Risk(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class State(str, Enum):
 
     passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state

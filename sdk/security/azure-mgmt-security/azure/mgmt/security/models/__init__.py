@@ -65,6 +65,18 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .sub_assessment_status_py3 import SubAssessmentStatus
+    from .resource_details_py3 import ResourceDetails
+    from .additional_data_py3 import AdditionalData
+    from .security_sub_assessment_py3 import SecuritySubAssessment
+    from .azure_resource_details_py3 import AzureResourceDetails
+    from .aws_resource_details_py3 import AwsResourceDetails
+    from .sql_server_sub_assessment_properties_py3 import SqlServerSubAssessmentProperties
+    from .cvss_py3 import CVSS
+    from .cve_py3 import CVE
+    from .vendor_reference_py3 import VendorReference
+    from .container_registry_vulnerability_sub_assessment_properties_py3 import ContainerRegistryVulnerabilitySubAssessmentProperties
+    from .server_vulnerability_sub_assessment_properties_py3 import ServerVulnerabilitySubAssessmentProperties
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
@@ -124,6 +136,18 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .sub_assessment_status import SubAssessmentStatus
+    from .resource_details import ResourceDetails
+    from .additional_data import AdditionalData
+    from .security_sub_assessment import SecuritySubAssessment
+    from .azure_resource_details import AzureResourceDetails
+    from .aws_resource_details import AwsResourceDetails
+    from .sql_server_sub_assessment_properties import SqlServerSubAssessmentProperties
+    from .cvss import CVSS
+    from .cve import CVE
+    from .vendor_reference import VendorReference
+    from .container_registry_vulnerability_sub_assessment_properties import ContainerRegistryVulnerabilitySubAssessmentProperties
+    from .server_vulnerability_sub_assessment_properties import ServerVulnerabilitySubAssessmentProperties
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
@@ -143,6 +167,7 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .security_sub_assessment_paged import SecuritySubAssessmentPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
@@ -160,6 +185,8 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    Severity,
+    Risk,
     State,
     ConnectionType,
 )
@@ -220,6 +247,18 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'SubAssessmentStatus',
+    'ResourceDetails',
+    'AdditionalData',
+    'SecuritySubAssessment',
+    'AzureResourceDetails',
+    'AwsResourceDetails',
+    'SqlServerSubAssessmentProperties',
+    'CVSS',
+    'CVE',
+    'VendorReference',
+    'ContainerRegistryVulnerabilitySubAssessmentProperties',
+    'ServerVulnerabilitySubAssessmentProperties',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
@@ -239,6 +278,7 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'SecuritySubAssessmentPaged',
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
@@ -255,6 +295,8 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'Severity',
+    'Risk',
     'State',
     'ConnectionType',
 ]
