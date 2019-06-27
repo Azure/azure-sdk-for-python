@@ -141,7 +141,7 @@ class CosmosClient:
             response_hook(self.client_connection.last_response_headers)
         return Database(self.client_connection, id=result["id"], properties=result)
 
-    def get_database(
+    def get_database_client(
         self,
         database
     ):

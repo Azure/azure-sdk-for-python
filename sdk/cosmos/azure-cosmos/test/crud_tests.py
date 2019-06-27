@@ -124,12 +124,12 @@ class CRUDTests(unittest.TestCase):
                      'number of results for the query should be > 0')
 
         # read database.
-        self.client.get_database(created_db.id)
+        self.client.get_database_client(created_db.id)
 
         # delete database.
         self.client.delete_database(created_db.id)
         # read database after deletion
-        read_db = self.client.get_database(created_db.id)
+        read_db = self.client.get_database_client(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
@@ -2380,15 +2380,15 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         # read database with id
-        read_db = self.client.get_database(created_db.id)
+        read_db = self.client.get_database_client(created_db.id)
         self.assertEquals(read_db.id, created_db.id)
 
         # read database with instance
-        read_db = self.client.get_database(created_db)
+        read_db = self.client.get_database_client(created_db)
         self.assertEquals(read_db.id, created_db.id)
 
         # read database with properties
-        read_db = self.client.get_database(created_db.read())
+        read_db = self.client.get_database_client(created_db.read())
         self.assertEquals(read_db.id, created_db.id)
 
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)

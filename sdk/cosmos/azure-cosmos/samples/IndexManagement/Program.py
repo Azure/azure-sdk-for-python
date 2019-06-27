@@ -86,7 +86,7 @@ def CreateDatabaseIfNotExists(client, database_id):
         database = Query_Entities(client, 'database', id = database_id)
         if database == None:
             database = client.create_database(id=database_id)
-        return client.get_database(database['id'])
+        return client.get_database_client(database['id'])
     except errors.HTTPFailure as e:
         if e.status_code == 409: # Move these constants to an enum
             pass
