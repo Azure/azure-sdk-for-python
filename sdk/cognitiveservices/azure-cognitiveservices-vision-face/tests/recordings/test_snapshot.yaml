@@ -116,27 +116,6 @@ interactions:
     method: GET
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/4ff5f990-b88b-4f46-bc9e-8eb505589bd4
   response:
-    body: {string: '{"error":{"code":"429","message": "Rate limit is exceeded. Try
-        again in 21 seconds."}}'}
-    headers:
-      apim-request-id: [492ef93d-fe4e-4e7a-9b19-c8166096a898]
-      content-length: ['86']
-      content-type: [application/json]
-      date: ['Thu, 27 Jun 2019 21:22:55 GMT']
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-content-type-options: [nosniff]
-    status: {code: 429, message: Too Many Requests}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/4ff5f990-b88b-4f46-bc9e-8eb505589bd4
-  response:
     body: {string: '{"createdTime":"2019-06-27T21:22:55.3043353Z","lastActionTime":"2019-06-27T21:22:56.7620246Z","message":null,"resourceLocation":"/snapshots/8bc8d286-2c39-40b6-8190-4a8a2eb95297","status":"succeeded"}'}
     headers:
       apim-request-id: [e3f68883-ad66-4d7f-a504-f02cbb4a49ef]
