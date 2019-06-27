@@ -9,7 +9,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
 
 # Getting started
 
@@ -31,9 +31,9 @@ $ pip install azure-eventhub
 
 Interaction with Event Hubs starts with an instance of the EventHubClient class. You need the host name, SAS/AAD credential and event hub name to instantiate the client object.
 
-### Get credentials
+### Obtain a connection string
 
-You can find credential information in [Azure Portal](https://portal.azure.com/).
+For the Event Hubs client library to interact with an Event Hub, it will need to understand how to connect and authorize with it. The easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace. If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
 
 ### Create client
 
@@ -43,12 +43,9 @@ There are several ways to instantiate the EventHubClient object and the followin
 import os
 from azure.eventhub import EventHubClient
 
-connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-    os.environ['EVENT_HUB_HOSTNAME'],
-    os.environ['EVENT_HUB_SAS_POLICY'],
-    os.environ['EVENT_HUB_SAS_KEY'],
-    os.environ['EVENT_HUB_NAME'])
-client = EventHubClient.from_connection_string(connection_str)
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 ```
 
 # Key concepts
@@ -82,12 +79,9 @@ Sends an event data and blocks until acknowledgement is received or operation ti
 import os
 from azure.eventhub import EventHubClient, EventData
 
-connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-    os.environ['EVENT_HUB_HOSTNAME'],
-    os.environ['EVENT_HUB_SAS_POLICY'],
-    os.environ['EVENT_HUB_SAS_KEY'],
-    os.environ['EVENT_HUB_NAME'])
-client = EventHubClient.from_connection_string(connection_str)
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 sender = client.create_producer(partition_id="0")
 
 try:
@@ -112,12 +106,9 @@ import os
 import logging
 from azure.eventhub import EventHubClient, EventData, EventPosition
 
-connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-    os.environ['EVENT_HUB_HOSTNAME'],
-    os.environ['EVENT_HUB_SAS_POLICY'],
-    os.environ['EVENT_HUB_SAS_KEY'],
-    os.environ['EVENT_HUB_NAME'])
-client = EventHubClient.from_connection_string(connection_str)
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
@@ -141,12 +132,9 @@ import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData
 
-connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-    os.environ['EVENT_HUB_HOSTNAME'],
-    os.environ['EVENT_HUB_SAS_POLICY'],
-    os.environ['EVENT_HUB_SAS_KEY'],
-    os.environ['EVENT_HUB_NAME'])
-client = EventHubClient.from_connection_string(connection_str)
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 sender = client.create_producer(partition_id="0")
 
 try:
@@ -172,12 +160,9 @@ import logging
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData, EventPosition
 
-connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-    os.environ['EVENT_HUB_HOSTNAME'],
-    os.environ['EVENT_HUB_SAS_POLICY'],
-    os.environ['EVENT_HUB_SAS_KEY'],
-    os.environ['EVENT_HUB_NAME'])
-client = EventHubClient.from_connection_string(connection_str)
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
@@ -218,7 +203,7 @@ For instance, this error is raised if you try to send an EventData that is alrea
 
 ## Documentation
 
-Reference documentation is available at https://docs.microsoft.com/python/api/azure-eventhub.
+Reference documentation is available at http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.
 
 ## Logging
 
