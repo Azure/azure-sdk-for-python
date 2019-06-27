@@ -96,7 +96,16 @@ class ApiManagementServiceUpdateParameters(ApimResource):
      specifying any of these properties on PATCH operation will reset omitted
      properties' values to their defaults. For all the settings except Http2
      the default value is `True` if the service was created on or before April
-     1st 2018 and `False` otherwise. Http2 setting's default value is `False`.
+     1st 2018 and `False` otherwise. Http2 setting's default value is
+     `False`.</br></br>You can disable any of next ciphers by using settings
+     `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.[cipher_name]`:
+     TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+     TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+     TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_128_GCM_SHA256,
+     TLS_RSA_WITH_AES_256_CBC_SHA256, TLS_RSA_WITH_AES_128_CBC_SHA256,
+     TLS_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA. For example,
+     `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TLS_RSA_WITH_AES_128_CBC_SHA256`:`false`.
+     The default value is `true` for them.
     :type custom_properties: dict[str, str]
     :param certificates: List of Certificates that need to be installed in the
      API Management service. Max supported certificates that can be installed
