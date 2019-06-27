@@ -4,7 +4,6 @@ import azure.cosmos.diagnostics as m
 
 _common = {
     'x-ms-activity-id',
-    'x-ms-request-charge',
     'x-ms-session-token',
 
     'x-ms-item-count',
