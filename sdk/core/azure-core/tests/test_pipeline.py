@@ -29,6 +29,10 @@ import requests
 import datetime
 from enum import Enum
 import unittest
+try:
+    from io import BytesIO
+except ImportError:
+    from cStringIO import StringIO as BytesIO
 
 try:
     from unittest import mock
@@ -47,10 +51,11 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     RedirectPolicy
 )
+from azure.core.pipeline.transport.base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
-    RequestsTransport,
+    RequestsTransport
 )
 
 from azure.core.configuration import Configuration
@@ -122,6 +127,59 @@ class TestRequestsTransport(unittest.TestCase):
         transport.session.close()
 
 
+class TestClientPipelineURLFormatting(unittest.TestCase):
+
+    def test_format_url_basic(self):
+        client = PipelineClientBase("https://bing.com")
+        formatted = client.format_url("/{foo}", foo="bar")
+        assert formatted == "https://bing.com/bar"
+
+    def test_format_url_with_query(self):
+        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+        formatted = client.format_url("/{foo}", foo="bar")
+        assert formatted == "https://bing.com/path/bar?query=testvalue&x=2ndvalue"
+
+    def test_format_url_missing_param_values(self):
+        client = PipelineClientBase("https://bing.com/path")
+        formatted = client.format_url("/{foo}")
+        assert formatted == "https://bing.com/path"
+
+    def test_format_url_missing_param_values_with_query(self):
+        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+        formatted = client.format_url("/{foo}")
+        assert formatted == "https://bing.com/path?query=testvalue&x=2ndvalue"
+
+    def test_format_url_extra_path(self):
+        client = PipelineClientBase("https://bing.com/path")
+        formatted = client.format_url("/subpath/{foo}", foo="bar")
+        assert formatted == "https://bing.com/path/subpath/bar"
+
+    def test_format_url_complex_params(self):
+        client = PipelineClientBase("https://bing.com/path")
+        formatted = client.format_url("/subpath/{a}/{b}/foo/{c}/bar", a="X", c="Y")
+        assert formatted == "https://bing.com/path/subpath/X/foo/Y/bar"
+
+    def test_format_url_extra_path_missing_values(self):
+        client = PipelineClientBase("https://bing.com/path")
+        formatted = client.format_url("/subpath/{foo}")
+        assert formatted == "https://bing.com/path/subpath"
+
+    def test_format_url_extra_path_missing_values_with_query(self):
+        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+        formatted = client.format_url("/subpath/{foo}")
+        assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue"
+
+    def test_format_url_full_url(self):
+        client = PipelineClientBase("https://bing.com/path")
+        formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
+        assert formatted == "https://google.com/subpath/bar"
+
+    def test_format_url_no_base_url(self):
+        client = PipelineClientBase(None)
+        formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
+        assert formatted == "https://google.com/subpath/bar"
+
+
 class TestClientRequest(unittest.TestCase):
     def test_request_json(self):
 
@@ -140,6 +198,25 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertEqual(request.data, data)
         self.assertEqual(request.headers.get("Content-Length"), "15")
+
+    def test_request_stream(self):
+        request = HttpRequest("GET", "/")
+
+        data = b"Lots of dataaaa"
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
+        def data_gen():
+            for i in range(10):
+                yield i
+        data = data_gen()
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
+        data = BytesIO(b"Lots of dataaaa")
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
 
     def test_request_xml(self):
         request = HttpRequest("GET", "/")

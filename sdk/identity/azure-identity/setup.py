@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import re
 import os.path
 from io import open
@@ -78,6 +77,7 @@ setup(
     ),
     install_requires=[
         # "azure-core~=1.0.0", TODO: commented until azure-core is published
+        "cryptography>=2.1.4",
         "msal~=0.3.1"
     ],
     extras_require={":python_version<'3.0'": ["azure-nspkg"]},

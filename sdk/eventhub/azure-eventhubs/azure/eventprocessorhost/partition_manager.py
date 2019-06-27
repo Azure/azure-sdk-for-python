@@ -8,7 +8,9 @@ import asyncio
 from queue import Queue
 from collections import Counter
 
-from azure.eventhub import EventHubClientAsync
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventHubSharedKeyCredential
+
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from azure.eventprocessorhost.cancellation_token import CancellationToken
 
@@ -35,18 +37,20 @@ class PartitionManager:
         :rtype: list[str]
         """
         if not self.partition_ids:
+            hostname = "{}.{}".format(self.host.eh_config.sb_name, self.host.eh_config.namespace_suffix)
+            event_hub_path = self.host.eh_config.eh_name
+            shared_key_cred = EventHubSharedKeyCredential(self.host.eh_config.policy, self.host.eh_config.sas_key)
+
+            eh_client = EventHubClient(
+                hostname, event_hub_path, shared_key_cred,
+                network_tracing=self.host.eph_options.debug_trace,
+                # http_proxy=self.host.eph_options.http_proxy,
+            )
             try:
-                eh_client = EventHubClientAsync(
-                    self.host.eh_config.client_address,
-                    debug=self.host.eph_options.debug_trace,
-                    http_proxy=self.host.eph_options.http_proxy)
-                try:
-                    eh_info = await eh_client.get_eventhub_info_async()
-                    self.partition_ids = eh_info['partition_ids']
-                except Exception as err:  # pylint: disable=broad-except
-                    raise Exception("Failed to get partition ids", repr(err))
-            finally:
-                await eh_client.stop_async()
+                eh_info = await eh_client.get_properties()
+                self.partition_ids = eh_info['partition_ids']
+            except Exception as err:  # pylint: disable=broad-except
+                raise Exception("Failed to get partition ids", repr(err))
         return self.partition_ids
 
     async def start_async(self):

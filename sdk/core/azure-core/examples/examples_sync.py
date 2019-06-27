@@ -25,26 +25,70 @@
 # --------------------------------------------------------------------------
 
 from azure.core.configuration import Configuration
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline_client import PipelineClient
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     RedirectPolicy,
     RetryPolicy
 )
 
-def test_example_pipeline_client():
-    config = Configuration()
 
-    config.user_agent_policy = UserAgentPolicy("myusergant")
+def test_example_requests():
+    request = HttpRequest("GET", "https://bing.com")
+    config = Configuration()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
+    # [START requests]
+    from azure.core.pipeline.transport import RequestsTransport
+
+    with Pipeline(transport=RequestsTransport(config), policies=policies) as pipeline:
+        response = pipeline.run(request)
+    # [END requests]
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
+
+
+def test_example_pipeline():
+    # [START build_pipeline]
+    from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
+    from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+
+    # example: create request and policies
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
+
+    # run the pipeline
+    with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
+        response = pipeline.run(request)
+    # [END build_pipeline]
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
+
+
+def test_example_pipeline_client():
+    url = "https://bing.com"
+    # [START build_pipeline_client]
+    from azure.core import Configuration, PipelineClient
+    from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
+
+    # example configuration with some policies
+    config = Configuration()
+    config.user_agent_policy = UserAgentPolicy("myuseragent")
     config.redirect_policy = RedirectPolicy()
 
-    # [START build_pipeline_client]
-    client = PipelineClient(base_url="https://bing.com", config=config)
-    # [END build_pipeline_client]
-
+    client = PipelineClient(base_url=url, config=config)
     request = client.get("https://bing.com")
 
     pipeline_response = client._pipeline.run(request)
+    # [END build_pipeline_client]
 
     response = pipeline_response.http_response
     assert response.status_code == 200
@@ -54,6 +98,8 @@ def test_example_redirect_policy():
     url = "https://bing.com"
 
     # [START redirect_policy]
+    from azure.core.pipeline.policies import RedirectPolicy
+
     config = Configuration()
     config.redirect_policy = RedirectPolicy()
 
@@ -69,11 +115,27 @@ def test_example_redirect_policy():
     # It can also be overridden per operation.
     client = PipelineClient(base_url=url, config=config)
     request = client.get(url)
-    pipeline_response = client._pipeline.run(request, redirect_max=5)
+    pipeline_response = client._pipeline.run(request, permit_redirects=True, redirect_max=5)
     # [END redirect_policy]
 
     response = pipeline_response.http_response
     assert response.status_code == 200
+
+
+def test_example_no_redirects():
+    url = "https://bing.com"
+
+    config = Configuration()
+    config.redirect_policy = RedirectPolicy.no_redirects()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request)
+
+    response = pipeline_response.http_response
+    # bing returns 301 if not redirected
+    assert response.status_code == 301
+
 
 def test_example_retry_policy():
 
@@ -84,6 +146,8 @@ def test_example_retry_policy():
     config.redirect_policy = RedirectPolicy()
 
     # [START retry_policy]
+    from azure.core.pipeline.policies import RetryPolicy
+
     config.retry_policy = RetryPolicy()
 
     # Total number of retries to allow. Takes precedence over other counts.
@@ -135,3 +199,17 @@ def test_example_retry_policy():
 
     response = pipeline_response.http_response
     assert response.status_code == 200
+
+def test_example_no_retries():
+    url = "https://bing.com"
+
+    config = Configuration()
+    config.retry_policy = RetryPolicy.no_retries()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request)
+
+    response = pipeline_response.http_response
+    # bing returns 301 if not retried
+    assert response.status_code == 301

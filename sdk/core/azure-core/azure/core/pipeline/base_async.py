@@ -115,6 +115,14 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
 
     :param transport: The async Http Transport type.
     :param list policies: List of configured policies.
+
+    Example:
+        .. literalinclude:: ../examples/examples_async.py
+            :start-after: [START build_async_pipeline]
+            :end-before: [END build_async_pipeline]
+            :language: python
+            :dedent: 4
+            :caption: Builds the async pipeline for asynchronous transport.
     """
 
     def __init__(self, transport, policies: AsyncPoliciesType = None) -> None:

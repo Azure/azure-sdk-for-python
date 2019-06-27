@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .features_operations import FeaturesOperations
+from ._features_operations import FeaturesOperations
+from ._feature_client_operations import FeatureClientOperationsMixin
 
 __all__ = [
     'FeaturesOperations',
+    'FeatureClientOperationsMixin',
 ]

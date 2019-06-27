@@ -384,13 +384,14 @@ class MgmtResourceTest(AzureMgmtTestCase):
             if resource.resource_type == 'sites':
                 self.assertIn('West US', resource.locations)
 
-    def test_providers(self):
+    def test_provider_registration(self):
         self.resource_client.providers.unregister('Microsoft.Search')
         self.resource_client.providers.get('Microsoft.Search')
+        self.resource_client.providers.register('Microsoft.Search')
 
+    def test_providers(self):
         result_list = self.resource_client.providers.list()
         for provider in result_list:
-            self.resource_client.providers.register(provider.namespace)
             break
 
 

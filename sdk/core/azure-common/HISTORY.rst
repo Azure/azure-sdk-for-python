@@ -3,6 +3,16 @@
 Release History
 ===============
 
+1.1.23 (2019-06-24)
++++++++++++++++++++
+
+- Add Monitor into Profile v2019_03_01_hybrid (requires azure-mgmt-monitor >= 0.7.0)
+
+1.1.22 (2019-06-06)
++++++++++++++++++++
+
+- Fix KeyVaultClient support for get_client_from_auth_file
+
 1.1.21 (2019-05-21)
 +++++++++++++++++++
 

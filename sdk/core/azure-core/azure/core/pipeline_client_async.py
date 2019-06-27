@@ -48,14 +48,14 @@ class AsyncPipelineClient(PipelineClientBase):
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline
 
-    Keyword arguments:
-    pipeline - A Pipeline object. If omitted, an AsyncPipeline is created
-     and returned.
-    transport - The HTTP Transport type. If omitted, AioHttpTransport is used
-     for asynchronous transport.
+    **Keyword arguments:**
+
+    *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
+
+    *transport* - The HTTP Transport type. If omitted, AioHttpTransport is use for asynchronous transport.
 
     Example:
-        .. literalinclude:: ../../examples/examples_async.py
+        .. literalinclude:: ../examples/examples_async.py
             :start-after: [START build_async_pipeline_client]
             :end-before: [END build_async_pipeline_client]
             :language: python

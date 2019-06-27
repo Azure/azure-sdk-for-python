@@ -18,8 +18,9 @@ import pytest
 
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import Offset
+from azure.eventhub import EventPosition
 from azure.eventhub import EventHubClient
+from azure.eventhub import EventHubSharedKeyCredential
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -47,7 +48,7 @@ logger = get_logger("recv_test.log", logging.INFO)
 
 
 def get_partitions(args):
-    eh_data = args.get_eventhub_info()
+    eh_data = args.get_properties()
     return eh_data["partition_ids"]
 
 
@@ -73,10 +74,10 @@ def pump(receivers, duration):
                                 pid,
                                 total,
                                 batch[-1].sequence_number,
-                                batch[-1].offset.value))
+                                batch[-1].offset))
             print("Total received {}".format(total))
     except Exception as e:
-        print("Receiver failed: {}".format(e))
+        print("EventHubConsumer failed: {}".format(e))
         raise
 
 
@@ -97,12 +98,13 @@ def test_long_running_receive(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, debug=False)
+            event_hub_path=args.eventhub, network_tracing=False)
     elif args.address:
-        client = EventHubClient(
-            args.address,
-            username=args.sas_policy,
-            password=args.sas_key)
+        client = EventHubClient(host=args.address,
+                                event_hub_path=args.eventhub,
+                                credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+                                auth_timeout=240,
+                                network_tracing=False)
     else:
         try:
             import pytest
@@ -117,15 +119,14 @@ def test_long_running_receive(connection_str):
             partitions = args.partitions.split(",")
         pumps = {}
         for pid in partitions:
-            pumps[pid] = client.add_receiver(
-                consumer_group=args.consumer,
-                partition=pid,
-                offset=Offset(args.offset),
+            pumps[pid] = client.create_consumer(consumer_group="$default",
+                partition_id=pid,
+                event_position=EventPosition(args.offset),
                 prefetch=50)
-        client.run()
         pump(pumps, args.duration)
     finally:
-        client.stop()
+        for pid in partitions:
+            pumps[pid].close()
 
 
 if __name__ == '__main__':
