@@ -146,6 +146,14 @@ class FileClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START create_file_client]
+                :end-before: [END create_file_client]
+                :language: python
+                :dedent: 12
+                :caption: Creates the file client with connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -268,6 +276,14 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file.py
+                :start-after: [START create_file]
+                :end-before: [END create_file]
+                :language: python
+                :dedent: 12
+                :caption: Create a file.
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
@@ -334,6 +350,14 @@ class FileClient(StorageAccountHostsMixin):
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file.py
+                :start-after: [START upload_file]
+                :end-before: [END upload_file]
+                :language: python
+                :dedent: 12
+                :caption: Upload a file.
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
@@ -384,6 +408,14 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Polling object in order to wait on or abort the operation
         :rtype: ~azure.storage.file.polling.CopyStatusPoller
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file.py
+                :start-after: [START copy_file_from_url]
+                :end-before: [END copy_file_from_url]
+                :language: python
+                :dedent: 12
+                :caption: Copy a file from a URL
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -433,6 +465,14 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file.py
+                :start-after: [START download_file]
+                :end-before: [END download_file]
+                :language: python
+                :dedent: 12
+                :caption: Download a file.
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
@@ -459,6 +499,14 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file.py
+                :start-after: [START delete_file]
+                :end-before: [END delete_file]
+                :language: python
+                :dedent: 12
+                :caption: Delete a file.
         """
         try:
             self._client.file.delete(timeout=timeout, **kwargs)

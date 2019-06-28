@@ -27,6 +27,7 @@ class TestFileServiceSamples(StorageTestCase):
         from azure.storage.file import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
+        # [START set_service_properties]
         # Create service properties
         from azure.storage.file import Metrics, CorsRule, RetentionPolicy
 
@@ -53,9 +54,11 @@ class TestFileServiceSamples(StorageTestCase):
 
         # Set the service properties
         file_service.set_service_properties(hour_metrics, minute_metrics, cors)
+        # [END set_service_properties]
 
-        # Get queue service properties
+        # [START get_service_properties]
         properties = file_service.get_service_properties()
+        # [END get_service_properties]
 
     @record
     def test_share_operations(self):
@@ -63,26 +66,30 @@ class TestFileServiceSamples(StorageTestCase):
         from azure.storage.file import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
-        # Create a file share
+        # [START fsc_create_shares]
         file_service.create_share(share_name="testshare")
-
+        # [END fsc_create_shares]
         try:
+            # [START fsc_list_shares]
             # List the shares in the file service
             my_shares = list(file_service.list_shares())
 
             # Print the shares
             for share in my_shares:
                 print(share)
+            # [END fsc_list_shares]
 
         finally:
-            # Delete the file share
+            # [START fsc_delete_shares]
             file_service.delete_share(share_name="testshare")
+            # [END fsc_delete_shares]
 
     @record
     def test_get_share_client(self):
-        # Instantiate the FileServiceClient from a connection string
+        # [START get_share_client]
         from azure.storage.file import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
         share = file_service.get_share_client("fileshare")
+        # [END get_share_client]

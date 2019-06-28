@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+
 try:
     import tests.settings_real as settings
 except ImportError:
@@ -16,10 +18,30 @@ from tests.testcase import (
     record
 )
 
+SOURCE_FILE = 'SampleSource.txt'
+
 
 class TestHelloWorldSamples(StorageTestCase):
 
     connection_string = settings.CONNECTION_STRING
+
+    def setUp(self):
+        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        with open(SOURCE_FILE, 'wb') as stream:
+            stream.write(data)
+
+        super(TestHelloWorldSamples, self).setUp()
+
+    def tearDown(self):
+        if os.path.isfile(SOURCE_FILE):
+            try:
+                os.remove(SOURCE_FILE)
+            except:
+                pass
+
+        return super(TestHelloWorldSamples, self).tearDown()
+
+    #--Begin File Samples-----------------------------------------------------------------
 
     @record
     def test_create_client_with_connection_string(self):
@@ -41,8 +63,9 @@ class TestHelloWorldSamples(StorageTestCase):
         share.create_share()
 
         try:
-            # Get share properties
+            # [START get_share_properties]
             properties = share.get_share_properties()
+            # [END get_share_properties]
             assert properties is not None
 
         finally:
@@ -60,11 +83,13 @@ class TestHelloWorldSamples(StorageTestCase):
 
         try:
             # Instantiate the FileClient from a connection string
+            # [START create_file_client]
             from azure.storage.file import FileClient
             file = FileClient.from_connection_string(self.connection_string, share="share", file_path="myfile")
+            # [END create_file_client]
 
             # Upload a file
-            with open("./SampleSource.txt", "rb") as source_file:
+            with open(SOURCE_FILE, "rb") as source_file:
                 file.upload_file(source_file)
 
         finally:

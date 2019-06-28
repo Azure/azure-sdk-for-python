@@ -172,6 +172,14 @@ class DirectoryClient(StorageAccountHostsMixin):
             The name of the subdirectory.
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START get_subdirectory_client]
+                :end-before: [END get_subdirectory_client]
+                :language: python
+                :dedent: 12
+                :caption: Gets the subdirectory client.
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
@@ -194,6 +202,14 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START create_directory]
+                :end-before: [END create_directory]
+                :language: python
+                :dedent: 12
+                :caption: Creates a directory.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -214,6 +230,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START delete_directory]
+                :end-before: [END delete_directory]
+                :language: python
+                :dedent: 12
+                :caption: Deletes a directory.
         """
         try:
             self._client.directory.delete(timeout=timeout, **kwargs)
@@ -234,6 +258,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START lists_directory]
+                :end-before: [END lists_directory]
+                :language: python
+                :dedent: 12
+                :caption: List directories and files.
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -365,6 +397,14 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START create_subdirectory]
+                :end-before: [END create_subdirectory]
+                :language: python
+                :dedent: 12
+                :caption: Create a subdirectory.
         """
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
@@ -383,6 +423,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START delete_subdirectory]
+                :end-before: [END delete_subdirectory]
+                :language: python
+                :dedent: 12
+                :caption: Delete a subdirectory.
         """
         subdir = self.get_subdirectory_client(directory_name)
         subdir.delete_directory(timeout=timeout, **kwargs)
@@ -429,6 +477,14 @@ class DirectoryClient(StorageAccountHostsMixin):
             Defaults to UTF-8.
         :returns: FileClient
         :rtype: ~azure.storage.file.file_client.FileClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START upload_file_to_directory]
+                :end-before: [END upload_file_to_directory]
+                :language: python
+                :dedent: 12
+                :caption: Upload a file to a directory.
         """
         file_client = self.get_file_client(file_name)
         file_client.upload_file(
@@ -457,6 +513,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_directory.py
+                :start-after: [START delete_file_in_directory]
+                :end-before: [END delete_file_in_directory]
+                :language: python
+                :dedent: 12
+                :caption: Delete a file in a directory.
         """
         file_client = self.get_file_client(file_name)
         file_client.delete_file(timeout, **kwargs)

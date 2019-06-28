@@ -45,6 +45,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            :start-after: [START create_file_service_client]
+            :end-before: [END create_file_service_client]
+            :language: python
+            :dedent: 8
+            :caption: Create the file service client with url and credential.
     """
     def __init__(
             self, account_url,  # type: str
@@ -91,6 +99,14 @@ class FileServiceClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START create_file_service_client_from_conn_string]
+                :end-before: [END create_file_service_client_from_conn_string]
+                :language: python
+                :dedent: 8
+                :caption: Create the file service client with connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -142,6 +158,14 @@ class FileServiceClient(StorageAccountHostsMixin):
             Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START generate_sas_token]
+                :end-before: [END generate_sas_token]
+                :language: python
+                :dedent: 8
+                :caption: Generate a sas token.
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
@@ -158,6 +182,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START get_service_properties]
+                :end-before: [END get_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Get file service properties.
         """
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs)
@@ -192,6 +224,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START set_service_properties]
+                :end-before: [END set_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Sets file service properties.
         """
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
@@ -231,6 +271,14 @@ class FileServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.file.models.SharePropertiesPaged
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START fsc_list_shares]
+                :end-before: [END fsc_list_shares]
+                :language: python
+                :dedent: 12
+                :caption: List shares in the file service.
         """
         include = []
         if include_metadata:
@@ -268,6 +316,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.share_client.ShareClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START fsc_create_shares]
+                :end-before: [END fsc_create_shares]
+                :language: python
+                :dedent: 8
+                :caption: Create a share in the file service.
         """
         share = self.get_share_client(share_name)
         share.create_share(metadata, quota, timeout, **kwargs)
@@ -292,6 +348,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START fsc_delete_shares]
+                :end-before: [END fsc_delete_shares]
+                :language: python
+                :dedent: 12
+                :caption: Delete a share in the file service.
         """
         share = self.get_share_client(share_name)
         share.delete_share(
@@ -310,6 +374,14 @@ class FileServiceClient(StorageAccountHostsMixin):
             An optional share snapshot on which to operate.
         :returns: A ShareClient.
         :rtype: ~azure.core.file.share_client.ShareClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+                :start-after: [START get_share_client]
+                :end-before: [END get_share_client]
+                :language: python
+                :dedent: 8
+                :caption: Gets the share client.
         """
         return ShareClient(
             self.url, share=share, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,

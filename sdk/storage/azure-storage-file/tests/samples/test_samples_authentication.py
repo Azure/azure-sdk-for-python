@@ -32,8 +32,10 @@ class TestAuthSamples(StorageTestCase):
     @record
     def test_auth_connection_string(self):
         # Instantiate the FileServiceClient from a connection string
+        # [START create_file_service_client_from_conn_string]
         from azure.storage.file import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # [END create_file_service_client_from_conn_string]
 
         # Get queue service properties
         properties = file_service.get_service_properties()
@@ -42,8 +44,10 @@ class TestAuthSamples(StorageTestCase):
     @record
     def test_auth_shared_key(self):
         # Instantiate a FileServiceClient using a shared access key
+        # [START create_file_service_client]
         from azure.storage.file import FileServiceClient
         file_service_client = FileServiceClient(account_url=self.url, credential=self.shared_access_key)
+        # [END create_file_service_client]
 
         # Get account information for the File Service
         account_info = file_service_client.get_service_properties()
@@ -59,10 +63,11 @@ class TestAuthSamples(StorageTestCase):
         file_service_client = FileServiceClient.from_connection_string(self.connection_string)
 
         # Create a SAS token to use to authenticate a new client
+        # [START generate_sas_token]
         sas_token = file_service_client.generate_shared_access_signature(
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
-
+        # [END generate_sas_token]
         assert sas_token is not None
