@@ -39,11 +39,6 @@ These settings apply only when `--tag=package-2019-06` is specified on the comma
 input-file:
 - Microsoft.Cdn/preview/2019-06-15-preview/cdn.json
 - Microsoft.Cdn/preview/2019-06-15-preview/cdnwebapplicationfirewall.json
-directive:
-  - where:
-      - $.paths
-    suppress:
-      - OperationsAPIImplementation
 ```
 
 

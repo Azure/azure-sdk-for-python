@@ -16,7 +16,7 @@ Python packages are uploaded to [PyPI](https://pypi.org/). Once you've uploaded 
 
 Go to this Url: https://aka.ms/pysdkrelease
 
-- Click on "Queue"
+- Click on "Run pipeline"
 - Change "BuildTargetingString" to the name of your package. Example: azure-mgmt-compute
 - Change "CandidateForRelease" value to `True` (it should be defaulted to `False`)
 
