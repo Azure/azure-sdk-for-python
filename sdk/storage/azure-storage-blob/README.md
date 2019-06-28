@@ -9,7 +9,7 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](TODO) | [Package (PyPi)](TODO) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
+[Source code](TODO) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
 
 
 ## Getting started
@@ -42,7 +42,7 @@ Interaction with Storage Blobs starts with an instance of the BlobServiceClient 
 To authenticate the client you have a few options:
 1. Use a SAS token string 
 2. Use an account shared access key
-3. Use a token credential from [azure.identity](TODO)
+3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
 Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#client-creation-with-a-connection-string).
 
