@@ -1,5 +1,3 @@
-
-
 # Azure Storage File client library for Python
 
 ## Getting started

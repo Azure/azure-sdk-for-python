@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .version import __version__
+from .version import VERSION
 from .file_client import FileClient
 from .directory_client import DirectoryClient
 from .share_client import ShareClient
@@ -14,8 +14,7 @@ from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountPermissions,
-    StorageErrorCode
-)
+    StorageErrorCode)
 from .models import (
     ShareProperties,
     SharePropertiesPaged,
@@ -28,8 +27,10 @@ from .models import (
     AccessPolicy,
     FilePermissions,
     SharePermissions,
-    ContentSettings
-)
+    ContentSettings)
+
+
+__version__ = VERSION
 
 
 __all__ = [

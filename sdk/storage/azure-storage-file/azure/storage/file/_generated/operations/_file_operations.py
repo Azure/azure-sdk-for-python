@@ -214,7 +214,7 @@ class FileOperations(object):
                 'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
-                'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-content-md5')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
         if response.status_code == 206:
@@ -242,7 +242,7 @@ class FileOperations(object):
                 'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
-                'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-content-md5')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
 

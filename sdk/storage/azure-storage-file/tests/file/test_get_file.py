@@ -1186,7 +1186,6 @@ class StorageGetFileTest(StorageTestCase):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
-        pytest.skip("md5 header returned empty")
 
         file_client = FileClient(
             self.get_file_url(),

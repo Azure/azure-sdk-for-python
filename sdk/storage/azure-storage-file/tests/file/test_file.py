@@ -668,7 +668,6 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_copy_file_async_private_file(self):
         # Arrange
-        pytest.skip("")
         self._create_remote_share()
         source_file = self._create_remote_file()
 
@@ -687,8 +686,6 @@ class StorageFileTest(StorageTestCase):
 
     @record
     def test_copy_file_async_private_file_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
@@ -719,8 +716,6 @@ class StorageFileTest(StorageTestCase):
 
     @record
     def test_abort_copy_file(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
@@ -1222,7 +1217,6 @@ class StorageFileTest(StorageTestCase):
     @record
     def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        pytest.skip("")
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1237,21 +1231,17 @@ class StorageFileTest(StorageTestCase):
         identifiers = {'testid': access_policy}
         share_client.set_share_access_policy(identifiers)
 
-        resp = self.fs.set_share_acl(self.share_name, identifiers)
-
         token = file_client.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        service = FileService(
-            self.settings.STORAGE_ACCOUNT_NAME,
-            sas_token=token,
-            request_session=requests.Session(),
-        )
-        self._set_test_proxy(service, self.settings)
-        result = service.get_file_to_bytes(self.share_name, None, file_name)
+        sas_file = FileClient(
+            file_client.url,
+            credential=token)
+
+        content = file_client.download_file().content_as_bytes()
 
         # Assert
-        self.assertEqual(self.short_byte_data, result.content)
+        self.assertEqual(self.short_byte_data, content)
 
     @record
     def test_account_sas(self):

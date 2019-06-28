@@ -14,6 +14,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
+from azure.core.polling import LROPoller
 
 from .models import HandlesPaged
 from ._generated import AzureFileStorage
@@ -30,7 +31,7 @@ from ._shared.utils import (
     process_storage_error,
     parse_connection_str)
 from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
-from .polling import CopyStatusPoller
+from .polling import CopyStatusPoller, CloseHandles
 
 from ._share_utils import deserialize_directory_properties
 
@@ -709,7 +710,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
+    def list_handles(self, marker=None, timeout=None, **kwargs):
         """Lists handles for file.
 
         :param str marker:
@@ -718,9 +719,6 @@ class FileClient(StorageAccountHostsMixin):
             this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :param bool recursive:
-            Boolean that specifies if operation should apply to the directory specified by the client,
-            its files, its subdirectories and their files.
         :returns: An auto-paging iterable of HandleItems
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -728,7 +726,35 @@ class FileClient(StorageAccountHostsMixin):
             self._client.file.list_handles,
             sharesnapshot=self.snapshot,
             timeout=timeout,
-            recursive=recursive,
             **kwargs)
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
+
+    def close_handles(
+            self, handle=None, # type: Union[str, HandleItem]
+            timeout=None, # type: Optional[int]
+            **kwargs # type: Any
+        ):
+        # type: (...) -> Any
+        try:
+            handle_id = handle.id
+        except AttributeError:
+            handle_id = handle or '*'
+        command = functools.partial(
+            self._client.file.force_close_handles,
+            handle_id,
+            timeout=timeout,
+            sharesnapshot=self.snapshot,
+            cls=return_response_headers,
+            **kwargs)
+        try:
+            start_close = command()
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        return LROPoller(
+            command,
+            start_close,
+            None,
+            polling_method)

@@ -13,6 +13,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
+from azure.core.polling import LROPoller
 
 from .file_client import FileClient
 
@@ -31,6 +32,7 @@ from ._shared.utils import (
     parse_connection_str)
 
 from ._share_utils import deserialize_directory_properties
+from .polling import CloseHandles
 
 
 class DirectoryClient(StorageAccountHostsMixin):
@@ -61,7 +63,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             directory_path=None, # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
-            **kwargs, # type: Optional[Any]
+            **kwargs # type: Optional[Any]
         ):
         # type: (...) -> DirectoryClient
         try:
@@ -109,11 +111,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         share_name = self.share_name
         if isinstance(share_name, six.text_type):
             share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
+        directory_path = ""
+        if self.directory_path:
+            directory_path = "/" + quote(self.directory_path, safe='~')
+        return "{}://{}/{}{}{}".format(
             self.scheme,
             hostname,
             quote(share_name),
-            quote(self.directory_path, safe='~'),
+            directory_path,
             self._query_str)
 
     @classmethod
@@ -264,6 +269,37 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs)
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
+
+    def close_handles(
+            self, handle=None, # type: Union[str, HandleItem]
+            recursive=False,  # type: bool
+            timeout=None, # type: Optional[int]
+            **kwargs # type: Any
+        ):
+        # type: (...) -> Any
+        try:
+            handle_id = handle.id
+        except AttributeError:
+            handle_id = handle or '*'
+        command = functools.partial(
+            self._client.directory.force_close_handles,
+            handle_id,
+            timeout=timeout,
+            sharesnapshot=self.snapshot,
+            recursive=recursive,
+            cls=return_response_headers,
+            **kwargs)
+        try:
+            start_close = command()
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        return LROPoller(
+            command,
+            start_close,
+            None,
+            polling_method)
 
     def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties

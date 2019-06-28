@@ -238,8 +238,8 @@ class FilesAndDirectoriesListSegment(Model):
     }
 
     _attribute_map = {
-        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]', 'xml': {'name': 'Directory', 'itemsName': 'Directory'}},
-        'file_items': {'key': 'FileItems', 'type': '[FileItem]', 'xml': {'name': 'File', 'itemsName': 'File'}},
+        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'Entries', 'itemsName': 'Entries', 'wrapped': True}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
     }
     _xml_map = {
         'name': 'Entries'
@@ -289,14 +289,17 @@ class HandleItem(Model):
     }
 
     _attribute_map = {
-        'handle_id': {'key': 'HandleId', 'type': 'str'},
-        'path': {'key': 'Path', 'type': 'str'},
-        'file_id': {'key': 'FileId', 'type': 'str'},
-        'parent_id': {'key': 'ParentId', 'type': 'str'},
-        'session_id': {'key': 'SessionId', 'type': 'str'},
-        'client_ip': {'key': 'ClientIp', 'type': 'str'},
-        'open_time': {'key': 'OpenTime', 'type': 'rfc-1123'},
-        'last_reconnect_time': {'key': 'LastReconnectTime', 'type': 'rfc-1123'},
+        'handle_id': {'key': 'HandleId', 'type': 'str', 'xml': {'name': 'HandleId'}},
+        'path': {'key': 'Path', 'type': 'str', 'xml': {'name': 'Path'}},
+        'file_id': {'key': 'FileId', 'type': 'str', 'xml': {'name': 'FileId'}},
+        'parent_id': {'key': 'ParentId', 'type': 'str', 'xml': {'name': 'ParentId'}},
+        'session_id': {'key': 'SessionId', 'type': 'str', 'xml': {'name': 'SessionId'}},
+        'client_ip': {'key': 'ClientIp', 'type': 'str', 'xml': {'name': 'ClientIp'}},
+        'open_time': {'key': 'OpenTime', 'type': 'rfc-1123', 'xml': {'name': 'OpenTime'}},
+        'last_reconnect_time': {'key': 'LastReconnectTime', 'type': 'rfc-1123', 'xml': {'name': 'LastReconnectTime'}},
+    }
+    _xml_map = {
+        'name': 'Handle'
     }
 
     def __init__(self, *, handle_id: str, path: str, file_id: str, session_id: str, client_ip: str, open_time, parent_id: str=None, last_reconnect_time=None, **kwargs) -> None:
@@ -389,8 +392,11 @@ class ListHandlesResponse(Model):
     }
 
     _attribute_map = {
-        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'HandleList'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, next_marker: str, handle_list=None, **kwargs) -> None:
