@@ -2,7 +2,13 @@
 
 ## 5.0.0b1 (2019-06-25)
 
+Version 5.0.0b1 is a preview of our efforts in creating a library that follows the [Azure SDK Design Guidelines for Python](https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html) for creating client libraries that are user friendly and idiomatic to the Python ecosystem. For more information, please visit https://aka.ms/azure-sdk-preview1-python.
+
 - Added more configuration parameters when creating EventHubClient.
+  - `credential`: The credential object used for authentication which implements `TokenCredential` interface of getting tokens.
+  - `transport_type`: The type of transport protocol that will be used for communicating with the Event Hubs service.
+  - `max_retries`: The max number of attempts to redo the failed operation when an error happened.
+  - for more information about the configuration parameters please read the reference documentation.
 - New error hierarchy
   - `azure.error.EventHubError`
   - `azure.error.ConnectionLostError`
@@ -18,10 +24,9 @@
   - Each EventHubProducer/EventHubConsumer is responsible for its own connection management.
   - Added support for context manager on EventHubProducer and EventHubConsumer.
 - Reorganized async APIs into "azure.eventhub.aio" namespace and rename to drop the "_async" suffix.
-- Added support for authentication using azure-core credential.
+- Added support for authentication using azure-identity credential.
 - Added support for transport using AMQP over WebSocket.
-- Updated uAMQP dependency to 1.2.0
-
+- Updated uAMQP dependency to 1.2
 
 ## 1.3.1 (2019-02-28)
 

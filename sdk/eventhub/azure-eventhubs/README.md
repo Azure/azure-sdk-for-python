@@ -11,9 +11,9 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
 
-# Getting started
+## Getting started
 
-## Install the package
+### Install the package
 
 Install the Azure Event Hubs client library for Python with pip:
 
@@ -21,25 +21,26 @@ Install the Azure Event Hubs client library for Python with pip:
 $ pip install azure-eventhub
 ```
 
-### Prerequisites
+**Prerequisites**
 
-- An Azure subscription.
 - Python 2.7, 3.5 or later.
-- An existing Event Hubs namespace and event hub. You can create these entities by following the instructions in [this article](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create)
+- **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.  If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
-## Authenticate the client
+- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
+
+### Authenticate the client
 
 Interaction with Event Hubs starts with an instance of the EventHubClient class. You need the host name, SAS/AAD credential and event hub name to instantiate the client object.
 
-### Obtain a connection string
+#### Obtain a connection string
 
 For the Event Hubs client library to interact with an Event Hub, it will need to understand how to connect and authorize with it. The easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace. If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
 
-### Create client
+#### Create client
 
 There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate two ways:
 
-#### Create client from connection string:
+**Create client from connection string:**
 
 ```python
 from azure.eventhub import EventHubClient
@@ -49,9 +50,9 @@ event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 ```
 
-- The `from_connection_string` method takes the connection string of the form 'Endpoint=sb://<yournamespace>.servicebus.windows.net/;SharedAccessKeyName=<yoursharedaccesskeyname>;SharedAccessKey=<yoursharedaccesskey>' and entity name to your Event Hub instance. You can get the connection string from the [Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string#get-connection-string-from-the-portal).
+- The `from_connection_string` method takes the connection string of the form `Endpoint=sb://<yournamespace>.servicebus.windows.net/;SharedAccessKeyName=<yoursharedaccesskeyname>;SharedAccessKey=<yoursharedaccesskey>` and entity name to your Event Hub instance. You can get the connection string from the [Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string#get-connection-string-from-the-portal).
 
-#### Create client using the azure-identity library:
+**Create client using the azure-identity library:**
 
 ```python
 from azure.eventhub import EventHubClient
@@ -64,9 +65,9 @@ event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient(host, event_hub_path, credential)
 ```
 
-- This constructor takes the hostname and entity name of your Event Hub instance and credential that implements the TokenCredential interface. There are implementations of the TokenCredential interface available in the azure-identity package. The host name is of the format <yournamespace>.servicebus.windows.net.
+- This constructor takes the host name and entity name of your Event Hub instance and credential that implements the TokenCredential interface. There are implementations of the TokenCredential interface available in the [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
 
-# Key concepts
+## Key concepts
 
 - An **Event Hub client** is the primary interface for developers interacting with the Event Hubs client library, allowing for inspection of Event Hub metadata and providing a guided experience towards specific Event Hub operations such as the creation of producers and consumers.
 
@@ -80,18 +81,32 @@ client = EventHubClient(host, event_hub_path, credential)
 
 For more concepts and deeper discussion, see: [Event Hubs Features](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-features). Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
 
-# Examples
+## Examples
 
 The following sections provide several code snippets covering some of the most common Event Hubs tasks, including:
 
-- [Send event data](#send-event-data)
-- [Receive event data](#receive-event-data)
-- [Async send event data](#async-send-event-data)
-- [Async receive event data](#async-receive-event-data)
+- [Inspect an Event Hub](#inspect-an-event-hub)
+- [Publish events to an Event Hub](#publish-events-to-an-event-hub)
+- [Consume events from an Event Hub](#consume-events-from-an-event-hub)
+- [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
+- [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
 
-## Send event data
+### Inspect an Event Hub
 
-Sends an event data and blocks until acknowledgement is received or operation times out.
+Get the partition ids of an Event Hub.
+
+```python
+from azure.eventhub import EventHubClient
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient.from_connection_string(connection_str, event_hub_path)
+partition_ids = client.get_partition_ids()
+```
+
+### Publish events to an Event Hub
+
+Publish events to an Event Hub.
 
 ```python
 from azure.eventhub import EventHubClient, EventData
@@ -99,24 +114,24 @@ from azure.eventhub import EventHubClient, EventData
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
-sender = client.create_producer(partition_id="0")
+producer = client.create_producer(partition_id="0")
 
 try:
  	event_list = []
  	for i in range(10):
  		event_list.append(EventData(b"A single event"))
 
- 	with sender:
- 	    sender.send(event_list)
+ 	with producer:
+ 	    producer.send(event_list)
 except:
 	raise
 finally:
     pass
 ```
 
-## Receive event data
+### Consume events from an Event Hub
 
-Receive events from the EventHub.
+Consume events from an Event Hub.
 
 ```python
 import logging
@@ -125,12 +140,12 @@ from azure.eventhub import EventHubClient, EventData, EventPosition
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
-receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
+consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
     logger = logging.getLogger("azure.eventhub")
-    with receiver:
-        received = receiver.receive(max_batch_size=100, timeout=5)
+    with consumer:
+        received = consumer.receive(max_batch_size=100, timeout=5)
         for event_data in received:
             logger.info("Message received:{}".format(event_data))
 except:
@@ -139,9 +154,9 @@ finally:
     pass
 ```
 
-## Async send event data
+### Async publish events to an Event Hub
 
-Sends an event data and asynchronously.
+Publish events to an Event Hub asynchronously.
 
 ```python
 from azure.eventhub.aio import EventHubClient
@@ -150,24 +165,24 @@ from azure.eventhub import EventData
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
-sender = client.create_producer(partition_id="0")
+producer = client.create_producer(partition_id="0")
 
 try:
  	event_list = []
  	for i in range(10):
  		event_list.append(EventData(b"A single event"))
 
-	async with sender:
-		await sender.send(event_list)
+	async with producer:
+		await producer.send(event_list)
 except:
 	raise
 finally:
     pass
 ```
 
-## Async receive event data
+### Async consume events from an Event Hub
 
-Receive events asynchronously from the EventHub.
+Consume events asynchronously from an EventHub.
 
 ```python
 import logging
@@ -177,12 +192,12 @@ from azure.eventhub import EventData, EventPosition
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
-receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
+consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
 try:
     logger = logging.getLogger("azure.eventhub")
-    async with receiver:
-        received = await receiver.receive(max_batch_size=100, timeout=5)
+    async with consumer:
+        received = await consumer.receive(max_batch_size=100, timeout=5)
         for event_data in received:
             logger.info("Message received:{}".format(event_data))
 except:
@@ -191,9 +206,9 @@ finally:
     pass
 ```
 
-# Troubleshooting
+## Troubleshooting
 
-## General
+### General
 
 The Event Hubs APIs generate the following exceptions.
 
@@ -205,31 +220,33 @@ For instance, this error is raised if you try to send an EventData that is alrea
 - **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the above mentioned errors.
 
-# Next steps
+## Next steps
 
-## Examples
+### Examples
 
-- ./examples/send.py - use sender to publish events
-- ./examples/recv.py - use receiver to read events
-- ./examples/send_async.py - async/await support of a sender
-- ./examples/recv_async.py - async/await support of a receiver
-- ./examples/eph.py - event processor host
+These are the samples in our repo demonstraing the usage of the library.
 
-## Documentation
+- [./examples/send.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/send.py) - use producer to publish events
+- [./examples/recv.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/recv.py) - use consumer to consume events
+- [./examples/async_examples/send_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/send_async.py) - async/await support of a producer
+- [./examples/async_examples/recv_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/recv_async.py) - async/await support of a consumer
+- [./examples/eph.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/eph.py) - event processor host
+
+### Documentation
 
 Reference documentation is available at http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.
 
-## Logging
+### Logging
 
-- Enable 'azure.eventhub' logger to collect traces from the library.
-- Enable 'uamqp' logger to collect traces from the underlying uAMQP library.
+- Enable `azure.eventhub` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `network_tracing=True` when creating the client.
 
-## Provide Feedback
+### Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 

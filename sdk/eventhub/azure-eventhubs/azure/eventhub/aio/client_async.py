@@ -206,7 +206,7 @@ class EventHubClient(EventHubClientAbstract):
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype: ~azure.eventhub.aio.receiver_async.EventHubConsumer
+        :rtype: ~azure.eventhub.aio.consumer_async.EventHubConsumer
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -244,7 +244,7 @@ class EventHubClient(EventHubClientAbstract):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype ~azure.eventhub.aio.sender_async.EventHubProducer
+        :rtype ~azure.eventhub.aio.producer_async.EventHubProducer
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
