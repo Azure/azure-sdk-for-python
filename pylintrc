@@ -7,7 +7,7 @@ reports=no
 # locally-disabled: Warning locally suppressed using disable-msg
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods
 
 [FORMAT]
 max-line-length=120
@@ -21,6 +21,10 @@ init-import=yes
 max-locals=25
 # Maximum number of branch for function / method body
 max-branches=20
+# Maximum number of instance attributes for class
+max-attributes=10
+# Maximum number of ancestors
+max-parents=15
 
 [SIMILARITIES]
 min-similarity-lines=10
