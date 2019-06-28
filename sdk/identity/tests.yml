@@ -1,0 +1,11 @@
+trigger: none
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: identity
+      EnvVars:
+        AZURE_CLIENT_ID: $(python-identity-client-id)
+        AZURE_CLIENT_SECRET: $(python-identity-client-secret)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        PEM_CONTENT: $(python-identity-certificate)

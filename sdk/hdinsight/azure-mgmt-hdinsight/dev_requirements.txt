@@ -1,0 +1,4 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../keyvault/azure-keyvault-keys
+-e ../../keyvault/azure-mgmt-keyvault
+-e ../../resources/azure-mgmt-msi/

@@ -1,0 +1,19 @@
+trigger: none
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: eventhub
+      EnvVars:
+        AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
+        AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
+        EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
+        EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
+        EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
+        EVENT_HUB_SAS_KEY: $(python-eh-livetest-event-hub-sas-key)
+        EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
+        IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
+        IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
+        AAD_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
+        AAD_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
+        AAD_SECRET: $(python-eh-livetest-event-hub-aad-secret)

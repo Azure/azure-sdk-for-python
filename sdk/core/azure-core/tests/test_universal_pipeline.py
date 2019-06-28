@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #--------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -134,6 +135,12 @@ def test_raw_deserializer():
     raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result.tag == "groot"
+
+    # The basic deserializer works with unicode XML
+    response = build_response(u'<groot language="français"/>'.encode('utf-8'), content_type="application/xml")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result.attrib["language"] == u"français"
 
     # Catch some weird situation where content_type is XML, but content is JSON
     response = build_response(b'{"ugly": true}', content_type="application/xml")

@@ -62,7 +62,7 @@ def parse_input(input_parameter):
 # given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
 def resolve_package_directory(package_name, sdk_root=None):
     packages = [
-        os.path.dirname(p)
+        p.parent
         for p in (
             list(sdk_root.glob("{}/setup.py".format(package_name)))
             + list(sdk_root.glob("sdk/*/{}/setup.py".format(package_name)))
@@ -77,7 +77,7 @@ def resolve_package_directory(package_name, sdk_root=None):
         )
         sys.exit(1)
 
-    return os.path.relpath(packages[0], sdk_root)
+    return str(packages[0].relative_to(sdk_root))
 
 
 def get_versioned_modules(
@@ -327,7 +327,12 @@ def build_last_rt_list(
         if local_last_api_version == last_api_version:
             continue
         # If some others RT contains "local_last_api_version", and it's greater than the future default, danger, don't profile it
-        if there_is_a_rt_that_contains_api_version(versioned_dict, local_last_api_version) and local_last_api_version > last_api_version:
+        if (
+            there_is_a_rt_that_contains_api_version(
+                versioned_dict, local_last_api_version
+            )
+            and local_last_api_version > last_api_version
+        ):
             continue
         last_rt_list[operation] = local_last_api_version
 
@@ -382,7 +387,7 @@ def patch_import(file_path: Union[str, Path]) -> None:
     """
     # That's a dirty hack, maybe it's worth making configuration a template?
     with open(file_path, "rb") as read_fd:
-        conf_bytes: bytes = read_fd.read()
+        conf_bytes = read_fd.read()
     conf_bytes = conf_bytes.replace(
         b" .version", b" ..version"
     )  # Just a dot right? Worth its own template for that? :)
@@ -415,17 +420,26 @@ def main(input_str, default_api=None):
     # I need default_api to be v2019_06_07_preview shaped if it exists, let's be smart
     # and change it automatically so I can take both syntax as input
     if default_api and not default_api.startswith("v"):
-        last_api_version = [mod_api for mod_api, real_api in mod_to_api_version.items() if real_api == default_api][0]
+        last_api_version = [
+            mod_api
+            for mod_api, real_api in mod_to_api_version.items()
+            if real_api == default_api
+        ][0]
         _LOGGER.info("Default API version will be: %s", last_api_version)
 
     last_api_path = client_folder / last_api_version
 
+    # In case we are transitioning from a single api generation, clean old folders
+    shutil.rmtree(str(client_folder / "operations"), ignore_errors=True)
+    shutil.rmtree(str(client_folder / "models"), ignore_errors=True)
+
     shutil.copy(
-        client_folder / last_api_version / "_configuration.py",
-        client_folder / "_configuration.py",
+        str(client_folder / last_api_version / "_configuration.py"),
+        str(client_folder / "_configuration.py"),
     )
     shutil.copy(
-        client_folder / last_api_version / "__init__.py", client_folder / "__init__.py"
+        str(client_folder / last_api_version / "__init__.py"),
+        str(client_folder / "__init__.py"),
     )
     if is_multi_client_package:
         _LOGGER.warning("Patching multi-api client basic files")
@@ -464,10 +478,7 @@ def main(input_str, default_api=None):
     # }
 
     last_rt_list = build_last_rt_list(
-        versioned_operations_dict,
-        mixin_operations,
-        last_api_version,
-        preview_mode
+        versioned_operations_dict, mixin_operations, last_api_version, preview_mode
     )
 
     conf = {
@@ -480,7 +491,9 @@ def main(input_str, default_api=None):
         "last_api_version": mod_to_api_version[last_api_version],
         "client_doc": client_class.__doc__.split("\n")[0],
         "last_rt_list": last_rt_list,
-        "default_models": sorted({last_api_version} | {versions for _, versions in last_rt_list.items()})
+        "default_models": sorted(
+            {last_api_version} | {versions for _, versions in last_rt_list.items()}
+        ),
     }
 
     env = Environment(
@@ -504,21 +517,24 @@ def main(input_str, default_api=None):
         template = env.get_template(template_name)
         result = template.render(**conf)
 
-        with open(future_filepath, "w") as fd:
+        with future_filepath.open("w") as fd:
             fd.write(result)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Multi-API client generation for Azure SDK for Python',
+        description="Multi-API client generation for Azure SDK for Python"
     )
-    parser.add_argument("--debug",
-                        dest="debug", action="store_true",
-                        help="Verbosity in DEBUG mode")
-    parser.add_argument('--default-api-version',
-                        dest='default_api', default=None,
-                        help='Force default API version, do not detect it. [default: %(default)s]')
-    parser.add_argument('package_name', help='The package name.')
+    parser.add_argument(
+        "--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode"
+    )
+    parser.add_argument(
+        "--default-api-version",
+        dest="default_api",
+        default=None,
+        help="Force default API version, do not detect it. [default: %(default)s]",
+    )
+    parser.add_argument("package_name", help="The package name.")
 
     args = parser.parse_args()
 
