@@ -428,6 +428,22 @@ class StorageClientTest(StorageTestCase):
 
         service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
+    @record
+    def test_user_agent_append(self):
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "azsdk-python-storage.blob/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        custom_headers = {'User-Agent': 'customer_user_agent'}
+        service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
+
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

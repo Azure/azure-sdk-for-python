@@ -256,12 +256,15 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
         super(StorageUserAgentPolicy, self).__init__()
 
     def on_request(self, request, **kwargs):
+        existing = request.http_request.headers.get(self._USERAGENT, "")
         app_string = request.context.options.pop('user_agent', None) or self._application
         if app_string:
             request.http_request.headers[self._USERAGENT] = "{} {}".format(
                 app_string, self._user_agent)
         else:
             request.http_request.headers[self._USERAGENT] = self._user_agent
+        if existing:
+            request.http_request.headers[self._USERAGENT] += " " + existing
 
 
 class StorageRequestHook(SansIOHTTPPolicy):

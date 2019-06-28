@@ -502,8 +502,8 @@ def create_pipeline(credential, **kwargs):
         transport = RequestsTransport(config)
     policies = [
         QueueMessagePolicy(),
-        config.user_agent_policy,
         config.headers_policy,
+        config.user_agent_policy,
         StorageContentValidation(),
         StorageRequestHook(**kwargs),
         credential_policy,
