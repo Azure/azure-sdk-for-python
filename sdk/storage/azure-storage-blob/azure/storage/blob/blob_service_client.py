@@ -60,6 +60,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            :start-after: [START create_blob_service_client]
+            :end-before: [END create_blob_service_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the BlobServiceClient with account url and credential.
     """
 
     def __init__(
@@ -103,6 +111,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobServiceClient from a connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
@@ -122,14 +138,16 @@ class BlobServiceClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any BlobServiceClient,
         ContainerClient or BlobClient.
 
-        :param ~azure.storage.blob.models.ResourceTypes resource_types:
+        :param resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.blob.models.AccountPermissions permission:
+        :type resource_types: str or ~azure.storage.blob.models.ResourceTypes
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ~azure.storage.blob.models.AccountPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -155,6 +173,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START create_sas_token]
+                :end-before: [END create_sas_token]
+                :language: python
+                :dedent: 8
+                :caption: Generating a shared access signature.
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
@@ -170,6 +196,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         :returns: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START get_blob_service_account_info]
+                :end-before: [END get_blob_service_account_info]
+                :language: python
+                :dedent: 8
+                :caption: Getting account information for the blob service.
         """
         try:
             return self._client.service.get_account_info(cls=return_response_headers, **kwargs)
@@ -199,6 +233,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START get_blob_service_stats]
+                :end-before: [END get_blob_service_stats]
+                :language: python
+                :dedent: 8
+                :caption: Getting service stats for the blob service.
         """
         try:
             return self._client.service.get_statistics(
@@ -214,6 +256,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START get_blob_service_properties]
+                :end-before: [END get_blob_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting service properties for the blob service.
         """
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs)
@@ -271,6 +321,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START set_blob_service_properties]
+                :end-before: [END set_blob_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Setting service properties for the blob service.
         """
         props = StorageServiceProperties(
             logging=logging,
@@ -315,6 +373,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START bsc_list_containers]
+                :end-before: [END bsc_list_containers]
+                :language: python
+                :dedent: 12
+                :caption: Listing the containers in the blob service.
         """
         include = 'metadata' if include_metadata else None
         command = functools.partial(
@@ -343,11 +409,19 @@ class BlobServiceClient(StorageAccountHostsMixin):
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.common.PublicAccess public_access:
+        :param ~azure.storage.blob.models.PublicAccess public_access:
             Possible values include: container, blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.container_client.ContainerClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START bsc_create_container]
+                :end-before: [END bsc_create_container]
+                :language: python
+                :dedent: 12
+                :caption: Creating a container in the blob service.
         """
         container = self.get_container_client(name)
         container.create_container(
@@ -400,6 +474,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START bsc_delete_container]
+                :end-before: [END bsc_delete_container]
+                :language: python
+                :dedent: 12
+                :caption: Deleting a container in the blob service.
         """
         container = self.get_container_client(container)
         container.delete_container(
@@ -422,6 +504,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START bsc_get_container_client]
+                :end-before: [END bsc_get_container_client]
+                :language: python
+                :dedent: 8
+                :caption: Getting the container client to interact with a specific container.
         """
         return ContainerClient(
             self.url, container=container,
@@ -451,6 +541,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.core.blob.blob_client.BlobClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+                :start-after: [START bsc_get_blob_client]
+                :end-before: [END bsc_get_blob_client]
+                :language: python
+                :dedent: 12
+                :caption: Getting the blob client to interact with a specific blob.
         """
         return BlobClient(
             self.url, container=container, blob=blob, snapshot=snapshot,
