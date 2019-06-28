@@ -11,6 +11,7 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
   - `transport_type`: The type of transport protocol that will be used for communicating with the Event Hubs service.
   - `max_retries`: The max number of attempts to redo the failed operation when an error happened.
   - for detailed information about the configuration parameters, please read the reference documentation.
+- Added new methods `get_partition_properties` and `get_partition_ids` to EventHubClient.
 - Added support for authentication using azure-identity credential.
 - Added support for transport using AMQP over WebSocket.
 
@@ -27,6 +28,7 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
   - New APIs for creating EventHubProducer/EventHubConsumer.
   - EventHubConsumer is now iterable.
 - Rename class azure.eventhub.Offset to azure.eventhub.EventPosition.
+- Rename method `get_eventhub_info` to `get_properties` of EventHubClient.
 - Reorganized connection management, EventHubClient is no longer responsible for opening/closing EventHubProducer/EventHubConsumer.
   - Each EventHubProducer/EventHubConsumer is responsible for its own connection management.
   - Added support for context manager on EventHubProducer and EventHubConsumer.
