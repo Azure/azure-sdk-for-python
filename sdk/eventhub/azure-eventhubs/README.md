@@ -37,7 +37,9 @@ For the Event Hubs client library to interact with an Event Hub, it will need to
 
 ### Create client
 
-There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate one way:
+There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate two ways:
+
+#### Create client from connection string:
 
 ```python
 from azure.eventhub import EventHubClient
@@ -46,6 +48,23 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubClient.from_connection_string(connection_str, event_hub_path)
 ```
+
+- The `from_connection_string` method takes the connection string of the form 'Endpoint=sb://<yournamespace>.servicebus.windows.net/;SharedAccessKeyName=<yoursharedaccesskeyname>;SharedAccessKey=<yoursharedaccesskey>' and entity name to your Event Hub instance. You can get the connection string from the [Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string#get-connection-string-from-the-portal).
+
+#### Create client using the azure-identity library:
+
+```python
+from azure.eventhub import EventHubClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+
+host = '<< HOSTNAME OF THE EVENT HUB >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
+client = EventHubClient(host, event_hub_path, credential)
+```
+
+- This constructor takes the hostname and entity name of your Event Hub instance and credential that implements the TokenCredential interface. There are implementations of the TokenCredential interface available in the azure-identity package. The host name is of the format <yournamespace>.servicebus.windows.net.
 
 # Key concepts
 
