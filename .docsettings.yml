@@ -1,5 +1,5 @@
 omitted_paths:
-  - azure-sdk-tools/*
+  - tools/*
   - scripts/*
   - azure-mgmt-netapp/tests/*
   - "azure-mgmt*/*"
@@ -62,6 +62,10 @@ known_content_issues:
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-core/README.md', 'nspkg and common']
 
+  # dev tools 
+  - ['doc/dev/mgmt/swagger/single_api/readme.md', 'dev readme']
+  - ['doc/dev/mgmt/swagger/multi_api/readme.md', 'dev readme']
+  - ['doc/dev/mgmt/README.md', 'dev readme']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

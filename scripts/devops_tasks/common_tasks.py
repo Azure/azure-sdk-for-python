@@ -33,10 +33,14 @@ def process_glob_string(glob_string, target_root_dir):
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
-def run_check_call(command_array, working_directory, acceptable_return_codes = []):
-    print('Command Array: {0}, Target Working Directory: {1}'.format(command_array, working_directory))
+def run_check_call(command_array, working_directory, acceptable_return_codes = [], run_as_shell = False):
     try:
-        check_call(command_array, cwd = working_directory)
+        if run_as_shell:
+            print('Command Array: {0}, Target Working Directory: {1}'.format(' '.join(command_array), working_directory))
+            check_call(' '.join(command_array), cwd = working_directory, shell = True)
+        else:
+            print('Command Array: {0}, Target Working Directory: {1}'.format(command_array, working_directory))
+            check_call(command_array, cwd = working_directory)
     except CalledProcessError as err:
         if err.returncode not in acceptable_return_codes:
             print(err) #, file = sys.stderr

@@ -57,19 +57,19 @@ class CloudPoolPaged(Paged):
         super(CloudPoolPaged, self).__init__(*args, **kwargs)
 
 
-class NodeAgentSkuPaged(Paged):
+class ImageInformationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`NodeAgentSku <azure.batch.models.NodeAgentSku>` object
+    A paging container for iterating over a list of :class:`ImageInformation <azure.batch.models.ImageInformation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[NodeAgentSku]'}
+        'current_page': {'key': 'value', 'type': '[ImageInformation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(NodeAgentSkuPaged, self).__init__(*args, **kwargs)
+        super(ImageInformationPaged, self).__init__(*args, **kwargs)
 
 
 class PoolNodeCountsPaged(Paged):

@@ -82,7 +82,7 @@ import logging
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger("azure")
-logger.set_level(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
@@ -107,7 +107,7 @@ result = client.get_operation(logging_enable=True)
 Headers can be configured up front, where any custom headers will be applied to all outgoing operations, and additional headers can also be added dynamically per operation.
 ```python
 config = FooService.create_config()
-config.headers_policy.headers = {'CustomValue': 'Foo'}
+config.headers_policy.add_header('CustomValue', 'Foo')
 
 # Or headers can be added per operation. These headers will supplement existing headers
 # or those defined in the config headers policy. They will also overwrite existing
@@ -126,4 +126,23 @@ config.user_agent_policy.add_user_agent("CustomValue")
 # You can also pass in a custom value per operation to append to the end of the user-agent.
 # This can be used together with the policy configuration to append multiple values.
 result = client.get_operation(user_agent="AnotherValue")
+```
+
+### Configuring proxy
+
+Proxies can be passed in to the proxy policy or can be used from your environment settings. Proxy is currently implemented in transport.
+
+```python
+config = FooService.create_config()
+
+# Using a specified proxy
+config.proxy_policy.proxies = {'https': 'http://10.10.1.10:1180'}
+
+# Use proxy from environment settings (Defaults to True)
+# This will configure proxies by using the environment variables such as HTTP_PROXY and HTTPS_PROXY.
+# EXPORT HTTPS_PROXY='http://10.10.1.10:1180'
+config.proxy_policy.use_env_settings=True
+
+# For HTTP Basic Auth with proxy, use http://user:password@host/
+config.proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 ```

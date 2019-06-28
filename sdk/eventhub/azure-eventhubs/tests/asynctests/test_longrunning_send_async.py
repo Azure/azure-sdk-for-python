@@ -13,7 +13,8 @@ import sys
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClientAsync, EventData
+from azure.eventhub import EventData, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubClient
 
 
 def get_logger(filename, level=logging.INFO):
@@ -38,16 +39,12 @@ def get_logger(filename, level=logging.INFO):
 
     return azure_logger
 
+
 logger = get_logger("send_test_async.log", logging.INFO)
 
 
-def check_send_successful(outcome, condition):
-    if outcome.value != 0:
-        print("Send failed {}".format(condition))
-
-
 async def get_partitions(args):
-    eh_data = await args.get_eventhub_info_async()
+    eh_data = await args.get_properties()
     return eh_data["partition_ids"]
 
 
@@ -55,26 +52,17 @@ async def pump(pid, sender, args, duration):
     deadline = time.time() + duration
     total = 0
 
-    def data_generator():
-        for i in range(args.batch):
-            yield b"D" * args.payload
-
-    if args.batch > 1:
-        logger.info("{}: Sending batched messages".format(pid))
-    else:
-        logger.info("{}: Sending single messages".format(pid))
-
     try:
-        while time.time() < deadline:
-            if args.batch > 1:
-                data = EventData(batch=data_generator())
-            else:
+        async with sender:
+            event_list = []
+            while time.time() < deadline:
                 data = EventData(body=b"D" * args.payload)
-            sender.transfer(data, callback=check_send_successful)
-            total += args.batch
-            if total % 100 == 0:
-               await sender.wait_async()
-               logger.info("{}: Send total {}".format(pid, total))
+                event_list.append(data)
+                total += 1
+                if total % 100 == 0:
+                    await sender.send(event_list)
+                    event_list = []
+                    logger.info("{}: Send total {}".format(pid, total))
     except Exception as err:
         logger.error("{}: Send failed {}".format(pid, err))
         raise
@@ -82,12 +70,12 @@ async def pump(pid, sender, args, duration):
 
 
 @pytest.mark.liveTest
-def test_long_running_partition_send_async(connection_str):
+@pytest.mark.asyncio
+async def test_long_running_partition_send_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--payload", help="payload size", type=int, default=1024)
-    parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=200)
-    parser.add_argument("--partitions", help="Comma seperated partition IDs")
+    parser.add_argument("--partitions", help="Comma separated partition IDs")
     parser.add_argument("--conn-str", help="EventHub connection string", default=connection_str)
     parser.add_argument("--eventhub", help="Name of EventHub")
     parser.add_argument("--address", help="Address URI to the EventHub entity")
@@ -99,15 +87,14 @@ def test_long_running_partition_send_async(connection_str):
     args, _ = parser.parse_known_args()
 
     if args.conn_str:
-        client = EventHubClientAsync.from_connection_string(
+        client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, debug=True)
+            event_hub_path=args.eventhub, network_tracing=False)
     elif args.address:
-        client = EventHubClientAsync(
-            args.address,
-            username=args.sas_policy,
-            password=args.sas_key,
-            auth_timeout=500)
+        client = EventHubClient(host=args.address,
+                                event_hub_path=args.eventhub,
+                                credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+                                network_tracing=False)
     else:
         try:
             import pytest
@@ -117,7 +104,7 @@ def test_long_running_partition_send_async(connection_str):
 
     try:
         if not args.partitions:
-            partitions = loop.run_until_complete(get_partitions(client))
+            partitions = await client.get_partition_ids()
         else:
             pid_range = args.partitions.split("-")
             if len(pid_range) > 1:
@@ -126,16 +113,13 @@ def test_long_running_partition_send_async(connection_str):
                 partitions = args.partitions.split(",")
         pumps = []
         for pid in partitions:
-            sender = client.add_async_sender(partition=pid, send_timeout=0, keep_alive=False)
+            sender = client.create_producer(partition_id=pid, send_timeout=0)
             pumps.append(pump(pid, sender, args, args.duration))
-        loop.run_until_complete(client.run_async())
-        results = loop.run_until_complete(asyncio.gather(*pumps, return_exceptions=True))
+        results = await asyncio.gather(*pumps, return_exceptions=True)
         assert not results
     except Exception as e:
-        logger.error("Sender failed: {}".format(e))
-    finally:
-        logger.info("Shutting down sender")
-        loop.run_until_complete(client.stop_async())
+        logger.error("EventHubProducer failed: {}".format(e))
+
 
 if __name__ == '__main__':
-    test_long_running_partition_send_async(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    asyncio.run(test_long_running_partition_send_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))

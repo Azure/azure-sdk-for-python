@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.1.0 (2019-06-17)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGetHttpsEndpoint has a new parameter disable_gateway_auth
+- Model ApplicationGetHttpsEndpoint has a new parameter sub_domain_suffix
+
 1.0.0 (2019-04-08)
 ++++++++++++++++++
 
