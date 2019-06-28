@@ -357,6 +357,85 @@ class AutoscaleTimeAndCapacity(Model):
         self.max_instance_count = kwargs.get('max_instance_count', None)
 
 
+class BillingMeters(Model):
+    """The billing meters.
+
+    :param meter_parameter: The virtual machine sizes.
+    :type meter_parameter: str
+    :param meter: The HDInsight meter guid.
+    :type meter: str
+    :param unit: The unit of meter, VMHours or CoreHours.
+    :type unit: str
+    """
+
+    _attribute_map = {
+        'meter_parameter': {'key': 'meterParameter', 'type': 'str'},
+        'meter': {'key': 'meter', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BillingMeters, self).__init__(**kwargs)
+        self.meter_parameter = kwargs.get('meter_parameter', None)
+        self.meter = kwargs.get('meter', None)
+        self.unit = kwargs.get('unit', None)
+
+
+class BillingResources(Model):
+    """The billing resources.
+
+    :param region: The region or location.
+    :type region: str
+    :param billing_meters: The billing meter information.
+    :type billing_meters: list[~azure.mgmt.hdinsight.models.BillingMeters]
+    :param disk_billing_meters: The managed disk billing information.
+    :type disk_billing_meters:
+     list[~azure.mgmt.hdinsight.models.DiskBillingMeters]
+    """
+
+    _attribute_map = {
+        'region': {'key': 'region', 'type': 'str'},
+        'billing_meters': {'key': 'billingMeters', 'type': '[BillingMeters]'},
+        'disk_billing_meters': {'key': 'diskBillingMeters', 'type': '[DiskBillingMeters]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BillingResources, self).__init__(**kwargs)
+        self.region = kwargs.get('region', None)
+        self.billing_meters = kwargs.get('billing_meters', None)
+        self.disk_billing_meters = kwargs.get('disk_billing_meters', None)
+
+
+class BillingResponseListResult(Model):
+    """The response for the operation to get regional billingSpecs for a
+    subscription.
+
+    :param vm_sizes: The virtual machine sizes to include or exclude.
+    :type vm_sizes: list[str]
+    :param vm_size_filters: The virtual machine filtering mode. Effectively
+     this can enabling or disabling the virtual machine sizes in a particular
+     set.
+    :type vm_size_filters:
+     list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+    :param billing_resources: The billing and managed disk billing resources
+     for a region.
+    :type billing_resources:
+     list[~azure.mgmt.hdinsight.models.BillingResources]
+    """
+
+    _attribute_map = {
+        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+        'vm_size_filters': {'key': 'vmSizeFilters', 'type': '[VmSizeCompatibilityFilterV2]'},
+        'billing_resources': {'key': 'billingResources', 'type': '[BillingResources]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BillingResponseListResult, self).__init__(**kwargs)
+        self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.billing_resources = kwargs.get('billing_resources', None)
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -953,6 +1032,31 @@ class DataDisksGroups(Model):
         self.disks_per_node = kwargs.get('disks_per_node', None)
         self.storage_account_type = None
         self.disk_size_gb = None
+
+
+class DiskBillingMeters(Model):
+    """The disk billing meters.
+
+    :param disk_rp_meter: The managed disk meter guid.
+    :type disk_rp_meter: str
+    :param sku: The managed disk billing sku, P30 or S30.
+    :type sku: str
+    :param tier: The managed disk billing tier, Standard or Premium. Possible
+     values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.hdinsight.models.Tier
+    """
+
+    _attribute_map = {
+        'disk_rp_meter': {'key': 'diskRpMeter', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'Tier'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiskBillingMeters, self).__init__(**kwargs)
+        self.disk_rp_meter = kwargs.get('disk_rp_meter', None)
+        self.sku = kwargs.get('sku', None)
+        self.tier = kwargs.get('tier', None)
 
 
 class DiskEncryptionProperties(Model):
@@ -1785,3 +1889,52 @@ class VirtualNetworkProfile(Model):
         super(VirtualNetworkProfile, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.subnet = kwargs.get('subnet', None)
+
+
+class VmSizeCompatibilityFilterV2(Model):
+    """This class represent a single filter object that defines a multidimensional
+    set. The dimensions of this set are Regions, ClusterFlavors, NodeTypes and
+    ClusterVersions. The constraint should be defined based on the following:
+    FilterMode (Exclude vs Include), VMSizes (the vm sizes in affect of
+    exclusion/inclusion) and the ordering of the Filters. Later filters
+    override previous settings if conflicted.
+
+    :param filter_mode: The filtering mode. Effectively this can enabling or
+     disabling the VM sizes in a particular set. Possible values include:
+     'Exclude', 'Include'
+    :type filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
+    :param regions: The list of regions under the effect of the filter.
+    :type regions: list[str]
+    :param cluster_flavors: The list of cluster flavors under the effect of
+     the filter.
+    :type cluster_flavors: list[str]
+    :param node_types: The list of node types affected by the filter.
+    :type node_types: list[str]
+    :param cluster_versions: The list of cluster versions affected in
+     Major.Minor format.
+    :type cluster_versions: list[str]
+    :param os_type: The OSType affected, Windows or Linux.
+    :type os_type: list[str or ~azure.mgmt.hdinsight.models.OSType]
+    :param vm_sizes: The list of virtual machine sizes to include or exclude.
+    :type vm_sizes: list[str]
+    """
+
+    _attribute_map = {
+        'filter_mode': {'key': 'filterMode', 'type': 'str'},
+        'regions': {'key': 'regions', 'type': '[str]'},
+        'cluster_flavors': {'key': 'clusterFlavors', 'type': '[str]'},
+        'node_types': {'key': 'nodeTypes', 'type': '[str]'},
+        'cluster_versions': {'key': 'clusterVersions', 'type': '[str]'},
+        'os_type': {'key': 'osType', 'type': '[OSType]'},
+        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VmSizeCompatibilityFilterV2, self).__init__(**kwargs)
+        self.filter_mode = kwargs.get('filter_mode', None)
+        self.regions = kwargs.get('regions', None)
+        self.cluster_flavors = kwargs.get('cluster_flavors', None)
+        self.node_types = kwargs.get('node_types', None)
+        self.cluster_versions = kwargs.get('cluster_versions', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.vm_sizes = kwargs.get('vm_sizes', None)

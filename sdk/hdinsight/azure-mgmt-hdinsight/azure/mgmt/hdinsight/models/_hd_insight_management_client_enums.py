@@ -69,3 +69,9 @@ class AsyncOperationState(str, Enum):
     in_progress = "InProgress"
     succeeded = "Succeeded"
     failed = "Failed"
+
+
+class FilterMode(str, Enum):
+
+    exclude = "Exclude"
+    include = "Include"

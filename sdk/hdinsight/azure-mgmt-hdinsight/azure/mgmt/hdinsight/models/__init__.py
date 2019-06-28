@@ -19,6 +19,9 @@ try:
     from ._models_py3 import AutoscaleRecurrence
     from ._models_py3 import AutoscaleSchedule
     from ._models_py3 import AutoscaleTimeAndCapacity
+    from ._models_py3 import BillingMeters
+    from ._models_py3 import BillingResources
+    from ._models_py3 import BillingResponseListResult
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
@@ -37,6 +40,7 @@ try:
     from ._models_py3 import ComputeProfile
     from ._models_py3 import ConnectivityEndpoint
     from ._models_py3 import DataDisksGroups
+    from ._models_py3 import DiskBillingMeters
     from ._models_py3 import DiskEncryptionProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Errors
@@ -69,6 +73,7 @@ try:
     from ._models_py3 import Usage
     from ._models_py3 import UsagesListResult
     from ._models_py3 import VirtualNetworkProfile
+    from ._models_py3 import VmSizeCompatibilityFilterV2
 except (SyntaxError, ImportError):
     from ._models import Application
     from ._models import ApplicationGetEndpoint
@@ -79,6 +84,9 @@ except (SyntaxError, ImportError):
     from ._models import AutoscaleRecurrence
     from ._models import AutoscaleSchedule
     from ._models import AutoscaleTimeAndCapacity
+    from ._models import BillingMeters
+    from ._models import BillingResources
+    from ._models import BillingResponseListResult
     from ._models import Cluster
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
@@ -97,6 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeProfile
     from ._models import ConnectivityEndpoint
     from ._models import DataDisksGroups
+    from ._models import DiskBillingMeters
     from ._models import DiskEncryptionProperties
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Errors
@@ -129,6 +138,7 @@ except (SyntaxError, ImportError):
     from ._models import Usage
     from ._models import UsagesListResult
     from ._models import VirtualNetworkProfile
+    from ._models import VmSizeCompatibilityFilterV2
 from ._paged_models import ApplicationPaged
 from ._paged_models import ClusterPaged
 from ._paged_models import OperationPaged
@@ -142,6 +152,7 @@ from ._hd_insight_management_client_enums import (
     ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
+    FilterMode,
 )
 
 __all__ = [
@@ -154,6 +165,9 @@ __all__ = [
     'AutoscaleRecurrence',
     'AutoscaleSchedule',
     'AutoscaleTimeAndCapacity',
+    'BillingMeters',
+    'BillingResources',
+    'BillingResponseListResult',
     'Cluster',
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
@@ -172,6 +186,7 @@ __all__ = [
     'ComputeProfile',
     'ConnectivityEndpoint',
     'DataDisksGroups',
+    'DiskBillingMeters',
     'DiskEncryptionProperties',
     'ErrorResponse', 'ErrorResponseException',
     'Errors',
@@ -204,6 +219,7 @@ __all__ = [
     'Usage',
     'UsagesListResult',
     'VirtualNetworkProfile',
+    'VmSizeCompatibilityFilterV2',
     'ClusterPaged',
     'ApplicationPaged',
     'RuntimeScriptActionDetailPaged',
@@ -216,4 +232,5 @@ __all__ = [
     'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
+    'FilterMode',
 ]
