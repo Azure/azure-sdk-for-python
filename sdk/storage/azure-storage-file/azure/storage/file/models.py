@@ -23,18 +23,18 @@ from ._generated.models import DirectoryItem, FileItem
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates
-    for blobs.
+    for files.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param str version: The version of Storage Analytics to configure.
-    :param bool enabled: Required. Indicates whether metrics are enabled for the
-     Blob service.
-    :param bool include_ap_is: Indicates whether metrics should generate summary
-     statistics for called API operations.
-    :param retention_policy: Required. Determines how long the associated data should
-     persist.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :ivar str version: The version of Storage Analytics to configure.
+    :ivar bool enabled: Required. Indicates whether metrics are enabled for the
+        File service.
+    :ivar bool include_ap_is: Indicates whether metrics should generate summary
+        statistics for called API operations.
+    :ivar retention_policy: Required. Determines how long the associated data should
+        persist.
+    :vartype retention_policy: ~azure.storage.file.models.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -51,10 +51,10 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     All required parameters must be populated in order to send to Azure.
 
     :param bool enabled: Required. Indicates whether a retention policy is enabled
-     for the storage service
+        for the storage service.
     :param int days: Indicates the number of days that metrics or logging or
-     soft-deleted data should be retained. All data older than this value will
-     be deleted.
+        soft-deleted data should be retained. All data older than this value will
+        be deleted.
     """
 
     def __init__(self, enabled=False, days=None):
@@ -152,27 +152,26 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class ContentSettings(DictMixin):
-    """
-    Used to store the content settings of a file.
+    """Used to store the content settings of a file.
 
-    :ivar str content_type:
+    :param str content_type:
         The content type specified for the file. If no content type was
         specified, the default content type is application/octet-stream.
-    :ivar str content_encoding:
+    :param str content_encoding:
         If the content_encoding has previously been set
         for the file, that value is stored.
-    :ivar str content_language:
+    :param str content_language:
         If the content_language has previously been set
         for the file, that value is stored.
-    :ivar str content_disposition:
+    :param str content_disposition:
         content_disposition conveys additional information about how to
         process the response payload, and also can be used to attach
         additional metadata. If content_disposition has previously been set
         for the file, that value is stored.
-    :ivar str cache_control:
+    :param str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :ivar str content_md5:
+    :param str content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -204,21 +203,20 @@ class ContentSettings(DictMixin):
 
 class ShareProperties(DictMixin):
     """Share's properties class.
-    :param datetime last_modified:
+
+    :ivar str name:
+        The name of the share.
+    :ivar datetime last_modified:
         A datetime object representing the last time the share was modified.
-    :param str etag:
+    :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param int quota:
+    :ivar int quota:
         The allocated quota.
-    :param str public_access: Specifies whether data in the share may be accessed
-        publicly and the level of access.
-    :param bool has_immutability_policy:
-        Represents whether the share has an immutability policy.
-    :param bool has_legal_hold:
-        Represents whether the share has a legal hold.
-    :param dict metadata: A dict with name_value pairs to associate with the
+    :ivar dict metadata: A dict with name_value pairs to associate with the
         share as metadata.
+    :ivar str snapshot:
+        Snapshot of the share.
     """
 
     def __init__(self, **kwargs):
@@ -243,6 +241,7 @@ class ShareProperties(DictMixin):
 
 class SharePropertiesPaged(Paged):
     """Share properties paged.
+
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only shares whose names
         begin with the specified prefix.
@@ -341,9 +340,10 @@ class Handle(DictMixin):
 
 
 class HandlesPaged(Paged):
-    """Share properties paged.
+    """Handles paged.
+
     :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only shares whose names
+    :param str prefix: Filters the results to return only handles whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
@@ -382,12 +382,17 @@ class HandlesPaged(Paged):
 
 class DirectoryProperties(DictMixin):
     """Directory's properties class.
-    :param datetime last_modified:
+
+    :ivar str name:
+        The name of the directory.
+    :ivar datetime last_modified:
         A datetime object representing the last time the directory was modified.
-    :param str etag:
+    :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param dict metadata: A dict with name_value pairs to associate with the
+    :ivar bool server_encrypted:
+        Whether encryption is enabled.
+    :ivar dict metadata: A dict with name_value pairs to associate with the
         directory as metadata.
     """
 
@@ -411,6 +416,7 @@ class DirectoryProperties(DictMixin):
 
 class DirectoryPropertiesPaged(Paged):
     """Directory properties paged.
+
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only directors whose names
         begin with the specified prefix.
@@ -465,21 +471,38 @@ class DirectoryPropertiesPaged(Paged):
 
 class FileProperties(DictMixin):
     """File's properties class.
-    :param datetime last_modified:
+
+    :ivar str name:
+        The name of the file.
+    :ivar str path:
+        The path of the file.
+    :ivar str share:
+        The name of share.
+    :ivar str snapshot:
+        File snapshot.
+    :ivar int content_length:
+        Size of file in bytes.
+    :ivar dict metadata: A dict with name_value pairs to associate with the
+        file as metadata.
+    :ivar str file_type:
+        Type of the file.
+    :ivar datetime last_modified:
         A datetime object representing the last time the file was modified.
-    :param str etag:
+    :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param int quota:
-        The allocated quota.
-    :param str public_access: Specifies whether data in the file may be accessed
-        publicly and the level of access.
-    :param bool has_immutability_policy:
-        Represents whether the file has an immutability policy.
-    :param bool has_legal_hold:
-        Represents whether the file has a legal hold.
-    :param dict metadata: A dict with name_value pairs to associate with the
-        file as metadata.
+    :ivar int size:
+        Size of file in bytes.
+    :ivar str content_range:
+        The range of bytes.
+    :ivar bool server_encrypted:
+        Whether encryption is enabled.
+    :ivar copy:
+        The copy properties.
+    :vartype copy: ~azure.storage.file.models.CopyProperties
+    :ivar content_settings:
+        The content settings for the file.
+    :vartype content_settings: ~azure.storage.file.models.ContentSettings
     """
 
     def __init__(self, **kwargs):
@@ -508,22 +531,19 @@ class FileProperties(DictMixin):
 
 
 class CopyProperties(DictMixin):
-    """
-    Blob Copy Properties.
+    """File Copy Properties.
 
-    :param str id:
-        String identifier for the last attempted Copy Blob operation where this blob
-        was the destination blob. This header does not appear if this blob has never
-        been the destination in a Copy Blob operation, or if this blob has been
-        modified after a concluded Copy Blob operation using Set Blob Properties,
-        Put Blob, or Put Block List.
-    :param str source:
-        URL up to 2 KB in length that specifies the source blob used in the last attempted
-        Copy Blob operation where this blob was the destination blob. This header does not
-        appear if this blob has never been the destination in a Copy Blob operation, or if
-        this blob has been modified after a concluded Copy Blob operation using
-        Set Blob Properties, Put Blob, or Put Block List.
-    :param str status:
+    :ivar str id:
+        String identifier for the last attempted Copy File operation where this file
+        was the destination file. This header does not appear if this file has never
+        been the destination in a Copy File operation, or if this file has been
+        modified after a concluded Copy File operation.
+    :ivar str source:
+        URL up to 2 KB in length that specifies the source file used in the last attempted
+        Copy File operation where this file was the destination file. This header does not
+        appear if this file has never been the destination in a Copy File operation, or if
+        this file has been modified after a concluded Copy File operation.
+    :ivar str status:
         State of the copy operation identified by Copy ID, with these values:
             success:
                 Copy completed successfully.
@@ -531,28 +551,28 @@ class CopyProperties(DictMixin):
                 Copy is in progress. Check copy_status_description if intermittent,
                 non-fatal errors impede copy progress but don't cause failure.
             aborted:
-                Copy was ended by Abort Copy Blob.
+                Copy was ended by Abort Copy File.
             failed:
                 Copy failed. See copy_status_description for failure details.
-    :param str progress:
+    :ivar str progress:
         Contains the number of bytes copied and the total bytes in the source in the last
-        attempted Copy Blob operation where this blob was the destination blob. Can show
+        attempted Copy File operation where this file was the destination file. Can show
         between 0 and Content-Length bytes copied.
-    :param datetime completion_time:
-        Conclusion time of the last attempted Copy Blob operation where this blob was the
-        destination blob. This value can specify the time of a completed, aborted, or
+    :ivar datetime completion_time:
+        Conclusion time of the last attempted Copy File operation where this file was the
+        destination file. This value can specify the time of a completed, aborted, or
         failed copy attempt.
-    :param str status_description:
+    :ivar str status_description:
         Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
         or non-fatal copy operation failure.
-    :param bool incremental_copy:
-        Copies the snapshot of the source page blob to a destination page blob.
+    :ivar bool incremental_copy:
+        Copies the snapshot of the source file to a destination file.
         The snapshot is copied such that only the differential changes between
         the previously copied snapshot are transferred to the destination
-    :param datetime destination_snapshot:
-        Included if the blob is incremental copy blob or incremental copy snapshot,
+    :ivar datetime destination_snapshot:
+        Included if the file is incremental copy or incremental copy snapshot,
         if x-ms-copy-status is success. Snapshot time of the last successful
-        incremental copy snapshot for this blob.
+        incremental copy snapshot for this file.
     """
 
     def __init__(self, **kwargs):
@@ -580,39 +600,35 @@ class CopyProperties(DictMixin):
 
 
 class FilePermissions(object):
-    '''
-    FilePermissions class to be used with 
-    :func:`~azure.storage.file.fileservice.FileService.generate_file_shared_access_signature` API.
+    """FilePermissions class to be used with
+    generating shared access signature operations.
 
-    :ivar FilePermissions FilePermissions.CREATE:
+    :cvar FilePermissions FilePermissions.CREATE:
         Create a new file or copy a file to a new file.
-    :ivar FilePermissions FilePermissions.DELETE: 
+    :cvar FilePermissions FilePermissions.DELETE:
         Delete the file.
-    :ivar FilePermissions FilePermissions.READ:
+    :cvar FilePermissions FilePermissions.READ:
         Read the content, properties, metadata. Use the file as the source of a copy 
         operation.
-    :ivar FilePermissions FilePermissions.WRITE: 
+    :cvar FilePermissions FilePermissions.WRITE:
         Create or write content, properties, metadata. Resize the file. Use the file 
         as the destination of a copy operation within the same account.
-    '''
+    :param bool read:
+        Read the content, properties, metadata. Use the file as the source of a copy
+        operation.
+    :param bool create:
+        Create a new file or copy a file to a new file.
+    :param bool write:
+        Create or write content, properties, metadata. Resize the file. Use the file
+        as the destination of a copy operation within the same account.
+    :param bool delete:
+        Delete the file.
+    :param str _str:
+        A string representing the permissions.
+    """
 
     def __init__(self, read=False, create=False, write=False, delete=False,
                  _str=None):
-        '''
-        :param bool read:
-            Read the content, properties, metadata. Use the file as the source of a copy 
-            operation.
-        :param bool create:
-            Create a new file or copy a file to a new file.
-        :param bool write: 
-            Create or write content, properties, metadata. Resize the file. Use the file 
-            as the destination of a copy operation within the same account.
-        :param bool delete: 
-            Delete the file.
-        :param str _str: 
-            A string representing the permissions.
-        '''
-
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)
@@ -640,49 +656,45 @@ FilePermissions.WRITE = FilePermissions(write=True)
 
 
 class SharePermissions(object):
-    '''
-    SharePermissions class to be used with `azure.storage.file.FileService.generate_share_shared_access_signature`
-    method and for the AccessPolicies used with `azure.storage.file.FileService.set_share_acl`. 
+    """SharePermissions class to be used to be used with
+    generating shared access signature and access policy operations.
 
-    :ivar SharePermissions FilePermissions.DELETE: 
+    :cvar SharePermissions SharePermissions.DELETE:
         Delete any file in the share.
         Note: You cannot grant permissions to delete a share with a service SAS. Use 
         an account SAS instead.
-    :ivar SharePermissions FilePermissions.LIST: 
+    :cvar SharePermissions SharePermissions.LIST:
         List files and directories in the share.
-    :ivar SharePermissions FilePermissions.READ:
+    :cvar SharePermissions SharePermissions.READ:
         Read the content, properties or metadata of any file in the share. Use any 
         file in the share as the source of a copy operation.
-    :ivar SharePermissions FilePermissions.WRITE: 
+    :cvar SharePermissions SharePermissions.WRITE:
         For any file in the share, create or write content, properties or metadata. 
         Resize the file. Use the file as the destination of a copy operation within 
         the same account.
         Note: You cannot grant permissions to read or write share properties or 
         metadata with a service SAS. Use an account SAS instead.
-    '''
+    :param bool read:
+        Read the content, properties or metadata of any file in the share. Use any
+        file in the share as the source of a copy operation.
+    :param bool write:
+        For any file in the share, create or write content, properties or metadata.
+        Resize the file. Use the file as the destination of a copy operation within
+        the same account.
+        Note: You cannot grant permissions to read or write share properties or
+        metadata with a service SAS. Use an account SAS instead.
+    :param bool delete:
+        Delete any file in the share.
+        Note: You cannot grant permissions to delete a share with a service SAS. Use
+        an account SAS instead.
+    :param bool list:
+        List files and directories in the share.
+    :param str _str:
+        A string representing the permissions
+    """
 
     def __init__(self, read=False, write=False, delete=False, list=False,
                  _str=None):
-        '''
-        :param bool read:
-            Read the content, properties or metadata of any file in the share. Use any 
-            file in the share as the source of a copy operation.
-        :param bool write: 
-            For any file in the share, create or write content, properties or metadata. 
-            Resize the file. Use the file as the destination of a copy operation within 
-            the same account.
-            Note: You cannot grant permissions to read or write share properties or 
-            metadata with a service SAS. Use an account SAS instead.
-        :param bool delete: 
-            Delete any file in the share.
-            Note: You cannot grant permissions to delete a share with a service SAS. Use 
-            an account SAS instead.
-        :param bool list: 
-            List files and directories in the share.
-        :param str _str: 
-            A string representing the permissions
-        '''
-
         if not _str:
             _str = ''
         self.read = read or ('r' in _str)

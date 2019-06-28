@@ -31,50 +31,28 @@ from ._generated.version import VERSION
 
 
 class FileServiceClient(StorageAccountHostsMixin):
-    """ A client interact with the File Service at the account level.
+    """A client interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete shares within the account.
-    For operations relating to a specific share, clients for those entities
-    can also be retrieved using the `get_client` functions.
+    For operations relating to a specific share, a client for that entity
+    can also be retrieved using the `get_share_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the File service account. This could be either the
-        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
+    :param str account_url:
+        The URL to the file storage account. Any other entities included
+        in the URL path (e.g. share or file) will be discarded. This URL can be optionally
+        authenticated with a SAS token.
+    :param credential:
+        The credential with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string or an account
+        shared access key.
     """
-
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """A new FileServiceClient.
-
-        :param str account_url:
-            The URL to the file storage account. Any other entities included
-            in the URL path (e.g. share or file) will be discarded. This URL can be optionally
-            authenticated with a SAS token.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, and account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-        """
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -113,9 +91,11 @@ class FileServiceClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
+        :param configuration:
+            An optional configuration for the client.
+        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -130,14 +110,13 @@ class FileServiceClient(StorageAccountHostsMixin):
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
         ):
-        """
-        Generates a shared access signature for the file service.
+        """Generates a shared access signature for the file service.
         Use the returned signature with the credential parameter of any FileServiceClient,
-        ShareClient or FileClient.
+        ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.ResourceTypes resource_types:
+        :param ~azure.storage.file._shared.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.file.models.AccountPermissions permission:
+        :param ~azure.storage.file._shared.models.AccountPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
@@ -205,13 +184,11 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for files.
-        :type hour_metrics:
-            :class:`~azure.storage.file.models.Metrics`
+        :type hour_metrics: ~azure.storage.file.models.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for files.
-        :type minute_metrics:
-            :class:`~azure.storage.file.models.Metrics`
+        :type minute_metrics: ~azure.storage.file.models.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
@@ -251,6 +228,10 @@ class FileServiceClient(StorageAccountHostsMixin):
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
             Specifies that share snapshot be returned in the response.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
@@ -311,9 +292,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The share to delete. This can either be the name of the share,
             or an instance of ShareProperties.
         :type share_name: str or ~azure.storage.file.models.ShareProperties
-        :param delete_snapshots:
+        :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
-        :type delete_snapshots: bool
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -331,6 +311,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The share. This can either be the name of the share,
             or an instance of ShareProperties.
         :type share: str or ~azure.storage.file.models.ShareProperties
+        :param str snapshot:
+            An optional share snapshot on which to operate.
         :returns: A ShareClient.
         :rtype: ~azure.core.file.share_client.ShareClient
         """

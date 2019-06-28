@@ -36,10 +36,27 @@ from .polling import CloseHandles
 
 
 class DirectoryClient(StorageAccountHostsMixin):
-    """
-    A client to interact with the sirectory.
-    """
+    """Creates a new DirectoryClient. This client represents interaction with a specific
+    directory, although it may not yet exist. For operations relating to a specific
+    subdirectory or file, the clients for those entities can also be retrieved using
+    the `get_subdirectory_client` and `get_file_client` functions.
 
+    :param str directory_url:
+        The full URI to the directory. This can also be a URL to the storage account
+        or share, in which case the directory and/or share must also be specified.
+    :param share: The share for the directory. If specified, this value will override
+        a share value specified in the directory URL.
+    :type share: str or ~azure.storage.file.models.ShareProperties
+    :param str directory_path:
+        The directory path for the directory with which to interact.
+        If specified, this value will override a directory value specified in the directory URL.
+    :param str snapshot:
+        An optional share snapshot on which to operate.
+    :param credential:
+        The credential with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string or an account
+        shared access key.
+    """
     def __init__(
             self, directory_url,  # type: str
             share=None, # type: Optional[Union[str, ShareProperties]]
@@ -49,14 +66,6 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> DirectoryClient
-        """Creates a new DirectoryClient. This client represents interaction with a specific
-        directory, although it may not yet exist.
-        :param share: The directory with which to interact. If specified, this value will override
-         a directory value specified in the directory URL.
-        :type share: str or ~azure.storage.file.models.DirectoryProperties
-        :param str directory: The full URI to the directory.
-        :param credential:
-        """
         try:
             if not directory_url.lower().startswith('http'):
                 directory_url = "https://" + directory_url
@@ -96,6 +105,9 @@ class DirectoryClient(StorageAccountHostsMixin):
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
         share_name = self.share_name
         if isinstance(share_name, six.text_type):
             share_name = share_name.encode('UTF-8')
@@ -118,8 +130,19 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> DirectoryClient
-        """
-        Create DirectoryClient from a Connection String.
+        """Create DirectoryClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param share: The share. This can either be the name of the share,
+            or an instance of ShareProperties
+        :type share: str or ~azure.storage.file.models.ShareProperties
+        :param str directory_path:
+            The directory path.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -128,14 +151,13 @@ class DirectoryClient(StorageAccountHostsMixin):
             account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
     
     def get_file_client(self, file_name, **kwargs):
-        """Get a client to interact with the specified file.
+        """Get a client to interact with a specific file.
         The file need not already exist.
 
-        :param directory_name:
-            The name of the directory.
-        :type directory_name: str
+        :param file_name:
+            The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.core.file.file_client.FileClient
+        :rtype: ~azure.storage.file.file_client.FileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -145,12 +167,11 @@ class DirectoryClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
-        """Get a client to interact with the specified subdirectory.
+        """Get a client to interact with a specific subdirectory.
         The subdirectory need not already exist.
 
-        :param directory_name:
+        :param str directory_name:
             The name of the subdirectory.
-        :type directory_name: str
         :returns: A Directory Client.
         :rtype: ~azure.core.file.directory_client.DirectoryClient
         """
@@ -166,7 +187,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> Dict[str, Any]
-        """Creates a new Directory.
+        """Creates a new directory under the directory referenced by the client.
+
         :param metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
@@ -188,7 +210,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def delete_directory(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> None
-        """Marks the specified directory for deletion. The directory is
+        """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
         :param int timeout:
@@ -202,7 +224,17 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def list_directories_and_files(self, name_starts_with=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[int]) -> DirectoryProperties
-        """
+        """Lists all the directories and files under the directory.
+
+        :param str name_starts_with:
+            Filters the results to return only entities whose names
+            begin with the specified prefix.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -214,8 +246,18 @@ class DirectoryClient(StorageAccountHostsMixin):
         return DirectoryPropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def list_handles(self, marker=None, timeout=None, recursive=False, **kwargs):
-        """
+    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
+        """Lists opened handles on a directory or a file under the directory.
+
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param bool recursive:
+            Boolean that specifies if operation should apply to the directory specified by the client,
+            its files, its subdirectories and their files.
         :returns: An auto-paging iterable of HandleItems
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -261,8 +303,14 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties
-        """
+        """Returns all user-defined metadata and system properties for the
+        specified directory. The data returned does not include the directory's
+        list of files.
+
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: DirectoryProperties
+        :rtype: ~azure.storage.file.models.DirectoryProperties
         """
         try:
             response = self._client.directory.get_properties(
@@ -275,13 +323,18 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def set_directory_metadata(self, metadata, timeout=None, **kwargs):
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
-        """ Sets the metadata for the directory.
+        """Sets the metadata for the directory.
+
+        Each call to this operation replaces all existing metadata
+        attached to the directory. To remove all metadata from the directory,
+        call this operation with no metadata dict.
+
         :param metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: directory-updated property dict (Etag and last modified).
+        :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         headers = kwargs.pop('headers', {})
@@ -302,17 +355,18 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> DirectoryClient
-        """Creates a new Sub Directory.
-        :param directory_name:
+        """Creates a new subdirectory and returns a client to interact
+        with the subdirectory.
+
+        :param str directory_name:
             The name of the subdirectory.
-        :type directory_name: str
         :param metadata:
-            Name-value pairs associated with the directory as metadata.
+            Name-value pairs associated with the subdirectory as metadata.
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: DirectoryClient
+        :rtype: ~azure.storage.file.directory_client.DirectoryClient
         """
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
@@ -324,10 +378,10 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> None
-        """Deletes a Sub Directory.
-        :param directory_name:
+        """Deletes a subdirectory.
+
+        :param str directory_name:
             The name of the subdirectory.
-        :type directory_name: str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
@@ -348,22 +402,35 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> FileClient
-        """Creates a new file.
-        :param file_name:
+        """Creates a new file in the directory and returns a FileClient
+        to interact with the file.
+
+        :param str file_name:
             The name of the file.
-        :type file_name: str
-        :param size:
-            The max size of the file.
-        :type size: int
-        :param content_settings:
-            The content settings.
+        :param Any data:
+            Content of the file.
+        :param int length:
+            Length of the file in bytes. Specify its maximum size, up to 1 TiB.
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
+        :param ~azure.storage.file.models.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :param bool validate_content:
+            If true, calculates an MD5 hash for each range of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https as https (the default) will
+            already validate. Note that this MD5 hash is not stored with the
+            file.
+        :param int max_connections:
+            Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param str encoding:
+            Defaults to UTF-8.
         :returns: FileClient
-        :rtype: FileClient
+        :rtype: ~azure.storage.file.file_client.FileClient
         """
         file_client = self.get_file_client(file_name)
         file_client.upload_file(
@@ -384,10 +451,11 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Optional[Any] 
         ):
         # type: (...) -> None
-        """Deletes a file.
-        :param file_name:
-            The name of the file.
-        :type file_name: str
+        """Marks the specified file for deletion. The file is later
+        deleted during garbage collection.
+
+        :param str file_name:
+            The name of the file to delete.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
