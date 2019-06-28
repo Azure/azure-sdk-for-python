@@ -512,22 +512,22 @@ class StorageQueueTest(StorageTestCase):
 
     @record
     def test_token_credential(self):
-        pytest.skip('pending oauth')
-        token_credential = TokenCredential(self.generate_oauth_token())
+        pytest.skip("")
+        token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueService(self.settings.OAUTH_STORAGE_ACCOUNT_NAME, token_credential=token_credential)
-        queues = list(service.list_queues())
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
+        queues = service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
-        token_credential.token = "YOU SHALL NOT PASS"
-        with self.assertRaises(AzureException):
-            queues = list(service.list_queues())
-            self.assertIsNone(queues)
+        fake_credential = self.generate_fake_token()
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=fake_credential)
+        with self.assertRaises(ClientAuthenticationError):
+            list(service.list_queues())
 
         # Action 3: update token to make it working again
-        token_credential.token = self.generate_oauth_token()
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
         queues = list(service.list_queues())
         self.assertIsNotNone(queues)
 

@@ -29,6 +29,8 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.credentials import AccessToken
+
 try:
     import tests.settings_real as settings
 except ImportError:
@@ -61,8 +63,8 @@ class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
-    def __init__(self, token):
-        self.token = token
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
     def get_token(self, *args):
         return self.token
@@ -197,6 +199,12 @@ class StorageTestCase(unittest.TestCase):
         return "{}://{}.queue.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.STORAGE_ACCOUNT_NAME
+        )
+
+    def _get_oauth_queue_url(self):
+        return "{}://{}.queue.core.windows.net".format(
+            self.settings.PROTOCOL,
+            self.settings.OAUTH_STORAGE_ACCOUNT_NAME
         )
 
     def _get_premium_account_url(self):
@@ -410,16 +418,16 @@ class StorageTestCase(unittest.TestCase):
         return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
 
     def generate_oauth_token(self):
-        try:
-            from azure.identity import ClientSecretCredential
+        from azure.identity import ClientSecretCredential
 
-            return ClientSecretCredential(
-                self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-                self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-                self.settings.ACTIVE_DIRECTORY_TENANT_ID
-            )
-        except ImportError:
-            return FakeTokenCredential('initial token')
+        return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+        )
+
+    def generate_fake_token(self):
+        return FakeTokenCredential()
 
 def record(test):
     def recording_test(self):
