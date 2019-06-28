@@ -46,7 +46,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             directory_path=None, # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
-            **kwargs, # type: Optional[Any]
+            **kwargs # type: Optional[Any]
         ):
         # type: (...) -> DirectoryClient
         """Creates a new DirectoryClient. This client represents interaction with a specific
