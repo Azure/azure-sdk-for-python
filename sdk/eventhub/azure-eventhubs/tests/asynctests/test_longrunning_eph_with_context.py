@@ -13,7 +13,8 @@ import json
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClientAsync, EventData
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData
 from azure.eventprocessorhost import (
     AbstractEventProcessor,
     AzureStorageCheckpointLeaseManager,
@@ -43,6 +44,7 @@ def get_logger(filename, level=logging.INFO):
         uamqp_logger.addHandler(file_handler)
 
     return azure_logger
+
 
 logger = get_logger("eph_test_async.log", logging.INFO)
 
@@ -128,13 +130,16 @@ async def pump(pid, sender, duration):
     total = 0
 
     try:
-        while time.time() < deadline:
-            data = EventData(body=b"D" * 512)
-            sender.transfer(data)
-            total += 1
-            if total % 100 == 0:
-               await sender.wait_async()
-               #logger.info("{}: Send total {}".format(pid, total))
+        async with sender:
+            event_list = []
+            while time.time() < deadline:
+                data = EventData(body=b"D" * 512)
+                event_list.append(data)
+                total += 1
+                if total % 100 == 0:
+                    await sender.send(event_list)
+                    event_list = []
+                    logger.info("{}: Send total {}".format(pid, total))
     except Exception as err:
         logger.error("{}: Send failed {}".format(pid, err))
         raise
@@ -142,7 +147,8 @@ async def pump(pid, sender, duration):
 
 
 @pytest.mark.liveTest
-def test_long_running_context_eph(live_eventhub):
+@pytest.mark.asyncio
+async def test_long_running_context_eph(live_eventhub):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--storage-account", help="Storage account name", default=os.environ.get('AZURE_STORAGE_ACCOUNT'))
@@ -169,14 +175,12 @@ def test_long_running_context_eph(live_eventhub):
         live_eventhub['key_name'],
         live_eventhub['access_key'],
         live_eventhub['event_hub'])
-    send_client = EventHubClientAsync.from_connection_string(conn_str)
+    send_client = EventHubClient.from_connection_string(conn_str)
     pumps = []
     for pid in ["0", "1"]:
-        sender = send_client.add_async_sender(partition=pid, send_timeout=0, keep_alive=False)
+        sender = send_client.create_producer(partition_id=pid, send_timeout=0)
         pumps.append(pump(pid, sender, 15))
-    loop.run_until_complete(send_client.run_async())
-    results = loop.run_until_complete(asyncio.gather(*pumps, return_exceptions=True))
-    loop.run_until_complete(send_client.stop_async())
+    results = await asyncio.gather(*pumps, return_exceptions=True)
     assert not any(results)
 
     # Eventhub config and storage manager 
@@ -210,7 +214,7 @@ def test_long_running_context_eph(live_eventhub):
     tasks = asyncio.gather(
         host.open_async(),
         wait_and_close(host, args.duration), return_exceptions=True)
-    results = loop.run_until_complete(tasks)
+    results = await tasks
     assert not any(results)
 
 
@@ -223,4 +227,5 @@ if __name__ == '__main__':
     config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
     config['consumer_group'] = "$Default"
     config['partition'] = "0"
-    test_long_running_eph(config)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_long_running_context_eph(config))

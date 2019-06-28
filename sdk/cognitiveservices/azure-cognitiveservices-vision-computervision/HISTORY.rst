@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.4.0 (2019-06-27)
+++++++++++++++++++
+
+**Breaking changes**
+
+- "batch_read_file" and "batch_read_file_in_stream" have no "mode" parameter anymore
+
+**Bugfix**
+
+- "bounding_box" now supports float numbers
+- Incorrect "Not Started" typo for state reporting
+
 0.3.0 (2019-03-11)
 ++++++++++++++++++
 

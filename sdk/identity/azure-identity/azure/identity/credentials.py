@@ -1,19 +1,21 @@
-# ------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# ------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""
+Credentials for Azure SDK authentication.
+"""
 import os
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ._internal import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
-from .exceptions import AuthenticationError
 
 try:
     from typing import TYPE_CHECKING
@@ -29,7 +31,15 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientSecretCredentialBase):
-    """Authenticates with a client secret"""
+    """
+    Authenticates as a service principal using a client ID and client secret.
+
+    :param str client_id: the service principal's client ID
+    :param str secret: one of the service principal's client secrets
+    :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
 
     def __init__(self, client_id, secret, tenant_id, config=None, **kwargs):
         # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
@@ -38,6 +48,13 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -46,7 +63,15 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
 
 class CertificateCredential(CertificateCredentialBase):
-    """Authenticates with a certificate"""
+    """
+    Authenticates as a service principal using a certificate.
+
+    :param str client_id: the service principal's client ID
+    :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+    :param str certificate_path: path to a PEM-encoded certificate file including the private key
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
 
     def __init__(self, client_id, tenant_id, certificate_path, config=None, **kwargs):
         # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
@@ -55,15 +80,35 @@ class CertificateCredential(CertificateCredentialBase):
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
         token = self._client.get_cached_token(scopes)
         if not token:
-            data = dict(self._form_data, scope=" ".join(scopes))
+            data = self._get_request_data(*scopes)
             token = self._client.request_token(scopes, form_data=data)
         return token
 
 
 class EnvironmentCredential:
-    """Authenticates with a secret or certificate using environment variable settings"""
+    """
+    Authenticates as a service principal using a client ID/secret pair or a certificate,
+    depending on environment variable settings.
+
+    These environment variables are required:
+
+      - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+
+    Additionally, set **one** of these to configure client secret or certificate authentication:
+
+      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
+    """
 
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
@@ -86,16 +131,29 @@ class EnvironmentCredential:
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
         if not self._credential:
-            message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
+            message = "Missing environment settings. To authenticate with one of the service principal's client secrets, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
             )
-            raise AuthenticationError(message)
+            raise ClientAuthenticationError(message=message)
         return self._credential.get_token(*scopes)
 
 
 class ManagedIdentityCredential(object):
-    """factory for MSI and IMDS credentials"""
+    """
+    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+
+    :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :param config: optional configuration for the underlying HTTP pipeline
+    :type config: :class:`azure.core.configuration`
+    """
 
     def __new__(cls, *args, **kwargs):
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
@@ -111,15 +169,33 @@ class ManagedIdentityCredential(object):
     @staticmethod
     def create_config(**kwargs):
         # type: (Dict[str, str]) -> Configuration
-        return Configuration()
+        """
+        Build a default configuration for the credential's HTTP pipeline.
+
+        :rtype: :class:`azure.core.configuration`
+        """
+        return Configuration(**kwargs)
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
         return AccessToken()
 
 
-class TokenCredentialChain(object):
-    """A sequence of token credentials"""
+class ChainedTokenCredential(object):
+    """
+    A sequence of credentials that is itself a credential. Its ``get_token`` method calls ``get_token`` on each
+    credential in the sequence, in order, returning the first valid token received.
+
+    :param credentials: credential instances to form the chain
+    :type credentials: :class:`azure.core.credentials.TokenCredential`
+    """
 
     def __init__(self, *credentials):
         # type: (*TokenCredential) -> None
@@ -129,19 +205,24 @@ class TokenCredentialChain(object):
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
-        """Attempts to get a token from each credential, in order, returning the first token.
-           If no token is acquired, raises an exception listing error messages.
+        """
+        Request a token from each chained credential, in order, returning the first token received.
+        If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
+        error message from each credential.
+
+        :param str scopes: desired scopes for the token
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         history = []
         for credential in self._credentials:
             try:
                 return credential.get_token(*scopes)
-            except AuthenticationError as ex:
+            except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
                 history.append((credential, str(ex)))
         error_message = self._get_error_message(history)
-        raise AuthenticationError(error_message)
+        raise ClientAuthenticationError(message=error_message)
 
     @staticmethod
     def _get_error_message(history):

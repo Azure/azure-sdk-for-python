@@ -36,12 +36,12 @@ _logger = get_logger(logging.DEBUG)
 @pytest.mark.liveTest
 def test_subscription_by_subscription_client_conn_str_receive_basic(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=topic_name, debug=True)
+    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=topic_name, debug=False)
     with topic_client.get_sender() as sender:
         message = Message(b"Sample topic message")
         sender.send(message)
 
-    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=True)
+    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=False)
     with sub_client.get_receiver(idle_timeout=5) as receiver:
         count = 0
         for message in receiver:
@@ -56,7 +56,7 @@ def test_subscription_by_servicebus_client_conn_str_send_basic(live_servicebus_c
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     topic_client = client.get_topic(topic_name)
     sub_client = client.get_subscription(topic_name, subscription_name)
@@ -79,7 +79,7 @@ def test_subscription_by_servicebus_client_list_subscriptions(live_servicebus_co
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     subs = client.list_subscriptions(topic_name)
     assert len(subs) >= 1
@@ -91,6 +91,6 @@ def test_subscription_by_servicebus_client_list_subscriptions(live_servicebus_co
 def test_subscription_by_subscription_client_conn_str_send_fail(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
 
-    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=True)
+    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=False)
     with pytest.raises(AttributeError):
         sub_client.get_sender()

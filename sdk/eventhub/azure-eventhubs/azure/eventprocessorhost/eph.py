@@ -75,7 +75,7 @@ class EPHOptions:
     :vartype prefetch_count: int
     :ivar receive_timeout: The length of time a single partition receiver will wait in
      order to receive a batch of events. Default is 60 seconds.
-    :vartype receive_timeout: int
+    :vartype receive_timeout: float
     :ivar release_pump_on_timeout: Whether to shutdown an individual partition receiver if
      no events were received in the specified timeout. Shutting down the pump will release
      the lease to allow it to be picked up by another host. Default is False.

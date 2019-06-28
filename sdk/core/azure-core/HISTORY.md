@@ -3,6 +3,6 @@
 
 -------------------
 
-2019-06-07 Version 0.0.1
+2019-06-26 Version 1.0.0b1
 
-- Preview release
+- Preview 1 release

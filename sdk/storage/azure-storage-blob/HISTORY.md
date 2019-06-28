@@ -2,7 +2,7 @@
 
 > See [BreakingChanges](BreakingChanges.md) for a detailed list of API breaks.
 
-## Version 2.0.0:
+## Version 12.0.0:
 
 - New API.
 
