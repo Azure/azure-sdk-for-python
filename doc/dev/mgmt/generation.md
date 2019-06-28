@@ -2,7 +2,7 @@
 
 Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](./swagger_conf.md)), this page explains how to generate your packages.
 
-IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
 
 ## Building the code
 
@@ -45,3 +45,54 @@ The common configuration to pass to all generation are located in the [swagger_t
 
 If the automation is doing its job correctly, you should not have to build the SDK, but look for an integration PR for the service in question. This link will give you for instance [the list of all integration PRs](https://github.com/Azure/azure-sdk-for-python/labels/ServicePR).
 
+## Using raw autorest
+
+If you want to use raw autorest and nothing else, not even Readme, a few tips:
+
+If you're doing basic testing and want to minimal set of parameters:
+- To call Autorest, you need the following options:
+
+  - Required parameter: `--payload-flattening-threshold=2`
+  - About the generator:
+
+     - If your endpoint is ARM, add `--python --azure-arm=true`
+     - If not, add `--python`. If your client _might_ ask authentication, add `--add-credentials`
+
+And that's it! You should now have Python code ready to test. Note that this generation is for testing only and should not be sent to a customer or published to PyPI.
+
+This command generate code only. If you want to generate a [wheel](https://pythonwheels.com/) file to share this code, add the `--basic-setup-py` option to generate a basic `setup.py` file and call `python setup.py bdist_wheel`.
+
+### Example
+
+ARM management Swagger:
+
+`autorest --version=latest --python --azure-arm=true --payload-flattening-threshold=2 --input-file=myswagger.json`
+
+Not-ARM Swagger:
+
+`autorest --version=latest --python --payload-flattening-threshold=2 --add-credentials --input-file=myswagger.json`
+
+If you want something closed to a real generation:
+
+Let's assume for now that your Swagger is in `specification/compute/resource-manager`
+
+To call Autorest, you need the following options:
+
+  - Required parameters:
+
+      `--payload-flattening-threshold=2 --license-header=MICROSOFT_MIT_NO_VERSION --namespace=azure.mgmt.compute --package-name=azure-mgmt-compute --package-version=0.1.0`
+
+  - About the generator:
+
+     - If your endpoint is ARM, add `--python --azure-arm=true`
+     - If not, add `--python`. If your client _might_ ask authentication, add `--add-credentials`
+
+## Example
+
+ARM Swagger with MD (preferred syntax):
+
+`autorest --version=latest specifications/storage/resource-manager/readme.md --python --azure-arm=true --payload-flattening-threshold=2 --license-header=MICROSOFT_MIT_NO_VERSION --namespace=azure.mgmt.storage --package-name=azure-mgmt-storage --package-version=0.1.0 `
+
+ARM Swagger without MD (if you have an excellent reason):
+
+`autorest --version=latest --python --azure-arm=true --payload-flattening-threshold=2 --license-header=MICROSOFT_MIT_NO_VERSION --namespace=azure.mgmt.storage --package-name=azure-mgmt-storage --package-version=0.1.0 --input-file=specifications/storage/resource-manager/Microsoft.Storage/2016-12-01/storage.json`
