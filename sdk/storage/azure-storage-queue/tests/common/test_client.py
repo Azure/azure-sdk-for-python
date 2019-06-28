@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+import platform
 
 from azure.storage.queue import (
     QueueServiceClient,
@@ -345,6 +346,61 @@ class StorageClientTest(StorageTestCase):
         # Assert
         exists = queue.get_queue_properties(raw_response_hook=callback)
         self.assertTrue(exists)
+
+    @record
+    def test_user_agent_default(self):
+        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback)
+
+    @record
+    def test_user_agent_custom(self):
+        custom_app = "TestApp/v1.0"
+        service = QueueServiceClient(
+            self._get_queue_url(), credential=self.account_key, user_agent=custom_app)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "TestApp/v1.0 azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "TestApp/v2.0 azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
+
+    @record
+    def test_user_agent_append(self):
+        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "azsdk-python-storage-queue/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        custom_headers = {'User-Agent': 'customer_user_agent'}
+        service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
 
 # ------------------------------------------------------------------------------

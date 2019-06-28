@@ -13,6 +13,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
+import platform
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -37,6 +38,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.policies.base import RequestHistory
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
+from ..version import VERSION
 from .models import LocationMode
 
 try:
@@ -107,14 +109,14 @@ class StorageBlobSettings(object):
         # Block blob uploads
         self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = False
+        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
 
         # Page blob uploads
-        self.max_page_size = 4 * 1024 * 1024
+        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
 
         # Blob downloads
-        self.max_single_get_size = 32 * 1024 * 1024
-        self.max_chunk_get_size = 4 * 1024 * 1024
+        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -239,6 +241,30 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                         _LOGGER.debug(response.http_response.text())
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
+
+
+class StorageUserAgentPolicy(SansIOHTTPPolicy):
+
+    _USERAGENT = "User-Agent"
+
+    def __init__(self, **kwargs):
+        self._application = kwargs.pop('user_agent', None)
+        self._user_agent = "azsdk-python-storage-queue/{} Python/{} ({})".format(
+            VERSION,
+            platform.python_version(),
+            platform.platform())
+        super(StorageUserAgentPolicy, self).__init__()
+
+    def on_request(self, request, **kwargs):
+        existing = request.http_request.headers.get(self._USERAGENT, "")
+        app_string = request.context.options.pop('user_agent', None) or self._application
+        if app_string:
+            request.http_request.headers[self._USERAGENT] = "{} {}".format(
+                app_string, self._user_agent)
+        else:
+            request.http_request.headers[self._USERAGENT] = self._user_agent
+        if existing:
+            request.http_request.headers[self._USERAGENT] += " " + existing
 
 
 class StorageRequestHook(SansIOHTTPPolicy):

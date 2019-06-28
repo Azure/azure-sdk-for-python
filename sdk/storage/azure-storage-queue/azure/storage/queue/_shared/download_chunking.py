@@ -54,8 +54,6 @@ def process_content(blob, start_offset, end_offset, require_encryption, key_encr
         return b"".join(list(blob))
 
 
-
-
 class _BlobChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
