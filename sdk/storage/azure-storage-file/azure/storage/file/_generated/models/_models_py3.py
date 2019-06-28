@@ -239,8 +239,8 @@ class FilesAndDirectoriesListSegment(Model):
     }
 
     _attribute_map = {
-        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'Entries', 'itemsName': 'Entries', 'wrapped': True}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]', 'xml': {'name': 'Directory', 'itemsName': 'Directory'}},
+        'file_items': {'key': 'FileItems', 'type': '[FileItem]', 'xml': {'name': 'File', 'itemsName': 'File'}},
     }
     _xml_map = {
         'name': 'Entries'
@@ -393,7 +393,7 @@ class ListHandlesResponse(Model):
     }
 
     _attribute_map = {
-        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'HandleList'}},
+        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'Entries', 'itemsName': 'Entries', 'wrapped': True}},
         'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
     }
     _xml_map = {
