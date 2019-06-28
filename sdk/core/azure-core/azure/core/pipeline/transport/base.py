@@ -30,9 +30,11 @@ import logging
 import os
 import time
 try:
-    from urlparse import urljoin, urlparse # type: ignore
+    binary_type = str
+    from urlparse import urlparse # type: ignore
 except ImportError:
-    from urllib.parse import urljoin, urlparse
+    binary_type = bytes # type: ignore
+    from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
@@ -48,8 +50,35 @@ from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, Pi
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _format_url_section(template, **kwargs):
+    components = template.split("/")
+    while components:
+        try:
+            return template.format(**kwargs)
+        except KeyError as key:
+            formatted_components = template.split("/")
+            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+            template = "/".join(components)
+    # No URL sections left - returning None
+
+
+def _urljoin(base_url, stub_url):
+    # type: (str, str) -> str
+    """Append to end of base URL without losing query parameters.
+
+    :param str base_url: The base URL.
+    :param str stub_url: Section to append to the end of the URL path.
+    :returns: The updated URL.
+    :rtype: str
+    """
+    parsed = urlparse(base_url)
+    parsed = parsed._replace(path=parsed.path + '/' + stub_url)
+    return parsed.geturl()
 
 
 class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
@@ -159,7 +188,8 @@ class HttpRequest(object):
 
         :param data: The request field data.
         """
-        if not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
+        if not isinstance(data, binary_type) and \
+                not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
@@ -179,7 +209,7 @@ class HttpRequest(object):
 
     def set_json_body(self, data):
         """Set a JSON-friendly object as the body of the request.
-        
+
         :param data: The request field data.
         """
         if data is None:
@@ -207,7 +237,7 @@ class HttpRequest(object):
 
     def set_bytes_body(self, data):
         """Set generic bytes as the body of the request.
-        
+
         :param data: The request field data.
         """
         if data:
@@ -259,8 +289,8 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
-    def stream_download(self):
-        # type: () -> Iterator[bytes]
+    def stream_download(self, pipeline):
+        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -288,6 +318,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
+
         :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
         :param dict params: URL query parameters.
@@ -320,31 +351,20 @@ class PipelineClientBase(object):
 
         return request
 
-    @staticmethod
-    def _format_url_section(template, **kwargs):
-        components = template.split("/")
-        while components:
-            try:
-                return template.format(**kwargs)
-            except KeyError as key:
-                formatted_components = template.split("/")
-                components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
-                template = "/".join(components)
-        # No URL sections left - returning None
-
     def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
+
         :param str url_template: The request URL to be formatted if necessary.
         """
-        url = self._format_url_section(url_template, **kwargs)
+        url = _format_url_section(url_template, **kwargs)
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip('/')
                 base = self._base_url.format(**kwargs).rstrip('/')
-                url = urljoin(base + '/', url)
+                url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
         return url
@@ -358,6 +378,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create a GET request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -379,6 +400,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create a PUT request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -399,6 +421,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create a POST request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -419,6 +442,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create a HEAD request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -439,6 +463,7 @@ class PipelineClientBase(object):
         ):
         # type: (...) -> HttpRequest
         """Create a PATCH request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -452,6 +477,7 @@ class PipelineClientBase(object):
     def delete(self, url, params=None, headers=None, content=None, form_content=None):
         # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
         """Create a DELETE request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
@@ -465,6 +491,7 @@ class PipelineClientBase(object):
     def merge(self, url, params=None, headers=None, content=None, form_content=None):
         # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
         """Create a MERGE request object.
+
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers

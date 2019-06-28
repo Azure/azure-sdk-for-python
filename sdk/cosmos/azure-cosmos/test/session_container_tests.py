@@ -32,6 +32,8 @@ import azure.cosmos.constants as constants
 import azure.cosmos.session as session
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):
     # this test doesn't need real credentials, or connection to server

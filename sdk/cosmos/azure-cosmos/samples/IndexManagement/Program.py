@@ -565,6 +565,102 @@ def PerformIndexTransformations(client, database_id):
         else:
             raise
 
+def PerformMultiOrderbyQuery(client, database_id):
+    try:
+        DeleteContainerIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
+
+        # Create a collection with composite indexes
+        indexingPolicy = {
+            "compositeIndexes": [
+                [
+                    {
+                        "path": "/numberField",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/stringField",
+                        "order": "descending"
+                    }
+                ],
+                [
+                    {
+                        "path": "/numberField",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/stringField",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/numberField2",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/stringField2",
+                        "order": "ascending"
+                    }
+                ]
+            ]
+        }
+
+        container_definition = {
+            'id': COLLECTION_ID,
+            'indexingPolicy': indexingPolicy
+        }
+
+        created_container = client.CreateContainer(database_link, container_definition)
+
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n8. Collection created with index policy")
+        print_dictionary_items(created_container["indexingPolicy"])
+
+        # Insert some documents
+        collection_link = GetContainerLink(database_id, COLLECTION_ID)
+        doc1 = client.CreateItem(collection_link, {"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        doc2 = client.CreateItem(collection_link, {"id": "doc2", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        doc3 = client.CreateItem(collection_link, {"id": "doc3", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        doc4 = client.CreateItem(collection_link, {"id": "doc4", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        doc5 = client.CreateItem(collection_link, {"id": "doc5", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        doc6 = client.CreateItem(collection_link, {"id": "doc6", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        doc7 = client.CreateItem(collection_link, {"id": "doc7", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        doc8 = client.CreateItem(collection_link, {"id": "doc8", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+        doc9 = client.CreateItem(collection_link, {"id": "doc9", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        doc10 = client.CreateItem(collection_link, {"id": "doc10", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        doc11 = client.CreateItem(collection_link, {"id": "doc11", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        doc12 = client.CreateItem(collection_link, {"id": "doc12", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        doc13 = client.CreateItem(collection_link, {"id": "doc13", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        doc14 = client.CreateItem(collection_link, {"id": "doc14", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        doc15 = client.CreateItem(collection_link, {"id": "doc15", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        doc16 = client.CreateItem(collection_link, {"id": "doc16", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+
+        print("Query documents and Order by 1st composite index: Ascending numberField and Descending stringField:")
+
+        query = {
+                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC",
+                }
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
+
+        print("Query documents and Order by inverted 2nd composite index -")
+        print("Ascending numberField, Descending stringField, Ascending numberField2, Descending stringField2")
+
+        query = {
+                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC, r.numberField2 ASC, r.stringField2 DESC",
+                }
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
+
+        # Cleanup
+        client.DeleteContainer(collection_link)
+        print("\n")
+    except errors.HTTPFailure as e:
+        if e.status_code == 409:
+            print("Entity already exists")
+        elif e.status_code == 404:
+            print("Entity doesn't exist")
+        else:
+            raise
+
 def RunIndexDemo():
     try:
         client = ObtainClient()
@@ -591,6 +687,9 @@ def RunIndexDemo():
 
         # 7. Perform an index transform
         PerformIndexTransformations(client, DATABASE_ID)
+
+        # 8. Perform Multi Orderby queries using composite indexes
+        PerformMultiOrderbyQuery(client, DATABASE_ID)
 
     except errors.CosmosError as e:
         raise e

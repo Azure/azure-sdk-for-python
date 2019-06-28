@@ -10,51 +10,53 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .role_assignment_filter_py3 import RoleAssignmentFilter
-    from .role_definition_filter_py3 import RoleDefinitionFilter
-    from .permission_py3 import Permission
-    from .provider_operation_py3 import ProviderOperation
-    from .resource_type_py3 import ResourceType
-    from .provider_operations_metadata_py3 import ProviderOperationsMetadata
-    from .role_assignment_properties_with_scope_py3 import RoleAssignmentPropertiesWithScope
-    from .role_assignment_py3 import RoleAssignment
-    from .role_assignment_properties_py3 import RoleAssignmentProperties
-    from .role_assignment_create_parameters_py3 import RoleAssignmentCreateParameters
-    from .role_definition_properties_py3 import RoleDefinitionProperties
-    from .role_definition_py3 import RoleDefinition
+    from ._models_py3 import ClassicAdministrator
+    from ._models_py3 import Permission
+    from ._models_py3 import ProviderOperation
+    from ._models_py3 import ProviderOperationsMetadata
+    from ._models_py3 import ResourceType
+    from ._models_py3 import RoleAssignment
+    from ._models_py3 import RoleAssignmentCreateParameters
+    from ._models_py3 import RoleAssignmentFilter
+    from ._models_py3 import RoleAssignmentProperties
+    from ._models_py3 import RoleAssignmentPropertiesWithScope
+    from ._models_py3 import RoleDefinition
+    from ._models_py3 import RoleDefinitionFilter
 except (SyntaxError, ImportError):
-    from .role_assignment_filter import RoleAssignmentFilter
-    from .role_definition_filter import RoleDefinitionFilter
-    from .permission import Permission
-    from .provider_operation import ProviderOperation
-    from .resource_type import ResourceType
-    from .provider_operations_metadata import ProviderOperationsMetadata
-    from .role_assignment_properties_with_scope import RoleAssignmentPropertiesWithScope
-    from .role_assignment import RoleAssignment
-    from .role_assignment_properties import RoleAssignmentProperties
-    from .role_assignment_create_parameters import RoleAssignmentCreateParameters
-    from .role_definition_properties import RoleDefinitionProperties
-    from .role_definition import RoleDefinition
-from .permission_paged import PermissionPaged
-from .provider_operations_metadata_paged import ProviderOperationsMetadataPaged
-from .role_assignment_paged import RoleAssignmentPaged
-from .role_definition_paged import RoleDefinitionPaged
+    from ._models import ClassicAdministrator
+    from ._models import Permission
+    from ._models import ProviderOperation
+    from ._models import ProviderOperationsMetadata
+    from ._models import ResourceType
+    from ._models import RoleAssignment
+    from ._models import RoleAssignmentCreateParameters
+    from ._models import RoleAssignmentFilter
+    from ._models import RoleAssignmentProperties
+    from ._models import RoleAssignmentPropertiesWithScope
+    from ._models import RoleDefinition
+    from ._models import RoleDefinitionFilter
+from ._paged_models import ClassicAdministratorPaged
+from ._paged_models import PermissionPaged
+from ._paged_models import ProviderOperationsMetadataPaged
+from ._paged_models import RoleAssignmentPaged
+from ._paged_models import RoleDefinitionPaged
 
 __all__ = [
-    'RoleAssignmentFilter',
-    'RoleDefinitionFilter',
+    'ClassicAdministrator',
     'Permission',
     'ProviderOperation',
-    'ResourceType',
     'ProviderOperationsMetadata',
-    'RoleAssignmentPropertiesWithScope',
+    'ResourceType',
     'RoleAssignment',
-    'RoleAssignmentProperties',
     'RoleAssignmentCreateParameters',
-    'RoleDefinitionProperties',
+    'RoleAssignmentFilter',
+    'RoleAssignmentProperties',
+    'RoleAssignmentPropertiesWithScope',
     'RoleDefinition',
+    'RoleDefinitionFilter',
     'PermissionPaged',
+    'RoleDefinitionPaged',
     'ProviderOperationsMetadataPaged',
     'RoleAssignmentPaged',
-    'RoleDefinitionPaged',
+    'ClassicAdministratorPaged',
 ]

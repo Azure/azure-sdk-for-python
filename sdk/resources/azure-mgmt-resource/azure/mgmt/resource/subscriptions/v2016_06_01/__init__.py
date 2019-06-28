@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_client import SubscriptionClient
-from .version import VERSION
+from ._configuration import SubscriptionClientConfiguration
+from ._subscription_client import SubscriptionClient
+__all__ = ['SubscriptionClient', 'SubscriptionClientConfiguration']
 
-__all__ = ['SubscriptionClient']
+from .version import VERSION
 
 __version__ = VERSION
 

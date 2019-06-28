@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.9.0 (2019-06-04)
+++++++++++++++++++
+
+**Features**
+
+- Add storage_autogrow in all DB
+- Support for PG11
+
 1.8.0 (2019-04-08)
 ++++++++++++++++++
 

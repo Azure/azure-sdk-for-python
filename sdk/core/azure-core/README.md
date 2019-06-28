@@ -4,12 +4,12 @@
 
 ## Pipeline
 
-The Azure Core pipeline is a re-strucuting of the msrest pipeline introduced in msrest 0.6.0.
+The Azure Core pipeline is a re-structuring of the msrest pipeline introduced in msrest 0.6.0.
 Further discussions on the msrest implementation can be found in the [msrest wiki](https://github.com/Azure/msrest-for-python/wiki/msrest-0.6.0---Pipeline).
 
 The Azure Core Pipeline is an implementation of chained policies as described in the [Azure SDK guidelines](https://github.com/Azure/azure-sdk/tree/master/docs/design).
 
-The Python implementation of the pipeline has some mechanisms specific to Python. This is due to the fact that both synchronous and asynchronous implementations of the pipeline must be supported indepedently.
+The Python implementation of the pipeline has some mechanisms specific to Python. This is due to the fact that both synchronous and asynchronous implementations of the pipeline must be supported independently.
 
 When constructing an SDK, a developer may consume the pipeline like so:
 
@@ -22,26 +22,28 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     RedirectPolicy,
     BearerTokenCredentialPolicy,
-    ContentDecodePolicy
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy
 )
 
 class FooServiceClient():
 
     @staticmethod
-    def create_config(**kwargs):
+    def create_config(credential, scopes, **kwargs):
         # Here the SDK developer would define the default
         # config to interact with the service
         config = Configuration(**kwargs)
         config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
         config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, **kwargs)
+        config.authentication_policy = BearerTokenCredentialPolicy(credential, scopes, **kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
         config.redirect_policy = RedirectPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
         config.transport = kwargs.get('transport', RequestsTransport)
 
-    def __init__(self, endpoint=None, credentials=None, configuration=None, **kwargs):
+    def __init__(self, transport=None, configuration=None, **kwargs):
         config = configuration or FooServiceClient.create_config(**kwargs)
         transport = config.get_transport(**kwargs)
         policies = [
@@ -92,7 +94,7 @@ response = client.get_foo_properties(redirects_max=0)
 # Scenario where user wishes to fully customize the policies.
 # We expose the SDK-developer defined configuration to allow it to be tweaked
 # or entire policies replaced or patched.
-foo_config = FooserviceClient.create_config()
+foo_config = FooServiceClient.create_config()
 
 foo_config.retry_policy = CustomRetryPolicy()
 foo_config.redirect_policy.max_redirects = 5
@@ -120,7 +122,7 @@ transport = RequestsTransport(config)
 policies = [
     config.headers_policy,
     config.user_agent_policy,
-    config.authentication_policy,  # Credentials policy needs to be inserted after all request mutation to accomodate signing.
+    config.authentication_policy,  # Authentication policy needs to be inserted after all request mutation to accommodate signing.
     ContentDecodePolicy(),
     config.redirect_policy,
     config.retry_policy,
@@ -137,6 +139,8 @@ The policies that should currently be defined on the Configuration object are as
 - Configuration.user_agent_policy  # UserAgentPolicy
 - Configuration.connection  # The is a ConnectionConfiguration, used to provide common transport parameters.
 - Configuration.proxy_policy  # While this is a ProxyPolicy object, current implementation is transport configuration.
+- Configuration.authentication_policy  # BearerTokenCredentialPolicy
+
 ```
 
 ### Transport 
@@ -151,15 +155,15 @@ synchronous_transport = RequestsTransport()
 ```
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
-should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified as alternative.
+should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
 ```
 from azure.foo.aio import FooServiceClient
 from azure.core.pipeline.transport import (
-    # Identical implementation as the synchronous RequestsTrasport wrapped in an asynchronous using the
+    # Identical implementation as the synchronous RequestsTransport wrapped in an asynchronous using the
     # built-in asyncio event loop.
     AsyncioRequestsTransport,
 
-    # Identical implementation as the synchronous RequestsTrasport wrapped in an asynchronous using the
+    # Identical implementation as the synchronous RequestsTransport wrapped in an asynchronous using the
     # third party trio event loop.
     TrioRequestsTransport,
 
@@ -176,16 +180,19 @@ Some common properties can be configured on all transports, and can be set on th
 class ConnectionConfiguration(object):
     """Configuration of HTTP transport.
 
-    :param connection_timeout: The connect and read timeout value, in seconds. Default value is 100.
-    :param verify: SSL certificate verification. Enabled by default. Set to False to disable, alternatively
-     can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
-    :param cert: Client-side certificates. You can specify a local cert to use as client side certificate, as a single   file (containing the private key and the certificate) or as a tuple of both files’ paths.
+    :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
+    :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
+     alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
+    :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
+     certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
+    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
     """
 
     def __init__(self, **kwargs):
         self.timeout = kwargs.pop('connection_timeout', 100)
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
+        self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
 ```
 
 ### HttpRequest and HttpResponse
@@ -283,7 +290,7 @@ While the SDK developer will not construct the PipelineRequest explicitly, they 
 object that is returned from `pipeline.run()`
 These objects are universal for all transports, both synchronous and asynchronous.
 
-The pipeline request and response containers are also responsable for carrying a `context` object. This is
+The pipeline request and response containers are also responsible for carrying a `context` object. This is
 transport specific and can contain data persisted between pipeline requests (for example reusing an open connection
 pool or "session"), as well as used by the SDK developer to carry arbitrary data through the pipeline.
 
@@ -372,7 +379,7 @@ Currently provided HTTP policies include:
 ```python
 from azure.core.pipeline.policies import (
     RetryPolicy,
-    AsyncRetryPolicy.
+    AsyncRetryPolicy,
     RedirectPolicy,
     AsyncRedirectPolicy
 )
@@ -385,8 +392,8 @@ A pipeline can either be synchronous or asynchronous.
 The pipeline does not expose the policy chain, so individual policies cannot/should not be further
 configured once the pipeline has been instantiated.
 
-The pipeline hasa single exposed operation: `run(request)` which will seen a new HttpRequest object down
-the pipeline. This operation returns a `PipelineResonse` object.
+The pipeline has a single exposed operation: `run(request)` which will send a new HttpRequest object down
+the pipeline. This operation returns a `PipelineResponse` object.
 
 ```python
 class Pipeline:

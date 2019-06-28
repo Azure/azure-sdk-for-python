@@ -67,7 +67,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_peeklock
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
     queue_client.get_properties()
 
     session_id = str(uuid.uuid4())
@@ -95,7 +95,7 @@ async def test_async_session_by_queue_client_conn_str_receive_handler_receiveand
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
     queue_client.get_properties()
 
     session_id = str(uuid.uuid4())
@@ -129,7 +129,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_sto
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     async with queue_client.get_sender(session=session_id) as sender:
@@ -168,7 +168,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_no_
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
 
     session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5)
     with pytest.raises(NoActiveSession):
@@ -180,7 +180,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_ina
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     messages = []
@@ -198,7 +198,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     deferred_messages = []
@@ -236,7 +236,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     deferred_messages = []
@@ -279,7 +279,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     deferred_messages = []
@@ -314,7 +314,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     deferred_messages = []
@@ -347,7 +347,7 @@ async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadl
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
@@ -385,7 +385,7 @@ async def test_async_session_by_servicebus_client_browse_messages_client(live_se
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
@@ -412,7 +412,7 @@ async def test_async_session_by_servicebus_client_browse_messages_with_receiver(
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
@@ -437,7 +437,7 @@ async def test_async_session_by_servicebus_client_renew_client_locks(live_servic
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
@@ -479,7 +479,7 @@ async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
 
     async with queue_client.get_sender(session=session_id) as sender:
         for i in range(10):
@@ -528,7 +528,7 @@ async def test_async_session_message_connection_closed(live_servicebus_config, s
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
@@ -552,7 +552,7 @@ async def test_async_session_message_expiry(live_servicebus_config, session_queu
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
     
@@ -590,11 +590,11 @@ async def test_async_session_schedule_message(live_servicebus_config, session_qu
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     async with queue_client.get_sender(session=session_id) as sender:
         content = str(uuid.uuid4())
         message_id = uuid.uuid4()
@@ -627,11 +627,11 @@ async def test_async_session_schedule_multiple_messages(live_servicebus_config, 
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     messages = []
     async with queue_client.get_sender(session=session_id) as sender:
         content = str(uuid.uuid4())
@@ -667,11 +667,11 @@ async def test_async_session_cancel_scheduled_messages(live_servicebus_config, s
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     async with queue_client.get_sender(session=session_id) as sender:
         message_a = Message("Test scheduled message")
         message_b = Message("Test scheduled message")
@@ -700,7 +700,7 @@ async def test_async_session_get_set_state_with_receiver(live_servicebus_config,
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=session_queue,
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     queue_client.get_properties()
@@ -727,7 +727,7 @@ async def test_async_session_by_servicebus_client_list_sessions_with_receiver(li
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     sessions = []
@@ -756,7 +756,7 @@ async def test_async_session_by_servicebus_client_list_sessions_with_client(live
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     sessions = []
@@ -802,7 +802,7 @@ async def test_async_session_by_servicebus_client_session_pool(live_servicebus_c
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(session_queue)
     for session_id in sessions:
