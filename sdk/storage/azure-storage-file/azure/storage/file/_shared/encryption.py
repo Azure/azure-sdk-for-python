@@ -328,32 +328,6 @@ def _generate_blob_encryption_data(key_encryption_key):
     return content_encryption_key, initialization_vector, encryption_data
 
 
-def _generate_file_encryption_data(key_encryption_key):
-    '''
-    Generates the encryption_metadata for the file.
-
-    :param bytes key_encryption_key:
-        The key-encryption-key used to wrap the cek associate with this file.
-    :return: A tuple containing the cek and iv for this file as well as the
-        serialized encryption metadata for the file.
-    :rtype: (bytes, bytes, str)
-    '''
-    encryption_data = None
-    content_encryption_key = None
-    initialization_vector = None
-    if key_encryption_key:
-        _validate_key_encryption_key_wrap(key_encryption_key)
-        content_encryption_key = urandom(32)
-        initialization_vector = urandom(16)
-        encryption_data = _generate_encryption_data_dict(key_encryption_key,
-                                                         content_encryption_key,
-                                                         initialization_vector)
-        encryption_data['EncryptionMode'] = 'FullFile'
-        encryption_data = dumps(encryption_data)
-
-    return content_encryption_key, initialization_vector, encryption_data
-
-
 def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
                   response, start_offset, end_offset):
     '''

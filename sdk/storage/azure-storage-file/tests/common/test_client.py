@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import platform
 
 from azure.storage.file import (
     FileServiceClient,
@@ -241,6 +242,61 @@ class StorageClientTest(StorageTestCase):
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
+
+    @record
+    def test_user_agent_default(self):
+        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback)
+
+    @record
+    def test_user_agent_custom(self):
+        custom_app = "TestApp/v1.0"
+        service = FileServiceClient(
+            self.get_file_url(), credential=self.account_key, user_agent=custom_app)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "TestApp/v1.0 azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "TestApp/v2.0 azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
+
+    @record
+    def test_user_agent_append(self):
+        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+
+        def callback(response):
+            self.assertTrue('User-Agent' in response.http_request.headers)
+            self.assertEqual(
+                response.http_request.headers['User-Agent'],
+                "azsdk-python-storage-file/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                    platform.python_version(),
+                    platform.platform()))
+
+        custom_headers = {'User-Agent': 'customer_user_agent'}
+        service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
 
 # ------------------------------------------------------------------------------
