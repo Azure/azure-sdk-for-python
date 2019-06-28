@@ -97,3 +97,4 @@ certifi>=2017.4.17
 aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
+six>=1.6
