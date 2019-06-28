@@ -49,6 +49,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Topic :: Software Development'],
     install_requires=[
-        "azure-core>=1.0.0",
+        "azure-core>=1.0.0b1",
     ],
 )
