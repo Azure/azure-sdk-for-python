@@ -396,7 +396,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage.blob/12.0.0b1 Python/{} ({})".format(
+                "azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
                     platform.python_version(),
                     platform.platform()))
 
@@ -412,7 +412,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage.blob/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
                     platform.python_version(),
                     platform.platform()))
 
@@ -422,7 +422,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage.blob/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
                     platform.python_version(),
                     platform.platform()))
 
@@ -436,7 +436,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage.blob/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-blob/12.0.0b1 Python/{} ({}) customer_user_agent".format(
                     platform.python_version(),
                     platform.platform()))
 

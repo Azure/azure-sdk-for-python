@@ -249,7 +249,7 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._application = kwargs.pop('user_agent', None)
-        self._user_agent = "azsdk-python-storage.blob/{} Python/{} ({})".format(
+        self._user_agent = "azsdk-python-storage-blob/{} Python/{} ({})".format(
             VERSION,
             platform.python_version(),
             platform.platform())

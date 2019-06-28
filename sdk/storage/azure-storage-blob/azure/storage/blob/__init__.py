@@ -106,12 +106,13 @@ def upload_blob_to_url(
     :type data: bytes or str or Iterable
     :param bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
-        If True, upload_blob_to_url will silently overwrite the existing data. If set to False, the
+        If True, upload_blob_to_url will overwrite any existing data. If set to False, the
         operation will fail with a ResourceExistsError.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
@@ -125,9 +126,14 @@ def upload_blob_to_url(
             **kwargs)
 
 
+def _download_to_stream(client, handle, max_connections, **kwargs):
+    stream = client.download_blob(**kwargs)
+    stream.download_to_stream(handle, max_connections=max_connections)
+
+
 def download_blob_from_url(
         blob_url,  # type: str
-        file_path,  # type: str
+        output,  # type: str
         overwrite=False,  # type: bool
         max_connections=1,  # type: int
         credential=None,  # type: Any
@@ -136,22 +142,27 @@ def download_blob_from_url(
 
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.
-    :param str file_path:
-        The full local path, including file name, that the blob will be downloaded to.
+    :param output:
+        Where the data should be downloaded to. This could be either a file path to write to,
+        or an open IO handle to write to.
+    :type output: str or writable stream.
     :param bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
-        `True`, an attempt will be made to write to the existing file.
+        `True`, an attempt will be made to write to the existing file. If a stream handle is passed
+        in, this value is ignored.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-    :returns: Blob-updated property dict (Etag and last modified)
-    :rtype: dict[str, Any]
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :rtype: None
     """
     with BlobClient(blob_url, credential=credential) as client:
-        if not overwrite and os.path.isfile(file_path):
-            raise ValueError("The file '{}' already exists.".format(file_path))
-        with open(file_path, 'wb') as file_handle:
-            stream = client.download_blob(**kwargs)
-            stream.download_to_stream(file_handle, max_connections=max_connections)
+        if hasattr(output, 'write'):
+            _download_to_stream(client, output, max_connections, **kwargs)
+        else:
+            if not overwrite and os.path.isfile(output):
+                raise ValueError("The file '{}' already exists.".format(output))
+            with open(output, 'wb') as file_handle:
+                _download_to_stream(client, file_handle, max_connections, **kwargs)

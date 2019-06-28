@@ -1486,11 +1486,31 @@ class StorageCommonBlobTest(StorageTestCase):
         source_blob = self._create_remote_block_blob(blob_data=data)
 
         # Act
-        print(source_blob.url)
         download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_connections=2,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    @record
+    def test_download_to_stream_with_credential(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        self._create_remote_container()
+        source_blob = self._create_remote_block_blob(blob_data=data)
+
+        # Act
+        with open(FILE_PATH, 'wb') as stream:
+            download_blob_from_url(
+                source_blob.url, stream,
+                max_connections=2,
+                credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1507,7 +1527,6 @@ class StorageCommonBlobTest(StorageTestCase):
         source_blob = self._create_remote_block_blob(blob_data=data)
 
         # Act
-        print(source_blob.url)
         download_blob_from_url(
             source_blob.url, FILE_PATH,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
