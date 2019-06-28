@@ -235,10 +235,9 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
         """
         return DirectoryClient(
-            self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
         """Get a client to interact with the specified file.
@@ -251,9 +250,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         return FileClient(
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
 
     def create_share(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -293,7 +290,6 @@ class ShareClient(StorageAccountHostsMixin):
 
     def create_snapshot(
             self, metadata=None,  # type: Optional[Dict[str, str]]
-            quota=None, # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
@@ -311,8 +307,6 @@ class ShareClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the share as metadata.
         :type metadata: dict(str, str)
-        :param int quota:
-            The quota to be allotted.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
@@ -507,8 +501,14 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_directories_and_files(self, directory_name=None, name_starts_with=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[int]) -> DirectoryProperties
+    def list_directories_and_files(
+            self, directory_name=None,  # type: Optional[str]
+            name_starts_with=None,  # type: Optional[str]
+            marker=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> Iterable[dict[str,str]]
         """Lists the directories and files under the share.
 
         :param str directory_name:
@@ -522,7 +522,7 @@ class ShareClient(StorageAccountHostsMixin):
             this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties 
+        :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         """
         directory = self.get_directory_client(directory_name)
         return directory.list_directories_and_files(

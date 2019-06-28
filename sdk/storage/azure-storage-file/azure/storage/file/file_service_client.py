@@ -16,10 +16,9 @@ except ImportError:
 
 from .share_client import ShareClient
 from ._shared.shared_access_signature import SharedAccessSignature
-from ._shared.models import LocationMode, Services
+from ._shared.models import Services
 from ._shared.utils import (
     StorageAccountHostsMixin,
-    return_response_headers,
     parse_connection_str,
     process_storage_error,
     parse_query)
@@ -82,7 +81,6 @@ class FileServiceClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             credential=None, # type: Optional[Any]
-            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """Create FileServiceClient from a Connection String.
@@ -93,9 +91,6 @@ class FileServiceClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
-        :param configuration:
-            An optional configuration for the client.
-        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:

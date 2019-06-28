@@ -8,7 +8,6 @@ import sys
 from io import BytesIO
 
 from .models import ShareProperties, DirectoryProperties, FileProperties
-from ._shared.utils import return_response_headers
 from ._generated.models import StorageErrorException
 from ._shared.utils import process_storage_error, parse_length_from_content_range
 from ._shared.upload_chunking import upload_file_chunks
@@ -20,7 +19,7 @@ from ._shared.download_chunking import (
     SequentialFileChunkDownloader)
 
 
-def deserialize_metadata(response, obj, headers):
+def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
     raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 

@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from msrest.serialization import Model
 from azure.core import HttpResponseError
@@ -645,7 +646,7 @@ class ShareStats(Model):
         'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int', 'xml': {'name': 'ShareUsageBytes'}},
     }
     _xml_map = {
-        'name': 'ShareStats
+        'name': 'ShareStats'
     }
 
     def __init__(self, *, share_usage_bytes: int, **kwargs) -> None:

@@ -8,7 +8,6 @@
 
 from azure.core.paging import Paged
 from ._shared.utils import (
-    decode_base64,
     return_context_and_deserialized,
     process_storage_error)
 
@@ -18,7 +17,13 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import DirectoryItem, FileItem
+from ._generated.models import DirectoryItem
+
+
+def _wrap_item(item):
+    if isinstance(item, DirectoryItem):
+        return {'name': item.name, 'is_directory': True}
+    return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
 
 
 class Metrics(GeneratedMetrics):
@@ -316,7 +321,7 @@ class Handle(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.handle_id = kwargs.get('handle_id')
+        self.id = kwargs.get('handle_id')
         self.path = kwargs.get('path')
         self.file_id = kwargs.get('file_id')
         self.parent_id = kwargs.get('parent_id')
@@ -343,13 +348,11 @@ class HandlesPaged(Paged):
     """Handles paged.
 
     :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only handles whose names
-        begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
     :param str marker: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, marker=None, **kwargs):
+    def __init__(self, command, results_per_page=None, marker=None, **kwargs):
         super(HandlesPaged, self).__init__(command, None)
         self.current_marker = None
         self.results_per_page = results_per_page
@@ -433,11 +436,6 @@ class DirectoryPropertiesPaged(Paged):
         self.next_marker = marker or ""
         self.location_mode = None
 
-    def _wrap(self, item):
-        if isinstance(item, DirectoryItem):
-            return {'name': item.name, 'is_directory': True}
-        return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
-
     def _advance_page(self):
         # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
@@ -463,8 +461,8 @@ class DirectoryPropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [self._wrap(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([self._wrap(i) for i in self._response.segment.file_items])
+        self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
+        self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
         self.next_marker = self._response.next_marker or None
         return self.current_page
 
@@ -608,10 +606,10 @@ class FilePermissions(object):
     :cvar FilePermissions FilePermissions.DELETE:
         Delete the file.
     :cvar FilePermissions FilePermissions.READ:
-        Read the content, properties, metadata. Use the file as the source of a copy 
+        Read the content, properties, metadata. Use the file as the source of a copy
         operation.
     :cvar FilePermissions FilePermissions.WRITE:
-        Create or write content, properties, metadata. Resize the file. Use the file 
+        Create or write content, properties, metadata. Resize the file. Use the file
         as the destination of a copy operation within the same account.
     :param bool read:
         Read the content, properties, metadata. Use the file as the source of a copy
@@ -661,18 +659,18 @@ class SharePermissions(object):
 
     :cvar SharePermissions SharePermissions.DELETE:
         Delete any file in the share.
-        Note: You cannot grant permissions to delete a share with a service SAS. Use 
+        Note: You cannot grant permissions to delete a share with a service SAS. Use
         an account SAS instead.
     :cvar SharePermissions SharePermissions.LIST:
         List files and directories in the share.
     :cvar SharePermissions SharePermissions.READ:
-        Read the content, properties or metadata of any file in the share. Use any 
+        Read the content, properties or metadata of any file in the share. Use any
         file in the share as the source of a copy operation.
     :cvar SharePermissions SharePermissions.WRITE:
-        For any file in the share, create or write content, properties or metadata. 
-        Resize the file. Use the file as the destination of a copy operation within 
+        For any file in the share, create or write content, properties or metadata.
+        Resize the file. Use the file as the destination of a copy operation within
         the same account.
-        Note: You cannot grant permissions to read or write share properties or 
+        Note: You cannot grant permissions to read or write share properties or
         metadata with a service SAS. Use an account SAS instead.
     :param bool read:
         Read the content, properties or metadata of any file in the share. Use any
@@ -693,7 +691,7 @@ class SharePermissions(object):
         A string representing the permissions
     """
 
-    def __init__(self, read=False, write=False, delete=False, list=False,
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  _str=None):
         if not _str:
             _str = ''

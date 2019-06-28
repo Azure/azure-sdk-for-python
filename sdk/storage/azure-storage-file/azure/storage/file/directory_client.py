@@ -20,11 +20,9 @@ from .file_client import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, SignedIdentifier
+from ._generated.models import StorageErrorException
 from ._shared.utils import (
     StorageAccountHostsMixin,
-    serialize_iso,
-    return_headers_and_deserialized,
     parse_query,
     return_response_headers,
     add_metadata_headers,
@@ -149,7 +147,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(
             account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
-    
+
     def get_file_client(self, file_name, **kwargs):
         """Get a client to interact with a specific file.
         The file need not already exist.
@@ -447,8 +445,8 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def delete_file(
             self, file_name,  # type: str,
-            timeout=None, # type: Optional[int],
-            **kwargs # type: Optional[Any] 
+            timeout=None,  # type: Optional[int],
+            **kwargs  # type: Optional[Any]
         ):
         # type: (...) -> None
         """Marks the specified file for deletion. The file is later

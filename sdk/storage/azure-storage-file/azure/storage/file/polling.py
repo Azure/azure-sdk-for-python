@@ -8,7 +8,7 @@ import time
 
 from azure.core.polling import PollingMethod, LROPoller
 
-from ._shared.utils import process_storage_error, return_response_headers
+from ._shared.utils import process_storage_error
 from ._generated.models import StorageErrorException
 from ._share_utils import deserialize_file_properties
 
@@ -175,7 +175,7 @@ class CloseHandles(PollingMethod):
         """Is this polling finished?
         :rtype: bool
         """
-        return self._status == None
+        return self._status is None
 
     def resource(self):
         # type: () -> Any

@@ -33,8 +33,6 @@ from ._shared.utils import (
 from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
 from .polling import CopyStatusPoller, CloseHandles
 
-from ._share_utils import deserialize_directory_properties
-
 
 class FileClient(StorageAccountHostsMixin):
     """Creates a new FileClient. This client represents interaction with a specific
@@ -498,17 +496,17 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any) 
+        :rtype: dict(str, Any)
         """
         file_content_length = kwargs.pop('size', None)
         file_http_headers = FileHTTPHeaders(
-                file_cache_control=content_settings.cache_control,
-                file_content_type=content_settings.content_type,
-                file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                file_content_encoding=content_settings.content_encoding,
-                file_content_language=content_settings.content_language,
-                file_content_disposition=content_settings.content_disposition
-            )
+            file_cache_control=content_settings.cache_control,
+            file_content_type=content_settings.content_type,
+            file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+            file_content_encoding=content_settings.content_encoding,
+            file_content_language=content_settings.content_language,
+            file_content_disposition=content_settings.content_disposition
+        )
         try:
             return self._client.file.set_http_headers(
                 timeout=timeout,
@@ -534,7 +532,7 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any) 
+        :rtype: dict(str, Any)
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
