@@ -18,8 +18,8 @@ import sys
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import Offset
-from azure.eventhub import EventHubClientAsync
+from azure.eventhub import EventPosition, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubClient
 
 
 def get_logger(filename, level=logging.INFO):
@@ -48,7 +48,7 @@ logger = get_logger("recv_test_async.log", logging.INFO)
 
 
 async def get_partitions(client):
-    eh_data = await client.get_eventhub_info_async()
+    eh_data = await client.get_properties()
     return eh_data["partition_ids"]
 
 
@@ -56,34 +56,37 @@ async def pump(_pid, receiver, _args, _dl):
     total = 0
     iteration = 0
     deadline = time.time() + _dl
+
     try:
-        while time.time() < deadline:
-            batch = await receiver.receive(timeout=1)
-            size = len(batch)
-            total += size
-            iteration += 1
-            if size == 0:
-                print("{}: No events received, queue size {}, delivered {}".format(
-                    _pid,
-                    receiver.queue_size,
-                    total))
-            elif iteration >= 5:
-                iteration = 0
-                print("{}: total received {}, last sn={}, last offset={}".format(
-                            _pid,
-                            total,
-                            batch[-1].sequence_number,
-                            batch[-1].offset.value))
-        print("{}: total received {}".format(
-            _pid,
-            total))
+        async with receiver:
+            while time.time() < deadline:
+                batch = await receiver.receive(timeout=1)
+                size = len(batch)
+                total += size
+                iteration += 1
+                if size == 0:
+                    print("{}: No events received, queue size {}, delivered {}".format(
+                        _pid,
+                        receiver.queue_size,
+                        total))
+                elif iteration >= 5:
+                    iteration = 0
+                    print("{}: total received {}, last sn={}, last offset={}".format(
+                                _pid,
+                                total,
+                                batch[-1].sequence_number,
+                                batch[-1].offset))
+            print("{}: total received {}".format(
+                _pid,
+                total))
     except Exception as e:
         print("Partition {} receiver failed: {}".format(_pid, e))
         raise
 
 
 @pytest.mark.liveTest
-def test_long_running_receive_async(connection_str):
+@pytest.mark.asyncio
+async def test_long_running_receive_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--consumer", help="Consumer group name", default="$default")
@@ -98,15 +101,16 @@ def test_long_running_receive_async(connection_str):
     loop = asyncio.get_event_loop()
     args, _ = parser.parse_known_args()
     if args.conn_str:
-        client = EventHubClientAsync.from_connection_string(
+        client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, auth_timeout=240, debug=False)
+            event_hub_path=args.eventhub, auth_timeout=240, network_tracing=False)
     elif args.address:
-        client = EventHubClientAsync(
-            args.address,
-            auth_timeout=240,
-            username=args.sas_policy,
-            password=args.sas_key)
+        client = EventHubClient(host=args.address,
+                                event_hub_path=args.eventhub,
+                                credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+                                auth_timeout=240,
+                                network_tracing=False)
+
     else:
         try:
             import pytest
@@ -114,24 +118,20 @@ def test_long_running_receive_async(connection_str):
         except ImportError:
             raise ValueError("Must specify either '--conn-str' or '--address'")
 
-    try:
-        if not args.partitions:
-            partitions = loop.run_until_complete(get_partitions(client))
-        else:
-            partitions = args.partitions.split(",")
-        pumps = []
-        for pid in partitions:
-            receiver = client.add_async_receiver(
-                consumer_group=args.consumer,
-                partition=pid,
-                offset=Offset(args.offset),
-                prefetch=50)
-            pumps.append(pump(pid, receiver, args, args.duration))
-        loop.run_until_complete(client.run_async())
-        loop.run_until_complete(asyncio.gather(*pumps))
-    finally:
-        loop.run_until_complete(client.stop_async())
+    if not args.partitions:
+        partitions = await client.get_partition_ids()
+    else:
+        partitions = args.partitions.split(",")
+    pumps = []
+    for pid in partitions:
+        receiver = client.create_consumer(consumer_group="$default",
+            partition_id=pid,
+            event_position=EventPosition(args.offset),
+            prefetch=50,
+            loop=loop)
+        pumps.append(pump(pid, receiver, args, args.duration))
+    await asyncio.gather(*pumps)
 
 
 if __name__ == '__main__':
-    test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    asyncio.run(test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))

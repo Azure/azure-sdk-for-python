@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
+from ._classic_administrators_operations import ClassicAdministratorsOperations
 
 __all__ = [
     'ClassicAdministratorsOperations',

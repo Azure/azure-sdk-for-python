@@ -1,5 +1,0 @@
--e ../../authorization/azure-mgmt-authorization
--e ../../core/azure-core
--e ../../storage/azure-storage-blob
--e ../azure-mgmt-keyvault
--e ../../../tools/azure-sdk-tools

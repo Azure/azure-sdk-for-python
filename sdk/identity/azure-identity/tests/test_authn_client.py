@@ -1,8 +1,7 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# -------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import json
 import time
 
@@ -19,9 +18,11 @@ def test_authn_client_deserialization():
     # using the synchronous AuthnClient to drive this test but the functionality tested is
     # in the sans I/O AuthnClientBase, shared with AsyncAuthnClient
     now = 6
-    expires_in = 1800
+    expires_in = 59 - now
     expires_on = now + expires_in
-    expected_token = "token"
+    access_token = "***"
+    expected_access_token = AccessToken(access_token, expires_on)
+    scope = "scope"
 
     mock_response = Mock(
         headers={"content-type": "application/json"}, status_code=200, content_type=["application/json"]
@@ -30,29 +31,44 @@ def test_authn_client_deserialization():
 
     # response with expires_on only
     mock_response.text = lambda: json.dumps(
-        {"access_token": expected_token, "expires_on": expires_on, "token_type": "Bearer"}
+        {"access_token": access_token, "expires_on": expires_on, "token_type": "Bearer", "resource": scope}
     )
-    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token("scope")
-    assert token.token == expected_token
-    assert token.expires_on == expires_on
+    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    assert token == expected_access_token
 
-    # response with expires_in and expires_on
+    # response with expires_on only and it's a datetime string (App Service MSI)
     mock_response.text = lambda: json.dumps(
-        {"access_token": expected_token, "expires_in": expires_in, "expires_on": expires_on, "token_type": "Bearer"}
+        {
+            "access_token": access_token,
+            "expires_on": "01/01/1970 00:00:{} +00:00".format(now + expires_in),
+            "token_type": "Bearer",
+            "resource": scope,
+        }
     )
-    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token("scope")
-    assert token.token == expected_token
-    assert token.expires_on == expires_on
+    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    assert token == expected_access_token
 
-    # response with expires_in only
+    # response with string expires_in and expires_on (IMDS, Cloud Shell)
     mock_response.text = lambda: json.dumps(
-        {"access_token": expected_token, "expires_in": expires_in, "token_type": "Bearer"}
+        {
+            "access_token": access_token,
+            "expires_in": str(expires_in),
+            "expires_on": str(expires_on),
+            "token_type": "Bearer",
+            "resource": scope,
+        }
+    )
+    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    assert token == expected_access_token
+
+    # response with int expires_in (AAD)
+    mock_response.text = lambda: json.dumps(
+        {"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer", "ext_expires_in": expires_in}
     )
     with patch("azure.identity._authn_client.time.time") as mock_time:
         mock_time.return_value = now
-        token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token("scope")
-        assert token.token == expected_token
-        assert token.expires_on == expires_on
+        token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+        assert token == expected_access_token
 
 
 def test_caching_when_only_expires_in_set():

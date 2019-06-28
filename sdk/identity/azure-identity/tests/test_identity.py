@@ -1,8 +1,7 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# -------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import json
 import os
 import time
@@ -15,13 +14,13 @@ except ImportError:  # python < 3.3
 
 import pytest
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import (
-    AuthenticationError,
     ClientSecretCredential,
     DefaultAzureCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    TokenCredentialChain,
+    ChainedTokenCredential,
 )
 from azure.identity._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
@@ -78,54 +77,30 @@ def test_client_secret_environment_credential(monkeypatch):
         assert request.data["client_id"] == client_id
         assert request.data["client_secret"] == secret
         # raising here makes mocking a transport response unnecessary
-        raise AuthenticationError(success_message)
+        raise ClientAuthenticationError(success_message)
 
     credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(AuthenticationError) as ex:
-        credential.get_token("scope")
-    assert str(ex.value) == success_message
-
-
-def test_cert_environment_credential(monkeypatch):
-    client_id = "fake-client-id"
-    pem_path = os.path.join(os.path.dirname(__file__), "private-key.pem")
-    tenant_id = "fake-tenant-id"
-
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, pem_path)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    success_message = "request passed validation"
-
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["grant_type"] == "client_credentials"
-        # raising here makes mocking a transport response unnecessary
-        raise AuthenticationError(success_message)
-
-    credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(AuthenticationError) as ex:
+    with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
 def test_environment_credential_error():
-    with pytest.raises(AuthenticationError):
+    with pytest.raises(ClientAuthenticationError):
         EnvironmentCredential().get_token("scope")
 
 
 def test_credential_chain_error_message():
     def raise_authn_error(message):
-        raise AuthenticationError(message)
+        raise ClientAuthenticationError(message)
 
     first_error = "first_error"
     first_credential = Mock(spec=ClientSecretCredential, get_token=lambda _: raise_authn_error(first_error))
     second_error = "second_error"
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
-    with pytest.raises(AuthenticationError) as ex:
-        TokenCredentialChain(first_credential, second_credential).get_token("scope")
+    with pytest.raises(ClientAuthenticationError) as ex:
+        ChainedTokenCredential(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -134,7 +109,7 @@ def test_credential_chain_error_message():
 
 def test_chain_attempts_all_credentials():
     def raise_authn_error(message="it didn't work"):
-        raise AuthenticationError(message)
+        raise ClientAuthenticationError(message)
 
     expected_token = AccessToken("expected_token", 0)
 
@@ -144,7 +119,7 @@ def test_chain_attempts_all_credentials():
         Mock(get_token=Mock(return_value=expected_token)),
     ]
 
-    token = TokenCredentialChain(*credentials).get_token("scope")
+    token = ChainedTokenCredential(*credentials).get_token("scope")
     assert token is expected_token
 
     for credential in credentials:
@@ -156,7 +131,7 @@ def test_chain_returns_first_token():
     first_credential = Mock(get_token=lambda _: expected_token)
     second_credential = Mock(get_token=Mock())
 
-    aggregate = TokenCredentialChain(first_credential, second_credential)
+    aggregate = ChainedTokenCredential(first_credential, second_credential)
     credential = aggregate.get_token("scope")
 
     assert credential is expected_token
@@ -207,23 +182,24 @@ def test_imds_credential_cache():
 
 def test_imds_credential_retries():
     mock_response = Mock(
-        text=lambda: b"",
+        text=lambda: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
         content_type=["application/json"],
     )
     mock_send = Mock(return_value=mock_response)
 
-    credential = ImdsCredential(transport=Mock(send=mock_send))
+    total_retries = ImdsCredential.create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
         mock_response.status_code = status_code
         try:
-            credential.get_token("scope")
-        except AuthenticationError:
+            ImdsCredential(transport=Mock(send=mock_send)).get_token("scope")
+        except ClientAuthenticationError:
             pass
-        # first call was availability probe, second the original request; there should be at least one retry thereafter
-        assert mock_send.call_count > 2
+        # first call was availability probe, second the original request;
+        # credential should have then exhausted retries for each of these status codes
+        assert mock_send.call_count == 2 + total_retries
 
 
 def test_managed_identity_app_service(monkeypatch):
