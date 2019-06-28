@@ -116,11 +116,11 @@ class TestMessageQueueSamples(StorageTestCase):
 
         try:
             # [START enqueue_messages]
-            queue.enqueue_message("message1")
-            queue.enqueue_message("message2", visibility_timeout=30)  # wait 30s before becoming visible
-            queue.enqueue_message("message3")
-            queue.enqueue_message("message4")
-            queue.enqueue_message("message5")
+            queue.enqueue_message(u"message1")
+            queue.enqueue_message(u"message2", visibility_timeout=30)  # wait 30s before becoming visible
+            queue.enqueue_message(u"message3")
+            queue.enqueue_message(u"message4")
+            queue.enqueue_message(u"message5")
             # [END enqueue_messages]
 
             # [START receive_messages]
@@ -157,11 +157,11 @@ class TestMessageQueueSamples(StorageTestCase):
 
         try:
             # Enqueue messages
-            queue.enqueue_message("message1")
-            queue.enqueue_message("message2")
-            queue.enqueue_message("message3")
-            queue.enqueue_message("message4")
-            queue.enqueue_message("message5")
+            queue.enqueue_message(u"message1")
+            queue.enqueue_message(u"message2")
+            queue.enqueue_message(u"message3")
+            queue.enqueue_message(u"message4")
+            queue.enqueue_message(u"message5")
 
             # [START delete_message]
             # Get the message at the front of the queue
@@ -190,11 +190,11 @@ class TestMessageQueueSamples(StorageTestCase):
 
         try:
             # Enqueue messages
-            queue.enqueue_message("message1")
-            queue.enqueue_message("message2")
-            queue.enqueue_message("message3")
-            queue.enqueue_message("message4")
-            queue.enqueue_message("message5")
+            queue.enqueue_message(u"message1")
+            queue.enqueue_message(u"message2")
+            queue.enqueue_message(u"message3")
+            queue.enqueue_message(u"message4")
+            queue.enqueue_message(u"message5")
 
             # [START peek_message]
             # Peek at one message at the front of the queue
@@ -225,7 +225,7 @@ class TestMessageQueueSamples(StorageTestCase):
         try:
             # [START update_message]
             # Enqueue a message
-            queue.enqueue_message("update me")
+            queue.enqueue_message(u"update me")
 
             # Receive the message
             messages = queue.receive_messages()
@@ -236,7 +236,7 @@ class TestMessageQueueSamples(StorageTestCase):
                 list_result.id,
                 pop_receipt=list_result.pop_receipt,
                 visibility_timeout=0,
-                content="updated")
+                content=u"updated")
             # [END update_message]
             assert message.content == "updated"
 

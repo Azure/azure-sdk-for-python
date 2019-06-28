@@ -45,8 +45,8 @@ class TestHelloWorldSamples(StorageTestCase):
 
         try:
             # Enqueue messages
-            queue.enqueue_message("I'm using queues!")
-            queue.enqueue_message("This is my second message")
+            queue.enqueue_message(u"I'm using queues!")
+            queue.enqueue_message(u"This is my second message")
 
             # Receive the messages
             response = queue.receive_messages(messages_per_page=2)
