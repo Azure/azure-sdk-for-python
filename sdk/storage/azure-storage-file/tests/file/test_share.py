@@ -507,7 +507,6 @@ class StorageShareTest(StorageTestCase):
     @record
     def test_set_share_acl_with_signed_identifiers(self):
         # Arrange
-        pytest.skip("Failing with auth error")
         share = self._get_share_reference()
         share.create_share()
 
@@ -524,8 +523,8 @@ class StorageShareTest(StorageTestCase):
         # Assert
         acl = share.get_share_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl), 1)
-        self.assertTrue('testid' in acl)
+        self.assertEqual(len(acl['signed_identifiers']), 1)
+        self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
 
     @record
     def test_set_share_acl_too_many_ids(self):

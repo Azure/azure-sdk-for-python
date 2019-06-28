@@ -518,7 +518,8 @@ class ShareOperations:
 
         # Construct body
         if share_acl is not None:
-            body_content = self._serialize.body(share_acl, '[SignedIdentifier]')
+            body_content = self._serialize.serialize_iter(share_acl, 'SignedIdentifier',
+                                                          serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
 

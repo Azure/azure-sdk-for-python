@@ -116,10 +116,8 @@ class StorageDirectoryTest(StorageTestCase):
 
     @record
     def test_create_file_in_directory(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         # Arrange
-        file_data = b'12345678' * 1024 * 1024
+        file_data = b'12345678' * 1024
         file_name = self.get_resource_name('file')
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
