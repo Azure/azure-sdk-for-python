@@ -220,6 +220,38 @@ class QueueMessage(DictMixin):
         return message
 
 
+class MessagesPaged(Paged):
+    """Queue messages paged.
+
+    :param callable command: Function to retrieve the next page of items.
+    :param int results_per_page: The maximum number of messages to retrieve per
+        call.
+    """
+    def __init__(self, command, results_per_page=None):
+        super(MessagesPaged, self).__init__(command, None)
+        self.results_per_page = results_per_page
+
+    def _advance_page(self):
+        # type: () -> List[Model]
+        """Force moving the cursor to the next azure call.
+
+        This method is for advanced usage, iterator protocol is prefered.
+
+        :raises: StopIteration if no further page
+        :return: The current page list
+        :rtype: list
+        """
+        self._current_page_iter_index = 0
+        try:
+            messages = self._get_next(number_of_messages=self.results_per_page)
+            if not messages:
+                raise StopIteration()
+        except StorageErrorException as error:
+            process_storage_error(error)
+        self.current_page = [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+        return self.current_page
+
+
 class QueueProperties(DictMixin):
     """Queue Properties.
 
@@ -289,17 +321,9 @@ class QueuePropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.queue_items
+        self.current_page = [QueueProperties._from_generated(q) for q in self._response.queue_items]  # pylint: disable=protected-access
         self.next_marker = self._response.next_marker or None
         return self.current_page
-
-    def __next__(self):
-        item = super(QueuePropertiesPaged, self).__next__()
-        if isinstance(item, QueueProperties):
-            return item
-        return QueueProperties._from_generated(item)  # pylint: disable=protected-access
-
-    next = __next__
 
 
 class QueuePermissions(object):

@@ -28,7 +28,6 @@ from ._shared.utils import (
     parse_connection_str
 )
 from ._queue_utils import (
-    MessageIterator,
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
     deserialize_queue_properties,
@@ -37,7 +36,7 @@ from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
-from .models import QueueMessage, AccessPolicy
+from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
@@ -415,7 +414,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def dequeue_messages(self, num_messages=None, visibility_timeout=None, timeout=None, **kwargs):
+    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Removes one or more messages from the front of the queue.
 
@@ -428,7 +427,7 @@ class QueueClient(StorageAccountHostsMixin):
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
 
-        :param int num_messages:
+        :param int messages_per_page:
             A nonzero integer value that specifies the number of
             messages to retrieve from the queue, up to a maximum of 32. If
             fewer are visible, the visible messages are returned. By default,
@@ -455,13 +454,12 @@ class QueueClient(StorageAccountHostsMixin):
         try:
             command = functools.partial(
                 self._client.messages.dequeue,
-                number_of_messages=num_messages,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return MessageIterator(command)
+            return MessagesPaged(command, results_per_page=messages_per_page)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -473,7 +471,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         This operation can be used to continually extend the invisibility of a
         queue message. This functionality can be useful if you want a worker role
-        to "lease" a queue message. For example, if a worker role calls :func:`~dequeue_messages()`
+        to "lease" a queue message. For example, if a worker role calls :func:`~receive_messages()`
         and recognizes that it needs more time to process a message, it can
         continually extend the message's invisibility until it is processed. If
         the worker role were to fail during processing, eventually the message
@@ -493,7 +491,7 @@ class QueueClient(StorageAccountHostsMixin):
             The message object or message id identifying the message to update.
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
-            to the :func:`~dequeue_messages` or :func:`~update_message` operation.
+            to the :func:`~receive_messages` or :func:`~update_message` operation.
         :param obj content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
@@ -556,7 +554,7 @@ class QueueClient(StorageAccountHostsMixin):
         not alter the visibility of the message.
 
         Only messages that are visible may be retrieved. When a message is retrieved
-        for the first time with a call to :func:`~dequeue_messages`, its dequeue_count property
+        for the first time with a call to :func:`~receive_messages`, its dequeue_count property
         is set to 1. If it is not deleted and is subsequently retrieved again, the
         dequeue_count property is incremented. The client may use this value to
         determine how many times a message has been retrieved. Note that a call
@@ -616,18 +614,18 @@ class QueueClient(StorageAccountHostsMixin):
         Normally after a client retrieves a message with the dequeue messages operation,
         the client is expected to process and delete the message. To delete the
         message, you must have the message object itself, or two items of data: id and pop_receipt.
-        The id is returned from the previous dequeue_messages operation. The
-        pop_receipt is returned from the most recent :func:`~dequeue_messages` or
+        The id is returned from the previous receive_messages operation. The
+        pop_receipt is returned from the most recent :func:`~receive_messages` or
         :func:`~update_message` operation. In order for the delete_message operation
         to succeed, the pop_receipt specified on the request must match the
-        pop_receipt returned from the :func:`~dequeue_messages` or :func:`~update_message`
+        pop_receipt returned from the :func:`~receive_messages` or :func:`~update_message`
         operation.
 
         :param str message:
             The message object or id identifying the message to delete.
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
-            to the :func:`~dequeue_messages` or :func:`~update_message`.
+            to the :func:`~receive_messages` or :func:`~update_message`.
         :param int timeout:
             The server timeout, expressed in seconds.
         """

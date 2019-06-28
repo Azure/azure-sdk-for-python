@@ -15,7 +15,6 @@ from ._shared.models import(
     StorageErrorCode
 )
 from ._queue_utils import (
-    MessageIterator,
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,
@@ -35,6 +34,7 @@ from .models import (
     Metrics,
     CorsRule,
     RetentionPolicy,
+    MessagesPaged,
 )
 
 __version__ = VERSION
@@ -62,9 +62,9 @@ __all__ = [
     'TextXMLDecodePolicy',
     'NoEncodePolicy',
     'NoDecodePolicy',
-    'MessageIterator',
     'Logging',
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
+    'MessagesPaged',
 ]

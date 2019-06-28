@@ -75,8 +75,8 @@ class StorageQueueEncodingTest(StorageTestCase):
         queue.enqueue_message(message)
 
         # Asserts
-        messages = next(queue.dequeue_messages())
-        self.assertEqual(message, messages[0].content)
+        dequeued = next(queue.receive_messages())
+        self.assertEqual(message, dequeued.content)
 
     # --------------------------------------------------------------------------
 

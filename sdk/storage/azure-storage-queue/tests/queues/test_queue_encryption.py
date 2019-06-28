@@ -98,10 +98,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         queue.enqueue_message(u'encrypted_message_2')
 
         # Act
-        li = next(queue.dequeue_messages())
+        li = next(queue.receive_messages())
 
         # Assert
-        self.assertEqual(li[0].content, u'encrypted_message_2')
+        self.assertEqual(li.content, u'encrypted_message_2')
 
     @record
     def test_get_messages_encrypted_resolver(self):
@@ -115,10 +115,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
         queue.key_encryption_key = None  # Ensure that the resolver is used
 
         # Act
-        li = next(queue.dequeue_messages())
+        li = next(queue.receive_messages())
 
         # Assert
-        self.assertEqual(li[0].content, u'encrypted_message_2')
+        self.assertEqual(li.content, u'encrypted_message_2')
 
     @record
     def test_peek_messages_encrypted_kek(self):
@@ -178,13 +178,13 @@ class StorageQueueEncryptionTest(StorageTestCase):
         queue.key_encryption_key = KeyWrapper('key1')
         queue.enqueue_message(u'Update Me')
 
-        messages = queue.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue.receive_messages()
+        list_result1 = next(messages)
         list_result1.content = u'Updated'
 
         # Act
         message = queue.update_message(list_result1)
-        list_result2 = next(messages)[0]
+        list_result2 = next(messages)
 
         # Assert
         self.assertEqual(u'Updated', list_result2.content)
@@ -199,15 +199,15 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         binary_message = self.get_random_bytes(100)
         queue.enqueue_message(binary_message)
-        messages = queue.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue.receive_messages()
+        list_result1 = next(messages)
 
         # Act
         binary_message = self.get_random_bytes(100)
         list_result1.content = binary_message
         queue.update_message(list_result1)
 
-        list_result2 = next(messages)[0]
+        list_result2 = next(messages)
 
         # Assert
         self.assertEqual(binary_message, list_result2.content)
@@ -225,15 +225,15 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         raw_text = u'Update Me'
         queue.enqueue_message(raw_text)
-        messages = queue.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue.receive_messages()
+        list_result1 = next(messages)
 
         # Act
         raw_text = u'Updated'
         list_result1.content = raw_text
         queue.update_message(list_result1)
 
-        list_result2 = next(messages)[0]
+        list_result2 = next(messages)
 
         # Assert
         self.assertEqual(raw_text, list_result2.content)
@@ -252,8 +252,8 @@ class StorageQueueEncryptionTest(StorageTestCase):
         message_dict = {'val1': 1, 'val2': '2'}
         json_text = dumps(message_dict)
         queue.enqueue_message(json_text)
-        messages = queue.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue.receive_messages()
+        list_result1 = next(messages)
 
         # Act
         message_dict['val1'] = 0
@@ -262,7 +262,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         list_result1.content = json_text
         queue.update_message(list_result1)
 
-        list_result2 = next(messages)[0]
+        list_result2 = next(messages)
 
         # Assert
         self.assertEqual(message_dict, loads(list_result2.content))
@@ -446,7 +446,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         queue.require_encryption = True
         queue.key_encryption_key = KeyWrapper('key1')
         with self.assertRaises(ValueError) as e:
-            next(queue.dequeue_messages())
+            next(queue.receive_messages())
 
         self.assertEqual(str(e.exception), 'Message was not encrypted.')
 
@@ -476,7 +476,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         # Assert
         with self.assertRaises(HttpResponseError) as e:
-            next(queue.dequeue_messages())
+            next(queue.receive_messages())
 
         self.assertEqual(str(e.exception), "Decryption failed.")
 

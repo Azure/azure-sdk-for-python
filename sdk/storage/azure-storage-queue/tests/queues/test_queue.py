@@ -296,12 +296,10 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        result = next(queue_client.dequeue_messages())
+        message = next(queue_client.receive_messages())
 
         # Asserts
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
+        self.assertIsNotNone(message)
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
@@ -320,13 +318,14 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        result = next(queue_client.dequeue_messages(num_messages=4, visibility_timeout=20))
+        result = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
+        next(result)
 
         # Asserts
         self.assertIsNotNone(result)
-        self.assertEqual(4, len(result))
+        self.assertEqual(4, len(result.current_page))
 
-        for message in result:
+        for message in result.current_page:
             self.assertIsNotNone(message)
             self.assertNotEqual('', message.id)
             self.assertNotEqual('', message.content)
@@ -405,21 +404,23 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        result = next(queue_client.dequeue_messages())
-        queue_client.delete_message(result[0])
-        result2 = next(queue_client.dequeue_messages(num_messages=32))
+        message = next(queue_client.receive_messages())
+        queue_client.delete_message(message)
+
+        messages = queue_client.receive_messages(messages_per_page=32)
+        next(messages)
 
         # Asserts
-        self.assertIsNotNone(result2)
-        self.assertEqual(3, len(result2))
+        self.assertIsNotNone(messages)
+        self.assertEqual(3, len(messages.current_page))
 
     @record
     def test_update_message(self):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
-        messages = queue_client.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue_client.receive_messages()
+        list_result1 = next(messages)
         message = queue_client.update_message(
             list_result1.id,
             pop_receipt=list_result1.pop_receipt,
@@ -435,7 +436,7 @@ class StorageQueueTest(StorageTestCase):
 
         # Get response
         self.assertIsNotNone(list_result2)
-        message = list_result2[0]
+        message = list_result2
         self.assertIsNotNone(message)
         self.assertEqual(list_result1.id, message.id)
         self.assertEqual(u'message1', message.content)
@@ -451,8 +452,8 @@ class StorageQueueTest(StorageTestCase):
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
 
-        messages = queue_client.dequeue_messages()
-        list_result1 = next(messages)[0]
+        messages = queue_client.receive_messages()
+        list_result1 = next(messages)
         message = queue_client.update_message(
             list_result1.id,
             pop_receipt=list_result1.pop_receipt,
@@ -469,7 +470,7 @@ class StorageQueueTest(StorageTestCase):
 
         # Get response
         self.assertIsNotNone(list_result2)
-        message = list_result2[0]
+        message = list_result2
         self.assertIsNotNone(message)
         self.assertEqual(list_result1.id, message.id)
         self.assertEqual(u'new text', message.content)
@@ -512,22 +513,22 @@ class StorageQueueTest(StorageTestCase):
 
     @record
     def test_token_credential(self):
-        pytest.skip('pending oauth')
-        token_credential = TokenCredential(self.generate_oauth_token())
+        pytest.skip("")
+        token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueService(self.settings.OAUTH_STORAGE_ACCOUNT_NAME, token_credential=token_credential)
-        queues = list(service.list_queues())
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
+        queues = service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
-        token_credential.token = "YOU SHALL NOT PASS"
-        with self.assertRaises(AzureException):
-            queues = list(service.list_queues())
-            self.assertIsNone(queues)
+        fake_credential = self.generate_fake_token()
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=fake_credential)
+        with self.assertRaises(ClientAuthenticationError):
+            list(service.list_queues())
 
         # Action 3: update token to make it working again
-        token_credential.token = self.generate_oauth_token()
+        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
         queues = list(service.list_queues())
         self.assertIsNotNone(queues)
 
@@ -580,8 +581,8 @@ class StorageQueueTest(StorageTestCase):
         result = service.enqueue_message(u'addedmessage')
 
         # Assert
-        result = next(queue_client.dequeue_messages())
-        self.assertEqual(u'addedmessage', result[0].content)
+        result = next(queue_client.receive_messages())
+        self.assertEqual(u'addedmessage', result.content)
 
     def test_sas_update(self):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -595,7 +596,7 @@ class StorageQueueTest(StorageTestCase):
             QueuePermissions.UPDATE,
             datetime.utcnow() + timedelta(hours=1),
         )
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
         result = next(messages)
 
         # Act
@@ -604,15 +605,15 @@ class StorageQueueTest(StorageTestCase):
             credential=token,
         )
         service.update_message(
-            result[0].id,
-            pop_receipt=result[0].pop_receipt,
+            result.id,
+            pop_receipt=result.pop_receipt,
             visibility_timeout=0,
             content=u'updatedmessage1',
         )
 
         # Assert
         result = next(messages)
-        self.assertEqual(u'updatedmessage1', result[0].content)
+        self.assertEqual(u'updatedmessage1', result.content)
 
     def test_sas_process(self):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -632,12 +633,9 @@ class StorageQueueTest(StorageTestCase):
             queue_url=queue_client.url,
             credential=token,
         )
-        result = next(service.dequeue_messages())
+        message = next(service.receive_messages())
 
         # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
@@ -821,12 +819,9 @@ class StorageQueueTest(StorageTestCase):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1㚈')
-        result = next(queue_client.dequeue_messages())
+        message = next(queue_client.receive_messages())
 
         # Asserts
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1㚈', message.content)
@@ -841,17 +836,14 @@ class StorageQueueTest(StorageTestCase):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
 
-        list_result1 = next(messages)[0]
+        list_result1 = next(messages)
         list_result1.content = u'啊齄丂狛狜'
         queue_client.update_message(list_result1, visibility_timeout=0)
 
-        list_result2 = next(messages)
-
         # Asserts
-        self.assertIsNotNone(list_result2)
-        message = list_result2[0]
+        message = next(messages)
         self.assertIsNotNone(message)
         self.assertEqual(list_result1.id, message.id)
         self.assertEqual(u'啊齄丂狛狜', message.content)
