@@ -13,10 +13,8 @@ import six
 from azure.core.exceptions import ResourceExistsError, DecodeError
 
 from ._shared.models import StorageErrorCode
-from ._shared.utils import process_storage_error
 from ._shared.encryption import _decrypt_queue_message, _encrypt_queue_message
-from ._generated.models import StorageErrorException
-from .models import QueueProperties, QueueMessage
+from .models import QueueProperties
 
 
 def deserialize_metadata(response, obj, headers):
