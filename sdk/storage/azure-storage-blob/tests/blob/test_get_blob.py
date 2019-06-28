@@ -6,8 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-
-#pytestmark = pytest.mark.xfail
 import base64
 import os
 import unittest

@@ -864,8 +864,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
-        Creates a new Page or Append Blob depending on the current blob type
-        of the client.
+        Creates a new Page Blob of the specified size.
 
         :param int size:
             This header specifies the maximum size
