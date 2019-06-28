@@ -6,6 +6,7 @@ from datetime import datetime
 import glob
 import io
 import os
+from pkg_resources import Requirement
 import re
 import sys
 import textwrap
@@ -27,6 +28,24 @@ def locate_wheels(base_dir):
     wheels = glob.glob(os.path.join(base_dir, '*.whl'))
     return sorted(wheels)
 
+def parse_req(req):
+    try:
+        req_object = Requirement.parse(req)
+        req_name = req_object.key
+        spec = str(req_object).replace(req_name, '')
+        return (req_name, spec)
+    except:
+        print('Failed to parse requirement %s' % (req))
+
+def record_dep(dependencies, req, lib_name):
+    req_name, spec = parse_req(req)
+    if not req_name in dependencies:
+        dependencies[req_name] = {}
+    if not spec in dependencies[req_name]:
+        dependencies[req_name][spec] = []
+    dependencies[req_name][spec].append(lib_name)
+
+
 def get_lib_deps(base_dir):
     packages = {}
     dependencies = {}
@@ -44,15 +63,7 @@ def get_lib_deps(base_dir):
             }
 
             for req in requires:
-                req_parts = re.split('([<>~=]+)', req, 1)
-                req_name = req_parts[0]
-                spec = ''.join(req_parts[1:])
-                spec = ','.join(sorted(spec.split(',')))
-                if not req_name in dependencies:
-                    dependencies[req_name] = {}
-                if not spec in dependencies[req_name]:
-                    dependencies[req_name][spec] = []
-                dependencies[req_name][spec].append(lib_name)
+                record_dep(dependencies, req, lib_name)
         except:
             print('Failed to parse %s' % (setup_path))
     return packages, dependencies
@@ -61,7 +72,6 @@ def get_wheel_deps(wheel_dir):
     from wheel.pkginfo import read_pkg_info_bytes
     from wheel.wheelfile import WheelFile
 
-    requires_dist_re = re.compile(r"""^(?P<name>\S+)(\s\((?P<spec>.+)\))?$""")
     packages = {}
     dependencies = {}
     for whl_path in locate_wheels(wheel_dir):
@@ -79,14 +89,8 @@ def get_wheel_deps(wheel_dir):
 
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
-                    parsed = requires_dist_re.match(req.split(';')[0].strip())
-                    req_name, spec = parsed.group('name', 'spec')
-                    spec = ','.join(sorted(spec.split(','))) if spec else ''
-                    if not req_name in dependencies:
-                        dependencies[req_name] = {}
-                    if not spec in dependencies[req_name]:
-                        dependencies[req_name][spec] = []
-                    dependencies[req_name][spec].append(lib_name)
+                    req = re.sub(r'[\s\(\)]', '', req)
+                    record_dep(dependencies, req, lib_name)
         except:
             print('Failed to parse METADATA from %s' % (whl_path))
     return packages, dependencies
@@ -241,9 +245,7 @@ if __name__ == '__main__':
     try:
         with open(frozen_filename, 'r') as frozen_file:
             for line in frozen_file:
-                req_parts = re.split('([<>~=]+)', line.strip(), 1)
-                req_name = req_parts[0]
-                spec = ''.join(req_parts[1:])
+                req_name, spec = parse_req(line)
                 frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
