@@ -9,7 +9,7 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](TODO) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples)
 
 
 ## Getting started
@@ -21,11 +21,11 @@ Install the Azure Storage Blobs client library for Python with [pip](https://pyp
 pip install azure-storage-blob
 ```
 
-**Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/en-us/free/), and a
-[Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview) to use this package.
+**Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
+[Storage Account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
-To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
+To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
 
 ```bash
 az storage account create -n MyStorageAccountName -g MyResourceGroupName
@@ -91,7 +91,7 @@ Once you've initialized a Client, you can choose from the different types of blo
 * **Append blobs** are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios such as logging data from virtual machines
 * **Page blobs** store random access files up to 8 TB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for Azure virtual machines
 
-For more information about the different types of blobs, see [Understanding Block Blobs, Append Blobs, and Page Blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
+For more information about the different types of blobs, see [Understanding Block Blobs, Append Blobs, and Page Blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
 
 
 ## Examples
@@ -152,37 +152,37 @@ for blob in blob_list:
 ## Troubleshooting
 Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
 
-All Blob service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/en-us/rest/api/storageservices/blob-service-error-codes).
+All Blob service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
 
 ## Next steps
 
 ### More sample code
 
-Get started with our [Blob samples](TODO).
+Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples).
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
-* [`test_samples_hello_world.py`](TODO) - Examples for common Storage Blob tasks:
+* [`test_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_hello_world.py) - Examples for common Storage Blob tasks:
     * Set up a container
     * Create a block, page, or append blob
     * Upload blobs
     * Download blobs
     * Delete blobs
 
-* [`test_samples_authentication.py`](TODO) - Examples for authenticating and creating the client:
+* [`test_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_authentication.py) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
     
-* [`test_samples_blob_service.py`](TODO) - Examples for interacting with the blob service:
+* [`test_samples_blob_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_blob_service.py) - Examples for interacting with the blob service:
     * Get account information
     * Get and set service properties
     * Get service statistics
     * Create, list, and delete containers
     * Get the Blob or Container client
 
-* [`test_samples_containers.py`](TODO) - Examples for interacting with containers:
+* [`test_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_containers.py) - Examples for interacting with containers:
     * Create a container and delete containers
     * Set metadata on containers
     * Get container properties
@@ -191,7 +191,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Upload, list, delete blobs in container
     * Get the blob client to interact with a specific blob
 
-* [`test_samples_common_blobs.py`](TODO) - Examples common to all types of blobs:
+* [`test_samples_common_blobs.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_common_blobs.py) - Examples common to all types of blobs:
     * Create a snapshot
     * Delete a blob snapshot
     * Soft delete a blob
@@ -201,7 +201,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
 
 ### Additional documentation
 
-For more extensive documentation on the Azure Storage Blobs, see the [Azure Storage Blobs documentation](https://docs.microsoft.com/en-us/azure/storage/) on docs.microsoft.com.
+For more extensive documentation on the Azure Storage Blobs, see the [Azure Storage Blobs documentation](https://docs.microsoft.com/azure/storage/) on docs.microsoft.com.
 
 
 ## Contributing
