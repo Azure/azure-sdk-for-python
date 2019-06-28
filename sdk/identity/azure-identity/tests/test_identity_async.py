@@ -39,7 +39,7 @@ async def test_client_secret_credential_cache():
         "not_before": now,
         "token_type": "Bearer",
     }
-    mock_send = Mock(return_value=mock_response(payload=token_payload))
+    mock_send = Mock(return_value=mock_response(json_payload=token_payload))
     transport = Mock(send=asyncio.coroutine(mock_send))
     scope = "scope"
 
@@ -72,7 +72,12 @@ async def test_client_secret_credential():
         requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
         responses=[
             mock_response(
-                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+                json_payload={
+                    "token_type": "Bearer",
+                    "expires_in": 42,
+                    "ext_expires_in": 42,
+                    "access_token": access_token,
+                }
             )
         ],
     )
@@ -96,7 +101,12 @@ async def test_client_secret_environment_credential(monkeypatch):
         requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
         responses=[
             mock_response(
-                payload={"token_type": "Bearer", "expires_in": 42, "ext_expires_in": 42, "access_token": access_token}
+                json_payload={
+                    "token_type": "Bearer",
+                    "expires_in": 42,
+                    "ext_expires_in": 42,
+                    "access_token": access_token,
+                }
             )
         ],
     )

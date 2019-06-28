@@ -28,7 +28,7 @@ async def test_cloud_shell():
         ],
         responses=[
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "expires_in": 0,
                     "expires_on": expires_on,
@@ -66,7 +66,7 @@ async def test_cloud_shell_user_assigned_identity():
         ],
         responses=[
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "expires_in": 0,
                     "expires_on": expires_on,
@@ -104,7 +104,7 @@ async def test_app_service():
         ],
         responses=[
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "expires_on": expires_on,
                     "resource": scope,
@@ -141,7 +141,7 @@ async def test_app_service_user_assigned_identity():
         ],
         responses=[
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "expires_on": expires_on,
                     "resource": scope,
@@ -175,9 +175,9 @@ async def test_imds():
         ],
         responses=[
             # probe receives error response
-            mock_response(status_code=400, payload={"error": "this is an error message"}),
+            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "expires_in": 42,
                     "expires_on": expires_on,
@@ -214,9 +214,9 @@ async def test_imds_user_assigned_identity():
         ],
         responses=[
             # probe receives error response
-            mock_response(status_code=400, payload={"error": "this is an error message"}),
+            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
-                payload={
+                json_payload={
                     "access_token": access_token,
                     "client_id": client_id,
                     "expires_in": 42,

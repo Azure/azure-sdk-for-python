@@ -176,7 +176,7 @@ def test_cache_scopes():
 
     def mock_send(request, **kwargs):
         token = expected_tokens[request.data["resource"]]
-        return mock_response(payload=token)
+        return mock_response(json_payload=token)
 
     client = AuthnClient("http://foo", transport=Mock(send=mock_send))
 
