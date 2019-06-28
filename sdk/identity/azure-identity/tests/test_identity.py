@@ -30,8 +30,8 @@ from helpers import mock_response, Request, validating_transport
 
 def test_client_secret_credential_cache():
     expired = "this token's expired"
-    now = time.time()
-    expired_on = int(now - 300)
+    now = int(time.time())
+    expired_on = now - 3600
     expired_token = AccessToken(expired, expired_on)
     token_payload = {
         "access_token": expired,
@@ -40,26 +40,25 @@ def test_client_secret_credential_cache():
         "expires_on": expired_on,
         "not_before": now,
         "token_type": "Bearer",
-        "resource": str(uuid.uuid1()),
     }
+    mock_send = Mock(return_value=mock_response(payload=token_payload))
+    scope = "scope"
 
-    mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
-        headers={"content-type": "application/json"},
-        status_code=200,
-        content_type=["application/json"],
-    )
-    mock_send = Mock(return_value=mock_response)
+    credential = ClientSecretCredential("client_id", "secret", tenant_id="some-guid", transport=Mock(send=mock_send))
 
-    credential = ClientSecretCredential(
-        "client_id", "secret", tenant_id=str(uuid.uuid1()), transport=Mock(send=mock_send)
-    )
-    scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
-    token = credential.get_token(*scopes)
+    # get_token initially returns the expired token because the credential
+    # doesn't check whether tokens it receives from the service have expired
+    token = credential.get_token(scope)
     assert token == expired_token
 
-    token = credential.get_token(*scopes)
-    assert token == expired_token
+    access_token = "new token"
+    token_payload["access_token"] = access_token
+    token_payload["expires_on"] = now + 3600
+    valid_token = AccessToken(access_token, now + 3600)
+
+    # second call should observe the cached token has expired, and request another
+    token = credential.get_token(scope)
+    assert token == valid_token
     assert mock_send.call_count == 2
 
 
