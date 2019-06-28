@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime, timedelta
 import pytest
 
 try:
@@ -35,26 +34,24 @@ class TestAuthSamples(StorageTestCase):
 
     @record
     def test_auth_connection_string(self):
-
-        # Instantiate a BlobServiceClient using a connection string
+        # [START auth_from_connection_string]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        # [END auth_from_connection_string]
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-
         assert account_info is not None
 
     @record
     def test_auth_shared_key(self):
-
-        # Instantiate a BlobServiceClient using a shared access key
+        # [START create_blob_service_client]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
+        # [END create_blob_service_client]
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-
         assert account_info is not None
 
     @record
@@ -75,7 +72,6 @@ class TestAuthSamples(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-
         assert account_info is not None
 
     def test_auth_shared_access_signature(self):
@@ -87,12 +83,15 @@ class TestAuthSamples(StorageTestCase):
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
+        # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client
+        from datetime import datetime, timedelta
+
         sas_token = blob_service_client.generate_shared_access_signature(
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
-
+        # [END create_sas_token]
         assert sas_token is not None
 

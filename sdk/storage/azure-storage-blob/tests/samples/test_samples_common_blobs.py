@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+
 try:
     import tests.settings_real as settings
 except ImportError:
@@ -17,10 +19,30 @@ from tests.testcase import (
     record
 )
 
+SOURCE_FILE = 'SampleSource.txt'
+
 
 class TestCommonBlobSamples(StorageTestCase):
 
     connection_string = settings.CONNECTION_STRING
+
+    def setUp(self):
+        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        with open(SOURCE_FILE, 'wb') as stream:
+            stream.write(data)
+
+        super(TestCommonBlobSamples, self).setUp()
+
+    def tearDown(self):
+        if os.path.isfile(SOURCE_FILE):
+            try:
+                os.remove(SOURCE_FILE)
+            except:
+                pass
+
+        return super(TestCommonBlobSamples, self).tearDown()
+
+    #--Begin Blob Samples-----------------------------------------------------------------
 
     @record
     def test_blob_snapshots(self):
@@ -36,17 +58,19 @@ class TestCommonBlobSamples(StorageTestCase):
         container_client.create_container()
 
         # Upload a blob to the container
-        with open("./SampleSource.txt", "rb") as data:
+        with open(SOURCE_FILE, "rb") as data:
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get a BlobClient for a specific blob
         blob_client = blob_service_client.get_blob_client(container="containerformyblobs", blob="my_blob")
 
+        # [START create_blob_snapshot]
         # Create a read-only snapshot of the blob at this point in time
         snapshot_blob = blob_client.create_snapshot()
 
         # Get the snapshot ID
         print(snapshot_blob.get('snapshot'))
+        # [END create_blob_snapshot]
 
         # Delete only the snapshot (blob itself is retained)
         blob_client.delete_blob(delete_snapshots="only")
@@ -75,7 +99,7 @@ class TestCommonBlobSamples(StorageTestCase):
         container_client.create_container()
 
         # Upload a blob to the container
-        with open("./SampleSource.txt", "rb") as data:
+        with open(SOURCE_FILE, "rb") as data:
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get the blob client
@@ -84,11 +108,14 @@ class TestCommonBlobSamples(StorageTestCase):
         # Soft delete blob in the container (blob can be recovered with undelete)
         blob_client.delete_blob()
 
+        # [START undelete_blob]
         # Undelete the blob before the retention policy expires
         blob_client.undelete_blob()
+        # [END undelete_blob]
 
-        # Get blob properties
+        # [START get_blob_properties]
         properties = blob_client.get_blob_properties()
+        # [END get_blob_properties]
 
         assert properties is not None
 
@@ -109,17 +136,19 @@ class TestCommonBlobSamples(StorageTestCase):
         container_client.create_container()
 
         # Upload a blob to the container
-        with open("./SampleSource.txt", "rb") as data:
+        with open(SOURCE_FILE, "rb") as data:
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get the blob client
         blob_client = blob_service_client.get_blob_client("leasemyblobscontainer", "my_blob")
 
+        # [START acquire_lease_on_blob]
         # Acquire a lease on the blob
         lease = blob_client.acquire_lease()
 
         # Delete blob by passing in the lease
         blob_client.delete_blob(lease=lease)
+        # [END acquire_lease_on_blob]
 
         # Delete container
         blob_service_client.delete_container("leasemyblobscontainer")

@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 from datetime import datetime, timedelta
 
 try:
@@ -19,10 +20,30 @@ from tests.testcase import (
     record
 )
 
+SOURCE_FILE = 'SampleSource.txt'
+
 
 class TestContainerSamples(StorageTestCase):
 
     connection_string = settings.CONNECTION_STRING
+
+    def setUp(self):
+        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        with open(SOURCE_FILE, 'wb') as stream:
+            stream.write(data)
+
+        super(TestContainerSamples, self).setUp()
+
+    def tearDown(self):
+        if os.path.isfile(SOURCE_FILE):
+            try:
+                os.remove(SOURCE_FILE)
+            except:
+                pass
+
+        return super(TestContainerSamples, self).tearDown()
+
+    #--Begin Blob Samples-----------------------------------------------------------------
 
     @record
     def test_container_sample(self):
@@ -35,17 +56,19 @@ class TestContainerSamples(StorageTestCase):
         container_client = blob_service_client.get_container_client("mynewcontainer")
 
         try:
-            # Create new Container
+            # [START create_container]
             container_client.create_container()
+            # [END create_container]
 
-            # Get container properties
+            # [START get_container_properties]
             properties = container_client.get_container_properties()
-
+            # [END get_container_properties]
             assert properties is not None
 
         finally:
-            # Delete the container
+            # [START delete_container]
             container_client.delete_container()
+            # [END delete_container]
 
     @record
     def test_acquire_lease_on_container(self):
@@ -57,16 +80,16 @@ class TestContainerSamples(StorageTestCase):
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myleasecontainer")
 
-        try:
-            # Create new Container
-            container_client.create_container()
+        # Create new Container
+        container_client.create_container()
 
-            # Acquire a lease on the container
-            lease = container_client.acquire_lease()
+        # [START acquire_lease_on_container]
+        # Acquire a lease on the container
+        lease = container_client.acquire_lease()
 
-        finally:
-            # Delete container by passing in the lease
-            container_client.delete_container(lease=lease)
+        # Delete container by passing in the lease
+        container_client.delete_container(lease=lease)
+        # [END acquire_lease_on_container]
 
     @record
     def test_set_metadata_on_container(self):
@@ -82,11 +105,13 @@ class TestContainerSamples(StorageTestCase):
             # Create new Container
             container_client.create_container()
 
+            # [START set_container_metadata]
             # Create key, value pairs for metadata
             metadata = {'type': 'test'}
 
             # Set metadata on the container
             container_client.set_container_metadata(metadata=metadata)
+            # [END set_container_metadata]
 
             # Get container properties
             properties = container_client.get_container_properties().metadata
@@ -103,7 +128,7 @@ class TestContainerSamples(StorageTestCase):
             return
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient, ContainerClient
+        from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -113,6 +138,7 @@ class TestContainerSamples(StorageTestCase):
             # Create new Container
             container_client.create_container()
 
+            # [START set_container_access_policy]
             # Create access policy
             from azure.storage.blob import AccessPolicy, ContainerPermissions
             access_policy = AccessPolicy(permission=ContainerPermissions(read=True),
@@ -123,20 +149,27 @@ class TestContainerSamples(StorageTestCase):
 
             # Set the access policy on the container
             container_client.set_container_access_policy(signed_identifiers=identifiers)
+            # [END set_container_access_policy]
 
-            # Get the access policy on the container
+            # [START get_container_access_policy]
             policy = container_client.get_container_access_policy()
+            # [END get_container_access_policy]
 
-            # Use the access policy to generate a sas token
+            # [START generate_sas_token]
+            # Use access policy to generate a sas token
             sas_token = container_client.generate_shared_access_signature(
                 policy_id='my-access-policy-id'
             )
+            # [END generate_sas_token]
 
             # Use the sas token to authenticate a new client
+            # [START create_container_client]
+            from azure.storage.blob import ContainerClient
             container = ContainerClient(
                 container_url=container_client.url,
                 credential=sas_token
             )
+            # [END create_container_client]
 
         finally:
             # Delete container
@@ -155,14 +188,16 @@ class TestContainerSamples(StorageTestCase):
         # Create new Container
         container_client.create_container()
 
-        # Upload a blob to the container
-        with open("./SampleSource.txt", "rb") as data:
+        # [START upload_blob_to_container]
+        with open(SOURCE_FILE, "rb") as data:
             container_client.upload_blob(name="bloby", data=data)
+        # [END upload_blob_to_container]
 
-        # List blobs in the container
+        # [START list_blobs_in_container]
         blobs_list = container_client.list_blobs()
         for blob in blobs_list:
             print(blob.name + '\n')
+        # [END list_blobs_in_container]
 
         assert blobs_list is not None
 
@@ -182,8 +217,10 @@ class TestContainerSamples(StorageTestCase):
         # Create new Container
         container_client.create_container()
 
+        # [START get_blob_client]
         # Get the BlobClient from the ContainerClient to interact with a specific blob
         blob_client = container_client.get_blob_client("mynewblob")
+        # [END get_blob_client]
 
         # Delete container
         container_client.delete_container()

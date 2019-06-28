@@ -201,13 +201,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Use the returned signature with the credential parameter of any BlobServiceClient,
         ContainerClient or BlobClient.
 
-        :param ~azure.storage.blob.models.BlobPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ~azure.storage.blob.models.BlobPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -310,7 +311,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
+        :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -364,7 +365,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -381,6 +382,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Defaults to UTF-8.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START upload_a_blob]
+                :end-before: [END upload_a_blob]
+                :language: python
+                :dedent: 12
+                :caption: Upload a blob to the container.
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
@@ -537,6 +546,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A iterable data generator (stream)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START download_a_blob]
+                :end-before: [END download_a_blob]
+                :language: python
+                :dedent: 12
+                :caption: Download a blob.
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
@@ -620,6 +637,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START delete_blob]
+                :end-before: [END delete_blob]
+                :language: python
+                :dedent: 12
+                :caption: Delete a blob.
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -649,6 +674,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_common_blobs.py
+                :start-after: [START undelete_blob]
+                :end-before: [END undelete_blob]
+                :language: python
+                :dedent: 8
+                :caption: Undeleting a blob.
         """
         try:
             self._client.blob.undelete(timeout=timeout, **kwargs)
@@ -697,6 +730,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :returns: BlobProperties
         :rtype: ~azure.storage.blob.models.BlobProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_common_blobs.py
+                :start-after: [START get_blob_properties]
+                :end-before: [END get_blob_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting the properties for a blob.
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -907,7 +948,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -1086,6 +1127,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_common_blobs.py
+                :start-after: [START create_blob_snapshot]
+                :end-before: [END create_blob_snapshot]
+                :language: python
+                :dedent: 8
+                :caption: Create a snapshot of the blob.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -1241,7 +1290,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
-        :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -1352,6 +1401,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
         :rtype: ~azure.storage.blob.lease.LeaseClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_common_blobs.py
+                :start-after: [START acquire_lease_on_blob]
+                :end-before: [END acquire_lease_on_blob]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on a blob.
         """
         lease = LeaseClient(self, lease_id=lease_id)
         lease.acquire(
@@ -1378,7 +1435,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
-        :type standard_blob_tier: str or ~azure.storage.blob.common.StandardBlobTier
+        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param lease:
@@ -1670,7 +1727,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :type premium_page_blob_tier: ~azure.storage.blob.common.PremiumPageBlobTier
+        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1819,7 +1876,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str sequence_number_action:
             This property indicates how the service should modify the blob's sequence
-            number. See :class:`~azure.storage.blob.common.SequenceNumberAction` for more information.
+            number. See :class:`~azure.storage.blob.models.SequenceNumberAction` for more information.
         :param str sequence_number:
             This property sets the blob's sequence number. The sequence number is a
             user-controlled property that you can use to track requests and manage

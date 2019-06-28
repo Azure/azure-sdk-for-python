@@ -53,7 +53,30 @@ if TYPE_CHECKING:
 
 
 class ContainerClient(StorageAccountHostsMixin):
+    """Creates a new ContainerClient. This client represents interaction with a specific
+    container, although that container may not yet exist.
+    For operations relating to a specific blob, the client can also be retrieved using
+    the `get_blob_client` function.
 
+    :param str container_url:
+        The full URI to the container. This can also be a URL to the storage
+        account, in which case the blob container must also be specified.
+    :param container:
+        The container for the blob.
+    :type container: str or ~azure.storage.blob.models.ContainerProperties
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_containers.py
+            :start-after: [START create_container_client]
+            :end-before: [END create_container_client]
+            :language: python
+            :dedent: 12
+            :caption: Creating the container client.
+    """
     def __init__(
             self, container_url,  # type: str
             container=None,  # type: Union[ContainerProperties, str]
@@ -61,22 +84,6 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        """Creates a new ContainerClient. This client represents interaction with a specific
-        container, although that container may not yet exist.
-        For operations relating to a specific blob, the client can also be retrieved using
-        the `get_blob_client` function.
-
-        :param str container_url:
-            The full URI to the container. This can also be a URL to the storage
-            account, in which case the blob container must also be specified.
-        :param container:
-            The container for the blob.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, and account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-        """
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
@@ -154,13 +161,14 @@ class ContainerClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any BlobServiceClient,
         ContainerClient or BlobClient.
 
-        :param ~azure.storage.blob.models.BlobPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ~azure.storage.blob.models.ContainerPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -204,6 +212,14 @@ class ContainerClient(StorageAccountHostsMixin):
             using this shared access signature.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START generate_sas_token]
+                :end-before: [END generate_sas_token]
+                :language: python
+                :dedent: 12
+                :caption: Generating a sas token.
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
@@ -233,11 +249,19 @@ class ContainerClient(StorageAccountHostsMixin):
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
         :type metadata: dict[str, str]
-        :param ~azure.storage.blob.common.PublicAccess public_access:
+        :param ~azure.storage.blob.models.PublicAccess public_access:
             Possible values include: container, blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 12
+                :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -293,6 +317,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START delete_container]
+                :end-before: [END delete_container]
+                :language: python
+                :dedent: 12
+                :caption: Delete a container.
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -354,6 +386,14 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.lease.LeaseClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START acquire_lease_on_container]
+                :end-before: [END acquire_lease_on_container]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on the container.
         """
         lease = LeaseClient(self, lease_id=lease_id)
         lease.acquire(
@@ -391,6 +431,14 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.models.ContainerProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START get_container_properties]
+                :end-before: [END get_container_properties]
+                :language: python
+                :dedent: 12
+                :caption: Getting properties on the container.
         """
         access_conditions = get_access_conditions(lease)
         try:
@@ -433,6 +481,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START set_container_metadata]
+                :end-before: [END set_container_metadata]
+                :language: python
+                :dedent: 12
+                :caption: Setting metadata on the container.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -461,6 +517,14 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
         :rtype: dict[str, str]
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START get_container_access_policy]
+                :end-before: [END get_container_access_policy]
+                :language: python
+                :dedent: 12
+                :caption: Getting the access policy on the container.
         """
         access_conditions = get_access_conditions(lease)
         try:
@@ -494,7 +558,7 @@ class ContainerClient(StorageAccountHostsMixin):
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, :class:`~azure.storage.blob.models.AccessPolicy`)
-        :param ~azure.storage.blob.common.PublicAccess public_access:
+        :param ~azure.storage.blob.models.PublicAccess public_access:
             Possible values include: container, blob.
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
@@ -515,6 +579,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START set_container_access_policy]
+                :end-before: [END set_container_access_policy]
+                :language: python
+                :dedent: 12
+                :caption: Setting access policy on the container.
         """
         if signed_identifiers:
             if len(signed_identifiers) > 5:
@@ -563,6 +635,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START list_blobs_in_container]
+                :end-before: [END list_blobs_in_container]
+                :language: python
+                :dedent: 8
+                :caption: List the blobs in the container.
         """
         if include and not isinstance(include, list):
             include = [include]
@@ -647,7 +727,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param name: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
         :type name: str or ~azure.storage.blob.models.BlobProperties
-        :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
+        :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -701,7 +781,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -718,6 +798,14 @@ class ContainerClient(StorageAccountHostsMixin):
             Defaults to UTF-8.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START upload_blob_to_container]
+                :end-before: [END upload_blob_to_container]
+                :language: python
+                :dedent: 8
+                :caption: Upload blob to the container.
         """
         blob = self.get_blob_client(name)
         blob.upload_blob(
@@ -834,6 +922,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str snapshot: The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.blob_client.BlobClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_containers.py
+                :start-after: [START get_blob_client]
+                :end-before: [END get_blob_client]
+                :language: python
+                :dedent: 8
+                :caption: Get the blob client.
         """
         return BlobClient(
             self.url, container=self.container_name, blob=blob, snapshot=snapshot,
