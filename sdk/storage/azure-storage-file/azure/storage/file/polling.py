@@ -179,5 +179,6 @@ class CloseHandles(PollingMethod):
 
     def resource(self):
         # type: () -> Any
-        self._update_status()
+        if not self.finished:
+            self._update_status()
         return self.handles_closed

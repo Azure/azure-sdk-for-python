@@ -283,17 +283,9 @@ class SharePropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.share_items
+        self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
         self.next_marker = self._response.next_marker or None
         return self.current_page
-
-    def __next__(self):
-        item = super(SharePropertiesPaged, self).__next__()
-        if isinstance(item, ShareProperties):
-            return item
-        return ShareProperties._from_generated(item)  # pylint: disable=protected-access
-
-    next = __next__
 
 
 class Handle(DictMixin):
@@ -383,17 +375,9 @@ class HandlesPaged(Paged):
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.current_page = self._response.handle_list
+        self.current_page = [Handle._from_generated(h) for h in self._response.handle_list]  # pylint: disable=protected-access
         self.next_marker = self._response.next_marker or None
         return self.current_page
-
-    def __next__(self):
-        item = super(HandlesPaged, self).__next__()
-        if isinstance(item, Handle):
-            return item
-        return Handle._from_generated(item)  # pylint: disable=protected-access
-
-    next = __next__
 
 
 class DirectoryProperties(DictMixin):
@@ -443,6 +427,11 @@ class DirectoryPropertiesPaged(Paged):
         self.next_marker = marker or ""
         self.location_mode = None
 
+    def _wrap(self, item):
+        if isinstance(item, DirectoryItem):
+            return {'name': item.name, 'is_directory': True}
+        return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
+
     def _advance_page(self):
         # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
@@ -468,20 +457,10 @@ class DirectoryPropertiesPaged(Paged):
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.directory_items
-        self.current_page.extend(self._response.segment.file_items)
+        self.current_page = [self._wrap(i) for i in self._response.segment.directory_items]
+        self.current_page.extend([self._wrap(i) for i in self._response.segment.file_items])
         self.next_marker = self._response.next_marker or None
         return self.current_page
-
-    def __next__(self):
-        item = super(DirectoryPropertiesPaged, self).__next__()
-        if isinstance(item, DirectoryItem):
-            return {'name': item.name, 'is_directory': True}
-        if isinstance(item, FileItem):
-            return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
-        return item
-
-    next = __next__
 
 
 class FileProperties(DictMixin):

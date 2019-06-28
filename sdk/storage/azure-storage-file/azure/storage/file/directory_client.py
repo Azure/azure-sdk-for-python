@@ -99,11 +99,14 @@ class DirectoryClient(StorageAccountHostsMixin):
         share_name = self.share_name
         if isinstance(share_name, six.text_type):
             share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
+        directory_path = ""
+        if self.directory_path:
+            directory_path = "/" + quote(self.directory_path, safe='~')
+        return "{}://{}/{}{}{}".format(
             self.scheme,
             hostname,
             quote(share_name),
-            quote(self.directory_path, safe='~'),
+            directory_path,
             self._query_str)
 
     @classmethod

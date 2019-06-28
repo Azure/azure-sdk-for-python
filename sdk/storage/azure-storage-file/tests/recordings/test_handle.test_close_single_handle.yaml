@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.5.0)]
+      x-ms-client-request-id: [6d97f07c-6d71-11e9-9951-f218981b70f8]
+      x-ms-date: ['Fri, 03 May 2019 07:02:34 GMT']
+      x-ms-recursive: ['True']
+      x-ms-version: ['2018-11-09']
+    method: GET
+    uri: https://storagename.file.core.windows.net/test?comp=listhandles
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults><Entries><Handle><HandleId>21129684298</HandleId><Path\
+        \ /><FileId>0</FileId><ParentId>0</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,\
+        \ 03 May 2019 07:01:34 GMT</OpenTime></Handle><Handle><HandleId>21129680188</HandleId><Path>foo2.txt</Path><FileId>12682214616000888832</FileId><ParentId>0</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,\
+        \ 03 May 2019 06:59:59 GMT</OpenTime></Handle><Handle><HandleId>21129680656</HandleId><Path>wut/bla1.txt</Path><FileId>17293900634428276736</FileId><ParentId>11529308504556830720</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,\
+        \ 03 May 2019 07:00:18 GMT</OpenTime></Handle><Handle><HandleId>21129680100</HandleId><Path>wut/foo1.txt</Path><FileId>14988057625214582784</FileId><ParentId>11529308504556830720</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,\
+        \ 03 May 2019 06:59:55 GMT</OpenTime></Handle></Entries><NextMarker /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Fri, 03 May 2019 07:02:35 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [9ed7aaf9-801a-001d-287e-0116c1000000]
+      x-ms-version: ['2018-11-09']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.5.0)]
+      x-ms-client-request-id: [6e1b9e18-6d71-11e9-9951-f218981b70f8]
+      x-ms-date: ['Fri, 03 May 2019 07:02:35 GMT']
+      x-ms-handle-id: ['21129684298']
+      x-ms-version: ['2018-11-09']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/test?comp=forceclosehandles
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      Date: ['Fri, 03 May 2019 07:02:35 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-number-of-handles-closed: ['1']
+      x-ms-request-id: [9ed7aafc-801a-001d-297e-0116c1000000]
+      x-ms-version: ['2018-11-09']
+    status: {code: 200, message: OK}
+version: 1

@@ -65,7 +65,7 @@ class StorageHandleTest(StorageTestCase):
         # verify basic fields
         # path may or may not be present
         # last_connect_time_string has been missing in the test
-        self.assertIsNotNone(handles[0].handle_id)
+        self.assertIsNotNone(handles[0].id)
         self.assertIsNotNone(handles[0].file_id)
         self.assertIsNotNone(handles[0].parent_id)
         self.assertIsNotNone(handles[0].session_id)
@@ -74,7 +74,7 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_on_share(self):
-        pytest.skip("")
+        #pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -91,7 +91,6 @@ class StorageHandleTest(StorageTestCase):
 #
     @record
     def test_list_handles_on_share_snapshot(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -107,7 +106,6 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_with_marker(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -134,12 +132,11 @@ class StorageHandleTest(StorageTestCase):
 
         # Make sure the old handle did not appear
         # In other words, the marker worked
-        old_handle_not_present = all([old_handle.handle_id != handle.handle_id for handle in remaining_handles])
+        old_handle_not_present = all([old_handle.id != handle.id for handle in remaining_handles])
         self.assertTrue(old_handle_not_present)
 
     @record
     def test_list_handles_on_directory(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -161,7 +158,6 @@ class StorageHandleTest(StorageTestCase):
 
     @record
     def test_list_handles_on_file(self):
-        pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -179,12 +175,11 @@ class StorageHandleTest(StorageTestCase):
     def test_close_single_handle(self):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        pytest.skip("")
         if not TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        share = self._create_share()
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = list(root.list_handles(recursive=True))
         self._validate_handles(handles)
@@ -199,12 +194,11 @@ class StorageHandleTest(StorageTestCase):
     def test_close_all_handle(self):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        pytest.skip("")
         if not TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        share = self._create_share()
+        share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = list(root.list_handles(recursive=True))
         self._validate_handles(handles)

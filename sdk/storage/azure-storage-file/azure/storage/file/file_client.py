@@ -634,7 +634,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_handles(self, marker=None, timeout=None, recursive=False, **kwargs):
+    def list_handles(self, marker=None, timeout=None, **kwargs):
         """
         :returns: An auto-paging iterable of HandleItems
         """
@@ -643,7 +643,6 @@ class FileClient(StorageAccountHostsMixin):
             self._client.file.list_handles,
             sharesnapshot=self.snapshot,
             timeout=timeout,
-            recursive=recursive,
             **kwargs)
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
