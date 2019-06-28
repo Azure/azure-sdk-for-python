@@ -85,8 +85,10 @@ try:
     from ._models_py3 import GetTdeCertificatesSqlTaskProperties
     from ._models_py3 import GetUserTablesOracleTaskInput
     from ._models_py3 import GetUserTablesOracleTaskOutput
+    from ._models_py3 import GetUserTablesOracleTaskProperties
     from ._models_py3 import GetUserTablesPostgreSqlTaskInput
     from ._models_py3 import GetUserTablesPostgreSqlTaskOutput
+    from ._models_py3 import GetUserTablesPostgreSqlTaskProperties
     from ._models_py3 import GetUserTablesSqlSyncTaskInput
     from ._models_py3 import GetUserTablesSqlSyncTaskOutput
     from ._models_py3 import GetUserTablesSqlSyncTaskProperties
@@ -220,7 +222,6 @@ try:
     from ._models_py3 import ProjectTaskProperties
     from ._models_py3 import QueryAnalysisValidationResult
     from ._models_py3 import QueryExecutionResult
-    from ._models_py3 import QueryTable
     from ._models_py3 import Quota
     from ._models_py3 import QuotaName
     from ._models_py3 import ReportableException
@@ -337,8 +338,10 @@ except (SyntaxError, ImportError):
     from ._models import GetTdeCertificatesSqlTaskProperties
     from ._models import GetUserTablesOracleTaskInput
     from ._models import GetUserTablesOracleTaskOutput
+    from ._models import GetUserTablesOracleTaskProperties
     from ._models import GetUserTablesPostgreSqlTaskInput
     from ._models import GetUserTablesPostgreSqlTaskOutput
+    from ._models import GetUserTablesPostgreSqlTaskProperties
     from ._models import GetUserTablesSqlSyncTaskInput
     from ._models import GetUserTablesSqlSyncTaskOutput
     from ._models import GetUserTablesSqlSyncTaskProperties
@@ -472,7 +475,6 @@ except (SyntaxError, ImportError):
     from ._models import ProjectTaskProperties
     from ._models import QueryAnalysisValidationResult
     from ._models import QueryExecutionResult
-    from ._models import QueryTable
     from ._models import Quota
     from ._models import QuotaName
     from ._models import ReportableException
@@ -642,8 +644,10 @@ __all__ = [
     'GetTdeCertificatesSqlTaskProperties',
     'GetUserTablesOracleTaskInput',
     'GetUserTablesOracleTaskOutput',
+    'GetUserTablesOracleTaskProperties',
     'GetUserTablesPostgreSqlTaskInput',
     'GetUserTablesPostgreSqlTaskOutput',
+    'GetUserTablesPostgreSqlTaskProperties',
     'GetUserTablesSqlSyncTaskInput',
     'GetUserTablesSqlSyncTaskOutput',
     'GetUserTablesSqlSyncTaskProperties',
@@ -777,7 +781,6 @@ __all__ = [
     'ProjectTaskProperties',
     'QueryAnalysisValidationResult',
     'QueryExecutionResult',
-    'QueryTable',
     'Quota',
     'QuotaName',
     'ReportableException',
