@@ -14,6 +14,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
+from azure.core.polling import LROPoller
 
 from .models import HandlesPaged
 from ._generated import AzureFileStorage
@@ -30,14 +31,27 @@ from ._shared.utils import (
     process_storage_error,
     parse_connection_str)
 from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
-from .polling import CopyStatusPoller
-
-from ._share_utils import deserialize_directory_properties
+from .polling import CopyStatusPoller, CloseHandles
 
 
 class FileClient(StorageAccountHostsMixin):
-    """
-    A client to interact with the file.
+    """Creates a new FileClient. This client represents interaction with a specific
+    file, although that file may not yet exist.
+
+    :param str file_url: The full URI to the file. This can also be a URL to the storage account
+        or share, in which case the file and/or share must also be specified.
+    :param share: The share for the file. If specified, this value will override
+        a share value specified in the file URL.
+    :type share: str or ~azure.storage.file.models.ShareProperties
+    :param str file_path:
+        The file path to the file with which to interact. If specified, this value will override
+        a file value specified in the file URL.
+    :param str snapshot:
+        An optional file snapshot on which to operate.
+    :param credential:
+        The credential with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string or an account
+        shared access key.
     """
     def __init__(
             self, file_url,  # type: str
@@ -48,15 +62,6 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> FileClient
-        """ Creates a new FileClient. This client represents interaction with a specific
-        file, although that file may not yet exist.
-        :param str file_url: The full URI to the file.
-        :param share: The share with which to interact. If specified, this value will override
-         a share value specified in the share URL.
-        :type share: str or ~azure.storage.file.models.ShareProperties
-        :param credentials:
-        :param configuration: A optional pipeline configuration.
-        """
         try:
             if not file_url.lower().startswith('http'):
                 file_url = "https://" + file_url
@@ -103,6 +108,9 @@ class FileClient(StorageAccountHostsMixin):
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
         share_name = self.share_name
         if isinstance(share_name, six.text_type):
             share_name = share_name.encode('UTF-8')
@@ -123,8 +131,21 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> FileClient
-        """
-        Create FileClient from a Connection String.
+        """Create FileClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param share: The share. This can either be the name of the share,
+            or an instance of ShareProperties
+        :type share: str or ~azure.storage.file.models.ShareProperties
+        :param str file_path:
+            The file path.
+        :param str snapshot:
+            An optional file snapshot on which to operate.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -147,9 +168,9 @@ class FileClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> str
         """
-        Generates a shared access signature for the blob.
-        Use the returned signature with the credential parameter of any BlobServiceClient,
-        ContainerClient or BlobClient.
+        Generates a shared access signature for the file.
+        Use the returned signature with the credential parameter of any FileServiceClient,
+        ShareClient, DirectoryClient, or FileClient.
 
         :param ~azure.storage.file.models.FilePermissions permission:
             The permissions associated with the shared access signature. The
@@ -175,8 +196,7 @@ class FileClient(StorageAccountHostsMixin):
         :type start: datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use
-            :func:`~ContainerClient.set_container_access_policy()`.
+            stored access policy.
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
@@ -234,12 +254,16 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Dict[str, Any]
-        """Creates a new FileClient.
+        """Creates a new file. Note that it only initializes the
+        file with no content.
+
+        :param int size: Specifies the maximum size for the file,
+            up to 1 TB.
+        :param ~azure.storage.file.models.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int quota:
-            The quota to be alloted.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -285,24 +309,29 @@ class FileClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> Dict[str, Any]
         """Uploads a new file.
-        :param data:
-            Data of the file.
-        :type data: Any
-        :param size:
-            The max size of the file.
-        :type size: int
-        :param content_settings:
-            The content settings
+
+        :param Any data:
+            Content of the file.
+        :param int length:
+            Length of the file in bytes. Specify its maximum size, up to 1 TiB.
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param validate_content:
-            If the content is validated or not.
-        :type validate_content: bool
+        :param ~azure.storage.file.models.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :param bool validate_content:
+            If true, calculates an MD5 hash for each range of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https as https (the default) will
+            already validate. Note that this MD5 hash is not stored with the
+            file.
         :param int max_connections:
-            The max_connections to be alloted.
+            Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param str encoding:
+            Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -343,16 +372,18 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Any
-        """Creates a new FileClient.
+        """Copies the file from the provided URL to the file referenced by
+        the client.
+
+        :param str source_url:
+            Specifies the URL of the source file.
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int quota:
-            The quota to be alloted.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Polling object in order to wait on or abort the operation
-        :rtype: Any
+        :rtype: ~azure.storage.file.polling.CopyStatusPoller
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -382,7 +413,25 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> Iterable[bytes]
-        """
+        """Downloads a file to a stream with automatic chunking.
+
+        :param int offset:
+            Start of byte range to use for downloading a section of the file.
+            Must be set if length is provided.
+        :param int length:
+            Number of bytes to read from the stream. This is optional, but
+            should be supplied for optimal performance.
+        :param bool validate_content:
+            If true, calculates an MD5 hash for each chunk of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https as https (the default) will
+            already validate. Note that this MD5 hash is not stored with the
+            file. Also note that if enabled, the memory-efficient upload algorithm
+            will not be used, because computing the MD5 hash requires buffering
+            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -418,8 +467,13 @@ class FileClient(StorageAccountHostsMixin):
 
     def get_file_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> FileProperties
-        """
+        """Returns all user-defined metadata, standard HTTP properties, and
+        system properties for the file.
+
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: FileProperties
+        :rtype: ~azure.storage.file.models.FileProperties
         """
         try:
             file_props = self._client.file.get_properties(
@@ -435,19 +489,24 @@ class FileClient(StorageAccountHostsMixin):
 
     def set_http_headers(self, content_settings, timeout=None, **kwargs):
         #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
-        """
+        """Sets HTTP headers on the file.
+
+        :param ~azure.storage.file.models.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any) 
+        :rtype: dict(str, Any)
         """
         file_content_length = kwargs.pop('size', None)
         file_http_headers = FileHTTPHeaders(
-                file_cache_control=content_settings.cache_control,
-                file_content_type=content_settings.content_type,
-                file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                file_content_encoding=content_settings.content_encoding,
-                file_content_language=content_settings.content_language,
-                file_content_disposition=content_settings.content_disposition
-            )
+            file_cache_control=content_settings.cache_control,
+            file_content_type=content_settings.content_type,
+            file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+            file_content_encoding=content_settings.content_encoding,
+            file_content_language=content_settings.content_language,
+            file_content_disposition=content_settings.content_disposition
+        )
         try:
             return self._client.file.set_http_headers(
                 timeout=timeout,
@@ -460,9 +519,20 @@ class FileClient(StorageAccountHostsMixin):
 
     def set_file_metadata(self, metadata=None, timeout=None, **kwargs):
         #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
-        """
+        """Sets user-defined metadata for the specified file as one or more
+        name-value pairs.
+
+        Each call to this operation replaces all existing metadata
+        attached to the file. To remove all metadata from the file,
+        call this operation with no metadata dict.
+
+        :param metadata:
+            Name-value pairs associated with the file as metadata.
+        :type metadata: dict(str, str)
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any) 
+        :rtype: dict(str, Any)
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -485,29 +555,34 @@ class FileClient(StorageAccountHostsMixin):
             encoding='UTF-8',
             **kwargs
         ):
-        # type: (...) -> List[dict[str, int]]
-        """
-        Returns dict with etag and last-modified.
+        # type: (...) -> Dict[str, Any]
+        """Upload a range of bytes to a file.
+
+        :param bytes data:
+            The data to upload.
         :param int start_range:
-            Start of byte range to use for getting valid page ranges.
-            If no end_range is given, all bytes after the start_range will be searched.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            Start of byte range to use for uploading a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
         :param int end_range:
-            End of byte range to use for getting valid page ranges.
-            If end_range is given, start_range must be provided.
-            This range will return valid page ranges for from the offset start up to
-            offset end.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
-        :param validate_content:
-            If the content is validated or not.
-        :type validate_content: bool
+            End of byte range to use for uploading a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
+        :param bool validate_content:
+            If true, calculates an MD5 hash of the page content. The storage
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https as https (the default)
+            will already validate. Note that this MD5 hash is not stored with the
+            file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: Returns dict with etag and last-modified .
+        :param str encoding:
+            Defaults to UTF-8.
+        :returns: File-updated property dict (Etag and last modified).
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
@@ -535,25 +610,20 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> List[dict[str, int]]
-        """
-        Returns the list of valid ranges of a file.
+        """Returns the list of valid ranges of a file.
+
         :param int start_range:
-            Start of byte range to use for getting valid page ranges.
-            If no end_range is given, all bytes after the start_range will be searched.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            Specifies the start offset of bytes over which to get ranges.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param int end_range:
-            End of byte range to use for getting valid page ranges.
-            If end_range is given, start_range must be provided.
-            This range will return valid page ranges for from the offset start up to
-            offset end.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            Specifies the end offset of bytes over which to get ranges.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A list of page ranges.
+        :returns: A list of valid ranges.
+        :rtype: List[dict[str, int]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
@@ -581,17 +651,21 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        """
+        """Clears the specified range and releases the space used in storage for
+        that range.
+
         :param int start_range:
-            Start of byte range to use for writing to a section of the file.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            Start of byte range to use for clearing a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param int end_range:
-            End of byte range to use for writing to a section of the file.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            End of byte range to use for clearing a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
@@ -617,9 +691,10 @@ class FileClient(StorageAccountHostsMixin):
     def resize_file(self, size, timeout=None, **kwargs):
         # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Resizes a file to the specified size.
+
         :param int size:
-            Size to resize file to.
-        :param str timeout:
+            Size to resize file to (in bytes)
+        :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
@@ -633,8 +708,15 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
-        """
+    def list_handles(self, marker=None, timeout=None, **kwargs):
+        """Lists handles for file.
+
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -642,7 +724,35 @@ class FileClient(StorageAccountHostsMixin):
             self._client.file.list_handles,
             sharesnapshot=self.snapshot,
             timeout=timeout,
-            recursive=recursive,
             **kwargs)
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
+
+    def close_handles(
+            self, handle=None, # type: Union[str, HandleItem]
+            timeout=None, # type: Optional[int]
+            **kwargs # type: Any
+        ):
+        # type: (...) -> Any
+        try:
+            handle_id = handle.id
+        except AttributeError:
+            handle_id = handle or '*'
+        command = functools.partial(
+            self._client.file.force_close_handles,
+            handle_id,
+            timeout=timeout,
+            sharesnapshot=self.snapshot,
+            cls=return_response_headers,
+            **kwargs)
+        try:
+            start_close = command()
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        return LROPoller(
+            command,
+            start_close,
+            None,
+            polling_method)

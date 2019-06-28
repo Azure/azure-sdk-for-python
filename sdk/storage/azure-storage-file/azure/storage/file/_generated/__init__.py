@@ -4,6 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 from ._configuration import AzureFileStorageConfiguration
 from ._azure_file_storage import AzureFileStorage

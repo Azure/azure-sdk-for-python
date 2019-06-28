@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_graph_client import ResourceGraphClient
-from .version import VERSION
+from ._configuration import ResourceGraphClientConfiguration
+from ._resource_graph_client import ResourceGraphClient
+__all__ = ['ResourceGraphClient', 'ResourceGraphClientConfiguration']
 
-__all__ = ['ResourceGraphClient']
+from .version import VERSION
 
 __version__ = VERSION
 

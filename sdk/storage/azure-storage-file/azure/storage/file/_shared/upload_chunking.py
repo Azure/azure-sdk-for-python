@@ -377,7 +377,7 @@ class AppendBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-m
             )
 
 
-class FileChunkUploader(object):
+class FileChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, file_service, file_size, chunk_size, stream, parallel,
                  validate_content, timeout, **kwargs):
