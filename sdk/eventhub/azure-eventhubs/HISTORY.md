@@ -12,6 +12,7 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
   - `max_retries`: The max number of attempts to redo the failed operation when an error happened.
   - for detailed information about the configuration parameters, please read the reference documentation.
 - Added new methods `get_partition_properties` and `get_partition_ids` to EventHubClient.
+- Added support for http proxy.
 - Added support for authentication using azure-identity credential.
 - Added support for transport using AMQP over WebSocket.
 
@@ -25,7 +26,7 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
   - `azure.error.EventDataError`
   - `azure.error.EventDataSendError`
 - Renamed Sender/Receiver to EventHubProducer/EventHubConsumer.
-  - New APIs for creating EventHubProducer/EventHubConsumer.
+  - Renamed `add_sender` to `create_producer` and `add_receiver` to `create_consumer` in EventHubClient.
   - EventHubConsumer is now iterable.
 - Rename class azure.eventhub.Offset to azure.eventhub.EventPosition.
 - Rename method `get_eventhub_info` to `get_properties` of EventHubClient.
