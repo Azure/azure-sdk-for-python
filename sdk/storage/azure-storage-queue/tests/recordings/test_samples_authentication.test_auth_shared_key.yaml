@@ -9,93 +9,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - fccafa0c-9790-11e9-ba1a-b831b58100e8
+      - 0b6f99f4-99ee-11e9-9c67-b831b58100e8
       x-ms-date:
-      - Tue, 25 Jun 2019 21:34:18 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors
-        /></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 21:34:17 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      x-ms-request-id:
-      - 577e28c5-c003-0075-609d-2b38d8000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 1e3b7306-9791-11e9-9fa6-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:35:14 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors
-        /></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 21:35:14 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      x-ms-request-id:
-      - 63754c18-4003-0019-659d-2bd34f000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - aa38a8c6-9791-11e9-a78a-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:39:09 GMT
+      - Fri, 28 Jun 2019 21:45:28 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -110,7 +28,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Tue, 25 Jun 2019 21:39:08 GMT
+      - Fri, 28 Jun 2019 21:45:27 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -118,48 +36,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 0283cf7a-c003-00ae-0d9e-2bfee5000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - cc347a98-9797-11e9-a46b-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 22:23:03 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors
-        /></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 22:23:03 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      x-ms-request-id:
-      - f1432e55-7003-00bb-53a4-2be956000000
+      - 08e4c2c1-0003-0045-25fa-2d8617000000
       x-ms-version:
       - '2018-03-28'
     status:

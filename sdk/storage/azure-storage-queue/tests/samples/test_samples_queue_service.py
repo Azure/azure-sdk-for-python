@@ -27,6 +27,7 @@ class TestQueueServiceSamples(StorageTestCase):
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
+        # [START set_queue_service_properties]
         # Create service properties
         from azure.storage.queue import Logging, Metrics, CorsRule, RetentionPolicy
 
@@ -56,9 +57,11 @@ class TestQueueServiceSamples(StorageTestCase):
 
         # Set the service properties
         queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
+        # [END set_queue_service_properties]
 
-        # Get queue service properties
+        # [START get_queue_service_properties]
         properties = queue_service.get_service_properties()
+        # [END get_queue_service_properties]
 
     @record
     def test_queues_in_account(self):
@@ -66,19 +69,23 @@ class TestQueueServiceSamples(StorageTestCase):
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
-        # Create a queue
+        # [START qsc_create_queue]
         queue_service.create_queue("testqueue")
+        # [END qsc_create_queue]
 
-        # List all the queues in the service
-        list_queues = next(queue_service.list_queues())
+        try:
+            # [START qsc_list_queues]
+            # List all the queues in the service
+            list_queues = next(queue_service.list_queues())
 
-        # List the queues in the service that start with the name "test"
-        list_test_queues = next(queue_service.list_queues(name_starts_with="test"))
+            # List the queues in the service that start with the name "test"
+            list_test_queues = next(queue_service.list_queues(name_starts_with="test"))
+            # [END qsc_list_queues]
 
-        assert list_test_queues is not None
-
-        # Delete the queue
-        queue_service.delete_queue("testqueue")
+        finally:
+            # [START qsc_delete_queue]
+            queue_service.delete_queue("testqueue")
+            # [END qsc_delete_queue]
 
     @record
     def test_get_queue_client(self):
@@ -86,5 +93,7 @@ class TestQueueServiceSamples(StorageTestCase):
         from azure.storage.queue import QueueServiceClient, QueueClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
+        # [START get_queue_client]
         # Get the queue client to interact with a specific queue
         queue = queue_service.get_queue_client("myqueue")
+        # [END get_queue_client]

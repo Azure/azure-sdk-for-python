@@ -39,18 +39,23 @@ class TestHelloWorldSamples(StorageTestCase):
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue")
 
         # Create the queue
+        # [START create_queue]
         queue.create_queue()
+        # [END create_queue]
 
-        # Enqueue messages
-        queue.enqueue_message("I'm using queues!")
-        queue.enqueue_message("This is my second message")
+        try:
+            # Enqueue messages
+            queue.enqueue_message("I'm using queues!")
+            queue.enqueue_message("This is my second message")
 
-        # Dequeue the messages
-        response = next(queue.dequeue_messages(num_messages=2))
+            # Receive the messages
+            response = queue.receive_messages(messages_per_page=2)
 
-        # Print the content of the messages
-        for message in response:
-            print(message.content)
+            # Print the content of the messages
+            for message in response:
+                print(message.content)
 
-        # Delete the queue
-        queue.delete_queue()
+        finally:
+            # [START delete_queue]
+            queue.delete_queue()
+            # [END delete_queue]

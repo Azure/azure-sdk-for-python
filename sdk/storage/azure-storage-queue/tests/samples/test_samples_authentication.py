@@ -35,10 +35,11 @@ class TestAuthSamples(StorageTestCase):
 
     @record
     def test_auth_connection_string(self):
-
         # Instantiate a QueueServiceClient using a connection string
+        # [START auth_from_connection_string]
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        # [END auth_from_connection_string]
 
         # Get information for the Queue Service
         properties = queue_service.get_service_properties()
@@ -49,9 +50,10 @@ class TestAuthSamples(StorageTestCase):
     def test_auth_shared_key(self):
 
         # Instantiate a QueueServiceClient using a shared access key
+        # [START create_queue_service_client]
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient(account_url=self.url, credential=self.shared_access_key)
-
+        # [END create_queue_service_client]
         # Get information for the Queue Service
         properties = queue_service.get_service_properties()
 

@@ -16,11 +16,11 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5c4649c-978f-11e9-83dc-b831b58100e8
+      - 130d4f58-99ee-11e9-9c89-b831b58100e8
       x-ms-date:
-      - Tue, 25 Jun 2019 21:25:09 GMT
+      - Fri, 28 Jun 2019 21:45:41 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -32,11 +32,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 25 Jun 2019 21:25:11 GMT
+      - Fri, 28 Jun 2019 21:45:44 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - a4e78b07-a003-0087-2f9c-2bc091000000
+      - c901295d-c003-00e3-79fa-2d3109000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -52,11 +52,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b747dc28-978f-11e9-922d-b831b58100e8
+      - 1585d5dc-99ee-11e9-b386-b831b58100e8
       x-ms-date:
-      - Tue, 25 Jun 2019 21:25:12 GMT
+      - Fri, 28 Jun 2019 21:45:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -71,7 +71,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Tue, 25 Jun 2019 21:25:11 GMT
+      - Fri, 28 Jun 2019 21:45:44 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -79,265 +79,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - a4e78e4c-a003-0087-5e9c-2bc091000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Logging><Version>1.0</Version><Delete>true</Delete><Read>true</Read><Write>true</Write><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedMethods>GET,PUT</AllowedMethods><AllowedHeaders>x-ms-meta-data*,x-ms-meta-target*,x-ms-meta-xyz,x-ms-meta-foo</AllowedHeaders><ExposedHeaders>x-ms-meta-data*,x-ms-meta-source*,x-ms-meta-abc,x-ms-meta-bcd</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1155'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 255f0002-9791-11e9-8d8a-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:35:26 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 25 Jun 2019 21:35:28 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 632ce229-6003-0053-799d-2b70c0000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 271ea818-9791-11e9-93f7-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:35:29 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
-        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 21:35:28 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 632ce30a-6003-0053-429d-2b70c0000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Logging><Version>1.0</Version><Delete>true</Delete><Read>true</Read><Write>true</Write><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedMethods>GET,PUT</AllowedMethods><AllowedHeaders>x-ms-meta-data*,x-ms-meta-target*,x-ms-meta-xyz,x-ms-meta-foo</AllowedHeaders><ExposedHeaders>x-ms-meta-data*,x-ms-meta-source*,x-ms-meta-abc,x-ms-meta-bcd</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1155'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b1ce6b80-9791-11e9-a8cb-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:39:22 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 25 Jun 2019 21:39:21 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d48b5ce-5003-0015-6a9e-2b4447000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b1f3a736-9791-11e9-a029-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 21:39:22 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
-        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 21:39:21 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 4d48b5eb-5003-0015-7e9e-2b4447000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Logging><Version>1.0</Version><Delete>true</Delete><Read>true</Read><Write>true</Write><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedMethods>GET,PUT</AllowedMethods><AllowedHeaders>x-ms-meta-data*,x-ms-meta-target*,x-ms-meta-xyz,x-ms-meta-foo</AllowedHeaders><ExposedHeaders>x-ms-meta-data*,x-ms-meta-source*,x-ms-meta-abc,x-ms-meta-bcd</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1155'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - d6eff052-9797-11e9-bb49-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 22:23:21 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 25 Jun 2019 22:23:25 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 936eb738-7003-004f-56a4-2b22a0000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
-      x-ms-client-request-id:
-      - d991c39e-9797-11e9-854f-b831b58100e8
-      x-ms-date:
-      - Tue, 25 Jun 2019 22:23:25 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
-        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 25 Jun 2019 22:23:25 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 936eb7b4-7003-004f-25a4-2b22a0000000
+      - c9012a58-c003-00e3-4efa-2d3109000000
       x-ms-version:
       - '2018-03-28'
     status:

@@ -47,6 +47,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            :start-after: [START create_queue_service_client]
+            :end-before: [END create_queue_service_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the QueueServiceClient with an account url and credential.
     """
 
     def __init__(
@@ -92,6 +100,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the QueueServiceClient with a connection string.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
@@ -189,6 +205,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START get_queue_service_properties]
+                :end-before: [END get_queue_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting queue service properties.
         """
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs)
@@ -229,6 +253,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START set_queue_service_properties]
+                :end-before: [END set_queue_service_properties]
+                :language: python
+                :dedent: 8
+                :caption: Setting queue service properties.
         """
         props = StorageServiceProperties(
             logging=logging,
@@ -272,6 +304,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
         :rtype: ~azure.core.queue.models.QueuePropertiesPaged
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START qsc_list_queues]
+                :end-before: [END qsc_list_queues]
+                :language: python
+                :dedent: 12
+                :caption: List queues in the service.
         """
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
@@ -302,6 +342,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.queue_client.QueueClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START qsc_create_queue]
+                :end-before: [END qsc_create_queue]
+                :language: python
+                :dedent: 8
+                :caption: Create a queue in the service.
         """
         queue = self.get_queue_client(name)
         queue.create_queue(
@@ -331,6 +379,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START qsc_delete_queue]
+                :end-before: [END qsc_delete_queue]
+                :language: python
+                :dedent: 12
+                :caption: Delete a queue in the service.
         """
         queue = self.get_queue_client(queue)
         queue.delete_queue(timeout=timeout, **kwargs)
@@ -346,6 +402,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :type queue: str or ~azure.storage.queue.models.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
         :rtype: ~azure.core.queue.queue_client.QueueClient
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+                :start-after: [START get_queue_client]
+                :end-before: [END get_queue_client]
+                :language: python
+                :dedent: 8
+                :caption: Get the queue client.
         """
         return QueueClient(
             self.url, queue=queue, credential=self.credential, key_resolver_function=self.key_resolver_function,

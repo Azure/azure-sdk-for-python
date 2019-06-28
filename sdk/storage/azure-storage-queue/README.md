@@ -7,7 +7,7 @@ Common uses of Queue storage include:
 * Creating a backlog of work to process asynchronously
 * Passing messages between different parts of a distributed application
 
-[Source code](TODO) | [Package (PyPi)](TODO) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
+[Source code](TODO) | [Package (PyPi)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
 
 ## Getting started
 
@@ -39,7 +39,7 @@ Interaction with Storage Queues starts with an instance of the QueueServiceClien
 To authenticate the client you have a few options:
 1. Use a SAS token string 
 2. Use an account shared access key
-3. Use a token credential from [azure.identity](TODO)
+3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
 Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#create-client-with-conn-string).
 
@@ -73,13 +73,13 @@ The Storage Queues SDK provides two different clients to interact with the Queue
     can also be retrieved using the `get_queue_client` function.
 2. **QueueClient** - this client represents interaction with a specific
     queue, although that queue need not exist yet. It provides operations to create, delete, or
-    configure queues and includes operations to enqueue, dequeue, peak, delete, and update messages in the queue.
+    configure queues and includes operations to enqueue, receive, peak, delete, and update messages in the queue.
 
 #### Messages
 
 Once you've initialized a Client, you can use the following operations to work with the messages in the queue:
 * **Enqueue** - Adds a message to the queue and optionally sets a visibility timeout for the message.
-* **Dequeue** - Retrieves a message from the queue and makes it invisible to other consumers.
+* **Receive** - Retrieves a message from the queue and makes it invisible to other consumers.
 * **Peek** - Retrieves a message from the front of the queue, without changing the message visibility.
 * **Update** - Updates the visibility timeout of a message and/or the message contents.
 * **Delete** - Deletes a specified message from the queue.
@@ -93,7 +93,7 @@ The following sections provide several code snippets covering some of the most c
 * [Client creation with a connection string](#client-creation-with-a-connection-string)
 * [Create a queue](#create-a-queue)
 * [Enqueue messages](#enqueue-messages)
-* [Dequeue messages](#dequeue-messages)
+* [Receive messages](#receive-messages)
 
 
 ### Client creation with a connection string
@@ -125,8 +125,8 @@ queue.enqueue_message("I'm using queues!")
 queue.enqueue_message("This is my second message")
 ```
 
-### Dequeue messages
-Dequeue messages from your queue.
+### Receive messages
+Receive messages from your queue.
 
 ```python
 from azure.storage.queue import QueueClient
@@ -158,7 +158,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
     * Client creation
     * Create a queue
     * Enqueue messages
-    * Dequeue messages
+    * Receive messages
 
 * [`test_samples_authentication.py`](TODO) - Examples for authenticating and creating the client:
     * From a connection string
@@ -167,7 +167,6 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
     * From active directory
 
 * [`test_samples_queue_service.py`](TODO) - Examples for interacting with the queue service:
-    * Get account information
     * Get and set service properties
     * List queues in a storage account
     * Create and delete a queue from the service
@@ -176,7 +175,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
 * [`test_samples_message_queue.py`](TODO) - Examples for working with queues and messages:
     * Set an access policy
     * Get and set queue metadata
-    * Enqueue and dequeue messages
+    * Enqueue and receive messages
     * Delete specified messages and clear all messages
     * Peek and update messages
     

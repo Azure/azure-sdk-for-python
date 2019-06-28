@@ -56,6 +56,14 @@ class QueueClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+            :start-after: [START create_queue_client]
+            :end-before: [END create_queue_client]
+            :language: python
+            :dedent: 12
+            :caption: Create the queue client with url and credential.
     """
     def __init__(
             self, queue_url,  # type: str
@@ -125,6 +133,14 @@ class QueueClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START create_queue_client_from_connection_string]
+                :end-before: [END create_queue_client_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Create the queue client from connection string.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
@@ -179,6 +195,14 @@ class QueueClient(StorageAccountHostsMixin):
             is https,http.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START queue_client_sas_token]
+                :end-before: [END queue_client_sas_token]
+                :language: python
+                :dedent: 12
+                :caption: Generate a sas token.
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
@@ -210,6 +234,14 @@ class QueueClient(StorageAccountHostsMixin):
         :rtype: None
         :raises:
             ~azure.storage.queue._generated.models._models.StorageErrorException
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START create_queue]
+                :end-before: [END create_queue]
+                :language: python
+                :dedent: 8
+                :caption: Create a queue.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -238,6 +270,14 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START delete_queue]
+                :end-before: [END delete_queue]
+                :language: python
+                :dedent: 12
+                :caption: Delete a queue.
         """
         try:
             self._client.queue.delete(timeout=timeout, **kwargs)
@@ -254,6 +294,14 @@ class QueueClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.queue.models.QueueProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START get_queue_properties]
+                :end-before: [END get_queue_properties]
+                :language: python
+                :dedent: 12
+                :caption: Get the properties on the queue.
         """
         try:
             response = self._client.queue.get_properties(
@@ -277,6 +325,14 @@ class QueueClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The server timeout, expressed in seconds.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START set_queue_metadata]
+                :end-before: [END set_queue_metadata]
+                :language: python
+                :dedent: 12
+                :caption: Set metadata on the queue.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -331,6 +387,14 @@ class QueueClient(StorageAccountHostsMixin):
         :type signed_identifiers: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
         :param int timeout:
             The server timeout, expressed in seconds.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START set_access_policy]
+                :end-before: [END set_access_policy]
+                :language: python
+                :dedent: 12
+                :caption: Set an access policy on the queue.
         """
         if signed_identifiers:
             if len(signed_identifiers) > 15:
@@ -389,6 +453,14 @@ class QueueClient(StorageAccountHostsMixin):
             This object is also populated with the content although it is not
             returned from the service.
         :rtype: ~azure.storage.queue.models.QueueMessage
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START enqueue_messages]
+                :end-before: [END enqueue_messages]
+                :language: python
+                :dedent: 12
+                :caption: Enqueue messages.
         """
         self._config.message_encode_policy.configure(
             self.require_encryption,
@@ -446,6 +518,14 @@ class QueueClient(StorageAccountHostsMixin):
             Objects are also populated with the content although it is not
             returned from the service.
         :rtype: ~azure.storage.queue.models.QueueMessage
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START receive_messages]
+                :end-before: [END receive_messages]
+                :language: python
+                :dedent: 12
+                :caption: Receive messages from the queue.
         """
         self._config.message_decode_policy.configure(
             self.require_encryption,
@@ -501,6 +581,14 @@ class QueueClient(StorageAccountHostsMixin):
             A :class:`~azure.storage.queue.models.QueueMessage` object. For convenience,
             this object is also populated with the content, although it is not returned by the service.
         :rtype: ~azure.storage.queue.models.QueueMessage
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START update_message]
+                :end-before: [END update_message]
+                :language: python
+                :dedent: 12
+                :caption: Update a message.
         """
         try:
             message_id = message.id
@@ -575,6 +663,14 @@ class QueueClient(StorageAccountHostsMixin):
             time_next_visible and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START peek_message]
+                :end-before: [END peek_message]
+                :language: python
+                :dedent: 12
+                :caption: Peek messages.
         """
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
@@ -601,6 +697,14 @@ class QueueClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The server timeout, expressed in seconds.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START clear_messages]
+                :end-before: [END clear_messages]
+                :language: python
+                :dedent: 12
+                :caption: Clears all messages.
         """
         try:
             self._client.messages.clear(timeout=timeout, **kwargs)
@@ -611,7 +715,7 @@ class QueueClient(StorageAccountHostsMixin):
         # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
         """Deletes the specified message.
 
-        Normally after a client retrieves a message with the dequeue messages operation,
+        Normally after a client retrieves a message with the receive messages operation,
         the client is expected to process and delete the message. To delete the
         message, you must have the message object itself, or two items of data: id and pop_receipt.
         The id is returned from the previous receive_messages operation. The
@@ -628,6 +732,14 @@ class QueueClient(StorageAccountHostsMixin):
             to the :func:`~receive_messages` or :func:`~update_message`.
         :param int timeout:
             The server timeout, expressed in seconds.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_message_queue.py
+                :start-after: [START delete_message]
+                :end-before: [END delete_message]
+                :language: python
+                :dedent: 12
+                :caption: Delete a message.
         """
         try:
             message_id = message.id
