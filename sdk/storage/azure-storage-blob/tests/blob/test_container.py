@@ -565,8 +565,12 @@ class StorageContainerTest(StorageTestCase):
             identifiers['id{}'.format(i)] = AccessPolicy()
 
         # Assert
-        with self.assertRaisesRegexp(ValueError, 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'):
+        with self.assertRaises(ValueError) as e:
             container_name.set_container_access_policy(identifiers)
+        self.assertEqual(
+            str(e.exception),
+            'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        )
 
     @record
     def test_lease_container_acquire_and_release(self):

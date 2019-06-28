@@ -29,7 +29,6 @@ from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
-    UserAgentPolicy,
     RedirectPolicy,
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
@@ -48,6 +47,7 @@ from .authentication import SharedKeyCredentialPolicy
 from .policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
+    StorageUserAgentPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageResponseHook,
@@ -475,7 +475,7 @@ def create_configuration(**kwargs):
         kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(**kwargs)
+    config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)

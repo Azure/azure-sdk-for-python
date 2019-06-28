@@ -54,7 +54,7 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -93,11 +93,13 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        #'azure-core~=0.0.1',
-        'azure-common~=1.1',
+        "azure-core>=1.0.0b1,<2.0.0",
+        "msrest>=0.5.0"
     ],
     extras_require={
+        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
         ":python_version<'3.0'": ['futures'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
     },
 )

@@ -9,6 +9,7 @@ import pytest
 import requests
 import time
 import unittest
+import os
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import (
@@ -17,6 +18,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ClientAuthenticationError)
 from azure.storage.blob import (
+    upload_blob_to_url,
+    download_blob_from_url,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -40,6 +43,7 @@ from tests.testcase import (
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
+FILE_PATH = 'blob_data.temp.dat'
 #------------------------------------------------------------------------------
 
 class StorageCommonBlobTest(StorageTestCase):
@@ -79,6 +83,11 @@ class StorageCommonBlobTest(StorageTestCase):
                     self.bsc2.delete_container(self.remote_container_name)
                 except:
                     pass
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
 
         return super(StorageCommonBlobTest, self).tearDown()
 
@@ -1241,25 +1250,22 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_token_credential(self):
-        pytest.skip("Pending rebase")
-        try:
-            token_credential = self.generate_oauth_token()
-            get_token = token_credential.get_token
-        except ImportError:
-            pytest.skip("Azure Identity not installed.")
+        token_credential = self.generate_oauth_token()
+        get_token = token_credential.get_token
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self._get_account_url(), credential=token_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
-        token_credential.get_token = lambda x: "YOU SHALL NOT PASS"
+        fake_credential = self.generate_fake_token()
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             service.get_service_properties()
 
         # Action 3: update token to make it working again
-        token_credential.get_token = get_token
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
@@ -1446,6 +1452,230 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
+
+    @record
+    def test_download_to_file_with_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        self._create_remote_container()
+        source_blob = self._create_remote_block_blob(blob_data=data)
+        sas_token = source_blob.generate_shared_access_signature(
+            permission=BlobPermissions.READ,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        blob = BlobClient(source_blob.url, credential=sas_token)
+
+
+        # Act
+        download_blob_from_url(blob.url, FILE_PATH)
+
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    @record
+    def test_download_to_file_with_credential(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        self._create_remote_container()
+        source_blob = self._create_remote_block_blob(blob_data=data)
+
+        # Act
+        print(source_blob.url)
+        download_blob_from_url(
+            source_blob.url, FILE_PATH,
+            max_connections=2,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    @record
+    def test_download_to_file_with_existing_file(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        self._create_remote_container()
+        source_blob = self._create_remote_block_blob(blob_data=data)
+
+        # Act
+        print(source_blob.url)
+        download_blob_from_url(
+            source_blob.url, FILE_PATH,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        with self.assertRaises(ValueError):
+            download_blob_from_url(source_blob.url, FILE_PATH)
+
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    @record
+    def test_download_to_file_with_existing_file_overwrite(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        self._create_remote_container()
+        source_blob = self._create_remote_block_blob(blob_data=data)
+
+        # Act
+        download_blob_from_url(
+            source_blob.url, FILE_PATH,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        data2 = b'ABCDEFGH' * 1024 * 1024
+        source_blob = self._create_remote_block_blob(blob_data=data2)
+        download_blob_from_url(
+            source_blob.url, FILE_PATH, overwrite=True,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data2, actual)
+
+    @record
+    def test_upload_to_url_bytes_with_sas(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        token = blob.generate_shared_access_signature(
+            permission=BlobPermissions.WRITE,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_blob = BlobClient(blob.url, credential=token)
+
+        # Act
+        uploaded = upload_blob_to_url(sas_blob.url, data)
+
+        # Assert
+        self.assertIsNotNone(uploaded)
+        content = blob.download_blob().content_as_bytes()
+        self.assertEqual(data, content)
+
+    @record
+    def test_upload_to_url_bytes_with_credential(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        uploaded = upload_blob_to_url(
+            blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        self.assertIsNotNone(uploaded)
+        content = blob.download_blob().content_as_bytes()
+        self.assertEqual(data, content)
+
+    @record
+    def test_upload_to_url_bytes_with_existing_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(b"existing_data")
+
+        # Act
+        with self.assertRaises(ResourceExistsError):
+            upload_blob_to_url(
+                blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        content = blob.download_blob().content_as_bytes()
+        self.assertEqual(b"existing_data", content)
+
+    @record
+    def test_upload_to_url_bytes_with_existing_blob_overwrite(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(b"existing_data")
+
+        # Act
+        uploaded = upload_blob_to_url(
+            blob.url, data,
+            overwrite=True,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        self.assertIsNotNone(uploaded)
+        content = blob.download_blob().content_as_bytes()
+        self.assertEqual(data, content)
+
+    @record
+    def test_upload_to_url_text_with_credential(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = '12345678' * 1024 * 1024
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        uploaded = upload_blob_to_url(
+            blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        self.assertIsNotNone(uploaded)
+        content = blob.download_blob().content_as_text()
+        self.assertEqual(data, content)
+
+    @record
+    def test_upload_to_url_file_with_credential(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        data = b'12345678' * 1024 * 1024
+        with open(FILE_PATH, 'wb') as stream:
+            stream.write(data)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        with open(FILE_PATH, 'rb'):
+            uploaded = upload_blob_to_url(
+                blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
+
+        # Assert
+        self.assertIsNotNone(uploaded)
+        content = blob.download_blob().content_as_bytes()
+        self.assertEqual(data, content)
 
 
 #------------------------------------------------------------------------------
