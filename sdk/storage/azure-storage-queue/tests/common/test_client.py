@@ -319,13 +319,11 @@ class StorageClientTest(StorageTestCase):
         name = self.get_resource_name('cont')
 
         # Act
-        def callback(request):
-            if request.http_request.method == 'PUT':
-                request.http_request.headers['x-ms-meta-hello'] = 'world'
-
-        # Assert
         try:
-            queue = service.create_queue(name, raw_request_hook=callback)
+            headers = {'x-ms-meta-hello': 'world'}
+            queue = service.create_queue(name, headers=headers)
+
+            # Assert
             metadata = queue.get_queue_properties().metadata
             self.assertEqual(metadata, {'hello': 'world'})
         finally:

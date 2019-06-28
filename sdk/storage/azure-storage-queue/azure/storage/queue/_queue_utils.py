@@ -49,26 +49,6 @@ def deserialize_queue_creation(response, obj, headers):
     return headers
 
 
-class MessageIterator(object):
-
-    def __init__(self, command):
-        self._command = command
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        try:
-            messages = self._command()
-            if not messages:
-                raise StopIteration()
-            return [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    next = __next__
-
-
 class MessageEncodePolicy(object):
 
     def __init__(self):

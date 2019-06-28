@@ -28,7 +28,6 @@ from ._shared.utils import (
     parse_connection_str
 )
 from ._queue_utils import (
-    MessageIterator,
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
     deserialize_queue_properties,
@@ -37,7 +36,7 @@ from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
-from .models import QueueMessage, AccessPolicy
+from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
@@ -415,7 +414,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def dequeue_messages(self, num_messages=None, visibility_timeout=None, timeout=None, **kwargs):
+    def dequeue_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Removes one or more messages from the front of the queue.
 
@@ -428,7 +427,7 @@ class QueueClient(StorageAccountHostsMixin):
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
 
-        :param int num_messages:
+        :param int messages_per_page:
             A nonzero integer value that specifies the number of
             messages to retrieve from the queue, up to a maximum of 32. If
             fewer are visible, the visible messages are returned. By default,
@@ -455,13 +454,12 @@ class QueueClient(StorageAccountHostsMixin):
         try:
             command = functools.partial(
                 self._client.messages.dequeue,
-                number_of_messages=num_messages,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return MessageIterator(command)
+            return MessagesPaged(command, results_per_page=messages_per_page)
         except StorageErrorException as error:
             process_storage_error(error)
 

@@ -132,7 +132,7 @@ Dequeue messages from your queue.
 from azure.storage.queue import QueueClient
 
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
-response = next(queue.dequeue_messages(num_messages=2))
+response = queue.dequeue_messages()
 
 for message in response:
     print(message.content)
