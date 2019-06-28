@@ -80,12 +80,13 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        #'azure-core~=0.0.1',
-        'msrest>=0.5.0',
+        "azure-core<2.0.0,>=1.0.0b1",
+        "msrest>=0.5.0"
     ],
     extras_require={
+        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
         ":python_version<'3.0'": ['futures'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
+        ":python_version<'3.5'": ["typing"]
     },
 )
