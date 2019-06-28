@@ -8,7 +8,7 @@ import uuid
 
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING
+    TypeVar, TYPE_CHECKING
 )
 
 from ._shared.utils import return_response_headers, process_storage_error
@@ -19,6 +19,8 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.operations import BlobOperations, ContainerOperations
 
+BlobClient = TypeVar("BlobClient")
+ContainerClient = TypeVar("ContainerClient")
 
 class LeaseClient(object):
     """Creates a new LeaseClient. This client provides lease operations on
@@ -35,9 +37,9 @@ class LeaseClient(object):
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
-            self._client = client._client.blob  # pylint: disable=protected-access
+            self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
         elif hasattr(client, 'container_name'):
-            self._client = client._client.container  # pylint: disable=protected-access
+            self._client = client._client.container  # type: ignore # pylint: disable=protected-access
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
 
@@ -324,4 +326,4 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return response.get('lease_time')
+        return response.get('lease_time') # type: ignore

@@ -6,15 +6,15 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO,
     TYPE_CHECKING
 )
 
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
 
@@ -36,11 +36,14 @@ from ._blob_utils import (
     get_access_conditions,
     get_modification_conditions,
     deserialize_container_properties)
-from .models import (
+from .models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
+    AccessPolicy,
+    ContentSettings,
+    PremiumPageBlobTier,
     BlobPrefix)
 from .lease import LeaseClient
 from .blob_client import BlobClient
@@ -79,7 +82,7 @@ class ContainerClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, container_url,  # type: str
-            container=None,  # type: Union[ContainerProperties, str]
+            container=None,  # type: Optional[Union[ContainerProperties, str]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
@@ -100,9 +103,9 @@ class ContainerClient(StorageAccountHostsMixin):
             path_container = parsed_url.path.lstrip('/').partition('/')[0]
         _, sas_token = parse_query(parsed_url.query)
         try:
-            self.container_name = container.name
+            self.container_name = container.name # type: ignore
         except AttributeError:
-            self.container_name = container or unquote(path_container)
+            self.container_name = container or unquote(path_container) # type: ignore
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -156,7 +159,7 @@ class ContainerClient(StorageAccountHostsMixin):
             content_language=None,  # type: Optional[str]
             content_type=None  # type: Optional[str]
         ):
-        # type: (...) -> str
+        # type: (...) -> Any
         """Generates a shared access signature for the container.
         Use the returned signature with the credential parameter of any BlobServiceClient,
         ContainerClient or BlobClient.
@@ -240,7 +243,7 @@ class ContainerClient(StorageAccountHostsMixin):
         )
 
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int]) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -264,9 +267,9 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.container.create(
+            return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
                 cls=return_response_headers,
@@ -395,7 +398,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Acquiring a lease on the container.
         """
-        lease = LeaseClient(self, lease_id=lease_id)
+        lease = LeaseClient(self, lease_id=lease_id) # type: ignore
         lease.acquire(
             lease_duration=lease_duration,
             if_modified_since=if_modified_since,
@@ -406,8 +409,8 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
         return lease
 
-    def get_account_information(self, **kwargs):
-        # type: (Optional[int]) -> Dict[str, str]
+    def get_account_information(self, **kwargs): # type: ignore
+        # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
         The information can also be retrieved if the user has a SAS to a container or blob.
 
@@ -415,7 +418,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: dict(str, str)
         """
         try:
-            return self._client.container.get_account_info(cls=return_response_headers, **kwargs)
+            return self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -450,9 +453,9 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
         response.name = self.container_name
-        return response
+        return response # type: ignore
 
-    def set_container_metadata(
+    def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -495,7 +498,7 @@ class ContainerClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(if_modified_since)
         try:
-            return self._client.container.set_metadata(
+            return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -506,7 +509,7 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int]) -> Dict[str, str]
+        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -598,8 +601,8 @@ class ContainerClient(StorageAccountHostsMixin):
                 if value:
                     value.start = serialize_iso(value.start)
                     value.expiry = serialize_iso(value.expiry)
-                identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers
+                identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
+            signed_identifiers = identifiers # type: ignore
 
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since)
@@ -617,7 +620,7 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
+        # type: (Optional[str], Optional[Any], Optional[str], Optional[int], **Any) -> Iterable[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -655,8 +658,15 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
         return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def walk_blobs(self, name_starts_with=None, include=None, delimiter="/", marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
+    def walk_blobs(
+            self, name_starts_with=None, # type: Optional[str]
+            include=None, # type: Optional[Any]
+            delimiter="/", # type: Optional[str]
+            marker=None, # type: Optional[str]
+            timeout=None, # type: Optional[int]
+            **kwargs # type: **Any
+        ):
+        # type: (...) -> Iterable[BlobProperties]
         """
         Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
@@ -720,7 +730,7 @@ class ContainerClient(StorageAccountHostsMixin):
             encoding='UTF-8', # type: str
             **kwargs
         ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> BlobClient
         """
         Creates a new blob from a data source with automatic chunking.
 
@@ -896,8 +906,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        blob = self.get_blob_client(blob)
-        blob.delete_blob(
+        blob = self.get_blob_client(blob) # type: ignore
+        blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             lease=lease,
             if_modified_since=if_modified_since,
@@ -909,7 +919,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None  # type: str
+            snapshot=None  # type: str                                           
         ):
         # type: (...) -> BlobClient
         """

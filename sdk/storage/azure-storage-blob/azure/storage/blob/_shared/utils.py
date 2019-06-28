@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type,
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
     TYPE_CHECKING
 )
 import base64
@@ -18,8 +18,8 @@ from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 try:
     from urllib.parse import quote, unquote, parse_qs
 except ImportError:
-    from urlparse import parse_qs
-    from urllib2 import quote, unquote
+    from urlparse import parse_qs  # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 import six
 import isodate
@@ -118,7 +118,7 @@ class _QueryStringConstants(object):
 class StorageAccountHostsMixin(object):
 
     def __init__(
-            self, parsed_url,  # type: str
+            self, parsed_url,  # type: Any
             service, # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
@@ -485,7 +485,7 @@ def create_configuration(**kwargs):
 
 
 def create_pipeline(credential, **kwargs):
-    # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
+    # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
     credential_policy = None
     if hasattr(credential, 'get_token'):
         credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
@@ -540,7 +540,6 @@ def is_credential_sastoken(credential):
 
 
 def add_metadata_headers(metadata):
-    # type: (Dict[str, str]) -> Dict[str, str]
     headers = {}
     if metadata:
         for key, value in metadata.items():
