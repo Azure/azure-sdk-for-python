@@ -13,7 +13,7 @@ from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-storage-queue"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_PPRINT_NAME = "Azure Queue Storage"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -56,7 +56,7 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='azpysdkhelp@microsoft.com',
+    author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -80,12 +80,13 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
-        'azure-common~=1.1',
-        #'azure-core~=0.0.1',
+        "azure-core<2.0.0,>=1.0.0b1",
+        "msrest>=0.5.0"
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-storage-nspkg==3.1.0'],
-    }
+        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+    },
 )

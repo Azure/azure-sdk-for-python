@@ -296,7 +296,7 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        message = next(queue_client.dequeue_messages())
+        message = next(queue_client.receive_messages())
 
         # Asserts
         self.assertIsNotNone(message)
@@ -318,7 +318,7 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        result = queue_client.dequeue_messages(messages_per_page=4, visibility_timeout=20)
+        result = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
         next(result)
 
         # Asserts
@@ -404,10 +404,10 @@ class StorageQueueTest(StorageTestCase):
         queue_client.enqueue_message(u'message2')
         queue_client.enqueue_message(u'message3')
         queue_client.enqueue_message(u'message4')
-        message = next(queue_client.dequeue_messages())
+        message = next(queue_client.receive_messages())
         queue_client.delete_message(message)
 
-        messages = queue_client.dequeue_messages(messages_per_page=32)
+        messages = queue_client.receive_messages(messages_per_page=32)
         next(messages)
 
         # Asserts
@@ -419,7 +419,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
         list_result1 = next(messages)
         message = queue_client.update_message(
             list_result1.id,
@@ -452,7 +452,7 @@ class StorageQueueTest(StorageTestCase):
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
 
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
         list_result1 = next(messages)
         message = queue_client.update_message(
             list_result1.id,
@@ -581,7 +581,7 @@ class StorageQueueTest(StorageTestCase):
         result = service.enqueue_message(u'addedmessage')
 
         # Assert
-        result = next(queue_client.dequeue_messages())
+        result = next(queue_client.receive_messages())
         self.assertEqual(u'addedmessage', result.content)
 
     def test_sas_update(self):
@@ -596,7 +596,7 @@ class StorageQueueTest(StorageTestCase):
             QueuePermissions.UPDATE,
             datetime.utcnow() + timedelta(hours=1),
         )
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
         result = next(messages)
 
         # Act
@@ -633,7 +633,7 @@ class StorageQueueTest(StorageTestCase):
             queue_url=queue_client.url,
             credential=token,
         )
-        message = next(service.dequeue_messages())
+        message = next(service.receive_messages())
 
         # Assert
         self.assertIsNotNone(message)
@@ -819,7 +819,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1㚈')
-        message = next(queue_client.dequeue_messages())
+        message = next(queue_client.receive_messages())
 
         # Asserts
         self.assertIsNotNone(message)
@@ -836,7 +836,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
-        messages = queue_client.dequeue_messages()
+        messages = queue_client.receive_messages()
 
         list_result1 = next(messages)
         list_result1.content = u'啊齄丂狛狜'
