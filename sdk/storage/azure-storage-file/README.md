@@ -138,33 +138,33 @@ Get started with our [File samples](https://github.com/Azure/azure-sdk-for-pytho
 
 Several Storage File Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage File:
 
-* [`test_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_hello_world.py) - Examples found in this article:
+* [`test_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_hello_world.py) - Examples found in this article:
     * Client creation
     * Create a file share
     * Upload a file
 
-* [`test_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_authentication.py) - Examples for authenticating and creating the client:
+* [`test_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_authentication.py) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
 
-* [`test_samples_file_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_file_service.py) - Examples for interacting with the file service:
+* [`test_samples_file_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_file_service.py) - Examples for interacting with the file service:
     * Get and set service properties
     * Create, list, and delete shares
     * Get a share client
 
-* [`test_samples_share.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_share.py) - Examples for interacting with file shares:
+* [`test_samples_share.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_share.py) - Examples for interacting with file shares:
     * Create a share snapshot
     * Set share quota and metadata
     * List directories and files
     * Get the directory or file client to interact with a specific entity
 
-* [`test_samples_directory.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_directory.py) - Examples for interacting with directories:
+* [`test_samples_directory.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_directory.py) - Examples for interacting with directories:
     * Create a directory and add files
     * Create and delete subdirectories
     * Get the subdirectory client
 
-* [`test_samples_file.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_samples_file.py) - Examples for interacting with files:
+* [`test_samples_file.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples/test_samples_file.py) - Examples for interacting with files:
     * Create, upload, download, and delete files
     * Copy a file from a URL
 
