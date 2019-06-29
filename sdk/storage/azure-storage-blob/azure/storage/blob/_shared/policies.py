@@ -14,9 +14,8 @@ import logging
 import uuid
 import types
 import platform
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
-from azure.core.pipeline import PipelineRequest, PipelineResponse
 try:
     from urllib.parse import (
         urlparse,
@@ -47,6 +46,9 @@ try:
     _unicode_type = unicode # type: ignore
 except NameError:
     _unicode_type = str
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 _LOGGER = logging.getLogger(__name__)

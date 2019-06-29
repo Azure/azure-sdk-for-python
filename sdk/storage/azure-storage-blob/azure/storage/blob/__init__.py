@@ -6,6 +6,7 @@
 
 import os
 
+from typing import Union, Iterable, AnyStr, IO, Any # pylint: disable=unused-import
 from .version import VERSION
 from .blob_client import BlobClient
 from .container_client import ContainerClient

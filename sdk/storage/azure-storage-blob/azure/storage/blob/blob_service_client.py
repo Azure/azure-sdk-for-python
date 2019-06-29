@@ -6,7 +6,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, TypeVar,
+    Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
 try:
@@ -43,7 +43,6 @@ if TYPE_CHECKING:
         CorsRule,
         PublicAccess
     )
-SnapshotProperties = TypeVar("SnapshotProperties")
 
 
 class BlobServiceClient(StorageAccountHostsMixin):
@@ -525,7 +524,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
+            snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.

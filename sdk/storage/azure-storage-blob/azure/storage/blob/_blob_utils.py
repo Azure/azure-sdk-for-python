@@ -7,7 +7,6 @@
 
 import sys
 from io import BytesIO, SEEK_SET, UnsupportedOperation
-from datetime import datetime # pylint: disable=unused-import
 from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
 import six
@@ -41,10 +40,12 @@ from ._generated.models import (
 )
 from .models import BlobProperties, ContainerProperties
 
+if TYPE_CHECKING:
+    from datetime import datetime # pylint: disable=unused-import
+    LeaseClient = TypeVar("LeaseClient")
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
-LeaseClient = TypeVar("LeaseClient")
 
 
 def _convert_mod_error(error):

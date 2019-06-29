@@ -41,9 +41,6 @@ from .models import ( # pylint: disable=unused-import
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
-    AccessPolicy,
-    ContentSettings,
-    PremiumPageBlobTier,
     BlobPrefix)
 from .lease import LeaseClient
 from .blob_client import BlobClient
@@ -53,6 +50,10 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
     from .models import ContainerPermissions, PublicAccess
     from datetime import datetime
+    from .models import ( # pylint: disable=unused-import
+        AccessPolicy,
+        ContentSettings,
+        PremiumPageBlobTier)
 
 
 class ContainerClient(StorageAccountHostsMixin):
@@ -661,10 +662,10 @@ class ContainerClient(StorageAccountHostsMixin):
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
-            delimiter="/", # type: Optional[str]
+            delimiter="/", # type: str
             marker=None, # type: Optional[str]
             timeout=None, # type: Optional[int]
-            **kwargs # type: **Any
+            **kwargs # type: Optional[Any]
         ):
         # type: (...) -> Iterable[BlobProperties]
         """
@@ -919,7 +920,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None  # type: str                                           
+            snapshot=None  # type: str
         ):
         # type: (...) -> BlobClient
         """
