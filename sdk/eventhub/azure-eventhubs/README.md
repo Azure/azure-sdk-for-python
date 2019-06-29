@@ -18,7 +18,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 Install the Azure Event Hubs client library for Python with pip:
 
 ```
-$ pip install azure-eventhub
+$ pip install --pre azure-eventhub
 ```
 
 **Prerequisites**
