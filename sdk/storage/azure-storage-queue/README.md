@@ -7,7 +7,7 @@ Common uses of Queue storage include:
 * Creating a backlog of work to process asynchronously
 * Passing messages between different parts of a distributed application
 
-[Source code](TODO) | [Package (PyPi)](TODO) | [API reference documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-rest-api) | [Product documentation](https://docs.microsoft.com/en-us/azure/storage/) | [Samples](TODO)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPi)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/queue-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples)
 
 ## Getting started
 
@@ -18,11 +18,11 @@ Install the Azure Storage Queue client library for Python with [pip](https://pyp
 pip install azure-storage-queue
 ```
 
-**Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/en-us/free/), and a
-[Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview) to use this package.
+**Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
+[Storage Account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
-To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
+To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
 
 ```bash
 az storage account create -n MyStorageAccountName -g MyResourceGroupName
@@ -39,7 +39,7 @@ Interaction with Storage Queues starts with an instance of the QueueServiceClien
 To authenticate the client you have a few options:
 1. Use a SAS token string 
 2. Use an account shared access key
-3. Use a token credential from [azure.identity](TODO)
+3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
 Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#create-client-with-conn-string).
 
@@ -73,13 +73,13 @@ The Storage Queues SDK provides two different clients to interact with the Queue
     can also be retrieved using the `get_queue_client` function.
 2. **QueueClient** - this client represents interaction with a specific
     queue, although that queue need not exist yet. It provides operations to create, delete, or
-    configure queues and includes operations to enqueue, dequeue, peak, delete, and update messages in the queue.
+    configure queues and includes operations to enqueue, receive, peak, delete, and update messages in the queue.
 
 #### Messages
 
 Once you've initialized a Client, you can use the following operations to work with the messages in the queue:
 * **Enqueue** - Adds a message to the queue and optionally sets a visibility timeout for the message.
-* **Dequeue** - Retrieves a message from the queue and makes it invisible to other consumers.
+* **Receive** - Retrieves a message from the queue and makes it invisible to other consumers.
 * **Peek** - Retrieves a message from the front of the queue, without changing the message visibility.
 * **Update** - Updates the visibility timeout of a message and/or the message contents.
 * **Delete** - Deletes a specified message from the queue.
@@ -93,7 +93,7 @@ The following sections provide several code snippets covering some of the most c
 * [Client creation with a connection string](#client-creation-with-a-connection-string)
 * [Create a queue](#create-a-queue)
 * [Enqueue messages](#enqueue-messages)
-* [Dequeue messages](#dequeue-messages)
+* [Receive messages](#receive-messages)
 
 
 ### Client creation with a connection string
@@ -125,8 +125,8 @@ queue.enqueue_message("I'm using queues!")
 queue.enqueue_message("This is my second message")
 ```
 
-### Dequeue messages
-Dequeue messages from your queue.
+### Receive messages
+Receive messages from your queue.
 
 ```python
 from azure.storage.queue import QueueClient
@@ -145,44 +145,43 @@ for message in response:
 ## Troubleshooting
 Storage Queue clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
 
-All Queue service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-error-codes).
+All Queue service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/queue-service-error-codes).
 
 ## Next steps
 ### More sample code
 
-Get started with our [Queue samples](TODO).
+Get started with our [Queue samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples).
 
 Several Storage Queues Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Queues:
 
-* [`test_samples_hello_world.py`](TODO) - Examples found in this article:
+* [`test_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples/test_samples_hello_world.py) - Examples found in this article:
     * Client creation
     * Create a queue
     * Enqueue messages
-    * Dequeue messages
+    * Receive messages
 
-* [`test_samples_authentication.py`](TODO) - Examples for authenticating and creating the client:
+* [`test_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples/test_samples_authentication.py) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
 
-* [`test_samples_queue_service.py`](TODO) - Examples for interacting with the queue service:
-    * Get account information
+* [`test_samples_queue_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples/test_samples_queue_service.py) - Examples for interacting with the queue service:
     * Get and set service properties
     * List queues in a storage account
     * Create and delete a queue from the service
     * Get the QueueClient
 
-* [`test_samples_message_queue.py`](TODO) - Examples for working with queues and messages:
+* [`test_samples_message_queue.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/samples/test_samples_message_queue.py) - Examples for working with queues and messages:
     * Set an access policy
     * Get and set queue metadata
-    * Enqueue and dequeue messages
+    * Enqueue and receive messages
     * Delete specified messages and clear all messages
     * Peek and update messages
     
 ### Additional documentation
 
-For more extensive documentation on the Azure Storage Queues, see the [Azure Storage Queues documentation](https://docs.microsoft.com/en-us/azure/storage/) on docs.microsoft.com.
+For more extensive documentation on the Azure Storage Queues, see the [Azure Storage Queues documentation](https://docs.microsoft.com/azure/storage/) on docs.microsoft.com.
 
 
 ## Contributing

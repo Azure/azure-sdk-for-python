@@ -177,25 +177,25 @@ class QueueMessage(DictMixin):
         A GUID value assigned to the message by the Queue service that
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
-        it has been retrieved with the dequeue messages operation.
+        it has been retrieved with the receive messages operation.
     :ivar date insertion_time:
         A UTC date value representing the time the messages was inserted.
     :ivar date expiration_time:
         A UTC date value representing the time the message expires.
     :ivar int dequeue_count:
-        Begins with a value of 1 the first time the message is dequeued. This
-        value is incremented each time the message is subsequently dequeued.
+        Begins with a value of 1 the first time the message is received. This
+        value is incremented each time the message is subsequently received.
     :param obj content:
         The message content. Type is determined by the decode_function set on
         the service. Default is str.
     :ivar str pop_receipt:
         A receipt str which can be used together with the message_id element to
-        delete a message from the queue after it has been retrieved with the dequeue
-        messages operation. Only returned by dequeue messages operations. Set to
+        delete a message from the queue after it has been retrieved with the receive
+        messages operation. Only returned by receive messages operations. Set to
         None for peek messages.
     :ivar date time_next_visible:
         A UTC date value representing the time the message will next be visible.
-        Only returned by dequeue messages operations. Set to None for peek messages.
+        Only returned by receive messages operations. Set to None for peek messages.
     """
 
     def __init__(self, content=None):
