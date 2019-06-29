@@ -131,6 +131,14 @@ class ShareClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START create_share_client_from_conn_string]
+                :end-before: [END create_share_client_from_conn_string]
+                :language: python
+                :dedent: 8
+                :caption: Gets the share client from connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -271,6 +279,14 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START create_share]
+                :end-before: [END create_share]
+                :language: python
+                :dedent: 8
+                :caption: Creates a file share.
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
@@ -311,6 +327,14 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START create_share_snapshot]
+                :end-before: [END create_share_snapshot]
+                :language: python
+                :dedent: 12
+                :caption: Creates a snapshot of the file share.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -337,6 +361,14 @@ class ShareClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START delete_share]
+                :end-before: [END delete_share]
+                :language: python
+                :dedent: 12
+                :caption: Deletes the share and any snapshots.
         """
         delete_include = None
         if delete_snapshots:
@@ -360,6 +392,14 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: The share properties.
         :rtype: ~azure.storage.file.models.ShareProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+                :start-after: [START get_share_properties]
+                :end-before: [END get_share_properties]
+                :language: python
+                :dedent: 12
+                :caption: Gets the share properties.
         """
         try:
             props = self._client.share.get_properties(
@@ -384,6 +424,14 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START set_share_quota]
+                :end-before: [END set_share_quota]
+                :language: python
+                :dedent: 12
+                :caption: Sets the share quota.
         """
         try:
             return self._client.share.set_quota(
@@ -409,6 +457,14 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START set_share_metadata]
+                :end-before: [END set_share_metadata]
+                :language: python
+                :dedent: 12
+                :caption: Sets the share metadata.
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -523,6 +579,14 @@ class ShareClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_share.py
+                :start-after: [START share_list_files_in_dir]
+                :end-before: [END share_list_files_in_dir]
+                :language: python
+                :dedent: 12
+                :caption: List directories and files in the share.
         """
         directory = self.get_directory_client(directory_name)
         return directory.list_directories_and_files(
