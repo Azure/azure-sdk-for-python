@@ -7,6 +7,7 @@
 
 import sys
 from io import BytesIO, SEEK_SET, UnsupportedOperation
+from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
 import six
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
@@ -39,6 +40,9 @@ from ._generated.models import (
 )
 from .models import BlobProperties, ContainerProperties
 
+if TYPE_CHECKING:
+    from datetime import datetime # pylint: disable=unused-import
+    LeaseClient = TypeVar("LeaseClient")
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
@@ -60,9 +64,9 @@ def _convert_mod_error(error):
 def get_access_conditions(lease):
     # type: (Optional[Union[LeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
-        lease_id = lease.id
+        lease_id = lease.id # type: ignore
     except AttributeError:
-        lease_id = lease
+        lease_id = lease # type: ignore
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 

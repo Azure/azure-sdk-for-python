@@ -7,6 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
+from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.paging import Paged
 
@@ -307,7 +308,6 @@ class ContainerPropertiesPaged(Paged):
         self.location_mode = None
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
@@ -336,7 +336,7 @@ class ContainerPropertiesPaged(Paged):
         self.next_marker = self._response.next_marker or None
         return self.current_page
 
-    def __next__(self):
+    def __next__(self): # type: ignore
         item = super(ContainerPropertiesPaged, self).__next__()
         if isinstance(item, ContainerProperties):
             return item
@@ -497,7 +497,6 @@ class BlobPropertiesPaged(Paged):
         self.location_mode = location_mode
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
@@ -554,7 +553,6 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         self.name = self.prefix
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.

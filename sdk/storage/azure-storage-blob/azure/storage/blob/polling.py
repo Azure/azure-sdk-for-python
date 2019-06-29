@@ -6,7 +6,7 @@
 
 import logging
 import time
-
+from typing import Callable, Any # pylint: disable=unused-import
 from azure.core.polling import PollingMethod, LROPoller
 
 from ._shared.utils import process_storage_error
@@ -60,7 +60,7 @@ class CopyBlob(PollingMethod):
         self.last_modified = self.blob.last_modified
 
     def initialize(self, client, initial_status, _):  # pylint: disable=arguments-differ
-        # type: (Any, requests.Response, Callable) -> None
+        # type: (Any, Any, Callable) -> None
         self._client = client
         if isinstance(initial_status, str):
             self.id = initial_status
@@ -122,9 +122,9 @@ class CopyBlobPolling(CopyBlob):
         :rtype: str
         """
         try:
-            return self._status.value
+            return self._status.value # type: ignore
         except AttributeError:
-            return self._status
+            return self._status # type: ignore
 
     def resource(self):
         # type: () -> Any

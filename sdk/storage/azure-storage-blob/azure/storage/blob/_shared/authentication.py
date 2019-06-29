@@ -12,8 +12,8 @@ import sys
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import unquote # type: ignore
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy

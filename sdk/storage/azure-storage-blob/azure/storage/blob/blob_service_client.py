@@ -12,7 +12,7 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
@@ -40,7 +40,8 @@ if TYPE_CHECKING:
         Metrics,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule
+        CorsRule,
+        PublicAccess
     )
 
 
@@ -187,9 +188,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
+            Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
-    def get_account_information(self, **kwargs):
+    def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account.
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -206,11 +207,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting account information for the blob service.
         """
         try:
-            return self._client.service.get_account_info(cls=return_response_headers, **kwargs)
+            return self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_service_stats(self, timeout=None, **kwargs):
+    def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service. It is
         only available when read-access geo-redundant replication is enabled for
@@ -243,7 +244,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting service stats for the blob service.
         """
         try:
-            return self._client.service.get_statistics(
+            return self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -483,8 +484,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Deleting a container in the blob service.
         """
-        container = self.get_container_client(container)
-        container.delete_container(
+        container = self.get_container_client(container) # type: ignore
+        container.delete_container( # type: ignore
             lease=lease,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -523,7 +524,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
+            snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -550,7 +551,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
-        return BlobClient(
+        return BlobClient( # type: ignore
             self.url, container=container, blob=blob, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,

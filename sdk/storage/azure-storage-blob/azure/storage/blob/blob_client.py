@@ -13,8 +13,8 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
 
@@ -117,20 +117,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
         try:
-            self.container_name = container.name
+            self.container_name = container.name # type: ignore
         except AttributeError:
-            self.container_name = container or unquote(path_container)
+            self.container_name = container or unquote(path_container) # type: ignore
         try:
-            self.snapshot = snapshot.snapshot
+            self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot']
+                self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
         try:
-            self.blob_name = blob.name
+            self.blob_name = blob.name # type: ignore
             if not snapshot:
-                self.snapshot = blob.snapshot
+                self.snapshot = blob.snapshot # type: ignore
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
         self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
@@ -195,7 +195,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_language=None,  # type: Optional[str]
             content_type=None  # type: Optional[str]
         ):
-        # type: (...) -> str
+        # type: (...) -> Any
         """
         Generates a shared access signature for the blob.
         Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -273,7 +273,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_type=content_type,
         )
 
-    def get_account_information(self, **kwargs):
+    def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -282,7 +282,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, str)
         """
         try:
-            return self._client.blob.get_account_info(cls=return_response_headers, **kwargs)
+            return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -306,7 +306,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             encoding='UTF-8', # type: str
             **kwargs
         ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> Any
         """
         Creates a new blob from a data source with automatic chunking.
 
@@ -399,7 +399,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
 
         if isinstance(data, six.text_type):
-            data = data.encode(encoding)
+            data = data.encode(encoding) # type: ignore
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -665,7 +665,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def undelete_blob(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> None
+        # type: (Optional[int], **Any) -> None
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -754,7 +754,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         blob_props.name = self.blob_name
         blob_props.container = self.container_name
-        return blob_props
+        return blob_props # type: ignore
 
     def set_http_headers(
             self, content_settings=None,  # type: Optional[ContentSettings]
@@ -806,16 +806,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        blob_headers = BlobHTTPHeaders(
-            blob_cache_control=content_settings.cache_control,
-            blob_content_type=content_settings.content_type,
-            blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-            blob_content_encoding=content_settings.content_encoding,
-            blob_content_language=content_settings.content_language,
-            blob_content_disposition=content_settings.content_disposition
-        )
+        blob_headers = None
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
         try:
-            return self._client.blob.set_http_headers(
+            return self._client.blob.set_http_headers( # type: ignore
                 timeout=timeout,
                 blob_http_headers=blob_headers,
                 lease_access_conditions=access_conditions,
@@ -825,7 +827,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_blob_metadata(
+    def set_blob_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -879,7 +881,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
-            return self._client.blob.set_metadata(
+            return self._client.blob.set_metadata(  # type: ignore
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -889,7 +891,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_page_blob(
+    def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             sequence_number=None,  # type: Optional[int]
@@ -974,10 +976,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             if premium_page_blob_tier:
                 try:
-                    headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                    headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
                 except AttributeError:
-                    headers['x-ms-access-tier'] = premium_page_blob_tier
-            return self._client.page_blob.create(
+                    headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
+            return self._client.page_blob.create( # type: ignore
                 content_length=0,
                 blob_content_length=size,
                 blob_sequence_number=sequence_number,
@@ -992,7 +994,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_append_blob(
+    def create_append_blob( # type: ignore
             self, content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -1060,7 +1062,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
         try:
-            return self._client.append_blob.create(
+            return self._client.append_blob.create( # type: ignore
                 content_length=0,
                 blob_http_headers=blob_headers,
                 timeout=timeout,
@@ -1073,7 +1075,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_snapshot(
+    def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -1141,7 +1143,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
-            return self._client.blob.create_snapshot(
+            return self._client.blob.create_snapshot( # type: ignore
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -1303,7 +1305,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         if source_lease:
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id
+                headers['x-ms-source-lease-id'] = source_lease.id # type: ignore
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
         if premium_page_blob_tier:
@@ -1409,7 +1411,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 8
                 :caption: Acquiring a lease on a blob.
         """
-        lease = LeaseClient(self, lease_id=lease_id)
+        lease = LeaseClient(self, lease_id=lease_id) # type: ignore
         lease.acquire(
             lease_duration=lease_duration,
             if_modified_since=if_modified_since,
@@ -1498,7 +1500,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
         if isinstance(data, six.text_type):
-            data = data.encode(encoding)
+            data = data.encode(encoding) # type: ignore
         access_conditions = get_access_conditions(lease)
         if length is None:
             length = get_length(data)
@@ -1608,15 +1610,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        committed = []
-        uncommitted = []
+        committed = [] # type: List
+        uncommitted = [] # type: List
         if blocks.committed_blocks:
             committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
         if blocks.uncommitted_blocks:
             uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
         return committed, uncommitted
 
-    def commit_block_list(
+    def commit_block_list( # type: ignore
             self, block_list,  # type: List[BlobBlock]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -1706,7 +1708,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
         try:
-            return self._client.block_blob.commit_block_list(
+            return self._client.block_blob.commit_block_list( # type: ignore
                 block_lookup,
                 blob_http_headers=blob_headers,
                 lease_access_conditions=access_conditions,
@@ -1719,7 +1721,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
+        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -1749,7 +1751,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_page_ranges(
+    def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -1816,7 +1818,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        page_range = None
+        page_range = None # type: ignore
         if start_range is not None and end_range is None:
             page_range = str(start_range)
         elif start_range is not None and end_range is not None:
@@ -1824,10 +1826,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             if previous_snapshot_diff:
                 try:
-                    prev_snapshot = previous_snapshot_diff.snapshot
+                    prev_snapshot = previous_snapshot_diff.snapshot # type: ignore
                 except AttributeError:
                     try:
-                        prev_snapshot = previous_snapshot_diff['snapshot']
+                        prev_snapshot = previous_snapshot_diff['snapshot'] # type: ignore
                     except TypeError:
                         prev_snapshot = previous_snapshot_diff
                 ranges = self._client.page_blob.get_page_ranges_diff(
@@ -1850,15 +1852,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 )
         except StorageErrorException as error:
             process_storage_error(error)
-        page_range = []
-        clear_range = []
+        page_range = [] # type: ignore
+        clear_range = [] # type: List
         if ranges.page_range:
-            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]
+            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
         if ranges.clear_range:
             clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
-        return page_range, clear_range
+        return page_range, clear_range # type: ignore
 
-    def set_sequence_number(
+    def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -1915,7 +1917,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if sequence_number_action is None:
             raise ValueError("A sequence number action must be specified")
         try:
-            return self._client.page_blob.update_sequence_number(
+            return self._client.page_blob.update_sequence_number( # type: ignore
                 sequence_number_action=sequence_number_action,
                 timeout=timeout,
                 blob_sequence_number=sequence_number,
@@ -1926,7 +1928,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def resize_blob(
+    def resize_blob( # type: ignore
             self, size,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -1979,7 +1981,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if size is None:
             raise ValueError("A content length must be specified for a Page Blob.")
         try:
-            return self._client.page_blob.resize(
+            return self._client.page_blob.resize( # type: ignore
                 blob_content_length=size,
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
@@ -1989,7 +1991,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_page(
+    def upload_page( # type: ignore
             self, page,  # type: bytes
             start_range,  # type: int
             end_range,  # type: int
@@ -2085,7 +2087,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("start_range must be an integer that aligns with 512 page size")
         if end_range is None or end_range % 512 != 511:
             raise ValueError("end_range must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        content_range = 'bytes={0}-{1}'.format(start_range, end_range) # type: ignore
         access_conditions = get_access_conditions(lease)
         seq_conditions = get_sequence_conditions(
             if_sequence_number_lte=if_sequence_number_lte,
@@ -2095,7 +2097,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
-            return self._client.page_blob.upload_pages(
+            return self._client.page_blob.upload_pages( # type: ignore
                 page[:length],
                 content_length=length,
                 transactional_content_md5=None,
@@ -2110,7 +2112,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def clear_page(
+    def clear_page( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -2191,7 +2193,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("end_range must be an integer that aligns with 512 page size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         try:
-            return self._client.page_blob.clear_pages(
+            return self._client.page_blob.clear_pages( # type: ignore
                 content_length=0,
                 timeout=timeout,
                 range=content_range,
@@ -2203,7 +2205,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def append_block(
+    def append_block( # type: ignore
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
@@ -2279,7 +2281,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         if isinstance(data, six.text_type):
-            data = data.encode(encoding)
+            data = data.encode(encoding) # type: ignore
         if length is None:
             length = get_length(data)
             if length is None:
@@ -2296,10 +2298,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 append_position=appendpos_condition
             )
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
+        mod_conditions = get_modification_conditions( # type: ignore
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
-            return self._client.append_blob.append_block(
+            return self._client.append_blob.append_block( # type: ignore
                 data,
                 content_length=length,
                 timeout=timeout,
