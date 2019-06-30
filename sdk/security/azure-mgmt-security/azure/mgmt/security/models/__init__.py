@@ -71,7 +71,7 @@ try:
     from .security_sub_assessment_py3 import SecuritySubAssessment
     from .azure_resource_details_py3 import AzureResourceDetails
     from .aws_resource_details_py3 import AwsResourceDetails
-    from .sql_server_sub_assessment_properties_py3 import SqlServerSubAssessmentProperties
+    from .sql_server_vulnerability_sub_assessment_properties_py3 import SqlServerVulnerabilitySubAssessmentProperties
     from .cvss_py3 import CVSS
     from .cve_py3 import CVE
     from .vendor_reference_py3 import VendorReference
@@ -142,7 +142,7 @@ except (SyntaxError, ImportError):
     from .security_sub_assessment import SecuritySubAssessment
     from .azure_resource_details import AzureResourceDetails
     from .aws_resource_details import AwsResourceDetails
-    from .sql_server_sub_assessment_properties import SqlServerSubAssessmentProperties
+    from .sql_server_vulnerability_sub_assessment_properties import SqlServerVulnerabilitySubAssessmentProperties
     from .cvss import CVSS
     from .cve import CVE
     from .vendor_reference import VendorReference
@@ -253,7 +253,7 @@ __all__ = [
     'SecuritySubAssessment',
     'AzureResourceDetails',
     'AwsResourceDetails',
-    'SqlServerSubAssessmentProperties',
+    'SqlServerVulnerabilitySubAssessmentProperties',
     'CVSS',
     'CVE',
     'VendorReference',

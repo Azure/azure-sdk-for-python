@@ -16,7 +16,7 @@ class AdditionalData(Model):
     """Details of the sub-assessment.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SqlServerSubAssessmentProperties,
+    sub-classes are: SqlServerVulnerabilitySubAssessmentProperties,
     ContainerRegistryVulnerabilitySubAssessmentProperties,
     ServerVulnerabilitySubAssessmentProperties
 
@@ -35,7 +35,7 @@ class AdditionalData(Model):
     }
 
     _subtype_map = {
-        'assessed_resource_type': {'SqlServerSubAssessment': 'SqlServerSubAssessmentProperties', 'ContainerRegistryVulnerabilitySubAssessment': 'ContainerRegistryVulnerabilitySubAssessmentProperties', 'ServerVulnerabilityAssessment': 'ServerVulnerabilitySubAssessmentProperties'}
+        'assessed_resource_type': {'SqlServerVulnerabilitySubAssessment': 'SqlServerVulnerabilitySubAssessmentProperties', 'ContainerRegistryVulnerabilitySubAssessment': 'ContainerRegistryVulnerabilitySubAssessmentProperties', 'ServerVulnerabilityAssessment': 'ServerVulnerabilitySubAssessmentProperties'}
     }
 
     def __init__(self, **kwargs):
