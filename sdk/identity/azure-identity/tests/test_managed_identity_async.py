@@ -3,21 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from unittest import mock
 
 from azure.core.credentials import AccessToken
-from azure.identity import ManagedIdentityCredential
+from azure.identity.aio import ManagedIdentityCredential
 from azure.identity.constants import Endpoints, EnvironmentVariables
+import pytest
+
+from helpers import async_validating_transport, mock_response, Request
 
 
-from helpers import validating_transport, mock_response, Request
-
-
-def test_cloud_shell():
+@pytest.mark.asyncio
+async def test_cloud_shell():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     access_token = "****"
@@ -25,7 +22,7 @@ def test_cloud_shell():
     expected_token = AccessToken(access_token, expires_on)
     url = "http://localhost:42/token"
     scope = "scope"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(url, method="POST", required_headers={"Metadata": "true"}, required_data={"resource": scope})
         ],
@@ -44,11 +41,12 @@ def test_cloud_shell():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url}):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token == expected_token
 
 
-def test_cloud_shell_user_assigned_identity():
+@pytest.mark.asyncio
+async def test_cloud_shell_user_assigned_identity():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     access_token = "****"
@@ -57,7 +55,7 @@ def test_cloud_shell_user_assigned_identity():
     expected_token = AccessToken(access_token, expires_on)
     url = "http://localhost:42/token"
     scope = "scope"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(
                 url,
@@ -81,11 +79,12 @@ def test_cloud_shell_user_assigned_identity():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url}):
-        token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+        token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
         assert token == expected_token
 
 
-def test_app_service():
+@pytest.mark.asyncio
+async def test_app_service():
     """App Service environment: MSI_ENDPOINT, MSI_SECRET set"""
 
     access_token = "****"
@@ -94,7 +93,7 @@ def test_app_service():
     url = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(
                 url,
@@ -116,11 +115,12 @@ def test_app_service():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret}):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token == expected_token
 
 
-def test_app_service_user_assigned_identity():
+@pytest.mark.asyncio
+async def test_app_service_user_assigned_identity():
     """App Service environment: MSI_ENDPOINT, MSI_SECRET set"""
 
     access_token = "****"
@@ -130,7 +130,7 @@ def test_app_service_user_assigned_identity():
     url = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(
                 url,
@@ -152,17 +152,18 @@ def test_app_service_user_assigned_identity():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret}):
-        token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+        token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
         assert token == expected_token
 
 
-def test_imds():
+@pytest.mark.asyncio
+async def test_imds():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
     url = Endpoints.IMDS
     scope = "scope"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(url),  # first request should be availability probe => match only the URL
             Request(
@@ -189,18 +190,19 @@ def test_imds():
         ],
     )
 
-    token = ManagedIdentityCredential(transport=transport).get_token(scope)
+    token = await ManagedIdentityCredential(transport=transport).get_token(scope)
     assert token == expected_token
 
 
-def test_imds_user_assigned_identity():
+@pytest.mark.asyncio
+async def test_imds_user_assigned_identity():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
     url = Endpoints.IMDS
     scope = "scope"
     client_id = "some-guid"
-    transport = validating_transport(
+    transport = async_validating_transport(
         requests=[
             Request(url),  # first request should be availability probe => match only the URL
             Request(
@@ -228,5 +230,5 @@ def test_imds_user_assigned_identity():
         ],
     )
 
-    token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+    token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
