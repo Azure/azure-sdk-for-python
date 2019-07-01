@@ -191,7 +191,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.core.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
         Example:
             .. literalinclude:: ../tests/samples/test_samples_directory.py
