@@ -57,9 +57,7 @@ if TYPE_CHECKING:
 
 
 class ContainerClient(StorageAccountHostsMixin):
-    """Creates a new ContainerClient.
-
-    This client represents interaction with a specific container, although that container
+    """A client to interact with a specific container, although that container
     may not yet exist.
 
     For operations relating to a specific blob within this container, a blob client can be
@@ -67,7 +65,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the Container, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
@@ -94,7 +92,6 @@ class ContainerClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
-        Credentials provided here will take precedence over those in the connection string.
 
     Example:
         .. literalinclude:: ../tests/samples/test_samples_containers.py

@@ -54,8 +54,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_client` functions.
 
     :ivar str url:
-        The full endpoint URL to the Blob service account. This could be either the
-        primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        The full endpoint URL to the Blob service endpoint. This could be either the
+        primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
