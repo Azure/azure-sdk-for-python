@@ -462,9 +462,9 @@ class ARMPolling(PollingMethod):
 
         :rtype: requests.Response
         """
-        request = self._client.get(status_link)
         # ARM requires to re-inject 'x-ms-client-request-id' while polling
         header_parameters = {
             'x-ms-client-request-id': self._operation.initial_response.request.headers['x-ms-client-request-id']
         }
-        return self._client.send(request, header_parameters, stream=False, **self._operation_config)
+        request = self._client.get(status_link, headers=header_parameters)
+        return self._client._pipeline.run(request, **self._operation_config).http_response

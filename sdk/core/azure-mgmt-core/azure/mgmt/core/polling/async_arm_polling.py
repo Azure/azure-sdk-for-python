@@ -122,4 +122,4 @@ class AsyncARMPolling(ARMPolling):
             'x-ms-client-request-id': self._operation.initial_response.request.headers['x-ms-client-request-id']
         }
         request = self._client.get(status_link, headers=header_parameters)
-        return await self._client.async_send(request, stream=False, **self._operation_config)
+        return (await self._client._pipeline.send(request, **self._operation_config)).http_response
