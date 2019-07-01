@@ -8,6 +8,9 @@
 
 import os
 
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobServiceClient
+
 try:
     import tests.settings_real as settings
 except ImportError:
@@ -34,6 +37,13 @@ class TestCommonBlobSamples(StorageTestCase):
         super(TestCommonBlobSamples, self).setUp()
 
     def tearDown(self):
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        for container in ['containerformyblobs', 'containerforblobs', 'leasemyblobscontainer']:
+            try:
+                blob_service_client.delete_container(container)
+            except HttpResponseError:
+                pass
+
         if os.path.isfile(SOURCE_FILE):
             try:
                 os.remove(SOURCE_FILE)
@@ -96,7 +106,11 @@ class TestCommonBlobSamples(StorageTestCase):
         container_client = blob_service_client.get_container_client("containerforblobs")
 
         # Create new Container
-        container_client.create_container()
+        try:
+            container_client.create_container()
+        except ResourceExistsError:
+            # Container already created
+            pass
 
         # Upload a blob to the container
         with open(SOURCE_FILE, "rb") as data:

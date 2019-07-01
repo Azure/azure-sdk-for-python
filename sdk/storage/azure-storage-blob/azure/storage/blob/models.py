@@ -119,17 +119,17 @@ class PublicAccess(str, Enum):
 class Logging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param str version: Required. The version of Storage Analytics to configure.
-    :param bool delete: Required. Indicates whether all delete requests should be
-     logged.
-    :param bool read: Required. Indicates whether all read requests should be
-     logged.
-    :param bool write: Required. Indicates whether all write requests should be
-     logged.
-    :param retention_policy: Required. Determines how long the associated data should
-     persist.
+    :param str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :param bool delete:
+        Indicates whether all delete requests should be logged. The default value is `False`.
+    :param bool read:
+        Indicates whether all read requests should be logged. The default value is `False`.
+    :param bool write:
+        Indicates whether all write requests should be logged. The default value is `False`.
+    :param retention_policy:
+        Determines how long the associated data should persist. If not specified the retention
+        policy will be disabled by default.
     :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
@@ -145,15 +145,16 @@ class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for blobs.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param str version: The version of Storage Analytics to configure.
-    :param bool enabled: Required. Indicates whether metrics are enabled for the
-     Blob service.
-    :param bool include_ap_is: Indicates whether metrics should generate summary
-     statistics for called API operations.
-    :param retention_policy: Required. Determines how long the associated data should
-     persist.
+    :param str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :param bool enabled:
+        Indicates whether metrics are enabled for the Blob service.
+        The default value is `False`.
+    :param bool include_apis:
+        Indicates whether metrics should generate summary statistics for called API operations.
+    :param retention_policy:
+        Determines how long the associated data should persist. If not specified the retention
+        policy will be disabled by default.
     :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
@@ -168,13 +169,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """The retention policy which determines how long the associated data should
     persist.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param bool enabled: Required. Indicates whether a retention policy is enabled
-     for the storage service
-    :param int days: Indicates the number of days that metrics or logging or
-     soft-deleted data should be retained. All data older than this value will
-     be deleted.
+    :param bool enabled:
+        Indicates whether a retention policy is enabled for the storage service.
+        The default value is False.
+    :param int days:
+        Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted. If enabled=True, the number of days must be specified.
     """
 
     def __init__(self, enabled=False, days=None):
@@ -187,13 +188,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 class StaticWebsite(GeneratedStaticWebsite):
     """The properties that enable an account to host a static website.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param bool enabled: Required. Indicates whether this account is hosting a
-     static website.
-    :param str index_document: The default name of the index page under each
-     directory.
-    :param str error_document404_path: The absolute path of the custom 404 page.
+    :param bool enabled:
+        Indicates whether this account is hosting a static website.
+        The default value is `False`.
+    :param str index_document:
+        The default name of the index page under each directory.
+    :param str error_document404_path:
+        The absolute path of the custom 404 page.
     """
 
     def __init__(self, **kwargs):
@@ -212,8 +213,6 @@ class CorsRule(GeneratedCorsRule):
     security restriction known as same-origin policy that prevents a web page
     from calling APIs in a different domain; CORS provides a secure way to
     allow one domain (the origin domain) to call APIs in another domain.
-
-    All required parameters must be populated in order to send to Azure.
 
     :param list(str) allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
@@ -260,7 +259,7 @@ class ContainerProperties(DictMixin):
         Represents whether the container has an immutability policy.
     :param bool has_legal_hold:
         Represents whether the container has a legal hold.
-    :param dict metadata: A dict with name_value pairs to associate with the
+    :param dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
     """
 
@@ -289,7 +288,17 @@ class ContainerProperties(DictMixin):
 
 
 class ContainerPropertiesPaged(Paged):
-    """Container properties paged.
+    """An Iterable of Container properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A container name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.blob.models.ContainerProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only containers whose names
@@ -353,9 +362,9 @@ class BlobProperties(DictMixin):
         The name of the blob.
     :ivar container:
         The container in which the blob resides.
-    :ivar datetime snapshot:
+    :ivar str snapshot:
         Datetime value that uniquely identifies the blob snapshot.
-    :ivar str blob_type:
+    :ivar ~azure.blob.storage.models.BlobType blob_type:
         String indicating this blob's type.
     :ivar dict metadata:
         Name-value pairs associated with the blob as metadata.
@@ -384,7 +393,7 @@ class BlobProperties(DictMixin):
         Stores all the content settings for the blob.
     :ivar ~azure.storage.blob.models.LeaseProperties lease:
         Stores all the lease information for the blob.
-    :ivar StandardBlobTier blob_tier:
+    :ivar ~azure.storage.blob.models.StandardBlobTier blob_tier:
         Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
@@ -404,7 +413,7 @@ class BlobProperties(DictMixin):
         The number of days that the blob will be retained before being permanently deleted by the service.
     :ivar datetime creation_time:
         Indicates when the blob was created, in UTC.
-    :ivar archive_status:
+    :ivar str archive_status:
         Archive status of blob.
     """
 
@@ -461,7 +470,19 @@ class BlobProperties(DictMixin):
 
 
 class BlobPropertiesPaged(Paged):
-    """Blob properties paged.
+    """An Iterable of Blob properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A blob name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :ivar str container: The container that the blobs are listed from.
+    :ivar str delimiter: A delimiting character used for hierarchy listing.
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only blobs whose names
@@ -543,10 +564,37 @@ class BlobPropertiesPaged(Paged):
 
 
 class BlobPrefix(BlobPropertiesPaged, DictMixin):
-    """Returned from list_blobs when a delimiter is used.
-    Can be thought of as virtual blob directories.
+    """An Iterable of Blob properties.
 
-    :ivar name: The prefix name of the blob.
+    Returned from walk_blobs when a delimiter is used.
+    Can be thought of as a virtual blob directory.
+
+    :ivar str name: The prefix, or "directory name" of the blob.
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A blob name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :ivar str container: The container that the blobs are listed from.
+    :ivar str delimiter: A delimiting character used for hierarchy listing.
+
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only blobs whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of blobs to retrieve per
+        call.
+    :param str marker: An opaque continuation token.
+    :param str delimiter:
+        Used to capture blobs whose names begin with the same substring up to
+        the appearance of the delimiter character. The delimiter may be a single
+        character or a string.
+    :param location_mode: Specifies the location the request should be sent to.
+        This mode only applies for RA-GRS accounts which allow secondary read access.
+        Options include 'primary' or 'secondary'.
     """
     def __init__(self, *args, **kwargs):
         super(BlobPrefix, self).__init__(*args, **kwargs)
@@ -595,8 +643,7 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
 
 
 class LeaseProperties(DictMixin):
-    """
-    Blob Lease Properties.
+    """Blob Lease Properties.
 
     :param str status:
         The lease status of the blob. Possible values: locked|unlocked
@@ -621,8 +668,7 @@ class LeaseProperties(DictMixin):
 
 
 class ContentSettings(DictMixin):
-    """
-    Used to store the content settings of a blob.
+    """The content settings of a blob.
 
     :ivar str content_type:
         The content type specified for the blob. If no content type was
@@ -672,21 +718,18 @@ class ContentSettings(DictMixin):
 
 
 class CopyProperties(DictMixin):
-    """
-    Blob Copy Properties.
+    """Blob Copy Properties.
+
+    These properties will be `None` if this blob has never been the destination
+    in a Copy Blob operation, or if this blob has been modified after a concluded
+    Copy Blob operation, for example, using Set Blob Properties, Upload Blob, or Commit Block List.
 
     :param str id:
         String identifier for the last attempted Copy Blob operation where this blob
-        was the destination blob. This header does not appear if this blob has never
-        been the destination in a Copy Blob operation, or if this blob has been
-        modified after a concluded Copy Blob operation using Set Blob Properties,
-        Put Blob, or Put Block List.
+        was the destination blob.
     :param str source:
         URL up to 2 KB in length that specifies the source blob used in the last attempted
-        Copy Blob operation where this blob was the destination blob. This header does not
-        appear if this blob has never been the destination in a Copy Blob operation, or if
-        this blob has been modified after a concluded Copy Blob operation using
-        Set Blob Properties, Put Blob, or Put Block List.
+        Copy Blob operation where this blob was the destination blob.
     :param str status:
         State of the copy operation identified by Copy ID, with these values:
             success:
@@ -744,12 +787,11 @@ class CopyProperties(DictMixin):
 
 
 class BlobBlock(DictMixin):
-    """
-    BlockBlob Block class.
+    """BlockBlob Block class.
 
-    :ivar str block_id:
+    :param str block_id:
         Block id.
-    :ivar str state:
+    :param str state:
         Block state. Possible values: committed|uncommitted
     :ivar int size:
         Block size in bytes.
@@ -760,9 +802,6 @@ class BlobBlock(DictMixin):
         self.state = state
         self.size = None
 
-    def _set_size(self, size):
-        self.size = size
-
     @classmethod
     def _from_generated(cls, generated):
         block = cls()
@@ -772,8 +811,7 @@ class BlobBlock(DictMixin):
 
 
 class PageRange(DictMixin):
-    """
-    Page Range for page blob.
+    """Page Range for page blob.
 
     :ivar int start:
         Start of page range in bytes.
@@ -787,8 +825,7 @@ class PageRange(DictMixin):
 
 
 class AccessPolicy(GenAccessPolicy):
-    """
-    Access Policy class used by the set and get acl methods in each service.
+    """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
     permissions for the Shared Access Signatures with which it's associated.
@@ -807,12 +844,13 @@ class AccessPolicy(GenAccessPolicy):
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
 
-    :param str permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: str or ~azure.storage.blob.models.ContainerPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -836,8 +874,7 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class ContainerPermissions(object):
-    """
-    ContainerPermissions class to be used with
+    """ContainerPermissions class to be used with
     :func:`~azure.storage.blob.container_client.ContainerClient.generate_shared_access_signature` API and
     for the AccessPolicies used with
     :func:`~azure.storage.blob.container_client.ContainerClient.set_container_access_policy`.
@@ -909,8 +946,7 @@ ContainerPermissions.WRITE = ContainerPermissions(write=True)
 
 
 class BlobPermissions(object):
-    """
-    BlobPermissions class to be used with
+    """BlobPermissions class to be used with
     :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
 
     :cvar BlobPermissions BlobPermissions.ADD:

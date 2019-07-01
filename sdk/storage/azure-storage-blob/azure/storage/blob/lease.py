@@ -18,18 +18,32 @@ from ._blob_utils import get_modification_conditions
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.operations import BlobOperations, ContainerOperations
+    BlobClient = TypeVar("BlobClient")
+    ContainerClient = TypeVar("ContainerClient")
 
-BlobClient = TypeVar("BlobClient")
-ContainerClient = TypeVar("ContainerClient")
 
 class LeaseClient(object):
-    """Creates a new LeaseClient. This client provides lease operations on
-    a BlobClient or ContainerClient.
+    """Creates a new LeaseClient.
 
-    :param client: The client to interact with.
+    This client provides lease operations on a BlobClient or ContainerClient.
+
+    :ivar str id:
+        The ID of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired.
+    :ivar str etag:
+        The ETag of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired or modified.
+    :ivar datetime last_modified:
+        The last modified timestampt of the lease currently being maintained.
+        This will be `None` if no lease has yet been acquired or modified.
+
+    :param client:
+        The client of the blob or container to lease.
     :type client: ~azure.storage.blob.blob_client.BlobClient or
         ~azure.storage.blob.container_client.ContainerClient
-    :param str lease_id: A string representing the lease ID.
+    :param str lease_id:
+        A string representing the lease ID of an existing lease. This value does not
+        need to be specified in order to acquire a new lease, or break one.
     """
     def __init__(self, client, lease_id=None):
         # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
@@ -58,10 +72,10 @@ class LeaseClient(object):
             timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> None
-        """
-        Requests a new lease. If the container does not have an active lease,
-        the Blob service creates a lease on the container and returns a new
-        lease ID.
+        """Requests a new lease.
+
+        If the container does not have an active lease, the Blob service creates a
+        lease on the container and returns a new lease ID.
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
@@ -118,7 +132,9 @@ class LeaseClient(object):
             **kwargs
         ):
         # type: (...) -> None
-        """Renews the lease. The lease can be renewed if the lease ID specified in the
+        """Renews the lease.
+
+        The lease can be renewed if the lease ID specified in the
         lease client matches that associated with the container or blob. Note that
         the lease may be renewed even if it has expired as long as the container
         or blob has not been leased again since the expiration of that lease. When you
@@ -173,7 +189,9 @@ class LeaseClient(object):
             **kwargs
         ):
         # type: (...) -> None
-        """Release the lease. The lease may be released if the lease id specified matches
+        """Release the lease.
+
+        The lease may be released if the client lease id specified matches
         that associated with the container or blob. Releasing the lease allows another client
         to immediately acquire the lease for the container or blob as soon as the release is complete.
 
@@ -280,8 +298,9 @@ class LeaseClient(object):
             timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> int
-        """Break the lease, if the container or blob has an active lease. Once a lease is
-        broken, it cannot be renewed. Any authorized request can break the lease;
+        """Break the lease, if the container or blob has an active lease.
+
+        Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. When a lease
         is broken, the lease break period is allowed to elapse, during which time
         no lease operation except break and release can be performed on the container or blob.

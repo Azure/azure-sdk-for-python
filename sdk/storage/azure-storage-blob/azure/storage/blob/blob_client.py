@@ -74,6 +74,24 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     """Creates a new BlobClient. This client represents interaction with a specific
     blob, although that blob may not yet exist.
 
+    :ivar str url:
+        The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
+        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str blob_url: The full URI to the blob. This can also be a URL to the storage account
         or container, in which case the blob and/or container must also be specified.
     :param container: The container for the blob. If specified, this value will override
@@ -88,6 +106,22 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
+
+    Example:
+        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            :start-after: [START create_blob_client]
+            :end-before: [END create_blob_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the BlobClient from a URL to a public blob (no auth needed).
+
+        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            :start-after: [START create_blob_client_sas_url]
+            :end-before: [END create_blob_client_sas_url]
+            :language: python
+            :dedent: 8
+            :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
             self, blob_url,  # type: str
@@ -175,6 +209,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+
+        Example:
+            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+                :start-after: [START auth_from_connection_string_blob]
+                :end-before: [END auth_from_connection_string_blob]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobClient from a connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
@@ -232,7 +275,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+            For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value is https.
@@ -276,7 +319,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
+
         The information can also be retrieved if the user has a SAS to a container or blob.
+        The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
         :returns: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
@@ -307,8 +352,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Any
-        """
-        Creates a new blob from a data source with automatic chunking.
+        """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
         :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
@@ -546,6 +590,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A iterable data generator (stream)
+        :rtype: ~azure.storage.blob._blob_utils.StorageStreamDownloader
 
         Example:
             .. literalinclude:: ../tests/samples/test_samples_hello_world.py
@@ -591,10 +636,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> None
-        """
-        Marks the specified blob for deletion.
-        The blob is later deleted during garbage collection.
+        """Marks the specified blob for deletion.
 
+        The blob is later deleted during garbage collection.
         Note that in order to delete a blob, you must delete all of its
         snapshots. You can delete both at the same time with the Delete
         Blob operation.
@@ -602,7 +646,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         If a delete retention policy is enabled for the service, then this operation soft deletes the blob
         and retains the blob for a specified number of days.
         After the specified number of days, the blob's data is removed from the service during garbage collection.
-        Soft deleted blob is accessible through List Blobs API specifying include=deleted option.
+        Soft deleted blob is accessible through List Blobs API specifying `include='deleted'` option.
         Soft-deleted blob can be restored using Undelete API.
 
         :param str delete_snapshots:
@@ -673,7 +717,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: None
+        :rtype: None
 
         Example:
             .. literalinclude:: ../tests/samples/test_samples_common_blobs.py
@@ -767,9 +811,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> None
-        """
-        Sets system properties on the blob. If one property is set for the
-        content_settings, all properties will be overriden.
+        """Sets system properties on the blob.
+
+        If one property is set for the content_settings, all properties will be overriden.
 
         :param ~azure.storage.blob.models.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
@@ -838,8 +882,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """Sets user-defined metadata for the blob as one or more
-        name-value pairs.
+        """Sets user-defined metadata for the blob as one or more name-value pairs.
 
         :param metadata:
             Dict containing name and value pairs. Each call to this operation
@@ -906,8 +949,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        Creates a new Page Blob of the specified size.
+        """Creates a new Page Blob of the specified size.
 
         :param int size:
             This header specifies the maximum size
@@ -1006,8 +1048,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        Creates a new Append Blob.
+        """Creates a new Append Blob.
 
         :param ~azure.storage.blob.models.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
@@ -1174,8 +1215,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Any
-        """
-        Copies a blob asynchronously. This operation returns a copy operation
+        """Copies a blob asynchronously.
+
+        This operation returns a copy operation
         object that can be used to wait on the completion of the operation,
         as well as check status or abort the copy operation.
         The Blob service copies blobs on a best-effort basis.
@@ -1365,7 +1407,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> LeaseClient
-        """Requests a new lease. If the blob does not have an active lease, the Blob
+        """Requests a new lease.
+
+        If the blob does not have an active lease, the Blob
         Service creates a lease on the blob and returns a new lease.
 
         :param int lease_duration:
@@ -1443,8 +1487,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :raises: TypeError when blob client type is not BlockBlob.
-        :returns: None
+        :rtype: None
         """
         access_conditions = get_access_conditions(lease)
         if standard_blob_tier is None:
@@ -1493,8 +1536,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Defaults to UTF-8.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not BlockBlob.
-        :returns: None
+        :rtype: None
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1553,8 +1595,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not BlockBlob.
-        :returns: None
+        :rtype: None
         """
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None is length is set.")
@@ -1584,8 +1625,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Tuple[List[BlobBlock], List[BlobBlock]]
-        """
-        The Get Block List operation retrieves the list of blocks that have
+        """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
         :param str block_list_type:
@@ -1598,7 +1638,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A tuple of two sets - committed and uncommitted blocks
+        :returns: A tuple of two lists - committed and uncommitted blocks
+        :rtype: tuple(list(~azure.storage.blob.models.BlobBlock), list(~azure.storage.blob.models.BlobBlock))
         """
         access_conditions = get_access_conditions(lease)
         try:
@@ -1632,8 +1673,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        The Commit Block List operation writes a blob by specifying the list of
+        """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob.
 
         :param list block_list:
@@ -1678,6 +1718,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1737,7 +1778,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :returns: None
+        :rtype: None
         """
         access_conditions = get_access_conditions(lease)
         if premium_page_blob_tier is None:
@@ -1764,8 +1805,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> List[dict[str, int]]
-        """
-        Returns the list of valid page ranges for a Page Blob or snapshot
+        """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
         :param int start_range:
@@ -1813,7 +1853,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A list of page ranges.
+        :returns:
+            A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled page ranges, the 2nd element is cleared page ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -1872,8 +1915,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        Sets the blob sequence number.
+        """Sets the blob sequence number.
 
         :param str sequence_number_action:
             This property indicates how the service should modify the blob's sequence
@@ -1910,6 +1952,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -1939,10 +1982,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        Resizes a page blob to the specified size. If the specified value is less
-        than the current size of the blob, then all pages above the specified value
-        are cleared.
+        """Resizes a page blob to the specified size.
+
+        If the specified value is less than the current size of the blob,
+        then all pages above the specified value are cleared.
 
         :param int size:
             Size to resize blob to.
@@ -1974,6 +2017,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -2010,8 +2054,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
-        The Upload Pages operation writes a range of pages to a page blob.
+        """The Upload Pages operation writes a range of pages to a page blob.
 
         :param bytes page:
             Content of the page.
@@ -2073,6 +2116,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         if isinstance(page, six.text_type):
             page = page.encode(encoding)
@@ -2176,6 +2220,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2276,6 +2321,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)

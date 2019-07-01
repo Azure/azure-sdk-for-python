@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 try:
     import tests.settings_real as settings
 except ImportError:
@@ -31,6 +32,7 @@ class TestBlobServiceSamples(StorageTestCase):
 
         # [START get_blob_service_account_info]
         account_info = blob_service_client.get_account_information()
+        print('Using Storage SKU: {}'.format(account_info['sku_name']))
         # [END get_blob_service_account_info]
         assert account_info is not None
 
@@ -87,17 +89,33 @@ class TestBlobServiceSamples(StorageTestCase):
 
         try:
             # [START bsc_create_container]
-            blob_service_client.create_container("containerfromblobservice")
+            try:
+                new_container = blob_service_client.create_container("containerfromblobservice")
+                properties = new_container.get_container_properties()
+            except ResourceExistsError:
+                print("Container already exists.")
             # [END bsc_create_container]
 
             # [START bsc_list_containers]
-            list_response = blob_service_client.list_containers()
+            # List all containers
+            all_containers = blob_service_client.list_containers(include_metadata=True)
+            for container in all_containers:
+                print(container['name'], container['metadata'])
+
+            # Filter results with name prefix
+            test_containers = blob_service_client.list_containers(name_starts_with='test-')
+            for container in test_containers:
+                blob_service_client.delete_container(container)
             # [END bsc_list_containers]
-            assert list_response is not None
+            assert test_containers is not None
 
         finally:
             # [START bsc_delete_container]
-            blob_service_client.delete_container("containerfromblobservice")
+            # Delete container if it exists
+            try:
+                blob_service_client.delete_container("containerfromblobservice")
+            except ResourceNotFoundError:
+                print("Container already deleted.")
             # [END bsc_delete_container]
 
     @record
@@ -108,7 +126,13 @@ class TestBlobServiceSamples(StorageTestCase):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # [START bsc_get_container_client]
+        # Get a client to interact with a specific container - though it may not yet exist
         container_client = blob_service_client.get_container_client("containertest")
+        try:
+            for blob in container_client.list_blobs():
+                print("Found blob: ", blob.name)
+        except ResourceNotFoundError:
+            print("Container not found.")
         # [END bsc_get_container_client]
         try:
             # Create new Container in the service
@@ -116,6 +140,10 @@ class TestBlobServiceSamples(StorageTestCase):
 
             # [START bsc_get_blob_client]
             blob_client = blob_service_client.get_blob_client(container="containertest", blob="my_blob")
+            try:
+                stream = blob_client.download_blob()
+            except ResourceNotFoundError:
+                print("No blob found.")
             # [END bsc_get_blob_client]
 
             assert container_client is not None

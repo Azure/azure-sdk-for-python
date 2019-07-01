@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class CopyStatusPoller(LROPoller):
+    """Poller for a long-running copy operation."""
 
     def __init__(self, client, copy_id, polling=True, configuration=None, **kwargs):
         if configuration:
@@ -29,10 +30,42 @@ class CopyStatusPoller(LROPoller):
         super(CopyStatusPoller, self).__init__(client, copy_id, None, poller)
 
     def copy_id(self):
+        # type: () -> str
+        """Get the ID of the copy operation.
+
+        :rtype: str
+        """
         return self._polling_method.id
 
-    def abort(self):  # Check whether this is in API guidelines, or should remain specific to Storage
+    def abort(self):
+        # type: () -> None
+        """Abort the copy operation.
+
+        This will leave a destination blob with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :rtype: None
+        """
         return self._polling_method.abort()
+
+    def status(self): # pylint: disable=useless-super-delegation
+        # type: () -> str
+        """Returns the current status of the copy operation.
+
+        :rtype: str
+        """
+        return super(CopyStatusPoller, self).status()
+
+    def result(self, timeout=None):
+        # type: (Optional[int]) -> Model
+        """Return the BlobProperties after the completion of the copy operation,
+        or the properties available after the specified timeout.
+
+        :returns: The destination blob properties.
+        :rtype: ~azure.storage.blob.models.BlobProperties
+        """
+        return super(CopyStatusPoller, self).result(timeout=timeout)
+
 
 
 class CopyBlob(PollingMethod):
@@ -73,10 +106,10 @@ class CopyBlob(PollingMethod):
 
     def run(self):
         # type: () -> None
-        """Empty run, no polling.
-        """
+        """Empty run, no polling."""
 
     def abort(self):
+        # type: () -> None
         try:
             return self._client._client.blob.abort_copy_from_url(  # pylint: disable=protected-access
                 self.id, **self.kwargs)
@@ -84,6 +117,7 @@ class CopyBlob(PollingMethod):
             process_storage_error(error)
 
     def status(self):
+        # type: () -> str
         self._update_status()
         return self._status
 
