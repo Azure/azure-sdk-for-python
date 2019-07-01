@@ -7,8 +7,8 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
-from azure.keyvault.secrets._internal import _KeyVaultClientBase
-from azure.keyvault.secrets import SecretClient
+from azure.keyvault.certificates._internal import _KeyVaultClientBase
+from azure.keyvault.certificates import CertificateClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -24,8 +24,8 @@ class VaultClient(_KeyVaultClientBase):
         super(VaultClient, self).__init__(
             vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
         )
-        self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        self._certificates = CertificateClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 
     @property
-    def secrets(self):
-        return self._secrets
+    def certificates(self):
+        return self._certificates

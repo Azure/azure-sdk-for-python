@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-keyvault-secrets"
-PACKAGE_PPRINT_NAME = "Key Vault Secrets"
+PACKAGE_NAME = "azure-keyvault-certificates"
+PACKAGE_PPRINT_NAME = "Key Vault Certificates"
 
 # a-b-c => a/b/c
 PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")

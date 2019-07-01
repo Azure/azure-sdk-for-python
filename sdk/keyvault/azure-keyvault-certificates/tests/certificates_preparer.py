@@ -30,7 +30,7 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
-from secrets_vault_client import VaultClient
+from certificates_vault_client import VaultClient
 
 
 DEFAULT_PERMISSIONS = Permissions(

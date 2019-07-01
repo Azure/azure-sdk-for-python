@@ -10,9 +10,9 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
-from azure.keyvault.secrets._generated import KeyVaultClient
-from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets.aio._internal import _AsyncKeyVaultClientBase
+from azure.keyvault.certificates._generated import KeyVaultClient
+from azure.keyvault.certificates.aio import SecretClient
+from azure.keyvault.certificates.aio._internal import _AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     try:
