@@ -38,8 +38,7 @@ class Assignment(TrackedResource):
      definition.
     :type blueprint_id: str
     :param parameters: Required. Blueprint assignment parameter values.
-    :type parameters: dict[str,
-     ~azure.mgmt.blueprint.models.ParameterValueBase]
+    :type parameters: dict[str, ~azure.mgmt.blueprint.models.ParameterValue]
     :param resource_groups: Required. Names and locations of resource group
      placeholders.
     :type resource_groups: dict[str,
@@ -79,7 +78,7 @@ class Assignment(TrackedResource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'blueprint_id': {'key': 'properties.blueprintId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValueBase}'},
+        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValue}'},
         'resource_groups': {'key': 'properties.resourceGroups', 'type': '{ResourceGroupValue}'},
         'status': {'key': 'properties.status', 'type': 'AssignmentStatus'},
         'locks': {'key': 'properties.locks', 'type': 'AssignmentLockSettings'},

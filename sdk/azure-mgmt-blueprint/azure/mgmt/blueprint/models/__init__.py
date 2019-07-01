@@ -19,11 +19,11 @@ try:
     from .blueprint_status_py3 import BlueprintStatus
     from .parameter_definition_py3 import ParameterDefinition
     from .resource_group_definition_py3 import ResourceGroupDefinition
-    from .parameter_value_base_py3 import ParameterValueBase
+    from .parameter_value_py3 import ParameterValue
     from .template_artifact_py3 import TemplateArtifact
     from .role_assignment_artifact_py3 import RoleAssignmentArtifact
     from .policy_assignment_artifact_py3 import PolicyAssignmentArtifact
-    from .parameter_value_py3 import ParameterValue
+    from .parameter_value_base_py3 import ParameterValueBase
     from .key_vault_reference_py3 import KeyVaultReference
     from .secret_value_reference_py3 import SecretValueReference
     from .secret_reference_parameter_value_py3 import SecretReferenceParameterValue
@@ -52,11 +52,11 @@ except (SyntaxError, ImportError):
     from .blueprint_status import BlueprintStatus
     from .parameter_definition import ParameterDefinition
     from .resource_group_definition import ResourceGroupDefinition
-    from .parameter_value_base import ParameterValueBase
+    from .parameter_value import ParameterValue
     from .template_artifact import TemplateArtifact
     from .role_assignment_artifact import RoleAssignmentArtifact
     from .policy_assignment_artifact import PolicyAssignmentArtifact
-    from .parameter_value import ParameterValue
+    from .parameter_value_base import ParameterValueBase
     from .key_vault_reference import KeyVaultReference
     from .secret_value_reference import SecretValueReference
     from .secret_reference_parameter_value import SecretReferenceParameterValue
@@ -98,11 +98,11 @@ __all__ = [
     'BlueprintStatus',
     'ParameterDefinition',
     'ResourceGroupDefinition',
-    'ParameterValueBase',
+    'ParameterValue',
     'TemplateArtifact',
     'RoleAssignmentArtifact',
     'PolicyAssignmentArtifact',
-    'ParameterValue',
+    'ParameterValueBase',
     'KeyVaultReference',
     'SecretValueReference',
     'SecretReferenceParameterValue',

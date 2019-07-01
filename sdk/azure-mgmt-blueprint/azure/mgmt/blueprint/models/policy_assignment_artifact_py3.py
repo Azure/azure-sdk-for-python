@@ -39,8 +39,7 @@ class PolicyAssignmentArtifact(Artifact):
      definition.
     :type policy_definition_id: str
     :param parameters: Required. Parameter values for the policy definition.
-    :type parameters: dict[str,
-     ~azure.mgmt.blueprint.models.ParameterValueBase]
+    :type parameters: dict[str, ~azure.mgmt.blueprint.models.ParameterValue]
     :param resource_group: Name of the resource group placeholder to which the
      policy will be assigned.
     :type resource_group: str
@@ -66,7 +65,7 @@ class PolicyAssignmentArtifact(Artifact):
         'description': {'key': 'properties.description', 'type': 'str'},
         'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
         'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValueBase}'},
+        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValue}'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
     }
 

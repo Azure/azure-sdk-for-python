@@ -44,8 +44,7 @@ class TemplateArtifact(Artifact):
     :type resource_group: str
     :param parameters: Required. Resource Manager template blueprint artifact
      parameter values.
-    :type parameters: dict[str,
-     ~azure.mgmt.blueprint.models.ParameterValueBase]
+    :type parameters: dict[str, ~azure.mgmt.blueprint.models.ParameterValue]
     """
 
     _validation = {
@@ -69,7 +68,7 @@ class TemplateArtifact(Artifact):
         'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
         'template': {'key': 'properties.template', 'type': 'object'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValueBase}'},
+        'parameters': {'key': 'properties.parameters', 'type': '{ParameterValue}'},
     }
 
     def __init__(self, **kwargs):
