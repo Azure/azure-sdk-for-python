@@ -12,6 +12,7 @@ from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
+from .polling import CopyStatusPoller
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
 from ._shared.models import(
     LocationMode,
@@ -19,6 +20,7 @@ from ._shared.models import(
     AccountPermissions,
     StorageErrorCode
 )
+from ._blob_utils import StorageStreamDownloader
 from .models import (
     BlobType,
     BlockState,
@@ -85,6 +87,8 @@ __all__ = [
     'BlobPermissions',
     'ResourceTypes',
     'AccountPermissions',
+    'CopyStatusPoller',
+    'StorageStreamDownloader',
 ]
 
 
@@ -96,6 +100,7 @@ def upload_blob_to_url(
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
         **kwargs):
+    # type: (...) -> dict[str, Any]
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -115,7 +120,7 @@ def upload_blob_to_url(
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :returns: Blob-updated property dict (Etag and last modified)
-    :rtype: dict[str, Any]
+    :rtype: dict(str, Any)
     """
     with BlobClient(blob_url, credential=credential) as client:
         return client.upload_blob(
@@ -128,6 +133,7 @@ def upload_blob_to_url(
 
 
 def _download_to_stream(client, handle, max_connections, **kwargs):
+    """Download data to specified open file-handle."""
     stream = client.download_blob(**kwargs)
     stream.download_to_stream(handle, max_connections=max_connections)
 
@@ -139,7 +145,8 @@ def download_blob_from_url(
         max_connections=1,  # type: int
         credential=None,  # type: Any
         **kwargs):
-    """Download the contents of a blob to a local file.
+    # type: (...) -> None
+    """Download the contents of a blob to a local file or stream.
 
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.

@@ -48,12 +48,21 @@ class TestContainerSamples(StorageTestCase):
     @record
     def test_container_sample(self):
 
+        # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mynewcontainer")
+        # [END create_container_client_from_service]
+
+        # [START create_container_client_sasurl]
+        from azure.storage.blob import ContainerClient
+
+        sas_url = sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        container = ContainerClient(sas_url)
+        # [END create_container_client_sasurl]
 
         try:
             # [START create_container]
@@ -163,13 +172,13 @@ class TestContainerSamples(StorageTestCase):
             # [END generate_sas_token]
 
             # Use the sas token to authenticate a new client
-            # [START create_container_client]
+            # [START create_container_client_sastoken]
             from azure.storage.blob import ContainerClient
             container = ContainerClient(
-                container_url=container_client.url,
+                container_url="https://account.blob.core.windows.net/mycontainer",
                 credential=sas_token
             )
-            # [END create_container_client]
+            # [END create_container_client_sastoken]
 
         finally:
             # Delete container
@@ -190,7 +199,9 @@ class TestContainerSamples(StorageTestCase):
 
         # [START upload_blob_to_container]
         with open(SOURCE_FILE, "rb") as data:
-            container_client.upload_blob(name="bloby", data=data)
+            blob_client = container_client.upload_blob(name="blobby", data=data)
+        
+        properties = blob_client.get_blob_properties()
         # [END upload_blob_to_container]
 
         # [START list_blobs_in_container]

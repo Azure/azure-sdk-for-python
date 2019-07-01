@@ -1,10 +1,21 @@
 # Change Log azure-storage-blob
 
-> See [BreakingChanges](BreakingChanges.md) for a detailed list of API breaks.
+## Version 12.0.0b1:
 
-## Version 12.0.0:
+For release notes and more information please visit
+https://aka.ms/azure-sdk-preview1-python
 
-- New API.
+## Version 2.0.1:
+
+- Updated dependency on azure-storage-common.
+
+## Version 2.0.0:
+
+- Support for 2018-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
+- Added support for append block from URL(synchronously) for append blobs.
+- Added support for update page from URL(synchronously) for page blobs.
+- Added support for generating and using blob snapshot SAS tokens.
+- Added support for generating user delegation SAS tokens.
 
 ## Version 1.5.0:
 
