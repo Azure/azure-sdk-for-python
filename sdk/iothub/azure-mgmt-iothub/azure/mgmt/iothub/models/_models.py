@@ -915,14 +915,16 @@ class IotHubProperties(Model):
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
-    :param locations: Primary and secondary location for iot hub
-    :type locations: list[~azure.mgmt.iothub.models.IotHubLocationDescription]
+    :ivar locations: Primary and secondary location for iot hub
+    :vartype locations:
+     list[~azure.mgmt.iothub.models.IotHubLocationDescription]
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'host_name': {'readonly': True},
+        'locations': {'readonly': True},
     }
 
     _attribute_map = {
@@ -959,7 +961,7 @@ class IotHubProperties(Model):
         self.comments = kwargs.get('comments', None)
         self.device_streams = kwargs.get('device_streams', None)
         self.features = kwargs.get('features', None)
-        self.locations = kwargs.get('locations', None)
+        self.locations = None
 
 
 class IotHubPropertiesDeviceStreams(Model):

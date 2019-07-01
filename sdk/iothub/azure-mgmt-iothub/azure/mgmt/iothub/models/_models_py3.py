@@ -915,14 +915,16 @@ class IotHubProperties(Model):
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
-    :param locations: Primary and secondary location for iot hub
-    :type locations: list[~azure.mgmt.iothub.models.IotHubLocationDescription]
+    :ivar locations: Primary and secondary location for iot hub
+    :vartype locations:
+     list[~azure.mgmt.iothub.models.IotHubLocationDescription]
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'host_name': {'readonly': True},
+        'locations': {'readonly': True},
     }
 
     _attribute_map = {
@@ -943,7 +945,7 @@ class IotHubProperties(Model):
         'locations': {'key': 'locations', 'type': '[IotHubLocationDescription]'},
     }
 
-    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, locations=None, **kwargs) -> None:
+    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
@@ -959,7 +961,7 @@ class IotHubProperties(Model):
         self.comments = comments
         self.device_streams = device_streams
         self.features = features
-        self.locations = locations
+        self.locations = None
 
 
 class IotHubPropertiesDeviceStreams(Model):
