@@ -771,10 +771,16 @@
   },
   "azure-servicebus": {
     "category ": "Client",
+    "namespaces": [
+      "azure.servicebus"
+    ],
     "service_name": "Service Bus"
   },
   "azure-eventhub": {
     "category ": "Client",
+    "namespaces": [
+      "azure.eventhub"
+    ],
     "service_name": "Event Hub"
   },
   "azure-core": {
