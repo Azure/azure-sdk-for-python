@@ -165,6 +165,14 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-keyvault-secrets": {
+    "category ": "Client",
+    "service_name": "Key Vault"
+  },
+  "azure-keyvault-keys": {
+    "category ": "Client",
+    "service_name": "Key Vault"
+  },
   "azure-loganalytics": {
 		"service_name": "Log Analytics",
 		"category ": "Client",
@@ -764,6 +772,22 @@
   "azure-servicebus": {
     "category ": "Client",
     "service_name": "Service Bus"
+  },
+  "azure-eventhub": {
+    "category ": "Client",
+    "service_name": "Event Hub"
+  },
+  "azure-core": {
+    "category ": "Client",
+    "service_name": "Other"
+  },
+  "azure-identity": {
+    "category ": "Client",
+    "service_name": "Identity"
+  },
+  "azure-cosmos": {
+    "category ": "Client",
+    "service_name": "Cosmos"
   },
   "azure-servicefabric": {
     "category ": "Client",
