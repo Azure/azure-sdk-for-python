@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from .version import VERSION
 from ._configuration import ContainerRegistryManagementClientConfiguration
 
 
@@ -55,8 +54,6 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             'build_steps': '2018-02-01-preview',
             'build_tasks': '2018-02-01-preview',
             'builds': '2018-02-01-preview',
-            'scope_maps': '2019-05-01-preview',
-            'tokens': '2019-05-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
