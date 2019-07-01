@@ -24,8 +24,11 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResponse
     from ._models_py3 import Patch
+    from ._models_py3 import PatchPropertiesRenewProperties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models_py3 import RenewPropertiesResponse
+    from ._models_py3 import RenewPropertiesResponseLockedPriceTotal
     from ._models_py3 import ReservationMergeProperties
     from ._models_py3 import ReservationOrderResponse
     from ._models_py3 import ReservationProperties
@@ -50,8 +53,11 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import OperationResponse
     from ._models import Patch
+    from ._models import PatchPropertiesRenewProperties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models import RenewPropertiesResponse
+    from ._models import RenewPropertiesResponseLockedPriceTotal
     from ._models import ReservationMergeProperties
     from ._models import ReservationOrderResponse
     from ._models import ReservationProperties
@@ -88,8 +94,11 @@ __all__ = [
     'OperationDisplay',
     'OperationResponse',
     'Patch',
+    'PatchPropertiesRenewProperties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
+    'RenewPropertiesResponse',
+    'RenewPropertiesResponseLockedPriceTotal',
     'ReservationMergeProperties',
     'ReservationOrderResponse',
     'ReservationProperties',

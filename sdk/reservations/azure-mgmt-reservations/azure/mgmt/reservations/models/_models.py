@@ -409,6 +409,11 @@ class Patch(Model):
      ~azure.mgmt.reservations.models.InstanceFlexibility
     :param name: Name of the Reservation
     :type name: str
+    :param renew:
+    :type renew: bool
+    :param renew_properties:
+    :type renew_properties:
+     ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
     """
 
     _attribute_map = {
@@ -416,6 +421,8 @@ class Patch(Model):
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
         'name': {'key': 'properties.name', 'type': 'str'},
+        'renew': {'key': 'properties.renew', 'type': 'bool'},
+        'renew_properties': {'key': 'properties.renewProperties', 'type': 'PatchPropertiesRenewProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -424,6 +431,24 @@ class Patch(Model):
         self.applied_scopes = kwargs.get('applied_scopes', None)
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
         self.name = kwargs.get('name', None)
+        self.renew = kwargs.get('renew', None)
+        self.renew_properties = kwargs.get('renew_properties', None)
+
+
+class PatchPropertiesRenewProperties(Model):
+    """PatchPropertiesRenewProperties.
+
+    :param purchase_properties:
+    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    """
+
+    _attribute_map = {
+        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PatchPropertiesRenewProperties, self).__init__(**kwargs)
+        self.purchase_properties = kwargs.get('purchase_properties', None)
 
 
 class PurchaseRequest(Model):
@@ -450,6 +475,8 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
+    :param renew:
+    :type renew: bool
     :param reserved_resource_properties: Properties specific to each reserved
      resource type. Not required if not applicable.
     :type reserved_resource_properties:
@@ -466,6 +493,7 @@ class PurchaseRequest(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
+        'renew': {'key': 'properties.renew', 'type': 'bool'},
         'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
     }
 
@@ -480,6 +508,7 @@ class PurchaseRequest(Model):
         self.display_name = kwargs.get('display_name', None)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
+        self.renew = kwargs.get('renew', None)
         self.reserved_resource_properties = kwargs.get('reserved_resource_properties', None)
 
 
@@ -499,6 +528,50 @@ class PurchaseRequestPropertiesReservedResourceProperties(Model):
     def __init__(self, **kwargs):
         super(PurchaseRequestPropertiesReservedResourceProperties, self).__init__(**kwargs)
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
+
+
+class RenewPropertiesResponse(Model):
+    """RenewPropertiesResponse.
+
+    :param purchase_properties:
+    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    :param locked_price_total: Locked currency & amount for new reservation
+     purchase at the time of renewal. Price is locked 30 days before expiry
+     date time if renew is true.
+    :type locked_price_total:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponseLockedPriceTotal
+    """
+
+    _attribute_map = {
+        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
+        'locked_price_total': {'key': 'lockedPriceTotal', 'type': 'RenewPropertiesResponseLockedPriceTotal'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RenewPropertiesResponse, self).__init__(**kwargs)
+        self.purchase_properties = kwargs.get('purchase_properties', None)
+        self.locked_price_total = kwargs.get('locked_price_total', None)
+
+
+class RenewPropertiesResponseLockedPriceTotal(Model):
+    """Locked currency & amount for new reservation purchase at the time of
+    renewal. Price is locked 30 days before expiry date time if renew is true.
+
+    :param currency_code:
+    :type currency_code: str
+    :param amount:
+    :type amount: str
+    """
+
+    _attribute_map = {
+        'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RenewPropertiesResponseLockedPriceTotal, self).__init__(**kwargs)
+        self.currency_code = kwargs.get('currency_code', None)
+        self.amount = kwargs.get('amount', None)
 
 
 class ReservationMergeProperties(Model):
@@ -642,6 +715,21 @@ class ReservationProperties(Model):
     :param merge_properties:
     :type merge_properties:
      ~azure.mgmt.reservations.models.ReservationMergeProperties
+    :param billing_scope_id:
+    :type billing_scope_id: str
+    :param renew:
+    :type renew: bool
+    :param renew_source: Reservation Id of the reservation from which this
+     reservation is renewed. Format of the resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :type renew_source: str
+    :param renew_destination: Reservation Id of the reservation which is
+     purchased because of renew. Format of the resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :type renew_destination: str
+    :param renew_properties:
+    :type renew_properties:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponse
     """
 
     _validation = {
@@ -663,6 +751,11 @@ class ReservationProperties(Model):
         'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
         'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
+        'billing_scope_id': {'key': 'billingScopeId', 'type': 'str'},
+        'renew': {'key': 'renew', 'type': 'bool'},
+        'renew_source': {'key': 'renewSource', 'type': 'str'},
+        'renew_destination': {'key': 'renewDestination', 'type': 'str'},
+        'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
     }
 
     def __init__(self, **kwargs):
@@ -681,6 +774,11 @@ class ReservationProperties(Model):
         self.extended_status_info = kwargs.get('extended_status_info', None)
         self.split_properties = kwargs.get('split_properties', None)
         self.merge_properties = kwargs.get('merge_properties', None)
+        self.billing_scope_id = kwargs.get('billing_scope_id', None)
+        self.renew = kwargs.get('renew', None)
+        self.renew_source = kwargs.get('renew_source', None)
+        self.renew_destination = kwargs.get('renew_destination', None)
+        self.renew_properties = kwargs.get('renew_properties', None)
 
 
 class ReservationResponse(Model):

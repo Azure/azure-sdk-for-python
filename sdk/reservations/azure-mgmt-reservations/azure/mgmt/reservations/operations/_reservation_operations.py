@@ -315,7 +315,7 @@ class ReservationOperations(object):
     list.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations'}
 
     def get(
-            self, reservation_id, reservation_order_id, custom_headers=None, raw=False, **operation_config):
+            self, reservation_id, reservation_order_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get `Reservation` details.
 
         Get specific `Reservation` details.
@@ -324,6 +324,8 @@ class ReservationOperations(object):
         :type reservation_id: str
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
+        :param expand: Supported value of this query is renewProperties
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -346,6 +348,8 @@ class ReservationOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
