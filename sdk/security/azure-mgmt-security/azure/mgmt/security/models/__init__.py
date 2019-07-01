@@ -68,6 +68,7 @@ try:
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
+    from .security_assessment_metadata_py3 import SecurityAssessmentMetadata
 except (SyntaxError, ImportError):
     from .compliance_result import ComplianceResult
     from .asc_location import AscLocation
@@ -127,6 +128,7 @@ except (SyntaxError, ImportError):
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
+    from .security_assessment_metadata import SecurityAssessmentMetadata
 from .compliance_result_paged import ComplianceResultPaged
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
@@ -146,6 +148,7 @@ from .workspace_setting_paged import WorkspaceSettingPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
+from .security_assessment_metadata_paged import SecurityAssessmentMetadataPaged
 from .security_center_enums import (
     ResourceStatus,
     PricingTier,
@@ -161,6 +164,9 @@ from .security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
     State,
+    Category,
+    RequiredPricingBundle,
+    AssessmentType,
     ConnectionType,
 )
 
@@ -223,6 +229,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
+    'SecurityAssessmentMetadata',
     'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',
@@ -242,6 +249,7 @@ __all__ = [
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
+    'SecurityAssessmentMetadataPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -256,5 +264,8 @@ __all__ = [
     'AlertNotifications',
     'AlertsToAdmins',
     'State',
+    'Category',
+    'RequiredPricingBundle',
+    'AssessmentType',
     'ConnectionType',
 ]

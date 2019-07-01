@@ -30,6 +30,7 @@ from .workspace_settings_operations import WorkspaceSettingsOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
+from .assessments_metadata_operations import AssessmentsMetadataOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -53,4 +54,5 @@ __all__ = [
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
+    'AssessmentsMetadataOperations',
 ]
