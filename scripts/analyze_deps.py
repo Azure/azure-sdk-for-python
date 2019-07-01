@@ -101,7 +101,7 @@ def parse_setup(setup_filename):
         __setup_calls__.append((args, kwargs))
     ''')
     parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with open(setup_filename, 'rt') as setup_file:
+    with io.open(setup_filename, 'r', encoding='utf-8-sig') as setup_file:
         parsed = ast.parse(setup_file.read())
         for index, node in enumerate(parsed.body[:]):
             if (
@@ -232,7 +232,7 @@ if __name__ == '__main__':
             print('Unable to freeze requirements due to incompatible dependency versions')
             sys.exit(exitcode)
         else:
-            with open(frozen_filename, 'w') as frozen_file:
+            with io.open(frozen_filename, 'w', encoding='utf-8') as frozen_file:
                 for requirement in sorted(dependencies.keys()):
                     spec = list(dependencies[requirement].keys())[0]
                     if spec == '':
@@ -243,7 +243,7 @@ if __name__ == '__main__':
 
     frozen = {}
     try:
-        with open(frozen_filename, 'r') as frozen_file:
+        with io.open(frozen_filename, 'r', encoding='utf-8-sig') as frozen_file:
             for line in frozen_file:
                 req_name, spec = parse_req(line)
                 frozen[req_name] = [spec]
