@@ -45,8 +45,7 @@ if TYPE_CHECKING:
 
 
 class QueueClient(StorageAccountHostsMixin):
-    """Creates a new QueueClient. This client represents interaction with a specific
-    queue, although that queue may not yet exist.
+    """A client to interact with a specific Queue.
 
     :ivar str url:
         The full endpoint URL to the Queue, including SAS token if used. This could be

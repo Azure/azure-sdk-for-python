@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 
 
 class QueueServiceClient(StorageAccountHostsMixin):
-    """A client interact with the Queue Service at the account level.
+    """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete queues within the account.
@@ -48,7 +48,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     can be retrieved using the :func:`~get_queue_client` function.
 
     :ivar str url:
-        The full endpoint URL to the Storage account, including SAS token if used. This could be
+        The full queue service endpoint URL, including SAS token if used. This could be
         either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
@@ -66,7 +66,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The URL to the queue storage account. Any other entities included
+        The URL to the queue service endpoint. Any other entities included
         in the URL path (e.g. queue) will be discarded. This URL can be optionally
         authenticated with a SAS token.
     :param credential:
