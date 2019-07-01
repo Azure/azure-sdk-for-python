@@ -50,6 +50,13 @@ class SqlServerLicenseType(str, Enum):
     ahub = "AHUB"
 
 
+class SqlManagementMode(str, Enum):
+
+    full = "Full"
+    light_weight = "LightWeight"
+    no_agent = "NoAgent"
+
+
 class SqlImageSku(str, Enum):
 
     developer = "Developer"
