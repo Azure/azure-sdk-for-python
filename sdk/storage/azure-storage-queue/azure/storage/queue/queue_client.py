@@ -11,8 +11,8 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
 
@@ -39,8 +39,9 @@ from ._generated.models import QueueMessage as GenQueueMessage
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from .models import QueuePermissions
+    from .models import QueuePermissions, QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin):
@@ -67,7 +68,7 @@ class QueueClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, queue_url,  # type: str
-            queue=None,  # type: Optional[str]
+            queue=None,  # type: Optional[Union[QueueProperties, str]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
@@ -90,7 +91,7 @@ class QueueClient(StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
         try:
-            self.queue_name = queue.name
+            self.queue_name = queue.name # type: ignore
         except AttributeError:
             self.queue_name = queue or unquote(path_queue)
         self._query_str, credential = self._format_query_string(sas_token, credential)
@@ -146,7 +147,7 @@ class QueueClient(StorageAccountHostsMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue=queue, credential=credential, **kwargs)
+        return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
@@ -244,9 +245,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Create a queue.
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.queue.create(
+            return self._client.queue.create( # type: ignore
                 metadata=metadata,
                 timeout=timeout,
                 headers=headers,
@@ -311,7 +312,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
         response.name = self.queue_name
-        return response
+        return response # type: ignore
 
     def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
@@ -335,9 +336,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Set metadata on the queue.
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.queue.set_metadata(
+            return self._client.queue.set_metadata( # type: ignore
                 timeout=timeout,
                 headers=headers,
                 cls=return_response_headers,
@@ -407,7 +408,7 @@ class QueueClient(StorageAccountHostsMixin):
                     value.start = serialize_iso(value.start)
                     value.expiry = serialize_iso(value.expiry)
                 identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers
+            signed_identifiers = identifiers # type: ignore
         try:
             self._client.queue.set_access_policy(
                 queue_acl=signed_identifiers or None,
@@ -416,8 +417,14 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def enqueue_message(self, content, visibility_timeout=None, time_to_live=None, timeout=None, **kwargs):
-        # type: (Any, Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
+    def enqueue_message( # type: ignore
+            self, content, # type: Any
+            visibility_timeout=None, # type: Optional[int]
+            time_to_live=None, # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs  # type: Optional[Any]
+        ):
+        # type: (...) -> QueueMessage
         """Adds a new message to the back of the message queue.
 
         The visibility timeout specifies the time that the message will be
@@ -486,7 +493,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs):
+    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Removes one or more messages from the front of the queue.
 
@@ -543,7 +550,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def update_message(self, message, visibility_timeout=None, pop_receipt=None,
+    def update_message(self, message, visibility_timeout=None, pop_receipt=None, # type: ignore
                        content=None, timeout=None, **kwargs):
         # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
@@ -615,7 +622,7 @@ class QueueClient(StorageAccountHostsMixin):
             message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=message_text)
         else:
-            updated = None
+            updated = None # type: ignore
         try:
             response = self._client.message_id.update(
                 queue_message=updated,
@@ -636,7 +643,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def peek_messages(self, max_messages=None, timeout=None, **kwargs):
+    def peek_messages(self, max_messages=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.

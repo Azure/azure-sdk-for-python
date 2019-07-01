@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
@@ -27,8 +27,16 @@ from .models import QueuePropertiesPaged
 from .queue_client import QueueClient
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
+    from ._shared.models import AccountPermissions, ResourceTypes
+    from .models import (
+        QueueProperties,
+        Logging,
+        Metrics,
+        CorsRule
+    )
 
 
 class QueueServiceClient(StorageAccountHostsMixin):
@@ -164,9 +172,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
+            Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
-    def get_service_stats(self, timeout=None, **kwargs):
+    def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
@@ -192,12 +200,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
         """
         try:
-            return self._client.service.get_statistics(
+            return self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_service_properties(self, timeout=None, **kwargs):
+    def get_service_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
@@ -215,11 +223,11 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Getting queue service properties.
         """
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs)
+            return self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_service_properties(
+    def set_service_properties( # type: ignore
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
@@ -269,7 +277,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            return self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -388,8 +396,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a queue in the service.
         """
-        queue = self.get_queue_client(queue)
-        queue.delete_queue(timeout=timeout, **kwargs)
+        queue_client = self.get_queue_client(queue)
+        queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):
         # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient

@@ -423,7 +423,7 @@ class Services(object):
                 ('f' if self.file else ''))
 
 
-Services.BLOB = Services(blob=True)
-Services.QUEUE = Services(queue=True)
-Services.TABLE = Services(table=True)
-Services.FILE = Services(file=True)
+Services.BLOB = Services(blob=True) # type: ignore
+Services.QUEUE = Services(queue=True) # type: ignore
+Services.TABLE = Services(table=True) # type: ignore
+Services.FILE = Services(file=True) # type: ignore
