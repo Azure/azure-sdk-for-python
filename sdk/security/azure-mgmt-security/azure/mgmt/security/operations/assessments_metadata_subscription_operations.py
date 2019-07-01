@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AssessmentsMetadataOperations(object):
-    """AssessmentsMetadataOperations operations.
+class AssessmentsMetadataSubscriptionOperations(object):
+    """AssessmentsMetadataSubscriptionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,8 @@ class AssessmentsMetadataOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get metadata information on all assessment types.
+        """Get metadata information on all assessment types in a specific
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,6 +57,10 @@ class AssessmentsMetadataOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -95,11 +100,12 @@ class AssessmentsMetadataOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Security/assessmentsMetadata'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentsMetadata'}
 
     def get(
             self, assessments_metadata_name, custom_headers=None, raw=False, **operation_config):
-        """Get metadata information on an assessment type.
+        """Get metadata information on an assessment type in a specific
+        subscription.
 
         :param assessments_metadata_name: The Assessment Key - Unique key for
          the assessment type
@@ -117,7 +123,8 @@ class AssessmentsMetadataOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'assessmentsMetadataName': self._serialize.url("assessments_metadata_name", assessments_metadata_name, 'str')
+            'assessmentsMetadataName': self._serialize.url("assessments_metadata_name", assessments_metadata_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -154,4 +161,4 @@ class AssessmentsMetadataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Security/assessmentsMetadata/{assessmentsMetadataName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentsMetadata/{assessmentsMetadataName}'}

@@ -31,6 +31,7 @@ from .regulatory_compliance_standards_operations import RegulatoryComplianceStan
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .assessments_metadata_operations import AssessmentsMetadataOperations
+from .assessments_metadata_subscription_operations import AssessmentsMetadataSubscriptionOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -55,4 +56,5 @@ __all__ = [
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
     'AssessmentsMetadataOperations',
+    'AssessmentsMetadataSubscriptionOperations',
 ]
