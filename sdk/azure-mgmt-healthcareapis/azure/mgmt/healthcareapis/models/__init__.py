@@ -12,6 +12,8 @@
 try:
     from .service_access_policy_entry_py3 import ServiceAccessPolicyEntry
     from .service_cosmos_db_configuration_info_py3 import ServiceCosmosDbConfigurationInfo
+    from .service_authentication_configuration_info_py3 import ServiceAuthenticationConfigurationInfo
+    from .service_cors_configuration_info_py3 import ServiceCorsConfigurationInfo
     from .services_properties_py3 import ServicesProperties
     from .services_description_py3 import ServicesDescription
     from .services_patch_description_py3 import ServicesPatchDescription
@@ -22,11 +24,12 @@ try:
     from .operation_py3 import Operation
     from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
     from .services_name_availability_info_py3 import ServicesNameAvailabilityInfo
-    from .move_resources_parameters_py3 import MoveResourcesParameters
     from .operation_results_description_py3 import OperationResultsDescription
 except (SyntaxError, ImportError):
     from .service_access_policy_entry import ServiceAccessPolicyEntry
     from .service_cosmos_db_configuration_info import ServiceCosmosDbConfigurationInfo
+    from .service_authentication_configuration_info import ServiceAuthenticationConfigurationInfo
+    from .service_cors_configuration_info import ServiceCorsConfigurationInfo
     from .services_properties import ServicesProperties
     from .services_description import ServicesDescription
     from .services_patch_description import ServicesPatchDescription
@@ -37,7 +40,6 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .check_name_availability_parameters import CheckNameAvailabilityParameters
     from .services_name_availability_info import ServicesNameAvailabilityInfo
-    from .move_resources_parameters import MoveResourcesParameters
     from .operation_results_description import OperationResultsDescription
 from .services_description_paged import ServicesDescriptionPaged
 from .operation_paged import OperationPaged
@@ -50,6 +52,8 @@ from .healthcare_apis_management_client_enums import (
 __all__ = [
     'ServiceAccessPolicyEntry',
     'ServiceCosmosDbConfigurationInfo',
+    'ServiceAuthenticationConfigurationInfo',
+    'ServiceCorsConfigurationInfo',
     'ServicesProperties',
     'ServicesDescription',
     'ServicesPatchDescription',
@@ -60,7 +64,6 @@ __all__ = [
     'Operation',
     'CheckNameAvailabilityParameters',
     'ServicesNameAvailabilityInfo',
-    'MoveResourcesParameters',
     'OperationResultsDescription',
     'ServicesDescriptionPaged',
     'OperationPaged',

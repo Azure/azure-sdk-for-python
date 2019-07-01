@@ -16,7 +16,6 @@ from .version import VERSION
 from .operations.services_operations import ServicesOperations
 from .operations.operations import Operations
 from .operations.operation_results_operations import OperationResultsOperations
-from .operations.move_resources_status_operations import MoveResourcesStatusOperations
 from . import models
 
 
@@ -64,8 +63,6 @@ class HealthcareApisManagementClient(SDKClient):
     :vartype operations: azure.mgmt.healthcareapis.operations.Operations
     :ivar operation_results: OperationResults operations
     :vartype operation_results: azure.mgmt.healthcareapis.operations.OperationResultsOperations
-    :ivar move_resources_status: MoveResourcesStatus operations
-    :vartype move_resources_status: azure.mgmt.healthcareapis.operations.MoveResourcesStatusOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -91,6 +88,4 @@ class HealthcareApisManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation_results = OperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.move_resources_status = MoveResourcesStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)

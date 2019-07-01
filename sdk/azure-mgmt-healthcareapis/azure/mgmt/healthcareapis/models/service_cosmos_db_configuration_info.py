@@ -20,6 +20,10 @@ class ServiceCosmosDbConfigurationInfo(Model):
     :type offer_throughput: int
     """
 
+    _validation = {
+        'offer_throughput': {'maximum': 10000, 'minimum': 400},
+    }
+
     _attribute_map = {
         'offer_throughput': {'key': 'offerThroughput', 'type': 'int'},
     }
