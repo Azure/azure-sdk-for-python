@@ -45,13 +45,30 @@ if TYPE_CHECKING:
 
 
 class QueueClient(StorageAccountHostsMixin):
-    """Creates a new QueueClient. This client represents interaction with a specific
-    queue, although that queue may not yet exist.
+    """A client to interact with a specific Queue.
 
+    :ivar str url:
+        The full endpoint URL to the Queue, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str queue_url: The full URI to the queue. This can also be a URL to the storage
         account, in which case the queue must also be specified.
     :param queue: The queue. If specified, this value will override
-        a queue value specified in the blob URL.
+        a queue value specified in the queue URL.
     :type queue: str or ~azure.storage.queue.models.QueueProperties
     :param credential:
         The credentials with which to authenticate. This is optional if the
@@ -222,6 +239,7 @@ class QueueClient(StorageAccountHostsMixin):
     def create_queue(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Creates a new queue in the storage account.
+
         If a queue with the same name already exists, the operation fails.
 
         :param metadata:
@@ -522,9 +540,7 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-            Objects are also populated with the content although it is not
-            returned from the service.
-        :rtype: ~azure.storage.queue.models.QueueMessage
+        :rtype: ~azure.storage.queue.models.MessagesPaged
 
         Example:
             .. literalinclude:: ../tests/samples/test_samples_message_queue.py
