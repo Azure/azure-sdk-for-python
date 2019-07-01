@@ -116,3 +116,4 @@
   ./ref/azure.servicefabric.rst
   ref/azure.servicebus
   ref/azure.servicemanagement
+  ref/azure.eventhub
