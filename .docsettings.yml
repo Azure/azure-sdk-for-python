@@ -5,6 +5,7 @@ omitted_paths:
   - "azure-mgmt*/*"
   - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
+  - "doc/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
