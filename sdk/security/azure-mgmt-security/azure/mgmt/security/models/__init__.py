@@ -68,6 +68,8 @@ try:
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
+    from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
+    from .server_vulnerability_assessments_list_py3 import ServerVulnerabilityAssessmentsList
 except (SyntaxError, ImportError):
     from .compliance_result import ComplianceResult
     from .asc_location import AscLocation
@@ -127,6 +129,8 @@ except (SyntaxError, ImportError):
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
+    from .server_vulnerability_assessment import ServerVulnerabilityAssessment
+    from .server_vulnerability_assessments_list import ServerVulnerabilityAssessmentsList
 from .compliance_result_paged import ComplianceResultPaged
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
@@ -223,6 +227,8 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
+    'ServerVulnerabilityAssessment',
+    'ServerVulnerabilityAssessmentsList',
     'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',
