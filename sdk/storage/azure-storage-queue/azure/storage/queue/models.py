@@ -221,7 +221,11 @@ class QueueMessage(DictMixin):
 
 
 class MessagesPaged(Paged):
-    """Queue messages paged.
+    """An iterable of Queue Messages.
+
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.queue.models.QueueMessage)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
@@ -277,10 +281,20 @@ class QueueProperties(DictMixin):
 
 
 class QueuePropertiesPaged(Paged):
-    """Queue properties paged.
+    """An iterable of Queue properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A queue name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.queue.models.QueueProperties)
 
     :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only containers whose names
+    :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of queue names to retrieve per
         call.
@@ -352,6 +366,11 @@ class QueuePermissions(object):
         A string representing the permissions.
     """
 
+    READ = None # type: QueuePermissions
+    ADD = None # type: QueuePermissions
+    UPDATE = None # type: QueuePermissions
+    PROCESS = None # type: QueuePermissions
+
     def __init__(self, read=False, add=False, update=False, process=False, _str=None):
         if not _str:
             _str = ''
@@ -373,7 +392,7 @@ class QueuePermissions(object):
                 ('p' if self.process else ''))
 
 
-QueuePermissions.READ = QueuePermissions(read=True) # type: ignore
-QueuePermissions.ADD = QueuePermissions(add=True) # type: ignore
-QueuePermissions.UPDATE = QueuePermissions(update=True) # type: ignore
-QueuePermissions.PROCESS = QueuePermissions(process=True) # type: ignore
+QueuePermissions.READ = QueuePermissions(read=True)
+QueuePermissions.ADD = QueuePermissions(add=True)
+QueuePermissions.UPDATE = QueuePermissions(update=True)
+QueuePermissions.PROCESS = QueuePermissions(process=True)

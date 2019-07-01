@@ -103,6 +103,11 @@ class MessageDecodePolicy(object):
 
 
 class TextBase64EncodePolicy(MessageEncodePolicy):
+    """Base 64 message encoding policy for text messages.
+    
+    Encodes text (unicode) messages to base 64. If the input content
+    is not text, a TypeError will be raised. Input text must support UTF-8.
+    """
 
     def encode(self, content):
         if not isinstance(content, six.text_type):
@@ -111,6 +116,12 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
 
 
 class TextBase64DecodePolicy(MessageDecodePolicy):
+    """Message decoding policy for base 64-encoded messages into text.
+    
+    Decodes base64-encoded messages to text (unicode). If the input content
+    is not valid base 64, a DecodeError will be raised. Message data must
+    support UTF-8.
+    """
 
     def decode(self, content, response):
         try:
@@ -124,6 +135,11 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
 
 
 class BinaryBase64EncodePolicy(MessageEncodePolicy):
+    """Base 64 message encoding policy for binary messages.
+    
+    Encodes binary messages to base 64. If the input content
+    is not bytes, a TypeError will be raised.
+    """
 
     def encode(self, content):
         if not isinstance(content, six.binary_type):
@@ -132,6 +148,11 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
 
 
 class BinaryBase64DecodePolicy(MessageDecodePolicy):
+    """Message decoding policy for base 64-encoded messages into bytes.
+    
+    Decodes base64-encoded messages to bytes. If the input content
+    is not valid base 64, a DecodeError will be raised.
+    """
 
     def decode(self, content, response):
         try:
@@ -145,6 +166,11 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
 
 
 class TextXMLEncodePolicy(MessageEncodePolicy):
+    """XML message encoding policy for text messages.
+    
+    Encodes text (unicode) messages to XML. If the input content
+    is not text, a TypeError will be raised.
+    """
 
     def encode(self, content):
         if not isinstance(content, six.text_type):
@@ -153,18 +179,24 @@ class TextXMLEncodePolicy(MessageEncodePolicy):
 
 
 class TextXMLDecodePolicy(MessageDecodePolicy):
+    """Message decoding policy for XML-encoded messages into text.
+    
+    Decodes XML-encoded messages to text (unicode).
+    """
 
     def decode(self, content, response):
         return xml_unescape(content)
 
 
 class NoEncodePolicy(MessageEncodePolicy):
+    """Bypass any message content encoding."""
 
     def encode(self, content):
         return content
 
 
 class NoDecodePolicy(MessageDecodePolicy):
+    """Bypass any message content decoding."""
 
     def decode(self, content, response):
         return content

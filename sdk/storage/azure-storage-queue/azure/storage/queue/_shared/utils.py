@@ -18,8 +18,8 @@ from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 try:
     from urllib.parse import quote, unquote, parse_qs
 except ImportError:
-    from urlparse import parse_qs # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urlparse import parse_qs  # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 import six
 import isodate
@@ -540,7 +540,6 @@ def is_credential_sastoken(credential):
 
 
 def add_metadata_headers(metadata):
-    # type: (Dict[str, str]) -> Dict[str, str]
     headers = {}
     if metadata:
         for key, value in metadata.items():

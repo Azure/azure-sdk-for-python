@@ -47,6 +47,24 @@ class QueueServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific queue, a client for this entity
     can be retrieved using the :func:`~get_queue_client` function.
 
+    :ivar str url:
+        The full endpoint URL to the Storage account, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the queue storage account. Any other entities included
         in the URL path (e.g. queue) will be discarded. This URL can be optionally
@@ -291,6 +309,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> QueuePropertiesPaged
         """Returns a generator to list the queues under the specified account.
+
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all queues have been returned.
 
@@ -338,9 +357,10 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. If a queue
-        with the same name already exists, the operation fails. Returns a client with
-        which to interact with the newly created queue.
+        """Creates a new queue under the specified account. 
+
+        If a queue with the same name already exists, the operation fails.
+        Returns a client with which to interact with the newly created queue.
 
         :param str name: The name of the queue to create.
         :param metadata:
@@ -402,6 +422,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def get_queue_client(self, queue, **kwargs):
         # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
         """Get a client to interact with the specified queue.
+
         The queue need not already exist.
 
         :param queue:
