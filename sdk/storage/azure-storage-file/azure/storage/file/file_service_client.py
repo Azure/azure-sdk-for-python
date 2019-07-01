@@ -30,7 +30,7 @@ from ._generated.version import VERSION
 
 
 class FileServiceClient(StorageAccountHostsMixin):
-    """A client interact with the File Service at the account level.
+    """A client to interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete shares within the account.
@@ -38,8 +38,8 @@ class FileServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_share_client` function.
 
     :ivar str url:
-        The full endpoint URL to the Storage account, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        The full endpoint URL to the file service endpoint, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:

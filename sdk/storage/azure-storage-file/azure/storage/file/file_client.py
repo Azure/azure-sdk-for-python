@@ -35,12 +35,11 @@ from .polling import CopyStatusPoller, CloseHandles
 
 
 class FileClient(StorageAccountHostsMixin):
-    """Creates a new FileClient. This client represents interaction with a specific
-    file, although that file may not yet exist.
+    """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:
         The full endpoint URL to the File, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:

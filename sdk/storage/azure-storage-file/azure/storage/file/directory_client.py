@@ -34,14 +34,14 @@ from .polling import CloseHandles
 
 
 class DirectoryClient(StorageAccountHostsMixin):
-    """Creates a new DirectoryClient. This client represents interaction with a specific
-    directory, although it may not yet exist. For operations relating to a specific
-    subdirectory or file, the clients for those entities can also be retrieved using
-    the `get_subdirectory_client` and `get_file_client` functions.
+    """A client to interact with a specific directory, although it may not yet exist.
+
+    For operations relating to a specific subdirectory or file in this share, the clients for those
+    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.s
 
     :ivar str url:
         The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:

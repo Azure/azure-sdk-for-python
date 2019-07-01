@@ -35,14 +35,14 @@ from ._share_utils import deserialize_share_properties
 
 
 class ShareClient(StorageAccountHostsMixin):
-    """Creates a new ShareClient. This client represents interaction with a specific
-    share, although that share may not yet exist. For operations relating to a specific
-    directory or file, the clients for those entities can also be retrieved using
-    the `get_directory_client` and `get_file_client` functions.
+    """A client to interact with a specific share, although that share may not yet exist.
+
+    For operations relating to a specific directory or file in this share, the clients for
+    those entities can also be retrieved using the `get_directory_client` and `get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the Share, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
