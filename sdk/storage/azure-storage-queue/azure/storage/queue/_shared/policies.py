@@ -14,6 +14,7 @@ import logging
 import uuid
 import types
 import platform
+from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -23,8 +24,8 @@ try:
         urlencode,
     )
 except ImportError:
-    from urllib import urlencode
-    from urlparse import (
+    from urllib import urlencode # type: ignore
+    from urlparse import ( # type: ignore
         urlparse,
         parse_qsl,
         urlunparse,
@@ -42,13 +43,14 @@ from ..version import VERSION
 from .models import LocationMode
 
 try:
-    _unicode_type = unicode
+    _unicode_type = unicode # type: ignore
 except NameError:
     _unicode_type = str
 
 
 _LOGGER = logging.getLogger(__name__)
-
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 def encode_base64(data):
     if isinstance(data, _unicode_type):
@@ -274,7 +276,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         super(StorageRequestHook, self).__init__()
 
     def on_request(self, request, **kwargs):
-        # type: (PipelineRequest) -> PipelineResponse
+        # type: (PipelineRequest, **Any) -> PipelineResponse
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
             request_callback(request)

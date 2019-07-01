@@ -6,8 +6,8 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
+from typing import List # pylint: disable=unused-import
 from azure.core.paging import Paged
-
 from ._shared.utils import (
     return_context_and_deserialized,
     process_storage_error)
@@ -232,7 +232,6 @@ class MessagesPaged(Paged):
         self.results_per_page = results_per_page
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
@@ -297,7 +296,6 @@ class QueuePropertiesPaged(Paged):
         self.location_mode = None
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
@@ -375,7 +373,7 @@ class QueuePermissions(object):
                 ('p' if self.process else ''))
 
 
-QueuePermissions.READ = QueuePermissions(read=True)
-QueuePermissions.ADD = QueuePermissions(add=True)
-QueuePermissions.UPDATE = QueuePermissions(update=True)
-QueuePermissions.PROCESS = QueuePermissions(process=True)
+QueuePermissions.READ = QueuePermissions(read=True) # type: ignore
+QueuePermissions.ADD = QueuePermissions(add=True) # type: ignore
+QueuePermissions.UPDATE = QueuePermissions(update=True) # type: ignore
+QueuePermissions.PROCESS = QueuePermissions(process=True) # type: ignore
