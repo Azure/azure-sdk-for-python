@@ -25,22 +25,22 @@
 # --------------------------------------------------------------------------
 
 
-from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import HeadersPolicy
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies import RetryPolicy
-from azure.core.pipeline.policies import RedirectPolicy
-from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
-from azure.core.pipeline.policies import ProxyPolicy
-from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import RequestsTransport
-
-
 # [START configuration]
+from azure.core import Configuration
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies import (
+    HeadersPolicy,
+    BearerTokenCredentialPolicy,
+    UserAgentPolicy,
+    RetryPolicy,
+    RedirectPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    ContentDecodePolicy
+)
 
-# Example of configuration for a service client
+# Example class to create configuration for a service client
 class FooServiceClient():
 
     @staticmethod
@@ -76,6 +76,8 @@ class FooServiceClient():
 def example_connection_config():
 
     # [START connection_configuration]
+    from azure.core import Configuration
+
     config = Configuration(
         connection_timeout=100,
         connection_verify=True,
@@ -84,7 +86,6 @@ def example_connection_config():
     )
 
     # Or parameters can be tweaked later:
-
     config.connection.timeout = 100
     config.connection.verify = True
     config.connection.cert = None

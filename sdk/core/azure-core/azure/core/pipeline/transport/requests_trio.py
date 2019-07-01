@@ -126,7 +126,15 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
-     asynchronous methods. Uses the third party trio event loop.
+    asynchronous methods. Uses the third party trio event loop.
+
+    Example:
+        .. literalinclude:: ../examples/examples_async.py
+            :start-after: [START trio]
+            :end-before: [END trio]
+            :language: python
+            :dedent: 4
+            :caption: Asynchronous transport with trio.
     """
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
@@ -161,9 +169,9 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                     headers=request.headers,
                     data=request.data,
                     files=request.files,
-                    verify=kwargs.get('connection_verify', self.config.connection.verify),
-                    timeout=kwargs.get('connection_timeout', self.config.connection.timeout),
-                    cert=kwargs.get('connection_cert', self.config.connection.cert),
+                    verify=kwargs.pop('connection_verify', self.config.connection.verify),
+                    timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
+                    cert=kwargs.pop('connection_cert', self.config.connection.cert),
                     allow_redirects=False,
                     **kwargs),
                 limiter=trio_limiter)

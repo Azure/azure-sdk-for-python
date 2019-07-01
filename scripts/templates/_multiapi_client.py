@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from .version import VERSION
 from ._configuration import {{ client_name }}Configuration
 {% if mixin_operations %}from ._operations_mixin import {{ client_name }}OperationsMixin{% endif %}
 
@@ -36,10 +35,12 @@ class {{ client_name }}({% if mixin_operations %}{{ client_name }}OperationsMixi
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+{%- if has_subscription_id %}
     :param subscription_id: Subscription credentials which uniquely identify
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+{%- endif %}
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
@@ -53,14 +54,14 @@ class {{ client_name }}({% if mixin_operations %}{{ client_name }}OperationsMixi
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
 {%- for rt_name, api_version in last_rt_list|dictsort %}
-            '{{ rt_name }}': '{{ api_version }}',
+            '{{ rt_name }}': '{{ mod_to_api_version[api_version] }}',
 {%- endfor %}
         }},
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = {{ client_name }}Configuration(credentials, subscription_id, base_url)
+    def __init__(self, credentials{%- if has_subscription_id %}, subscription_id{% endif %}, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = {{ client_name }}Configuration(credentials{%- if has_subscription_id %}, subscription_id{% endif %}, base_url)
         super({{ client_name }}, self).__init__(
             credentials,
             self.config,
