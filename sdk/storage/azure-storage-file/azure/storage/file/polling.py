@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class CopyStatusPoller(LROPoller):
+    """Poller for a long-running copy operation."""
 
     def __init__(self, client, copy_id, polling=True, configuration=None, **kwargs):
         if configuration:
@@ -28,10 +29,41 @@ class CopyStatusPoller(LROPoller):
         super(CopyStatusPoller, self).__init__(client, copy_id, None, poller)
 
     def copy_id(self):
+        # type: () -> str
+        """Get the ID of the copy operation.
+
+        :rtype: str
+        """
         return self._polling_method.id
 
-    def abort(self):  # Check whether this is in API guidelines, or should remain specific to Storage
+    def abort(self):
+        # type: () -> None
+        """Abort the copy operation.
+
+        This will leave a destination file with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :rtype: None
+        """
         return self._polling_method.abort()
+
+    def status(self): # pylint: disable=useless-super-delegation
+        # type: () -> str
+        """Returns the current status of the copy operation.
+
+        :rtype: str
+        """
+        return super(CopyStatusPoller, self).status()
+
+    def result(self, timeout=None):
+        # type: (Optional[int]) -> Model
+        """Return the FileProperties after the completion of the copy operation,
+        or the properties available after the specified timeout.
+
+        :returns: The destination file properties.
+        :rtype: ~azure.storage.file.models.FileProperties
+        """
+        return super(CopyStatusPoller, self).result(timeout=timeout)
 
 
 class CopyFile(PollingMethod):
@@ -133,8 +165,7 @@ class CopyFilePolling(CopyFile):
 
 
 class CloseHandles(PollingMethod):
-    """An empty poller that returns the deserialized initial response.
-    """
+
     def __init__(self, interval):
         self._command = None
         self._status = None

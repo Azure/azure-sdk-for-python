@@ -108,8 +108,7 @@ class CorsRule(GeneratedCorsRule):
 
 
 class AccessPolicy(GenAccessPolicy):
-    """
-    Access Policy class used by the set and get acl methods in each service.
+    """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
     permissions for the Shared Access Signatures with which it's associated.
@@ -245,7 +244,17 @@ class ShareProperties(DictMixin):
 
 
 class SharePropertiesPaged(Paged):
-    """Share properties paged.
+    """An iterable of Share properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A file name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.file.models.ShareProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only shares whose names
@@ -345,7 +354,15 @@ class Handle(DictMixin):
 
 
 class HandlesPaged(Paged):
-    """Handles paged.
+    """An iterable of Handles.
+
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.file.models.Handle)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
@@ -418,10 +435,24 @@ class DirectoryProperties(DictMixin):
 
 
 class DirectoryPropertiesPaged(Paged):
-    """Directory properties paged.
+    """An iterable for the contents of a directory.
+
+    This iterable will yield dicts for the contents of the directory. The dicts
+    will have the keys 'name' (str) and 'is_directory' (bool).
+    Items that are files (is_directory=False) will have an additional 'content_length' key.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A file name prefix being used to filter the list.
+    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(dict(str, Any))
 
     :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only directors whose names
+    :param str prefix: Filters the results to return only directories whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
@@ -625,6 +656,11 @@ class FilePermissions(object):
         A string representing the permissions.
     """
 
+    CREATE = None  # type: FilePermissions
+    DELETE = None  # type: FilePermissions
+    READ = None  # type: FilePermissions
+    WRITE = None  # type: FilePermissions
+
     def __init__(self, read=False, create=False, write=False, delete=False,
                  _str=None):
         if not _str:
@@ -690,6 +726,11 @@ class SharePermissions(object):
     :param str _str:
         A string representing the permissions
     """
+
+    LIST = None  # type: SharePermissions
+    DELETE = None  # type: SharePermissions
+    READ = None  # type: SharePermissions
+    WRITE = None  # type: SharePermissions
 
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  _str=None):

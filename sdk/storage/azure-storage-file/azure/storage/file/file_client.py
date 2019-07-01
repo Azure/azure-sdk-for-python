@@ -38,6 +38,24 @@ class FileClient(StorageAccountHostsMixin):
     """Creates a new FileClient. This client represents interaction with a specific
     file, although that file may not yet exist.
 
+    :ivar str url:
+        The full endpoint URL to the File, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str file_url: The full URI to the file. This can also be a URL to the storage account
         or share, in which case the file and/or share must also be specified.
     :param share: The share for the file. If specified, this value will override
@@ -175,8 +193,8 @@ class FileClient(StorageAccountHostsMixin):
             content_type=None  # type: Optional[str]
         ):
         # type: (...) -> str
-        """
-        Generates a shared access signature for the file.
+        """Generates a shared access signature for the file.
+
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
@@ -262,8 +280,9 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Dict[str, Any]
-        """Creates a new file. Note that it only initializes the
-        file with no content.
+        """Creates a new file.
+
+        Note that it only initializes the file with no content.
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
@@ -782,6 +801,20 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Any
+        """Close open file handles.
+
+        This operation may not finish with a single call, so a long-running poller
+        is returned that can be used to wait until the operation is complete.
+
+        :param handle:
+            Optionally, a specific handle to close. The default value is '*'
+            which will attempt to close all open handles.
+        :type handle: str or ~azure.storage.file.models.Handle
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A long-running poller to get operation status.
+        :rtype: ~azure.core.polling.LROPoller
+        """
         try:
             handle_id = handle.id
         except AttributeError:
