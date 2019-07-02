@@ -16,8 +16,8 @@ from azure.storage.file import (
     RetentionPolicy,
 )
 
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     record,
     not_for_emulator,
 )
@@ -26,7 +26,7 @@ from tests.testcase import (
 # ------------------------------------------------------------------------------
 
 
-class ServicePropertiesTest(StorageTestCase):
+class ServicePropertiesTest(FileTestCase):
     def setUp(self):
         super(ServicePropertiesTest, self).setUp()
 

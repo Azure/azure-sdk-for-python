@@ -9,12 +9,12 @@
 import os
 
 try:
-    import tests.settings_real as settings
+    import settings_real as settings
 except ImportError:
-    import tests.settings_fake as settings
+    import settings_fake as settings
 
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     TestMode,
     record
 )
@@ -23,7 +23,7 @@ SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'SampleDestination.txt'
 
 
-class TestFileSamples(StorageTestCase):
+class TestFileSamples(FileTestCase):
 
     connection_string = settings.CONNECTION_STRING
 

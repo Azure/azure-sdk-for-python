@@ -25,8 +25,8 @@ from azure.storage.file import (
     AccountPermissions,
     StorageErrorCode
 )
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     TestMode,
     record,
 )
@@ -42,7 +42,7 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 
 # ------------------------------------------------------------------------------
 
-class StorageFileTest(StorageTestCase):
+class StorageFileTest(FileTestCase):
     def setUp(self):
         super(StorageFileTest, self).setUp()
 

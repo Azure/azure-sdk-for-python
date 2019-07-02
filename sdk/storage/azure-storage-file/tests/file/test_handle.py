@@ -17,8 +17,8 @@ from azure.storage.file.file_service_client import FileServiceClient
 from azure.storage.file.directory_client import DirectoryClient
 from azure.storage.file.file_client import FileClient
 from azure.storage.file.share_client import ShareClient
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     record,
     TestMode,
 )
@@ -30,7 +30,7 @@ TEST_SHARE_PREFIX = 'share'
 
 # ------------------------------------------------------------------------------
 
-class StorageHandleTest(StorageTestCase):
+class StorageHandleTest(FileTestCase):
     def setUp(self):
         super(StorageHandleTest, self).setUp()
         file_url = self.get_file_url()

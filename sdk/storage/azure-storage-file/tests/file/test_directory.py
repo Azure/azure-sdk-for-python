@@ -13,8 +13,8 @@ from azure.storage.file import (
     FileServiceClient,
     StorageErrorCode,
 )
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     record,
     LogCaptured,
     TestMode
@@ -24,7 +24,7 @@ from tests.testcase import (
 # ------------------------------------------------------------------------------
 
 
-class StorageDirectoryTest(StorageTestCase):
+class StorageDirectoryTest(FileTestCase):
     def setUp(self):
         super(StorageDirectoryTest, self).setUp()
 

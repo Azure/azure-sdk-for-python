@@ -17,8 +17,8 @@ from azure.storage.file import (
     FileServiceClient,
     FileProperties
 )
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     TestMode,
     record,
 )
@@ -30,7 +30,7 @@ FILE_PATH = 'file_output.temp.dat'
 
 # ------------------------------------------------------------------------------
 
-class StorageGetFileTest(StorageTestCase):
+class StorageGetFileTest(FileTestCase):
     def setUp(self):
         super(StorageGetFileTest, self).setUp()
 

@@ -67,7 +67,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class StorageTestCase(unittest.TestCase):
+class FileTestCase(unittest.TestCase):
 
     def setUp(self):
         self.working_folder = os.path.dirname(__file__)

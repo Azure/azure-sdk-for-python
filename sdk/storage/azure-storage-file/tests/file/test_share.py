@@ -21,8 +21,8 @@ from azure.storage.file.directory_client import DirectoryClient
 from azure.storage.file.file_client import FileClient
 from azure.storage.file.share_client import ShareClient
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     TestMode,
     record,
     LogCaptured,
@@ -34,7 +34,7 @@ TEST_SHARE_PREFIX = 'share'
 
 # ------------------------------------------------------------------------------
 
-class StorageShareTest(StorageTestCase):
+class StorageShareTest(FileTestCase):
     def setUp(self):
         super(StorageShareTest, self).setUp()
 

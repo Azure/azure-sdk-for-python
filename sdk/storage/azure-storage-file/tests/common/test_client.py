@@ -12,8 +12,8 @@ from azure.storage.file import (
     DirectoryClient,
     FileClient)
 
-from tests.testcase import (
-    StorageTestCase,
+from filetestcase import (
+    FileTestCase,
     record,
 )
 #from azure.storage.common import TokenCredential
@@ -30,7 +30,7 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
-class StorageClientTest(StorageTestCase):
+class StorageClientTest(FileTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
