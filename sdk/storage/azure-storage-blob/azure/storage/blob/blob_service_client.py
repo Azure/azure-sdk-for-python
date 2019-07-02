@@ -82,14 +82,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
     Example:
-        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+        .. literalinclude:: ../tests/samples/test_blob_samples_authentication.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobServiceClient with account url and credential.
 
-        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+        .. literalinclude:: ../tests/samples/test_blob_samples_authentication.py
             :start-after: [START create_blob_service_client_oauth]
             :end-before: [END create_blob_service_client_oauth]
             :language: python
@@ -141,7 +141,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python
@@ -203,7 +203,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: str
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_authentication.py
                 :start-after: [START create_sas_token]
                 :end-before: [END create_sas_token]
                 :language: python
@@ -228,7 +228,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: dict(str, str)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
                 :language: python
@@ -266,7 +266,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
                 :language: python
@@ -289,7 +289,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
                 :language: python
@@ -356,7 +356,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
                 :language: python
@@ -410,7 +410,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
                 :language: python
@@ -454,7 +454,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.container_client.ContainerClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
                 :language: python
@@ -516,7 +516,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
                 :language: python
@@ -547,7 +547,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.blob.container_client.ContainerClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
                 :language: python
@@ -587,7 +587,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.blob_client.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_blob_service.py
+            .. literalinclude:: ../tests/samples/test_blob_samples_service.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]
                 :language: python
