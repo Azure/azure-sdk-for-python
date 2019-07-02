@@ -46,7 +46,6 @@ RST_AUTODOC_TOCTREE = """.. toctree::
 
   ref/azure.common
 {generated_packages}
-  ref/azure.servicebus
   ref/azure.servicemanagement
 """
 
@@ -139,6 +138,14 @@ def generate_doc(config_path, project_pattern=None):
                     namespace=multiapi_namespace,
                     version=version))
         package_list_path.append(rst_path)
+
+    rst_path_template = './ref/{}.rst'
+
+    data_plane_packages = [value for value in config.values() if value.manually_generated]
+
+    print(data_plane_packages)
+
+    exit(1)
 
     package_list_path.sort()
     with Path(GENERATED_PACKAGES_LIST_FILE).open('w') as generate_file_list_fd:

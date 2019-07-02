@@ -757,39 +757,48 @@
 
   "azure-servicebus": {
     "category ": "Client",
-    "service_name": "Service Bus"
+    "service_name": "Service Bus",
+    "manually_generated": true
   },
   "azure-eventhub": {
     "category ": "Client",
-    "service_name": "Event Hub"
+    "service_name": "Event Hub",
+    "manually_generated": true
   },
   "azure-core": {
     "category ": "Client",
-    "service_name": "Other"
+    "service_name": "Other",
+    "manually_generated": true
   },
   "azure-identity": {
     "category ": "Client",
-    "service_name": "Identity"
+    "service_name": "Identity",
+    "manually_generated": true
   },
   "azure-cosmos": {
     "category ": "Client",
-    "service_name": "Cosmos"
+    "service_name": "Cosmos",
+    "manually_generated": true
   },
   "azure-keyvault-keys": {
     "category ": "Client",
-    "service_name": "Keyvault"
+    "service_name": "Keyvault",
+    "manually_generated": true
   },
   "azure-keyvault-secrets": {
     "category ": "Client",
-    "service_name": "Keyvault"
+    "service_name": "Keyvault",
+    "manually_generated": true
   },
   "azure-storage-blob": {
     "category ": "Client",
-    "service_name": "Storage"
+    "service_name": "Storage",
+    "manually_generated": true
   },
   "azure-storage-file": {
     "category ": "Client",
-    "service_name": "Storage"
+    "service_name": "Storage",
+    "manually_generated": true
   },
   "azure-servicefabric": {
     "category ": "Client",
