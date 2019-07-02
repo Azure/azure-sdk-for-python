@@ -158,21 +158,6 @@
     ],
     "service_name": "Active Directory"
   },
-  "azure-keyvault": {
-    "category ": "Client",
-    "namespaces": [
-      "azure.keyvault"
-    ],
-    "service_name": "Key Vault"
-  },
-  "azure-keyvault-secrets": {
-    "category ": "Client",
-    "service_name": "Key Vault"
-  },
-  "azure-keyvault-keys": {
-    "category ": "Client",
-    "service_name": "Key Vault"
-  },
   "azure-loganalytics": {
 		"service_name": "Log Analytics",
 		"category ": "Client",
@@ -769,18 +754,13 @@
     ],
     "service_name": "Web Apps"
   },
+
   "azure-servicebus": {
     "category ": "Client",
-    "namespaces": [
-      "azure.servicebus"
-    ],
     "service_name": "Service Bus"
   },
   "azure-eventhub": {
     "category ": "Client",
-    "namespaces": [
-      "azure.eventhub"
-    ],
     "service_name": "Event Hub"
   },
   "azure-core": {
@@ -794,6 +774,22 @@
   "azure-cosmos": {
     "category ": "Client",
     "service_name": "Cosmos"
+  },
+  "azure-keyvault-keys": {
+    "category ": "Client",
+    "service_name": "Keyvault"
+  },
+  "azure-keyvault-secrets": {
+    "category ": "Client",
+    "service_name": "Keyvault"
+  },
+  "azure-storage-blob": {
+    "category ": "Client",
+    "service_name": "Storage"
+  },
+  "azure-storage-file": {
+    "category ": "Client",
+    "service_name": "Storage"
   },
   "azure-servicefabric": {
     "category ": "Client",

@@ -36,7 +36,7 @@ for example_file in [os.path.relpath(example_file, REPO_ROOT) for example_file i
     # create the directories if they don't already exist
     os.makedirs(os.path.dirname(final_destination), exist_ok=True)
 
-    # finally copy the example file
+    # finally copy the example file into the sphinx folder
     copyfile(os.path.join(REPO_ROOT, example_file), final_destination)
 
 # -- General configuration ------------------------------------------------
