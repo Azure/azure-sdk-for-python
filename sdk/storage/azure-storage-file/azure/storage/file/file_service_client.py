@@ -30,13 +30,31 @@ from ._generated.version import VERSION
 
 
 class FileServiceClient(StorageAccountHostsMixin):
-    """A client interact with the File Service at the account level.
+    """A client to interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete shares within the account.
     For operations relating to a specific share, a client for that entity
     can also be retrieved using the `get_share_client` function.
 
+    :ivar str url:
+        The full endpoint URL to the file service endpoint, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the file storage account. Any other entities included
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
@@ -47,7 +65,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         shared access key.
 
     Example:
-        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+        .. literalinclude:: ../tests/test_file_samples_authentication.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
             :language: python
@@ -101,7 +119,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             shared access key.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            .. literalinclude:: ../tests/test_file_samples_authentication.py
                 :start-after: [START create_file_service_client_from_conn_string]
                 :end-before: [END create_file_service_client_from_conn_string]
                 :language: python
@@ -122,6 +140,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             protocol=None  # type: Optional[str]
         ):
         """Generates a shared access signature for the file service.
+
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
@@ -160,7 +179,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: str
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            .. literalinclude:: ../tests/test_file_samples_authentication.py
                 :start-after: [START generate_sas_token]
                 :end-before: [END generate_sas_token]
                 :language: python
@@ -184,7 +203,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
                 :language: python
@@ -226,7 +245,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
                 :language: python
@@ -270,10 +289,10 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.core.file.models.SharePropertiesPaged
+        :rtype: ~azure.storage.file.models.SharePropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
                 :language: python
@@ -318,7 +337,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.share_client.ShareClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
                 :language: python
@@ -350,7 +369,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
                 :language: python
@@ -373,10 +392,10 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param str snapshot:
             An optional share snapshot on which to operate.
         :returns: A ShareClient.
-        :rtype: ~azure.core.file.share_client.ShareClient
+        :rtype: ~azure.storage.file.share_client.ShareClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file_service.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]
                 :language: python

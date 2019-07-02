@@ -35,9 +35,26 @@ from .polling import CopyStatusPoller, CloseHandles
 
 
 class FileClient(StorageAccountHostsMixin):
-    """Creates a new FileClient. This client represents interaction with a specific
-    file, although that file may not yet exist.
+    """A client to interact with a specific file, although that file may not yet exist.
 
+    :ivar str url:
+        The full endpoint URL to the File, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str file_url: The full URI to the file. This can also be a URL to the storage account
         or share, in which case the file and/or share must also be specified.
     :param share: The share for the file. If specified, this value will override
@@ -148,7 +165,7 @@ class FileClient(StorageAccountHostsMixin):
             shared access key.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+            .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START create_file_client]
                 :end-before: [END create_file_client]
                 :language: python
@@ -175,8 +192,8 @@ class FileClient(StorageAccountHostsMixin):
             content_type=None  # type: Optional[str]
         ):
         # type: (...) -> str
-        """
-        Generates a shared access signature for the file.
+        """Generates a shared access signature for the file.
+
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
@@ -262,8 +279,9 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Dict[str, Any]
-        """Creates a new file. Note that it only initializes the
-        file with no content.
+        """Creates a new file.
+
+        Note that it only initializes the file with no content.
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
@@ -278,7 +296,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
                 :language: python
@@ -352,7 +370,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
                 :language: python
@@ -410,7 +428,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.polling.CopyStatusPoller
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
                 :language: python
@@ -467,7 +485,7 @@ class FileClient(StorageAccountHostsMixin):
         :returns: A iterable data generator (stream)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
                 :language: python
@@ -501,7 +519,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]
                 :language: python
@@ -782,6 +800,20 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Any
+        """Close open file handles.
+
+        This operation may not finish with a single call, so a long-running poller
+        is returned that can be used to wait until the operation is complete.
+
+        :param handle:
+            Optionally, a specific handle to close. The default value is '*'
+            which will attempt to close all open handles.
+        :type handle: str or ~azure.storage.file.models.Handle
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A long-running poller to get operation status.
+        :rtype: ~azure.core.polling.LROPoller
+        """
         try:
             handle_id = handle.id
         except AttributeError:

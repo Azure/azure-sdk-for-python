@@ -100,6 +100,11 @@ def upload_file_helper(
 
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+    """A streaming object to download a file.
+
+    The stream downloader can iterated, or download to open file or stream
+    over multiple threads.
+    """
 
     def __init__(
             self, share, file_name, file_path, service, config, offset,
@@ -256,15 +261,40 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return file_stream
 
     def content_as_bytes(self, max_connections=1):
+        """Download the contents of this file.
+
+        This operation is blocking until all data is downloaded.
+
+        :param int max_connections:
+            The number of parallel connections with which to download.
+        :rtype: bytes
+        """
         stream = BytesIO()
         self.download_to_stream(stream, max_connections=max_connections)
         return stream.getvalue()
 
     def content_as_text(self, max_connections=1, encoding='UTF-8'):
+        """Download the contents of this file, and decode as text.
+
+        This operation is blocking until all data is downloaded.
+
+        :param int max_connections:
+            The number of parallel connections with which to download.
+        :rtype: str
+        """
         content = self.content_as_bytes(max_connections=max_connections)
         return content.decode(encoding)
 
     def download_to_stream(self, stream, max_connections=1):
+        """Download the contents of this file to a stream.
+
+        :param stream:
+            The stream to download to. This can be an open file-handle,
+            or any writable stream. The stream must be seekable if the download
+            uses more than one parallel connection.
+        :returns: The properties of the downloaded file.
+        :rtype: ~azure.storage.file.models.FileProperties
+        """
         # the stream must be seekable if parallel download is required
         if max_connections > 1:
             error_message = "Target stream handle must be seekable."

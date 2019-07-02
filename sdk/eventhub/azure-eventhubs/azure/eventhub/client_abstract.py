@@ -98,7 +98,7 @@ class EventHubClientAbstract(object):
         """
         Constructs a new EventHubClient.
 
-        :param host: The hostname of the the Event Hub.
+        :param host: The hostname of the Event Hub.
         :type host: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to.
         :type event_hub_path: str

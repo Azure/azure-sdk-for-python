@@ -35,11 +35,29 @@ from ._share_utils import deserialize_share_properties
 
 
 class ShareClient(StorageAccountHostsMixin):
-    """Creates a new ShareClient. This client represents interaction with a specific
-    share, although that share may not yet exist. For operations relating to a specific
-    directory or file, the clients for those entities can also be retrieved using
-    the `get_directory_client` and `get_file_client` functions.
+    """A client to interact with a specific share, although that share may not yet exist.
 
+    For operations relating to a specific directory or file in this share, the clients for
+    those entities can also be retrieved using the `get_directory_client` and `get_file_client` functions.
+
+    :ivar str url:
+        The full endpoint URL to the Share, including snapshot and SAS token if used. This could be
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str share_url: The full URI to the share.
     :param share: The share with which to interact. If specified, this value will override
         a share value specified in the share URL.
@@ -133,7 +151,7 @@ class ShareClient(StorageAccountHostsMixin):
             shared access key.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_client_from_conn_string]
                 :end-before: [END create_share_client_from_conn_string]
                 :language: python
@@ -281,7 +299,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
                 :language: python
@@ -329,7 +347,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: dict[str, Any]
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
                 :language: python
@@ -363,7 +381,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
                 :language: python
@@ -394,7 +412,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.models.ShareProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_hello_world.py
+            .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
                 :language: python
@@ -426,7 +444,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
                 :language: python
@@ -459,7 +477,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
                 :language: python
@@ -581,7 +599,7 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
                 :language: python

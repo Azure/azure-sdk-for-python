@@ -3,7 +3,7 @@ Azure Key Vault allows you to create and store keys in the Key Vault. Azure Key 
 
 Multiple keys, and multiple versions of the same key, can be kept in the Key Vault. Cryptographic keys in Key Vault are represented as [JSON Web Key (JWK)][JWK] objects. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the keys and its versions.
 
-[Source code][keys_client_src] | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][key_samples]
+[Source code][keys_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][key_samples]
 ## Getting started
 ### Install the package
 Install the Azure Key Vault Keys client library for Python with [pip][pip]:
@@ -273,6 +273,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
 [pip]: https://pypi.org/project/pip/
+[pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
 [keys_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete

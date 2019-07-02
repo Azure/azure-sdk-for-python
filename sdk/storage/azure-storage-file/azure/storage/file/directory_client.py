@@ -34,11 +34,29 @@ from .polling import CloseHandles
 
 
 class DirectoryClient(StorageAccountHostsMixin):
-    """Creates a new DirectoryClient. This client represents interaction with a specific
-    directory, although it may not yet exist. For operations relating to a specific
-    subdirectory or file, the clients for those entities can also be retrieved using
-    the `get_subdirectory_client` and `get_file_client` functions.
+    """A client to interact with a specific directory, although it may not yet exist.
 
+    For operations relating to a specific subdirectory or file in this share, the clients for those
+    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.s
+
+    :ivar str url:
+        The full endpoint URL to the Directory, including SAS token if used. This could be
+        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
     :param str directory_url:
         The full URI to the directory. This can also be a URL to the storage account
         or share, in which case the directory and/or share must also be specified.
@@ -150,6 +168,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def get_file_client(self, file_name, **kwargs):
         """Get a client to interact with a specific file.
+
         The file need not already exist.
 
         :param file_name:
@@ -166,15 +185,16 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         """Get a client to interact with a specific subdirectory.
+
         The subdirectory need not already exist.
 
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.core.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
                 :language: python
@@ -204,7 +224,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
@@ -232,7 +252,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
@@ -258,9 +278,10 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
+        :rtype: ~azure.storage.file.models.DirectoryPropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
                 :language: python
@@ -276,19 +297,20 @@ class DirectoryClient(StorageAccountHostsMixin):
         return DirectoryPropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def list_handles(self, marker=None, timeout=None, recursive=None, **kwargs):
+    def list_handles(self, marker=None, recursive=False, timeout=None, **kwargs):
         """Lists opened handles on a directory or a file under the directory.
 
         :param str marker:
             An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
-            its files, its subdirectories and their files.
+            its files, its subdirectories and their files. Default value is False.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
+        :rtype: ~azure.storage.file.models.HandlesPaged
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -307,6 +329,23 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Any
         ):
         # type: (...) -> Any
+        """Close open file handles.
+
+        This operation may not finish with a single call, so a long-running poller
+        is returned that can be used to wait until the operation is complete.
+
+        :param handle:
+            Optionally, a specific handle to close. The default value is '*'
+            which will attempt to close all open handles.
+        :type handle: str or ~azure.storage.file.models.Handle
+        :param bool recursive:
+            Boolean that specifies if operation should apply to the directory specified by the client,
+            its files, its subdirectories and their files. Default value is False.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A long-running poller to get operation status.
+        :rtype: ~azure.core.polling.LROPoller
+        """
         try:
             handle_id = handle.id
         except AttributeError:
@@ -357,7 +396,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         Each call to this operation replaces all existing metadata
         attached to the directory. To remove all metadata from the directory,
-        call this operation with no metadata dict.
+        call this operation with an empty metadata dict.
 
         :param metadata:
             Name-value pairs associated with the directory as metadata.
@@ -399,7 +438,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
                 :language: python
@@ -422,10 +461,10 @@ class DirectoryClient(StorageAccountHostsMixin):
             The name of the subdirectory.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: None
+        :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
                 :language: python
@@ -479,7 +518,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.file_client.FileClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
                 :language: python
@@ -512,10 +551,10 @@ class DirectoryClient(StorageAccountHostsMixin):
             The name of the file to delete.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: None
+        :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
                 :language: python
