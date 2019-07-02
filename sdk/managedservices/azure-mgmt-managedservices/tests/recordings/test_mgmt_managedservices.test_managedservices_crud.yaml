@@ -15,27 +15,78 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812?api-version=2018-06-01-preview
-
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
   response:
     body:
-      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
-        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","type":"Microsoft.ManagedServices/registrationDefinitions","name":"1cf1704a-f8a8-4082-a8be-457d3f68e812"}'
-
+      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Accepted","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8daec8c7-7567-47ff-9009-f0a4ec429a3c"}'
     headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8zOGJkNGJlZi00MWZmLTQ1YjUtYjNhZi1kMDNlNTVhNGNhMTUvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uRGVmaW5pdGlvbnMvOGRhZWM4YzctNzU2Ny00N2ZmLTkwMDktZjBhNGVjNDI5YTNjIiwiam9iSWQiOiJSZWdpc3RyYXRpb25EZWZpbml0aW9uUHJvdmlzaW9uaW5nSm9iOjJENzJGOTg4QkY6M0EyRDg2RjE6M0EyRDQxQUY6M0EyRDkxQUI6M0EyRDJEN0NEMDExREI0NzE3RDNFRTc4NTAzNjdCMTQyOTV8MzZGM0Q4ODU4NjU4Q0RENCJ9?api-version=2019-06-01
       cache-control:
       - no-cache
       content-length:
-      - '611'
+      - '610'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 May 2019 21:19:30 GMT
+      - Sat, 29 Jun 2019 07:02:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"properties": {"registrationDefinitionId": "subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '195'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","provisioningState":"Accepted"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60","type":"Microsoft.ManagedServices/registrationAssignments","name":"c0d5f994-63a1-484d-8c1e-a2ac825efd60"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8zOGJkNGJlZi00MWZmLTQ1YjUtYjNhZi1kMDNlNTVhNGNhMTUvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50UHJvdmlzaW9uaW5nSm9iOjJEU046MkQxN0QzRUU3ODUwMzY3QjE0Mjk1QzA2RjIyMjE1NEVGRjoyREMwRDVGOTk0OjNBMkQ2M0ExOjNBMkQ0ODREOjNBMkR8OTgzMDQ4NUYzNDlBMURGQyJ9?api-version=2019-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '485'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 29 Jun 2019 07:02:41 GMT
       expires:
       - '-1'
       pragma:
@@ -50,8 +101,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"properties": {"registrationDefinitionId": "/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812"}}'''
-
+    body: null
     headers:
       Accept:
       - application/json
@@ -59,44 +109,38 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '196'
-      Content-Type:
-      - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce?api-version=2018-06-01-preview
-
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8zOGJkNGJlZi00MWZmLTQ1YjUtYjNhZi1kMDNlNTVhNGNhMTUvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uRGVmaW5pdGlvbnMvOGRhZWM4YzctNzU2Ny00N2ZmLTkwMDktZjBhNGVjNDI5YTNjIiwiam9iSWQiOiJSZWdpc3RyYXRpb25EZWZpbml0aW9uUHJvdmlzaW9uaW5nSm9iOjJENzJGOTg4QkY6M0EyRDg2RjE6M0EyRDQxQUY6M0EyRDkxQUI6M0EyRDJEN0NEMDExREI0NzE3RDNFRTc4NTAzNjdCMTQyOTV8MzZGM0Q4ODU4NjU4Q0RENCJ9?api-version=2019-06-01
   response:
     body:
-      string: '{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce","type":"Microsoft.ManagedServices/registrationAssignments","name":"367257d7-b69a-4b76-9c18-6dd3e9ae33ce"}'
-
+      string: '{"status":"Succeeded"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '487'
+      - '22'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 May 2019 21:19:35 GMT
+      - Sat, 29 Jun 2019 07:02:50 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -107,18 +151,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812?api-version=2018-06-01-preview
-
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
   response:
     body:
       string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
-        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","type":"Microsoft.ManagedServices/registrationDefinitions","name":"1cf1704a-f8a8-4082-a8be-457d3f68e812"}'
-
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8daec8c7-7567-47ff-9009-f0a4ec429a3c"}'
     headers:
       cache-control:
       - no-cache
@@ -127,7 +167,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 May 2019 21:19:35 GMT
+      - Sat, 29 Jun 2019 07:02:51 GMT
       expires:
       - '-1'
       pragma:
@@ -153,26 +193,66 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce?api-version=2018-06-01-preview
-
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
   response:
     body:
-      string: '{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce","type":"Microsoft.ManagedServices/registrationAssignments","name":"367257d7-b69a-4b76-9c18-6dd3e9ae33ce"}'
-
+      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8daec8c7-7567-47ff-9009-f0a4ec429a3c"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '487'
+      - '611'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 May 2019 21:19:35 GMT
+      - Sat, 29 Jun 2019 07:02:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60","type":"Microsoft.ManagedServices/registrationAssignments","name":"c0d5f994-63a1-484d-8c1e-a2ac825efd60"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '486'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 29 Jun 2019 07:02:58 GMT
       expires:
       - '-1'
       pragma:
@@ -200,90 +280,215 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce?api-version=2018-06-01-preview
-
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
   response:
     body:
-      string: '{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","provisioningState":"Deleted"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce","type":"Microsoft.ManagedServices/registrationAssignments","name":"367257d7-b69a-4b76-9c18-6dd3e9ae33ce"}'
-
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '485'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 10 May 2019 21:19:38 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
       - '0'
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
-        azure-mgmt-managedservices/0.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812?api-version=2018-06-01-preview
-
-  response:
-    body:
-      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Deleted","managedByTenantName":"Default
-        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","type":"Microsoft.ManagedServices/registrationDefinitions","name":"1cf1704a-f8a8-4082-a8be-457d3f68e812"}'
-
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '609'
-      content-type:
-      - application/json; charset=utf-8
       date:
-      - Fri, 10 May 2019 21:19:39 GMT
+      - Sat, 29 Jun 2019 07:02:58 GMT
       expires:
       - '-1'
+      location:
+      - https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8zOGJkNGJlZi00MWZmLTQ1YjUtYjNhZi1kMDNlNTVhNGNhMTUvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50RGVwcm92aXNpb25pbmdKb2I6MkRTTjoyRDE3RDNFRTc4NTAzNjdCMTQyOTVDMDZGMjIyMTU0RUZGOjJEQzBENUY5OTQ6M0EyRDYzQTE6M0EyRDQ4NEQ6M0F8RDhEQTBEOTFBQUEzRjhCQiJ9?api-version=2019-06-01
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Sat, 29 Jun 2019 07:03:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments?api-version=2019-06-01
+  response:
+    body:
+      string: '{"value":[{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/2d9e78ec-37ea-43d2-8b13-a0be81816f3b","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/mygroup/providers/Microsoft.ManagedServices/registrationAssignments/02f2b8d0-ffb2-4124-ae76-a8231d8f855e","type":"Microsoft.ManagedServices/registrationAssignments","name":"02f2b8d0-ffb2-4124-ae76-a8231d8f855e"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/33974646-9bce-461d-89eb-331f20fca33c","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/test/providers/Microsoft.ManagedServices/registrationAssignments/94f247b0-453b-4920-a5e0-6eb5f9b133f3","type":"Microsoft.ManagedServices/registrationAssignments","name":"94f247b0-453b-4920-a5e0-6eb5f9b133f3"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/a156aad7-f3ce-4a46-b240-246242b6bd78","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/f2e18995-6c79-4ab7-876e-1b1c8393d12c","type":"Microsoft.ManagedServices/registrationAssignments","name":"f2e18995-6c79-4ab7-876e-1b1c8393d12c"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/cae481c0-de7c-42a8-86c1-5b170861caf8","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/ddd0d277-e120-4de1-8498-52b8f767b699","type":"Microsoft.ManagedServices/registrationAssignments","name":"ddd0d277-e120-4de1-8498-52b8f767b699"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/3da05785-3634-4e5e-8db2-ebaf913ee343","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/cd3ffcfa-a0ae-4017-a6a0-b39e1c191f54","type":"Microsoft.ManagedServices/registrationAssignments","name":"cd3ffcfa-a0ae-4017-a6a0-b39e1c191f54"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/4a50f8eb-96b3-44c4-a397-e1e57035fe65","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/a25f63d9-605c-4878-99bd-0d315480d46b","type":"Microsoft.ManagedServices/registrationAssignments","name":"a25f63d9-605c-4878-99bd-0d315480d46b"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/bb2626be-3e11-442f-b0f1-9209508d4f52","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/8b6d4693-efb0-4b58-ac94-625b6a321af3","type":"Microsoft.ManagedServices/registrationAssignments","name":"8b6d4693-efb0-4b58-ac94-625b6a321af3"},{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/1f267c51-ad54-434b-92b6-c1159cc50bd6","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/87f6c306-fe9e-4e6a-8068-a19d4179ac55","type":"Microsoft.ManagedServices/registrationAssignments","name":"87f6c306-fe9e-4e6a-8068-a19d4179ac55"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/33974646-9bce-461d-89eb-331f20fca33c","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/496e9e18-2ada-44fd-8f97-ebbcda132eb8","type":"Microsoft.ManagedServices/registrationAssignments","name":"496e9e18-2ada-44fd-8f97-ebbcda132eb8"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/367257d7-b69a-4b76-9c18-6dd3e9ae33ce","type":"Microsoft.ManagedServices/registrationAssignments","name":"367257d7-b69a-4b76-9c18-6dd3e9ae33ce"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/e716db1e-393d-4f2a-81fe-2577e92c9200","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/2b48e6b6-0141-4a19-816a-e0d569788898","type":"Microsoft.ManagedServices/registrationAssignments","name":"2b48e6b6-0141-4a19-816a-e0d569788898"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/2d9e78ec-37ea-43d2-8b13-a0be81816f3b","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationAssignments/00000000-0000-0000-0000-000000000000","type":"Microsoft.ManagedServices/registrationAssignments","name":"00000000-0000-0000-0000-000000000000"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/447b1aff-b0fc-4959-989d-d77dc93f3509","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/newRG/providers/Microsoft.ManagedServices/registrationAssignments/c5deb1ba-8e27-4935-8af5-9242e7dabd24","type":"Microsoft.ManagedServices/registrationAssignments","name":"c5deb1ba-8e27-4935-8af5-9242e7dabd24"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/46b981a7-63ff-4063-9961-9fce4ddea376","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/newRG/providers/Microsoft.ManagedServices/registrationAssignments/aa891268-329a-4637-b3f6-2877ea304f8b","type":"Microsoft.ManagedServices/registrationAssignments","name":"aa891268-329a-4637-b3f6-2877ea304f8b"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/f2dbf9cf-13a7-40da-89b1-8929c560899c","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/newRG/providers/Microsoft.ManagedServices/registrationAssignments/998021b8-5af8-4fde-9ff1-a10ab7e1e324","type":"Microsoft.ManagedServices/registrationAssignments","name":"998021b8-5af8-4fde-9ff1-a10ab7e1e324"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/653d2db9-1066-47c4-bac1-f31f11fd5d14","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/newRG/providers/Microsoft.ManagedServices/registrationAssignments/27fb250b-fdd1-4f2c-87da-7967e6028200","type":"Microsoft.ManagedServices/registrationAssignments","name":"27fb250b-fdd1-4f2c-87da-7967e6028200"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/47f471b3-ff5f-463c-8a1f-286501b01ddc","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/mygroup1/providers/Microsoft.ManagedServices/registrationAssignments/5aa0d921-64b8-40e8-af33-31993f0deaa8","type":"Microsoft.ManagedServices/registrationAssignments","name":"5aa0d921-64b8-40e8-af33-31993f0deaa8"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/40be0299-6573-4391-be2f-b41dd4aaf4f9","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/mygroup1/providers/Microsoft.ManagedServices/registrationAssignments/0c2645a8-8630-4c90-b07d-b0e22b4406f7","type":"Microsoft.ManagedServices/registrationAssignments","name":"0c2645a8-8630-4c90-b07d-b0e22b4406f7"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/cae481c0-de7c-42a8-86c1-5b170861caf8","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/jizen_testmsp_rgln/providers/Microsoft.ManagedServices/registrationAssignments/819df283-222c-47ed-ab1a-61ce8b4adf65","type":"Microsoft.ManagedServices/registrationAssignments","name":"819df283-222c-47ed-ab1a-61ce8b4adf65"},{"properties":{"registrationDefinitionId":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/bb2626be-3e11-442f-b0f1-9209508d4f52","provisioningState":"Succeeded"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/resourceGroups/jizen_testmsp_rgln/providers/Microsoft.ManagedServices/registrationAssignments/50a4707c-5780-46b1-8a6e-52a30abb5f1c","type":"Microsoft.ManagedServices/registrationAssignments","name":"50a4707c-5780-46b1-8a6e-52a30abb5f1c"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '10013'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 29 Jun 2019 07:03:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.3 (Windows-10-10.0.17763-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions?api-version=2019-06-01
+  response:
+    body:
+      string: '{"value":[{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"plan":{"name":"asd","product":"asd","publisher":"asd","version":"asda"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/00000000-0000-0000-0000-000000000000","type":"Microsoft.ManagedServices/registrationDefinitions","name":"00000000-0000-0000-0000-000000000000"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/03a3c4f9-2029-4fd2-ae83-c9efd3bb2f92","type":"Microsoft.ManagedServices/registrationDefinitions","name":"03a3c4f9-2029-4fd2-ae83-c9efd3bb2f92"},{"properties":{"registrationDefinitionName":"registrationDefinitionName","description":"Registration
+        Defintion Description","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/0cb6fbd6-90df-4923-9d92-c266f6c27bba","type":"Microsoft.ManagedServices/registrationDefinitions","name":"0cb6fbd6-90df-4923-9d92-c266f6c27bba"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1cf1704a-f8a8-4082-a8be-457d3f68e812","type":"Microsoft.ManagedServices/registrationDefinitions","name":"1cf1704a-f8a8-4082-a8be-457d3f68e812"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/1f267c51-ad54-434b-92b6-c1159cc50bd6","type":"Microsoft.ManagedServices/registrationDefinitions","name":"1f267c51-ad54-434b-92b6-c1159cc50bd6"},{"properties":{"registrationDefinitionName":"rajivnan-Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"plan":{"name":"name","product":"product","publisher":"publisher","version":"VERSION"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/2d9e78ec-37ea-43d2-8b13-a0be81816f3b","type":"Microsoft.ManagedServices/registrationDefinitions","name":"2d9e78ec-37ea-43d2-8b13-a0be81816f3b"},{"properties":{"registrationDefinitionName":"ps6003","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/33974646-9bce-461d-89eb-331f20fca33c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"33974646-9bce-461d-89eb-331f20fca33c"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"Test","managedByTenantId":"2e5c9528-1489-4f23-8170-c74b9263d6ec","authorizations":[{"principalId":"2c363068-8be4-443f-8bfd-6cf76641048f","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"},{"principalId":"2c363068-8be4-443f-8bfd-6cf76641048f","roleDefinitionId":"18d7d88d-d35e-4fb5-a5c3-7773c20a72d9","principalIdDisplayName":"Test
+        user","delegatedRoleDefinitionIds":["9980e02c-c2be-4d73-94e8-173b1dc7cf3c"]}],"provisioningState":"Succeeded","managedByTenantName":"publishingtestad"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/3da05785-3634-4e5e-8db2-ebaf913ee343","type":"Microsoft.ManagedServices/registrationDefinitions","name":"3da05785-3634-4e5e-8db2-ebaf913ee343"},{"properties":{"registrationDefinitionName":"ps7387","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/40be0299-6573-4391-be2f-b41dd4aaf4f9","type":"Microsoft.ManagedServices/registrationDefinitions","name":"40be0299-6573-4391-be2f-b41dd4aaf4f9"},{"properties":{"registrationDefinitionName":"rajivnan-Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/447b1aff-b0fc-4959-989d-d77dc93f3509","type":"Microsoft.ManagedServices/registrationDefinitions","name":"447b1aff-b0fc-4959-989d-d77dc93f3509"},{"properties":{"registrationDefinitionName":"name","description":"mydef1","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/46b981a7-63ff-4063-9961-9fce4ddea376","type":"Microsoft.ManagedServices/registrationDefinitions","name":"46b981a7-63ff-4063-9961-9fce4ddea376"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/47f471b3-ff5f-463c-8a1f-286501b01ddc","type":"Microsoft.ManagedServices/registrationDefinitions","name":"47f471b3-ff5f-463c-8a1f-286501b01ddc"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/4a50f8eb-96b3-44c4-a397-e1e57035fe65","type":"Microsoft.ManagedServices/registrationDefinitions","name":"4a50f8eb-96b3-44c4-a397-e1e57035fe65"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"plan":{"name":"name","product":"product","publisher":"publisher","version":"1.0.0"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/5d73ff53-1003-409e-a7a3-5f7073943d71","type":"Microsoft.ManagedServices/registrationDefinitions","name":"5d73ff53-1003-409e-a7a3-5f7073943d71"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/653d2db9-1066-47c4-bac1-f31f11fd5d14","type":"Microsoft.ManagedServices/registrationDefinitions","name":"653d2db9-1066-47c4-bac1-f31f11fd5d14"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/6b4501b1-49ab-49a8-8c89-41c95be6db4b","type":"Microsoft.ManagedServices/registrationDefinitions","name":"6b4501b1-49ab-49a8-8c89-41c95be6db4b"},{"properties":{"registrationDefinitionName":"ps7052","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/6f23783c-5999-4c42-b894-f0e40d49d307","type":"Microsoft.ManagedServices/registrationDefinitions","name":"6f23783c-5999-4c42-b894-f0e40d49d307"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/6feec550-c968-476a-9141-11463a2cba1a","type":"Microsoft.ManagedServices/registrationDefinitions","name":"6feec550-c968-476a-9141-11463a2cba1a"},{"properties":{"registrationDefinitionName":"clideftest","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/7567ff0b-e223-4061-80c0-363f4f654fe3","type":"Microsoft.ManagedServices/registrationDefinitions","name":"7567ff0b-e223-4061-80c0-363f4f654fe3"},{"properties":{"registrationDefinitionName":"ps8903","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/7a4946ae-1c3c-4857-a56d-0644166aaf97","type":"Microsoft.ManagedServices/registrationDefinitions","name":"7a4946ae-1c3c-4857-a56d-0644166aaf97"},{"properties":{"registrationDefinitionName":"Registration
+        Test with delegated definition","description":"Test","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/82e59375-1a6d-4577-9a98-2bfde12f4274","type":"Microsoft.ManagedServices/registrationDefinitions","name":"82e59375-1a6d-4577-9a98-2bfde12f4274"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8901fadf-ff28-4f39-984c-35775d2d4f50","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8901fadf-ff28-4f39-984c-35775d2d4f50"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"plan":{"name":"plan","product":"product","publisher":"publisher","version":"0.1"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8cde7c19-1750-468e-973e-b711549edc35","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8cde7c19-1750-468e-973e-b711549edc35"},{"properties":{"registrationDefinitionName":"rajivnan-Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"e87b720b-9168-4250-8e49-045286579941","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/8e8b5550-1973-4836-9aec-15b3ed9ac213","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8e8b5550-1973-4836-9aec-15b3ed9ac213"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/93fd6918-54d5-4688-81aa-7d9c3b8fa267","type":"Microsoft.ManagedServices/registrationDefinitions","name":"93fd6918-54d5-4688-81aa-7d9c3b8fa267"},{"properties":{"registrationDefinitionName":"ps127","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/a156aad7-f3ce-4a46-b240-246242b6bd78","type":"Microsoft.ManagedServices/registrationDefinitions","name":"a156aad7-f3ce-4a46-b240-246242b6bd78"},{"properties":{"registrationDefinitionName":"ps7939","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/ab274731-7b59-4615-a0c4-bc7bef1f4a5f","type":"Microsoft.ManagedServices/registrationDefinitions","name":"ab274731-7b59-4615-a0c4-bc7bef1f4a5f"},{"properties":{"registrationDefinitionName":"foo","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/b61a0a34-0509-43e0-b839-a392a3e05173","type":"Microsoft.ManagedServices/registrationDefinitions","name":"b61a0a34-0509-43e0-b839-a392a3e05173"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"Test","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/bb2626be-3e11-442f-b0f1-9209508d4f52","type":"Microsoft.ManagedServices/registrationDefinitions","name":"bb2626be-3e11-442f-b0f1-9209508d4f52"},{"properties":{"registrationDefinitionName":"foo","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/bd6ab912-359b-47dd-927a-9880eef365bd","type":"Microsoft.ManagedServices/registrationDefinitions","name":"bd6ab912-359b-47dd-927a-9880eef365bd"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/c1d0e9ad-d764-4c2d-8aa3-d5ea39cb1906","type":"Microsoft.ManagedServices/registrationDefinitions","name":"c1d0e9ad-d764-4c2d-8aa3-d5ea39cb1906"},{"properties":{"registrationDefinitionName":"clideftest","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/c5f63b67-3d34-41bf-be6f-26f63efff9ea","type":"Microsoft.ManagedServices/registrationDefinitions","name":"c5f63b67-3d34-41bf-be6f-26f63efff9ea"},{"properties":{"registrationDefinitionName":"Registration
+        Test","description":"Test","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"},{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"b24988ac-6180-42a0-ab88-20f7382dd24c"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/cae481c0-de7c-42a8-86c1-5b170861caf8","type":"Microsoft.ManagedServices/registrationDefinitions","name":"cae481c0-de7c-42a8-86c1-5b170861caf8"},{"properties":{"registrationDefinitionName":"name","description":"mydef1","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/cd96a7c3-0356-49d8-a0d1-fed78aa14bcf","type":"Microsoft.ManagedServices/registrationDefinitions","name":"cd96a7c3-0356-49d8-a0d1-fed78aa14bcf"},{"properties":{"registrationDefinitionName":"ps7291","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/d3301f65-7087-438c-a6bc-4b7ead094889","type":"Microsoft.ManagedServices/registrationDefinitions","name":"d3301f65-7087-438c-a6bc-4b7ead094889"},{"properties":{"registrationDefinitionName":"name","description":"mydef1","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/d4d14a4c-9b54-4dc3-b755-6d0659e0224b","type":"Microsoft.ManagedServices/registrationDefinitions","name":"d4d14a4c-9b54-4dc3-b755-6d0659e0224b"},{"properties":{"registrationDefinitionName":"asd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/db43b9f7-b8b9-4d2e-bcb3-9368f1ca360a","type":"Microsoft.ManagedServices/registrationDefinitions","name":"db43b9f7-b8b9-4d2e-bcb3-9368f1ca360a"},{"properties":{"registrationDefinitionName":"ps8814","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/e2ddcd3c-d50f-4d51-afd9-f9132fcae4e7","type":"Microsoft.ManagedServices/registrationDefinitions","name":"e2ddcd3c-d50f-4d51-afd9-f9132fcae4e7"},{"properties":{"registrationDefinitionName":"clideftest","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/e716db1e-393d-4f2a-81fe-2577e92c9200","type":"Microsoft.ManagedServices/registrationDefinitions","name":"e716db1e-393d-4f2a-81fe-2577e92c9200"},{"properties":{"registrationDefinitionName":"ps4847","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/ee7e40e8-bc3f-4624-b0ca-d5364635b141","type":"Microsoft.ManagedServices/registrationDefinitions","name":"ee7e40e8-bc3f-4624-b0ca-d5364635b141"},{"properties":{"registrationDefinitionName":"asd","description":"dsc","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"plan":{"name":"name","product":"product","publisher":"pub","version":"1.0.0"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/f2dbf9cf-13a7-40da-89b1-8929c560899c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"f2dbf9cf-13a7-40da-89b1-8929c560899c"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/fdad02a1-a715-4352-844f-2923233590da","type":"Microsoft.ManagedServices/registrationDefinitions","name":"fdad02a1-a715-4352-844f-2923233590da"},{"properties":{"registrationDefinitionName":"ps8849","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/38bd4bef-41ff-45b5-b3af-d03e55a4ca15/providers/Microsoft.ManagedServices/registrationDefinitions/fff287a4-1714-4a17-bc40-a17ca8e69e3f","type":"Microsoft.ManagedServices/registrationDefinitions","name":"fff287a4-1714-4a17-bc40-a17ca8e69e3f"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '26240'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 29 Jun 2019 07:03:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
