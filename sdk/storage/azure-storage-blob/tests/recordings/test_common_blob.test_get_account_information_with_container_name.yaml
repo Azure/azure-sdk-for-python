@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 30562fd2-8ecb-11e9-b390-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:15 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://remotestoragename.blob.core.windows.net/missing?restype=account&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:38:15 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-account-kind:
+      - StorageV2
+      x-ms-request-id:
+      - 9184d1b4-e01e-0088-44d7-22dcd9000000
+      x-ms-sku-name:
+      - Standard_RAGRS
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 82ae0b66-8ed4-11e9-87b5-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 18:44:58 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/missing?restype=account&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 18:44:58 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-account-kind:
+      - StorageV2
+      x-ms-request-id:
+      - 98937ed8-201e-0095-13e1-220533000000
+      x-ms-sku-name:
+      - Standard_RAGRS
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+version: 1

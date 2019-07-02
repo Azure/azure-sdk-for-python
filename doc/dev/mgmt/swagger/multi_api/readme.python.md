@@ -7,11 +7,11 @@ python:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   payload-flattening-threshold: 2
-  package-name: azure-mgmt-network
+  package-name: azure-mgmt-servicetoreplace
   clear-output-folder: true
   no-namespace-folders: true
-  python-base-folder: network/azure-mgmt-network/azure/mgmt/network
-  python-base-namespace: azure.mgmt.network
+  python-base-folder: servicetoreplace/azure-mgmt-servicetoreplace/azure/mgmt/servicetoreplace
+  python-base-namespace: azure.mgmt.servicetoreplace
 ```
 
 ### Python multi-api

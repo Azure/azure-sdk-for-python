@@ -58,15 +58,8 @@ class AuthnClientBase(object):
 
         token = payload["access_token"]
 
-        # these values are strings in some responses but msal.TokenCache requires they be integers
-        # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
-        if "expires_in" in payload:
-            payload["expires_in"] = int(payload["expires_in"])
-        if "ext_expires_in" in payload:
-            payload["ext_expires_in"] = int(payload["ext_expires_in"])
-
         # AccessToken wants expires_on as an int
-        expires_on = payload.get("expires_on") or payload["expires_in"] + request_time
+        expires_on = payload.get("expires_on") or int(payload["expires_in"]) + request_time
         try:
             expires_on = int(expires_on)
         except ValueError:

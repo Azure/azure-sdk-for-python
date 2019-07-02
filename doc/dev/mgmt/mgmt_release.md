@@ -1,17 +1,8 @@
 # Doing a mgmt release
 
-IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests#setting-up-a-test-environment) in your currently loaded virtual environment.
+Once you have a PR that contains accurate with correct tests (or no tests at all, but CI is green), this page explains how to prepare for a release.
 
-## Building the code
-
-If the automation is doing its job correctly, you should not have to build the SDK, but look for an integration PR for the service in question. This link will give you for instance [the list of all integration PRs](https://github.com/Azure/azure-sdk-for-python/labels/ServicePR).
-
-If you really need to generate the code manually:
-- Checkout the branch
-- Checkout the RestAPI specs repo
-- Call the tool: `python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md` changing the last path to the readme you want to generate.
-
-That's it.
+IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
 
 ## Building the packaging information
 
@@ -125,3 +116,16 @@ You need to check the version in:
 ```
 /azure-mgmt-myservice/azure/mgmt/myservice/version.py
 ```
+
+Python SDK _strictly_ follows [semver](https://semver.org/). A few notes:
+
+- First release should always use 0.1.0, unless asked explicitly by service team
+- If a version is 0.5.2:
+  - Next breaking / feature version is 0.6.0
+  - Next bug fix is 0.5.3
+- If a version is 2.1.0:
+  - Next preview breaking is 3.0.0rc1
+  - Next stable breaking is 3.0.0
+  - Next preview feature is 2.2.0rc1
+  - Next stable feature is 2.2.0
+  - Next patch is  2.1.1
