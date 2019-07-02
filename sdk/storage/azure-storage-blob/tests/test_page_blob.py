@@ -24,7 +24,7 @@ from azure.storage.blob import (
     SequenceNumberAction,
     StorageErrorCode)
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

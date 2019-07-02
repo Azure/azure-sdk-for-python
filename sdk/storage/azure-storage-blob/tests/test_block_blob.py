@@ -19,7 +19,7 @@ from azure.storage.blob import (
     BlobBlock,
     StandardBlobTier
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

@@ -14,7 +14,7 @@ from azure.storage.blob import (
     ExponentialRetry
 )
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     ResponseCallback,
     record,

@@ -34,12 +34,12 @@ from azure.storage.blob import (
     BlobClient,
     BlobType
 )
-from tests.encryption_test_helper import (
+from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
     RSAKeyWrapper,
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

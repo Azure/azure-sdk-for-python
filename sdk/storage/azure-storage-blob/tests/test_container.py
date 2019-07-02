@@ -23,7 +23,7 @@ from azure.storage.blob import (
     AccessPolicy
 )
 
-from tests.testcase import StorageTestCase, TestMode, record, LogCaptured
+from testcase import StorageTestCase, TestMode, record, LogCaptured
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'

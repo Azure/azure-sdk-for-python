@@ -23,7 +23,7 @@ from azure.storage.blob import (
     NoRetry
 )
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
     TestMode,

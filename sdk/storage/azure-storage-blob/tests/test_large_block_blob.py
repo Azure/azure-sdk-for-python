@@ -23,7 +23,7 @@ if os.sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

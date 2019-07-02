@@ -9,11 +9,11 @@
 import pytest
 
 try:
-    from . import settings_real as settings
+    import settings_real as settings
 except ImportError:
-    from . import settings_fake as settings
+    import settings_fake as settings
 
-from .testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record

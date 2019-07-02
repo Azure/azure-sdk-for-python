@@ -24,7 +24,7 @@ from azure.storage.blob import (
     ContentSettings,
     BlobProperties
 )
-from .testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )

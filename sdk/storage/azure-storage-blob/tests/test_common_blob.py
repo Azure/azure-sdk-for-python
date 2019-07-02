@@ -34,7 +34,7 @@ from azure.storage.blob import (
     ResourceTypes,
     AccountPermissions,
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

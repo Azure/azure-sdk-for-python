@@ -21,7 +21,7 @@ from azure.storage.blob import (
     StaticWebsite,
 )
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
     not_for_emulator,

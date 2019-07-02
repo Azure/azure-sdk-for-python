@@ -21,7 +21,7 @@ import uuid
 import unittest
 import sys
 import random
-import tests.settings_fake as fake_settings
+import settings_fake as fake_settings
 import logging
 
 try:
@@ -32,7 +32,7 @@ except ImportError:
 from azure.core.credentials import AccessToken
 
 try:
-    import tests.settings_real as settings
+    import settings_real as settings
 except ImportError:
     settings = None
 

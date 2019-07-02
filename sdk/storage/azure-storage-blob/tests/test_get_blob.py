@@ -19,7 +19,7 @@ from azure.storage.blob import (
     StorageErrorCode,
     BlobProperties
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

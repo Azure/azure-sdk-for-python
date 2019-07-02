@@ -15,7 +15,7 @@ from azure.storage.blob import (
     BlobPermissions
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )

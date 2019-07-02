@@ -19,7 +19,7 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.utils import _QueryStringConstants
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,

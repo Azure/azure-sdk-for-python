@@ -15,7 +15,7 @@ from azure.storage.blob import (
     BlobClient,
     StandardBlobTier
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )
