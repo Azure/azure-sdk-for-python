@@ -1,4 +1,4 @@
-# coding: utf-8
+﻿# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -70,7 +70,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class StorageTestCase(unittest.TestCase):
+class QueueTestCase(unittest.TestCase):
 
     def setUp(self):
         self.working_folder = os.path.dirname(__file__)
@@ -195,8 +195,14 @@ class StorageTestCase(unittest.TestCase):
             self.settings.STORAGE_ACCOUNT_NAME
         )
 
-    def _get_oauth_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
+    def _get_queue_url(self):
+        return "{}://{}.queue.core.windows.net".format(
+            self.settings.PROTOCOL,
+            self.settings.STORAGE_ACCOUNT_NAME
+        )
+
+    def _get_oauth_queue_url(self):
+        return "{}://{}.queue.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.OAUTH_STORAGE_ACCOUNT_NAME
         )
@@ -213,19 +219,26 @@ class StorageTestCase(unittest.TestCase):
             self.settings.REMOTE_STORAGE_ACCOUNT_NAME
         )
 
-    def _create_storage_service(self, service_class, settings, **kwargs):
+    def _create_storage_service(self, service_class, settings):
         if settings.CONNECTION_STRING:
-            service = service_class.from_connection_string(settings.CONNECTION_STRING, **kwargs)
+            service = service_class(connection_string=settings.CONNECTION_STRING)
+        elif settings.IS_EMULATED:
+            service = service_class(is_emulated=True)
         else:
-            url = self._get_account_url()
-            credential = self._get_shared_key_credential()
-            service = service_class(url, credential=credential, **kwargs)
+            service = service_class(
+                settings.STORAGE_ACCOUNT_NAME,
+                settings.STORAGE_ACCOUNT_KEY,
+                protocol=settings.PROTOCOL,
+            )
+        self._set_test_proxy(service, settings)
         return service
 
     # for blob storage account
     def _create_storage_service_for_blob_storage_account(self, service_class, settings):
         if hasattr(settings, 'BLOB_CONNECTION_STRING') and settings.BLOB_CONNECTION_STRING != "":
             service = service_class(connection_string=settings.BLOB_CONNECTION_STRING)
+        elif settings.IS_EMULATED:
+            service = service_class(is_emulated=True)
         elif hasattr(settings, 'BLOB_STORAGE_ACCOUNT_NAME') and settings.BLOB_STORAGE_ACCOUNT_NAME != "":
             service = service_class(
                 settings.BLOB_STORAGE_ACCOUNT_NAME,
@@ -235,9 +248,14 @@ class StorageTestCase(unittest.TestCase):
         else:
             raise SkipTest('BLOB_CONNECTION_STRING or BLOB_STORAGE_ACCOUNT_NAME must be populated to run this test')
 
+        self._set_test_proxy(service, settings)
+        return service
+
     def _create_premium_storage_service(self, service_class, settings):
         if hasattr(settings, 'PREMIUM_CONNECTION_STRING') and settings.PREMIUM_CONNECTION_STRING != "":
             service = service_class(connection_string=settings.PREMIUM_CONNECTION_STRING)
+        elif settings.IS_EMULATED:
+            service = service_class(is_emulated=True)
         elif hasattr(settings, 'PREMIUM_STORAGE_ACCOUNT_NAME') and settings.PREMIUM_STORAGE_ACCOUNT_NAME != "":
             service = service_class(
                 settings.PREMIUM_STORAGE_ACCOUNT_NAME,
@@ -341,8 +359,8 @@ class StorageTestCase(unittest.TestCase):
 
     def _scrub(self, val):
         old_to_new_dict = {
-            self.settings.STORAGE_ACCOUNT_NAME: self.fake_settings.STORAGE_ACCOUNT_NAME,
-            self.settings.STORAGE_ACCOUNT_KEY: self.fake_settings.STORAGE_ACCOUNT_KEY,
+            self.settings.STORAGE_ACCOUNT_NAME: self.settings.STORAGE_ACCOUNT_NAME,
+            self.settings.STORAGE_ACCOUNT_KEY: self.settings.STORAGE_ACCOUNT_KEY,
             self.settings.OAUTH_STORAGE_ACCOUNT_NAME: self.fake_settings.OAUTH_STORAGE_ACCOUNT_NAME,
             self.settings.OAUTH_STORAGE_ACCOUNT_KEY: self.fake_settings.OAUTH_STORAGE_ACCOUNT_KEY,
             self.settings.BLOB_STORAGE_ACCOUNT_NAME: self.fake_settings.BLOB_STORAGE_ACCOUNT_NAME,
@@ -421,7 +439,10 @@ def record(test):
 
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
-        test(self)
+        if self.settings.IS_EMULATED:
+            return
+        else:
+            test(self)
     return skip_test_if_targeting_emulator
 
 
@@ -441,14 +462,14 @@ class ResponseCallback(object):
         self.count = 0
 
     def override_first_status(self, response):
-        if self.first and response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
+        if self.first and response.status == self.status:
+            response.status = self.new_status
             self.first = False
         self.count += 1
 
     def override_status(self, response):
-        if response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
+        if response.status == self.status:
+            response.status = self.new_status
         self.count += 1
 
 
@@ -470,8 +491,8 @@ class LogCaptured(object):
         self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
 
         # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage.blob')
-        self.logger.level = logging.DEBUG
+        self.logger = logging.getLogger('azure.storage')
+        self.logger.level = logging.INFO
         self.logger.addHandler(self.handler)
 
         # the stream is returned to the user so that the capture logs can be retrieved
