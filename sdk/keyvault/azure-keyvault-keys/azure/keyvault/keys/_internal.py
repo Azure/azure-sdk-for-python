@@ -6,7 +6,6 @@ from collections import namedtuple
 from typing import TYPE_CHECKING
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from ._generated import KeyVaultClient
 
@@ -21,6 +20,7 @@ try:
 except ImportError:
     import urlparse as parse  # pylint: disable=import-error
 
+from .auth_challenge_policy import AuthChallengePolicy
 
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
@@ -65,7 +65,7 @@ class _KeyVaultClientBase(object):
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, KEY_VAULT_SCOPE)
+        config.authentication_policy = AuthChallengePolicy(credential)
         return config
 
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
