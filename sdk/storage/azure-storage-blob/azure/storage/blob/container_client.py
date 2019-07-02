@@ -98,14 +98,14 @@ class ContainerClient(StorageAccountHostsMixin):
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
-            :dedent: 12
+            :dedent: 8
             :caption: Get a ContainerClient from an existing BlobSericeClient.
 
         .. literalinclude:: ../tests/test_blob_samples_containers.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
-            :dedent: 12
+            :dedent: 8
             :caption: Creating the container client directly.
     """
     def __init__(

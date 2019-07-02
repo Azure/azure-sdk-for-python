@@ -1,7 +1,7 @@
 # Azure Key Vault Secret client library for Python
 Azure Key Vault is a cloud service that provides a secure storage of secrets, such as passwords and database connection strings. Secret client library allows you to securely store and tightly control the access to tokens, passwords, API keys, and other secrets. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the secrets and its versions.
 
-[Source code][secrets_client_src] | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][secret_samples]
+[Source code][secrets_client_src] | [Package (PyPI)][pypi_package_secrets] | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][secret_samples]
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip][pip]:
@@ -260,6 +260,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations_async.py
 [pip]: https://pypi.org/project/pip/
+[pypi_package_secrets]: https://pypi.org/project/azure-keyvault-secrets/
 [secrets_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault/azure/keyvault/secrets
 [secret_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete

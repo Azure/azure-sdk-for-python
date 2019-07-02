@@ -9,7 +9,7 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
 
 
 ## Getting started
@@ -158,7 +158,7 @@ All Blob service operations will throw a StorageErrorException on failure with h
 
 ### More sample code
 
-Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples).
+Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests).
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
