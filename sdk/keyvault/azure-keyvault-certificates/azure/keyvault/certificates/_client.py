@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+
 from ._internal import _KeyVaultClientBase
 from ._models import (
     Certificate,
@@ -29,6 +31,8 @@ class CertificateClient(_KeyVaultClientBase):
             :dedent: 4
             :caption: Creates a new instance of the Certificate client
     """
+    # pylint:disable=protected-access
+
     def create_certificate(self, name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, Optional[CertificatePolicy], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
         """Creates a new certificate.
@@ -61,7 +65,13 @@ class CertificateClient(_KeyVaultClientBase):
             attributes = None
 
         bundle = self._client.create_certificate(
-            self.vault_url, certificate_name=name, certificate_policy=policy, certificate_attributes=attributes, tags=tags)
+            self.vault_url,
+            certificate_name=name,
+            certificate_policy=policy,
+            certificate_attributes=attributes,
+            tags=tags,
+            **kwargs
+        )
 
         return CertificateOperation._from_certificate_operation_bundle(bundle)
 
@@ -83,7 +93,7 @@ class CertificateClient(_KeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = self._client.get_certificate(self.vault_url, name, certificate_version=version)
+        bundle = self._client.get_certificate(self.vault_url, name, certificate_version=version, **kwargs)
         return Certificate._from_certificate_bundle(bundle)
 
     def delete_certificate(self, name, **kwargs):
@@ -100,20 +110,24 @@ class CertificateClient(_KeyVaultClientBase):
         :returns: The deleted certificate
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         """
-        bundle = self._client.delete_certificate(self.vault_url, name)
+        bundle = self._client.delete_certificate(self.vault_url, certificate_name=name, **kwargs)
         return DeletedCertificate._from_deleted_certificate_bundle(bundle)
 
     def get_deleted_certificate(self, name, **kwargs):
         # type: (str) -> DeletedCertificate
-        pass
+        bundle = self._client.get_deleted_certificate(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
+        return DeletedCertificate._from_deleted_certificate_bundle(bundle)
 
     def purge_deleted_certificate(self, name, **kwargs):
         # type: (str) -> None
-        pass
+        self._client.purge_deleted_certificate(self.vault_url, name, **kwargs)
 
     def recover_deleted_certificate(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Certificate
-        pass
+        bundle = self._client.recover_deleted_certificate(self.vault_url, name, **kwargs)
+        return Certificate._from_certificate_bundle(bundle)
 
     def import_certificate(
         self,
@@ -174,6 +188,7 @@ class CertificateClient(_KeyVaultClientBase):
             polciy=policy,
             certificate_attributes=attributes,
             tags=tags,
+            **kwargs
         )
         return Certificate._from_certificate_bundle(bundle)
 
@@ -185,7 +200,7 @@ class CertificateClient(_KeyVaultClientBase):
         # type: (str, CertificatePolicy) -> CertificatePolicy
         pass
 
-    def update_certificate(self, name, version, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
+    def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
         # type: (str, str, Optional[bool], Optional[Dict[str, str]]) -> Certificate
         """Updates the specified attributes associated with the given certificate.
 
@@ -217,7 +232,7 @@ class CertificateClient(_KeyVaultClientBase):
             attributes = None
 
         bundle = self._client.update_certificate(
-            self.vault_url, name, certificate_version=version, certificate_attributes=attributes, tags=tags
+            self.vault_url, name, certificate_version=version or "", certificate_attributes=attributes, tags=tags, **kwargs
         )
         return Certificate._from_certificate_bundle(bundle)
 
@@ -229,15 +244,26 @@ class CertificateClient(_KeyVaultClientBase):
 
     def backup_certificate(self, name, **kwargs):
         # type: (str) -> bytes
-        pass
+        backup_result = self._client.backup_certificate(
+            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+        )
+        return backup_result.value
+
 
     def restore_certificate(self, backup, **kwargs):
         # type: (bytes) -> Certificate
-        pass
+        bundle = self._client.restore_certificate(
+            self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs
+        )
+        return Certificate._from_certificate_bundle(bundle)
 
     def list_deleted_certificates(self, include_pending=None, **kwargs):
         # type: (Optional[bool]) -> Generator[DeletedCertificate]
-        pass
+        max_page_size = kwargs.get("max_page_size", None)
+        pages = self._client.get_deleted_certificates(
+            self._vault_url, maxresults=max_page_size, include_pending=include_pending, **kwargs
+        )
+        return (DeletedCertificate._from_deleted_certificate_item(item) for item in pages)
 
     def list_certificates(self, include_pending=None, **kwargs):
         # type: (Optional[bool]) -> Generator[CertificateBase]
@@ -256,7 +282,7 @@ class CertificateClient(_KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         pages = self._client.get_certificates(
-            self._vault_url, maxresults=max_page_size, include_pending=include_pending
+            self._vault_url, maxresults=max_page_size, include_pending=include_pending, **kwargs
         )
         return (CertificateBase._from_certificate_item(item) for item in pages)
 
@@ -275,7 +301,7 @@ class CertificateClient(_KeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_certificate_versions(self._vault_url, name, maxresults=max_page_size)
+        pages = self._client.get_certificate_versions(self._vault_url, name, maxresults=max_page_size, **kwargs)
         return (CertificateBase._from_certificate_item(item) for item in pages)
 
     def create_contacts(self, contacts, **kwargs):
@@ -290,7 +316,7 @@ class CertificateClient(_KeyVaultClientBase):
         :returns: The created list of contacts
         :rtype: ~azure.security.keyvault.certificates._models.Contacts
         """
-        bundle = self._client.set_certificate_contacts(self.vault_url, contact_list=contacts)
+        bundle = self._client.set_certificate_contacts(self.vault_url, contact_list=contacts, **kwargs)
         return Contact._from_certificate_contacts_item(bundle)
 
     def list_contacts(self, **kwargs):
@@ -314,7 +340,7 @@ class CertificateClient(_KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.v7_0.models.CertificateOperation
         """
 
-        bundle =  self._client.get_certificate_operation(self.vault_url, name)
+        bundle = self._client.get_certificate_operation(self.vault_url, name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(bundle)
 
     def delete_certificate_operation(self, name, **kwargs):
@@ -330,7 +356,7 @@ class CertificateClient(_KeyVaultClientBase):
         :return: The deleted CertificateOperation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         """
-        bundle = self._client.delete_certificate_operation(self.vault_url, name)
+        bundle = self._client.delete_certificate_operation(self.vault_url, name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(bundle)
 
     def cancel_certificate_operation(self, name, cancellation_requested, **kwargs):
@@ -348,7 +374,7 @@ class CertificateClient(_KeyVaultClientBase):
         :returns: The updated certificate operation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         """
-        bundle = self._client.update_certificate_operation(self.vault_url, name, cancellation_requested)
+        bundle = self._client.update_certificate_operation(self.vault_url, name, cancellation_requested, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(bundle)
 
     def get_pending_certificate_signing_request(self, name, **kwargs):

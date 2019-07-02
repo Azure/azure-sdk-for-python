@@ -502,8 +502,8 @@ class Contact:
 
 
 class IssuerBase(object):
-    def __init__(self, attributes, issuer_id, provider, **kwargs):
-        # type: (models.IssuerAttributes, str, str, Mapping[str, Any]) -> None
+    def __init__(self, attributes, issuer_id, provider):
+        # type: (models.IssuerAttributes, str, str) -> None
         self._attributes = attributes
         self._id = issuer_id
         self._vault_id = _parse_vault_id(issuer_id)
