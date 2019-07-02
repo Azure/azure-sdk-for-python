@@ -84,8 +84,7 @@ setup(
         "cryptography>=2.1.4"
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-storage-nspkg~=3'],
-        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },
