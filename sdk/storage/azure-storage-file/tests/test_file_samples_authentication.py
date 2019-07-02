@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 try:
     import settings_real as settings
 except ImportError:
-    import settings_fake as settings
+    import file_settings_fake as settings
 
 from filetestcase import (
     FileTestCase,

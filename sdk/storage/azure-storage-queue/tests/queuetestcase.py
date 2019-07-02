@@ -21,7 +21,7 @@ import uuid
 import unittest
 import sys
 import random
-import settings_fake as fake_settings
+import queue_settings_fake as fake_settings
 import logging
 
 try:
