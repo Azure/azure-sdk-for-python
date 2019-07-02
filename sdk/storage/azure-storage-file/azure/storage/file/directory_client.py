@@ -194,7 +194,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
                 :language: python
@@ -224,7 +224,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
@@ -252,7 +252,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
@@ -281,7 +281,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.models.DirectoryPropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
                 :language: python
@@ -438,7 +438,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
                 :language: python
@@ -464,7 +464,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
                 :language: python
@@ -518,7 +518,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.file_client.FileClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
                 :language: python
@@ -554,7 +554,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
                 :language: python

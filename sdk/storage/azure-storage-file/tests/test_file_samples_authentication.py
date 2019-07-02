@@ -20,7 +20,7 @@ from filetestcase import (
 )
 
 
-class TestAuthSamples(FileTestCase):
+class TestFileAuthSamples(FileTestCase):
     url = "{}://{}.file.core.windows.net".format(
         settings.PROTOCOL,
         settings.STORAGE_ACCOUNT_NAME
