@@ -14,14 +14,14 @@ try:
 except ImportError:
     import settings_fake as settings
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     TestMode,
     record
 )
 
 
-class TestAuthSamples(StorageTestCase):
+class TestQueueAuthSamples(QueueTestCase):
     url = "{}://{}.queue.core.windows.net".format(
         settings.PROTOCOL,
         settings.STORAGE_ACCOUNT_NAME

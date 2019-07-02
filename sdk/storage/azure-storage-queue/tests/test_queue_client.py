@@ -11,8 +11,8 @@ from azure.storage.queue import (
     QueueServiceClient,
     QueueClient,
 )
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record,
 )
 
@@ -26,9 +26,9 @@ _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
 
-class StorageClientTest(StorageTestCase):
+class StorageQueueClientTest(QueueTestCase):
     def setUp(self):
-        super(StorageClientTest, self).setUp()
+        super(StorageQueueClientTest, self).setUp()
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
         self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'

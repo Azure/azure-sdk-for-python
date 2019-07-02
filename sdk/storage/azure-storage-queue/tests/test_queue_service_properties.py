@@ -19,8 +19,8 @@ from azure.storage.queue import (
     RetentionPolicy,
 )
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record,
     not_for_emulator,
 )
@@ -29,9 +29,9 @@ from testcase import (
 # ------------------------------------------------------------------------------
 
 
-class ServicePropertiesTest(StorageTestCase):
+class QueueServicePropertiesTest(QueueTestCase):
     def setUp(self):
-        super(ServicePropertiesTest, self).setUp()
+        super(QueueServicePropertiesTest, self).setUp()
 
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()

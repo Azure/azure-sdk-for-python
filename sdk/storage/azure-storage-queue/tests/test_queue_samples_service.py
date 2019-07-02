@@ -11,13 +11,13 @@ try:
 except ImportError:
     import settings_fake as settings
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record
 )
 
 
-class TestQueueServiceSamples(StorageTestCase):
+class TestQueueServiceSamples(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 

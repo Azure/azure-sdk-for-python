@@ -29,8 +29,8 @@ from azure.storage.queue import (
     AccountPermissions,
 )
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     TestMode,
     record,
     LogCaptured,
@@ -43,7 +43,7 @@ TEST_QUEUE_PREFIX = 'pythonqueue'
 # ------------------------------------------------------------------------------
 
 
-class StorageQueueTest(StorageTestCase):
+class StorageQueueTest(QueueTestCase):
     def setUp(self):
         super(StorageQueueTest, self).setUp()
 

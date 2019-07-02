@@ -8,8 +8,8 @@ import pytest
 
 from azure.storage.queue import QueueServiceClient
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record,
 )
 
@@ -19,7 +19,7 @@ SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageS
 
 
 # --Test Class -----------------------------------------------------------------
-class ServiceStatsTest(StorageTestCase):
+class QueueServiceStatsTest(QueueTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)

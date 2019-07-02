@@ -20,8 +20,8 @@ from azure.storage.queue import (
     NoEncodePolicy,
     NoDecodePolicy)
 
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record,
 )
 
@@ -31,7 +31,7 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 
 # ------------------------------------------------------------------------------
 
-class StorageQueueEncodingTest(StorageTestCase):
+class StorageQueueEncodingTest(QueueTestCase):
     def setUp(self):
         super(StorageQueueEncodingTest, self).setUp()
 

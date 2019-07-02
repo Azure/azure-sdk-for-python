@@ -42,8 +42,8 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from testcase import (
-    StorageTestCase,
+from queuetestcase import (
+    QueueTestCase,
     record,
     TestMode,
 )
@@ -55,7 +55,7 @@ TEST_QUEUE_PREFIX = 'encryptionqueue'
 # ------------------------------------------------------------------------------
 
 
-class StorageQueueEncryptionTest(StorageTestCase):
+class StorageQueueEncryptionTest(QueueTestCase):
     def setUp(self):
         super(StorageQueueEncryptionTest, self).setUp()
 
