@@ -13,7 +13,7 @@ from ._models import (
     CertificatePolicy,
     Contact,
     Issuer,
-    IssuerBase,
+    IssuerBase
 )
 
 __all__ = [
@@ -25,5 +25,5 @@ __all__ = [
     "Issuer",
     "IssuerBase",
     "Contact",
-    "CertificateOperation",
+    "CertificateOperation"
 ]

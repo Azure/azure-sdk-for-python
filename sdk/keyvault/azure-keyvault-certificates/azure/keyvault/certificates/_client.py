@@ -236,11 +236,6 @@ class CertificateClient(_KeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(bundle)
 
-    def merge_certificate(
-        self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs
-    ):
-        # type: (str, list[str], Optional[bool], Optional[Dict[str, str]]) -> Certificate
-        pass
 
     def backup_certificate(self, name, **kwargs):
         # type: (str) -> bytes
@@ -321,11 +316,10 @@ class CertificateClient(_KeyVaultClientBase):
 
     def list_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        pass
+        max_page_size = kwargs.get("max_page_size", None)
+        pages = self._client.get_certificate_contacts(self._vault_url, maxresults=max_page_size, **kwargs)
+        return (Contact._from_certificate_contacts_item(item) for item in pages)
 
-    def delete_contacts(self, **kwargs):
-        # type: () -> Iterable[Contact]
-        pass
 
     def get_certificate_operation(self, name, **kwargs):
         # type: (str) -> CertificateOperation
@@ -376,6 +370,16 @@ class CertificateClient(_KeyVaultClientBase):
         """
         bundle = self._client.update_certificate_operation(self.vault_url, name, cancellation_requested, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(bundle)
+
+    def merge_certificate(
+        self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs
+    ):
+        # type: (str, list[str], Optional[bool], Optional[Dict[str, str]]) -> Certificate
+        pass
+
+    def delete_contacts(self, **kwargs):
+        # type: () -> Iterable[Contact]
+        pass
 
     def get_pending_certificate_signing_request(self, name, **kwargs):
         # type: (str) -> str

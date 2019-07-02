@@ -343,7 +343,7 @@ class CertificatePolicy(object):
         certificate_type,
         certificate_transparency,
     ):
-        # type: (models.CertificatePolicy, str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifeTimeActions], str, str, bool, Mapping[str, Any]) -> None
+        # type: (models.CertificatePolicy, str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifeTimeAction], str, str, bool, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = cert_policy_id
         self._key_properties = key_properties
@@ -369,8 +369,8 @@ class CertificatePolicy(object):
             certificate_type=certificate_policy_bundle.issuer_parameters.certificate_type,
             certificate_transparency=certificate_policy_bundle.issuer_parameters.certificate_transparency,
             lifetime_actions=[
-                LifetimeActions(
-                    action_type=item.action,
+                LifetimeAction(
+                    action_type=item.action.action_type,
                     lifetime_percentage=item.trigger.lifetime_percentage or None,
                     days_before_expiry=item.trigger.days_before_expiry or None,
                 )
@@ -393,7 +393,6 @@ class CertificatePolicy(object):
             content_type=certificate_policy_bundle.secret_properties.content_type,
         )
 
-    # created updated stuff question
     @property
     def id(self):
         # type: () -> str
@@ -637,7 +636,7 @@ class KeyProperties(object):
         return self._key_usage
 
 
-class LifetimeActions(object):
+class LifetimeAction(object):
     """Action and its trigger that will be performed by certificate Vault over the
     lifetime of a certificate.
     """
@@ -702,7 +701,6 @@ class DeletedCertificate(Certificate):
             cer=None,
             recovery_id=deleted_certificate_item.recovery_id,
             scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
-            managed=deleted_certificate_item.managed,
             tags=deleted_certificate_item.tags,
         )
 
@@ -716,11 +714,10 @@ class DeletedCertificate(Certificate):
             thumbprint=deleted_certificate_bundle.x509_thumbprint,
             kid=deleted_certificate_bundle.kid,
             sid=deleted_certificate_bundle.sid,
-            policy=deleted_certificate_bundle.policy,
+            policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
             recovery_id=deleted_certificate_bundle.recovery_id,
             scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
-            managed=deleted_certificate_bundle.managed,
             tags=deleted_certificate_bundle.tags,
         )
 
