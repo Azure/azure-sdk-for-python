@@ -24,6 +24,7 @@ class RegistrationAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
     """
 
     models = models
@@ -33,11 +34,12 @@ class RegistrationAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-06-01"
 
         self.config = config
 
     def get(
-            self, scope, registration_assignment_id, api_version, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
         """Gets the details of specified registration assignment.
 
         :param scope: Scope of the resource.
@@ -45,8 +47,6 @@ class RegistrationAssignmentsOperations(object):
         :param registration_assignment_id: Guid of the registration
          assignment.
         :type registration_assignment_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param expand_registration_definition: Tells whether to return
          registration definition details also along with registration
          assignment details.
@@ -74,7 +74,7 @@ class RegistrationAssignmentsOperations(object):
         query_parameters = {}
         if expand_registration_definition is not None:
             query_parameters['$expandRegistrationDefinition'] = self._serialize.query("expand_registration_definition", expand_registration_definition, 'bool')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -107,7 +107,7 @@ class RegistrationAssignmentsOperations(object):
 
 
     def _delete_initial(
-            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -118,7 +118,7 @@ class RegistrationAssignmentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -141,7 +141,7 @@ class RegistrationAssignmentsOperations(object):
             return client_raw_response
 
     def delete(
-            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, scope, registration_assignment_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the specified registration assignment.
 
         :param scope: Scope of the resource.
@@ -149,8 +149,6 @@ class RegistrationAssignmentsOperations(object):
         :param registration_assignment_id: Guid of the registration
          assignment.
         :type registration_assignment_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -166,7 +164,6 @@ class RegistrationAssignmentsOperations(object):
         raw_result = self._delete_initial(
             scope=scope,
             registration_assignment_id=registration_assignment_id,
-            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -188,7 +185,7 @@ class RegistrationAssignmentsOperations(object):
 
 
     def _create_or_update_initial(
-            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
         request_body = models.RegistrationAssignment(properties=properties)
 
         # Construct URL
@@ -201,7 +198,7 @@ class RegistrationAssignmentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -238,7 +235,7 @@ class RegistrationAssignmentsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, scope, registration_assignment_id, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a registration assignment.
 
         :param scope: Scope of the resource.
@@ -246,8 +243,6 @@ class RegistrationAssignmentsOperations(object):
         :param registration_assignment_id: Guid of the registration
          assignment.
         :type registration_assignment_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param properties: Properties of a registration assignment.
         :type properties:
          ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
@@ -268,7 +263,6 @@ class RegistrationAssignmentsOperations(object):
         raw_result = self._create_or_update_initial(
             scope=scope,
             registration_assignment_id=registration_assignment_id,
-            api_version=api_version,
             properties=properties,
             custom_headers=custom_headers,
             raw=True,
@@ -294,13 +288,11 @@ class RegistrationAssignmentsOperations(object):
     create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def list(
-            self, scope, api_version, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the registration assignments.
 
         :param scope: Scope of the resource.
         :type scope: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param expand_registration_definition: Tells whether to return
          registration definition details also along with registration
          assignment details.
@@ -330,7 +322,7 @@ class RegistrationAssignmentsOperations(object):
                 query_parameters = {}
                 if expand_registration_definition is not None:
                     query_parameters['$expandRegistrationDefinition'] = self._serialize.query("expand_registration_definition", expand_registration_definition, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

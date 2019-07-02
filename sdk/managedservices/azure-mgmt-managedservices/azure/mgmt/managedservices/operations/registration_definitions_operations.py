@@ -24,6 +24,7 @@ class RegistrationDefinitionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
     """
 
     models = models
@@ -33,11 +34,12 @@ class RegistrationDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-06-01"
 
         self.config = config
 
     def get(
-            self, scope, registration_definition_id, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_definition_id, custom_headers=None, raw=False, **operation_config):
         """Gets the registration definition details.
 
         :param scope: Scope of the resource.
@@ -45,8 +47,6 @@ class RegistrationDefinitionsOperations(object):
         :param registration_definition_id: Guid of the registration
          definition.
         :type registration_definition_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -68,7 +68,7 @@ class RegistrationDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -100,14 +100,12 @@ class RegistrationDefinitionsOperations(object):
     get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def delete(
-            self, registration_definition_id, api_version, scope, custom_headers=None, raw=False, **operation_config):
+            self, registration_definition_id, scope, custom_headers=None, raw=False, **operation_config):
         """Deletes the registration definition.
 
         :param registration_definition_id: Guid of the registration
          definition.
         :type registration_definition_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param scope: Scope of the resource.
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
@@ -130,7 +128,7 @@ class RegistrationDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -155,7 +153,7 @@ class RegistrationDefinitionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
+            self, registration_definition_id, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
         request_body = models.RegistrationDefinition(properties=properties, plan=plan)
 
         # Construct URL
@@ -168,7 +166,7 @@ class RegistrationDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -205,14 +203,12 @@ class RegistrationDefinitionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, registration_definition_id, scope, properties=None, plan=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a registration definition.
 
         :param registration_definition_id: Guid of the registration
          definition.
         :type registration_definition_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param scope: Scope of the resource.
         :type scope: str
         :param properties: Properties of a registration definition.
@@ -236,7 +232,6 @@ class RegistrationDefinitionsOperations(object):
         """
         raw_result = self._create_or_update_initial(
             registration_definition_id=registration_definition_id,
-            api_version=api_version,
             scope=scope,
             properties=properties,
             plan=plan,
@@ -264,13 +259,11 @@ class RegistrationDefinitionsOperations(object):
     create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def list(
-            self, scope, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the registration definitions.
 
         :param scope: Scope of the resource.
         :type scope: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -294,7 +287,7 @@ class RegistrationDefinitionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
