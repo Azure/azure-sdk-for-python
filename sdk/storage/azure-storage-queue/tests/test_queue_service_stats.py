@@ -8,7 +8,7 @@ import pytest
 
 from azure.storage.queue import QueueServiceClient
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )

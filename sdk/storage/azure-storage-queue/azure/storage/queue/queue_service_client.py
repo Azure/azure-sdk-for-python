@@ -75,7 +75,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     Example:
-        .. literalinclude:: ../tests/samples/test_samples_authentication.py
+        .. literalinclude:: ../tests/test_queue_samples_authentication.py
             :start-after: [START create_queue_service_client]
             :end-before: [END create_queue_service_client]
             :language: python
@@ -128,7 +128,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_authentication.py
+            .. literalinclude:: ../tests/test_queue_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python
@@ -233,7 +233,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START get_queue_service_properties]
                 :end-before: [END get_queue_service_properties]
                 :language: python
@@ -281,7 +281,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START set_queue_service_properties]
                 :end-before: [END set_queue_service_properties]
                 :language: python
@@ -333,7 +333,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.queue.models.QueuePropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_list_queues]
                 :end-before: [END qsc_list_queues]
                 :language: python
@@ -372,7 +372,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.queue.queue_client.QueueClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_create_queue]
                 :end-before: [END qsc_create_queue]
                 :language: python
@@ -409,7 +409,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_delete_queue]
                 :end-before: [END qsc_delete_queue]
                 :language: python
@@ -433,7 +433,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.queue.queue_client.QueueClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_samples_queue_service.py
+            .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]
                 :language: python

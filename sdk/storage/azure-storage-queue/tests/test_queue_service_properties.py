@@ -19,7 +19,7 @@ from azure.storage.queue import (
     RetentionPolicy,
 )
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
     not_for_emulator,

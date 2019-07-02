@@ -20,7 +20,7 @@ from azure.storage.queue import (
     NoEncodePolicy,
     NoDecodePolicy)
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )

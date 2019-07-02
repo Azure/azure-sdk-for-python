@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 import pytest
 
 try:
-    import tests.settings_real as settings
+    import settings_real as settings
 except ImportError:
-    import tests.settings_fake as settings
+    import settings_fake as settings
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record

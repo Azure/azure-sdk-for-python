@@ -11,11 +11,10 @@ from azure.storage.queue import (
     QueueServiceClient,
     QueueClient,
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
 )
-#from azure.storage.common import TokenCredential
 
 # ------------------------------------------------------------------------------
 SERVICES = {

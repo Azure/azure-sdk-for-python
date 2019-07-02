@@ -37,12 +37,12 @@ from azure.storage.queue import (
     NoEncodePolicy,
     NoDecodePolicy
 )
-from tests.encryption_test_helper import (
+from encryption_test_helper import (
     KeyWrapper,
     KeyResolver,
     RSAKeyWrapper,
 )
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     record,
     TestMode,

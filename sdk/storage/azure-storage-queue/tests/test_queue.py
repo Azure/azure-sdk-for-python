@@ -27,10 +27,9 @@ from azure.storage.queue import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-    #TokenCredential,
 )
 
-from tests.testcase import (
+from testcase import (
     StorageTestCase,
     TestMode,
     record,
