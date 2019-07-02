@@ -28,7 +28,8 @@ try:
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import RenewPropertiesResponse
-    from ._models_py3 import RenewPropertiesResponseLockedPriceTotal
+    from ._models_py3 import RenewPropertiesResponseBillingCurrencyTotal
+    from ._models_py3 import RenewPropertiesResponsePricingCurrencyTotal
     from ._models_py3 import ReservationMergeProperties
     from ._models_py3 import ReservationOrderResponse
     from ._models_py3 import ReservationProperties
@@ -57,7 +58,8 @@ except (SyntaxError, ImportError):
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import RenewPropertiesResponse
-    from ._models import RenewPropertiesResponseLockedPriceTotal
+    from ._models import RenewPropertiesResponseBillingCurrencyTotal
+    from ._models import RenewPropertiesResponsePricingCurrencyTotal
     from ._models import ReservationMergeProperties
     from ._models import ReservationOrderResponse
     from ._models import ReservationProperties
@@ -98,7 +100,8 @@ __all__ = [
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'RenewPropertiesResponse',
-    'RenewPropertiesResponseLockedPriceTotal',
+    'RenewPropertiesResponseBillingCurrencyTotal',
+    'RenewPropertiesResponsePricingCurrencyTotal',
     'ReservationMergeProperties',
     'ReservationOrderResponse',
     'ReservationProperties',

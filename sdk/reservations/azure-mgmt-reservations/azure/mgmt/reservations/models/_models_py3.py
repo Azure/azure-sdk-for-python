@@ -459,7 +459,8 @@ class PurchaseRequest(Model):
     :param location: The Azure Region where the reserved resource lives.
     :type location: str
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux', 'CosmosDb'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat', 'SqlDataWarehouse',
+     'VMwareCloudSimple', 'RedHatOsa'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param billing_scope_id:
@@ -535,41 +536,70 @@ class RenewPropertiesResponse(Model):
 
     :param purchase_properties:
     :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :param locked_price_total: Locked currency & amount for new reservation
-     purchase at the time of renewal. Price is locked 30 days before expiry
-     date time if renew is true.
-    :type locked_price_total:
-     ~azure.mgmt.reservations.models.RenewPropertiesResponseLockedPriceTotal
+    :param pricing_currency_total: Amount that Microsoft uses for record. Used
+     during refund for calculating refund limit. Tax is not included. This is
+     locked price 30 days before expiry.
+    :type pricing_currency_total:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponsePricingCurrencyTotal
+    :param billing_currency_total: Currency and amount that customer will be
+     charged in customer's local currency for renewal purchase. Tax is not
+     included.
+    :type billing_currency_total:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponseBillingCurrencyTotal
     """
 
     _attribute_map = {
         'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
-        'locked_price_total': {'key': 'lockedPriceTotal', 'type': 'RenewPropertiesResponseLockedPriceTotal'},
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'RenewPropertiesResponsePricingCurrencyTotal'},
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'RenewPropertiesResponseBillingCurrencyTotal'},
     }
 
-    def __init__(self, *, purchase_properties=None, locked_price_total=None, **kwargs) -> None:
+    def __init__(self, *, purchase_properties=None, pricing_currency_total=None, billing_currency_total=None, **kwargs) -> None:
         super(RenewPropertiesResponse, self).__init__(**kwargs)
         self.purchase_properties = purchase_properties
-        self.locked_price_total = locked_price_total
+        self.pricing_currency_total = pricing_currency_total
+        self.billing_currency_total = billing_currency_total
 
 
-class RenewPropertiesResponseLockedPriceTotal(Model):
-    """Locked currency & amount for new reservation purchase at the time of
-    renewal. Price is locked 30 days before expiry date time if renew is true.
+class RenewPropertiesResponseBillingCurrencyTotal(Model):
+    """Currency and amount that customer will be charged in customer's local
+    currency for renewal purchase. Tax is not included.
 
     :param currency_code:
     :type currency_code: str
     :param amount:
-    :type amount: str
+    :type amount: float
     """
 
     _attribute_map = {
         'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'float'},
     }
 
-    def __init__(self, *, currency_code: str=None, amount: str=None, **kwargs) -> None:
-        super(RenewPropertiesResponseLockedPriceTotal, self).__init__(**kwargs)
+    def __init__(self, *, currency_code: str=None, amount: float=None, **kwargs) -> None:
+        super(RenewPropertiesResponseBillingCurrencyTotal, self).__init__(**kwargs)
+        self.currency_code = currency_code
+        self.amount = amount
+
+
+class RenewPropertiesResponsePricingCurrencyTotal(Model):
+    """Amount that Microsoft uses for record. Used during refund for calculating
+    refund limit. Tax is not included. This is locked price 30 days before
+    expiry.
+
+    :param currency_code:
+    :type currency_code: str
+    :param amount:
+    :type amount: float
+    """
+
+    _attribute_map = {
+        'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'float'},
+    }
+
+    def __init__(self, *, currency_code: str=None, amount: float=None, **kwargs) -> None:
+        super(RenewPropertiesResponsePricingCurrencyTotal, self).__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
 
@@ -678,7 +708,8 @@ class ReservationProperties(Model):
     sending a request.
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux', 'CosmosDb'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat', 'SqlDataWarehouse',
+     'VMwareCloudSimple', 'RedHatOsa'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off'
