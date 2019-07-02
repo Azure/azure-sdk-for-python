@@ -94,14 +94,14 @@ class ContainerClient(StorageAccountHostsMixin):
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
     Example:
-        .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+        .. literalinclude:: ../tests/test_blob_samples_containers.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 12
             :caption: Get a ContainerClient from an existing BlobSericeClient.
 
-        .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+        .. literalinclude:: ../tests/test_blob_samples_containers.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
@@ -170,7 +170,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_authentication.py
+            .. literalinclude:: ../tests/test_blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_container]
                 :end-before: [END auth_from_connection_string_container]
                 :language: python
@@ -254,7 +254,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: str
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START generate_sas_token]
                 :end-before: [END generate_sas_token]
                 :language: python
@@ -296,7 +296,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -359,7 +359,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
@@ -428,7 +428,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.lease.LeaseClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
@@ -475,7 +475,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.models.ContainerProperties
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
@@ -525,7 +525,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: Container-updated property dict (Etag and last modified).
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
@@ -561,7 +561,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: dict[str, str]
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
@@ -623,7 +623,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: Container-updated property dict (Etag and last modified).
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
@@ -680,7 +680,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.models.BlobPropertiesPaged
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
@@ -850,7 +850,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.blob_cient.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
@@ -975,7 +975,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob.blob_client.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/samples/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python

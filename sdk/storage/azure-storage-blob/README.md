@@ -162,27 +162,27 @@ Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-pytho
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
-* [`test_blob_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_blob_samples_hello_world.py) - Examples for common Storage Blob tasks:
+* [`test_blob_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_hello_world.py) - Examples for common Storage Blob tasks:
     * Set up a container
     * Create a block, page, or append blob
     * Upload blobs
     * Download blobs
     * Delete blobs
 
-* [`test_blob_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_blob_samples_authentication.py) - Examples for authenticating and creating the client:
+* [`test_blob_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_authentication.py) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
     
-* [`test_blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_blob_samples_service.py) - Examples for interacting with the blob service:
+* [`test_blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service.py) - Examples for interacting with the blob service:
     * Get account information
     * Get and set service properties
     * Get service statistics
     * Create, list, and delete containers
     * Get the Blob or Container client
 
-* [`test_blob_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_blob_samples_containers.py) - Examples for interacting with containers:
+* [`test_blob_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_containers.py) - Examples for interacting with containers:
     * Create a container and delete containers
     * Set metadata on containers
     * Get container properties
@@ -191,7 +191,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Upload, list, delete blobs in container
     * Get the blob client to interact with a specific blob
 
-* [`test_blob_samples_common.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/samples/test_blob_samples_common.py) - Examples common to all types of blobs:
+* [`test_blob_samples_common.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_common.py) - Examples common to all types of blobs:
     * Create a snapshot
     * Delete a blob snapshot
     * Soft delete a blob

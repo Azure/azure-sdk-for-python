@@ -12,7 +12,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
 )
-from tests.testcase import (
+from .testcase import (
     StorageTestCase,
     record,
 )
