@@ -26,9 +26,9 @@ from filetestcase import (
 # ------------------------------------------------------------------------------
 
 
-class ServicePropertiesTest(FileTestCase):
+class FileServicePropertiesTest(FileTestCase):
     def setUp(self):
-        super(ServicePropertiesTest, self).setUp()
+        super(FileServicePropertiesTest, self).setUp()
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
