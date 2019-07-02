@@ -11,10 +11,7 @@ class AbstractSpan:
         # type: (str) -> AbstractSpan
         """
         Create a child span for the current span and append it to the child spans list.
-         :type name: str
-         :param name: (Optional) The name of the child span.
-         :rtype: :class: `AbstractSpan`
-         :returns: A child Span to be added to the current span.
+        The child span must be wrapped by an implementation of AbstractSpan
          """
         pass
 
