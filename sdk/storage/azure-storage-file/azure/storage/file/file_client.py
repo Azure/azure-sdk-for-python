@@ -6,12 +6,15 @@
 
 import functools
 from io import BytesIO
-
+from typing import ( # pylint: disable=unused-import
+    Optional, Union, IO, List, Dict, Any, Iterable,
+    TYPE_CHECKING
+)
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
 from azure.core.polling import LROPoller
@@ -33,6 +36,10 @@ from ._shared.utils import (
 from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
 from .polling import CopyStatusPoller, CloseHandles
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from .models import ShareProperties, FilePermissions, ContentSettings, FileProperties
+    from ._generated.models import HandleItem
 
 class FileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
@@ -70,7 +77,7 @@ class FileClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
     """
-    def __init__(
+    def __init__( # type: ignore
             self, file_url,  # type: str
             share=None,  # type: Optional[Union[str, ShareProperties]]
             file_path=None,  # type: Optional[str]
@@ -78,7 +85,7 @@ class FileClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> FileClient
+        # type: (...) -> None
         try:
             if not file_url.lower().startswith('http'):
                 file_url = "https://" + file_url
@@ -101,17 +108,17 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError(
                 'You need to provide either an account key or SAS token when creating a storage service.')
         try:
-            self.snapshot = snapshot.snapshot
+            self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot']
+                self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
         try:
-            self.share_name = share.name
+            self.share_name = share.name # type: ignore
         except AttributeError:
-            self.share_name = share or unquote(path_share)
+            self.share_name = share or unquote(path_share) # type: ignore
         if file_path:
             self.file_path = file_path.split('/')
         else:
@@ -254,8 +261,8 @@ class FileClient(StorageAccountHostsMixin):
         if len(self.file_path) > 1:
             file_path = '/'.join(self.file_path[:-1])
         else:
-            file_path = None
-        return sas.generate_file(
+            file_path = None # type: ignore
+        return sas.generate_file( # type: ignore
             self.share_name,
             file_path,
             self.file_name,
@@ -271,7 +278,7 @@ class FileClient(StorageAccountHostsMixin):
             content_language=content_language,
             content_type=content_type)
 
-    def create_file(
+    def create_file( # type: ignore
             self, size, # type: int
             content_settings=None, # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -319,7 +326,7 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_disposition=content_settings.content_disposition
             )
         try:
-            return self._client.file.create(
+            return self._client.file.create( # type: ignore
                 file_content_length=size,
                 timeout=timeout,
                 metadata=metadata,
@@ -392,10 +399,10 @@ class FileClient(StorageAccountHostsMixin):
         elif hasattr(data, 'read'):
             stream = data
         elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding)
+            stream = IterStreamer(data, encoding=encoding) # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return upload_file_helper(
+        return upload_file_helper( # type: ignore
             self,
             stream,
             length,
@@ -551,9 +558,9 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         file_props.name = self.file_name
         file_props.share_name = self.share_name
-        return file_props
+        return file_props # type: ignore
 
-    def set_http_headers(self, content_settings, timeout=None, **kwargs):
+    def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
         #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
@@ -574,7 +581,7 @@ class FileClient(StorageAccountHostsMixin):
             file_content_disposition=content_settings.content_disposition
         )
         try:
-            return self._client.file.set_http_headers(
+            return self._client.file.set_http_headers( # type: ignore
                 timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
@@ -583,7 +590,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_file_metadata(self, metadata=None, timeout=None, **kwargs):
+    def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
         #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
@@ -601,9 +608,9 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.file.set_metadata(
+            return self._client.file.set_metadata( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -612,7 +619,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_range(
+    def upload_range( # type: ignore
             self, data,  # type: bytes
             start_range, # type: int
             end_range, # type: int
@@ -658,7 +665,7 @@ class FileClient(StorageAccountHostsMixin):
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         content_length = end_range - start_range + 1
         try:
-            return self._client.file.upload_range(
+            return self._client.file.upload_range( # type: ignore
                 range=content_range,
                 content_length=content_length,
                 optionalbody=data,
@@ -669,7 +676,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_ranges(
+    def get_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
             timeout=None, # type: Optional[int]
@@ -710,7 +717,7 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': b.start, 'end': b.end} for b in ranges]
 
-    def clear_range(
+    def clear_range( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
             timeout=None,  # type: Optional[int]
@@ -744,7 +751,7 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("end_range must be an integer that aligns with 512 file size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         try:
-            return self._client.file.upload_range(
+            return self._client.file.upload_range( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
@@ -754,7 +761,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def resize_file(self, size, timeout=None, **kwargs):
+    def resize_file(self, size, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
@@ -766,7 +773,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: Dict[str, Any]
         """
         try:
-            return self._client.file.set_http_headers(
+            return self._client.file.set_http_headers( # type: ignore
                 timeout=timeout,
                 file_content_length=size,
                 cls=return_response_headers,
@@ -815,7 +822,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.polling.LROPoller
         """
         try:
-            handle_id = handle.id
+            handle_id = handle.id # type: ignore
         except AttributeError:
             handle_id = handle or '*'
         command = functools.partial(

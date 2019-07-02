@@ -4,11 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import ( # pylint: disable=unused-import
+    Optional, Union, Dict, Any, TYPE_CHECKING
+)
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
 
@@ -32,6 +35,9 @@ from ._shared.utils import (
     parse_connection_str)
 
 from ._share_utils import deserialize_share_properties
+
+if TYPE_CHECKING:
+    from .models import ShareProperties, AccessPolicy
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -69,14 +75,14 @@ class ShareClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
     """
-    def __init__(
+    def __init__( # type: ignore
             self, share_url,  # type: str
             share=None,  # type: Optional[Union[str, ShareProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> ShareClient
+        # type: (...) -> None
         try:
             if not share_url.lower().startswith('http'):
                 share_url = "https://" + share_url
@@ -99,14 +105,14 @@ class ShareClient(StorageAccountHostsMixin):
             raise ValueError(
                 'You need to provide either an account key or SAS token when creating a storage service.')
         try:
-            self.snapshot = snapshot.snapshot
+            self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot']
+                self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
         try:
-            self.share_name = share.name
+            self.share_name = share.name # type: ignore
         except AttributeError:
             self.share_name = share or unquote(path_share)
         self._query_str, credential = self._format_query_string(
@@ -278,7 +284,7 @@ class ShareClient(StorageAccountHostsMixin):
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
             _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
 
-    def create_share(
+    def create_share( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             quota=None, # type: Optional[int]
             timeout=None, # type: Optional[int]
@@ -309,10 +315,10 @@ class ShareClient(StorageAccountHostsMixin):
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
 
         try:
-            return self._client.share.create(
+            return self._client.share.create( # type: ignore
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
@@ -322,7 +328,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_snapshot(
+    def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
             **kwargs # type: Optional[Any]
@@ -355,9 +361,9 @@ class ShareClient(StorageAccountHostsMixin):
                 :caption: Creates a snapshot of the file share.
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
+        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.share.create_snapshot(
+            return self._client.share.create_snapshot( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -429,9 +435,9 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
         props.name = self.share_name
         props.snapshot = self.snapshot
-        return props
+        return props # type: ignore
 
-    def set_share_quota(self, quota, timeout=None, **kwargs):
+    def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Any) ->  Dict[str, Any]
         """Sets the quota for the share.
 
@@ -452,7 +458,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :caption: Sets the share quota.
         """
         try:
-            return self._client.share.set_quota(
+            return self._client.share.set_quota( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 cls=return_response_headers,
@@ -460,7 +466,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_share_metadata(self, metadata, timeout=None, **kwargs):
+    def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
@@ -487,7 +493,7 @@ class ShareClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.share.set_metadata(
+            return self._client.share.set_metadata( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -496,7 +502,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def get_share_access_policy(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> Dict[str, str]
+        # type: (Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the share. The permissions
         indicate whether files in a share may be accessed publicly.
 
@@ -517,8 +523,8 @@ class ShareClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
-    def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int]) -> Dict[str, str]
+    def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
+        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], **Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -544,10 +550,10 @@ class ShareClient(StorageAccountHostsMixin):
                     value.start = serialize_iso(value.start)
                     value.expiry = serialize_iso(value.expiry)
                 identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers
+            signed_identifiers = identifiers # type: ignore
 
         try:
-            return self._client.share.set_access_policy(
+            return self._client.share.set_access_policy( # type: ignore
                 share_acl=signed_identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
@@ -555,8 +561,8 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_share_stats(self, timeout=None, **kwargs):
-        # type: (Optional[int]) -> int
+    def get_share_stats(self, timeout=None, **kwargs): # type: ignore
+        # type: (Optional[int], **Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
 
         Note that this value may not include all recently created
@@ -571,11 +577,11 @@ class ShareClient(StorageAccountHostsMixin):
             stats = self._client.share.get_statistics(
                 timeout=timeout,
                 **kwargs)
-            return stats.share_usage_bytes
+            return stats.share_usage_bytes # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_directories_and_files(
+    def list_directories_and_files( # type: ignore
             self, directory_name=None,  # type: Optional[str]
             name_starts_with=None,  # type: Optional[str]
             marker=None,  # type: Optional[str]
@@ -627,4 +633,4 @@ class ShareClient(StorageAccountHostsMixin):
         """
         directory = self.get_directory_client(directory_name)
         directory.create_directory(metadata, timeout, **kwargs)
-        return directory
+        return directory # type: ignore

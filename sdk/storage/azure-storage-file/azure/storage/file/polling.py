@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import time
-
+from typing import Any, Callable
 from azure.core.polling import PollingMethod, LROPoller
 
 from ._shared.utils import process_storage_error
@@ -91,7 +91,7 @@ class CopyFile(PollingMethod):
         self.last_modified = self.file.last_modified
 
     def initialize(self, client, initial_status, _):  # pylint: disable=arguments-differ
-        # type: (Any, requests.Response, Callable) -> None
+        # type: (Any, Any, Callable) -> None
         self._client = client
         if isinstance(initial_status, str):
             self.id = initial_status
@@ -153,9 +153,9 @@ class CopyFilePolling(CopyFile):
         :rtype: str
         """
         try:
-            return self._status.value
+            return self._status.value # type: ignore
         except AttributeError:
-            return self._status
+            return self._status # type: ignore
 
     def resource(self):
         # type: () -> Any
@@ -182,7 +182,7 @@ class CloseHandles(PollingMethod):
         self.handles_closed += status['number_of_handles_closed']
 
     def initialize(self, command, initial_status, _):  # pylint: disable=arguments-differ
-        # type: (Any, requests.Response, Callable) -> None
+        # type: (Any, Any, Callable) -> None
         self._command = command
         self._status = initial_status['marker']
         self.handles_closed = initial_status['number_of_handles_closed']

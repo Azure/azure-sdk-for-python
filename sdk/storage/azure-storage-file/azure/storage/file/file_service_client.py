@@ -12,7 +12,7 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 
 from .share_client import ShareClient
 from ._shared.shared_access_signature import SharedAccessSignature
@@ -27,6 +27,10 @@ from .models import SharePropertiesPaged
 from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
+if TYPE_CHECKING:
+    from datetime import datetime
+    from ._shared.models import ResourceTypes, AccountPermissions
+    from .models import Metrics, CorsRule, ShareProperties
 
 
 class FileServiceClient(StorageAccountHostsMixin):
@@ -191,7 +195,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.FILE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol)
+            Services.FILE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
@@ -381,7 +385,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
     def get_share_client(self, share, snapshot=None):
-        # type: (Union[ShareProperties, str],Optional[Union[SnapshotProperties, str]]) -> ShareClient
+        # type: (Union[ShareProperties, str],Optional[Union[Dict[str, Any], str]]) -> ShareClient
         """Get a client to interact with the specified share.
         The share need not already exist.
 
