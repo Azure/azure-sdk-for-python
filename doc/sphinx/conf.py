@@ -25,11 +25,16 @@ sys.path.insert(0, os.path.abspath('../azure'))
 
 # FIX FOR EXAMPLE REFERENCES
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
-glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*examples*.py')
-example_files = glob.glob(glob_expansion, recursive=True)
+examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
+samples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*sample*.py')
+
+example_files = glob.glob(examples_glob_expansion, recursive=True)
+samples_files = glob.glob(samples_glob_expansion, recursive=True)
+
+all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_files + samples_files))]
 
 # now for each package, we need to copy it and write it to the relative path FROM THE CURRENT CWD
-for example_file in [os.path.relpath(example_file, REPO_ROOT) for example_file in example_files]:
+for example_file in all_files:
     relative_path_in_pkg = os.path.join(*(example_file.split(os.path.sep)[3:]))
     final_destination = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path_in_pkg))
 
