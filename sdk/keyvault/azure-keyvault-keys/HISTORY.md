@@ -8,6 +8,11 @@ https://aka.ms/azure-sdk-preview1-python.
 
 This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-keys`.
+This package's
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
+and
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples)
+demonstrate the new API.
 
 ### Major changes from `azure-keyvault`
 - Packages scoped by functionality
