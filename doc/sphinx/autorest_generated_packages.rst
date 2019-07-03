@@ -3,16 +3,7 @@
   :glob:
   :caption: Developer Documentation
 
-  ./ref/azure.core.rst
-  ./ref/azure.cosmos.rst
-  ./ref/azure.eventhub.rst
-  ./ref/azure.identity.rst
-  ./ref/azure.keyvault.keys.rst
-  ./ref/azure.keyvault.secrets.rst
-  ./ref/azure.servicebus.rst
-  ./ref/azure.storage.blob.rst
-  ./ref/azure.storage.queue.rst
-  ./ref/azure.common.rst
+  ref/azure.common
   ./ref/azure.applicationinsights.rst
   ./ref/azure.batch.rst
   ./ref/azure.cognitiveservices.anomalydetector.rst
@@ -35,8 +26,14 @@
   ./ref/azure.cognitiveservices.vision.customvision.prediction.rst
   ./ref/azure.cognitiveservices.vision.customvision.training.rst
   ./ref/azure.cognitiveservices.vision.face.rst
+  ./ref/azure.core.rst
+  ./ref/azure.cosmos.rst
   ./ref/azure.eventgrid.rst
+  ./ref/azure.eventhub.rst
   ./ref/azure.graphrbac.rst
+  ./ref/azure.identity.rst
+  ./ref/azure.keyvault.keys.rst
+  ./ref/azure.keyvault.secrets.rst
   ./ref/azure.loganalytics.rst
   ./ref/azure.mgmt.advisor.rst
   ./ref/azure.mgmt.alertsmanagement.rst
@@ -121,5 +118,8 @@
   ./ref/azure.mgmt.subscription.rst
   ./ref/azure.mgmt.trafficmanager.rst
   ./ref/azure.mgmt.web.rst
+  ./ref/azure.servicebus.rst
   ./ref/azure.servicefabric.rst
+  ./ref/azure.storage.blob.rst
+  ./ref/azure.storage.file.rst
   ref/azure.servicemanagement
