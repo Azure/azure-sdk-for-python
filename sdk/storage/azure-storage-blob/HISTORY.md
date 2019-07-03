@@ -8,7 +8,7 @@ https://aka.ms/azure-sdk-preview1-python
 - **Breaking** New API desgin:
     - Operations are now scoped to a particular client:
         - `BlobServiceClient`: This client handles account-level operations. This includes managing service properties and listing the containers within an account.
-        - `ContainerClient`: The client handles operations for a particular blob. This includes creating or deleting that container, as well as listing the blobs with that container and managing properties and metadata.
+        - `ContainerClient`: The client handles operations for a particular blob. This includes creating or deleting that container, as well as listing the blobs within that container and managing properties and metadata.
         - `BlobClient`: The client handles operations for a particular blob. This includes creating or deleting that blob, as well as upload and download data and managing properties.
         This BlobClient handles all blob types (block, page and append). Where operations can behave differently according to type (i.e. `upload_blob`) the default behaviour will be block blobs unless otherwise specified.
         - `LeaseClient`: Handles all lease operations for both containers and blobs.
