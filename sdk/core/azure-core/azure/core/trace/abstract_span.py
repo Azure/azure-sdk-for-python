@@ -1,9 +1,12 @@
 import abc
-from abc import abstractmethod, abstractproperty, abstractstaticmethod
+from abc import abstractmethod, abstractproperty
+
 try:
     ABC = abc.ABC
-except AttributeError: # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
+    abstractstaticmethod = abs.abstractstaticmethod
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+    abstractstaticmethod = lambda x: x
 
 
 class AbstractSpan(ABC):
