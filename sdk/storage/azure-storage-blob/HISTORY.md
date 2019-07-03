@@ -5,6 +5,47 @@
 For release notes and more information please visit
 https://aka.ms/azure-sdk-preview1-python
 
+- **Breaking** New API desgin:
+    - Operations are now scoped to a particular client:
+        - `BlobServiceClient`: This client handles account-level operations. This includes managing service properties and listing the containers within an account.
+        - `ContainerClient`: The client handles operations for a particular blob. This includes creating or deleting that container, as well as listing the blobs with that container and managing properties and metadata.
+        - `BlobClient`: The client handles operations for a particular blob. This includes creating or deleting that blob, as well as upload and download data and managing properties.
+        This BlobClient handles all blob types (block, page and append). Where operations can behave differently according to type (i.e. `upload_blob`) the default behaviour will be block blobs unless otherwise specified.
+        - `LeaseClient`: Handles all lease operations for both containers and blobs.
+
+        These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
+      For full details on the new API, please see reference documentation.
+    - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
+    - New module level operations for simple upload and download using a blob URL.
+    - Download operations now return a streaming object that can download data in multiple ways:
+        - Iteration: The streamer is an iterable object that will download and yield the content in chunks. Only supports single threaded download.
+        - `content_as_bytes`: Return the entire blob content as bytes. Blocking operation that suppots multi-threaded download.
+        - `content_as_text`: Return the entire blob content as decoded text. Blocking operation that supports multi-threaded download.
+        - `download_to_stream`: Download the entire content to an open stream handle (e.g. an open file). Supports multi-threaded download.
+    - New underlying REST pipeline implementation, based on the new `azure.core` library.
+    - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
+    - Support for token credentials using the new `azure.identity` library.
+    - New error hierarchy:
+        - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
+        - The are a couple of specific exception types derived from this base type for common error scenarios:
+            - `ResourceNotFoundError`: The resource (e.g. queue, message) could not be found. Commonly a 404 status code.
+            - `ResourceExistsError`: A resource conflict - commonly caused when attempting to create a resource that already exists.
+            - `ResourceModifiedError`: The resource has been modified (e.g. overwritten) and therefore the current operation is in conflict. Alternatively this may be raised if a condition on the operation is not met.
+            - `ClientAuthenticationError`: Authentication failed.
+    - Operation `set_blob_properties` has been renamed to `set_http_headers`.
+    - Operations `get_blob_to_<output>` have been replaced with `download_blob`. See above for download output options.
+    - Operations `create_blob_from_<input>` have been replace with `upload_blob`.
+    - Opteration `create_blob` has been renamed to separate `create_page_blob` and `create_append_blob`.
+    - Operations `get_container_acl` and `set_container_acl` have been renamed to `get_container_access_policy` and `set_container_access_policy`.
+    - Operation `snapshot_blob` has been renamed to `create_snapshot`.
+    - Operation `copy_blob` has been renamed to `copy_blob_from_url`.
+    - Operations `put_block` and `put_block_from_url` have been renamed to `stage_block` and `stage_block_from_url`.
+    - Operation `put_block_list` has been renamed to `commit_block_list`.
+    - No longer have specific operations for `get_metadata` - use `get_properties` instead.
+    - Operation `incremental_copy_blob` has been replaced by an optional boolean flag in the `copy_blob_from_url` operation.
+    - Operation `update_page` has been renamed to `upload_page`.
+    - Operation `get_page_ranges_diff` has been replaced by an optional str flag in the `get_page_ranges` operation.
+
 ## Version 2.0.1:
 
 - Updated dependency on azure-storage-common.
