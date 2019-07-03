@@ -2,8 +2,9 @@
 
 ## 4.0.0b1 (2019-06-28)
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly
-and Pythonic client library for Azure Key Vault. For more information, please
-visit https://aka.ms/azure-sdk-preview1-python.
+and Pythonic client library for Azure Key Vault. For more information about
+preview releases of other Azure SDK libraries, please visit
+https://aka.ms/azure-sdk-preview1-python.
 
 This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-secrets`.
@@ -25,5 +26,6 @@ only)
   for more information
 
 ### `azure-keyvault` features not implemented in this library
-This release doesn't include all features of `azure-keyvault`. In particular,
-certificate APIs are not included in this release.
+- Certificate management APIs
+- National cloud support. This release supports public global cloud vaults,
+    e.g. https://{vault-name}.vault.azure.net
