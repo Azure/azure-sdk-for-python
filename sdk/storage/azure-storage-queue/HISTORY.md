@@ -2,32 +2,37 @@
 
 ## Version 12.0.0b1:
 
-For release notes and more information please visit
-https://aka.ms/azure-sdk-preview1-python
+Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Queues. For more information about this, and preview releases of other Azure SDK libraries, please visit
+https://aka.ms/azure-sdk-preview1-python.
 
-- **Breaking** New API desgin:
-    - Operations are now scoped to a particular client:
-        - `QueueServiceClient`: This client handles account-level operations. This includes managing service properties and listing the queues within an account.
-        - `QueueClient`: The client handles operations within a particular queue. This includes creating or deleting that queue, as well as enqueuing and dequeuing messages.
+**Breaking changes: New API desgin**
+- Operations are now scoped to a particular client:
+    - `QueueServiceClient`: This client handles account-level operations. This includes managing service properties and listing the queues within an account.
+    - `QueueClient`: The client handles operations within a particular queue. This includes creating or deleting that queue, as well as enqueueing and dequeueing messages.
 
-      These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account or queue).
-      For full details on the new API, please see reference documentation.
-    - New message iterator, for receiving messages from a queue in a continuous stream.
-    - New underlying REST pipeline implementation, based on the new `azure.core` library.
-    - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
-    - Support for token credentials using the new `azure.identity` library.
-    - New error hierarchy:
-        - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
-        - The are a couple of specific exception types derived from this base type for common error scenarios:
-            - `ResourceNotFoundError`: The resource (e.g. queue, message) could not be found. Commonly a 404 status code.
-            - `ResourceExistsError`: A resource conflict - commonly caused when attempting to create a resource that already exists.
-            - `ResourceModifiedError`: The resource has been modified (e.g. overwritten) and therefore the current operation is in conflict. Alternatively this may be raised if a condition on the operation is not met.
-            - `ClientAuthenticationError`: Authentication failed.
-    - No longer have specific operations for `get_metadata` - use `get_properties` instead.
-    - No longer have specific operations for `exists` - use `get_properties` instead.
-    - Operations `get_queue_acl` and `set_queue_acl` have been renamed to `get_queue_access_policy` and `set_queue_access_policy`.
-    - Operation `put_message` has been renamed to `enqueue_message`.
-    - Operation `get_messages` has been renamed to `receive_messages`.
+    These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account or queue).
+    For full details on the new API, please see reference documentation.
+- New message iterator, for receiving messages from a queue in a continuous stream.
+- New underlying REST pipeline implementation, based on the new `azure-core` library.
+- Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
+- Authentication using `azure-identity` credentials
+  - see this package's
+  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
+  , and the
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  for more information
+- New error hierarchy:
+    - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
+    - The are a couple of specific exception types derived from this base type for common error scenarios:
+        - `ResourceNotFoundError`: The resource (e.g. queue, message) could not be found. Commonly a 404 status code.
+        - `ResourceExistsError`: A resource conflict - commonly caused when attempting to create a resource that already exists.
+        - `ResourceModifiedError`: The resource has been modified (e.g. overwritten) and therefore the current operation is in conflict. Alternatively this may be raised if a condition on the operation is not met.
+        - `ClientAuthenticationError`: Authentication failed.
+- No longer have specific operations for `get_metadata` - use `get_properties` instead.
+- No longer have specific operations for `exists` - use `get_properties` instead.
+- Operations `get_queue_acl` and `set_queue_acl` have been renamed to `get_queue_access_policy` and `set_queue_access_policy`.
+- Operation `put_message` has been renamed to `enqueue_message`.
+- Operation `get_messages` has been renamed to `receive_messages`.
 
 ## Version 2.0.1:
 - Updated dependency on azure-storage-common.
