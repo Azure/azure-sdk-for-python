@@ -1,16 +1,5 @@
-PEP420
-
-**Note**
-
-- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
-
-Autorest context manager
-
-**Features**
-
-- Client class can be used as a context manager to keep the underlying HTTP session open for performance
-
-Autorest 3.x
+Autorest v2 to v3
+-----------------
 
 **General Breaking changes**
 
@@ -37,8 +26,32 @@ This version uses a next-generation code generator that *might* introduce breaki
   - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
 
-Misc
+Autorest v3 to v4, if the package is single API
+-----------------------------------------------
 
-**Bugfixes**
+**General Breaking changes**
 
-- Compatibility of the sdist with wheel 0.31.0
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- HanaManagementClient cannot be imported from `azure.mgmt.hanaonazure.hana_management_client` anymore (import from `azure.mgmt.hanaonazure` works like before)
+- HanaManagementClientConfiguration import has been moved from `azure.mgmt.hanaonazure.hana_management_client` to `azure.mgmt.hanaonazure`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.hanaonazure.models.my_class` (import from `azure.mgmt.hanaonazure.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.hanaonazure.operations.my_class_operations` (import from `azure.mgmt.hanaonazure.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
+Autorest v3 to v4, if the package is multiapi
+---------------------------------------------
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- NetworkManagementClient cannot be imported from `azure.mgmt.network.v20xx_yy_zz.network_management_client` anymore (import from `azure.mgmt.network.v20xx_yy_zz` works like before)
+- NetworkManagementClientConfiguration import has been moved from `azure.mgmt.network.v20xx_yy_zz.network_management_client` to `azure.mgmt.network.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.network.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.network.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
