@@ -33,6 +33,11 @@ class DefaultConsistencyLevel(str, Enum):
     consistent_prefix = "ConsistentPrefix"
 
 
+class ConnectorOffer(str, Enum):
+
+    small = "Small"
+
+
 class IndexingMode(str, Enum):
 
     consistent = "Consistent"
