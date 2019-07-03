@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - e79ba08c-8ecb-11e9-aacf-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:43:22 GMT
+      x-ms-range:
+      - bytes=1-3
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer70c4165d/byteblob70c4165d
+  response:
+    body:
+      string: !!binary |
+        ggln
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-Range:
+      - bytes 1-3/65541
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Fri, 14 Jun 2019 17:43:23 GMT
+      ETag:
+      - '"0x8D6F0EFCC3DD8A0"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:43:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - aDw6r6PDnuj5jJUVZCgSPg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Fri, 14 Jun 2019 17:43:23 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - d2dae123-e01e-00c7-6dd8-2218c1000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 3d16310c-8ed5-11e9-9a8e-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 18:50:11 GMT
+      x-ms-range:
+      - bytes=1-3
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer70c4165d/byteblob70c4165d
+  response:
+    body:
+      string: !!binary |
+        ggln
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-Range:
+      - bytes 1-3/65541
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Fri, 14 Jun 2019 18:50:11 GMT
+      ETag:
+      - '"0x8D6F0F9213FB98D"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 18:50:11 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - aDw6r6PDnuj5jJUVZCgSPg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Fri, 14 Jun 2019 18:50:11 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 6d508818-f01e-001f-04e1-22bf10000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+version: 1
