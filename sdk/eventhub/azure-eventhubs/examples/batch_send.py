@@ -37,12 +37,11 @@ try:
 
     event_list = []
     for i in range(1500):
-        event_list.append('Hello World')
+        event_list.append(EventData('Hello World'))
 
     with producer:
         start_time = time.time()
-        data = EventData(body=event_list)
-        producer.send(data)
+        producer.send(event_list)
         end_time = time.time()
         run_time = end_time - start_time
         logger.info("Runtime: {} seconds".format(run_time))

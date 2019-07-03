@@ -36,15 +36,15 @@ try:
     consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION, prefetch=5000)
     with consumer:
         start_time = time.time()
-        batch = consumer.receive(timeout=5000)
+        batch = consumer.receive(timeout=5)
         while batch:
             for event_data in batch:
                 last_offset = event_data.offset
                 last_sn = event_data.sequence_number
-                print("Received: {}, {}".format(last_offset.value, last_sn))
+                print("Received: {}, {}".format(last_offset, last_sn))
                 print(event_data.body_as_str())
                 total += 1
-            batch = consumer.receive(timeout=5000)
+            batch = consumer.receive(timeout=5)
 
         end_time = time.time()
         run_time = end_time - start_time

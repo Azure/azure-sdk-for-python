@@ -27,7 +27,7 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EVENT_POSITION = EventPosition.first_available_event()
+EVENT_POSITION = EventPosition("-1")
 
 
 async def pump(client, partition):
@@ -38,7 +38,7 @@ async def pump(client, partition):
         for event_data in await consumer.receive(timeout=10):
             last_offset = event_data.offset
             last_sn = event_data.sequence_number
-            print("Received: {}, {}".format(last_offset.value, last_sn))
+            print("Received: {}, {}".format(last_offset, last_sn))
             total += 1
         end_time = time.time()
         run_time = end_time - start_time

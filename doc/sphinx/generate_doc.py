@@ -3,7 +3,7 @@ import logging
 import json
 from pathlib import Path
 
-CONFIG_FILE = '../package_service_mapping.json'
+CONFIG_FILE = './package_service_mapping.json'
 GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,7 +46,6 @@ RST_AUTODOC_TOCTREE = """.. toctree::
 
   ref/azure.common
 {generated_packages}
-  ref/azure.servicebus
   ref/azure.servicemanagement
 """
 
@@ -91,6 +90,7 @@ def generate_doc(config_path, project_pattern=None):
     with Path(config_path).open() as config_fd:
         config = json.load(config_fd)
     package_list_path = []
+    rst_path_template = './ref/{}.rst'
 
     namespaces = [n for pack in config.values() for n in pack.get("namespaces", {})]
 
@@ -101,7 +101,7 @@ def generate_doc(config_path, project_pattern=None):
 
         _LOGGER.info("Working on %s", namespace)
 
-        rst_path = './ref/{}.rst'.format(namespace)
+        rst_path = rst_path_template.format(namespace)
         with Path(rst_path).open('w') as rst_file:
             rst_file.write(PACKAGE_TEMPLATE.format(
                 title=make_title(namespace+" package"),
@@ -128,7 +128,7 @@ def generate_doc(config_path, project_pattern=None):
     for multiapi_namespace, apilist in multiapi_found_apiversion.items():
         apilist.sort()
         apilist.reverse()
-        rst_path = './ref/{}.rst'.format(multiapi_namespace)
+        rst_path = rst_path_template.format(multiapi_namespace)
         with Path(rst_path).open('w') as rst_file:
             rst_file.write(MULTIAPI_VERSION_PACKAGE_TEMPLATE.format(
                 title=make_title(multiapi_namespace+" package"),
@@ -139,6 +139,12 @@ def generate_doc(config_path, project_pattern=None):
                     namespace=multiapi_namespace,
                     version=version))
         package_list_path.append(rst_path)
+
+
+    # now handle the packages from data plane that we want to be present properly sorted in the list of packages
+    for package in config.keys():
+        if 'manually_generated' in config[package] and config[package]['manually_generated'] == True:
+            package_list_path.append(rst_path_template.format(package.replace('-','.')))
 
     package_list_path.sort()
     with Path(GENERATED_PACKAGES_LIST_FILE).open('w') as generate_file_list_fd:

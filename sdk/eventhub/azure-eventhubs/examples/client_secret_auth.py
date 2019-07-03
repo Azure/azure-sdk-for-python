@@ -12,7 +12,7 @@ import os
 import time
 import logging
 
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventHubClient
 from azure.eventhub import EventData
 from azure.identity import ClientSecretCredential
 

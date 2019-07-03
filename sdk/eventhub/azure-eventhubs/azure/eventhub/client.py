@@ -213,7 +213,7 @@ class EventHubClient(EventHubClientAbstract):
         :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
-        :rtype: ~azure.eventhub.receiver.EventHubConsumer
+        :rtype: ~azure.eventhub.consumer.EventHubConsumer
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -249,7 +249,7 @@ class EventHubClient(EventHubClientAbstract):
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
-        :rtype: ~azure.eventhub.sender.EventHubProducer
+        :rtype: ~azure.eventhub.producer.EventHubProducer
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py

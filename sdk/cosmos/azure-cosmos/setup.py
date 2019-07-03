@@ -12,7 +12,7 @@ setup(name='azure-cosmos',
       maintainer_email="askdocdb@microsoft.com",
       url="https://github.com/Azure/azure-documentdb-python",
       license='MIT',
-      install_requires=['six >=1.6', 'requests>=2.10.0', ],
+      install_requires=['six >=1.6', 'requests>=2.18.4'],
       extras_require={
         ":python_version<'3.5'": ['typing', ],
       },

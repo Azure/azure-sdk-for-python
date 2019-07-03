@@ -1,8 +1,7 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# -------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import asyncio
 import json
 import os
@@ -23,12 +22,14 @@ from azure.identity.aio import (
 from azure.identity.aio._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
 
+from helpers import mock_response, Request, async_validating_transport
+
 
 @pytest.mark.asyncio
 async def test_client_secret_credential_cache():
     expired = "this token's expired"
-    now = time.time()
-    expired_on = int(now - 300)
+    now = int(time.time())
+    expired_on = now - 3600
     expired_token = AccessToken(expired, expired_on)
     token_payload = {
         "access_token": expired,
@@ -37,27 +38,56 @@ async def test_client_secret_credential_cache():
         "expires_on": expired_on,
         "not_before": now,
         "token_type": "Bearer",
-        "resource": str(uuid.uuid1()),
     }
+    mock_send = Mock(return_value=mock_response(json_payload=token_payload))
+    transport = Mock(send=asyncio.coroutine(mock_send))
+    scope = "scope"
 
-    mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
-        headers={"content-type": "application/json"},
-        status_code=200,
-        content_type=["application/json"],
-    )
-    mock_send = Mock(return_value=mock_response)
+    credential = ClientSecretCredential("client_id", "secret", tenant_id="some-guid", transport=transport)
 
-    credential = ClientSecretCredential(
-        "client_id", "secret", tenant_id=str(uuid.uuid1()), transport=Mock(send=asyncio.coroutine(mock_send))
-    )
-    scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
-    token = await credential.get_token(*scopes)
+    # get_token initially returns the expired token because the credential
+    # doesn't check whether tokens it receives from the service have expired
+    token = await credential.get_token(scope)
     assert token == expired_token
 
-    token = await credential.get_token(*scopes)
-    assert token == expired_token
+    access_token = "new token"
+    token_payload["access_token"] = access_token
+    token_payload["expires_on"] = now + 3600
+    valid_token = AccessToken(access_token, now + 3600)
+
+    # second call should observe the cached token has expired, and request another
+    token = await credential.get_token(scope)
+    assert token == valid_token
     assert mock_send.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_client_secret_credential():
+    client_id = "fake-client-id"
+    secret = "fake-client-secret"
+    tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = async_validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                json_payload={
+                    "token_type": "Bearer",
+                    "expires_in": 42,
+                    "ext_expires_in": 42,
+                    "access_token": access_token,
+                }
+            )
+        ],
+    )
+
+    token = await ClientSecretCredential(
+        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
+    ).get_token("scope")
+
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
 
 
 @pytest.mark.asyncio
@@ -65,24 +95,30 @@ async def test_client_secret_environment_credential(monkeypatch):
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
+    access_token = "***"
+
+    transport = async_validating_transport(
+        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
+        responses=[
+            mock_response(
+                json_payload={
+                    "token_type": "Bearer",
+                    "expires_in": 42,
+                    "ext_expires_in": 42,
+                    "access_token": access_token,
+                }
+            )
+        ],
+    )
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
 
-    success_message = "request passed validation"
+    token = await EnvironmentCredential(transport=transport).get_token("scope")
 
-    def validate_request(request, **kwargs):
-        assert tenant_id in request.url
-        assert request.data["client_id"] == client_id
-        assert request.data["client_secret"] == secret
-        # raising here makes mocking a transport response unnecessary
-        raise ClientAuthenticationError(success_message)
-
-    credential = EnvironmentCredential(transport=Mock(send=validate_request))
-    with pytest.raises(ClientAuthenticationError) as ex:
-        await credential.get_token("scope")
-    assert str(ex.value) == success_message
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == access_token
 
 
 @pytest.mark.asyncio

@@ -1,8 +1,23 @@
 # Release History
 
-## 2.0.0b1 (2019-06-25)
+## 5.0.0b1 (2019-06-25)
 
-- Added more configuration parameters when creating EventHubClient.
+Version 5.0.0b1 is a preview of our efforts to create a client library that is user friendly and idiomatic to the Python ecosystem. The reasons for most of the changes in this update can be found in the [Azure SDK Design Guidelines for Python](https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html). For more information, please visit https://aka.ms/azure-sdk-preview1-python.
+
+**New features**
+
+- Added new configuration parameters for creating EventHubClient.
+  - `credential`: The credential object used for authentication which implements `TokenCredential` interface of getting tokens.
+  - `transport_type`: The type of transport protocol that will be used for communicating with the Event Hubs service.
+  - `max_retries`: The max number of attempts to redo the failed operation when an error happened.
+  - for detailed information about the configuration parameters, please read the reference documentation.
+- Added new methods `get_partition_properties` and `get_partition_ids` to EventHubClient.
+- Added support for http proxy.
+- Added support for authentication using azure-identity credential.
+- Added support for transport using AMQP over WebSocket.
+
+**Breaking changes**
+
 - New error hierarchy
   - `azure.error.EventHubError`
   - `azure.error.ConnectionLostError`
@@ -10,18 +25,16 @@
   - `azure.error.AuthenticationError`
   - `azure.error.EventDataError`
   - `azure.error.EventDataSendError`
-- Renamed Sender/Receiver to EventHubProducer/EventHubConsumer
-  - New APIs for creating EventHubProducer/EventHubConsumer.
+- Renamed Sender/Receiver to EventHubProducer/EventHubConsumer.
+  - Renamed `add_sender` to `create_producer` and `add_receiver` to `create_consumer` in EventHubClient.
   - EventHubConsumer is now iterable.
-- Rename class azure.eventhub.Offset to azure.eventhub.EventPosition
+- Rename class azure.eventhub.Offset to azure.eventhub.EventPosition.
+- Rename method `get_eventhub_info` to `get_properties` of EventHubClient.
 - Reorganized connection management, EventHubClient is no longer responsible for opening/closing EventHubProducer/EventHubConsumer.
   - Each EventHubProducer/EventHubConsumer is responsible for its own connection management.
   - Added support for context manager on EventHubProducer and EventHubConsumer.
 - Reorganized async APIs into "azure.eventhub.aio" namespace and rename to drop the "_async" suffix.
-- Added support for authentication using azure-core credential.
-- Added support for transport using AMQP over WebSocket.
-- Updated uAMQP dependency to 1.2.0
-
+- Updated uAMQP dependency to 1.2.
 
 ## 1.3.1 (2019-02-28)
 
