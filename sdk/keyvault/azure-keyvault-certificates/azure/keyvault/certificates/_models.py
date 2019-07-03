@@ -377,9 +377,9 @@ class CertificatePolicy(object):
                 for item in certificate_policy_bundle.lifetime_actions
             ],
             subject_name=certificate_policy_bundle.x509_certificate_properties.subject,
-            sans_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails,
-            sans_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns,
-            sans_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names,
+            sans_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            sans_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            sans_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
             validity_in_months=certificate_policy_bundle.x509_certificate_properties.validity_in_months,
             key_properties=KeyProperties(
                 exportable=certificate_policy_bundle.key_properties.exportable,
@@ -472,7 +472,7 @@ class Contact:
     """The contact information for the vault certificates.
     """
 
-    def __init__(self, email, name, phone):
+    def __init__(self, email=None, name=None, phone=None):
         # type: (str, str, str) -> None
         self._email = email
         self._name = name
@@ -482,7 +482,10 @@ class Contact:
     def _from_certificate_contacts_item(cls, contact_item):
         # type: (list[models.Contact]) -> Contact
         """Construct a Contact from an autorest-generated ContactItem"""
-        return cls(email=contact_item.email, name=contact_item.name, phone=contact_item.phone)
+        return [
+                cls(email=item.email, name=item.name, phone=item.phone)
+                for item in contact_item.contact_list
+            ]
 
     @property
     def email(self):

@@ -17,7 +17,7 @@ from dateutil import parser as date_parse
 
 class CertificatesClientTest(KeyVaultTestCase):
 
-    def _import_common_certificate(self, cert_name): 
+    def _import_common_certificate(self, client, cert_name): 
         cert_content = 'MIIJOwIBAzCCCPcGCSqGSIb3DQEHAaCCCOgEggjkMIII4DCCBgkGCSqGSIb3DQEHAaCCBfoEggX2MIIF8jCCBe4GCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAj15YH9pOE58AICB9AEggTYLrI+SAru2dBZRQRlJY7XQ3LeLkah2FcRR3dATDshZ2h0IA2oBrkQIdsLyAAWZ32qYR1qkWxLHn9AqXgu27AEbOk35+pITZaiy63YYBkkpR+pDdngZt19Z0PWrGwHEq5z6BHS2GLyyN8SSOCbdzCz7blj3+7IZYoMj4WOPgOm/tQ6U44SFWek46QwN2zeA4i97v7ftNNns27ms52jqfhOvTA9c/wyfZKAY4aKJfYYUmycKjnnRl012ldS2lOkASFt+lu4QCa72IY6ePtRudPCvmzRv2pkLYS6z3cI7omT8nHP3DymNOqLbFqr5O2M1ZYaLC63Q3xt3eVvbcPh3N08D1hHkhz/KDTvkRAQpvrW8ISKmgDdmzN55Pe55xHfSWGB7gPw8sZea57IxFzWHTK2yvTslooWoosmGxanYY2IG/no3EbPOWDKjPZ4ilYJe5JJ2immlxPz+2e2EOCKpDI+7fzQcRz3PTd3BK+budZ8aXX8aW/lOgKS8WmxZoKnOJBNWeTNWQFugmktXfdPHAdxMhjUXqeGQd8wTvZ4EzQNNafovwkI7IV/ZYoa++RGofVR3ZbRSiBNF6TDj/qXFt0wN/CQnsGAmQAGNiN+D4mY7i25dtTu/Jc7OxLdhAUFpHyJpyrYWLfvOiS5WYBeEDHkiPUa/8eZSPA3MXWZR1RiuDvuNqMjct1SSwdXADTtF68l/US1ksU657+XSC+6ly1A/upz+X71+C4Ho6W0751j5ZMT6xKjGh5pee7MVuduxIzXjWIy3YSd0fIT3U0A5NLEvJ9rfkx6JiHjRLx6V1tqsrtT6BsGtmCQR1UCJPLqsKVDvAINx3cPA/CGqr5OX2BGZlAihGmN6n7gv8w4O0k0LPTAe5YefgXN3m9pE867N31GtHVZaJ/UVgDNYS2jused4rw76ZWN41akx2QN0JSeMJqHXqVz6AKfz8ICS/dFnEGyBNpXiMRxrY/QPKi/wONwqsbDxRW7vZRVKs78pBkE0ksaShlZk5GkeayDWC/7Hi/NqUFtIloK9XB3paLxo1DGu5qqaF34jZdktzkXp0uZqpp+FfKZaiovMjt8F7yHCPk+LYpRsU2Cyc9DVoDA6rIgf+uEP4jppgehsxyT0lJHax2t869R2jYdsXwYUXjgwHIV0voj7bJYPGFlFjXOp6ZW86scsHM5xfsGQoK2Fp838VT34SHE1ZXU/puM7rviREHYW72pfpgGZUILQMohuTPnd8tFtAkbrmjLDo+k9xx7HUvgoFTiNNWuq/cRjr70FKNguMMTIrid+HwfmbRoaxENWdLcOTNeascER2a+37UQolKD5ksrPJG6RdNA7O2pzp3micDYRs/+s28cCIxO//J/d4nsgHp6RTuCu4+Jm9k0YTw2Xg75b2cWKrxGnDUgyIlvNPaZTB5QbMid4x44/lE0LLi9kcPQhRgrK07OnnrMgZvVGjt1CLGhKUv7KFc3xV1r1rwKkosxnoG99oCoTQtregcX5rIMjHgkc1IdflGJkZzaWMkYVFOJ4Weynz008i4ddkske5vabZs37Lb8iggUYNBYZyGzalruBgnQyK4fz38Fae4nWYjyildVfgyo/fCePR2ovOfphx9OQJi+M9BoFmPrAg+8ARDZ+R+5yzYuEc9ZoVX7nkp7LTGB3DANBgkrBgEEAYI3EQIxADATBgkqhkiG9w0BCRUxBgQEAQAAADBXBgkqhkiG9w0BCRQxSh5IAGEAOAAwAGQAZgBmADgANgAtAGUAOQA2AGUALQA0ADIAMgA0AC0AYQBhADEAMQAtAGIAZAAxADkANABkADUAYQA2AGIANwA3MF0GCSsGAQQBgjcRATFQHk4ATQBpAGMAcgBvAHMAbwBmAHQAIABTAHQAcgBvAG4AZwAgAEMAcgB5AHAAdABvAGcAcgBhAHAAaABpAGMAIABQAHIAbwB2AGkAZABlAHIwggLPBgkqhkiG9w0BBwagggLAMIICvAIBADCCArUGCSqGSIb3DQEHATAcBgoqhkiG9w0BDAEGMA4ECNX+VL2MxzzWAgIH0ICCAojmRBO+CPfVNUO0s+BVuwhOzikAGNBmQHNChmJ/pyzPbMUbx7tO63eIVSc67iERda2WCEmVwPigaVQkPaumsfp8+L6iV/BMf5RKlyRXcwh0vUdu2Qa7qadD+gFQ2kngf4Dk6vYo2/2HxayuIf6jpwe8vql4ca3ZtWXfuRix2fwgltM0bMz1g59d7x/glTfNqxNlsty0A/rWrPJjNbOPRU2XykLuc3AtlTtYsQ32Zsmu67A7UNBw6tVtkEXlFDqhavEhUEO3dvYqMY+QLxzpZhA0q44ZZ9/ex0X6QAFNK5wuWxCbupHWsgxRwKftrxyszMHsAvNoNcTlqcctee+ecNwTJQa1/MDbnhO6/qHA7cfG1qYDq8Th635vGNMW1w3sVS7l0uEvdayAsBHWTcOC2tlMa5bfHrhY8OEIqj5bN5H9RdFy8G/W239tjDu1OYjBDydiBqzBn8HG1DSj1Pjc0kd/82d4ZU0308KFTC3yGcRad0GnEH0Oi3iEJ9HbriUbfVMbXNHOF+MktWiDVqzndGMKmuJSdfTBKvGFvejAWVO5E4mgLvoaMmbchc3BO7sLeraHnJN5hvMBaLcQI38N86mUfTR8AP6AJ9c2k514KaDLclm4z6J8dMz60nUeo5D3YD09G6BavFHxSvJ8MF0Lu5zOFzEePDRFm9mH8W0N/sFlIaYfD/GWU/w44mQucjaBk95YtqOGRIj58tGDWr8iUdHwaYKGqU24zGeRae9DhFXPzZshV1ZGsBQFRaoYkyLAwdJWIXTi+c37YaC8FRSEnnNmS79Dou1Kc3BvK4EYKAD2KxjtUebrV174gD0Q+9YuJ0GXOTspBvCFd5VT2Rw5zDNrA/J3F5fMCk4wOzAfMAcGBSsOAwIaBBSxgh2xyF+88V4vAffBmZXv8Txt4AQU4O/NX4MjxSodbE7ApNAMIvrtREwCAgfQ'
         cert_password = '123'
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
@@ -26,7 +26,7 @@ class CertificatesClientTest(KeyVaultTestCase):
                                                                      reuse_key=False),
                                         secret_properties=SecretProperties(content_type='application/x-pkcs12'))
         return (
-            self.client.import_certificate(cert_name, cert_content, cert_password, cert_policy),
+            client.import_certificate(cert_name, cert_content, cert_password, cert_policy),
             cert_policy
         )
 
@@ -96,6 +96,15 @@ class CertificatesClientTest(KeyVaultTestCase):
             else:
                 self.assertTrue(False)
         self.assertEqual(len(expected), 0)        
+    
+    def _validate_certificate_contacts(self, contacts, vault, expected):
+        contact_id = '{}certificates/contacts'.format(vault)
+        self.assertEqual(contact_id, contacts.id)
+        self.assertEqual(len(contacts.contact_list), len(expected))
+
+        for contact in contacts.contact_list:
+            exp_contact = next(x for x in expected if x.email_address == contact.email_address)
+            self.assertEqual(contact, exp_contact)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -175,12 +184,11 @@ class CertificatesClientTest(KeyVaultTestCase):
         # import some certificates
         for x in range(max_certificates):
             cert_name = self.get_resource_name('cert{}'.format(x))
-            cert_bundle = None
             error_count = 0
             try:
-                cert_bundle = self._import_common_certificate(cert_name)[0]
+                cert_bundle = self._import_common_certificate(client, cert_name)[0]
                 cid = KeyVaultId.parse_certificate_id(cert_bundle.id).base_id.strip('/')
-                expected[cid] = cert_bundle.attributes
+                expected[cid] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, 'message') and 'Throttled' in ex.message:
                     error_count += 1
@@ -205,12 +213,11 @@ class CertificatesClientTest(KeyVaultTestCase):
 
         # import same certificates as different versions
         for x in range(max_certificates):
-            cert_bundle = None
             error_count = 0
             try:
-                cert_bundle = self._import_common_certificate(vault_uri, cert_name)[0]
+                cert_bundle = self._import_common_certificate(client, cert_name)[0]
                 cid = KeyVaultId.parse_certificate_id(cert_bundle.id).id.strip('/')
-                expected[cid] = cert_bundle.attributes
+                expected[cid] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, 'message') and 'Throttled' in ex.message:
                     error_count += 1
@@ -221,3 +228,100 @@ class CertificatesClientTest(KeyVaultTestCase):
 
         # list certificate versions
         self._validate_certificate_list((client.list_versions(cert_name)), expected)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_crud_contacts(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+
+        contact_list = [
+            Contact(email_address='admin@contoso.com',
+                    name='John Doe',
+                    phone='1111111111'),
+            Contact(email_address='admin2@contoso.com',
+                    name='John Doe2',
+                    phone='2222222222')
+        ]
+
+        # create certificate contacts
+        contacts = client.create_contacts(contact_list)
+        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+
+        # get certificate contacts
+        contacts = client.list_contacts()
+        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+
+        # delete certificate contacts
+        contacts = client.delete_contacts()
+        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+
+        # get certificate contacts returns not found
+        try:
+            contacts = client.get_certificate_contacts(client.vault_url)
+            self.fail('Get should fail')
+        except Exception as ex:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
+                raise ex
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_recover_and_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+
+        certs = {}
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        secret_properties=SecretProperties(content_type='application/x-pkcs12'),
+                                        issuer_parameters=IssuerParameters(name='Self'),
+                                        x509_certificate_properties=X509CertificateProperties(
+                                            subject='CN=*.microsoft.com',
+                                            subject_alternative_names=SubjectAlternativeNames(
+                                                dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                            ),
+                                            validity_in_months=24
+                                        ))
+        # create certificates to recover
+        for i in range(self.list_test_size):
+            cert_name = self.get_resource_name('certrec{}'.format(str(i)))
+            certs[cert_name] = self._import_common_certificate(cert_name)
+
+        # create certificates to purge
+        for i in range(self.list_test_size):
+            cert_name = self.get_resource_name('certprg{}'.format(str(i)))
+            certs[cert_name] = self._import_common_certificate(cert_name)
+
+        # delete all certificates
+        for cert_name in certs.keys():
+            delcert = client.delete_certificate(cert_name)
+            print(delcert)
+
+        if not self.is_playback():
+            time.sleep(30)
+
+        # validate all our deleted certificates are returned by get_deleted_certificates
+        deleted = [KeyVaultId.parse_certificate_id(s.id).name for s in client.get_deleted_certificates()]
+        # self.assertTrue(all(s in deleted for s in certs.keys()))
+
+        # recover select secrets
+        for certificate_name in [s for s in certs.keys() if s.startswith('certrec')]:
+            client.recover_deleted_certificate(certificate_name)
+
+        # purge select secrets
+        for certificate_name in [s for s in certs.keys() if s.startswith('certprg')]:
+            client.purge_deleted_certificate(certificate_name)
+
+        if not self.is_playback():
+            time.sleep(30)
+
+        # validate none of our deleted certificates are returned by get_deleted_certificates
+        deleted = [KeyVaultId.parse_secret_id(s.id).name for s in client.get_deleted_certificates()]
+        self.assertTrue(not any(s in deleted for s in certs.keys()))
+
+        # validate the recovered certificates
+        expected = {k: v for k, v in certs.items() if k.startswith('certrec')}
+        actual = {k: client.get_certificate(k, KeyVaultId.version_none) for k in expected.keys()}
+        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))

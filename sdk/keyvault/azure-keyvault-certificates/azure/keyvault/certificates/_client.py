@@ -185,7 +185,7 @@ class CertificateClient(_KeyVaultClientBase):
             name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            polciy=policy,
+            certificate_policy=policy,
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -379,7 +379,8 @@ class CertificateClient(_KeyVaultClientBase):
 
     def delete_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        pass
+        bundle = self._client.delete_certificate_contacts(self.vault_url, **kwargs)
+        return Contact._from_certificate_contacts_item(bundle)
 
     def get_pending_certificate_signing_request(self, name, **kwargs):
         # type: (str) -> str
