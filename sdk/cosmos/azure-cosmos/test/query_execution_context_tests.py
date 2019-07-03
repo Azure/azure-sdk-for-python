@@ -29,6 +29,8 @@ import azure.cosmos.base as base
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos account.

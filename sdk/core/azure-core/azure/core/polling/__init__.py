@@ -28,6 +28,7 @@ import sys
 from .poller import LROPoller, NoPolling, PollingMethod
 __all__ = ['LROPoller', 'NoPolling', 'PollingMethod']
 
+#pylint: disable=unused-import
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
     from .async_poller import AsyncNoPolling, AsyncPollingMethod, async_poller

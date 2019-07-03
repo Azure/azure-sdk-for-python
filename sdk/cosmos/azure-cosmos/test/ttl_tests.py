@@ -30,6 +30,8 @@ from azure.cosmos.http_constants import StatusCodes
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #  	Most test cases in this file create collections in your Azure Cosmos account.
@@ -47,8 +49,6 @@ class Test_ttl_tests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    created_db = test_config._test_config.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -71,6 +71,8 @@ class Test_ttl_tests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
 
     def test_collection_and_document_ttl_values(self):
         ttl = 5

@@ -158,10 +158,21 @@ class KnownProfiles(Enum):
                 None: "2015-07-01"
             },
             "azure.mgmt.compute.ComputeManagementClient": {
-                None: "2017-12-01"
+                None: "2017-12-01",
+                'resource_skus': '2017-09-01',
+                'disks': '2017-03-30',
+                'snapshots': '2017-03-30'
             },
             "azure.mgmt.keyvault.KeyVaultManagementClient":{
                 None: "2016-10-01"
+            },
+            "azure.mgmt.monitor.MonitorManagementClient": {
+                'metric_definitions': '2018-01-01',
+                'metrics': '2018-01-01',
+                'diagnostic_settings': '2017-05-01-preview',
+                'diagnostic_settings_category': '2017-05-01-preview',
+                'event_categories': '2015-04-01',
+                'operations': '2015-04-01',
             },
             "azure.mgmt.network.NetworkManagementClient": {
                 None: "2017-10-01"

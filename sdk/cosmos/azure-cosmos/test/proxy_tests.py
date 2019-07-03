@@ -32,6 +32,8 @@ else:
 from threading import Thread
 from requests.exceptions import ProxyError
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class CustomRequestHandler(BaseHTTPRequestHandler):
     database_name = None

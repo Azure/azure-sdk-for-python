@@ -29,12 +29,13 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 class AsyncPagedMixin(AsyncIterator):
+    """Bring async to Paging.
 
-    def __init__(self, *args, **kwargs):
-        """Bring async to Paging.
+    **Keyword argument:**
 
-        "async_command" is mandatory keyword argument for this mixin to work.
-        """
+    *async_command* - Mandatory keyword argument for this mixin to work.
+    """
+    def __init__(self, *args, **kwargs): # pylint: disable=unused-argument
         self._async_get_next = kwargs.get("async_command")
         if not self._async_get_next:
             _LOGGER.debug("Paging async iterator protocol is not available for %s",
@@ -43,8 +44,7 @@ class AsyncPagedMixin(AsyncIterator):
     async def _async_advance_page(self):
         if not self._async_get_next:
             raise NotImplementedError(
-                "The class %s does not support async paging.",
-                self.__class__.__name__
+                "The class {} does not support async paging.".format(self.__class__.__name__)
             )
         if self.next_link is None:
             raise StopAsyncIteration("End of paging")
@@ -62,6 +62,5 @@ class AsyncPagedMixin(AsyncIterator):
             response = self.current_page[self._current_page_iter_index]
             self._current_page_iter_index += 1
             return response
-        else:
-            await self._async_advance_page()
-            return await self.__anext__()
+        await self._async_advance_page()
+        return await self.__anext__()

@@ -25,14 +25,18 @@
 # --------------------------------------------------------------------------
 
 import abc
+from typing import (TypeVar, Any, Dict, Optional)
 
 try:
     ABC = abc.ABC
 except AttributeError: # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 try:
-    from contextlib import AbstractContextManager  # type: ignore
+    from contextlib import AbstractContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.5
     class AbstractContextManager(object):  # type: ignore
         def __enter__(self):
@@ -46,8 +50,17 @@ except ImportError: # Python <= 3.5
 
 
 class PipelineContext(dict):
+    """A context object carried by the pipeline request and response containers.
 
-    def __init__(self, transport, **kwargs):
+    This is transport specific and can contain data persisted between
+    pipeline requests (for example reusing an open connection pool or "session"),
+    as well as used by the SDK developer to carry arbitrary data through
+    the pipeline.
+
+    :param transport: The HTTP transport type.
+    :param kwargs: Developer-defined keyword arguments.
+    """
+    def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
         self._protected = ['transport', 'options']
@@ -63,32 +76,37 @@ class PipelineContext(dict):
         return super(PipelineContext, self).__delitem__(key)
 
     def clear(self):
+        """Context objects cannot be cleared.
+
+        :raises: TypeError
+        """
         raise TypeError("Context objects cannot be cleared.")
 
     def update(self, *args, **kwargs):
+        """Context objects cannot be updated.
+
+        :raises: TypeError
+        """
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
+        """Removes specified key and returns the value.
+        """
         if args and args[0] in self._protected:
             raise ValueError('Context value {} cannot be popped.'.format(args[0]))
         return super(PipelineContext, self).pop(*args)
 
 
 class PipelineRequest(object):
-    """Represents a HTTP request in a Pipeline.
+    """A pipeline request object.
 
-    URL can be given without query parameters, to be added later using "format_parameters".
+    Container for moving the HttpRequest through the pipeline.
+    Universal for all transports, both synchronous and asynchronous.
 
-    Instance can be created without data, to be added later using "add_content"
-
-    Instance can be created without files, to be added later using "add_formdata"
-
-    :param str method: HTTP method (GET, HEAD, etc.)
-    :param str url: At least complete scheme/host/path
-    :param dict[str,str] headers: HTTP headers
-    :param files: Files list.
-    :param data: Body to be sent.
-    :type data: bytes or str.
+    :param http_request: The request object.
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
+    :param context: Contains the context - data persisted between pipeline requests.
+    :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, context):
         # type: (HTTPRequestType, Optional[Any]) -> None
@@ -102,18 +120,25 @@ class PipelineResponse(object):
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
     This ensures that Policy objects have access to the HTTP response.
 
-    This also have a "context" object where policy can put additional fields.
+    This also has a "context" object where policy can put additional fields.
     Policy SHOULD update the "context" with additional post-processed field if they create them.
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
+
+    :param http_request: The request object.
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
+    :param http_response: The response object.
+    :type http_response: ~azure.core.pipeline.transport.HttpResponse
+    :param context: Contains the context - data persisted between pipeline requests.
+    :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, http_response, context):
-        # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context
 
 
-from .base import Pipeline
+from .base import Pipeline #pylint: disable=wrong-import-position
 
 __all__ = [
     'Pipeline',
@@ -123,9 +148,7 @@ __all__ = [
 ]
 
 try:
-    from .base_async import AsyncPipeline
+    from .base_async import AsyncPipeline #pylint: disable=unused-import
     __all__.append('AsyncPipeline')
 except (SyntaxError, ImportError):
     pass  # Asynchronous pipelines not supported.
-
-

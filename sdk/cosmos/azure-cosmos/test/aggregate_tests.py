@@ -34,6 +34,8 @@ import test_config
 from azure.cosmos.errors import HTTPFailure
 from azure.cosmos.partition_key import PartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
+
 class _config:
     host = test_config._test_config.host
     master_key = test_config._test_config.masterKey
@@ -184,10 +186,6 @@ class AggregateQueryTestSequenceMeta(type):
             return created_docs
 
         _all_tests = []
-
-        _setup()
-        _generate_test_configs()
-        _run_all()
 
         return type.__new__(mcs, name, bases, dict)
 

@@ -24,19 +24,20 @@
 #
 # --------------------------------------------------------------------------
 import threading
-import time
 import uuid
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
 from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
+from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
 
 if TYPE_CHECKING:
     import requests
-    from .pipeline import HttpResponse  # pylint: disable=unused-import
-    from msrest.serialization import Model # pylint: disable=unused-import
+    from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
+    DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
+
 
 class PollingMethod(object):
     """ABC class for polling method.
@@ -77,11 +78,11 @@ class NoPolling(PollingMethod):
         # type: () -> None
         """Empty run, no polling.
         """
-        pass
 
     def status(self):
         # type: () -> str
         """Return the current status as a string.
+
         :rtype: str
         """
         return "succeeded"
@@ -89,6 +90,7 @@ class NoPolling(PollingMethod):
     def finished(self):
         # type: () -> bool
         """Is this polling finished?
+
         :rtype: bool
         """
         return True
@@ -102,25 +104,26 @@ class LROPoller(object):
     """Poller for long running operations.
 
     :param client: A pipeline service client
-    :type client: azure.core.pipeline.PipelineClient
+    :type client: ~azure.core.pipeline.PipelineClient
     :param initial_response: The initial call response
-    :type initial_response: azure.core.pipeline.HttpResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
+    :type initial_response: ~azure.core.pipeline.HttpResponse
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
-    :type polling_method: msrest.polling.PollingMethod
+    :type polling_method: ~msrest.polling.PollingMethod
     """
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, HttpResponse, Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
-        self._client = client 
+        # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
+        self._client = client
         self._response = initial_response
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
-        # This implicit test avoids bringing in an explicit dependency on Model directly 
+        # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
-            deserialization_callback = deserialization_callback.deserialize
+            deserialization_callback = deserialization_callback.deserialize # type: ignore
         except AttributeError:
             pass
 
@@ -143,12 +146,12 @@ class LROPoller(object):
         """Start the long running operation.
         On completion, runs any callbacks.
 
-        :param callable update_cmd: The API reuqest to check the status of
+        :param callable update_cmd: The API request to check the status of
          the operation.
         """
         try:
             self._polling_method.run()
-        except Exception as err:
+        except Exception as err: #pylint: disable=broad-except
             self._exception = err
 
         finally:

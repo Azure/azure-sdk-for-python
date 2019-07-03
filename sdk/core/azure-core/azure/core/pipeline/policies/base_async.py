@@ -26,12 +26,12 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Any, List, Union, Callable, AsyncIterator, Optional
+from typing import Generic, TypeVar, Optional, Any
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 
 try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
+    from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.7
     class AbstractAsyncContextManager(object):  # type: ignore
         async def __aenter__(self):
@@ -51,15 +51,25 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """An async HTTP policy ABC.
+
+    Use with an asynchronous pipeline.
+
+    :param next: Use to process the next policy in the pipeline. Set when pipeline
+     is instantiated and all policies chained.
+    :type next: ~azure.core.pipeline.policies.AsyncHTTPPolicy or ~azure.core.pipeline.transport.AsyncHttpTransport
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        self.next = None  # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
+        self.next = None # type: Optional[Any]
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
-        """Mutate the request.
+        """Abstract send method for a asynchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
+
+        :param request: The pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        pass
