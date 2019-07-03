@@ -30,7 +30,7 @@ def wait_for_no_pool(client, rg, acc_name, pool_name, live=False):
     while co<5:
         co += 1
         if live:
-            time.sleep(5)
+            time.sleep(10)
         try:
             pool = client.pools.get(rg, acc_name, pool_name)
         except:

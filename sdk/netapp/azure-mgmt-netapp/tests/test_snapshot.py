@@ -35,7 +35,7 @@ def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_n
     while co<5:
         co += 1
         if live:
-            time.sleep(5)
+            time.sleep(20)
         try:
             snapshot = client.snapshots.get(rg, account_name, pool_name, volume_name, snapshot_namne)
         except:
