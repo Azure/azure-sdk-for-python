@@ -372,6 +372,8 @@ try:
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object_py3 import CustomActivityReferenceObject
     from .custom_activity_py3 import CustomActivity
+    from .ssis_access_credential_py3 import SSISAccessCredential
+    from .ssis_log_location_py3 import SSISLogLocation
     from .ssis_property_override_py3 import SSISPropertyOverride
     from .ssis_execution_parameter_py3 import SSISExecutionParameter
     from .ssis_execution_credential_py3 import SSISExecutionCredential
@@ -824,6 +826,8 @@ except (SyntaxError, ImportError):
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object import CustomActivityReferenceObject
     from .custom_activity import CustomActivity
+    from .ssis_access_credential import SSISAccessCredential
+    from .ssis_log_location import SSISLogLocation
     from .ssis_property_override import SSISPropertyOverride
     from .ssis_execution_parameter import SSISExecutionParameter
     from .ssis_execution_credential import SSISExecutionCredential
@@ -967,6 +971,7 @@ from .data_factory_management_client_enums import (
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
     SalesforceSourceReadBehavior,
+    SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
     AzureSearchIndexWriteBehaviorType,
@@ -1349,6 +1354,8 @@ __all__ = [
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',
     'CustomActivity',
+    'SSISAccessCredential',
+    'SSISLogLocation',
     'SSISPropertyOverride',
     'SSISExecutionParameter',
     'SSISExecutionCredential',
@@ -1491,6 +1498,7 @@ __all__ = [
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
     'SalesforceSourceReadBehavior',
+    'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
     'AzureSearchIndexWriteBehaviorType',
