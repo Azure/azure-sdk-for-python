@@ -16,9 +16,10 @@ class UnderstandingResult(Model):
     """A set of extracted fields corresponding to a semantic object, such as a
     receipt, in the input document.
 
-    :param pages: List of pages where the document is found.
+    :param pages: List of pages where the receipt is found.
     :type pages: list[int]
-    :param fields: Dictionary of recognized field values.
+    :param fields: Dictionary of analyzed field values. If a field is not
+     detected, the corresponding field value will be set to null.
     :type fields: dict[str,
      ~azure.cognitiveservices.formrecognizer.models.FieldValue]
     """

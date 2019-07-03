@@ -12,31 +12,31 @@
 from msrest.serialization import Model
 
 
-class ReadReceiptResult(Model):
-    """Analysis result of the 'Batch Read Receipt' operation.
+class AnalyzeReceiptResult(Model):
+    """Result of the 'Analyze Receipt' operation.
 
-    :param status: Status of the read operation. Possible values include: 'Not
-     Started', 'Running', 'Failed', 'Succeeded'
+    :param status: Status of the analysis operation. Possible values include:
+     'NotStarted', 'Running', 'Failed', 'Succeeded'
     :type status: str or
-     ~azure.cognitiveservices.formrecognizer.models.TextOperationStatusCodes
-    :param recognition_results: Text recognition result of the 'Batch Read
-     Receipt' operation.
+     ~azure.cognitiveservices.formrecognizer.models.OperationStatusCodes
+    :param recognition_results: An array of objects, each representing the OCR
+     result for a page in the input document.
     :type recognition_results:
      list[~azure.cognitiveservices.formrecognizer.models.TextRecognitionResult]
-    :param understanding_results: Semantic understanding result of the 'Batch
-     Read Receipt' operation.
+    :param understanding_results: An array of objects, each representing a
+     receipt detected in the input document.
     :type understanding_results:
      list[~azure.cognitiveservices.formrecognizer.models.UnderstandingResult]
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'TextOperationStatusCodes'},
+        'status': {'key': 'status', 'type': 'OperationStatusCodes'},
         'recognition_results': {'key': 'recognitionResults', 'type': '[TextRecognitionResult]'},
         'understanding_results': {'key': 'understandingResults', 'type': '[UnderstandingResult]'},
     }
 
-    def __init__(self, *, status=None, recognition_results=None, understanding_results=None, **kwargs) -> None:
-        super(ReadReceiptResult, self).__init__(**kwargs)
-        self.status = status
-        self.recognition_results = recognition_results
-        self.understanding_results = understanding_results
+    def __init__(self, **kwargs):
+        super(AnalyzeReceiptResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.recognition_results = kwargs.get('recognition_results', None)
+        self.understanding_results = kwargs.get('understanding_results', None)

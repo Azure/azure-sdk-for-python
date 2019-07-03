@@ -12,9 +12,9 @@
 from enum import Enum
 
 
-class TextOperationStatusCodes(str, Enum):
+class OperationStatusCodes(str, Enum):
 
-    not_started = "Not Started"
+    not_started = "NotStarted"
     running = "Running"
     failed = "Failed"
     succeeded = "Succeeded"

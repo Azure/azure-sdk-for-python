@@ -13,9 +13,11 @@ from msrest.serialization import Model
 
 
 class ElementReference(Model):
-    """Reference to an OCR word.
+    """Reference to an OCR word element.
 
-    :param ref:
+    :param ref: JSON pointer to an OCR word element. For example,
+     "#/recognitionResults/0/lines/1/words/2" refers to 3rd word in the 2nd
+     line of the 1st page in the document.
     :type ref: str
     """
 

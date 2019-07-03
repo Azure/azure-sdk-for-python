@@ -17,7 +17,7 @@ class NumberValue(FieldValue):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: OCR text content of the recognized field.
+    :param text: Extracted text content of the recognized field.
     :type text: str
     :param elements: List of references to OCR words comprising the recognized
      field value.

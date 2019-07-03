@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import HttpOperationError
 from . import models
 
 
@@ -47,7 +48,7 @@ class FormRecognizerClientConfiguration(Configuration):
 
 
 class FormRecognizerClient(SDKClient):
-    """FormRecognizerClient
+    """Extracts information from forms and images into structured data based on a model created by a set of representative training forms.
 
     :ivar config: Configuration for client.
     :vartype config: FormRecognizerClientConfiguration
@@ -426,11 +427,11 @@ class FormRecognizerClient(SDKClient):
         return deserialized
     analyze_with_custom_model.metadata = {'url': '/custom/models/{id}/analyze'}
 
-    def batch_read_receipt(
+    def analyze_receipt(
             self, url, custom_headers=None, raw=False, **operation_config):
-        """Batch Read Receipt operation. The response contains a field called
-        'Operation-Location', which contains the URL that you must use for your
-        'Get Read Receipt Result' operation.
+        """Analyze Receipt.
+
+        Extract field text and semantic values from a given receipt document.
 
         :param url: Publicly reachable URL of an image.
         :type url: str
@@ -442,12 +443,12 @@ class FormRecognizerClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = self.batch_read_receipt.metadata['url']
+        url = self.analyze_receipt.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -469,8 +470,8 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+        if response.status_code not in [202, 400, 415, 500, 503]:
+            raise HttpOperationError(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -478,32 +479,32 @@ class FormRecognizerClient(SDKClient):
                 'Operation-Location': 'str',
             })
             return client_raw_response
-    batch_read_receipt.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
+    analyze_receipt.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
 
-    def get_read_receipt_result(
+    def get_receipt_result(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
-        """This interface is used for getting the analysis results of a 'Batch
-        Read Receipt' operation. The URL to this interface should be retrieved
-        from the 'Operation-Location' field returned from the 'Batch Read
-        Receipt' operation.
+        """Get Receipt Result.
 
-        :param operation_id: Id of read operation returned in the response of
-         a 'Batch Read Receipt' operation.
+        Query the status and retrieve the result of an 'Analyze Receipt'
+        operation. The URL to this interface can be obtained from the
+        'Operation-Location' header in the 'Analyze Receipt' response.
+
+        :param operation_id: Id returned by the 'Analyze Receipt' operation.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ReadReceiptResult or ClientRawResponse if raw=true
+        :return: AnalyzeReceiptResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.formrecognizer.models.ReadReceiptResult or
+         ~azure.cognitiveservices.formrecognizer.models.AnalyzeReceiptResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = self.get_read_receipt_result.metadata['url']
+        url = self.get_receipt_result.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
@@ -523,27 +524,26 @@ class FormRecognizerClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+        if response.status_code not in [200, 404, 500, 503]:
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ReadReceiptResult', response)
+            deserialized = self._deserialize('AnalyzeReceiptResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_read_receipt_result.metadata = {'url': '/prebuilt/receipt/operations/{operationId}'}
+    get_receipt_result.metadata = {'url': '/prebuilt/receipt/operations/{operationId}'}
 
-    def batch_read_receipt_in_stream(
+    def analyze_receipt_in_stream(
             self, image, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Read Receipt operation. When you use the 'Batch Read Receipt'
-        interface, the response contains a field called 'Operation-Location'.
-        The 'Operation-Location' field contains the URL that you must use for
-        your 'Get Read Receipt Result' operation.
+        """Analyze Receipt.
+
+        Extract field text and semantic values from a given receipt document.
 
         :param image: An image stream.
         :type image: Generator
@@ -560,10 +560,10 @@ class FormRecognizerClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = self.batch_read_receipt_in_stream.metadata['url']
+        url = self.analyze_receipt_in_stream.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -585,8 +585,8 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+        if response.status_code not in [202, 400, 415, 500, 503]:
+            raise HttpOperationError(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -594,4 +594,4 @@ class FormRecognizerClient(SDKClient):
                 'Operation-Location': 'str',
             })
             return client_raw_response
-    batch_read_receipt_in_stream.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
+    analyze_receipt_in_stream.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}

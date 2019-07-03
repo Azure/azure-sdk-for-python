@@ -33,10 +33,9 @@ try:
     from .element_reference_py3 import ElementReference
     from .field_value_py3 import FieldValue
     from .understanding_result_py3 import UnderstandingResult
-    from .read_receipt_result_py3 import ReadReceiptResult
+    from .analyze_receipt_result_py3 import AnalyzeReceiptResult
     from .string_value_py3 import StringValue
     from .number_value_py3 import NumberValue
-    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
     from .image_url_py3 import ImageUrl
 except (SyntaxError, ImportError):
     from .train_source_filter import TrainSourceFilter
@@ -62,13 +61,12 @@ except (SyntaxError, ImportError):
     from .element_reference import ElementReference
     from .field_value import FieldValue
     from .understanding_result import UnderstandingResult
-    from .read_receipt_result import ReadReceiptResult
+    from .analyze_receipt_result import AnalyzeReceiptResult
     from .string_value import StringValue
     from .number_value import NumberValue
-    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
     from .image_url import ImageUrl
 from .form_recognizer_client_enums import (
-    TextOperationStatusCodes,
+    OperationStatusCodes,
     TextRecognitionResultDimensionUnit,
     TextRecognitionResultConfidenceClass,
 )
@@ -97,12 +95,11 @@ __all__ = [
     'ElementReference',
     'FieldValue',
     'UnderstandingResult',
-    'ReadReceiptResult',
+    'AnalyzeReceiptResult',
     'StringValue',
     'NumberValue',
-    'ComputerVisionError', 'ComputerVisionErrorException',
     'ImageUrl',
-    'TextOperationStatusCodes',
+    'OperationStatusCodes',
     'TextRecognitionResultDimensionUnit',
     'TextRecognitionResultConfidenceClass',
 ]
