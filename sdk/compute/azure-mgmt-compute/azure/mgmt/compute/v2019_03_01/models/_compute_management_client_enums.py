@@ -37,6 +37,13 @@ class ProximityPlacementGroupType(str, Enum):
     ultra = "Ultra"
 
 
+class DedicatedHostLicenseTypes(str, Enum):
+
+    none = "None"
+    windows_server_hybrid = "Windows_Server_Hybrid"
+    windows_server_perpetual = "Windows_Server_Perpetual"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
