@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import threading
-
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -22,14 +20,31 @@ from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
 
 
-class AuthChallengePolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
-    """policy for handling HTTP authentication challenges"""
+class _AuthChallengePolicyBase(_BearerTokenCredentialPolicyBase):
+    """Sans I/O base for challenge authentication policies"""
 
     def __init__(self, credential, **kwargs):
-        super(AuthChallengePolicy, self).__init__(credential, **kwargs)
+        super(_AuthChallengePolicyBase, self).__init__(credential, **kwargs)
+
+    @staticmethod
+    def _update_challenge(request, challenger):
+        # type: (HttpRequest, HttpResponse) -> HttpChallenge
+        """parse challenge from challenger, cache it, return it"""
+
+        challenge = HttpChallenge(
+            request.http_request.url,
+            challenger.http_response.headers.get("WWW-Authenticate"),
+            response_headers=challenger.http_response.headers,
+        )
+        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+        return challenge
+
+
+class AuthChallengePolicy(_AuthChallengePolicyBase, HTTPPolicy):
+    """policy for handling HTTP authentication challenges"""
 
     def send(self, request):
-        # type: (PipelineRequest) -> None
+        # type: (PipelineRequest) -> HttpResponse
 
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
@@ -64,22 +79,9 @@ class AuthChallengePolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
 
         return response
 
-    @staticmethod
-    def _update_challenge(request, challenger):
-        # type: (HttpRequest, HttpResponse) -> HttpChallenge
-        """parse challenge from challenger, cache it, return it"""
-
-        challenge = HttpChallenge(
-            request.http_request.url,
-            challenger.http_response.headers.get("WWW-Authenticate"),
-            response_headers=challenger.http_response.headers,
-        )
-        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
-        return challenge
-
     def _handle_challenge(self, request, challenge):
         # type: (PipelineRequest, HttpChallenge) -> None
-        """authenticate as instructed, add Authorization header to request"""
+        """authenticate according to challenge, add Authorization header to request"""
 
         scope = challenge.get_resource()
         if not scope.endswith("/.default"):

@@ -6,12 +6,11 @@ from typing import Any, Callable, Mapping, TYPE_CHECKING
 from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
 from azure.keyvault.keys._generated import KeyVaultClient
-from azure.keyvault.keys._internal import KEY_VAULT_SCOPE
+from azure.keyvault.keys._shared import AsyncAuthChallengePolicy
 
 
 if TYPE_CHECKING:
@@ -58,7 +57,7 @@ class _AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
-        config.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, KEY_VAULT_SCOPE)
+        config.authentication_policy = AsyncAuthChallengePolicy(credential)
         return config
 
     def __init__(
