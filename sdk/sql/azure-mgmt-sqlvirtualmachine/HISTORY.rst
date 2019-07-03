@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.4.0 (2019-07-04)
+++++++++++++++++++
+
+**Features**
+
+- Model SqlVirtualMachine has a new parameter sql_management
+
 0.3.0 (2019-06-03)
 ++++++++++++++++++
 
