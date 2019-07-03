@@ -633,6 +633,380 @@ class DataDiskImage(Model):
         self.lun = None
 
 
+class DedicatedHost(Resource):
+    """Specifies information about the Dedicated host.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param platform_fault_domain: Fault domain of the host within a group.
+     Supported values 0,1,2.
+    :type platform_fault_domain: int
+    :param auto_replace_on_failure: Whether the host should be replaced
+     automatically in case of a failure. The value is defaulted to true when
+     not provided.
+    :type auto_replace_on_failure: bool
+    :ivar host_id: A unique id generated and assigned to the dedicated host by
+     the platform.
+    :vartype host_id: str
+    :ivar virtual_machines: A list of references to all virtual machines in
+     the Dedicated Host.
+    :vartype virtual_machines:
+     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
+    :param license_type: Specifies the software license type that will be
+     applied to the VMs deployed on the dedicated host. <br><br> Possible
+     values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
+     **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
+     include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
+    :type license_type: str or
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
+    :ivar provisioning_time: The date when the host was first created.
+    :vartype provisioning_time: datetime
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The dedicated host instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostInstanceView
+    :param sku: Sku of the dedicated host for Hardware Generation and VM
+     family, The only name is required to be set. See DedicatedHostSkuTypes for
+     possible set of values.
+    :type sku: ~azure.mgmt.compute.v2019_03_01.models.Sku
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'host_id': {'readonly': True},
+        'virtual_machines': {'readonly': True},
+        'provisioning_time': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
+        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
+        'host_id': {'key': 'properties.hostId', 'type': 'str'},
+        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
+        'license_type': {'key': 'properties.licenseType', 'type': 'DedicatedHostLicenseTypes'},
+        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHost, self).__init__(**kwargs)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
+        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
+        self.host_id = None
+        self.virtual_machines = None
+        self.license_type = kwargs.get('license_type', None)
+        self.provisioning_time = None
+        self.provisioning_state = None
+        self.instance_view = None
+        self.sku = kwargs.get('sku', None)
+
+
+class DedicatedHostAllocatableVM(Model):
+    """Represents the dedicated host unutilized capacity in terms of a specific VM
+    size.
+
+    :param vm_size: VM size in terms of which the unutilized capacity is
+     represented.
+    :type vm_size: str
+    :param count: Maximum number of VMs of size vmSize that can fit in the
+     dedicated host's remaining capacity.
+    :type count: float
+    """
+
+    _attribute_map = {
+        'vm_size': {'key': 'vmSize', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostAllocatableVM, self).__init__(**kwargs)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.count = kwargs.get('count', None)
+
+
+class DedicatedHostAvailableCapacity(Model):
+    """Dedicated host unutilized capacity.
+
+    :param available_vcpus: The total number of CPUs.
+    :type available_vcpus: float
+    :param allocatable_vms: The unutilized capacity of the dedicated host
+     represented in terms of each VM size that is allowed to be deployed to the
+     dedicated host.
+    :type allocatable_vms:
+     list[~azure.mgmt.compute.v2019_03_01.models.DedicatedHostAllocatableVM]
+    """
+
+    _attribute_map = {
+        'available_vcpus': {'key': 'availableVCpus', 'type': 'float'},
+        'allocatable_vms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
+        self.available_vcpus = kwargs.get('available_vcpus', None)
+        self.allocatable_vms = kwargs.get('allocatable_vms', None)
+
+
+class DedicatedHostCapacity(Model):
+    """Dedicated host total capacity.
+
+    :param total_cores: The total number of cores.
+    :type total_cores: float
+    :param total_vcpus: The total number of CPUs.
+    :type total_vcpus: float
+    """
+
+    _attribute_map = {
+        'total_cores': {'key': 'totalCores', 'type': 'float'},
+        'total_vcpus': {'key': 'totalVCpus', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostCapacity, self).__init__(**kwargs)
+        self.total_cores = kwargs.get('total_cores', None)
+        self.total_vcpus = kwargs.get('total_vcpus', None)
+
+
+class DedicatedHostGroup(Resource):
+    """Specifies information about the dedicated host group that the dedicated
+    hosts should be assigned to. <br><br> Currently, a Dedicated host can only
+    be added to Dedicated Host Group at creation time. An existing Dedicated
+    Host cannot be added to a dedicated host group.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param platform_fault_domain_count: Number of fault domains that the host
+     group can span. Supported values 1,2,3.
+    :type platform_fault_domain_count: int
+    :ivar hosts: A list of references to all dedicated hosts in the dedicated
+     host group.
+    :vartype hosts:
+     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
+    :param zones: Availability Zone to use for this host group � only single
+     zone is supported. The zone can be assigned only during creation. If not
+     provided, the group supports all zones in the region. If provided, enforce
+     each host in the group is in the same zone.
+    :type zones: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'hosts': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostGroup, self).__init__(**kwargs)
+        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+        self.hosts = None
+        self.zones = kwargs.get('zones', None)
+
+
+class DedicatedHostGroupUpdate(UpdateResource):
+    """Specifies information about the dedicated host group that the dedicated
+    host should be assigned to. Only tags may be updated.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param platform_fault_domain_count: Number of fault domains that the host
+     group can span. Supported values 1,2,3.
+    :type platform_fault_domain_count: int
+    :ivar hosts: A list of references to all dedicated hosts in the dedicated
+     host group.
+    :vartype hosts:
+     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
+    :param zones: Availability Zone to use for this host group � only single
+     zone is supported. The zone can be assigned only during creation. If not
+     provided, the group supports all zones in the region. If provided, enforce
+     each host in the group is in the same zone.
+    :type zones: list[str]
+    """
+
+    _validation = {
+        'hosts': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostGroupUpdate, self).__init__(**kwargs)
+        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+        self.hosts = None
+        self.zones = kwargs.get('zones', None)
+
+
+class DedicatedHostInstanceView(Model):
+    """The instance view of a dedicated host.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar asset_id: Specifies the unique of the dedicated physical machine on
+     which the dedicated host resides.
+    :vartype asset_id: str
+    :param capacity: The total capacity of the dedicated host.
+    :type capacity:
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostCapacity
+    :param available_capacity: Unutilized capacity of the dedicated host.
+    :type available_capacity:
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostAvailableCapacity
+    :param statuses: The resource status information.
+    :type statuses:
+     list[~azure.mgmt.compute.v2019_03_01.models.InstanceViewStatus]
+    """
+
+    _validation = {
+        'asset_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'DedicatedHostCapacity'},
+        'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostInstanceView, self).__init__(**kwargs)
+        self.asset_id = None
+        self.capacity = kwargs.get('capacity', None)
+        self.available_capacity = kwargs.get('available_capacity', None)
+        self.statuses = kwargs.get('statuses', None)
+
+
+class DedicatedHostUpdate(UpdateResource):
+    """Specifies information about the dedicated host. Only tags,
+    autoReplaceOnFailure and licenseType may be updated.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param platform_fault_domain: Fault domain of the host within a group.
+     Supported values 0,1,2.
+    :type platform_fault_domain: int
+    :param auto_replace_on_failure: Whether the host should be replaced
+     automatically in case of a failure. The value is defaulted to true when
+     not provided.
+    :type auto_replace_on_failure: bool
+    :ivar host_id: A unique id generated and assigned to the dedicated host by
+     the platform.
+    :vartype host_id: str
+    :ivar virtual_machines: A list of references to all virtual machines in
+     the Dedicated Host.
+    :vartype virtual_machines:
+     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
+    :param license_type: Specifies the software license type that will be
+     applied to the VMs deployed on the dedicated host. <br><br> Possible
+     values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
+     **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
+     include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
+    :type license_type: str or
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
+    :ivar provisioning_time: The date when the host was first created.
+    :vartype provisioning_time: datetime
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The dedicated host instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostInstanceView
+    """
+
+    _validation = {
+        'host_id': {'readonly': True},
+        'virtual_machines': {'readonly': True},
+        'provisioning_time': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
+        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
+        'host_id': {'key': 'properties.hostId', 'type': 'str'},
+        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
+        'license_type': {'key': 'properties.licenseType', 'type': 'DedicatedHostLicenseTypes'},
+        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DedicatedHostUpdate, self).__init__(**kwargs)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
+        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
+        self.host_id = None
+        self.virtual_machines = None
+        self.license_type = kwargs.get('license_type', None)
+        self.provisioning_time = None
+        self.provisioning_state = None
+        self.instance_view = None
+
+
 class DiagnosticsProfile(Model):
     """Specifies the boot diagnostic settings state. <br><br>Minimum api-version:
     2015-06-15.
@@ -3621,6 +3995,9 @@ class VirtualMachine(Resource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param host: Specifies information about the dedicated host that the
+     virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
+    :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -3677,6 +4054,7 @@ class VirtualMachine(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
@@ -3697,6 +4075,7 @@ class VirtualMachine(Resource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+        self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
         self.license_type = kwargs.get('license_type', None)
@@ -6303,6 +6682,9 @@ class VirtualMachineUpdate(UpdateResource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param host: Specifies information about the dedicated host that the
+     virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
+    :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -6347,6 +6729,7 @@ class VirtualMachineUpdate(UpdateResource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
@@ -6366,6 +6749,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+        self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
         self.license_type = kwargs.get('license_type', None)

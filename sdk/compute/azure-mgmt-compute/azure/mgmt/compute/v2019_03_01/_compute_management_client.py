@@ -16,6 +16,8 @@ from ._configuration import ComputeManagementClientConfiguration
 from .operations import Operations
 from .operations import AvailabilitySetsOperations
 from .operations import ProximityPlacementGroupsOperations
+from .operations import DedicatedHostGroupsOperations
+from .operations import DedicatedHostsOperations
 from .operations import VirtualMachineExtensionImagesOperations
 from .operations import VirtualMachineExtensionsOperations
 from .operations import VirtualMachineImagesOperations
@@ -47,6 +49,10 @@ class ComputeManagementClient(SDKClient):
     :vartype availability_sets: azure.mgmt.compute.v2019_03_01.operations.AvailabilitySetsOperations
     :ivar proximity_placement_groups: ProximityPlacementGroups operations
     :vartype proximity_placement_groups: azure.mgmt.compute.v2019_03_01.operations.ProximityPlacementGroupsOperations
+    :ivar dedicated_host_groups: DedicatedHostGroups operations
+    :vartype dedicated_host_groups: azure.mgmt.compute.v2019_03_01.operations.DedicatedHostGroupsOperations
+    :ivar dedicated_hosts: DedicatedHosts operations
+    :vartype dedicated_hosts: azure.mgmt.compute.v2019_03_01.operations.DedicatedHostsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
     :vartype virtual_machine_extension_images: azure.mgmt.compute.v2019_03_01.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
@@ -106,6 +112,10 @@ class ComputeManagementClient(SDKClient):
         self.availability_sets = AvailabilitySetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.proximity_placement_groups = ProximityPlacementGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dedicated_host_groups = DedicatedHostGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dedicated_hosts = DedicatedHostsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
