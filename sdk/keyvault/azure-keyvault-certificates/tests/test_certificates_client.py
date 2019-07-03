@@ -97,12 +97,9 @@ class CertificatesClientTest(KeyVaultTestCase):
                 self.assertTrue(False)
         self.assertEqual(len(expected), 0)        
     
-    def _validate_certificate_contacts(self, contacts, vault, expected):
-        contact_id = '{}certificates/contacts'.format(vault)
-        self.assertEqual(contact_id, contacts.id)
-        self.assertEqual(len(contacts.contact_list), len(expected))
-
-        for contact in contacts.contact_list:
+    def _validate_certificate_contacts(self, contacts, expected):
+        self.assertEqual(len(list(contacts)), len(expected))
+        for contact in contacts:
             exp_contact = next(x for x in expected if x.email_address == contact.email_address)
             self.assertEqual(contact, exp_contact)
 
@@ -246,19 +243,19 @@ class CertificatesClientTest(KeyVaultTestCase):
 
         # create certificate contacts
         contacts = client.create_contacts(contact_list)
-        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+        self._validate_certificate_contacts(contacts, contact_list)
 
         # get certificate contacts
         contacts = client.list_contacts()
-        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+        self._validate_certificate_contacts(contacts, contact_list)
 
         # delete certificate contacts
         contacts = client.delete_contacts()
-        self._validate_certificate_contacts(contacts, client.vault_url, contact_list)
+        self._validate_certificate_contacts(contacts, contact_list)
 
         # get certificate contacts returns not found
         try:
-            contacts = client.get_certificate_contacts(client.vault_url)
+            contacts = client.list_contacts()
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
@@ -287,12 +284,12 @@ class CertificatesClientTest(KeyVaultTestCase):
         # create certificates to recover
         for i in range(self.list_test_size):
             cert_name = self.get_resource_name('certrec{}'.format(str(i)))
-            certs[cert_name] = self._import_common_certificate(cert_name)
+            certs[cert_name] = self._import_common_certificate(client, cert_name)
 
         # create certificates to purge
         for i in range(self.list_test_size):
             cert_name = self.get_resource_name('certprg{}'.format(str(i)))
-            certs[cert_name] = self._import_common_certificate(cert_name)
+            certs[cert_name] = self._import_common_certificate(client, cert_name)
 
         # delete all certificates
         for cert_name in certs.keys():
@@ -302,8 +299,8 @@ class CertificatesClientTest(KeyVaultTestCase):
         if not self.is_playback():
             time.sleep(30)
 
-        # validate all our deleted certificates are returned by get_deleted_certificates
-        deleted = [KeyVaultId.parse_certificate_id(s.id).name for s in client.get_deleted_certificates()]
+        # validate all our deleted certificates are returned by list_deleted_certificates
+        deleted = [KeyVaultId.parse_certificate_id(s.id).name for s in client.list_deleted_certificates()]
         # self.assertTrue(all(s in deleted for s in certs.keys()))
 
         # recover select secrets
@@ -317,8 +314,8 @@ class CertificatesClientTest(KeyVaultTestCase):
         if not self.is_playback():
             time.sleep(30)
 
-        # validate none of our deleted certificates are returned by get_deleted_certificates
-        deleted = [KeyVaultId.parse_secret_id(s.id).name for s in client.get_deleted_certificates()]
+        # validate none of our deleted certificates are returned by list_deleted_certificates
+        deleted = [KeyVaultId.parse_secret_id(s.id).name for s in client.list_deleted_certificates()]
         self.assertTrue(not any(s in deleted for s in certs.keys()))
 
         # validate the recovered certificates

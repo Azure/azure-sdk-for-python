@@ -482,10 +482,7 @@ class Contact:
     def _from_certificate_contacts_item(cls, contact_item):
         # type: (list[models.Contact]) -> Contact
         """Construct a Contact from an autorest-generated ContactItem"""
-        return [
-                cls(email=item.email, name=item.name, phone=item.phone)
-                for item in contact_item.contact_list
-            ]
+        return cls(email=contact_item.email_address, name=contact_item.name, phone=contact_item.phone)
 
     @property
     def email(self):

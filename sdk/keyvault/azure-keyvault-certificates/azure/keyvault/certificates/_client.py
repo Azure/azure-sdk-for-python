@@ -312,14 +312,17 @@ class CertificateClient(_KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Contacts
         """
         bundle = self._client.set_certificate_contacts(self.vault_url, contact_list=contacts, **kwargs)
-        return Contact._from_certificate_contacts_item(bundle)
+        return (Contact._from_certificate_contacts_item(item) for item in bundle.contact_list)
 
     def list_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_certificate_contacts(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (Contact._from_certificate_contacts_item(item) for item in pages)
+        pages = self._client.get_certificate_contacts(self._vault_url, **kwargs)
+        return (Contact._from_certificate_contacts_item(item) for item in pages.contact_list)
 
+    def delete_contacts(self, **kwargs):
+        # type: () -> Iterable[Contact]
+        bundle = self._client.delete_certificate_contacts(self.vault_url, **kwargs)
+        return (Contact._from_certificate_contacts_item(item) for item in bundle.contact_list)
 
     def get_certificate_operation(self, name, **kwargs):
         # type: (str) -> CertificateOperation
@@ -377,10 +380,6 @@ class CertificateClient(_KeyVaultClientBase):
         # type: (str, list[str], Optional[bool], Optional[Dict[str, str]]) -> Certificate
         pass
 
-    def delete_contacts(self, **kwargs):
-        # type: () -> Iterable[Contact]
-        bundle = self._client.delete_certificate_contacts(self.vault_url, **kwargs)
-        return Contact._from_certificate_contacts_item(bundle)
 
     def get_pending_certificate_signing_request(self, name, **kwargs):
         # type: (str) -> str
