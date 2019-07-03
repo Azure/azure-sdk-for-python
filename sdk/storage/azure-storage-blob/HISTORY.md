@@ -42,6 +42,7 @@ https://aka.ms/azure-sdk-preview1-python
     - Operations `put_block` and `put_block_from_url` have been renamed to `stage_block` and `stage_block_from_url`.
     - Operation `put_block_list` has been renamed to `commit_block_list`.
     - No longer have specific operations for `get_metadata` - use `get_properties` instead.
+    - No longer have specific operations for `exists` - use `get_properties` instead.
     - Operation `incremental_copy_blob` has been replaced by an optional boolean flag in the `copy_blob_from_url` operation.
     - Operation `update_page` has been renamed to `upload_page`.
     - Operation `get_page_ranges_diff` has been replaced by an optional str flag in the `get_page_ranges` operation.

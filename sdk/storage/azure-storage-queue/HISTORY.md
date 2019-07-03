@@ -24,6 +24,7 @@ https://aka.ms/azure-sdk-preview1-python
             - `ResourceModifiedError`: The resource has been modified (e.g. overwritten) and therefore the current operation is in conflict. Alternatively this may be raised if a condition on the operation is not met.
             - `ClientAuthenticationError`: Authentication failed.
     - No longer have specific operations for `get_metadata` - use `get_properties` instead.
+    - No longer have specific operations for `exists` - use `get_properties` instead.
     - Operations `get_queue_acl` and `set_queue_acl` have been renamed to `get_queue_access_policy` and `set_queue_access_policy`.
     - Operation `put_message` has been renamed to `enqueue_message`.
     - Operation `get_messages` has been renamed to `receive_messages`.
