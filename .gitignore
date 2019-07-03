@@ -62,6 +62,7 @@ $RECYCLE.BIN/
 src/build
 *.iml
 /doc/_build
+/doc/sphinx/examples
 /.vs/config/applicationhost.config
 
 # Azure deployment credentials
