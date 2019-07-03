@@ -1,4 +1,8 @@
-class AbstractSpan:
+from abc import ABC, abstractmethod, abstractproperty, abstractstaticmethod
+
+
+class AbstractSpan(ABC):
+    @abstractmethod
     def __init__(self, span=None, name=None):
         # type: (Any, str) -> None
         """
@@ -7,6 +11,7 @@ class AbstractSpan:
         """
         pass
 
+    @abstractmethod
     def span(self, name="child_span"):
         # type: (str) -> AbstractSpan
         """
@@ -15,16 +20,19 @@ class AbstractSpan:
          """
         pass
 
+    @abstractmethod
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
         pass
 
+    @abstractmethod
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
         pass
 
+    @abstractmethod
     def to_header(self, headers):
         # type: (Dict[str, str]) -> Dict[str, str]
         """
@@ -32,6 +40,7 @@ class AbstractSpan:
         """
         pass
 
+    @abstractmethod
     def from_header(self, headers):
         # type: (Dict[str, str]) -> Any
         """
@@ -40,7 +49,7 @@ class AbstractSpan:
         """
         pass
 
-    @property
+    @abstractproperty
     def span_instance(self):
         # type: () -> Any
         """
@@ -48,7 +57,7 @@ class AbstractSpan:
         """
         pass
 
-    @staticmethod
+    @abstractstaticmethod
     def end_tracer(tracer):
         # type: (Any) -> None
         """
@@ -56,7 +65,7 @@ class AbstractSpan:
         """
         pass
 
-    @staticmethod
+    @abstractstaticmethod
     def get_current_span():
         # type: () -> AbstractSpan
         """
@@ -64,7 +73,7 @@ class AbstractSpan:
         """
         pass
 
-    @staticmethod
+    @abstractstaticmethod
     def get_current_tracer():
         # type: () -> Any
         """
@@ -72,7 +81,7 @@ class AbstractSpan:
         """
         pass
 
-    @staticmethod
+    @abstractstaticmethod
     def set_current_span(span):
         # type: (AbstractSpan) -> None
         """
@@ -80,7 +89,7 @@ class AbstractSpan:
         """
         pass
 
-    @staticmethod
+    @abstractstaticmethod
     def set_current_tracer(tracer):
         # type: (Any) -> None
         """
