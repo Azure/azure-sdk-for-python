@@ -3,8 +3,8 @@ try:
     from unittest import mock
 except ImportError:
     import mock
-from azure.core.trace.context import tracing_context
-from azure.core.trace.abstract_span import AbstractSpan
+from azure.core.trace import tracing_context
+from azure.core.trace import AbstractSpan
 
 
 class TestContext(unittest.TestCase):
