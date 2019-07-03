@@ -12,7 +12,7 @@ import pytest
 try:
     import settings_real as settings
 except ImportError:
-    import settings_fake as settings
+    import queue_settings_fake as settings
 
 from queuetestcase import (
     QueueTestCase,
