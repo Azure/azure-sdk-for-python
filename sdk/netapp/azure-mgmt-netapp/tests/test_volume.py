@@ -49,7 +49,7 @@ def wait_for_no_volume(client, rg, account_name, pool_name, volume_name, live=Fa
     while co<10:
         co += 1
         if live:
-            time.sleep(5)
+            time.sleep(200)
         try:
             get_volume(client, rg, account_name, pool_name, volume_name)
         except:
@@ -63,7 +63,7 @@ def wait_for_volume(client, rg, account_name, pool_name, volume_name, live=False
     while co<10:
         co += 1
         if live:
-            time.sleep(5)
+            time.sleep(10)
         try:
             get_volume(client, rg, account_name, pool_name, volume_name)
             break
