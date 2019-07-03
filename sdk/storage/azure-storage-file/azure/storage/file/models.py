@@ -273,7 +273,6 @@ class SharePropertiesPaged(Paged):
         self.location_mode = None
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
         :raises: StopIteration if no further page
@@ -377,7 +376,6 @@ class HandlesPaged(Paged):
         self.location_mode = None
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
         :raises: StopIteration if no further page
@@ -468,7 +466,6 @@ class DirectoryPropertiesPaged(Paged):
         self.location_mode = None
 
     def _advance_page(self):
-        # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
         :raises: StopIteration if no further page
@@ -683,10 +680,10 @@ class FilePermissions(object):
                 ('d' if self.delete else ''))
 
 
-FilePermissions.CREATE = FilePermissions(create=True)
-FilePermissions.DELETE = FilePermissions(delete=True)
-FilePermissions.READ = FilePermissions(read=True)
-FilePermissions.WRITE = FilePermissions(write=True)
+FilePermissions.CREATE = FilePermissions(create=True) # type: ignore
+FilePermissions.DELETE = FilePermissions(delete=True) # type: ignore
+FilePermissions.READ = FilePermissions(read=True) # type: ignore
+FilePermissions.WRITE = FilePermissions(write=True) # type: ignore
 
 
 class SharePermissions(object):
@@ -754,7 +751,7 @@ class SharePermissions(object):
                 ('l' if self.list else ''))
 
 
-SharePermissions.DELETE = SharePermissions(delete=True)
-SharePermissions.LIST = SharePermissions(list=True)
-SharePermissions.READ = SharePermissions(read=True)
-SharePermissions.WRITE = SharePermissions(write=True)
+SharePermissions.DELETE = SharePermissions(delete=True) # type: ignore
+SharePermissions.LIST = SharePermissions(list=True) # type: ignore
+SharePermissions.READ = SharePermissions(read=True) # type: ignore
+SharePermissions.WRITE = SharePermissions(write=True) # type: ignore
