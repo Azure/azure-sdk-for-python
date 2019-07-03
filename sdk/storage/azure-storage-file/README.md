@@ -7,7 +7,7 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/azure/storage/file) | [Package (PyPi)](https://pypi.org/project/azure-storage-file/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/file-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/azure/storage/file) | [Package (PyPi)](https://pypi.org/project/azure-storage-file/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/file-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests)
 
 ## Getting started
 
@@ -134,7 +134,7 @@ All File service operations will throw a StorageErrorException on failure with h
 ## Next steps
 ### More sample code
 
-Get started with our [File samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/samples).
+Get started with our [File samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests).
 
 Several Storage File Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage File:
 
