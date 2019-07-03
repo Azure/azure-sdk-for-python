@@ -1,4 +1,7 @@
-recursive-include tests *.py *.yaml
-include *.rst
-include azure/__init__.py
-
+include README.md
+include LICENSE.txt
+recursive-include doc *.bat
+recursive-include doc *.py
+recursive-include doc *.rst
+recursive-include doc Makefile
+recursive-include test *.py
