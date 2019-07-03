@@ -122,4 +122,5 @@
   ./ref/azure.servicefabric.rst
   ./ref/azure.storage.blob.rst
   ./ref/azure.storage.file.rst
+  ./ref/azure.storage.queue.rst
   ref/azure.servicemanagement
