@@ -32,6 +32,7 @@ from .regulatory_compliance_controls_operations import RegulatoryComplianceContr
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .assessments_metadata_operations import AssessmentsMetadataOperations
 from .assessments_metadata_subscription_operations import AssessmentsMetadataSubscriptionOperations
+from .server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -57,4 +58,5 @@ __all__ = [
     'RegulatoryComplianceAssessmentsOperations',
     'AssessmentsMetadataOperations',
     'AssessmentsMetadataSubscriptionOperations',
+    'ServerVulnerabilityAssessmentOperations',
 ]
