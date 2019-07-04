@@ -74,6 +74,13 @@ class TestPrioritizedSetting(object):
         ps = m.PrioritizedSetting("foo")
         ps.set_value(40)
         assert ps() == 40
+    
+    def test_user_unset(self):
+        ps = m.PrioritizedSetting("foo", default=2)
+        ps.set_value(40)
+        assert ps() == 40
+        ps.unset_value()
+        assert ps() == 2
 
     def test_user_set_converts(self):
         ps = m.PrioritizedSetting("foo", convert=int)

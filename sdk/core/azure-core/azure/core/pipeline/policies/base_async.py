@@ -56,7 +56,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline
      is instantiated and all policies chained.
-    :type next: AsyncHTTPPolicy or AsyncHttpTransport
+    :type next: ~azure.core.pipeline.policies.AsyncHTTPPolicy or ~azure.core.pipeline.transport.AsyncHttpTransport
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline

@@ -10,117 +10,117 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .import_source_credentials_py3 import ImportSourceCredentials
-    from .import_source_py3 import ImportSource
-    from .import_image_parameters_py3 import ImportImageParameters
-    from .registry_name_check_request_py3 import RegistryNameCheckRequest
-    from .registry_name_status_py3 import RegistryNameStatus
-    from .operation_display_definition_py3 import OperationDisplayDefinition
-    from .operation_metric_specification_definition_py3 import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
-    from .operation_definition_py3 import OperationDefinition
-    from .sku_py3 import Sku
-    from .status1_py3 import Status1
-    from .storage_account_properties_py3 import StorageAccountProperties
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .ip_rule_py3 import IPRule
-    from .network_rule_set_py3 import NetworkRuleSet
-    from .registry_py3 import Registry
-    from .registry_update_parameters_py3 import RegistryUpdateParameters
-    from .registry_password_py3 import RegistryPassword
-    from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
-    from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
-    from .registry_usage_py3 import RegistryUsage
-    from .registry_usage_list_result_py3 import RegistryUsageListResult
-    from .quarantine_policy_py3 import QuarantinePolicy
-    from .trust_policy_py3 import TrustPolicy
-    from .registry_policies_py3 import RegistryPolicies
-    from .replication_py3 import Replication
-    from .replication_update_parameters_py3 import ReplicationUpdateParameters
-    from .webhook_py3 import Webhook
-    from .webhook_create_parameters_py3 import WebhookCreateParameters
-    from .webhook_update_parameters_py3 import WebhookUpdateParameters
-    from .event_info_py3 import EventInfo
-    from .callback_config_py3 import CallbackConfig
-    from .target_py3 import Target
-    from .request_py3 import Request
-    from .actor_py3 import Actor
-    from .source_py3 import Source
-    from .event_content_py3 import EventContent
-    from .event_request_message_py3 import EventRequestMessage
-    from .event_response_message_py3 import EventResponseMessage
-    from .event_py3 import Event
-    from .resource_py3 import Resource
-    from .scope_map_py3 import ScopeMap
-    from .scope_map_update_parameters_py3 import ScopeMapUpdateParameters
-    from .token_certificate_py3 import TokenCertificate
-    from .token_password_py3 import TokenPassword
-    from .token_credentials_properties_py3 import TokenCredentialsProperties
-    from .token_py3 import Token
-    from .token_update_parameters_py3 import TokenUpdateParameters
-    from .generate_credentials_parameters_py3 import GenerateCredentialsParameters
-    from .generate_credentials_result_py3 import GenerateCredentialsResult
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import Actor
+    from ._models_py3 import CallbackConfig
+    from ._models_py3 import Event
+    from ._models_py3 import EventContent
+    from ._models_py3 import EventInfo
+    from ._models_py3 import EventRequestMessage
+    from ._models_py3 import EventResponseMessage
+    from ._models_py3 import GenerateCredentialsParameters
+    from ._models_py3 import GenerateCredentialsResult
+    from ._models_py3 import ImportImageParameters
+    from ._models_py3 import ImportSource
+    from ._models_py3 import ImportSourceCredentials
+    from ._models_py3 import IPRule
+    from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import OperationDefinition
+    from ._models_py3 import OperationDisplayDefinition
+    from ._models_py3 import OperationMetricSpecificationDefinition
+    from ._models_py3 import OperationServiceSpecificationDefinition
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import QuarantinePolicy
+    from ._models_py3 import RegenerateCredentialParameters
+    from ._models_py3 import Registry
+    from ._models_py3 import RegistryListCredentialsResult
+    from ._models_py3 import RegistryNameCheckRequest
+    from ._models_py3 import RegistryNameStatus
+    from ._models_py3 import RegistryPassword
+    from ._models_py3 import RegistryPolicies
+    from ._models_py3 import RegistryUpdateParameters
+    from ._models_py3 import RegistryUsage
+    from ._models_py3 import RegistryUsageListResult
+    from ._models_py3 import Replication
+    from ._models_py3 import ReplicationUpdateParameters
+    from ._models_py3 import Request
+    from ._models_py3 import Resource
+    from ._models_py3 import ScopeMap
+    from ._models_py3 import ScopeMapUpdateParameters
+    from ._models_py3 import Sku
+    from ._models_py3 import Source
+    from ._models_py3 import Status1
+    from ._models_py3 import StorageAccountProperties
+    from ._models_py3 import Target
+    from ._models_py3 import Token
+    from ._models_py3 import TokenCertificate
+    from ._models_py3 import TokenCredentialsProperties
+    from ._models_py3 import TokenPassword
+    from ._models_py3 import TokenUpdateParameters
+    from ._models_py3 import TrustPolicy
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import Webhook
+    from ._models_py3 import WebhookCreateParameters
+    from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
-    from .import_source_credentials import ImportSourceCredentials
-    from .import_source import ImportSource
-    from .import_image_parameters import ImportImageParameters
-    from .registry_name_check_request import RegistryNameCheckRequest
-    from .registry_name_status import RegistryNameStatus
-    from .operation_display_definition import OperationDisplayDefinition
-    from .operation_metric_specification_definition import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition import OperationServiceSpecificationDefinition
-    from .operation_definition import OperationDefinition
-    from .sku import Sku
-    from .status1 import Status1
-    from .storage_account_properties import StorageAccountProperties
-    from .virtual_network_rule import VirtualNetworkRule
-    from .ip_rule import IPRule
-    from .network_rule_set import NetworkRuleSet
-    from .registry import Registry
-    from .registry_update_parameters import RegistryUpdateParameters
-    from .registry_password import RegistryPassword
-    from .registry_list_credentials_result import RegistryListCredentialsResult
-    from .regenerate_credential_parameters import RegenerateCredentialParameters
-    from .registry_usage import RegistryUsage
-    from .registry_usage_list_result import RegistryUsageListResult
-    from .quarantine_policy import QuarantinePolicy
-    from .trust_policy import TrustPolicy
-    from .registry_policies import RegistryPolicies
-    from .replication import Replication
-    from .replication_update_parameters import ReplicationUpdateParameters
-    from .webhook import Webhook
-    from .webhook_create_parameters import WebhookCreateParameters
-    from .webhook_update_parameters import WebhookUpdateParameters
-    from .event_info import EventInfo
-    from .callback_config import CallbackConfig
-    from .target import Target
-    from .request import Request
-    from .actor import Actor
-    from .source import Source
-    from .event_content import EventContent
-    from .event_request_message import EventRequestMessage
-    from .event_response_message import EventResponseMessage
-    from .event import Event
-    from .resource import Resource
-    from .scope_map import ScopeMap
-    from .scope_map_update_parameters import ScopeMapUpdateParameters
-    from .token_certificate import TokenCertificate
-    from .token_password import TokenPassword
-    from .token_credentials_properties import TokenCredentialsProperties
-    from .token import Token
-    from .token_update_parameters import TokenUpdateParameters
-    from .generate_credentials_parameters import GenerateCredentialsParameters
-    from .generate_credentials_result import GenerateCredentialsResult
-    from .proxy_resource import ProxyResource
-from .registry_paged import RegistryPaged
-from .operation_definition_paged import OperationDefinitionPaged
-from .replication_paged import ReplicationPaged
-from .webhook_paged import WebhookPaged
-from .event_paged import EventPaged
-from .scope_map_paged import ScopeMapPaged
-from .token_paged import TokenPaged
-from .container_registry_management_client_enums import (
+    from ._models import Actor
+    from ._models import CallbackConfig
+    from ._models import Event
+    from ._models import EventContent
+    from ._models import EventInfo
+    from ._models import EventRequestMessage
+    from ._models import EventResponseMessage
+    from ._models import GenerateCredentialsParameters
+    from ._models import GenerateCredentialsResult
+    from ._models import ImportImageParameters
+    from ._models import ImportSource
+    from ._models import ImportSourceCredentials
+    from ._models import IPRule
+    from ._models import NetworkRuleSet
+    from ._models import OperationDefinition
+    from ._models import OperationDisplayDefinition
+    from ._models import OperationMetricSpecificationDefinition
+    from ._models import OperationServiceSpecificationDefinition
+    from ._models import ProxyResource
+    from ._models import QuarantinePolicy
+    from ._models import RegenerateCredentialParameters
+    from ._models import Registry
+    from ._models import RegistryListCredentialsResult
+    from ._models import RegistryNameCheckRequest
+    from ._models import RegistryNameStatus
+    from ._models import RegistryPassword
+    from ._models import RegistryPolicies
+    from ._models import RegistryUpdateParameters
+    from ._models import RegistryUsage
+    from ._models import RegistryUsageListResult
+    from ._models import Replication
+    from ._models import ReplicationUpdateParameters
+    from ._models import Request
+    from ._models import Resource
+    from ._models import ScopeMap
+    from ._models import ScopeMapUpdateParameters
+    from ._models import Sku
+    from ._models import Source
+    from ._models import Status1
+    from ._models import StorageAccountProperties
+    from ._models import Target
+    from ._models import Token
+    from ._models import TokenCertificate
+    from ._models import TokenCredentialsProperties
+    from ._models import TokenPassword
+    from ._models import TokenUpdateParameters
+    from ._models import TrustPolicy
+    from ._models import VirtualNetworkRule
+    from ._models import Webhook
+    from ._models import WebhookCreateParameters
+    from ._models import WebhookUpdateParameters
+from ._paged_models import EventPaged
+from ._paged_models import OperationDefinitionPaged
+from ._paged_models import RegistryPaged
+from ._paged_models import ReplicationPaged
+from ._paged_models import ScopeMapPaged
+from ._paged_models import TokenPaged
+from ._paged_models import WebhookPaged
+from ._container_registry_management_client_enums import (
     ImportMode,
     SkuName,
     SkuTier,
@@ -139,57 +139,57 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImportSourceCredentials',
-    'ImportSource',
+    'Actor',
+    'CallbackConfig',
+    'Event',
+    'EventContent',
+    'EventInfo',
+    'EventRequestMessage',
+    'EventResponseMessage',
+    'GenerateCredentialsParameters',
+    'GenerateCredentialsResult',
     'ImportImageParameters',
-    'RegistryNameCheckRequest',
-    'RegistryNameStatus',
+    'ImportSource',
+    'ImportSourceCredentials',
+    'IPRule',
+    'NetworkRuleSet',
+    'OperationDefinition',
     'OperationDisplayDefinition',
     'OperationMetricSpecificationDefinition',
     'OperationServiceSpecificationDefinition',
-    'OperationDefinition',
-    'Sku',
-    'Status1',
-    'StorageAccountProperties',
-    'VirtualNetworkRule',
-    'IPRule',
-    'NetworkRuleSet',
-    'Registry',
-    'RegistryUpdateParameters',
-    'RegistryPassword',
-    'RegistryListCredentialsResult',
+    'ProxyResource',
+    'QuarantinePolicy',
     'RegenerateCredentialParameters',
+    'Registry',
+    'RegistryListCredentialsResult',
+    'RegistryNameCheckRequest',
+    'RegistryNameStatus',
+    'RegistryPassword',
+    'RegistryPolicies',
+    'RegistryUpdateParameters',
     'RegistryUsage',
     'RegistryUsageListResult',
-    'QuarantinePolicy',
-    'TrustPolicy',
-    'RegistryPolicies',
     'Replication',
     'ReplicationUpdateParameters',
-    'Webhook',
-    'WebhookCreateParameters',
-    'WebhookUpdateParameters',
-    'EventInfo',
-    'CallbackConfig',
-    'Target',
     'Request',
-    'Actor',
-    'Source',
-    'EventContent',
-    'EventRequestMessage',
-    'EventResponseMessage',
-    'Event',
     'Resource',
     'ScopeMap',
     'ScopeMapUpdateParameters',
-    'TokenCertificate',
-    'TokenPassword',
-    'TokenCredentialsProperties',
+    'Sku',
+    'Source',
+    'Status1',
+    'StorageAccountProperties',
+    'Target',
     'Token',
+    'TokenCertificate',
+    'TokenCredentialsProperties',
+    'TokenPassword',
     'TokenUpdateParameters',
-    'GenerateCredentialsParameters',
-    'GenerateCredentialsResult',
-    'ProxyResource',
+    'TrustPolicy',
+    'VirtualNetworkRule',
+    'Webhook',
+    'WebhookCreateParameters',
+    'WebhookUpdateParameters',
     'RegistryPaged',
     'OperationDefinitionPaged',
     'ReplicationPaged',

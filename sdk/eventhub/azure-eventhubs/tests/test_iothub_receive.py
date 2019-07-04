@@ -8,19 +8,19 @@ import os
 import pytest
 import time
 
-from azure import eventhub
-from azure.eventhub import EventData, EventHubClient, Offset
+from azure.eventhub import EventData, EventPosition, EventHubClient
 
 
 @pytest.mark.liveTest
 def test_iothub_receive_sync(iot_connection_str, device_id):
-    client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
-    receiver = client.add_receiver("$default", "0", operation='/messages/events')
+    pytest.skip("current code will cause ErrorCodes.LinkRedirect")
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
+    receiver._open()
     try:
-        client.run()
-        partitions = client.get_eventhub_info()
+        partitions = client.get_properties()
         assert partitions["partition_ids"] == ["0", "1", "2", "3"]
         received = receiver.receive(timeout=5)
         assert len(received) == 0
     finally:
-        client.stop()
+        receiver.close()

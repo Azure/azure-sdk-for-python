@@ -62,6 +62,7 @@ $RECYCLE.BIN/
 src/build
 *.iml
 /doc/_build
+/doc/sphinx/examples
 /.vs/config/applicationhost.config
 
 # Azure deployment credentials
@@ -71,3 +72,8 @@ src/build
 adlEnv/
 
 code_reports
+
+# Azure Storage test credentials
+sdk/storage/azure-storage-blob/tests/settings_real.py
+sdk/storage/azure-storage-queue/tests/settings_real.py
+sdk/storage/azure-storage-file/tests/settings_real.py

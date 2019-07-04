@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registries_operations import RegistriesOperations
-from .operations import Operations
-from .replications_operations import ReplicationsOperations
-from .webhooks_operations import WebhooksOperations
-from .builds_operations import BuildsOperations
-from .build_steps_operations import BuildStepsOperations
-from .build_tasks_operations import BuildTasksOperations
+from ._registries_operations import RegistriesOperations
+from ._operations import Operations
+from ._replications_operations import ReplicationsOperations
+from ._webhooks_operations import WebhooksOperations
+from ._builds_operations import BuildsOperations
+from ._build_steps_operations import BuildStepsOperations
+from ._build_tasks_operations import BuildTasksOperations
 
 __all__ = [
     'RegistriesOperations',
