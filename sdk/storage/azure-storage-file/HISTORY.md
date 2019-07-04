@@ -5,7 +5,7 @@
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Files. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://aka.ms/azure-sdk-preview1-python.
 
-**Breaking changes: New API desgin**
+**Breaking changes: New API design**
 - Operations are now scoped to a particular client:
     - `FileServiceClient`: This client handles account-level operations. This includes managing service properties and listing the shares within an account.
     - `ShareClient`: The client handles operations for a particular share. This includes creating or deleting that share, as well as listing the directories within that share, and managing properties and metadata.
@@ -13,7 +13,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `FileClient`: The client handles operations for a particular file. This includes creating or deleting that file, as well as upload and download data and managing properties.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, share, directory or file).
-    For full details on the new API, please see reference documentation.
+    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html).
 - The copy file operation now returns a polling object that can be used to check the status of the operation, as well as abort the operation.
 - The `close_handles` operation now return a polling object that can be used to check the status of the operation.
 - Download operations now return a streaming object that can download data in multiple ways:

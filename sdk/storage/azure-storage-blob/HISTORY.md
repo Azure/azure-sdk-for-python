@@ -5,7 +5,7 @@
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Blobs. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://aka.ms/azure-sdk-preview1-python.
 
-**Breaking changes: New API desgin**
+**Breaking changes: New API design**
 - Operations are now scoped to a particular client:
     - `BlobServiceClient`: This client handles account-level operations. This includes managing service properties and listing the containers within an account.
     - `ContainerClient`: The client handles operations for a particular container. This includes creating or deleting that container, as well as listing the blobs within that container and managing properties and metadata.
@@ -14,7 +14,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `LeaseClient`: Handles all lease operations for both containers and blobs.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
-    For full details on the new API, please see reference documentation.
+    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html).
 - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
 - New module level operations for simple upload and download using a blob URL.
 - Download operations now return a streaming object that can download data in multiple ways:
@@ -25,9 +25,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
-  - see this package's
-  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
-  , and the
+  - see the
   [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
