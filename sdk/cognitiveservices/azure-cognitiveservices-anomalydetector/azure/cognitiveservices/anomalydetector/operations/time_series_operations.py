@@ -386,10 +386,10 @@ class TimeSeriesOperations(object):
 
     def change_point_detect_on_timestamp(
             self, time_series_id, body, custom_headers=None, raw=False, **operation_config):
-        """Detect change point for the interval series.
+        """Detect the closest change point before the given timestamp.
 
-        Evaluate change point score of every series point between start and
-        end.
+        Evaluate change point score before the given timestamp and give the
+        closest change point.
 
         :param time_series_id: Unique id for time series.
         :type time_series_id: str

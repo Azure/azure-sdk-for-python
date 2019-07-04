@@ -20,9 +20,8 @@ class ChangePointDetectOnTimestampResponse(Model):
     :param period: Required. Frequency extracted from the series, zero means
      no recurrent pattern has been found.
     :type period: int
-    :param is_change_point: Required. Change point property. True means a
-     change point has been detected.
-    :type is_change_point: bool
+    :param change_point: Required. The closest change point's timestamp.
+    :type change_point: datetime
     :param confidence_score: Required. The change point confidence score.
     :type confidence_score: float
     :param timestamp: Required. Timestamp of a data point (ISO8601 format).
@@ -31,14 +30,14 @@ class ChangePointDetectOnTimestampResponse(Model):
 
     _validation = {
         'period': {'required': True},
-        'is_change_point': {'required': True},
+        'change_point': {'required': True},
         'confidence_score': {'required': True},
         'timestamp': {'required': True},
     }
 
     _attribute_map = {
         'period': {'key': 'period', 'type': 'int'},
-        'is_change_point': {'key': 'isChangePoint', 'type': 'bool'},
+        'change_point': {'key': 'changePoint', 'type': 'iso-8601'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
     }
@@ -46,6 +45,6 @@ class ChangePointDetectOnTimestampResponse(Model):
     def __init__(self, **kwargs):
         super(ChangePointDetectOnTimestampResponse, self).__init__(**kwargs)
         self.period = kwargs.get('period', None)
-        self.is_change_point = kwargs.get('is_change_point', None)
+        self.change_point = kwargs.get('change_point', None)
         self.confidence_score = kwargs.get('confidence_score', None)
         self.timestamp = kwargs.get('timestamp', None)
