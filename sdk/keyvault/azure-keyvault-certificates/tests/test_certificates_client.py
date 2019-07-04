@@ -322,3 +322,79 @@ class CertificatesClientTest(KeyVaultTestCase):
         expected = {k: v for k, v in certs.items() if k.startswith('certrec')}
         actual = {k: client.get_certificate(k, KeyVaultId.version_none) for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_async_request_cancellation_and_deletion(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+
+        cert_name = 'asyncCanceledDeletedCert'
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        secret_properties=SecretProperties(content_type='application/x-pkcs12'),
+                                        issuer_parameters=IssuerParameters(name='Self'),
+                                        x509_certificate_properties=X509CertificateProperties(
+                                            subject='CN=*.microsoft.com',
+                                            subject_alternative_names=SubjectAlternativeNames(
+                                                dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                            ),
+                                            validity_in_months=24
+                                        ))
+
+        # create certificate
+        client.create_certificate(cert_name, cert_policy)
+
+        # cancel certificate operation
+        cancel_operation = client.cancel_certificate_operation(cert_name, cancellation_requested=True)
+        self.assertTrue(hasattr(cancel_operation, 'cancellation_requested'))
+        self.assertTrue(cancel_operation.cancellation_requested)
+        self._validate_certificate_operation(cancel_operation, client.vault_url, cert_name, cert_policy)
+
+        retrieved_operation = client.get_certificate_operation(cert_name)
+        self.assertTrue(hasattr(retrieved_operation, 'cancellation_requested'))
+        self.assertTrue(retrieved_operation.cancellation_requested)
+        self._validate_certificate_operation(retrieved_operation, client.vault_url, cert_name, cert_policy)
+
+        # delete certificate operation
+        deleted_operation = client.delete_certificate_operation(cert_name)
+        self.assertIsNotNone(deleted_operation)
+        self._validate_certificate_operation(deleted_operation, client.vault_url, cert_name, cert_policy)
+
+        try:
+            client.get_certificate_operation(cert_name)
+            self.fail('Get should fail')
+        except Exception as ex:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
+                raise ex
+
+        # delete cancelled certificate
+        client.delete_certificate(cert_name)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_policy(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+
+        cert_name = 'policyCertificate'
+
+        # get certificate policy
+        (cert_bundle, cert_policy) = self._import_common_certificate(client, cert_name)
+        retrieved_policy = client.get_policy(cert_name)
+        self.assertIsNotNone(retrieved_policy)
+
+        # update certificate policy
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        secret_properties=SecretProperties(content_type='application/x-pkcs12'),
+                                        issuer_parameters=IssuerParameters(name='Self')
+                                        )
+
+        client.update_policy(cert_name, cert_policy)
+        updated_cert_policy = client.get_policy(cert_name)
+        self.assertIsNotNone(updated_cert_policy)

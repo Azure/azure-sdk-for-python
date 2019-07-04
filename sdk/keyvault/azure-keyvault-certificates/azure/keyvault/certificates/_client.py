@@ -194,11 +194,17 @@ class CertificateClient(_KeyVaultClientBase):
 
     def get_policy(self, name, **kwargs):
         # type: (str) -> CertificatePolicy
-        pass
+        bundle = self._client.get_certificate_policy(self.vault_url, name, **kwargs)
+        return CertificatePolicy._from_certificate_policy_bundle(bundle)
 
-    def update_policy(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
+
+    def update_policy(self, name, policy, **kwargs):
         # type: (str, CertificatePolicy) -> CertificatePolicy
-        pass
+        bundle = self._client.update_certificate_policy(
+            self.vault_url, name, certificate_policy=policy, **kwargs
+        )
+        return CertificatePolicy._from_certificate_policy_bundle(bundle)
+
 
     def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
         # type: (str, str, Optional[bool], Optional[Dict[str, str]]) -> Certificate
@@ -235,7 +241,6 @@ class CertificateClient(_KeyVaultClientBase):
             self.vault_url, name, certificate_version=version or "", certificate_attributes=attributes, tags=tags, **kwargs
         )
         return Certificate._from_certificate_bundle(bundle)
-
 
     def backup_certificate(self, name, **kwargs):
         # type: (str) -> bytes
