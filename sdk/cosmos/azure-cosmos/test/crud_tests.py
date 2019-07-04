@@ -988,7 +988,8 @@ class CRUDTests(unittest.TestCase):
             before_create_documents_count,
             'number of documents should remain same')
 
-    def test_spatial_index(self):
+
+    def _test_spatial_index(self):
         db = self.databaseForTest
         # partial policy specified
         collection = db.create_container(
@@ -1864,10 +1865,10 @@ class CRUDTests(unittest.TestCase):
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
         db.delete_container(container=created_container)
 
-    def test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
+    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
         self._test_create_indexing_policy_with_composite_and_spatial_indexes(False)
 
-    def test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
+    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
         self._test_create_indexing_policy_with_composite_and_spatial_indexes(True)
 
     def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
