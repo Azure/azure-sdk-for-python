@@ -30,8 +30,6 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
-
 #IMPORTANT NOTES: 
   
 #  	Most test cases in this file create collections in your Azure Cosmos account.
