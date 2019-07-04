@@ -7,3 +7,8 @@ Release History
 ++++++++++++++++++
 
 * Initial Release
+
+0.1.0 (2019-07-03)
+++++++++++++++++++
+
+* GA Release
