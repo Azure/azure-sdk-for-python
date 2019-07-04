@@ -63,6 +63,7 @@ src/build
 *.iml
 /doc/_build
 /doc/sphinx/examples
+/doc/sphinx/tests
 /.vs/config/applicationhost.config
 
 # Azure deployment credentials
