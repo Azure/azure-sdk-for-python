@@ -1,6 +1,6 @@
 # Azure SDK for Python
 
-[![Python](https://img.shields.io/pypi/pyversions/azure-core.svg?maxAge=2592000)](https://pypi.python.org/pypi/azure/) [![BuildStatus](https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master) [![Build](https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master)](https://travis-ci.org/Azure/azure-sdk-for-python) [![Dependencies](https://img.shields.io/badge/dependencies-analyzed-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html)
+[![Python](https://img.shields.io/pypi/pyversions/azure-core.svg?maxAge=2592000)](https://pypi.python.org/pypi/azure/) [![BuildStatus](https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master) [![Dependencies](https://img.shields.io/badge/dependencies-analyzed-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html)
 
 This repository contains official Python libraries for Azure services. For documentation go to [Azure SDK for Python documentation](http://aka.ms/python-docs).
 
@@ -53,4 +53,9 @@ Libraries which enable you to provision specific resources. They are responsible
 ## Contributing
 For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
 
+## Code of Conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2FREADME.png)
+
