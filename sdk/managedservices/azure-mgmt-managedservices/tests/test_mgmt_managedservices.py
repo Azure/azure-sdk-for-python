@@ -18,7 +18,7 @@ class MgmtManagedServicesTest(AzureMgmtTestCase):
         self.client = self.create_basic_client(ManagedServicesClient)
 
     def test_managedservices_crud(self):
-        scope = 'subscriptions/002b3477-bfbf-4402-b377-6003168b75d3'
+        scope = 'subscriptions/00000000-0000-0000-0000-000000000000'
         assignmentid = 'c0d5f994-63a1-484d-8c1e-a2ac825efd60'
         definitionid = '8daec8c7-7567-47ff-9009-f0a4ec429a3c'
         regdef_string='{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}]}'
@@ -29,7 +29,7 @@ class MgmtManagedServicesTest(AzureMgmtTestCase):
         response = poller.result()
         self.assertIsNotNone(response)
         self.assertEqual(definitionid, response.name)
-        
+
         #create assignment
         definition = scope + "/providers/Microsoft.ManagedServices/registrationDefinitions/" + definitionid
         assignmentproperties = {"registrationDefinitionId":definition}
