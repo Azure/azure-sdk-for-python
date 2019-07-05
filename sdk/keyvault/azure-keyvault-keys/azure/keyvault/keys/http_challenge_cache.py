@@ -33,10 +33,24 @@ def get_challenge_for_url(url):
     if not url:
         raise ValueError("URL cannot be None")
 
-    url = parse.urlparse(url)
+    key = _get_cache_key(url)
 
     with _lock:
-        return _cache.get(url.netloc)
+        return _cache.get(key)
+
+
+def _get_cache_key(url):
+    """Use the URL's netloc as cache key except when the URL specifies the default port for its scheme. In that case
+    use the netloc without the port. That is to say, https://foo.bar and https://foo.bar:443 are considered equivalent.
+
+    This equivalency prevents an unnecessary challenge when using Key Vault's paging API. The Key Vault client doesn't
+    specify ports, but Key Vault's next page links do, so a redundant challenge would otherwise be executed when the
+    client requests the next page."""
+
+    parsed = parse.urlparse(url)
+    if parsed.scheme == "https" and parsed.port == 443:
+        return parsed.netloc[:-4]
+    return parsed.netloc
 
 
 def remove_challenge_for_url(url):
