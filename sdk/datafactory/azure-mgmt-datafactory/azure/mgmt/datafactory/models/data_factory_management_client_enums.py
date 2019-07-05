@@ -321,6 +321,15 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
+class AvroCompressionCodec(str, Enum):
+
+    none = "none"
+    deflate = "deflate"
+    snappy = "snappy"
+    xz = "xz"
+    bzip2 = "bzip2"
+
+
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"

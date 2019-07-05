@@ -9,19 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceSink,
-    AzureDataExplorerSink, DynamicsSink, OdbcSink, AzureSearchIndexSink,
-    AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink, SqlDWSink,
-    AzureSqlSink, SqlServerSink, SqlSink, DocumentDbCollectionSink,
-    FileSystemSink, BlobSink, ParquetSink, AvroSink, AzureTableSink,
-    AzureQueueSink, SapCloudForCustomerSink, DelimitedTextSink
+class AvroSink(CopySink):
+    """A copy activity avro sink.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -48,6 +40,10 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param store_settings: Avro store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
+    :param format_settings: Avro format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.AvroWriteSettings
     """
 
     _validation = {
@@ -62,18 +58,12 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'AvroWriteSettings'},
     }
 
     def __init__(self, **kwargs):
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.type = None
+        super(AvroSink, self).__init__(**kwargs)
+        self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
+        self.type = 'AvroSink'
