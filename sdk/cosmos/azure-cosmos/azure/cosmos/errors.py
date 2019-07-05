@@ -21,7 +21,7 @@
 
 """PyCosmos Exceptions in the Azure Cosmos database service.
 """
-import azure.cosmos.http_constants as http_constants
+from . import http_constants
 
 class CosmosError(Exception):
     """Base class for all Azure Cosmos errors.

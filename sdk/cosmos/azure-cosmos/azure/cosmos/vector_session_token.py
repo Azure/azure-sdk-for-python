@@ -22,9 +22,9 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
-import azure.cosmos.errors as errors
-import azure.cosmos.base as base
-from azure.cosmos.http_constants import StatusCodes
+from . import errors
+from . import base
+from .http_constants import StatusCodes
 
 class VectorSessionToken(object):
     segment_separator = '#'

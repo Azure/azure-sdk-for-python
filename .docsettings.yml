@@ -5,6 +5,7 @@ omitted_paths:
   - "azure-mgmt*/*"
   - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
+  - "doc/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -62,6 +63,12 @@ known_content_issues:
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-core/README.md', 'nspkg and common']
 
+  # dev tools 
+  - ['doc/dev/mgmt/swagger/single_api/readme.md', 'dev readme']
+  - ['doc/dev/mgmt/swagger/multi_api/readme.md', 'dev readme']
+  - ['doc/dev/mgmt/README.md', 'dev readme']
+  - ['doc/dev/README.md', dev readme']
+  - ['doc/README.md', 'dev readme']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

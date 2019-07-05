@@ -22,8 +22,8 @@
 """Hash partition resolver implementation in the Azure Cosmos database service.
 """
 
-import azure.cosmos.murmur_hash as murmur_hash
-import azure.cosmos.consistent_hash_ring as consistent_hash_ring
+from . import murmur_hash
+from . import consistent_hash_ring
 
 class HashPartitionResolver(object):
     """HashPartitionResolver implements partitioning based on the value of a hash function, allowing you to evenly

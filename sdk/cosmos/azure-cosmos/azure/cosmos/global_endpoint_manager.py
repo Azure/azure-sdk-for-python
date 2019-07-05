@@ -24,9 +24,9 @@
 
 from six.moves.urllib.parse import urlparse
 import threading
-import azure.cosmos.constants as constants
-import azure.cosmos.errors as errors
-from azure.cosmos.location_cache import LocationCache
+from . import constants
+from . import errors
+from .location_cache import LocationCache
 
 class _GlobalEndpointManager(object):
     """

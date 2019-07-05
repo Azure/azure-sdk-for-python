@@ -25,10 +25,10 @@
 import sys, traceback
 import threading
 
-import azure.cosmos.base as base
-import azure.cosmos.http_constants as http_constants
-from azure.cosmos.vector_session_token import VectorSessionToken
-from azure.cosmos.errors import HTTPFailure
+from . import base
+from . import http_constants
+from .vector_session_token import VectorSessionToken
+from .errors import HTTPFailure
 
 class SessionContainer(object):
 

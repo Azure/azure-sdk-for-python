@@ -15,11 +15,34 @@
 import sys
 import os
 import sphinx_rtd_theme
+import glob
+from shutil import copyfile
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../azure'))
+
+# FIX FOR EXAMPLE REFERENCES
+REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
+samples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*sample*.py')
+
+example_files = glob.glob(examples_glob_expansion, recursive=True)
+samples_files = glob.glob(samples_glob_expansion, recursive=True)
+
+all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_files + samples_files))]
+
+# now for each package, we need to copy it and write it to the relative path FROM THE CURRENT CWD
+for example_file in all_files:
+    relative_path_in_pkg = os.path.join(*(example_file.split(os.path.sep)[3:]))
+    final_destination = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path_in_pkg))
+
+    # create the directories if they don't already exist
+    os.makedirs(os.path.dirname(final_destination), exist_ok=True)
+
+    # finally copy the example file into the sphinx folder
+    copyfile(os.path.join(REPO_ROOT, example_file), final_destination)
 
 # -- General configuration ------------------------------------------------
 
