@@ -5,7 +5,7 @@
 try:
     import urllib.parse as parse
 except ImportError:
-    import urlparse as parse  # pylint: disable=import-error
+    import urlparse as parse  # type: ignore
 
 
 class HttpChallenge(object):

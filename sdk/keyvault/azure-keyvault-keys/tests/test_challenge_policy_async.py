@@ -16,9 +16,7 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy
-from azure.keyvault.keys.http_challenge import HttpChallenge
-import azure.keyvault.keys.http_challenge_cache as challenge_cache
+from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
 from helpers import async_validating_transport, mock_response, Request
@@ -27,7 +25,7 @@ from helpers import async_validating_transport, mock_response, Request
 @pytest.mark.asyncio
 async def test_policy():
     # ensure the test starts with an empty cache
-    challenge_cache.clear()
+    HttpChallengeCache.clear()
 
     expected_scope = "https://challenge.resource/.default"
     expected_token = "expected_token"
@@ -75,7 +73,7 @@ async def test_policy_updates_cache():
     """
 
     # ensure the test starts with an empty cache
-    challenge_cache.clear()
+    HttpChallengeCache.clear()
 
     url = "https://azure.service/path"
     first_scope = "https://first-scope"

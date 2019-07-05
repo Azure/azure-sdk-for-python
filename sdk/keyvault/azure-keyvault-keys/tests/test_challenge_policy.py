@@ -15,9 +15,7 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
-from azure.keyvault.keys.challenge_auth_policy import ChallengeAuthPolicy
-from azure.keyvault.keys.http_challenge import HttpChallenge
-import azure.keyvault.keys.http_challenge_cache as challenge_cache
+from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
 from helpers import mock_response, Request, validating_transport
@@ -25,7 +23,7 @@ from helpers import mock_response, Request, validating_transport
 
 def test_challenge_cache():
     # ensure the test starts with an empty cache
-    challenge_cache.clear()
+    HttpChallengeCache.clear()
 
     url_a = "https://azure.service.a/"
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
@@ -34,13 +32,13 @@ def test_challenge_cache():
     challenge_b = HttpChallenge(url_b, "Bearer authorization=authority B, resource=resource B")
 
     for url, challenge in zip((url_a, url_b), (challenge_a, challenge_b)):
-        challenge_cache.set_challenge_for_url(url, challenge)
-        assert challenge_cache.get_challenge_for_url(url) == challenge
-        assert challenge_cache.get_challenge_for_url(url + "/some/path") == challenge
-        assert challenge_cache.get_challenge_for_url(url + "/some/path?with-query=string") == challenge
+        HttpChallengeCache.set_challenge_for_url(url, challenge)
+        assert HttpChallengeCache.get_challenge_for_url(url) == challenge
+        assert HttpChallengeCache.get_challenge_for_url(url + "/some/path") == challenge
+        assert HttpChallengeCache.get_challenge_for_url(url + "/some/path?with-query=string") == challenge
 
-        challenge_cache.remove_challenge_for_url(url)
-        assert not challenge_cache.get_challenge_for_url(url)
+        HttpChallengeCache.remove_challenge_for_url(url)
+        assert not HttpChallengeCache.get_challenge_for_url(url)
 
 
 def test_challenge_parsing():
@@ -56,7 +54,7 @@ def test_challenge_parsing():
 
 def test_policy():
     # ensure the test starts with an empty cache
-    challenge_cache.clear()
+    HttpChallengeCache.clear()
 
     expected_scope = "https://challenge.resource/.default"
     expected_token = "expected_token"
@@ -104,7 +102,7 @@ def test_policy_updates_cache():
     """
 
     # ensure the test starts with an empty cache
-    challenge_cache.clear()
+    HttpChallengeCache.clear()
 
     url = "https://azure.service/path"
     first_scope = "https://first-scope"

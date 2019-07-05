@@ -20,7 +20,7 @@ try:
 except ImportError:
     import urlparse as parse  # pylint: disable=import-error
 
-from .challenge_auth_policy import ChallengeAuthPolicy
+from ._shared.challenge_auth_policy import ChallengeAuthPolicy
 
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 

@@ -6,16 +6,15 @@ from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import http_challenge_cache as ChallengeCache
-from ..challenge_auth_policy import _ChallengeAuthPolicyBase
-from ..http_challenge import HttpChallenge
+from . import HttpChallenge, HttpChallengeCache
+from .challenge_auth_policy import _ChallengeAuthPolicyBase
 
 
 class AsyncChallengeAuthPolicy(_ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
     async def send(self, request: PipelineRequest) -> HttpResponse:
-        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
             # provoke a challenge with an unauthorized, bodiless request
             no_body = HttpRequest(
