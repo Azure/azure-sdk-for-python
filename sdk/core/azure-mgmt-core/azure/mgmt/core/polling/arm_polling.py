@@ -33,7 +33,7 @@ except ImportError:
 from msrest.exceptions import DeserializationError
 from azure.core.polling import PollingMethod
 
-from ..exceptions import CloudError
+from ..exceptions import ARMError
 
 
 FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
@@ -369,7 +369,7 @@ class ARMPolling(PollingMethod):
         """Set the initial status of this LRO.
 
         :param initial_response: The initial response of the poller
-        :raises: CloudError if initial status is incorrect LRO state
+        :raises: ARMError if initial status is incorrect LRO state
         """
         self._client = client
         self._response = initial_response
@@ -378,26 +378,26 @@ class ARMPolling(PollingMethod):
             self._operation.set_initial_status(initial_response)
         except BadStatus:
             self._operation.status = 'Failed'
-            raise CloudError(initial_response)
+            raise ARMError(initial_response)
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise CloudError(initial_response, str(err))
+            raise ARMError(initial_response, message=str(err))
         except OperationFailed:
-            raise CloudError(initial_response)
+            raise ARMError(initial_response)
 
     def run(self):
         try:
             self._poll()
         except BadStatus:
             self._operation.status = 'Failed'
-            raise CloudError(self._response)
+            raise ARMError(self._response)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise CloudError(self._response, str(err))
+            raise ARMError(self._response, message=str(err))
 
         except OperationFailed:
-            raise CloudError(self._response)
+            raise ARMError(self._response)
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and

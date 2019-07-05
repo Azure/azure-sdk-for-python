@@ -43,7 +43,7 @@ from msrest.exceptions import DeserializationError
 
 from azure.core.polling import async_poller
 
-from azure.mgmt.core.exceptions import CloudError
+from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
 )
@@ -171,7 +171,7 @@ async def test_long_running_put():
     op = LongRunningOperation(response, lambda x:None)
     with pytest.raises(BadStatus):
         op.set_initial_status(response)
-    with pytest.raises(CloudError):
+    with pytest.raises(ARMError):
         await async_poller(CLIENT, response,
             TestArmPolling.mock_outputs,
             AsyncARMPolling(0))
@@ -339,7 +339,7 @@ async def test_long_running_post():
     op = LongRunningOperation(response, lambda x:None)
     with pytest.raises(BadStatus):
         op.set_initial_status(response)
-    with pytest.raises(CloudError):
+    with pytest.raises(ARMError):
         await async_poller(CLIENT, response,
             TestArmPolling.mock_outputs,
             AsyncARMPolling(0))
@@ -423,7 +423,7 @@ async def test_long_running_negative():
     poll = async_poller(CLIENT, response,
         TestArmPolling.mock_outputs,
         AsyncARMPolling(0))
-    with pytest.raises(CloudError): # TODO: Node.js raises on deserialization
+    with pytest.raises(ARMError): # TODO: Node.js raises on deserialization
         await poll
 
     LOCATION_BODY = json.dumps({ 'name': TEST_NAME })

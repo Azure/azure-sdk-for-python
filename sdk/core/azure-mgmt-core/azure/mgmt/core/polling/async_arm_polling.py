@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 
-from ..exceptions import CloudError
+from ..exceptions import ARMError
 from .arm_polling import (
     failed,
     BadStatus,
@@ -45,14 +45,14 @@ class AsyncARMPolling(ARMPolling):
             await self._poll()
         except BadStatus:
             self._operation.status = 'Failed'
-            raise CloudError(self._response)
+            raise ARMError(self._response)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise CloudError(self._response, str(err))
+            raise ARMError(self._response, message=str(err))
 
         except OperationFailed:
-            raise CloudError(self._response)
+            raise ARMError(self._response)
 
     async def _poll(self):
         """Poll status of operation so long as operation is incomplete and

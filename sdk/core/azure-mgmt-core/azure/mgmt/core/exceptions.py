@@ -25,224 +25,71 @@
 # --------------------------------------------------------------------------
 
 import json
+from typing import TYPE_CHECKING, Dict, Any, Optional
 
-from requests import RequestException
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import HttpResponseError
 
-from msrest.serialization import Deserializer
-from msrest.exceptions import DeserializationError
 
-class CloudErrorRoot(object):
-    """Just match the "error" key at the root of a OdataV4 JSON.
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport.base import _HttpResponseBase
+
+
+class ODataV4Error(HttpResponseError):
+    """An HTTP response error where the JSON is decoded as OData V4 error format.
+
+    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
+
+    :ivar dict odata_json: The parsed JSON body as attribute for convenience.
+    :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str message: Human-readable, language-dependent representation of the error.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+    :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
     """
-    _validation = {}
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'CloudErrorData'},
-    }
-    def __init__(self, error):
-        self.error = error
 
-class CloudErrorData(object):
-    """Cloud Error Data object, deserialized from error data returned
-    during a failed REST API call.
-    """
+    def __init__(self, response, **kwargs):
+        # type: (_HttpResponseBase, Dict[str, Any]) -> None
 
-    _validation = {}
-    _attribute_map = {
-        'error': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorData]'},
-        'innererror': {'key': 'innererror', 'type': 'object'},
-        'additionalInfo': {'key': 'additionalInfo', 'type': '[TypedErrorInfo]'},
-        'data': {'key': 'values', 'type': '{str}'}
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.error = kwargs.get('error')
-        self.message = kwargs.get('message')
-        self.request_id = None
-        self.error_time = None
-        self.target = kwargs.get('target')
-        self.details = kwargs.get('details')
-        self.innererror = kwargs.get('innererror')
-        self.additionalInfo = kwargs.get('additionalInfo')
-        self.data = kwargs.get('data')
-        super(CloudErrorData, self).__init__(*args)
-
-    def __str__(self):
-        """Cloud error message."""
-        error_str = "Azure Error: {}".format(self.error)
-        error_str += "\nMessage: {}".format(self._message)
-        if self.target:
-            error_str += "\nTarget: {}".format(self.target)
-        if self.request_id:
-            error_str += "\nRequest ID: {}".format(self.request_id)
-        if self.error_time:
-            error_str += "\nError Time: {}".format(self.error_time)
-        if self.data:
-            error_str += "\nAdditional Data:"
-            for key, value in self.data.items():
-                error_str += "\n\t{} : {}".format(key, value)
-        if self.details:
-            error_str += "\nException Details:"
-            for error_obj in self.details:
-                error_str += "\n\tError Code: {}".format(error_obj.error)
-                error_str += "\n\tMessage: {}".format(error_obj.message)
-                if error_obj.target:
-                    error_str += "\n\tTarget: {}".format(error_obj.target)
-                if error_obj.innererror:
-                    error_str += "\nInner error: {}".format(json.dumps(error_obj.innererror, indent=4))
-                if error_obj.additionalInfo:
-                    error_str += "\n\tAdditional Information:"
-                    for error_info in error_obj.additionalInfo:
-                        error_str += "\n\t\t{}".format(str(error_info).replace("\n", "\n\t\t"))
-        if self.innererror:
-            error_str += "\nInner error: {}".format(json.dumps(self.innererror, indent=4))
-        if self.additionalInfo:
-            error_str += "\nAdditional Information:"
-            for error_info in self.additionalInfo:
-                error_str += "\n\t{}".format(str(error_info).replace("\n", "\n\t"))
-        error_bytes = error_str.encode()
-        return error_bytes.decode('ascii')
-
-    @classmethod
-    def _get_subtype_map(cls):
-        return {}
-
-    @property
-    def message(self):
-        """Cloud error message."""
-        return self._message
-
-    @message.setter
-    def message(self, value):
-        """Attempt to deconstruct error message to retrieve further
-        error data.
-        """
+        # Ensure field are declared, whatever can happen afterwards
+        self.odata_json = None  # type: Optional[dict[str, Any]]
         try:
-            import ast
-            value = ast.literal_eval(value)
-        except (SyntaxError, TypeError, ValueError):
-            pass
+            self.odata_json = json.loads(response.body())
+            odata_message = self.odata_json.setdefault("error", {}).get("message")
+        except Exception:
+            # If the body is not JSON valid, just stop now
+            odata_message = None
+
+        self.code = None  # type: Optional[str]
+        self.message = kwargs.get("message", odata_message)  # type: Optional[str]
+        self.target = None  # type: Optional[str]
+        self.details = []  # type: Optional[List[Any]]
+        self.innererror = {}  # type: Optional[Dict[str, Any]]
+
+        super(ODataV4Error, self).__init__(
+            response=response, **kwargs
+        )
+
+        # Required fields, but assume they could be missing still to be robust
         try:
-            value = value.get('value', value)
-            msg_data = value.split('\n')
-            self._message = msg_data[0]
-        except AttributeError:
-            self._message = value
-            return
-        try:
-            self.request_id = msg_data[1].partition(':')[2]
-            time_str = msg_data[2].partition(':')
-            self.error_time = Deserializer.deserialize_iso(
-                "".join(time_str[2:]))
-        except (IndexError, DeserializationError):
+            error_node = self.odata_json.get("error")
+            self.code = error_node.get("code")
+
+            # Optional fields
+            self.target = error_node.get("target", None)  # type: str
+            self.details = error_node.get("details", [])  # type: List[Dict[str, Any]]
+            self.innererror = error_node.get("innererror", {})  # type: Dict[str, Any]
+        except Exception:
+            # No details, too bad...
             pass
 
 
-class CloudError(AzureError):
-    """ClientError, exception raised for failed Azure REST call.
-    Will attempt to deserialize response into meaningful error
-    data.
 
-    :param requests.Response response: Response object.
-    :param str error: Optional error message.
+class TypedErrorInfo:
+    """Additional info class defined in ARM specification.
+
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
-
-    def __init__(self, response, error=None, *args, **kwargs):
-        self.deserializer = Deserializer({
-            'CloudErrorRoot': CloudErrorRoot,
-            'CloudErrorData': CloudErrorData,
-            'TypedErroInfo': TypedErrorInfo
-        })
-        self.error = None
-        self.message = None
-        self.response = response
-        self.status_code = self.response.status_code
-        self.request_id = None
-
-        if error:
-            self.message = error
-            self.error = response
-        else:
-            self._build_error_data(response)
-
-            if not self.error or not self.message:
-                self._build_error_message(response)
-
-        super(CloudError, self).__init__(
-            self.message, self.error, *args, **kwargs)
-
-    def __str__(self):
-        """Cloud error message"""
-        if self.error:
-            return str(self.error)
-        return str(self.message)
-
-    def _build_error_data(self, response):
-        try:
-            self.error = self.deserializer('CloudErrorRoot', response).error
-        except DeserializationError:
-            self.error = None
-        except AttributeError:
-            # So far seen on Autorest test server only.
-            self.error = None
-        else:
-            if self.error:
-                if not self.error.error or not self.error.message:
-                    self.error = None
-                else:
-                    self.message = self.error.message
-
-    def _get_state(self, content):
-        state = content.get("status")
-        if not state:
-            resource_content = content.get('properties', content)
-            state = resource_content.get("provisioningState")
-        return "Resource state {}".format(state) if state else "none"
-
-    def _build_error_message(self, response):
-        # Assume ClientResponse has "body", and otherwise it's a requests.Response
-        content = response.text() if hasattr(response, "body") else response.text
-        try:
-            data = json.loads(content)
-        except ValueError:
-            message = "none"
-        else:
-            try:
-                message = data.get("message", self._get_state(data))
-            except AttributeError: # data is not a dict, but is a requests.Response parsable as JSON
-                message = str(content)
-        try:
-            response.raise_for_status()
-        except RequestException as err:
-            if not self.error:
-                self.error = err
-            if not self.message:
-                if message == "none":
-                    message = str(err)
-                msg = "Operation failed with status: {!r}. Details: {}"
-                self.message = msg.format(response.reason, message)
-        else:
-            if not self.error:
-                self.error = response
-            if not self.message:
-                msg = "Operation failed with status: {!r}. Details: {}"
-                self.message = msg.format(
-                    response.status_code, message)
-
-class TypedErrorInfo(object):
-    """Typed Error Info object, deserialized from error data returned
-    during a failed REST API call. Contains additional error information
-    """
-
-    _validation = {}
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'}
-        }
 
     def __init__(self, type, info):
         self.type = type
@@ -252,5 +99,88 @@ class TypedErrorInfo(object):
         """Cloud error message."""
         error_str = "Type: {}".format(self.type)
         error_str += "\nInfo: {}".format(json.dumps(self.info, indent=4))
-        error_bytes = error_str.encode()
-        return error_bytes.decode('ascii')
+        return error_str
+
+
+class ARMErrorFormat:
+    """Describe error format from ARM, used at the base or inside "details" node.
+
+    This format is compatible with ODataV4 format.
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
+    """
+
+    def __init__(self, json_object):
+        # Required fields, but assume they could be missing still to be robust
+        self.code = json_object.get("code")  # type: Optional[str]
+        self.message = json_object.get("message")  # type: Optional[str]
+
+        # Optional fields
+        self.target = json_object.get("target", None)  # type: str
+
+        # details is recursive of this very format
+        self.details = [
+            ARMErrorFormat(detail_node)
+            for detail_node in json_object.get("details", [])
+        ]  # type: List[ARMErrorFormat]
+
+        # innererror is not mentioned in ARM spec, keep it for consistency with OData v4
+        self.innererror = json_object.get("innererror", None)  # type: Dict[str, Any]
+
+        # ARM specific annotations
+        self.additional_info = [
+            TypedErrorInfo(additional_info["type"], additional_info["info"])
+            for additional_info in json_object.get("additionalInfo", [])
+        ]
+
+    def __str__(self):
+        error_str = "Code: {}".format(self.code)
+        error_str += "\nMessage: {}".format(self.message)
+        if self.target:
+            error_str += "\nTarget: {}".format(self.target)
+
+        if self.details:
+            error_str += "\nException Details:"
+            for error_obj in self.details:
+                # Indent for visibility
+                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
+
+        if self.innererror:
+            error_str += "\nInner error: {}".format(
+                json.dumps(self.innererror, indent=4)
+            )
+
+        if self.additional_info:
+            error_str += "\nAdditional Information:"
+            for error_info in self.additional_info:
+                error_str += str(error_info)
+
+        return error_str
+
+
+class ARMError(ODataV4Error):
+    """An HTTP error from an ARM endpoint.
+
+    This subclass ODataV4Error since ARM specifications requires all
+    ARM error to be complient with it.
+
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
+    """
+
+    def __init__(self, response, **kwargs):
+        # type: (_HttpResponseBase, Dict[str, Any]) -> None
+        super(ARMError, self).__init__(response=response, **kwargs)
+
+        if self.odata_json:
+            try:
+                error_node = self.odata_json["error"]
+                self._arm_error_format = ARMErrorFormat(error_node)
+                # ARM error format is more typed than OData v4, replace, but keep message
+                self.__dict__.update(self._arm_error_format.__dict__)
+            except Exception:
+                pass
+
+        if "message" in kwargs:
+            self.message = kwargs["message"]
+
+    def __str__(self):
+        return str(self._arm_error_format)
