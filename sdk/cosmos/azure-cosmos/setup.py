@@ -28,7 +28,7 @@ with open("changelog.md", encoding="utf-8") as f:
 
 setup(
     name=PACKAGE_NAME,
-    version='4.0.0a1',
+    version='4.0.0b1',
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
