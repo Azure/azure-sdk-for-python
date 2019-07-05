@@ -24,7 +24,7 @@
 
 import platform
 import re as re
-import azure.cosmos.http_constants as http_constants
+from . import http_constants
 
 def _get_user_agent():
     os_name = _safe_user_agent_header(platform.system())

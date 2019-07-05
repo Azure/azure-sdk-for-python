@@ -27,10 +27,10 @@ import json
 from six.moves.urllib.parse import urlparse, urlencode
 import six
 
-import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
-import azure.cosmos.http_constants as http_constants
-import azure.cosmos.retry_utility as retry_utility
+from . import documents
+from . import errors
+from . import http_constants
+from . import retry_utility
 
 def _IsReadableStream(obj):
     """Checks whether obj is a file-like readable stream.

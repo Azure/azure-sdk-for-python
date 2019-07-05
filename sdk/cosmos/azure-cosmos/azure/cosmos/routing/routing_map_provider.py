@@ -22,10 +22,10 @@
 """Internal class for partition key range cache implementation in the Azure Cosmos database service.
 """
 
-import azure.cosmos.base as base
-from azure.cosmos.routing.collection_routing_map import _CollectionRoutingMap
-import azure.cosmos.routing.routing_range as routing_range
-from azure.cosmos.routing.routing_range import _PartitionKeyRange
+from .. import base
+from .collection_routing_map import _CollectionRoutingMap
+from . import routing_range
+from .routing_range import _PartitionKeyRange
 
 class _PartitionKeyRangeCache(object):
     '''

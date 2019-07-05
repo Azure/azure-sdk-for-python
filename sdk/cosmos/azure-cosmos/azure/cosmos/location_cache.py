@@ -25,9 +25,9 @@
 import collections
 import time
 
-import azure.cosmos.base as base
-import azure.cosmos.documents as documents
-import azure.cosmos.http_constants as http_constants
+from . import base
+from . import documents
+from . import http_constants
 
 class EndpointOperationType(object):
     NoneType = "None"

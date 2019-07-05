@@ -19,8 +19,17 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-from .cosmos_client import CosmosClient
+"""Represents a Permission object in the Azure Cosmos DB SQL API service.
+"""
 
-__all__ = (
-    'CosmosClient',
-)
+from .documents import PermissionMode
+class Permission:
+
+    def __init__(self, id, user_link, permission_mode, resource_link, properties):
+        # type: (str, str, PermissionMode, str, Dict[str, Any]) -> None
+        self.id = id
+        self.user_link = user_link
+        self.permission_mode = permission_mode
+        self.resource_link = resource_link
+        self.properties = properties
+        self.permission_link = u"{}/permissions/{}".format(self.user_link, self.id)
