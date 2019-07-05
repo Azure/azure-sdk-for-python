@@ -1,4 +1,4 @@
-## Changes in 4.0.0a1 : ##
+## Changes in 4.0.0b1 : ##
 
 - Alpha release for new object model.
 
