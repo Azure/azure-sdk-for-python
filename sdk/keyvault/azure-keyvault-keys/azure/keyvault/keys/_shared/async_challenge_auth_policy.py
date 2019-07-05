@@ -6,11 +6,10 @@ from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from . import HttpChallenge, HttpChallengeCache
-from .challenge_auth_policy import _ChallengeAuthPolicyBase
+from . import ChallengeAuthPolicyBase, HttpChallenge, HttpChallengeCache
 
 
-class AsyncChallengeAuthPolicy(_ChallengeAuthPolicyBase, AsyncHTTPPolicy):
+class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
     async def send(self, request: PipelineRequest) -> HttpResponse:

@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .challenge_auth_policy import ChallengeAuthPolicy
+from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as HttpChallengeCache
 
-__all__ = ["ChallengeAuthPolicy", "HttpChallenge", "HttpChallengeCache"]
+__all__ = ["ChallengeAuthPolicy", "ChallengeAuthPolicyBase", "HttpChallenge", "HttpChallengeCache"]
 
 try:
     from .async_challenge_auth_policy import AsyncChallengeAuthPolicy
