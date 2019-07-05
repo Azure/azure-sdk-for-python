@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTranspor
 from msrest.serialization import Model
 
 from azure.keyvault.keys._generated import KeyVaultClient
-from azure.keyvault.keys._shared import AsyncAuthChallengePolicy
+from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy
 
 
 if TYPE_CHECKING:
@@ -57,7 +57,7 @@ class _AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
-        config.authentication_policy = AsyncAuthChallengePolicy(credential)
+        config.authentication_policy = AsyncChallengeAuthPolicy(credential)
         return config
 
     def __init__(

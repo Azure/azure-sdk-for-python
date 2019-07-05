@@ -20,11 +20,11 @@ from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
 
 
-class _AuthChallengePolicyBase(_BearerTokenCredentialPolicyBase):
+class _ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
     """Sans I/O base for challenge authentication policies"""
 
     def __init__(self, credential, **kwargs):
-        super(_AuthChallengePolicyBase, self).__init__(credential, **kwargs)
+        super(_ChallengeAuthPolicyBase, self).__init__(credential, **kwargs)
 
     @staticmethod
     def _update_challenge(request, challenger):
@@ -40,7 +40,7 @@ class _AuthChallengePolicyBase(_BearerTokenCredentialPolicyBase):
         return challenge
 
 
-class AuthChallengePolicy(_AuthChallengePolicyBase, HTTPPolicy):
+class ChallengeAuthPolicy(_ChallengeAuthPolicyBase, HTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
     def send(self, request):

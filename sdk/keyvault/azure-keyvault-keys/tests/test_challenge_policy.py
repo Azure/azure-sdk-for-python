@@ -15,7 +15,7 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
-from azure.keyvault.keys.auth_challenge_policy import AuthChallengePolicy
+from azure.keyvault.keys.challenge_auth_policy import ChallengeAuthPolicy
 from azure.keyvault.keys.http_challenge import HttpChallenge
 import azure.keyvault.keys.http_challenge_cache as challenge_cache
 import pytest
@@ -91,7 +91,7 @@ def test_policy():
         return AccessToken(expected_token, 0)
 
     credential = Mock(get_token=Mock(wraps=get_token))
-    pipeline = Pipeline(policies=[AuthChallengePolicy(credential=credential)], transport=Mock(send=send))
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
     pipeline.run(HttpRequest("POST", "https://azure.service", data=data))
 
     assert credential.get_token.call_count == 1
@@ -138,7 +138,7 @@ def test_policy_updates_cache():
 
     tokens = (t for t in [first_token] * 2 + [second_token] * 2)
     credential = Mock(get_token=lambda _: AccessToken(next(tokens), 0))
-    pipeline = Pipeline(policies=[AuthChallengePolicy(credential=credential)], transport=transport)
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=transport)
 
     # policy should complete and cache the first challenge
     pipeline.run(HttpRequest("GET", url))

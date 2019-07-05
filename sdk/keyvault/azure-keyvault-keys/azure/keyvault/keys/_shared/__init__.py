@@ -4,8 +4,8 @@
 # ------------------------------------
 __all__ = []  # type: ignore
 try:
-    from .async_auth_challenge_policy import AsyncAuthChallengePolicy
+    from .async_challenge_auth_policy import AsyncChallengeAuthPolicy
 
-    __all__.append("AsyncAuthChallengePolicy")
+    __all__.append("AsyncChallengeAuthPolicy")
 except (SyntaxError, ImportError):
     pass

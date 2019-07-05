@@ -20,7 +20,7 @@ try:
 except ImportError:
     import urlparse as parse  # pylint: disable=import-error
 
-from .auth_challenge_policy import AuthChallengePolicy
+from .challenge_auth_policy import ChallengeAuthPolicy
 
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
@@ -65,7 +65,7 @@ class _KeyVaultClientBase(object):
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
-        config.authentication_policy = AuthChallengePolicy(credential)
+        config.authentication_policy = ChallengeAuthPolicy(credential)
         return config
 
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
