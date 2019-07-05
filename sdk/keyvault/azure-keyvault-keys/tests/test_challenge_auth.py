@@ -25,10 +25,10 @@ def test_challenge_cache():
     # ensure the test starts with an empty cache
     HttpChallengeCache.clear()
 
-    url_a = "https://azure.service.a/"
+    url_a = "https://azure.service.a"
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
 
-    url_b = "https://azure.service.b/"
+    url_b = "https://azure.service.b"
     challenge_b = HttpChallenge(url_b, "Bearer authorization=authority B, resource=resource B")
 
     for url, challenge in zip((url_a, url_b), (challenge_a, challenge_b)):
@@ -36,6 +36,7 @@ def test_challenge_cache():
         assert HttpChallengeCache.get_challenge_for_url(url) == challenge
         assert HttpChallengeCache.get_challenge_for_url(url + "/some/path") == challenge
         assert HttpChallengeCache.get_challenge_for_url(url + "/some/path?with-query=string") == challenge
+        assert HttpChallengeCache.get_challenge_for_url(url + ":443") == challenge
 
         HttpChallengeCache.remove_challenge_for_url(url)
         assert not HttpChallengeCache.get_challenge_for_url(url)
