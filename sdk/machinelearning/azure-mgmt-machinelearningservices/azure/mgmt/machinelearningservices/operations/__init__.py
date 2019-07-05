@@ -13,6 +13,7 @@ from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
 from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from ._quotas_operations import QuotasOperations
 from ._machine_learning_compute_operations import MachineLearningComputeOperations
 
 __all__ = [
@@ -20,5 +21,6 @@ __all__ = [
     'WorkspacesOperations',
     'UsagesOperations',
     'VirtualMachineSizesOperations',
+    'QuotasOperations',
     'MachineLearningComputeOperations',
 ]

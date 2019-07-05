@@ -51,6 +51,19 @@ class UsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UsagePaged, self).__init__(*args, **kwargs)
+class ResourceQuotaPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceQuota <azure.mgmt.machinelearningservices.models.ResourceQuota>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceQuota]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceQuotaPaged, self).__init__(*args, **kwargs)
 class ComputeResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ComputeResource <azure.mgmt.machinelearningservices.models.ComputeResource>` object
