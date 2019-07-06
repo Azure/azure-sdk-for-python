@@ -5,7 +5,7 @@
 
 __version__ = "5.0.0b1"
 
-from azure.eventhub.common import EventData, EventPosition
+from azure.eventhub.common import EventData, EventDataBatch, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient

@@ -13,7 +13,8 @@ from uamqp import constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
-from azure.eventhub.common import EventData, _BatchSendEventData
+from azure.eventhub import common
+from azure.eventhub.common import EventData, _BatchSendEventData, EventDataBatch
 from azure.eventhub.error import EventHubError, ConnectError, \
     AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
 
@@ -108,6 +109,8 @@ class EventHubProducer(object):
         if not self.running:
             self._connect()
             self.running = True
+            if self._handler.message_handler._link.peer_max_message_size:
+                common.MAX_MESSAGE_SIZE = self._handler.message_handler._link.peer_max_message_size
 
     def _connect(self):
         connected = self._build_connection()
@@ -330,6 +333,8 @@ class EventHubProducer(object):
                 event_data._set_partition_key(partition_key)
             wrapper_event_data = event_data
         else:
+            if isinstance(event_data, EventDataBatch):
+                event_data = event_data.event_list
             event_data_with_pk = self._set_partition_key(event_data, partition_key)
             wrapper_event_data = _BatchSendEventData(
                 event_data_with_pk,
