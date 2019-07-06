@@ -1,16 +1,16 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import abc
-from abc import abstractmethod, abstractproperty
-
 try:
     ABC = abc.ABC
-    abstractstaticmethod = abs.abstractstaticmethod
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-    abstractstaticmethod = lambda x: x
 
 
 class AbstractSpan(ABC):
-    @abstractmethod
+    @abc.abstractmethod
     def __init__(self, span=None, name=None):
         # type: (Any, str) -> None
         """
@@ -19,7 +19,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def span(self, name="child_span"):
         # type: (str) -> AbstractSpan
         """
@@ -28,19 +28,19 @@ class AbstractSpan(ABC):
          """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def to_header(self, headers):
         # type: (Dict[str, str]) -> Dict[str, str]
         """
@@ -48,7 +48,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def from_header(self, headers):
         # type: (Dict[str, str]) -> Any
         """
@@ -57,7 +57,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractproperty
+    @property
     def span_instance(self):
         # type: () -> Any
         """
@@ -65,7 +65,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
+    @staticmethod
     def end_tracer(tracer):
         # type: (Any) -> None
         """
@@ -73,7 +73,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
+    @staticmethod
     def get_current_span():
         # type: () -> AbstractSpan
         """
@@ -81,7 +81,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
+    @staticmethod
     def get_current_tracer():
         # type: () -> Any
         """
@@ -89,7 +89,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
+    @staticmethod
     def set_current_span(span):
         # type: (AbstractSpan) -> None
         """
@@ -97,7 +97,7 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
+    @staticmethod
     def set_current_tracer(tracer):
         # type: (Any) -> None
         """
