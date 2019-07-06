@@ -39,10 +39,13 @@ import pytest
 from requests import Request, Response
 
 from msrest import Deserializer, Configuration
-from msrest.service_client import ServiceClient
 from msrest.exceptions import DeserializationError
 
 from azure.core.polling import LROPoller
+from azure.core.configuration import Configuration
+from azure.core import PipelineClient
+from azure.core.pipeline import PipelineResponse, Pipeline
+from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
 from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.arm_polling import (
@@ -82,10 +85,10 @@ RESOURCE_URL = 'http://subscriptions/sub1/resourcegroups/g1/resourcetype1/resour
 ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
-CLIENT = ServiceClient(None, Configuration("http://example.org"))
-def mock_send(client_self, request, header_parameters, stream):
-    return TestArmPolling.mock_update(request.url, header_parameters)
-CLIENT.send = types.MethodType(mock_send, CLIENT)
+CLIENT = PipelineClient("http://example.org", Configuration())
+def mock_run(client_self, request, **kwargs):
+    return TestArmPolling.mock_update(request.url, request.headers)
+CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 
 class TestArmPolling(object):
@@ -106,10 +109,25 @@ class TestArmPolling(object):
         response.status_code = status
         response.headers = headers
         response.headers.update({"content-type": "application/json; charset=utf8"})
+        response.reason = "OK"
         content = body if body is not None else RESPONSE_BODY
         response.text = json.dumps(content)
         response.json = lambda: json.loads(response.text)
-        return response
+
+        request = CLIENT._request(
+            response.request.method,
+            response.request.url,
+            None,  # params
+            response.request.headers,
+            content,
+            None,  # form_content
+            None  # stream_content
+        )
+
+        return RequestsTransportResponse(
+            request,
+            response,
+        )
 
     @staticmethod
     def mock_update(url, headers=None):
@@ -118,6 +136,7 @@ class TestArmPolling(object):
         response.request.method = 'GET'
         response.headers = headers or {}
         response.headers.update({"content-type": "application/json; charset=utf8"})
+        response.reason = "OK"
 
         if url == ASYNC_URL:
             response.request.url = url
@@ -142,11 +161,29 @@ class TestArmPolling(object):
         else:
             raise Exception('URL does not match')
         response.json = lambda: json.loads(response.text)
-        return response
+
+        request = CLIENT._request(
+            response.request.method,
+            response.request.url,
+            None,  # params
+            {}, # request has no headers
+            None, # Request has no body
+            None,  # form_content
+            None  # stream_content
+        )
+
+        return PipelineResponse(
+            request,
+            RequestsTransportResponse(
+                request,
+                response,
+            ),
+            None  # context
+        )
 
     @staticmethod
     def mock_outputs(response):
-        body = response.json()
+        body = json.loads(response.text())
         body = {TestArmPolling.convert.sub(r'\1_\2', k).lower(): v
                 for k, v in body.items()}
         properties = body.setdefault('properties', {})
@@ -321,13 +358,12 @@ class TestArmPolling(object):
         assert poll.result() is None
         assert poll._polling_method._response.randomFieldFromPollAsyncOpHeader is None
 
-    @httpretty.activate
     def test_long_running_post(self):
 
         # Test POST LRO with both Location and Azure-AsyncOperation
 
         # The initial response contains both Location and Azure-AsyncOperation, a 202 and no Body
-        response = TestArmPolling.mock_send(
+        initial_response = TestArmPolling.mock_send(
             'POST',
             202,
             {
@@ -337,11 +373,12 @@ class TestArmPolling(object):
             ''
         )
 
-        class TestServiceClient(ServiceClient):
-            def __init__(self):
-                ServiceClient.__init__(self, None, Configuration("http://example.org"))
+        class TestHttpTransport(HttpTransport):
+            def open(self): pass
+            def close(self): pass
+            def __exit__(self, *args, **kwargs): pass
 
-            def send(self, request, headers=None, content=None, **config):
+            def send(self, request, **kwargs):
                 assert request.method == 'GET'
 
                 if request.url == 'http://example.org/location':
@@ -359,13 +396,21 @@ class TestArmPolling(object):
                 else:
                     pytest.fail("No other query allowed")
 
+        client = PipelineClient(
+            'http://example.org/',
+            Configuration(),
+            pipeline=Pipeline(
+                transport=TestHttpTransport()
+            )
+        )
+
         def deserialization_cb(response):
-            return response.json()
+            return json.loads(response.text())
 
         # Test 1, LRO options with Location final state
         poll = LROPoller(
-            TestServiceClient(),
-            response,
+            client,
+            initial_response,
             deserialization_cb,
             ARMPolling(0, lro_options={"final-state-via": "location"}))
         result = poll.result()
@@ -373,8 +418,8 @@ class TestArmPolling(object):
 
         # Test 2, LRO options with Azure-AsyncOperation final state
         poll = LROPoller(
-            TestServiceClient(),
-            response,
+            client,
+            initial_response,
             deserialization_cb,
             ARMPolling(0, lro_options={"final-state-via": "azure-async-operation"}))
         result = poll.result()
@@ -382,8 +427,8 @@ class TestArmPolling(object):
 
         # Test 3, backward compat (no options, means "azure-async-operation")
         poll = LROPoller(
-            TestServiceClient(),
-            response,
+            client,
+            initial_response,
             deserialization_cb,
             ARMPolling(0))
         result = poll.result()
@@ -391,11 +436,12 @@ class TestArmPolling(object):
 
         # Test 4, location has no body
 
-        class TestServiceClientNoBody(ServiceClient):
-            def __init__(self):
-                ServiceClient.__init__(self, None, Configuration("http://example.org"))
+        class TestHttpTransport(HttpTransport):
+            def open(self): pass
+            def close(self): pass
+            def __exit__(self, *args, **kwargs): pass
 
-            def send(self, request, headers=None, content=None, **config):
+            def send(self, request, **kwargs):
                 assert request.method == 'GET'
 
                 if request.url == 'http://example.org/location':
@@ -413,15 +459,24 @@ class TestArmPolling(object):
                 else:
                     pytest.fail("No other query allowed")
 
+        client = PipelineClient(
+            'http://example.org/',
+            Configuration(),
+            pipeline=Pipeline(
+                transport=TestHttpTransport()
+            )
+        )
+
         poll = LROPoller(
-            TestServiceClientNoBody(),
-            response,
+            client,
+            initial_response,
             deserialization_cb,
             ARMPolling(0, lro_options={"final-state-via": "location"}))
         result = poll.result()
         assert result is None
 
 
+    def test_long_running_post_legacy(self):
         # Former oooooold tests to refactor one day to something more readble
 
         # Test throw on non LRO related status code

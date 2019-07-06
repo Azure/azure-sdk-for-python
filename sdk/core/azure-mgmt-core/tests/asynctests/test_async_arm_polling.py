@@ -38,10 +38,11 @@ import pytest
 from requests import Request, Response
 
 from msrest import Deserializer, Configuration
-from msrest.service_client import ServiceClient
 from msrest.exceptions import DeserializationError
 
 from azure.core.polling import async_poller
+from azure.core.configuration import Configuration
+from azure.core import AsyncPipelineClient
 
 from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.async_arm_polling import (
@@ -83,7 +84,7 @@ RESOURCE_URL = 'http://subscriptions/sub1/resourcegroups/g1/resourcetype1/resour
 ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
-CLIENT = ServiceClient(None, Configuration("http://example.org"))
+CLIENT = AsyncPipelineClient("http://example.org", Configuration())
 async def mock_send(client_self, request, *, stream):
     return TestArmPolling.mock_update(request.url)
 CLIENT.async_send = types.MethodType(mock_send, CLIENT)
