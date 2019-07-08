@@ -39,7 +39,6 @@ from .operations.database_usages_operations import DatabaseUsagesOperations
 from .operations.database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .operations.encryption_protectors_operations import EncryptionProtectorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
-from .operations.managed_instances_operations import ManagedInstancesOperations
 from .operations.operations import Operations
 from .operations.server_keys_operations import ServerKeysOperations
 from .operations.sync_agents_operations import SyncAgentsOperations
@@ -95,6 +94,7 @@ from .operations.server_vulnerability_assessments_operations import ServerVulner
 from .operations.managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from .operations.instance_pools_operations import InstancePoolsOperations
 from .operations.usages_operations import UsagesOperations
+from .operations.managed_instances_operations import ManagedInstancesOperations
 from . import models
 
 
@@ -189,8 +189,6 @@ class SqlManagementClient(SDKClient):
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar failover_groups: FailoverGroups operations
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
-    :ivar managed_instances: ManagedInstances operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
     :ivar server_keys: ServerKeys operations
@@ -301,6 +299,8 @@ class SqlManagementClient(SDKClient):
     :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
+    :ivar managed_instances: ManagedInstances operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -372,8 +372,6 @@ class SqlManagementClient(SDKClient):
         self.encryption_protectors = EncryptionProtectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -484,4 +482,6 @@ class SqlManagementClient(SDKClient):
         self.instance_pools = InstancePoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instances = ManagedInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
