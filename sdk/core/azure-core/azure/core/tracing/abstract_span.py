@@ -7,21 +7,8 @@ from abc import abstractmethod
 
 try:
     ABC = abc.ABC
-    abstractproperty = lambda f: property(abstractmethod(f))
-    abstractstaticmethod = lambda f: staticmethod(abstractmethod(f))
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-    from abc import abstractproperty
-
-
-    class abstractstaticmethod(staticmethod):
-        __slots__ = ()
-
-        def __init__(self, function):
-            super(abstractstaticmethod, self).__init__(function)
-            function.__isabstractmethod__ = True
-
-        __isabstractmethod__ = True
 
 
 class AbstractSpan(ABC):
@@ -72,7 +59,8 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def span_instance(self):
         # type: () -> Any
         """
@@ -80,40 +68,45 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractstaticmethod
-    def end_tracer(tracer):
+    @classmethod
+    @abstractmethod
+    def end_tracer(cls, tracer):
         # type: (Any) -> None
         """
         If a tracer exists, exports and ends the tracer.
         """
         pass
 
-    @abstractstaticmethod
-    def get_current_span():
+    @classmethod
+    @abstractmethod
+    def get_current_span(cls):
         # type: () -> Any
         """
         Get the current span from the execution context. Return None otherwise.
         """
         pass
 
-    @abstractstaticmethod
-    def get_current_tracer():
+    @classmethod
+    @abstractmethod
+    def get_current_tracer(cls):
         # type: () -> Any
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
         pass
 
-    @abstractstaticmethod
-    def set_current_span(span):
+    @classmethod
+    @abstractmethod
+    def set_current_span(cls, span):
         # type: (Any) -> None
         """
         Set the given span as the current span in the execution context.
         """
         pass
 
-    @abstractstaticmethod
-    def set_current_tracer(tracer):
+    @classmethod
+    @abstractmethod
+    def set_current_tracer(cls, tracer):
         # type: (Any) -> None
         """
         Set the given tracer as the current tracer in the execution context.
