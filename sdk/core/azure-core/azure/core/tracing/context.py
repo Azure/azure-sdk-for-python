@@ -23,7 +23,7 @@ except ImportError:
 
 class ContextProtocol(Protocol):
     """
-     Class set and get variables in a thread safe way.
+     Implements set and get variables in a thread safe way.
      """
 
     def __init__(self, name, default, lock):
@@ -46,9 +46,9 @@ class ContextProtocol(Protocol):
         pass
 
 
-class _ContextVarContext:
+class _AsyncContext:
     """
-    Uses contextvars to set and get variables in a thread safe way.
+    Uses contextvars to set and get variables globally in a thread safe way.
     """
 
     def __init__(self, name, default, lock):
@@ -81,7 +81,7 @@ class _ContextVarContext:
 
 class _ThreadLocalContext:
     """
-    Uses thread local storage to set and get variables in a thread safe way.
+    Uses thread local storage to set and get variables globally in a thread safe way.
     """
     _thread_local = threading.local()
 
@@ -115,7 +115,7 @@ class _ThreadLocalContext:
 
 class TracingContext:
     _lock = threading.Lock()
-    _context = _ContextVarContext if contextvars else _ThreadLocalContext
+    _context = _AsyncContext if contextvars else _ThreadLocalContext
 
     def __init__(self):
         # type: () -> None
@@ -125,7 +125,7 @@ class TracingContext:
     def with_current_context(self, func):
         # type: (Callable[[Any], Any]) -> Any
         """
-        Passes the tracing context to the new context the function will be run in
+        Passes the current spans to the new context the function will be run in.
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
