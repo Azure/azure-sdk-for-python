@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+import sys
 import pytest
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
@@ -33,6 +34,12 @@ from azure.core.pipeline.transport import HttpRequest
 
 import trio
 
+if sys.version_info < (3, 5):
+    RUN_TESTS = True
+else:
+    RUN_TESTS = False
+
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_trio():
 
@@ -52,6 +59,7 @@ async def test_example_trio():
     response = trio.run(req)
     assert response.http_response.status_code == 200
 
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_asyncio():
 
@@ -70,6 +78,7 @@ async def test_example_asyncio():
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_aiohttp():
 
@@ -88,6 +97,7 @@ async def test_example_aiohttp():
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_async_pipeline():
     # [START build_async_pipeline]
@@ -109,7 +119,7 @@ async def test_example_async_pipeline():
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
-
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_async_pipeline_client():
 
@@ -133,7 +143,7 @@ async def test_example_async_pipeline_client():
     assert client._pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
-
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_async_redirect_policy():
     url = "https://bing.com"
@@ -163,6 +173,7 @@ async def test_example_async_redirect_policy():
     assert client._pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
+@pytest.mark.skipif(RUN_TESTS, reason="python version < 3.5")
 @pytest.mark.asyncio
 async def test_example_async_retry_policy():
     url = "https://bing.com"
