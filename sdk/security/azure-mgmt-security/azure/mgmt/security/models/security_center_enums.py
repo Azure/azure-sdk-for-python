@@ -133,7 +133,7 @@ class RecommendationType(str, Enum):
     io_t_permissive_output_firewall_rules = "IoT_PermissiveOutputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
     io_t_privileged_docker_options = "IoT_PrivilegedDockerOptions"  #: Edge module is configured to run in privileged mode, with extensive Linux capabilities or with host-level network access (send/receive data to host machine).
     io_t_shared_credentials = "IoT_SharedCredentials"  #: Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an illegitimate device impersonating a legitimate device. It also exposes the risk of device impersonation by an attacker.
-    io_t_vulnerable_tls_cipher_suite = "IoT_VulnerableTLSCipherSuite"  #: Unsecure TLS configurations detected. Immediate upgrade recommended.
+    io_t_vulnerable_tls_cipher_suite = "IoT_VulnerableTLSCipherSuite"  #: Insecure TLS configurations detected. Immediate upgrade recommended.
 
 
 class RecommendationConfigStatus(str, Enum):
