@@ -86,7 +86,7 @@ jobs:
         inputs:
           scriptType: inlineScript
           inlineScript: |
-            cmd /c 'pytest --junitxml=sdk/cosmos/azure-cosmos/Test-junit.xml --verbose sdk/cosmos/azure-cosmos/test -k "not globaldb"'
+            pytest --junitxml=sdk/cosmos/azure-cosmos/Test-junit.xml --verbose sdk/cosmos/azure-cosmos/test -k "not globaldb"
         env:
           ACCOUNT_KEY: $(python-cosmos-live-account-key)
           ACCOUNT_HOST: $(python-cosmos-live-account-host)
