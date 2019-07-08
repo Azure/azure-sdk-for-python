@@ -118,7 +118,7 @@ class DataSource(str, Enum):
 
 class RecommendationType(str, Enum):
 
-    io_t_acrauthentication = "IoT_ACRAuthentication"  #: Authentication schema used for pull an edge module from an ACR repository does not use Service Prinicpal Authentication.
+    io_t_acrauthentication = "IoT_ACRAuthentication"  #: Authentication schema used for pull an edge module from an ACR repository does not use Service Principal Authentication.
     io_t_agent_sends_unutilized_messages = "IoT_AgentSendsUnutilizedMessages"  #: IoT agent message size capacity is currently underutilized, causing an increase in the number of sent messages. Adjust message intervals for better utilization.
     io_t_baseline = "IoT_Baseline"  #: Identified security related system configuration issues.
     io_t_edge_hub_mem_optimize = "IoT_EdgeHubMemOptimize"  #: You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used by Edge modules in your solution.
@@ -126,7 +126,7 @@ class RecommendationType(str, Enum):
     io_t_inconsistent_module_settings = "IoT_InconsistentModuleSettings"  #: A minority within a device security group has inconsistent Edge Module settings with the rest of their group.
     io_t_install_agent = "IoT_InstallAgent"  #: Install the Azure Security of Things Agent.
     io_t_ipfilter_deny_all = "IoT_IPFilter_DenyAll"  #: IP Filter Configuration should have rules defined for allowed traffic and should deny all other traffic by default.
-    io_t_ipfilter_permissive_rule = "IoT_IPFilter_PermissiveRule"  #: An Allow IP Filter rule�s source IP range is too large. Overly permissive rules might expose your IoT hub to malicious intenders.
+    io_t_ipfilter_permissive_rule = "IoT_IPFilter_PermissiveRule"  #: An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose your IoT hub to malicious intenders.
     io_t_open_ports = "IoT_OpenPorts"  #: A listening endpoint was found on the device.
     io_t_permissive_firewall_policy = "IoT_PermissiveFirewallPolicy"  #: An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by default and define rules to allow necessary communication to/from the device.
     io_t_permissive_input_firewall_rules = "IoT_PermissiveInputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
