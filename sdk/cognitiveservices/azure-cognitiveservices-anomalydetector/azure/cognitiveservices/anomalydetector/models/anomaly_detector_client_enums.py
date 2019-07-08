@@ -25,7 +25,7 @@ class Granularity(str, Enum):
 class TimeSeriesField(str, Enum):
 
     is_anomaly = "isAnomaly"
-    is_change_point = "isChangePoint"
+    change_point = "changePoint"
     is_positive_anomaly = "isPositiveAnomaly"
     is_negative_anomaly = "isNegativeAnomaly"
     value = "value"
