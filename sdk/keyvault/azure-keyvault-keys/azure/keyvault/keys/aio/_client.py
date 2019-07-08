@@ -15,7 +15,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
+        .. literalinclude:: ../tests/test_samples_keys_async.py
             :start-after: [START create_key_client]
             :end-before: [END create_key_client]
             :language: python
@@ -42,7 +42,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START get_key]
                 :end-before: [END get_key]
                 :language: python
@@ -106,7 +106,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START create_key]
                 :end-before: [END create_key]
                 :language: python
@@ -173,7 +173,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START create_rsa_key]
                 :end-before: [END create_rsa_key]
                 :language: python
@@ -238,7 +238,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START create_ec_key]
                 :end-before: [END create_ec_key]
                 :language: python
@@ -300,7 +300,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START update_key]
                 :end-before: [END update_key]
                 :language: python
@@ -339,7 +339,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.keys._models.KeyBase]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START list_keys]
                 :end-before: [END list_keys]
                 :language: python
@@ -364,7 +364,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.keys._models.KeyBase]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START list_key_versions]
                 :end-before: [END list_key_versions]
                 :language: python
@@ -401,7 +401,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START backup_key]
                 :end-before: [END backup_key]
                 :language: python
@@ -438,7 +438,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START restore_key]
                 :end-before: [END restore_key]
                 :language: python
@@ -464,7 +464,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to delete the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START delete_key]
                 :end-before: [END delete_key]
                 :language: python
@@ -489,7 +489,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START get_deleted_key]
                 :end-before: [END get_deleted_key]
                 :language: python
@@ -517,7 +517,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.keys._models.DeletedKey]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START list_deleted_keys]
                 :end-before: [END list_deleted_keys]
                 :language: python
@@ -568,7 +568,7 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
+            .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START recover_deleted_key]
                 :end-before: [END recover_deleted_key]
                 :language: python

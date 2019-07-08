@@ -15,7 +15,7 @@ class SecretClient(_KeyVaultClientBase):
     """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_secrets.py
+        .. literalinclude:: ../tests/test_samples_secrets.py
             :start-after: [START create_secret_client]
             :end-before: [END create_secret_client]
             :language: python
@@ -40,7 +40,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START get_secret]
                 :end-before: [END get_secret]
                 :language: python
@@ -77,7 +77,7 @@ class SecretClient(_KeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets._models.Secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START set_secret]
                 :end-before: [END set_secret]
                 :language: python
@@ -120,7 +120,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to create the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START update_secret]
                 :end-before: [END update_secret]
                 :language: python
@@ -158,7 +158,7 @@ class SecretClient(_KeyVaultClientBase):
          Generator[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START list_secrets]
                 :end-before: [END list_secrets]
                 :language: python
@@ -184,7 +184,7 @@ class SecretClient(_KeyVaultClientBase):
          Generator[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START list_secret_versions]
                 :end-before: [END list_secret_versions]
                 :language: python
@@ -210,7 +210,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to back up the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]
                 :language: python
@@ -236,7 +236,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceExistsError, if client failed to restore the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START restore_secret]
                 :end-before: [END restore_secret]
                 :language: python
@@ -261,7 +261,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to delete the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START delete_secret]
                 :end-before: [END delete_secret]
                 :language: python
@@ -285,7 +285,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to get the deleted secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START get_deleted_secret]
                 :end-before: [END get_deleted_secret]
                 :language: python
@@ -309,7 +309,7 @@ class SecretClient(_KeyVaultClientBase):
          Generator[~azure.keyvault.secrets._models.DeletedSecret]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START list_deleted_secrets]
                 :end-before: [END list_deleted_secrets]
                 :language: python
@@ -357,7 +357,7 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError, if client failed to recover the deleted secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
+            .. literalinclude:: ../tests/test_samples_secrets.py
                 :start-after: [START recover_deleted_secret]
                 :end-before: [END recover_deleted_secret]
                 :language: python

@@ -61,7 +61,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
     :param dict base_headers: Headers to send with the request.
 
     Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START headers_policy]
             :end-before: [END headers_policy]
             :language: python
@@ -111,7 +111,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
 
     Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START user_agent_policy]
             :end-before: [END user_agent_policy]
             :language: python
@@ -181,7 +181,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     :param bool logging_enable: Use to enable per operation. Defaults to False.
 
     Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START network_trace_logging_policy]
             :end-before: [END network_trace_logging_policy]
             :language: python
@@ -399,7 +399,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
     *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START proxy_policy]
             :end-before: [END proxy_policy]
             :language: python
