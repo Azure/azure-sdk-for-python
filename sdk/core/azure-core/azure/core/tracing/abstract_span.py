@@ -8,7 +8,7 @@ from abc import abstractmethod
 try:
     ABC = abc.ABC
     abstractproperty = lambda f: property(abstractmethod(f))
-    abstractstaticmethod = lambda f: staticmethod(abc.abstractmethod(f))
+    abstractstaticmethod = lambda f: staticmethod(abstractmethod(f))
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
     from abc import abstractproperty
