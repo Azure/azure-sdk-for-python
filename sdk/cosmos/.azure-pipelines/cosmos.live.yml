@@ -13,6 +13,7 @@ jobs:
 
     timeoutInMinutes: 120
     continueOnError: false
+    maxParallel: 1
     strategy:
       matrix:
         Windows_Python34:
