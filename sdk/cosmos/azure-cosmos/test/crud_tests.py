@@ -72,8 +72,6 @@ class CRUDTests(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    databaseForTest = configs.create_database_if_not_exist(client)
     last_headers = []
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):

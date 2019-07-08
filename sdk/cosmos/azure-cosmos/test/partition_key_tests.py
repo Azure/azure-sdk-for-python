@@ -42,9 +42,6 @@ class PartitionKeyTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    created_db = test_config._test_config.create_database_if_not_exist(client)
-    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
 
     @classmethod
     def tearDownClass(cls):
@@ -52,6 +49,10 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+
         # Create a non partitioned collection using the rest API and older version
         client = requests.Session()
         base_url_split = cls.host.split(":");
