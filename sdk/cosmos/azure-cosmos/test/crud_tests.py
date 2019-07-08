@@ -137,6 +137,7 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
+    @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
         offer_throughput = 1000
