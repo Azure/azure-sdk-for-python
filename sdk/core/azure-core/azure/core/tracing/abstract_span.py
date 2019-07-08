@@ -90,7 +90,7 @@ class AbstractSpan(ABC):
 
     @abstractstaticmethod
     def get_current_span():
-        # type: () -> AbstractSpan
+        # type: () -> Any
         """
         Get the current span from the execution context. Return None otherwise.
         """
@@ -106,7 +106,7 @@ class AbstractSpan(ABC):
 
     @abstractstaticmethod
     def set_current_span(span):
-        # type: (AbstractSpan) -> None
+        # type: (Any) -> None
         """
         Set the given span as the current span in the execution context.
         """
