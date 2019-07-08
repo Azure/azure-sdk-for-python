@@ -59,7 +59,7 @@ class LocationCacheTest(unittest.TestCase):
         connectionPolicy.EnableEndpointDiscovery = enable_endpoint_discovery
         connectionPolicy.UseMultipleWriteLocations = use_multiple_write_locations
 
-        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, collection_policy=connectionPolicy)
         return client
 
     def test_validate_retry_on_session_not_availabe_with_disable_multiple_write_locations_and_endpoint_discovery_disabled(self):
@@ -215,7 +215,7 @@ class LocationCacheTest(unittest.TestCase):
         self.location_cache.perform_on_database_account_read(self.database_account)
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.PreferredLocations = self.preferred_locations
-        client = cosmos_client_connection.CosmosClientConnection("", {}, connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection("", {}, connection_policy=connectionPolicy)
         self.global_endpoint_manager = client._global_endpoint_manager
 
     def validate_location_cache(self, use_multiple_write_locations, endpoint_discovery_enabled, is_preferred_list_empty):
