@@ -48,7 +48,7 @@ Libraries which enable you to provision specific resources. They are responsible
 ## Need help?
 * For detailed documentation visit our [Azure SDK for Python documentation](aka.ms/python-docs)
 * File an issue via [Github Issues](../../issues)
-* Check [previous questions](https://stackoverflow.com/questions/tagged/azure-sdk-python) or ask new ones on StackOverflow using `azure-sdk-python` tag.
+* Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
