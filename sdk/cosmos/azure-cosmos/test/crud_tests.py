@@ -96,8 +96,7 @@ class CRUDTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.databseForTest = cls.configs.create_database_if_not_exist(cls.client)
-
+        cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
 
     def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
@@ -1871,7 +1870,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         indexing_policy = {
             "spatialIndexes": [
