@@ -18,6 +18,7 @@ TransportType = constants.TransportType
 
 __all__ = [
     "EventData",
+    "EventDataBatch",
     "EventHubError",
     "ConnectError",
     "ConnectionLostError",
