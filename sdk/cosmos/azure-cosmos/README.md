@@ -14,7 +14,7 @@ Looking for source code or API reference?
 * [SDK source code][source_code]
 * [SDK reference documentation][ref_cosmos_sdk]
 
-## Prerequisites
+## Getting started
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
@@ -42,7 +42,7 @@ python3 -m venv azure-cosmosdb-sdk-environment
 source azure-cosmosdb-sdk-environment/bin/activate
 ```
 
-## Authentication
+## Key concepts
 
 Interaction with Cosmos DB starts with an instance of the [CosmosClient][ref_cosmosclient] class. You need an **account**, its **URI**, and one of its **account keys** to instantiate the client object.
 
@@ -256,7 +256,7 @@ The container name must be unique within the database.""")
 
 Coming soon...
 
-### Additional documentation
+### Next steps
 
 For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos DB documentation][cosmos_docs] on docs.microsoft.com.
 
