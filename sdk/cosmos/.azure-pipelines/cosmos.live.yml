@@ -13,8 +13,8 @@ jobs:
 
     timeoutInMinutes: 120
     continueOnError: false
-    maxParallel: 1
     strategy:
+      maxParallel: 1
       matrix:
         Windows_Python34:
           OSVmImage: 'vs2017-win2016'
