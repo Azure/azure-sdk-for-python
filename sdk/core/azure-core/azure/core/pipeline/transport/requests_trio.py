@@ -129,7 +129,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
     asynchronous methods. Uses the third party trio event loop.
 
     Example:
-        .. literalinclude:: ../examples/examples_async.py
+        .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START trio]
             :end-before: [END trio]
             :language: python

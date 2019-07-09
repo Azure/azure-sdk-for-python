@@ -81,7 +81,7 @@ def test_example_user_agent_policy():
     assert response.status_code == 200
 
 
-def test_example_network_trace_logging():
+def example_network_trace_logging():
     filename = "log.txt"
     url = "https://bing.com"
     config = Configuration()

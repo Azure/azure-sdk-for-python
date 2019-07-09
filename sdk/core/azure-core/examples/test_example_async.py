@@ -33,6 +33,7 @@ from azure.core.pipeline.transport import HttpRequest
 
 import trio
 
+
 @pytest.mark.asyncio
 async def test_example_trio():
 
@@ -52,6 +53,7 @@ async def test_example_trio():
     response = trio.run(req)
     assert response.http_response.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_example_asyncio():
 
@@ -70,6 +72,7 @@ async def test_example_asyncio():
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_example_aiohttp():
 
@@ -87,6 +90,7 @@ async def test_example_aiohttp():
     # [END aiohttp]
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline():
@@ -162,6 +166,7 @@ async def test_example_async_redirect_policy():
 
     assert client._pipeline._transport.session is None
     assert response.http_response.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_example_async_retry_policy():
