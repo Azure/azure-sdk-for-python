@@ -146,9 +146,6 @@ try:
     from .live_event_preview_access_control_py3 import LiveEventPreviewAccessControl
     from .live_event_preview_py3 import LiveEventPreview
     from .live_event_encoding_py3 import LiveEventEncoding
-    from .live_event_input_track_selection_py3 import LiveEventInputTrackSelection
-    from .live_event_output_transcription_track_py3 import LiveEventOutputTranscriptionTrack
-    from .live_event_transcription_py3 import LiveEventTranscription
     from .cross_site_access_policies_py3 import CrossSiteAccessPolicies
     from .live_event_action_input_py3 import LiveEventActionInput
     from .live_event_py3 import LiveEvent
@@ -294,9 +291,6 @@ except (SyntaxError, ImportError):
     from .live_event_preview_access_control import LiveEventPreviewAccessControl
     from .live_event_preview import LiveEventPreview
     from .live_event_encoding import LiveEventEncoding
-    from .live_event_input_track_selection import LiveEventInputTrackSelection
-    from .live_event_output_transcription_track import LiveEventOutputTranscriptionTrack
-    from .live_event_transcription import LiveEventTranscription
     from .cross_site_access_policies import CrossSiteAccessPolicies
     from .live_event_action_input import LiveEventActionInput
     from .live_event import LiveEvent
@@ -499,9 +493,6 @@ __all__ = [
     'LiveEventPreviewAccessControl',
     'LiveEventPreview',
     'LiveEventEncoding',
-    'LiveEventInputTrackSelection',
-    'LiveEventOutputTranscriptionTrack',
-    'LiveEventTranscription',
     'CrossSiteAccessPolicies',
     'LiveEventActionInput',
     'LiveEvent',
