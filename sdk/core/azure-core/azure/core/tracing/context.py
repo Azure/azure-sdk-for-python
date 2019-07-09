@@ -46,7 +46,7 @@ class ContextProtocol(Protocol):
         pass
 
 
-class _AsyncContext:
+class _AsyncContext(object):
     """
     Uses contextvars to set and get variables globally in a thread safe way.
     """
@@ -79,7 +79,7 @@ class _AsyncContext:
             self.contextvar.set(value)
 
 
-class _ThreadLocalContext:
+class _ThreadLocalContext(object):
     """
     Uses thread local storage to set and get variables globally in a thread safe way.
     """
