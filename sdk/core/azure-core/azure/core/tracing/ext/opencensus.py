@@ -1,12 +1,17 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
 
+from azure.core.tracing.abstract_span import AbstractSpan
 from opencensus.trace import execution_context
 from opencensus.trace import tracer as tracer_module, Span
 from opencensus.trace.propagation import trace_context_http_header_format
 from opencensus.trace.samplers import ProbabilitySampler
 
 
-class OpencensusWrapper:
+class OpencensusWrapper(AbstractSpan):
     def __init__(self, span=None, name="parent_span"):
         # type: (Any) -> None
         tracer = self.get_current_tracer()
@@ -28,12 +33,7 @@ class OpencensusWrapper:
             span = tracer.span(name=name)
 
         self.tracer = tracer
-        self.trace_id = None
-        if span.context_tracer:
-            self.trace_id = span.context_tracer.span_context.trace_id
-        self.span_instance = span
         self.span_id = str(span.span_id)
-        self.children = []
 
     def _get_environ(self, key):
         # type: (str) -> str
@@ -45,8 +45,6 @@ class OpencensusWrapper:
         # type: (str) -> OpencensusWrapper
         child = self.span_instance.span(name=name)
         wrapped_child = OpencensusWrapper(child)
-        wrapped_child.trace_id = self.trace_id
-        self.children.append(wrapped_child)
         return wrapped_child
 
     def start(self):
