@@ -4,7 +4,6 @@ from opencensus.trace import execution_context
 from opencensus.trace import tracer as tracer_module, Span
 from opencensus.trace.propagation import trace_context_http_header_format
 from opencensus.trace.samplers import ProbabilitySampler
-from opencensus.trace.tracers.noop_tracer import NoopTracer
 
 
 class OpencensusWrapper:
@@ -15,7 +14,7 @@ class OpencensusWrapper:
         if span is None:
             instrumentation_key = self._get_environ("APPINSIGHTS_INSTRUMENTATIONKEY")
             prob = self._get_environ("AZURE_TRACING_SAMPLER") or 0.001
-            if tracer is None or isinstance(tracer, NoopTracer):
+            if tracer is None:
                 if instrumentation_key is not None:
                     from opencensus.ext.azure.trace_exporter import AzureExporter
 
