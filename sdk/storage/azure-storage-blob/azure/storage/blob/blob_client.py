@@ -18,20 +18,15 @@ except ImportError:
 
 import six
 
+from ._shared import encode_base64
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.encryption import _generate_blob_encryption_data
 from ._shared.upload_chunking import IterStreamer
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    return_response_headers,
-    add_metadata_headers,
-    encode_base64,
-    get_length,
-    read_length,
-    parse_connection_str,
-    parse_query,
-    process_storage_error,
+from ._shared.request_handlers import (
+    add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
@@ -486,7 +481,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 validate_content,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 self.require_encryption,
                 self.key_encryption_key,
                 **kwargs)
@@ -504,7 +499,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 premium_page_blob_tier,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 cek,
                 iv,
                 encryption_data,
@@ -525,7 +520,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 validate_content,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 **kwargs)
         raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
@@ -612,7 +607,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             name=self.blob_name,
             container=self.container_name,
             service=self._client.blob,
-            config=self._config.blob_settings,
+            config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,

@@ -138,6 +138,26 @@ class StorageErrorCode(str, Enum):
     queue_not_empty = "QueueNotEmpty"
     queue_not_found = "QueueNotFound"
 
+    # File values
+    cannot_delete_file_or_directory = "CannotDeleteFileOrDirectory"
+    client_cache_flush_delay = "ClientCacheFlushDelay"
+    delete_pending = "DeletePending"
+    directory_not_empty = "DirectoryNotEmpty"
+    file_lock_conflict = "FileLockConflict"
+    invalid_file_or_directory_path_name = "InvalidFileOrDirectoryPathName"
+    parent_not_found = "ParentNotFound"
+    read_only_attribute = "ReadOnlyAttribute"
+    share_already_exists = "ShareAlreadyExists"
+    share_being_deleted = "ShareBeingDeleted"
+    share_disabled = "ShareDisabled"
+    share_not_found = "ShareNotFound"
+    sharing_violation = "SharingViolation"
+    share_snapshot_in_progress = "ShareSnapshotInProgress"
+    share_snapshot_count_exceeded = "ShareSnapshotCountExceeded"
+    share_snapshot_operation_not_supported = "ShareSnapshotOperationNotSupported"
+    share_has_snapshots = "ShareHasSnapshots"
+    container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
+
 
 class DictMixin(object):
 

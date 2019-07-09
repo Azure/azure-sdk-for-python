@@ -12,9 +12,9 @@ from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disabl
 import six
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
 
-from ._shared.utils import (
+from ._shared.request_handlers import validate_and_format_range_headers
+from ._shared.response_handlers import (
     process_storage_error,
-    validate_and_format_range_headers,
     parse_length_from_content_range,
     return_response_headers)
 from ._shared.models import StorageErrorCode, ModifiedAccessConditions

@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
-from ._shared.utils import return_response_headers, process_storage_error
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import StorageErrorException
 from ._blob_utils import get_modification_conditions
 

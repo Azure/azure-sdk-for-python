@@ -45,7 +45,6 @@ from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TI
 from .models import LocationMode, StorageErrorCode
 from .authentication import SharedKeyCredentialPolicy
 from .policies import (
-    StorageDataSettings,
     StorageHeadersPolicy,
     StorageUserAgentPolicy,
     StorageContentValidation,
@@ -482,7 +481,25 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.data_settings = StorageDataSettings(**kwargs)
+
+    # Storage settings
+    config.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
+    config.copy_polling_interval = 15
+
+    # Block blob uploads
+    config.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
+    config.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
+    config.use_byte_buffer = kwargs.get('use_byte_buffer', False)
+
+    # Page blob uploads
+    config.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
+
+    # Blob downloads
+    config.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
+    config.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
+
+    # File uploads
+    config.max_range_size = kwargs.get('max_range_size', 4 * 1024 * 1024)
     return config
 
 
