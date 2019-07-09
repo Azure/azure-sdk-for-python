@@ -58,8 +58,11 @@ class MultiOrderbyTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    database = test_config._test_config.create_database_if_not_exist(client)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
 
     def generate_multi_orderby_item(self):
         item = {}

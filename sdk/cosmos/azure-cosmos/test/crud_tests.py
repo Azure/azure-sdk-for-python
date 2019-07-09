@@ -72,8 +72,6 @@ class CRUDTests(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    databaseForTest = configs.create_database_if_not_exist(client)
     last_headers = []
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -97,9 +95,8 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.databseForTest = cls.configs.create_database_if_not_exist(cls.client)
-
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
 
     def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
@@ -1874,7 +1871,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         indexing_policy = {
             "spatialIndexes": [
