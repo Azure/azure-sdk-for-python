@@ -1,5 +1,5 @@
 
-# Package Index - sdk-for-python
+# Package Index - azure-sdk-for-python
 
 | Package Id     | Readme    | Changelog                 | Published Url       |
 |----------------|-----------|---------------------------|---------------------|
