@@ -113,14 +113,13 @@ class EventData(object):
         :param value: The partition key to set.
         :type value: str or bytes
         """
-        if value:
-            annotations = dict(self._annotations)
-            annotations[self._partition_key] = value
-            header = MessageHeader()
-            header.durable = True
-            self.message.annotations = annotations
-            self.message.header = header
-            self._annotations = annotations
+        annotations = dict(self._annotations)
+        annotations[self._partition_key] = value
+        header = MessageHeader()
+        header.durable = True
+        self.message.annotations = annotations
+        self.message.header = header
+        self._annotations = annotations
 
     @property
     def sequence_number(self):
@@ -269,8 +268,8 @@ class _BatchSendEventData(EventData):
 class EventDataBatch(_BatchSendEventData):
     """
     The EventDataBatch class is a holder of a batch of event date within max message size bytes.
-     Do not instantiate an EventDataBatch object directly.
-     Do use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Do not instantiate an EventDataBatch object directly.
     """
     def __init__(self, max_message_size, partition_key=None):
         self.max_message_size = max_message_size

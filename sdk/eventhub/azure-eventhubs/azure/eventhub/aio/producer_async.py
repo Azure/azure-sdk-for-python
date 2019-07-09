@@ -20,9 +20,9 @@ log = logging.getLogger(__name__)
 class EventHubProducer(object):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
-     grouped together in batches. Depending on the options specified at creation, the producer may
-     be created to allow event data to be automatically routed to an available partition or specific
-     to a partition.
+    grouped together in batches. Depending on the options specified at creation, the producer may
+    be created to allow event data to be automatically routed to an available partition or specific
+    to a partition.
 
     """
 
@@ -31,7 +31,7 @@ class EventHubProducer(object):
             keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer`
-         method in EventHubClient.
+        method in EventHubClient.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
