@@ -108,7 +108,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         :rtype: bool
 
         Example:
-            .. literalinclude:: ../examples/examples_sansio.py
+            .. literalinclude:: ../examples/test_example_sansio.py
                 :start-after: [START on_exception]
                 :end-before: [END on_exception]
                 :language: python

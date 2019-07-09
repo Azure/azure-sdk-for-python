@@ -223,7 +223,7 @@ secret = secret_client.get_secret("secret-name", logging_enable=True)
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
-* [test_examples_secrets.py][test_examples_secrets] and [test_examples_secrets_async.py][test_example_secrets_async] - Contains the code snippets working with Key Vault secrets.
+* [test_samples_secrets.py][test_examples_secrets] and [test_samples_secrets_async.py][test_example_secrets_async] - Contains the code snippets working with Key Vault secrets.
 * [hello_world.py][hello_world_sample] and [hello_world_async.py][hello_world_async_sample] - Python code for working with Azure Key Vault, including:
   * Create a secret
   * Get an existing secret
@@ -264,7 +264,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [secrets_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault/azure/keyvault/secrets
 [secret_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
-[test_examples_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/tests/test_examples_secrets.py
-[test_example_secrets_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/tests/test_examples_secrets_async.py
+[test_examples_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/tests/test_samples_secrets.py
+[test_example_secrets_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/tests/test_samples_secrets_async.py
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-secrets%2FFREADME.png)
