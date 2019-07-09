@@ -64,6 +64,32 @@ class ProximityPlacementGroupPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProximityPlacementGroupPaged, self).__init__(*args, **kwargs)
+class DedicatedHostGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DedicatedHostGroup <azure.mgmt.compute.v2019_03_01.models.DedicatedHostGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DedicatedHostGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DedicatedHostGroupPaged, self).__init__(*args, **kwargs)
+class DedicatedHostPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DedicatedHost <azure.mgmt.compute.v2019_03_01.models.DedicatedHost>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DedicatedHost]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DedicatedHostPaged, self).__init__(*args, **kwargs)
 class UsagePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Usage <azure.mgmt.compute.v2019_03_01.models.Usage>` object
