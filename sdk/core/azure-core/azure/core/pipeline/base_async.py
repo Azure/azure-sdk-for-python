@@ -117,7 +117,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     :param list policies: List of configured policies.
 
     Example:
-        .. literalinclude:: ../examples/examples_async.py
+        .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START build_async_pipeline]
             :end-before: [END build_async_pipeline]
             :language: python

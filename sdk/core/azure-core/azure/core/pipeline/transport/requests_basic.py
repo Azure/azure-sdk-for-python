@@ -171,7 +171,7 @@ class RequestsTransport(HttpTransport):
     :param bool session_owner: Defaults to True.
 
     Example:
-        .. literalinclude:: ../examples/examples_sync.py
+        .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START requests]
             :end-before: [END requests]
             :language: python
