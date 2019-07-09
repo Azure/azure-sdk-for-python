@@ -1178,8 +1178,198 @@ class Gallery(Resource):
         self.provisioning_state = None
 
 
+class GalleryApplication(Resource):
+    """Specifies information about the gallery Application Definition that you
+    want to create or update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param description: The description of this gallery Application Definition
+     resource. This property is updatable.
+    :type description: str
+    :param eula: The Eula agreement for the gallery Application Definition.
+    :type eula: str
+    :param privacy_statement_uri: The privacy statement uri.
+    :type privacy_statement_uri: str
+    :param release_note_uri: The release note uri.
+    :type release_note_uri: str
+    :param end_of_life_date: The end of life date of the gallery Application
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param supported_os_type: Required. This property allows you to specify
+     the supported type of the OS that application is built for. <br><br>
+     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
+     values include: 'Windows', 'Linux'
+    :type supported_os_type: str or
+     ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemTypes
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'supported_os_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'eula': {'key': 'properties.eula', 'type': 'str'},
+        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
+        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
+    }
+
+    def __init__(self, *, location: str, supported_os_type, tags=None, description: str=None, eula: str=None, privacy_statement_uri: str=None, release_note_uri: str=None, end_of_life_date=None, **kwargs) -> None:
+        super(GalleryApplication, self).__init__(location=location, tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+
+
+class GalleryApplicationVersion(Resource):
+    """Specifies information about the gallery Application Version that you want
+    to create or update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param publishing_profile: Required.
+    :type publishing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersionPublishingProfile
+    :ivar provisioning_state: The current state of the gallery Application
+     Version. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_03_01.models.enum
+    :ivar replication_status:
+    :vartype replication_status:
+     ~azure.mgmt.compute.v2019_03_01.models.ReplicationStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'publishing_profile': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'replication_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+    }
+
+    def __init__(self, *, location: str, publishing_profile, tags=None, **kwargs) -> None:
+        super(GalleryApplicationVersion, self).__init__(location=location, tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.provisioning_state = None
+        self.replication_status = None
+
+
 class GalleryArtifactPublishingProfileBase(Model):
     """Describes the basic gallery artifact publishing profile.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param target_regions: The target regions where the Image Version is going
+     to be replicated to. This property is updatable.
+    :type target_regions:
+     list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
+    :param replica_count: The number of replicas of the Image Version to be
+     created per region. This property would take effect for a region when
+     regionalReplicaCount is not specified. This property is updatable.
+    :type replica_count: int
+    :param exclude_from_latest: If set to true, Virtual Machines deployed from
+     the latest version of the Image Definition won't use this Image Version.
+    :type exclude_from_latest: bool
+    :ivar published_date: The timestamp for when the gallery Image Version is
+     published.
+    :vartype published_date: datetime
+    :param end_of_life_date: The end of life date of the gallery Image
+     Version. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param storage_account_type: Specifies the storage account type to be used
+     to store the image. This property is not updatable. Possible values
+     include: 'Standard_LRS', 'Standard_ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
+    """
+
+    _validation = {
+        'published_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
+        'replica_count': {'key': 'replicaCount', 'type': 'int'},
+        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
+        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+    }
+
+    def __init__(self, *, target_regions=None, replica_count: int=None, exclude_from_latest: bool=None, end_of_life_date=None, storage_account_type=None, **kwargs) -> None:
+        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
+        self.target_regions = target_regions
+        self.replica_count = replica_count
+        self.exclude_from_latest = exclude_from_latest
+        self.published_date = None
+        self.end_of_life_date = end_of_life_date
+        self.storage_account_type = storage_account_type
+
+
+class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+    """The publishing profile of a gallery Image Version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1187,23 +1377,57 @@ class GalleryArtifactPublishingProfileBase(Model):
      to be replicated to. This property is updatable.
     :type target_regions:
      list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
+    :param replica_count: The number of replicas of the Image Version to be
+     created per region. This property would take effect for a region when
+     regionalReplicaCount is not specified. This property is updatable.
+    :type replica_count: int
+    :param exclude_from_latest: If set to true, Virtual Machines deployed from
+     the latest version of the Image Definition won't use this Image Version.
+    :type exclude_from_latest: bool
+    :ivar published_date: The timestamp for when the gallery Image Version is
+     published.
+    :vartype published_date: datetime
+    :param end_of_life_date: The end of life date of the gallery Image
+     Version. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param storage_account_type: Specifies the storage account type to be used
+     to store the image. This property is not updatable. Possible values
+     include: 'Standard_LRS', 'Standard_ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
     :param source: Required.
-    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
+    :type source: ~azure.mgmt.compute.v2019_03_01.models.UserArtifactSource
+    :param content_type: Optional. May be used to help process this file. The
+     type of file contained in the source, e.g. zip, json, etc.
+    :type content_type: str
+    :param enable_health_check: Optional. Whether or not this application
+     reports health.
+    :type enable_health_check: bool
     """
 
     _validation = {
+        'published_date': {'readonly': True},
         'source': {'required': True},
     }
 
     _attribute_map = {
         'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
+        'replica_count': {'key': 'replicaCount', 'type': 'int'},
+        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
+        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'UserArtifactSource'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
     }
 
-    def __init__(self, *, source, target_regions=None, **kwargs) -> None:
-        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
-        self.target_regions = target_regions
+    def __init__(self, *, source, target_regions=None, replica_count: int=None, exclude_from_latest: bool=None, end_of_life_date=None, storage_account_type=None, content_type: str=None, enable_health_check: bool=None, **kwargs) -> None:
+        super(GalleryApplicationVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, **kwargs)
         self.source = source
+        self.content_type = content_type
+        self.enable_health_check = enable_health_check
 
 
 class GalleryArtifactSource(Model):
@@ -1543,8 +1767,6 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      to be replicated to. This property is updatable.
     :type target_regions:
      list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
-    :param source: Required.
-    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
     :param replica_count: The number of replicas of the Image Version to be
      created per region. This property would take effect for a region when
      regionalReplicaCount is not specified. This property is updatable.
@@ -1564,30 +1786,28 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      include: 'Standard_LRS', 'Standard_ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
+    :param source: Required.
+    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
     """
 
     _validation = {
-        'source': {'required': True},
         'published_date': {'readonly': True},
+        'source': {'required': True},
     }
 
     _attribute_map = {
         'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
         'replica_count': {'key': 'replicaCount', 'type': 'int'},
         'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
         'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
     }
 
     def __init__(self, *, source, target_regions=None, replica_count: int=None, exclude_from_latest: bool=None, end_of_life_date=None, storage_account_type=None, **kwargs) -> None:
-        super(GalleryImageVersionPublishingProfile, self).__init__(target_regions=target_regions, source=source, **kwargs)
-        self.replica_count = replica_count
-        self.exclude_from_latest = exclude_from_latest
-        self.published_date = None
-        self.end_of_life_date = end_of_life_date
-        self.storage_account_type = storage_account_type
+        super(GalleryImageVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, **kwargs)
+        self.source = source
 
 
 class GalleryImageVersionStorageProfile(Model):
@@ -3853,6 +4073,34 @@ class UsageName(Model):
         super(UsageName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
+
+
+class UserArtifactSource(Model):
+    """The source image from which the Image Version is going to be created.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param file_name: Required. Required. The fileName of the artifact.
+    :type file_name: str
+    :param media_link: Required. Required. The mediaLink of the artifact, must
+     be a readable storage blob.
+    :type media_link: str
+    """
+
+    _validation = {
+        'file_name': {'required': True},
+        'media_link': {'required': True},
+    }
+
+    _attribute_map = {
+        'file_name': {'key': 'fileName', 'type': 'str'},
+        'media_link': {'key': 'mediaLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, file_name: str, media_link: str, **kwargs) -> None:
+        super(UserArtifactSource, self).__init__(**kwargs)
+        self.file_name = file_name
+        self.media_link = media_link
 
 
 class VaultCertificate(Model):
