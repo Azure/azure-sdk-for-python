@@ -47,4 +47,5 @@ class TestContext(unittest.TestCase):
         thread.join()
 
         span = tracing_context.current_span.get()
+        assert span == current_span
         assert getattr(span, "in_worker", False)
