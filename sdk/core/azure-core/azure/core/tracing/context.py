@@ -115,12 +115,11 @@ class _ThreadLocalContext(object):
 
 class TracingContext:
     _lock = threading.Lock()
-    _context = _AsyncContext if contextvars else _ThreadLocalContext
 
     def __init__(self):
         # type: () -> None
-        self.current_span = TracingContext.register_slot("current_span", None)
-        self.tracing_impl = TracingContext.register_slot("tracing_impl", None)
+        self.current_span = TracingContext._get_context_class("current_span", None)
+        self.tracing_impl = TracingContext._get_context_class("tracing_impl", None)
 
     def with_current_context(self, func):
         # type: (Callable[[Any], Any]) -> Any
@@ -147,7 +146,7 @@ class TracingContext:
         return call_with_current_context
 
     @classmethod
-    def register_slot(cls, name, default_val):
+    def _get_context_class(cls, name, default_val):
         # type: (str, Any) -> ContextProtocol
         """
         Returns an instance of the the context class that stores the variable.
@@ -155,7 +154,8 @@ class TracingContext:
         :param default_val: The default value of the variable if unset
         :return: An instance that implements the context protocol class
         """
-        return cls._context(name, default_val, cls._lock)
+        context_class = _AsyncContext if contextvars else _ThreadLocalContext
+        return context_class(name, default_val, cls._lock)
 
 
 tracing_context = TracingContext()

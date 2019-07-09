@@ -12,8 +12,8 @@ from azure.core.tracing import AbstractSpan
 
 
 class TestContext(unittest.TestCase):
-    def test_register(self):
-        slot = tracing_context.register_slot("temp", 1)
+    def test_get_context_class(self):
+        slot = tracing_context._get_context_class("temp", 1)
         assert slot.get() == 1
         slot.set(2)
         assert slot.get() == 2
