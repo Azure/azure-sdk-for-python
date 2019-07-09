@@ -90,7 +90,7 @@ class PartitionKeyTests(unittest.TestCase):
 
         headers['authorization'] = cls.get_authorization(cls.created_db.client_connection, verb,
                                                          resource_id_or_fullname, resource_type, headers)
-        response = client.request(verb,
+        response = requests_client.request(verb,
                                   resource_url,
                                   data=data,
                                   headers=headers,
