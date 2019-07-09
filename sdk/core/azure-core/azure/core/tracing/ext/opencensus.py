@@ -33,7 +33,7 @@ class OpencensusWrapper(AbstractSpan):
             span = tracer.span(name=name)
 
         self.tracer = tracer
-        self.span_id = str(span.span_id)
+        self.span_instance = span
 
     def _get_environ(self, key):
         # type: (str) -> str
