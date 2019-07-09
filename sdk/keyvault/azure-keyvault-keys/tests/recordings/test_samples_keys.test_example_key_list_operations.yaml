@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - python/3.5.4 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
-    uri: https://vault262b1539.vault.azure.net/keys/key0/create?api-version=7.0
+    uri: https://vaultfcf91456.vault.azure.net/keys/key0/create?api-version=7.0
   response:
     body:
       string: '{"key":{"kid":"https://vaultfcf91456.vault.azure.net/keys/key0/df7429b9985444d1af29694e0920b91f","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"cq5aq2KbQjby3SwnYjvHlFO8ifUbOEI9rwqMC4EOL9s","y":"0SdroJqc92tkGwlkDmfsAP0K5valk0r8O543t9qGf_M"},"attributes":{"enabled":true,"created":1560868652,"updated":1560868652,"recoveryLevel":"Recoverable+Purgeable"}}'
