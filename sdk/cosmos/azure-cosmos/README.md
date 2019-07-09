@@ -68,7 +68,7 @@ from azure.cosmos import HTTPFailure, CosmosClient, Container, Database, Partiti
 import os
 url = os.environ['ACCOUNT_URI']
 key = os.environ['ACCOUNT_KEY']
-client = azure.cosmos.CosmosClient(url, auth = {
+client = CosmosClient(url, auth = {
     'masterKey': key
 })
 ```
@@ -105,11 +105,11 @@ After authenticating your [CosmosClient][ref_cosmosclient], you can work with an
 ```Python
 database_name = 'testDatabase'
 try:
-    database = client.create_database(id=database_name)
+    database = client.create_database(database_name)
 except HTTPFailure as e:
     if e.status_code != 409:
         raise
-    database = client.get_database(id=database_name)
+    database = client.get_database_client(database_name)
 ```
 
 ### Create a container
@@ -119,11 +119,11 @@ This example creates a container with default settings. If a container with the 
 ```Python
 container_name = 'products'
 try:
-    container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
+    container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
 except HTTPFailure as e:
     if e.status_code != 409:
         raise
-    container = database.get_container(container_name)
+    container = database.get_container_client(container_name)
 ```
 
 The preceding snippet also handles the [HTTPFailure][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
@@ -148,13 +148,12 @@ database_client = client.get_database_client(database_name)
 container_client = database.get_container_client(container_name)
 
 for i in range(1, 10):
-    for i in range(1, 10):
-        container_client.upsert_item({
-                'id': 'item{0}'.format(i),
-                'productName': 'Widget',
-                'productModel': 'Model {0}'.format(i)
-            }
-        )
+    container_client.upsert_item({
+            'id': 'item{0}'.format(i),
+            'productName': 'Widget',
+            'productModel': 'Model {0}'.format(i)
+        }
+    )
 ```
 
 ### Delete data
@@ -162,7 +161,8 @@ for i in range(1, 10):
 To delete items from a container, use [Container.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
 
 ```Python
-for item in container.query_items(query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"'):
+for item in container.query_items(query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
+                                  enable_cross_partition_query=True):
     container.delete_item(item, partition_key='Pager')
 ```
 
@@ -179,7 +179,7 @@ container = database.get_container_client(container_name)
 # Enumerate the returned items
 import json
 for item in container.query_items(
-                query='SELECT * FROM mycontainer r WHERE r.id="something"',
+                query='SELECT * FROM mycontainer r WHERE r.id="item3"',
                 enable_cross_partition_query=True):
     print(json.dumps(item, indent=True))
 ```
@@ -192,7 +192,7 @@ Perform parameterized queries by passing a dictionary containing the parameters 
 discontinued_items = container.query_items(
     query='SELECT * FROM products p WHERE p.productModel = @model',
     parameters=[
-        dict(name='@model', value='DISCONTINUED')
+        dict(name='@model', value='Model 7')
     ],
     enable_cross_partition_query=True
 )
@@ -220,11 +220,11 @@ Certain properties of an existing container can be modified. This example sets t
 database = client.get_database_client(database_name)
 container = database.get_container_client(container_name)
 database.replace_container(container,
-    default_ttl=10,
-    partition_key=PartitionKey(path="/productName"))
-
+                           partition_key=PartitionKey(path="/productName"),
+                           default_ttl=10,
+                           )
 # Display the new TTL setting for the container
-container.read()
+container_props = container.read()
 print(json.dumps(container_props['defaultTtl']))
 ```
 
