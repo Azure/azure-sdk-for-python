@@ -25,6 +25,9 @@ class OpencensusWrapper(AbstractSpan):
     def __init__(self, span=None, name="parent_span"):
         # type: (Span, str) -> None
         """
+        If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
+        configure the azure exporter else will just create a new tracer.
+
         :param span: The opencensus span to wrap
         :param name: The name of the opencensus span to create if a new span is needed
         """
@@ -32,14 +35,14 @@ class OpencensusWrapper(AbstractSpan):
         tracer = self.get_current_tracer()
         self.was_created_by_azure_sdk = False
         if span is None:
-            instrumentation_key = self._get_environ("APPINSIGHTS_INSTRUMENTATIONKEY")
-            prob = self._get_environ("AZURE_TRACING_SAMPLER") or 0.001
             if tracer is None:
-                if instrumentation_key is not None:
+                azure_exporter_instrumentation_key = self._get_environ("APPINSIGHTS_INSTRUMENTATIONKEY")
+                prob = self._get_environ("AZURE_TRACING_SAMPLER") or 0.001
+                if azure_exporter_instrumentation_key is not None:
                     from opencensus.ext.azure.trace_exporter import AzureExporter
 
                     tracer = tracer_module.Tracer(
-                        exporter=AzureExporter(instrumentation_key=instrumentation_key),
+                        exporter=AzureExporter(instrumentation_key=azure_exporter_instrumentation_key),
                         sampler=ProbabilitySampler(prob),
                     )
                 else:
