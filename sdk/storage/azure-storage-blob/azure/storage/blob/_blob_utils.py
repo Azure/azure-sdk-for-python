@@ -16,6 +16,7 @@ from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import (
     process_storage_error,
     parse_length_from_content_range,
+    deserialize_metadata,
     return_response_headers)
 from ._shared.models import StorageErrorCode, ModifiedAccessConditions
 from ._shared.upload_chunking import (
@@ -383,11 +384,6 @@ def upload_append_blob(
                 **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)
-
-
-def deserialize_metadata(response, _, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
 
 
 def deserialize_blob_properties(response, obj, headers):

@@ -47,10 +47,12 @@ try:
 except NameError:
     _unicode_type = str
 
-
-_LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def encode_base64(data):
     if isinstance(data, _unicode_type):
@@ -232,7 +234,9 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._application = kwargs.pop('user_agent', None)
-        self._user_agent = "azsdk-python-storage-file/{} Python/{} ({})".format(
+        storage_sdk = kwargs.pop('storage_sdk')
+        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
+            storage_sdk,
             VERSION,
             platform.python_version(),
             platform.platform())

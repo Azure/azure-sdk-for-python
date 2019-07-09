@@ -19,21 +19,16 @@ except ImportError:
 import six
 from azure.core.polling import LROPoller
 
-from .models import HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.upload_chunking import IterStreamer
 from ._shared.shared_access_signature import FileSharedAccessSignature
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    get_length,
-    return_response_headers,
-    add_metadata_headers,
-    process_storage_error,
-    parse_connection_str)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, get_length
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
+from .models import HandlesPaged
 from .polling import CopyStatusPoller, CloseHandles
 
 if TYPE_CHECKING:
@@ -411,7 +406,7 @@ class FileClient(StorageAccountHostsMixin):
             validate_content,
             timeout,
             max_connections,
-            self._config.data_settings,
+            self._config,
             **kwargs)
 
     def copy_file_from_url(
@@ -509,7 +504,7 @@ class FileClient(StorageAccountHostsMixin):
             file_name=self.file_name,
             file_path='/'.join(self.file_path),
             service=self._client.file,
-            config=self._config.data_settings,
+            config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,
@@ -837,7 +832,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        polling_method = CloseHandles(self._config.copy_polling_interval)
         return LROPoller(
             command,
             start_close,

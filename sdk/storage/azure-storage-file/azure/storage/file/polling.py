@@ -8,7 +8,7 @@ import time
 from typing import Any, Callable
 from azure.core.polling import PollingMethod, LROPoller
 
-from ._shared.utils import process_storage_error
+from ._shared.response_handlers import process_storage_error
 from ._generated.models import StorageErrorException
 from ._share_utils import deserialize_file_properties
 
@@ -21,7 +21,7 @@ class CopyStatusPoller(LROPoller):
 
     def __init__(self, client, copy_id, polling=True, configuration=None, **kwargs):
         if configuration:
-            polling_interval = configuration.data_settings.copy_polling_interval
+            polling_interval = configuration.copy_polling_interval
         else:
             polling_interval = 2
         polling_method = CopyFilePolling if polling else CopyFile

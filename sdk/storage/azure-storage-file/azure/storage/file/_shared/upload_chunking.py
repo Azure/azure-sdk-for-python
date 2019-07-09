@@ -13,11 +13,9 @@ from math import ceil
 import six
 
 from .models import ModifiedAccessConditions
-from .utils import (
-    encode_base64,
-    url_quote,
-    get_length,
-    return_response_headers)
+from . import encode_base64, url_quote
+from .request_handlers import get_length
+from .response_handlers import return_response_headers
 from .encryption import _get_blob_encryptor_and_padder
 
 

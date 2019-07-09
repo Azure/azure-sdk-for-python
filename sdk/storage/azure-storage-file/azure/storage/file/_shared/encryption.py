@@ -21,7 +21,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from azure.core.exceptions import HttpResponseError
 
 from ..version import VERSION
-from .authentication import _encode_base64, _decode_base64_to_bytes
+from . import encode_base64, decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
@@ -147,7 +147,7 @@ def _generate_encryption_data_dict(kek, cek, iv):
     # Use OrderedDict to comply with Java's ordering requirement.
     wrapped_content_key = OrderedDict()
     wrapped_content_key['KeyId'] = kek.get_kid()
-    wrapped_content_key['EncryptedKey'] = _encode_base64(wrapped_cek)
+    wrapped_content_key['EncryptedKey'] = encode_base64(wrapped_cek)
     wrapped_content_key['Algorithm'] = kek.get_key_wrap_algorithm()
 
     encryption_agent = OrderedDict()
@@ -157,7 +157,7 @@ def _generate_encryption_data_dict(kek, cek, iv):
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
-    encryption_data_dict['ContentEncryptionIV'] = _encode_base64(iv)
+    encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
     encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + VERSION}
 
     return encryption_data_dict
@@ -180,7 +180,7 @@ def _dict_to_encryption_data(encryption_data_dict):
         raise ValueError("Unsupported encryption version.")
     wrapped_content_key = encryption_data_dict['WrappedContentKey']
     wrapped_content_key = _WrappedContentKey(wrapped_content_key['Algorithm'],
-                                             _decode_base64_to_bytes(wrapped_content_key['EncryptedKey']),
+                                             decode_base64_to_bytes(wrapped_content_key['EncryptedKey']),
                                              wrapped_content_key['KeyId'])
 
     encryption_agent = encryption_data_dict['EncryptionAgent']
@@ -192,7 +192,7 @@ def _dict_to_encryption_data(encryption_data_dict):
     else:
         key_wrapping_metadata = None
 
-    encryption_data = _EncryptionData(_decode_base64_to_bytes(encryption_data_dict['ContentEncryptionIV']),
+    encryption_data = _EncryptionData(decode_base64_to_bytes(encryption_data_dict['ContentEncryptionIV']),
                                       encryption_agent,
                                       wrapped_content_key,
                                       key_wrapping_metadata)
@@ -459,7 +459,7 @@ def _encrypt_queue_message(message, key_encryption_key):
     encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
 
     # Build the dictionary structure.
-    queue_message = {'EncryptedMessageContents': _encode_base64(encrypted_data),
+    queue_message = {'EncryptedMessageContents': encode_base64(encrypted_data),
                      'EncryptionData': _generate_encryption_data_dict(key_encryption_key,
                                                                       content_encryption_key,
                                                                       initialization_vector)}
@@ -492,7 +492,7 @@ def _decrypt_queue_message(message, response, require_encryption, key_encryption
         message = loads(message)
 
         encryption_data = _dict_to_encryption_data(message['EncryptionData'])
-        decoded_data = _decode_base64_to_bytes(message['EncryptedMessageContents'])
+        decoded_data = decode_base64_to_bytes(message['EncryptedMessageContents'])
     except (KeyError, ValueError):
         # Message was not json formatted and so was not encrypted
         # or the user provided a json formatted message.

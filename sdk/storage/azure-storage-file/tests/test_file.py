@@ -942,7 +942,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data)
         self.assert_upload_progress(
             len(data),
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     def test_create_file_from_stream(self):
@@ -1027,7 +1027,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self.assert_upload_progress(
             len(data),
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     def test_create_file_from_stream_truncated(self):
@@ -1089,7 +1089,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self.assert_upload_progress(
             file_size,
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     @record

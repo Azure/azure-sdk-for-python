@@ -8,7 +8,8 @@ import threading
 from azure.core.exceptions import HttpResponseError
 
 from .models import ModifiedAccessConditions
-from .utils import validate_and_format_range_headers, process_storage_error
+from .request_handlers import validate_and_format_range_headers
+from .response_handlers import process_storage_error
 from .encryption import _decrypt_blob
 
 
