@@ -38,9 +38,6 @@ class LiveEvent(TrackedResource):
     :type preview: ~azure.mgmt.media.models.LiveEventPreview
     :param encoding: The Live Event encoding.
     :type encoding: ~azure.mgmt.media.models.LiveEventEncoding
-    :param transcriptions: The Live Event transcription.
-    :type transcriptions:
-     list[~azure.mgmt.media.models.LiveEventTranscription]
     :ivar provisioning_state: The provisioning state of the Live Event.
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the Live Event. Possible
@@ -84,7 +81,6 @@ class LiveEvent(TrackedResource):
         'input': {'key': 'properties.input', 'type': 'LiveEventInput'},
         'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
         'encoding': {'key': 'properties.encoding', 'type': 'LiveEventEncoding'},
-        'transcriptions': {'key': 'properties.transcriptions', 'type': '[LiveEventTranscription]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
@@ -94,13 +90,12 @@ class LiveEvent(TrackedResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, input, tags=None, location: str=None, description: str=None, preview=None, encoding=None, transcriptions=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
+    def __init__(self, *, input, tags=None, location: str=None, description: str=None, preview=None, encoding=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
         super(LiveEvent, self).__init__(tags=tags, location=location, **kwargs)
         self.description = description
         self.input = input
         self.preview = preview
         self.encoding = encoding
-        self.transcriptions = transcriptions
         self.provisioning_state = None
         self.resource_state = None
         self.cross_site_access_policies = cross_site_access_policies
