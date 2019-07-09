@@ -32,7 +32,7 @@ class PathRecommendation(Model):
     :param usernames:
     :type usernames: list[~azure.mgmt.security.models.UserRecommendation]
     :param file_type: Possible values include: 'Exe', 'Dll', 'Msi', 'Script',
-     'Unknown'
+     'Executable', 'Unknown'
     :type file_type: str or ~azure.mgmt.security.models.enum
     :param configuration_status: Possible values include: 'Configured',
      'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
