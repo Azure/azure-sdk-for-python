@@ -35,7 +35,7 @@ def _get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus import OpencensusWrapper
+        from azure.core.tracing.ext.opencensus_wrapper  import OpencensusWrapper
 
         return OpencensusWrapper
     except ImportError:
@@ -46,7 +46,7 @@ def set_span_contexts(wrapped_span, span_instance=None, impl_wrapper=None):
     # type: (AbstractSpan, AbstractSpan) -> None
     tracing_context.current_span.set(wrapped_span)
     impl_wrapper = impl_wrapper or wrapped_span
-    tracing_context.tracing_impl.set(impl_wrapper)
+    tracing_context.tracing_impl.set(impl_wrapper.__class__)
     if wrapped_span is not None or (
         span_instance is not None and impl_wrapper is not None
     ):

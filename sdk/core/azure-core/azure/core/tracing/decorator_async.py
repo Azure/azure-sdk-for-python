@@ -49,7 +49,7 @@ def distributed_tracing_decorator_async(func):
             common.set_span_contexts(
                 original_span_from_sdk_context,
                 span_instance=original_span_instance,
-                wrapper_class=parent_span,
+                impl_wrapper=parent_span,
             )
         else:
             ans = await func(self, *args, **kwargs)

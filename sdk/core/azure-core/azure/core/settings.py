@@ -116,7 +116,7 @@ def _get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus import OpencensusWrapper
+        from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
 
         return OpencensusWrapper
     except ImportError:
@@ -138,7 +138,7 @@ def convert_tracing_impl(value):
     :raises ValueError: If conversion to AbstractSpan fails
 
     """
-    if isinstance(value, AbstractSpan):
+    if issubclass(value.__class__, AbstractSpan):
         return value
 
     _impl_dict = {"opencensus": _get_opencensus_wrapper()}
