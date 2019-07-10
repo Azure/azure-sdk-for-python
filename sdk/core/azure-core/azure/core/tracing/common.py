@@ -26,8 +26,8 @@
 from os import environ
 import re
 
-from azure.core.trace.context import tracing_context
-from azure.core.trace.abstract_span import AbstractSpan
+from azure.core.tracing.context import tracing_context
+from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.settings import settings
 
 
@@ -55,7 +55,7 @@ def set_span_contexts(wrapped_span, span_instance=None, impl_wrapper=None):
 
 
 def get_parent(kwargs, *args):
-    # type: (Any) -> Tuple(Any, Any)
+    # type: (Any) -> Tuple(Any, Any, Any)
     """Returns the parent span that of the span that represents the function and the spans before that parent span"""
     parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
     orig_wrapped_span = tracing_context.current_span.get()

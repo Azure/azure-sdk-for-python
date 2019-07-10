@@ -26,10 +26,10 @@
 import functools
 import azure.core.tracing.common as common
 
-def use_distributed_traces(func):
+def distributed_tracing_decorator_async(func):
     # type: (Callable[[Any], Any]) -> Callable[[Any], Any]
     @functools.wraps(func)
-    def wrapper_use_tracer(self, *args, **kwargs):
+    async def wrapper_use_tracer(self, *args, **kwargs):
         # type: (Any) -> Any
         parent_span, original_span_from_sdk_context, original_span_instance = common.get_parent(
             kwargs
@@ -41,7 +41,7 @@ def use_distributed_traces(func):
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)
-            ans = func(self, *args, **kwargs)
+            ans = await func(self, *args, **kwargs)
             child.finish()
             common.set_span_contexts(parent_span)
             if getattr(parent_span, "was_created_by_azure_sdk", False):
@@ -52,7 +52,7 @@ def use_distributed_traces(func):
                 wrapper_class=parent_span,
             )
         else:
-            ans = func(self, *args, **kwargs)
+            ans = await func(self, *args, **kwargs)
         return ans
 
     return wrapper_use_tracer

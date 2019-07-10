@@ -143,7 +143,6 @@ def convert_tracing_impl(value):
 
     _impl_dict = {"opencensus": _get_opencensus_wrapper()}
     wrapper_class = _impl_dict.get(value, None)
-
     if wrapper_class is None:
         raise ValueError(
             "Cannot convert {} to AbstractSpan, valid values are: {}".format(
