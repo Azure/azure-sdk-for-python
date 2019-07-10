@@ -85,7 +85,7 @@ class OpencensusWrapper(AbstractSpan):
         :param name: Name of the child span
         :return: The OpencensusWrapper that is wrapping the child span instance
         """
-        return OpencensusWrapper(self.span_instance.span(name=name))
+        return self.__class__(self.span_instance.span(name=name))
 
     def start(self):
         # type: () -> None
