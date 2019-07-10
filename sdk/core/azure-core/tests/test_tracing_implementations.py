@@ -57,14 +57,20 @@ class TestOpencensusWrapper(unittest.TestCase):
             )
             wrapped_span.finish()
 
-    @mock.patch.dict(os.environ, {'APPINSIGHTS_INSTRUMENTATIONKEY':'some key'})
+    @mock.patch.dict(os.environ, {"APPINSIGHTS_INSTRUMENTATIONKEY": "some key"})
     def test_no_span_passed_in_with_environ(self):
         with ContextHelper() as ctx:
             wrapped_span = OpencensusWrapper()
             assert wrapped_span.span_instance.name == "parent_span"
             tracer = OpencensusWrapper.get_current_tracer()
-            assert wrapped_span.tracer.span_context.trace_id == tracer.span_context.trace_id
-            assert not wrapped_span.span_instance.context_tracer.span_context.trace_id == ctx.orig_tracer.span_context.trace_id
+            assert (
+                wrapped_span.tracer.span_context.trace_id
+                == tracer.span_context.trace_id
+            )
+            assert (
+                not wrapped_span.span_instance.context_tracer.span_context.trace_id
+                == ctx.orig_tracer.span_context.trace_id
+            )
             wrapped_span.finish()
 
     def test_no_span_but_in_trace(self):
@@ -88,7 +94,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert child.tracer.span_context.trace_id == tracer.span_context.trace_id
             assert len(wrapped_class.span_instance.children) == 1
             assert wrapped_class.span_instance.children[0] == child.span_instance
-    
+
     def test_start_finish(self):
         with ContextHelper() as ctx:
             tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
@@ -96,24 +102,29 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.start()
             time.sleep(1)
             wrapped_class.finish()
-            latency = timestamp_to_microseconds(wrapped_class.span_instance.end_time) - timestamp_to_microseconds(wrapped_class.span_instance.start_time)
-            latency = int(latency/10000)
+            latency = timestamp_to_microseconds(
+                wrapped_class.span_instance.end_time
+            ) - timestamp_to_microseconds(wrapped_class.span_instance.start_time)
+            latency = int(latency / 10000)
             assert latency == 100
-    
+
     def test_to_and_from_header(self):
         with ContextHelper() as ctx:
             wrapped_class = OpencensusWrapper()
-            og_header = {'traceparent': '00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01'}
+            og_header = {
+                "traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"
+            }
             tracer = wrapped_class.from_header(og_header)
             assert tracer.span_context.trace_id == "2578531519ed94423ceae67588eff2c9"
             headers = wrapped_class.to_header({})
             assert headers == og_header
-        
+
     def test_end_tracer(self):
         with ContextHelper() as ctx:
             tracer = mock.Mock(spec=tracer_module.Tracer)
             OpencensusWrapper.end_tracer(tracer)
             assert tracer.finish.called
+
 
 if __name__ == "__main__":
     unittest.main()
