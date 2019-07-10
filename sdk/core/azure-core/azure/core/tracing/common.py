@@ -31,15 +31,15 @@ from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.settings import settings, get_opencensus_wrapper
 
 
-def set_span_contexts(wrapped_span, span_instance=None, impl_wrapper=None):
+def set_span_contexts(wrapped_span, span_instance=None):
     # type: (AbstractSpan, AbstractSpan) -> None
     tracing_context.current_span.set(wrapped_span)
-    impl_wrapper = impl_wrapper or wrapped_span
+    impl_wrapper = settings.tracing_implementation()
     tracing_context.tracing_impl.set(impl_wrapper.__class__)
-    if wrapped_span is not None or (
-        span_instance is not None and impl_wrapper is not None
-    ):
-        span_instance = span_instance or wrapped_span.span_instance
+    if impl_wrapper is not None:
+        span_instance = (
+            span_instance if wrapped_span is None else wrapped_span.span_instance
+        )
         impl_wrapper.set_current_span(span_instance)
 
 
