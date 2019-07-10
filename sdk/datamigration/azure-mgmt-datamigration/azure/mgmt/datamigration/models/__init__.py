@@ -163,6 +163,11 @@ try:
     from ._models_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from ._models_py3 import MigrateSqlServerSqlMITaskProperties
     from ._models_py3 import MigrateSqlServerSqlServerDatabaseInput
+    from ._models_py3 import MigrateSsisTaskInput
+    from ._models_py3 import MigrateSsisTaskOutput
+    from ._models_py3 import MigrateSsisTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSsisTaskOutputProjectLevel
+    from ._models_py3 import MigrateSsisTaskProperties
     from ._models_py3 import MigrateSyncCompleteCommandInput
     from ._models_py3 import MigrateSyncCompleteCommandOutput
     from ._models_py3 import MigrateSyncCompleteCommandProperties
@@ -235,6 +240,7 @@ try:
     from ._models_py3 import SqlConnectionInfo
     from ._models_py3 import SqlMigrationTaskInput
     from ._models_py3 import SqlServerSqlMISyncTaskInput
+    from ._models_py3 import SsisMigrationInfo
     from ._models_py3 import StartMigrationScenarioServerRoleResult
     from ._models_py3 import SyncMigrationDatabaseErrorEvent
     from ._models_py3 import TrackedResource
@@ -409,6 +415,11 @@ except (SyntaxError, ImportError):
     from ._models import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from ._models import MigrateSqlServerSqlMITaskProperties
     from ._models import MigrateSqlServerSqlServerDatabaseInput
+    from ._models import MigrateSsisTaskInput
+    from ._models import MigrateSsisTaskOutput
+    from ._models import MigrateSsisTaskOutputMigrationLevel
+    from ._models import MigrateSsisTaskOutputProjectLevel
+    from ._models import MigrateSsisTaskProperties
     from ._models import MigrateSyncCompleteCommandInput
     from ._models import MigrateSyncCompleteCommandOutput
     from ._models import MigrateSyncCompleteCommandProperties
@@ -481,6 +492,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlConnectionInfo
     from ._models import SqlMigrationTaskInput
     from ._models import SqlServerSqlMISyncTaskInput
+    from ._models import SsisMigrationInfo
     from ._models import StartMigrationScenarioServerRoleResult
     from ._models import SyncMigrationDatabaseErrorEvent
     from ._models import TrackedResource
@@ -511,6 +523,11 @@ from ._paged_models import ResourceSkuPaged
 from ._paged_models import ServiceOperationPaged
 from ._data_migration_service_client_enums import (
     CommandState,
+    SsisMigrationStage,
+    MigrationState,
+    MigrationStatus,
+    SsisMigrationOverwriteOption,
+    SsisStoreType,
     SqlSourcePlatform,
     AuthenticationType,
     MongoDbErrorType,
@@ -525,9 +542,7 @@ from ._data_migration_service_client_enums import (
     Severity,
     UpdateActionType,
     ObjectType,
-    MigrationState,
     DatabaseMigrationStage,
-    MigrationStatus,
     BackupFileStatus,
     DatabaseMigrationState,
     LoginMigrationStage,
@@ -708,6 +723,11 @@ __all__ = [
     'MigrateSqlServerSqlMITaskOutputMigrationLevel',
     'MigrateSqlServerSqlMITaskProperties',
     'MigrateSqlServerSqlServerDatabaseInput',
+    'MigrateSsisTaskInput',
+    'MigrateSsisTaskOutput',
+    'MigrateSsisTaskOutputMigrationLevel',
+    'MigrateSsisTaskOutputProjectLevel',
+    'MigrateSsisTaskProperties',
     'MigrateSyncCompleteCommandInput',
     'MigrateSyncCompleteCommandOutput',
     'MigrateSyncCompleteCommandProperties',
@@ -780,6 +800,7 @@ __all__ = [
     'SqlConnectionInfo',
     'SqlMigrationTaskInput',
     'SqlServerSqlMISyncTaskInput',
+    'SsisMigrationInfo',
     'StartMigrationScenarioServerRoleResult',
     'SyncMigrationDatabaseErrorEvent',
     'TrackedResource',
@@ -809,6 +830,11 @@ __all__ = [
     'ServiceOperationPaged',
     'ProjectFilePaged',
     'CommandState',
+    'SsisMigrationStage',
+    'MigrationState',
+    'MigrationStatus',
+    'SsisMigrationOverwriteOption',
+    'SsisStoreType',
     'SqlSourcePlatform',
     'AuthenticationType',
     'MongoDbErrorType',
@@ -823,9 +849,7 @@ __all__ = [
     'Severity',
     'UpdateActionType',
     'ObjectType',
-    'MigrationState',
     'DatabaseMigrationStage',
-    'MigrationStatus',
     'BackupFileStatus',
     'DatabaseMigrationState',
     'LoginMigrationStage',
