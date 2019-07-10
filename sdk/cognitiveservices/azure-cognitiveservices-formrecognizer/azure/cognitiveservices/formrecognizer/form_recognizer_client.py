@@ -470,7 +470,7 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 400, 415, 500, 503]:
+        if response.status_code not in [202]:
             raise HttpOperationError(self._deserialize, response)
 
         if raw:
@@ -524,7 +524,7 @@ class FormRecognizerClient(SDKClient):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404, 500, 503]:
+        if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
@@ -585,7 +585,7 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 400, 415, 500, 503]:
+        if response.status_code not in [202]:
             raise HttpOperationError(self._deserialize, response)
 
         if raw:
