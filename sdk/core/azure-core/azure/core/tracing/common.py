@@ -1,3 +1,28 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
 from os import environ
 import re
 
@@ -6,25 +31,14 @@ from azure.core.trace.abstract_span import AbstractSpan
 from azure.core.settings import settings
 
 
-def is_opencensus_installed():
-    # type: () -> bool
-    """Returns true if opencensus is installed else returns false"""
-    try:
-        import opencensus
-
-        return True
-    except ImportError:
-        return False
-
-
-def get_opencensus_wrapper():
+def _get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
-    if is_opencensus_installed():
+    try:
         from azure.core.tracing.ext.opencensus import OpencensusWrapper
 
         return OpencensusWrapper
-    else:
+    except ImportError:
         return None
 
 
@@ -50,7 +64,7 @@ def get_parent(kwargs, *args):
     wrapper_class = (
         tracing_context.tracing_impl.get()
         or settings.tracing_implementation()
-        or get_opencensus_wrapper()
+        or _get_opencensus_wrapper()
     )
     if wrapper_class is None:
         return None, orig_wrapped_span, None

@@ -112,14 +112,14 @@ def convert_logging(value):
     return level
 
 
-def get_opencensus_wrapper():
+def _get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
-    if is_opencensus_installed():
+    try:
         from azure.core.tracing.ext.opencensus import OpencensusWrapper
 
         return OpencensusWrapper
-    else:
+    except ImportError:
         return None
 
 
@@ -141,7 +141,7 @@ def convert_tracing_impl(value):
     if isinstance(value, AbstractSpan):
         return value
 
-    _impl_dict = {"opencensus": get_opencensus_wrapper()}
+    _impl_dict = {"opencensus": _get_opencensus_wrapper()}
     wrapper_class = _impl_dict.get(value, None)
 
     if wrapper_class is None:
