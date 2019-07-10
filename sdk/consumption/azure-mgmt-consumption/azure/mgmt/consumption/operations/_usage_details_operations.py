@@ -162,7 +162,7 @@ class UsageDetailsOperations(object):
 
 
     def _download_initial(
-            self, scope, metric=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, ln, metric=None, filter=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
@@ -175,7 +175,7 @@ class UsageDetailsOperations(object):
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if metric is not None:
             query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
-        query_parameters['ln'] = self._serialize.query("self.config.ln", self.config.ln, 'str')
+        query_parameters['ln'] = self._serialize.query("ln", ln, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -215,7 +215,7 @@ class UsageDetailsOperations(object):
         return deserialized
 
     def download(
-            self, scope, metric=None, filter=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, scope, ln, metric=None, filter=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Download usage details data.
 
         :param scope: The scope associated with usage details operations. This
@@ -236,6 +236,9 @@ class UsageDetailsOperations(object):
          e.g. to specify billing period at department scope use
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
         :type scope: str
+        :param ln: Language in which the CSV file for download will be
+         generated.
+        :type ln: str
         :param metric: Allows to select different type of cost/usage records.
          Possible values include: 'ActualCostMetricType',
          'AmortizedCostMetricType', 'UsageMetricType'
@@ -267,6 +270,7 @@ class UsageDetailsOperations(object):
         """
         raw_result = self._download_initial(
             scope=scope,
+            ln=ln,
             metric=metric,
             filter=filter,
             custom_headers=custom_headers,
