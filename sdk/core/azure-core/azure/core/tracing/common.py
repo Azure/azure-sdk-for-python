@@ -16,6 +16,12 @@ def is_opencensus_installed():
         return False
 
 
+def get_opencensus_wrapper():
+    from azure.core.tracing.ext.opencensus import OpencensusWrapper
+
+    return OpencensusWrapper
+
+
 def set_span_contexts(span, span_instance=None, wrapper_class=None):
     # type: (AbstractSpan, AbstractSpan) -> None
     tracing_context.current_span.set(span)
@@ -36,12 +42,11 @@ def get_parent(kwargs, *args):
     if parent_span is None:
         parent_span = orig_context
     else:
-        wrapper_class = wrapper_class
+        wrapper_class = wrapper_class or get_opencensus_wrapper()
         parent_span = wrapper_class(parent_span)
 
     if wrapper_class is None and is_opencensus_installed():
-        # wrapper_class = OpencensusWrapper
-        pass
+        wrapper_class = get_opencensus_wrapper()
 
     if parent_span is None and wrapper_class is not None:
         current_span = wrapper_class.get_current_span()
