@@ -35,7 +35,7 @@ def _get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_wrapper  import OpencensusWrapper
+        from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
 
         return OpencensusWrapper
     except ImportError:
