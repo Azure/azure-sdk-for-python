@@ -170,7 +170,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     @record
     def test_missing_attribute_kek_unwrap(self):
-        # Shared between all services in _decrypt_blob
+        # Shared between all services in decrypt_blob
         # Arrange
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')

@@ -25,18 +25,13 @@ from . import encode_base64, decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
-_ERROR_VALUE_NONE = '{0} should not be None.'
 _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
-_ERROR_DATA_NOT_ENCRYPTED = 'Encryption required, but received data does not contain appropriate metatadata.' + \
-                            'Data was either not encrypted or metadata has been lost.'
-_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM = \
-    'Specified encryption algorithm is not supported.'
 
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise ValueError(_ERROR_VALUE_NONE.format(param_name))
+        raise ValueError('{0} should not be None.'.format(param_name))
 
 
 def _validate_key_encryption_key_wrap(kek):
@@ -259,7 +254,49 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     return content_encryption_key
 
 
-def _encrypt_blob(blob, key_encryption_key):
+def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver=None):
+    '''
+    Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
+    Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
+    Returns the original plaintex.
+
+    :param str message:
+        The ciphertext to be decrypted.
+    :param _EncryptionData encryption_data:
+        The metadata associated with this ciphertext.
+    :param object key_encryption_key:
+        The user-provided key-encryption-key. Must implement the following methods:
+        unwrap_key(key, algorithm)
+            - returns the unwrapped form of the specified symmetric key using the string-specified algorithm.
+        get_kid()
+            - returns a string key id for this key-encryption-key.
+    :param function resolver(kid):
+        The user-provided key resolver. Uses the kid string to return a key-encryption-key
+        implementing the interface defined above.
+    :return: The decrypted plaintext.
+    :rtype: str
+    '''
+    _validate_not_none('message', message)
+    content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, resolver)
+
+    if _EncryptionAlgorithm.AES_CBC_256 != encryption_data.encryption_agent.encryption_algorithm:
+        raise ValueError('Specified encryption algorithm is not supported.')
+
+    cipher = _generate_AES_CBC_cipher(content_encryption_key, encryption_data.content_encryption_IV)
+
+    # decrypt data
+    decrypted_data = message
+    decryptor = cipher.decryptor()
+    decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
+
+    # unpad data
+    unpadder = PKCS7(128).unpadder()
+    decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
+
+    return decrypted_data
+
+
+def encrypt_blob(blob, key_encryption_key):
     '''
     Encrypts the given blob using AES256 in CBC mode with 128 bit padding.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -302,7 +339,7 @@ def _encrypt_blob(blob, key_encryption_key):
     return dumps(encryption_data), encrypted_data
 
 
-def _generate_blob_encryption_data(key_encryption_key):
+def generate_blob_encryption_data(key_encryption_key):
     '''
     Generates the encryption_metadata for the blob.
 
@@ -328,7 +365,7 @@ def _generate_blob_encryption_data(key_encryption_key):
     return content_encryption_key, initialization_vector, encryption_data
 
 
-def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
+def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
                   response, start_offset, end_offset):
     '''
     Decrypts the given blob contents and returns only the requested range.
@@ -356,12 +393,14 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
         encryption_data = _dict_to_encryption_data(loads(response.response.headers['x-ms-meta-encryptiondata']))
     except:  # pylint: disable=bare-except
         if require_encryption:
-            raise ValueError(_ERROR_DATA_NOT_ENCRYPTED)
+            raise ValueError(
+                'Encryption required, but received data does not contain appropriate metatadata.' + \
+                'Data was either not encrypted or metadata has been lost.')
 
         return content
 
     if encryption_data.encryption_agent.encryption_algorithm != _EncryptionAlgorithm.AES_CBC_256:
-        raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM)
+        raise ValueError('Specified encryption algorithm is not supported.')
 
     blob_type = response.response.headers['x-ms-blob-type']
 
@@ -407,7 +446,7 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     return content[start_offset: len(content) - end_offset]
 
 
-def _get_blob_encryptor_and_padder(cek, iv, should_pad):
+def get_blob_encryptor_and_padder(cek, iv, should_pad):
     encryptor = None
     padder = None
 
@@ -419,7 +458,7 @@ def _get_blob_encryptor_and_padder(cek, iv, should_pad):
     return encryptor, padder
 
 
-def _encrypt_queue_message(message, key_encryption_key):
+def encrypt_queue_message(message, key_encryption_key):
     '''
     Encrypts the given plain text message using AES256 in CBC mode with 128 bit padding.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -467,7 +506,7 @@ def _encrypt_queue_message(message, key_encryption_key):
     return dumps(queue_message)
 
 
-def _decrypt_queue_message(message, response, require_encryption, key_encryption_key, resolver):
+def decrypt_queue_message(message, response, require_encryption, key_encryption_key, resolver):
     '''
     Returns the decrypted message contents from an EncryptedQueueMessage.
     If no encryption metadata is present, will return the unaltered message.
@@ -501,51 +540,9 @@ def _decrypt_queue_message(message, response, require_encryption, key_encryption
 
         return message
     try:
-        return _decrypt(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8')
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8')
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",
             response=response,
             error=error)
-
-
-def _decrypt(message, encryption_data, key_encryption_key=None, resolver=None):
-    '''
-    Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
-    Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
-    Returns the original plaintex.
-
-    :param str message:
-        The ciphertext to be decrypted.
-    :param _EncryptionData encryption_data:
-        The metadata associated with this ciphertext.
-    :param object key_encryption_key:
-        The user-provided key-encryption-key. Must implement the following methods:
-        unwrap_key(key, algorithm)
-            - returns the unwrapped form of the specified symmetric key using the string-specified algorithm.
-        get_kid()
-            - returns a string key id for this key-encryption-key.
-    :param function resolver(kid):
-        The user-provided key resolver. Uses the kid string to return a key-encryption-key
-        implementing the interface defined above.
-    :return: The decrypted plaintext.
-    :rtype: str
-    '''
-    _validate_not_none('message', message)
-    content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, resolver)
-
-    if _EncryptionAlgorithm.AES_CBC_256 != encryption_data.encryption_agent.encryption_algorithm:
-        raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM)
-
-    cipher = _generate_AES_CBC_cipher(content_encryption_key, encryption_data.content_encryption_IV)
-
-    # decrypt data
-    decrypted_data = message
-    decryptor = cipher.decryptor()
-    decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
-
-    # unpad data
-    unpadder = PKCS7(128).unpadder()
-    decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
-
-    return decrypted_data

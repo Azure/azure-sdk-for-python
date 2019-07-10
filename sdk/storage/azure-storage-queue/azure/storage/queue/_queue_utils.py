@@ -13,7 +13,7 @@ import six
 from azure.core.exceptions import ResourceExistsError, DecodeError
 
 from ._shared.models import StorageErrorCode
-from ._shared.encryption import _decrypt_queue_message, _encrypt_queue_message
+from ._shared.encryption import decrypt_queue_message, encrypt_queue_message
 from .models import QueueProperties
 
 
@@ -58,7 +58,7 @@ class MessageEncodePolicy(object):
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
-                content = _encrypt_queue_message(content, self.key_encryption_key)
+                content = encrypt_queue_message(content, self.key_encryption_key)
         return content
 
     def configure(self, require_encryption, key_encryption_key, resolver):

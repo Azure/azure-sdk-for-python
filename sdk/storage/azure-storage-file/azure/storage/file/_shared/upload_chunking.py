@@ -16,7 +16,7 @@ from .models import ModifiedAccessConditions
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import _get_blob_encryptor_and_padder
+from .encryption import get_blob_encryptor_and_padder
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -51,7 +51,7 @@ def upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connecti
                        access_conditions, uploader_class, append_conditions=None, modified_access_conditions=None,
                        timeout=None, content_encryption_key=None, initialization_vector=None, **kwargs):
 
-    encryptor, padder = _get_blob_encryptor_and_padder(
+    encryptor, padder = get_blob_encryptor_and_padder(
         content_encryption_key,
         initialization_vector,
         uploader_class is not PageBlobChunkUploader)

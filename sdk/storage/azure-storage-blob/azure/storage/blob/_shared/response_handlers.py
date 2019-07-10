@@ -52,6 +52,11 @@ def normalize_headers(headers):
     return normalized
 
 
+def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
+    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    return {k[10:]: v for k, v in raw_metadata.items()}
+
+
 def return_response_headers(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return normalize_headers(response_headers)
 
