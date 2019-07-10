@@ -38,6 +38,9 @@ try:
     from ._models_py3 import DiskEncryptionSettings
     from ._models_py3 import DiskInstanceView
     from ._models_py3 import Gallery
+    from ._models_py3 import GalleryApplication
+    from ._models_py3 import GalleryApplicationVersion
+    from ._models_py3 import GalleryApplicationVersionPublishingProfile
     from ._models_py3 import GalleryArtifactPublishingProfileBase
     from ._models_py3 import GalleryArtifactSource
     from ._models_py3 import GalleryDataDiskImage
@@ -110,6 +113,7 @@ try:
     from ._models_py3 import UpgradePolicy
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
+    from ._models_py3 import UserArtifactSource
     from ._models_py3 import VaultCertificate
     from ._models_py3 import VaultSecretGroup
     from ._models_py3 import VirtualHardDisk
@@ -206,6 +210,9 @@ except (SyntaxError, ImportError):
     from ._models import DiskEncryptionSettings
     from ._models import DiskInstanceView
     from ._models import Gallery
+    from ._models import GalleryApplication
+    from ._models import GalleryApplicationVersion
+    from ._models import GalleryApplicationVersionPublishingProfile
     from ._models import GalleryArtifactPublishingProfileBase
     from ._models import GalleryArtifactSource
     from ._models import GalleryDataDiskImage
@@ -278,6 +285,7 @@ except (SyntaxError, ImportError):
     from ._models import UpgradePolicy
     from ._models import Usage
     from ._models import UsageName
+    from ._models import UserArtifactSource
     from ._models import VaultCertificate
     from ._models import VaultSecretGroup
     from ._models import VirtualHardDisk
@@ -349,6 +357,8 @@ from ._paged_models import AvailabilitySetPaged
 from ._paged_models import ComputeOperationValuePaged
 from ._paged_models import DedicatedHostGroupPaged
 from ._paged_models import DedicatedHostPaged
+from ._paged_models import GalleryApplicationPaged
+from ._paged_models import GalleryApplicationVersionPaged
 from ._paged_models import GalleryImagePaged
 from ._paged_models import GalleryImageVersionPaged
 from ._paged_models import GalleryPaged
@@ -393,9 +403,9 @@ from ._compute_management_client_enums import (
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
     IntervalInMins,
-    StorageAccountType,
     AggregatedReplicationState,
     ReplicationState,
+    StorageAccountType,
     HostCaching,
     InstanceViewTypes,
     ReplicationStatusTypes,
@@ -430,6 +440,9 @@ __all__ = [
     'DiskEncryptionSettings',
     'DiskInstanceView',
     'Gallery',
+    'GalleryApplication',
+    'GalleryApplicationVersion',
+    'GalleryApplicationVersionPublishingProfile',
     'GalleryArtifactPublishingProfileBase',
     'GalleryArtifactSource',
     'GalleryDataDiskImage',
@@ -502,6 +515,7 @@ __all__ = [
     'UpgradePolicy',
     'Usage',
     'UsageName',
+    'UserArtifactSource',
     'VaultCertificate',
     'VaultSecretGroup',
     'VirtualHardDisk',
@@ -587,6 +601,8 @@ __all__ = [
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
+    'GalleryApplicationPaged',
+    'GalleryApplicationVersionPaged',
     'HyperVGenerationTypes',
     'StatusLevelTypes',
     'AvailabilitySetSkuTypes',
@@ -616,9 +632,9 @@ __all__ = [
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
     'IntervalInMins',
-    'StorageAccountType',
     'AggregatedReplicationState',
     'ReplicationState',
+    'StorageAccountType',
     'HostCaching',
     'InstanceViewTypes',
     'ReplicationStatusTypes',
