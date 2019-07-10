@@ -18,8 +18,8 @@ from .operations.dashboards_operations import DashboardsOperations
 from . import models
 
 
-class portalClientConfiguration(AzureConfiguration):
-    """Configuration for portalClient
+class PortalClientConfiguration(AzureConfiguration):
+    """Configuration for PortalClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -42,7 +42,7 @@ class portalClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(portalClientConfiguration, self).__init__(base_url)
+        super(PortalClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('portal/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -51,11 +51,11 @@ class portalClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class portalClient(SDKClient):
+class PortalClient(SDKClient):
     """Allows creation and deletion of Azure Shared Dashboards.
 
     :ivar config: Configuration for client.
-    :vartype config: portalClientConfiguration
+    :vartype config: PortalClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: microsoft.portal.operations.Operations
@@ -74,8 +74,8 @@ class portalClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = portalClientConfiguration(credentials, subscription_id, base_url)
-        super(portalClient, self).__init__(self.config.credentials, self.config)
+        self.config = PortalClientConfiguration(credentials, subscription_id, base_url)
+        super(PortalClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-11-01-preview'
