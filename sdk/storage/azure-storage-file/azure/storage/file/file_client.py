@@ -23,11 +23,12 @@ from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.upload_chunking import IterStreamer
+from ._shared.download_chunking import StorageStreamDownloader
 from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
+from ._share_utils import upload_file_helper, deserialize_file_properties, deserialize_file_stream
 from .models import HandlesPaged
 from .polling import CopyStatusPoller, CloseHandles
 
@@ -500,14 +501,18 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Offset value must not be None is length is set.")
 
         return StorageStreamDownloader(
-            share=self.share_name,
-            file_name=self.file_name,
-            file_path='/'.join(self.file_path),
             service=self._client.file,
             config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,
+            encryption_options=None,
+            extra_properties={
+                'share': self.share_name,
+                'name': self.file_name,
+                'path': '/'.join(self.file_path),
+            },
+            cls=deserialize_file_stream,
             timeout=timeout,
             **kwargs)
 

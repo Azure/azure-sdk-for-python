@@ -18,7 +18,7 @@ from .encryption import decrypt_blob
 
 def process_range_and_offset(start_range, end_range, length, encryption):
     start_offset, end_offset = 0, 0
-    if encryption['key'] is not None or encryption['resolver'] is not None:
+    if encryption.get('key') is not None or encryption.get('resolver') is not None:
         if start_range is not None:
             # Align the start of the range along a 16 byte block
             start_offset = start_range % 16
@@ -40,12 +40,12 @@ def process_range_and_offset(start_range, end_range, length, encryption):
 
 
 def process_content(data, start_offset, end_offset, encryption):
-    if encryption['key'] is not None or encryption['resolver'] is not None:
+    if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
-                encryption['required'],
-                encryption['key'],
-                encryption['resolver'],
+                encryption.get('required'),
+                encryption.get('key'),
+                encryption.get('resolver'),
                 data,
                 start_offset,
                 end_offset)
@@ -217,21 +217,20 @@ class StorageStreamDownloader(object):
     """
 
     def __init__(
-            self, name=None,
-            container=None,
-            service=None,
+            self, service=None,
             config=None,
             offset=None,
             length=None,
             validate_content=None,
             encryption_options=None,
+            extra_properties=None,
             **kwargs):
         self.service = service
         self.config = config
         self.offset = offset
         self.length = length
         self.validate_content = validate_content
-        self.encryption_options = encryption_options
+        self.encryption_options = encryption_options or {}
         self.request_options = kwargs
         self.location_mode = None
         self._download_complete = False
@@ -254,14 +253,18 @@ class StorageStreamDownloader(object):
         self.file_size = None
         self.response = self._initial_request()
         self.properties = self.response.properties
-        self.properties.name = name
-        self.properties.container = container
+
         # Set the content length to the download size instead of the size of
         # the last range
         self.properties.size = self.download_size
 
         # Overwrite the content range to the user requested range
         self.properties.content_range = 'bytes {0}-{1}/{2}'.format(self.offset, self.length, self.file_size)
+
+        # Set additional properties according to download type
+        if extra_properties:
+            for prop, value in extra_properties.items():
+                setattr(self.properties, prop, value)
 
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5

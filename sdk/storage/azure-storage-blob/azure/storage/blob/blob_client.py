@@ -606,8 +606,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_modified_since, if_unmodified_since, if_match, if_none_match)
 
         return StorageStreamDownloader(
-            name=self.blob_name,
-            container=self.container_name,
             service=self._client.blob,
             config=self._config,
             offset=offset,
@@ -617,6 +615,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 'required': self.require_encryption,
                 'key': self.key_encryption_key,
                 'resolver': self.key_resolver_function},
+            extra_properties={
+                'name': self.blob_name,
+                'container': self.container_name
+            },
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
             cls=deserialize_blob_stream,
