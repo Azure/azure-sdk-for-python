@@ -56,7 +56,7 @@ def set_span_contexts(wrapped_span, span_instance=None, impl_wrapper=None):
 
 def get_parent(kwargs, *args):
     # type: (Any) -> Tuple(Any, Any)
-    """"""
+    """Returns the parent span that of the span that represents the function and the spans before that parent span"""
     parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
     orig_wrapped_span = tracing_context.current_span.get()
 
