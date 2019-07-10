@@ -61,6 +61,7 @@ class TestOpencensusWrapper(unittest.TestCase):
     @mock.patch.dict(os.environ, {"APPINSIGHTS_INSTRUMENTATIONKEY": "some key"})
     def test_no_span_passed_in_with_environ(self):
         with ContextHelper() as ctx:
+            assert os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] == "some key"
             wrapped_span = OpencensusWrapper()
             assert wrapped_span.span_instance.name == "parent_span"
             tracer = OpencensusWrapper.get_current_tracer()
