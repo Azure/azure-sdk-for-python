@@ -349,7 +349,8 @@ class EventHubProducer(object):
         """
         self._check_closed()
         if isinstance(event_data, EventData):
-            event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
+            if partition_key:
+                event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
