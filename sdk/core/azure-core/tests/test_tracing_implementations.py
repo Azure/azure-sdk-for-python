@@ -12,6 +12,7 @@ except ImportError:
 from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
+from opencensus.ext.azure.trace_exporter import AzureExporter
 from opencensus.common.utils import timestamp_to_microseconds
 import os
 import time
@@ -71,6 +72,7 @@ class TestOpencensusWrapper(unittest.TestCase):
                 not wrapped_span.span_instance.context_tracer.span_context.trace_id
                 == ctx.orig_tracer.span_context.trace_id
             )
+            assert isinstance(tracer.exporter, AzureExporter)
             wrapped_span.finish()
 
     def test_no_span_but_in_trace(self):
