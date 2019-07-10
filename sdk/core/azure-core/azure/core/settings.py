@@ -33,6 +33,8 @@ import logging
 import os
 from typing import Any, Union
 
+from azure.core.tracing import AbstractSpan
+
 
 __all__ = ("settings",)
 
@@ -108,6 +110,48 @@ def convert_logging(value):
             )
         )
     return level
+
+
+def get_opencensus_wrapper():
+    # type: () -> OpencensusWrapper
+    """Returns the OpencensusWrapper if opencensus is installed else returns None"""
+    if is_opencensus_installed():
+        from azure.core.tracing.ext.opencensus import OpencensusWrapper
+
+        return OpencensusWrapper
+    else:
+        return None
+
+
+def convert_tracing_impl(value):
+    # type: (Union[str, AbstractSpan]) -> AbstractSpan
+    """Convert a string to AbstractSpan
+
+    If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
+    understands the following strings, ignoring case:
+
+    * "opencensus"
+
+    :param value: the value to convert
+    :type value: string
+    :returns: AbstractSpan
+    :raises ValueError: If conversion to AbstractSpan fails
+
+    """
+    if isinstance(value, AbstractSpan):
+        return value
+
+    _impl_dict = {"opencensus": get_opencensus_wrapper()}
+    wrapper_class = _impl_dict.get(value, None)
+
+    if wrapper_class is None:
+        raise ValueError(
+            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                value, ", ".join(_impl_dict)
+            )
+        )
+
+    return wrapper_class
 
 
 class PrioritizedSetting(object):
@@ -357,6 +401,20 @@ class Settings(object):
     tracing_enabled = PrioritizedSetting(
         "tracing_enbled",
         env_var="AZURE_TRACING_ENABLED",
+        convert=convert_bool,
+        default=False,
+    )
+
+    tracing_implementation = PrioritizedSetting(
+        "tracing_implementation",
+        env_var="AZURE_SDK_TRACING_IMPLEMENTATION",
+        convert=convert_tracing_impl,
+        default=None,
+    )
+
+    tracing_should_only_propagate = PrioritizedSetting(
+        "tracing_should_only_propagate",
+        env_var="AZURE_TRACING_ONLY_PROPAGATE",
         convert=convert_bool,
         default=False,
     )

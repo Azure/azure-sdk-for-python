@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
+from azure.core.settings import settings
 
 try:
     from typing import TYPE_CHECKING
@@ -129,7 +130,7 @@ class TracingContext:
         :return: The target the pass in instead of the function
         """
         wrapped_span = tracing_context.current_span.get()
-        wrapper_class = self.tracing_impl.get()
+        wrapper_class = self.tracing_impl.get() or settings.tracing_implementation()
         if wrapper_class is not None:
             current_impl_span = wrapper_class.get_current_span()
             current_impl_tracer = wrapper_class.get_current_tracer()
