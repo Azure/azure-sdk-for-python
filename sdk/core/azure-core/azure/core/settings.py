@@ -112,7 +112,7 @@ def convert_logging(value):
     return level
 
 
-def _get_opencensus_wrapper():
+def get_opencensus_wrapper():
     # type: () -> OpencensusWrapper
     """Returns the OpencensusWrapper if opencensus is installed else returns None"""
     try:
@@ -141,7 +141,7 @@ def convert_tracing_impl(value):
     if issubclass(value.__class__, AbstractSpan):
         return value
 
-    _impl_dict = {"opencensus": _get_opencensus_wrapper()}
+    _impl_dict = {"opencensus": get_opencensus_wrapper()}
     wrapper_class = _impl_dict.get(value, None)
     if wrapper_class is None:
         raise ValueError(
