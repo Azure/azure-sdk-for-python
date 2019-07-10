@@ -36,8 +36,9 @@ class DynamicsCrmLinkedService(LinkedService):
     :param deployment_type: Required. The deployment type of the Dynamics CRM
      instance. 'Online' for Dynamics CRM Online and 'OnPremisesWithIfd' for
      Dynamics CRM on-premises with Ifd. Type: string (or Expression with
-     resultType string).
-    :type deployment_type: object
+     resultType string). Possible values include: 'Online', 'OnPremisesWithIfd'
+    :type deployment_type: str or
+     ~azure.mgmt.datafactory.models.DynamicsDeploymentType
     :param host_name: The host name of the on-premises Dynamics CRM server.
      The property is required for on-prem and not allowed for online. Type:
      string (or Expression with resultType string).
@@ -58,8 +59,9 @@ class DynamicsCrmLinkedService(LinkedService):
     :param authentication_type: Required. The authentication type to connect
      to Dynamics CRM server. 'Office365' for online scenario, 'Ifd' for
      on-premises with Ifd scenario. Type: string (or Expression with resultType
-     string).
-    :type authentication_type: object
+     string). Possible values include: 'Office365', 'Ifd'
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.DynamicsAuthenticationType
     :param username: Required. User name to access the Dynamics CRM instance.
      Type: string (or Expression with resultType string).
     :type username: object
@@ -85,12 +87,12 @@ class DynamicsCrmLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'object'},
+        'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'str'},
         'host_name': {'key': 'typeProperties.hostName', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'service_uri': {'key': 'typeProperties.serviceUri', 'type': 'object'},
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
-        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
+        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},

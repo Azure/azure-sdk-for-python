@@ -37,7 +37,9 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
      Service for Apps instance. 'Online' for Common Data Service for Apps
      Online and 'OnPremisesWithIfd' for Common Data Service for Apps
      on-premises with Ifd. Type: string (or Expression with resultType string).
-    :type deployment_type: object
+     Possible values include: 'Online', 'OnPremisesWithIfd'
+    :type deployment_type: str or
+     ~azure.mgmt.datafactory.models.DynamicsDeploymentType
     :param host_name: The host name of the on-premises Common Data Service for
      Apps server. The property is required for on-prem and not allowed for
      online. Type: string (or Expression with resultType string).
@@ -59,8 +61,9 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :param authentication_type: Required. The authentication type to connect
      to Common Data Service for Apps server. 'Office365' for online scenario,
      'Ifd' for on-premises with Ifd scenario. Type: string (or Expression with
-     resultType string).
-    :type authentication_type: object
+     resultType string). Possible values include: 'Office365', 'Ifd'
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.DynamicsAuthenticationType
     :param username: Required. User name to access the Common Data Service for
      Apps instance. Type: string (or Expression with resultType string).
     :type username: object
@@ -87,12 +90,12 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'object'},
+        'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'str'},
         'host_name': {'key': 'typeProperties.hostName', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'service_uri': {'key': 'typeProperties.serviceUri', 'type': 'object'},
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
-        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
+        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
