@@ -36,8 +36,9 @@ def set_span_contexts(wrapped_span, span_instance=None):
     tracing_context.current_span.set(wrapped_span)
     impl_wrapper = settings.tracing_implementation()
     tracing_context.tracing_impl.set(impl_wrapper.__class__)
+    if wrapped_span is not None:
+        span_instance = wrapped_span.span_instance
     if impl_wrapper is not None:
-        span_instance = wrapped_span.span_instance if wrapped_span is not None
         impl_wrapper.set_current_span(span_instance)
 
 
