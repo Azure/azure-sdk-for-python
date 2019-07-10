@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/lmazuel/swagger-to-sdk/master/swagger_to_sdk_config.schema.json",
+  "$schema": "https://openapistoragetest.blob.core.windows.net/sdkautomation/test/schemas/swagger_to_sdk_config.schema.json",
   "meta": {
     "autorest_options": {
       "version": "preview",
