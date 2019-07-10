@@ -13,13 +13,11 @@ from uamqp import constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
-from azure.eventhub.common import EventData, _BatchSendEventData, EventDataBatch
+from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import EventHubError, ConnectError, \
     AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
 
 log = logging.getLogger(__name__)
-
-
 
 
 class EventHubProducer(object):
@@ -354,14 +352,12 @@ class EventHubProducer(object):
             event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
         else:
-            if isinstance(event_data, EventDataBatch):
+            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 wrapper_event_data = event_data
             else:
                 if partition_key:
-                    event_data_with_pk = self._set_partition_key(event_data, partition_key)
-                    wrapper_event_data = _BatchSendEventData(event_data_with_pk, partition_key=partition_key)
-                else:
-                    wrapper_event_data = _BatchSendEventData(event_data)
+                    event_data = self._set_partition_key(event_data, partition_key)
+                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data()

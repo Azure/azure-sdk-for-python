@@ -248,10 +248,25 @@ class EventData(object):
         return self.message.encode_message()
 
 
-class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, partition_key=None):
-        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+class EventDataBatch(object):
+    """
+    The EventDataBatch class is a holder of a batch of event date within max message size bytes.
+    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Do not instantiate an EventDataBatch object directly.
+    """
+    def __init__(self, max_message_size=None, partition_key=None):
+        self.max_message_size = max_message_size if max_message_size else constants.MAX_MESSAGE_LENGTH_BYTES
+        self._partition_key = partition_key
+        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+
         self._set_partition_key(partition_key)
+        self._size = self.message.gather()[0].get_message_encoded_size()
+
+    @staticmethod
+    def _from_batch(batch_data, partition_key=None):
+        batch_data_instance = EventDataBatch(partition_key=partition_key)
+        batch_data_instance.message._body_gen = batch_data
+        return batch_data_instance
 
     def _set_partition_key(self, value):
         if value:
@@ -263,21 +278,6 @@ class _BatchSendEventData(EventData):
             header.durable = True
             self.message.annotations = annotations
             self.message.header = header
-
-
-class EventDataBatch(_BatchSendEventData):
-    """
-    The EventDataBatch class is a holder of a batch of event date within max message size bytes.
-    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
-    Do not instantiate an EventDataBatch object directly.
-    """
-    def __init__(self, max_message_size, partition_key=None):
-        self.max_message_size = max_message_size
-        self._partition_key = partition_key
-        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
-
-        self._set_partition_key(partition_key)
-        self._size = self.message.gather()[0].get_message_encoded_size()
 
     def try_add(self, event_data):
         """
