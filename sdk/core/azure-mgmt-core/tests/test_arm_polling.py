@@ -91,6 +91,127 @@ def mock_run(client_self, request, **kwargs):
 CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 
+@pytest.fixture
+def pipeline_client_builder():
+    """Build a client that use the "send" callback as final transport layer
+
+    send will receive "request" and kwargs as any transport layer
+    """
+    def create_client(send_cb):
+        class TestHttpTransport(HttpTransport):
+            def open(self): pass
+            def close(self): pass
+            def __exit__(self, *args, **kwargs): pass
+
+            def send(self, request, **kwargs):
+                return send_cb(request, **kwargs)
+
+        return PipelineClient(
+            'http://example.org/',
+            Configuration(),
+            pipeline=Pipeline(
+                transport=TestHttpTransport()
+            )
+        )
+    return create_client
+
+
+def test_post(pipeline_client_builder):
+
+        # Test POST LRO with both Location and Azure-AsyncOperation
+
+        # The initial response contains both Location and Azure-AsyncOperation, a 202 and no Body
+        initial_response = TestArmPolling.mock_send(
+            'POST',
+            202,
+            {
+                'location': 'http://example.org/location',
+                'azure-asyncoperation': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                )
+            elif request.url == 'http://example.org/async_monitor':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                )
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        def deserialization_cb(response):
+            return json.loads(response.text())
+
+        # Test 1, LRO options with Location final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            ARMPolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result['location_result'] == True
+
+        # Test 2, LRO options with Azure-AsyncOperation final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            ARMPolling(0, lro_options={"final-state-via": "azure-async-operation"}))
+        result = poll.result()
+        assert result['status'] == 'Succeeded'
+
+        # Test 3, backward compat (no options, means "azure-async-operation")
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            ARMPolling(0))
+        result = poll.result()
+        assert result['status'] == 'Succeeded'
+
+        # Test 4, location has no body
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body=""
+                )
+            elif request.url == 'http://example.org/async_monitor':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                )
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            ARMPolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result is None
+
+
 class TestArmPolling(object):
 
     convert = re.compile('([a-z0-9])([A-Z])')
@@ -357,124 +478,6 @@ class TestArmPolling(object):
         poll.wait()
         assert poll.result() is None
         assert poll._polling_method._response.randomFieldFromPollAsyncOpHeader is None
-
-    def test_long_running_post(self):
-
-        # Test POST LRO with both Location and Azure-AsyncOperation
-
-        # The initial response contains both Location and Azure-AsyncOperation, a 202 and no Body
-        initial_response = TestArmPolling.mock_send(
-            'POST',
-            202,
-            {
-                'location': 'http://example.org/location',
-                'azure-asyncoperation': 'http://example.org/async_monitor',
-            },
-            ''
-        )
-
-        class TestHttpTransport(HttpTransport):
-            def open(self): pass
-            def close(self): pass
-            def __exit__(self, *args, **kwargs): pass
-
-            def send(self, request, **kwargs):
-                assert request.method == 'GET'
-
-                if request.url == 'http://example.org/location':
-                    return TestArmPolling.mock_send(
-                        'GET',
-                        200,
-                        body={'location_result': True}
-                    )
-                elif request.url == 'http://example.org/async_monitor':
-                    return TestArmPolling.mock_send(
-                        'GET',
-                        200,
-                        body={'status': 'Succeeded'}
-                    )
-                else:
-                    pytest.fail("No other query allowed")
-
-        client = PipelineClient(
-            'http://example.org/',
-            Configuration(),
-            pipeline=Pipeline(
-                transport=TestHttpTransport()
-            )
-        )
-
-        def deserialization_cb(response):
-            return json.loads(response.text())
-
-        # Test 1, LRO options with Location final state
-        poll = LROPoller(
-            client,
-            initial_response,
-            deserialization_cb,
-            ARMPolling(0, lro_options={"final-state-via": "location"}))
-        result = poll.result()
-        assert result['location_result'] == True
-
-        # Test 2, LRO options with Azure-AsyncOperation final state
-        poll = LROPoller(
-            client,
-            initial_response,
-            deserialization_cb,
-            ARMPolling(0, lro_options={"final-state-via": "azure-async-operation"}))
-        result = poll.result()
-        assert result['status'] == 'Succeeded'
-
-        # Test 3, backward compat (no options, means "azure-async-operation")
-        poll = LROPoller(
-            client,
-            initial_response,
-            deserialization_cb,
-            ARMPolling(0))
-        result = poll.result()
-        assert result['status'] == 'Succeeded'
-
-        # Test 4, location has no body
-
-        class TestHttpTransport(HttpTransport):
-            def open(self): pass
-            def close(self): pass
-            def __exit__(self, *args, **kwargs): pass
-
-            def send(self, request, **kwargs):
-                assert request.method == 'GET'
-
-                if request.url == 'http://example.org/location':
-                    return TestArmPolling.mock_send(
-                        'GET',
-                        200,
-                        body=""
-                    )
-                elif request.url == 'http://example.org/async_monitor':
-                    return TestArmPolling.mock_send(
-                        'GET',
-                        200,
-                        body={'status': 'Succeeded'}
-                    )
-                else:
-                    pytest.fail("No other query allowed")
-
-        client = PipelineClient(
-            'http://example.org/',
-            Configuration(),
-            pipeline=Pipeline(
-                transport=TestHttpTransport()
-            )
-        )
-
-        poll = LROPoller(
-            client,
-            initial_response,
-            deserialization_cb,
-            ARMPolling(0, lro_options={"final-state-via": "location"}))
-        result = poll.result()
-        assert result is None
-
 
     def test_long_running_post_legacy(self):
         # Former oooooold tests to refactor one day to something more readble
