@@ -34,6 +34,8 @@ from .operations import VirtualMachineRunCommandsOperations
 from .operations import GalleriesOperations
 from .operations import GalleryImagesOperations
 from .operations import GalleryImageVersionsOperations
+from .operations import GalleryApplicationsOperations
+from .operations import GalleryApplicationVersionsOperations
 from . import models
 
 
@@ -85,6 +87,10 @@ class ComputeManagementClient(SDKClient):
     :vartype gallery_images: azure.mgmt.compute.v2019_03_01.operations.GalleryImagesOperations
     :ivar gallery_image_versions: GalleryImageVersions operations
     :vartype gallery_image_versions: azure.mgmt.compute.v2019_03_01.operations.GalleryImageVersionsOperations
+    :ivar gallery_applications: GalleryApplications operations
+    :vartype gallery_applications: azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationsOperations
+    :ivar gallery_application_versions: GalleryApplicationVersions operations
+    :vartype gallery_application_versions: azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationVersionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -148,4 +154,8 @@ class ComputeManagementClient(SDKClient):
         self.gallery_images = GalleryImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gallery_applications = GalleryApplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gallery_application_versions = GalleryApplicationVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

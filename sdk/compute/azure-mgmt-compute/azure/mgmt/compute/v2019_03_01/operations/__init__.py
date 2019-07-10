@@ -30,6 +30,8 @@ from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsO
 from ._galleries_operations import GalleriesOperations
 from ._gallery_images_operations import GalleryImagesOperations
 from ._gallery_image_versions_operations import GalleryImageVersionsOperations
+from ._gallery_applications_operations import GalleryApplicationsOperations
+from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations
 
 __all__ = [
     'Operations',
@@ -53,4 +55,6 @@ __all__ = [
     'GalleriesOperations',
     'GalleryImagesOperations',
     'GalleryImageVersionsOperations',
+    'GalleryApplicationsOperations',
+    'GalleryApplicationVersionsOperations',
 ]
