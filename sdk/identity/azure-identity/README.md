@@ -109,11 +109,11 @@ This example demonstrates authenticating the `BlobServiceClient` from the
 [`azure-storage-blob`][azure_storage_blob] library using
 `DefaultAzureCredential`.
 ```py
-# The default credential first checks environment variables for configuration as described above.
-# If environment configuration is incomplete, it will try managed identity.
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
+# The default credential first checks environment variables for configuration as described above.
+# If environment configuration is incomplete, it will try managed identity.
 credential = DefaultAzureCredential()
 
 client = BlobServiceClient(account_url=<your storage account url>, credential=credential)
@@ -168,7 +168,7 @@ client_secret = ClientSecretCredential(client_id, client_secret, tenant_id)
 # credential in order, stopping when one provides a token
 credential_chain = ChainedTokenCredential(managed_identity, client_secret)
 
-# the chain can be used anywhere a credential is required
+# the ChainedTokenCredential can be used anywhere a credential is required
 client = EventHubClient(host, event_hub_path, credential)
 ```
 
@@ -181,13 +181,12 @@ from azure.identity.aio import DefaultAzureCredential
 
 default_credential = DefaultAzureCredential()
 
-# async credentials have the same API and configuration as
-# their synchronous counterparts...
+# async credentials have the same API and configuration their synchronous counterparts,
 from azure.identity.aio import ClientSecretCredential
 
 credential = ClientSecretCredential(client_id, client_secret, tenant_id)
 
-# ...and are used with async Azure SDK clients in the same way
+# and are used with async Azure SDK clients in the same way
 from azure.keyvault.aio import SecretClient
 
 client = SecretClient(vault_url, credential)
@@ -199,6 +198,10 @@ Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fa
 to authenticate. `ClientAuthenticationError` has a `message` attribute which
 describes why authentication failed. When raised by `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
+
+For more details on dealing with Azure Active Directory errors please refer to the
+Azure Active Directory
+[error code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes).
 
 # Next steps
 ## Client library support
