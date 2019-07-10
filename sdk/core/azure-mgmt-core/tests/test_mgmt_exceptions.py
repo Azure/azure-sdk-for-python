@@ -70,8 +70,8 @@ def test_odata_v4_exception():
     assert exp.code == "501"
     assert exp.message == "Unsupported functionality"
     assert exp.target == "query"
-    assert exp.details[0]["code"] == "301"
-    assert exp.details[0]["target"] == "$search"
+    assert exp.details[0].code == "301"
+    assert exp.details[0].target == "$search"
     assert "trace" in exp.innererror
     assert "context" in exp.innererror
 

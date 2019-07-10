@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import json
+import logging
 from typing import TYPE_CHECKING, Dict, Any, Optional
 
 
@@ -33,6 +34,57 @@ from azure.core.exceptions import HttpResponseError
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport.base import _HttpResponseBase
+
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class ODataV4Format(object):
+    """Class to describe OData V4 error format.
+
+    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
+
+    :param dict json_object: A Python dict representing a ODataV4 JSON
+    :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str message: Human-readable, language-dependent representation of the error.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+    :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
+    """
+
+    def __init__(self, json_object):
+        # Required fields, but assume they could be missing still to be robust
+        self.code = json_object.get("code")  # type: Optional[str]
+        self.message = json_object.get("message")  # type: Optional[str]
+
+        # Optional fields
+        self.target = json_object.get("target", None)  # type: Optional[str]
+
+        # details is recursive of this very format
+        self.details = [
+            self.__class__(detail_node)
+            for detail_node in json_object.get("details", [])
+        ]  # type: List[ODataV4Format]
+
+        self.innererror = json_object.get("innererror", {})  # type: Dict[str, Any]
+
+    def __str__(self):
+        error_str = "Code: {}".format(self.code)
+        error_str += "\nMessage: {}".format(self.message)
+        if self.target:
+            error_str += "\nTarget: {}".format(self.target)
+
+        if self.details:
+            error_str += "\nException Details:"
+            for error_obj in self.details:
+                # Indent for visibility
+                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
+
+        if self.innererror:
+            error_str += "\nInner error: {}".format(
+                json.dumps(self.innererror, indent=4)
+            )
+        return error_str
 
 
 class ODataV4Error(HttpResponseError):
@@ -47,6 +99,7 @@ class ODataV4Error(HttpResponseError):
     :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
     :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
     """
+    _ERROR_FORMAT = ODataV4Format
 
     def __init__(self, response, **kwargs):
         # type: (_HttpResponseBase, Dict[str, Any]) -> None
@@ -67,22 +120,20 @@ class ODataV4Error(HttpResponseError):
         self.innererror = {}  # type: Optional[Dict[str, Any]]
 
         super(ODataV4Error, self).__init__(
-            response=response, **kwargs
+            message=self.message, response=response, **kwargs
         )
 
-        # Required fields, but assume they could be missing still to be robust
-        try:
-            error_node = self.odata_json.get("error")
-            self.code = error_node.get("code")
+        if self.odata_json:
+            try:
+                error_node = self.odata_json["error"]
+                self._error_format = self._ERROR_FORMAT(error_node)
+                self.__dict__.update(self._error_format.__dict__)
+            except Exception:
+                _LOGGER.info("Received error message was not valid OdataV4 format.")
+                self._error_format = "JSON was invalid for this format"
 
-            # Optional fields
-            self.target = error_node.get("target", None)  # type: str
-            self.details = error_node.get("details", [])  # type: List[Dict[str, Any]]
-            self.innererror = error_node.get("innererror", {})  # type: Dict[str, Any]
-        except Exception:
-            # No details, too bad...
-            pass
-
+    def __str__(self):
+        return str(self._error_format)
 
 
 class TypedErrorInfo:
@@ -102,7 +153,7 @@ class TypedErrorInfo:
         return error_str
 
 
-class ARMErrorFormat:
+class ARMErrorFormat(ODataV4Format):
     """Describe error format from ARM, used at the base or inside "details" node.
 
     This format is compatible with ODataV4 format.
@@ -110,21 +161,8 @@ class ARMErrorFormat:
     """
 
     def __init__(self, json_object):
-        # Required fields, but assume they could be missing still to be robust
-        self.code = json_object.get("code")  # type: Optional[str]
-        self.message = json_object.get("message")  # type: Optional[str]
-
-        # Optional fields
-        self.target = json_object.get("target", None)  # type: str
-
-        # details is recursive of this very format
-        self.details = [
-            ARMErrorFormat(detail_node)
-            for detail_node in json_object.get("details", [])
-        ]  # type: List[ARMErrorFormat]
-
-        # innererror is not mentioned in ARM spec, keep it for consistency with OData v4
-        self.innererror = json_object.get("innererror", None)  # type: Dict[str, Any]
+        # Parse the ODatav4 part
+        super(ARMErrorFormat, self).__init__(json_object)
 
         # ARM specific annotations
         self.additional_info = [
@@ -133,21 +171,7 @@ class ARMErrorFormat:
         ]
 
     def __str__(self):
-        error_str = "Code: {}".format(self.code)
-        error_str += "\nMessage: {}".format(self.message)
-        if self.target:
-            error_str += "\nTarget: {}".format(self.target)
-
-        if self.details:
-            error_str += "\nException Details:"
-            for error_obj in self.details:
-                # Indent for visibility
-                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
-
-        if self.innererror:
-            error_str += "\nInner error: {}".format(
-                json.dumps(self.innererror, indent=4)
-            )
+        error_str = super(ARMErrorFormat, self).__str__()
 
         if self.additional_info:
             error_str += "\nAdditional Information:"
@@ -165,22 +189,4 @@ class ARMError(ODataV4Error):
 
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
-
-    def __init__(self, response, **kwargs):
-        # type: (_HttpResponseBase, Dict[str, Any]) -> None
-        super(ARMError, self).__init__(response=response, **kwargs)
-
-        if self.odata_json:
-            try:
-                error_node = self.odata_json["error"]
-                self._arm_error_format = ARMErrorFormat(error_node)
-                # ARM error format is more typed than OData v4, replace, but keep message
-                self.__dict__.update(self._arm_error_format.__dict__)
-            except Exception:
-                pass
-
-        if "message" in kwargs:
-            self.message = kwargs["message"]
-
-    def __str__(self):
-        return str(self._arm_error_format)
+    _ERROR_FORMAT = ARMErrorFormat
