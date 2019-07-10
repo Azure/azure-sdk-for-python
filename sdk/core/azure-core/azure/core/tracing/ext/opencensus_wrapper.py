@@ -9,6 +9,11 @@ from opencensus.trace import execution_context
 from opencensus.trace import tracer as tracer_module, Span
 from opencensus.trace.propagation import trace_context_http_header_format
 from opencensus.trace.samplers import ProbabilitySampler
+from opencensus.trace.tracers.noop_tracer import NoopTracer
+try:
+    from opencensus.ext.azure.trace_exporter import AzureExporter
+except:
+    AzureExporter = False
 
 try:
     from typing import TYPE_CHECKING
@@ -34,21 +39,22 @@ class OpencensusWrapper(AbstractSpan):
         super(OpencensusWrapper, self).__init__(span, name)
         tracer = self.get_current_tracer()
         self.was_created_by_azure_sdk = False
-        if span is None:
-            if tracer is None:
-                azure_exporter_instrumentation_key = self._get_environ("APPINSIGHTS_INSTRUMENTATIONKEY")
-                prob = self._get_environ("AZURE_TRACING_SAMPLER") or 0.001
-                if azure_exporter_instrumentation_key is not None:
-                    from opencensus.ext.azure.trace_exporter import AzureExporter
-
-                    tracer = tracer_module.Tracer(
-                        exporter=AzureExporter(instrumentation_key=azure_exporter_instrumentation_key),
-                        sampler=ProbabilitySampler(prob),
-                    )
-                else:
-                    tracer = tracer_module.Tracer(sampler=ProbabilitySampler(prob))
-                self.was_created_by_azure_sdk = True
-            span = tracer.span(name=name)
+        if span is None and (tracer is None or isinstance(tracer, NoopTracer)):
+            azure_exporter_instrumentation_key = self._get_environ(
+                "APPINSIGHTS_INSTRUMENTATIONKEY"
+            )
+            prob = float(self._get_environ("AZURE_TRACING_SAMPLER") or 0)
+            if azure_exporter_instrumentation_key is not None and AzureExporter:
+                tracer = tracer_module.Tracer(
+                    exporter=AzureExporter(
+                        instrumentation_key=azure_exporter_instrumentation_key
+                    ),
+                    sampler=ProbabilitySampler(prob),
+                )
+            else:
+                tracer = tracer or tracer_module.Tracer(sampler=ProbabilitySampler(prob))
+            self.was_created_by_azure_sdk = True
+        span = span or tracer.span(name=name)
 
         self.tracer = tracer
         self._span_instance = span
@@ -79,9 +85,7 @@ class OpencensusWrapper(AbstractSpan):
         :param name: Name of the child span
         :return: The OpencensusWrapper that is wrapping the child span instance
         """
-        child = self.span_instance.span(name=name)
-        wrapped_child = OpencensusWrapper(child)
-        return wrapped_child
+        return OpencensusWrapper(self.span_instance.span(name=name))
 
     def start(self):
         # type: () -> None
@@ -116,7 +120,9 @@ class OpencensusWrapper(AbstractSpan):
         :param headers: A key value pair dictionary
         :return: A tracer initialized with the span context extraction from headers.
         """
-        ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
+        ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(
+            headers
+        )
         return tracer_module.Tracer(span_context=ctx)
 
     @classmethod
@@ -128,6 +134,7 @@ class OpencensusWrapper(AbstractSpan):
         """
         if tracer is not None:
             tracer.end_span()
+            tracer.finish()
 
     @classmethod
     def get_current_span(cls):
