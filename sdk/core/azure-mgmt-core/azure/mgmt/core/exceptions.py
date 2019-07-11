@@ -119,8 +119,11 @@ class ODataV4Error(HttpResponseError):
         self.details = []  # type: Optional[List[Any]]
         self.innererror = {}  # type: Optional[Dict[str, Any]]
 
+        if self.message and "message" not in kwargs:
+            kwargs['message'] = self.message
+
         super(ODataV4Error, self).__init__(
-            message=self.message, response=response, **kwargs
+            response=response, **kwargs
         )
 
         if self.odata_json:
