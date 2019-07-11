@@ -22,7 +22,7 @@
 """Hash partition resolver implementation in the Azure Cosmos database service.
 """
 
-from . import murmur_hash
+from . import _murmur_hash
 from . import _consistent_hash_ring
 
 class HashPartitionResolver(object):
@@ -51,7 +51,7 @@ class HashPartitionResolver(object):
         self.collection_links = collection_links
 
         if hash_generator is None:
-            hash_generator = murmur_hash._MurmurHash()
+            hash_generator = _murmur_hash.MurmurHash()
 
         self.consistent_hash_ring = _consistent_hash_ring.ConsistentHashRing(self.collection_links, default_number_of_virtual_nodes_per_collection, hash_generator)
 

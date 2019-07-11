@@ -45,7 +45,7 @@ from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import azure.cosmos.murmur_hash as murmur_hash
+import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
 import azure.cosmos.base as base
 import azure.cosmos.cosmos_client as cosmos_client
@@ -851,13 +851,13 @@ class CRUDTests(unittest.TestCase):
         str = 'afdgdd'
         bytes = bytearray(str, encoding='utf-8')
 
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
         self.assertEqual(1099701186, hash_value)
 
         num = 374.0
         bytes = bytearray(pack('d', num))
 
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
         self.assertEqual(3717946798, hash_value)
 
         self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326)
@@ -878,7 +878,7 @@ class CRUDTests(unittest.TestCase):
                              3381504877)
 
     def _validate_bytes(self, str, seed, expected_hash_bytes, expected_value):
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
         bytes = bytearray(pack('I', hash_value))
         self.assertEqual(expected_value, hash_value)
         self.assertEqual(expected_hash_bytes, bytes)
