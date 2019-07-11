@@ -17,6 +17,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+.pytest_cache
 
 # External tool builders
 .externalToolBuilders/

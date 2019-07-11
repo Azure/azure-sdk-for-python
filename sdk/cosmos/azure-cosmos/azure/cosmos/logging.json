@@ -1,0 +1,40 @@
+{
+    "version": 1,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s,%(levelname)s,%(name)s %(funcName)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%SZ"
+        }
+    },
+
+     "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+
+         "file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "filename": "info.log",
+            "formatter": "simple",
+            "maxBytes": 10485760,
+            "backupCount": 20,
+            "encoding": "utf8"
+        }
+    },
+    "loggers": {
+        "azure.cosmos": {
+            "level": "DEBUG",
+            "handlers": ["console_handler", "file_handler"],
+            "propagate": false
+        }
+    },
+
+     "root": {
+        "level": "DEBUG",
+        "handlers": ["console_handler", "file_handler"]
+    }
+}

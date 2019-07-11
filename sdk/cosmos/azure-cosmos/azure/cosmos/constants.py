@@ -36,3 +36,9 @@ class _Constants(object):
 
     #ServiceDocument Resource
     EnableMultipleWritableLocations = "enableMultipleWriteLocations"
+
+    # Environment variable for custom logging config file path
+    LogConfigurationFilePath = 'LOG_CONFIGURATION_FILE_PATH'
+
+    # Name of default logging config file
+    DefaultLogConfigurationFilePath = 'logging.json'

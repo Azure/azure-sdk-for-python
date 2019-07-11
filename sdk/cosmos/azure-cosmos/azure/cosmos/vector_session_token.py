@@ -22,6 +22,9 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
+import logging
+import logging.config
+import six
 from . import errors
 from . import base
 from .http_constants import StatusCodes
@@ -29,6 +32,7 @@ from .http_constants import StatusCodes
 class VectorSessionToken(object):
     segment_separator = '#'
     region_progress_separator = "="
+    logger = logging.getLogger(__name__)
 
     def __init__(self, version, global_lsn, local_lsn_by_region, session_token=None):
 
@@ -74,12 +78,20 @@ class VectorSessionToken(object):
 
         try:
             version = int(segments[0])
-        except ValueError as _:
+        except ValueError as e:
+            if six.PY2:
+                cls.logger.exception(e.message)
+            else:
+                cls.logger(e)
             return None
 
         try:
             global_lsn = int(segments[1])
-        except ValueError as _:
+        except ValueError as e:
+            if six.PY2:
+                cls.logger.exception(e.message)
+            else:
+                cls.logger(e)
             return None
 
         for i in range(2, len(segments)):
@@ -92,7 +104,11 @@ class VectorSessionToken(object):
             try:
                 region_id = int(region_id_with_lsn[0])
                 local_lsn = int(region_id_with_lsn[1])
-            except ValueError as _:
+            except ValueError as e:
+                if six.PY2:
+                    cls.logger.exception(e.message)
+                else:
+                    cls.logger(e)
                 return None
             local_lsn_by_region[region_id] = local_lsn
 

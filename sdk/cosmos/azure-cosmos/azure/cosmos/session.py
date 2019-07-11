@@ -24,6 +24,9 @@
 
 import sys, traceback
 import threading
+import logging
+import logging.config
+import six
 
 from . import base
 from . import http_constants
@@ -36,6 +39,7 @@ class SessionContainer(object):
         self.collection_name_to_rid = {}
         self.rid_to_session_token = {}
         self.session_lock = threading.RLock()
+        self.logger = logging.getLogger(__name__)
 
     def get_session_token(self, resource_path):
         """
@@ -114,12 +118,13 @@ class SessionContainer(object):
                     return
                 collection_rid, collection_name = base.GetItemContainerInfo(self_link, alt_content_path, response_result_id)
          
-            except ValueError:
+            except ValueError as e:
+                if six.PY2:
+                    e = e.message
+                self.logger.exception(e)
                 return
             except:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                  limit=2, file=sys.stdout)
+                self.logger.exception('')
                 return
 
             if collection_name in self.collection_name_to_rid:

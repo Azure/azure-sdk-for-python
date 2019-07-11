@@ -23,15 +23,8 @@
 """
 
 import logging
+import logging.config
 from azure.cosmos.documents import _OperationType
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-log_formatter = logging.Formatter('%(levelname)s:%(message)s')
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(log_formatter)
-logger.addHandler(log_handler)
-
 
 class _EndpointDiscoveryRetryPolicy(object):
     """The endpoint discovery retry policy class used for geo-replicated database accounts
@@ -57,6 +50,7 @@ class _EndpointDiscoveryRetryPolicy(object):
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
+        self.logger = logging.getLogger(__name__)
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -68,9 +62,11 @@ class _EndpointDiscoveryRetryPolicy(object):
 
         """
         if not self.connection_policy.EnableEndpointDiscovery:
+            self.logger.debug('Not retrying again.')
             return False
 
         if self.failover_retry_count >= self.Max_retry_attempt_count:
+            self.logger.debug('Not retrying again.')
             return False
 
         self.failover_retry_count += 1
@@ -98,4 +94,5 @@ class _EndpointDiscoveryRetryPolicy(object):
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
         self.request.route_to_location(self.location_endpoint)
+        self.logger.debug('Retrying again.')
         return True

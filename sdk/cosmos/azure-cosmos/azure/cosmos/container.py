@@ -124,6 +124,7 @@ class Container:
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
+        self.logger.debug("Reading a Container. container_link: [%s]" % self.container_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token:
@@ -183,7 +184,7 @@ class Container:
 
         """
         doc_link = self._get_document_link(item)
-
+        self.logger.debug("Reading an item. item_link: [%s]" % doc_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if partition_key:
@@ -224,6 +225,7 @@ class Container:
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
         """
+        self.logger.debug("Reading Items. container_link: [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -267,6 +269,7 @@ class Container:
         :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
 
         """
+        self.logger.debug("Querying items change feed. container_link: [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if partition_key_range_id is not None:
@@ -340,6 +343,7 @@ class Container:
             :name: query_items_param
 
         """
+        self.logger.debug("Querying Items. container_link: [%s], query [%s]" % (self.container_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
@@ -404,6 +408,7 @@ class Container:
 
         """
         item_link = self._get_document_link(item)
+        self.logger.debug("Replacing an item. item_link: [%s], item id: [%s]" % (item_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
@@ -459,6 +464,7 @@ class Container:
         If the item already exists in the container, it is replaced. If it does not, it is inserted.
 
         """
+        self.logger.debug("Upserting an item. container_link: [%s]" % self.container_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
@@ -515,6 +521,7 @@ class Container:
         To update or replace an existing item, use the :func:`Container.upsert_item` method.
 
         """
+        self.logger.debug("Creating an item. container_link: [%s]" % self.container_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -572,6 +579,8 @@ class Container:
         :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
 
         """
+        item_link = self._get_document_link(item)
+        self.logger.debug("Deleting an item. item_link: [%s]", item_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if partition_key:
@@ -589,9 +598,8 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        document_link = self._get_document_link(item)
         result = self.client_connection.DeleteItem(
-            document_link=document_link, options=request_options
+            document_link=item_link, options=request_options
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result) 
@@ -605,6 +613,7 @@ class Container:
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be retrieved.
 
         """
+        self.logger.debug("Reading container's offer. container_link [%s]", self.container_link)
         properties = self._get_properties()
         link = properties['_self']
         query_spec = {
@@ -638,6 +647,7 @@ class Container:
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be updated.
 
         """
+        self.logger.debug("Replacing container's throughput. container_link [%s], new throughput [%s]" % (self.container_link, throughput))
         properties = self._get_properties()
         link = properties['_self']
         query_spec = {
@@ -678,6 +688,7 @@ class Container:
         :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
 
         """
+        self.logger.debug("Reading Conflicts. container_link [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -715,6 +726,7 @@ class Container:
         :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
 
         """
+        self.logger.debug("Querying Conflicts. container_link [%s], query [%s]" % (self.container_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -753,13 +765,15 @@ class Container:
         :raise `HTTPFailure`: If the given conflict couldn't be retrieved.
 
         """
+        conflict_link = self._get_conflict_link(conflict)
+        self.logger.debug("Reading a Conflict. conflict_link [%s]" % conflict_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.ReadConflict(
-            conflict_link=self._get_conflict_link(conflict),
+            conflict_link=conflict_link,
             options=request_options
         )
         if response_hook:
@@ -783,13 +797,15 @@ class Container:
         :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
 
         """
+        conflict_link = self._get_conflict_link(conflict)
+        self.logger.debug("Deleting a Conflict. conflict_link [%s]" % conflict_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.DeleteConflict(
-            conflict_link=self._get_conflict_link(conflict),
+            conflict_link=conflict_link,
             options=request_options
         )
         if response_hook:

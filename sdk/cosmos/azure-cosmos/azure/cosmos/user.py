@@ -74,6 +74,7 @@ class User:
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
 
         """
+        self.logger.debug("Reading a User. user_link [%s]" % self.user_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -102,6 +103,7 @@ class User:
         :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
 
         """
+        self.logger.debug("Reading Permissions. user_link [%s]" % self.user_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -136,6 +138,7 @@ class User:
         :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
 
         """
+        self.logger.debug("Querying Permissions. user_link [%s], query [%s]" % (self.user_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -171,11 +174,13 @@ class User:
         :raise `HTTPFailure`: If the given permission couldn't be retrieved.
 
         """
+        permission_link = self._get_permission_link(permission)
+        self.logger.debug("Reading a Permission. permission_link [%s]" % permission_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         permission = self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission),
+            permission_link=permission_link,
             options=request_options
         )
 
@@ -208,6 +213,7 @@ class User:
         To update or replace an existing permision, use the :func:`User.upsert_permission` method.
 
         """
+        self.logger.debug("Creating a Permission. user_link [%s], permission id [%s]" % (self.user_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -246,6 +252,7 @@ class User:
         If the permission already exists in the container, it is replaced. If it does not, it is inserted.
         """
 
+        self.logger.debug("Upserting a Permission. user_link [%s], permission id [%s]", self.user_link, body['id'])
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -284,11 +291,14 @@ class User:
         :raise `HTTPFailure`: If the replace failed or the permission with given id does not exist.
 
         """
+        permission_link = self._get_permission_link(permission)
+        self.logger.debug(
+            "Replacing a Permission. permission_link [%s], permission id [%s]" % (permission_link, permission['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         permission = self.client_connection.ReplacePermission(
-            permission_link=self._get_permission_link(permission),
+            permission_link=permission_link,
             permission=body,
             options=request_options
         )
@@ -319,12 +329,13 @@ class User:
         :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does not exist for the user, a `404` error is returned.
 
         """
-
+        permission_link = self._get_permission_link(permission)
+        self.logger.debug("Deleting a Permission. permission_link [%s]" % permission_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         result = self.client_connection.DeletePermission(
-            permission_link=self._get_permission_link(permission),
+            permission_link=permission_link,
             options=request_options
         )
 

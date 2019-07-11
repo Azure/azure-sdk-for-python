@@ -21,6 +21,9 @@
 
 """Internal class for connection reset retry policy implementation in the Azure Cosmos database service.
 """
+import logging
+import logging.config
+
 from . import http_constants
 
 class _DefaultRetryPolicy(object):
@@ -50,6 +53,7 @@ class _DefaultRetryPolicy(object):
         self.current_retry_attempt_count = 0
         self.retry_after_in_milliseconds = 1000
         self.args = args
+        self.logger = logging.getLogger(__name__)
 
     def needsRetry(self, error_code):
         if error_code in _DefaultRetryPolicy.CONNECTION_ERROR_CODES:
@@ -70,5 +74,8 @@ class _DefaultRetryPolicy(object):
         """
         if (self.current_retry_attempt_count < self._max_retry_attempt_count) and self.needsRetry(exception.status_code):
             self.current_retry_attempt_count += 1
+            self.logger.debug('Retrying again.')
             return True
+
+        self.logger.debug('Not retrying again.')
         return False

@@ -22,6 +22,9 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos database service.
 """
 
+import six
+import logging
+import logging.config
 from six.moves.urllib.parse import urlparse
 import threading
 from . import constants
@@ -47,6 +50,7 @@ class _GlobalEndpointManager(object):
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
+        self.logger = logging.getLogger(__name__)
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -87,6 +91,10 @@ class _GlobalEndpointManager(object):
             try:
                 self._refresh_endpoint_list_private(database_account)
             except Exception as e:
+                if six.PY2:
+                    self.logger.exception(e.message)
+                else:
+                    self.logger(e)
                 raise e
 
     def _refresh_endpoint_list_private(self, database_account = None):
@@ -118,10 +126,20 @@ class _GlobalEndpointManager(object):
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint)
                     return database_account
-                except errors.HTTPFailure:
+                except errors.HTTPFailure as e:
+                    if six.PY2:
+                        self.logger.exception(e.message)
+                    else:
+                        self.logger(e)
                     pass
 
             return None
+        except Exception as e:
+            if six.PY2:
+                self.logger.exception(e.message)
+            else:
+                self.logger(e)
+            raise e
 
     def _GetDatabaseAccountStub(self, endpoint):
         """Stub for getting database account from the client

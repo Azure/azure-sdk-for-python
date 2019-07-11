@@ -28,6 +28,8 @@ import json
 import uuid
 import urllib
 import binascii
+import logging
+import logging.config
 
 from . import auth
 from . import documents
@@ -40,6 +42,7 @@ import six
 from six.moves.urllib.parse import quote as urllib_quote
 from six.moves import xrange
 
+logger = logging.getLogger(__name__)
 def GetHeaders(cosmos_client_connection,
                default_headers,
                verb,
@@ -544,6 +547,7 @@ def IsValidBase64String(string_to_validate):
         if type(e) == binascii.Error:
             return False
         else:
+            logger.exception(e)
             raise e
     return True
 

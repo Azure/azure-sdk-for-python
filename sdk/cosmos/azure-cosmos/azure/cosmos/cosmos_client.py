@@ -22,11 +22,16 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+import logging
+import logging.config
+import json
 import six
+import os
 from .cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
 from .query_iterable import QueryIterable
+from .constants import _Constants
 from typing import (
     Any,
     Callable,
@@ -68,13 +73,32 @@ class CosmosClient:
             :caption: Create a new instance of the Cosmos DB client:
             :name: create_client
 
-        """ 
+        """
+        self.__setup_logging()
+        self.logger = logging.getLogger(__name__)
+        self.logger.info(
+            "Client initialized. HOST: %s, AUTH: %s, CONSISTENCY LEVEL: %s" % (url, auth, consistency_level))
         self.client_connection = CosmosClientConnection(
             url,
             auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
         )
+
+    @staticmethod
+    def __setup_logging():
+        """Setup logging configuration
+         """
+        log_config_file_path = os.getenv(_Constants.LogConfigurationFilePath, None)
+        if not log_config_file_path:
+            dir_path = os.path.dirname(os.path.abspath(__file__))
+            log_config_file_path = os.path.join(dir_path, _Constants.DefaultLogConfigurationFilePath)
+        if os.path.exists(log_config_file_path):
+            with open(log_config_file_path, 'rt') as f:
+                config = json.load(f)
+            logging.config.dictConfig(config)
+        else:
+            logging.basicConfig(level=logging.DEBUG)
 
     @staticmethod
     def _get_database_link(database_or_id):
@@ -123,6 +147,7 @@ class CosmosClient:
 
         """
 
+        self.logger.debug("Creating a Database. id: [%s]" % id)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token:
@@ -159,6 +184,7 @@ class CosmosClient:
             id_value = database['id']
         else:
             id_value = database
+        self.logger.debug("Initializing Database client. database id [%s]" % id_value)
 
         return Database(
             self.client_connection,
@@ -187,6 +213,7 @@ class CosmosClient:
         :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
 
         """
+        self.logger.debug("Reading Databases")
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -234,6 +261,7 @@ class CosmosClient:
         :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
 
         """
+        self.logger.debug("Querying Databases. query: [%s]" % query)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
@@ -289,6 +317,9 @@ class CosmosClient:
         :raise HTTPFailure: If the database couldn't be deleted.
 
         """
+        database_link = self._get_database_link(database)
+        self.logger.debug("Deleting a Database. database_link: [%s]" % database_link)
+
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token:
@@ -300,7 +331,6 @@ class CosmosClient:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        database_link = self._get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -314,6 +344,7 @@ class CosmosClient:
         :returns: A :class:`DatabaseAccount` instance representing the Cosmos DB Database Account.
 
         """
+        self.logger.debug("Getting Database Account")
         result = self.client_connection.GetDatabaseAccount()
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

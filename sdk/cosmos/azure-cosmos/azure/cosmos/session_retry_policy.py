@@ -23,15 +23,8 @@
 """
 
 import logging
+import logging.config
 from azure.cosmos.documents import _OperationType
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-log_formatter = logging.Formatter('%(levelname)s:%(message)s')
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(log_formatter)
-logger.addHandler(log_handler)
-
 
 class _SessionRetryPolicy(object):
     """The session retry policy used to handle read/write session unavailability.
@@ -55,6 +48,7 @@ class _SessionRetryPolicy(object):
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
+        self.logger = logging.getLogger(__name__)
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -71,6 +65,7 @@ class _SessionRetryPolicy(object):
 
         if not self.endpoint_discovery_enable:
             # if endpoint discovery is disabled, the request cannot be retried anywhere else
+            self.logger.debug('Not retrying again.')
             return False
         else:
             if self.can_use_multiple_write_locations:
@@ -82,6 +77,7 @@ class _SessionRetryPolicy(object):
                 if self.session_token_retry_count > len(endpoints):
                     # When use multiple write locations is true and the request has been tried 
                     # on all locations, then don't retry the request
+                    self.logger.debug('Not retrying again.')
                     return False
                 else:
                     # set location-based routing directive based on request retry context
@@ -92,11 +88,13 @@ class _SessionRetryPolicy(object):
                     # This enables marking the endpoint unavailability on endpoint failover/unreachability
                     self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
                     self.request.route_to_location(self.location_endpoint)
+                    self.logger.debug('Retrying again.')
                     return True
             else:
                 if self.session_token_retry_count > self._max_retry_attempt_count:
                     # When cannot use multiple write locations, then don't retry the request if 
                     # we have already tried this request on the write location
+                    self.logger.debug('Not retrying again.')
                     return False
                 else:
                     # set location-based routing directive based on request retry context
@@ -107,5 +105,6 @@ class _SessionRetryPolicy(object):
                     # This enables marking the endpoint unavailability on endpoint failover/unreachability
                     self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
                     self.request.route_to_location(self.location_endpoint)
+                    self.logger.debug('Not retrying again.')
                     return True
 

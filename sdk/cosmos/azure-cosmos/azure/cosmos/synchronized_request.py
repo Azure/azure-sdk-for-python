@@ -23,7 +23,9 @@
 """
 
 import json
-
+import logging
+import logging.config
+import datetime
 from six.moves.urllib.parse import urlparse, urlencode
 import six
 
@@ -32,6 +34,7 @@ from . import errors
 from . import http_constants
 from . import retry_utility
 
+logger = logging.getLogger(__name__)
 def _IsReadableStream(obj):
     """Checks whether obj is a file-like readable stream.
 
@@ -120,7 +123,8 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
     # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
     # has explicitly specified to disable SSL verification.
     is_ssl_enabled = (parse_result.hostname != 'localhost' and parse_result.hostname != '127.0.0.1' and not connection_policy.DisableSSLVerification)
-    
+
+    start_time = datetime.datetime.now()
     if connection_policy.SSLConfiguration:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -142,6 +146,8 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
                                     stream = is_media_stream,
                                     # If SSL is disabled, verify = false
                                     verify = is_ssl_enabled)
+    end_time = datetime.datetime.now()
+    logger.debug("request latency: %s ms" % str((end_time - start_time).microseconds/1000))
 
     headers = dict(response.headers)
 
@@ -166,6 +172,7 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
             try:
                 result = json.loads(data)
             except:
+                logger.exception('')
                 raise errors.JSONParseFailure(data)
 
     return (result, headers)

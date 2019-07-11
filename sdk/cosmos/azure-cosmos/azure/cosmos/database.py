@@ -131,6 +131,7 @@ class Database(object):
         :raise `HTTPFailure`: If the given database couldn't be retrieved.
 
         """
+        self.logger.debug("Reading a Database. database_link: [%s]" % self.database_link)
         # TODO this helper function should be extracted from CosmosClient
         from .cosmos_client import CosmosClient 
         database_link = CosmosClient._get_database_link(self)
@@ -208,6 +209,9 @@ class Database(object):
             :name: create_container_with_settings
 
         """
+
+        self.logger.debug(
+            "Creating a Container. database_link: [%s], container id: [%s], partition_key" % (self.database_link, id, partition_key))
         definition = dict(id=id)  # type: Dict[str, Any]
         if partition_key:
             definition["partitionKey"] = partition_key
@@ -267,6 +271,8 @@ class Database(object):
         :raise HTTPFailure: If the container couldn't be deleted.
 
         """
+        container_link = self._get_container_link(container)
+        self.logger.debug("Deleting a Collection. container_link: [%s]" % container_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token:
@@ -278,8 +284,7 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        collection_link = self._get_container_link(container)
-        result = self.client_connection.DeleteContainer(collection_link, options=request_options)
+        result = self.client_connection.DeleteContainer(container_link, options=request_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
@@ -307,6 +312,8 @@ class Database(object):
             id_value = container['id']
         else:
             id_value = container
+
+        self.logger.debug("Initializing Container client. container id [%s]" % id_value)
 
         return Container(
             self.client_connection,
@@ -343,6 +350,8 @@ class Database(object):
             :name: list_containers
 
         """
+
+        self.logger.debug("Reading Containers. database_link: [%s]" % self.database_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -388,6 +397,7 @@ class Database(object):
         :returns: A :class:`QueryIterable` instance representing an iterable of container properties (dicts).
 
         """
+        self.logger.debug("Querying Containers. database_link: [%s], query [%s]" % (self.database_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -452,6 +462,11 @@ class Database(object):
             :name: reset_container_properties
 
         """
+        container_id = self._get_container_id(container)
+        container_link = self._get_container_link(container_id)
+
+        self.logger.debug("Replacing a Container. container_link [%s], id: [%s]" % (container_link, container_id))
+
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token:
@@ -463,8 +478,6 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        container_id = self._get_container_id(container)
-        container_link = self._get_container_link(container_id)
         parameters = {
             key: value
             for key, value in {
@@ -506,6 +519,7 @@ class Database(object):
         :returns: A :class:`QueryIterable` instance representing an iterable of user properties (dicts).
 
         """
+        self.logger.debug("Reading Users. database_link [%s]" % self.database_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -539,6 +553,7 @@ class Database(object):
         :returns: A :class:`QueryIterable` instance representing an iterable of user properties (dicts).
 
         """
+        self.logger.debug("Querying Users. database_link [%s], query [%s]" % (self.database_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -576,6 +591,8 @@ class Database(object):
         else:
             id_value = user
 
+        self.logger.debug("Initializing User client. user id [%s]" % id_value)
+
         return User(
             client_connection=self.client_connection,
             id=id_value,
@@ -609,6 +626,7 @@ class Database(object):
             :name: create_user
 
         """
+        self.logger.debug("Creating a User. database_link [%s], user id [%s]" % (self.database_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -646,6 +664,7 @@ class Database(object):
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
 
         """
+        self.logger.debug("Upserting a User. database_link [%s], user id [%s]" % (self.database_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -683,11 +702,13 @@ class Database(object):
         :raise `HTTPFailure`: If the replace failed or the user with given id does not exist.
 
         """
+        user_link = self._get_user_link(user)
+        self.logger.debug("Replacing a User. user_link [%s], user id [%s]" % (user_link, user['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         user = self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user),
+            user_link=user_link,
             user=body,
             options=request_options
         )
@@ -717,11 +738,13 @@ class Database(object):
         :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not exist in the container, a `404` error is returned.
 
         """
+        user_link = self._get_user_link(user)
+        self.logger.debug("Deleting a User. user_link [%s]" % user_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         result = self.client_connection.DeleteUser(
-            user_link=self._get_user_link(user), options=request_options
+            user_link=user_link, options=request_options
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -735,6 +758,8 @@ class Database(object):
         :raise HTTPFailure: If no offer exists for the database or if the offer could not be retrieved.
 
         """
+        self.logger.debug("Reading container's offer. database_link [%s]", self.database_link)
+
         properties = self._get_properties()
         link = properties['_self']
         query_spec = {
@@ -768,6 +793,7 @@ class Database(object):
         :raise HTTPFailure: If no offer exists for the database or if the offer could not be updated.
 
         """
+        self.logger.debug("Replacing database's throughput. database_link [%s], new throughput [%s]" % (self.database_link, throughput))
         properties = self._get_properties()
         link = properties['_self']
         query_spec = {

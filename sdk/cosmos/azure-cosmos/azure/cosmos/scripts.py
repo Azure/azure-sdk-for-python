@@ -67,6 +67,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of stored procedures (dicts).
 
         """
+        self.logger.debug("Reading UserDefinedFunctions. container_link [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -94,6 +95,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of stored procedures (dicts).
 
         """
+        self.logger.debug("Querying StoredProcedures. container_link [%s], query [%s]" % (self.container_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -122,11 +124,13 @@ class Scripts:
         :raise `HTTPFailure`: If the given stored procedure couldn't be retrieved.
 
         """
+        sproc_link = self._get_resource_link(sproc, ScriptType.StoredProcedure)
+        self.logger.debug("Reading a StoredProcedure. sproc_link [%s]" % sproc_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReadStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc_link=sproc_link,
             options=request_options
         )
 
@@ -146,6 +150,8 @@ class Scripts:
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
         """
+        self.logger.debug(
+            "Creating a StoredProcedure. container_link: [%s], storedProcedure id [%s]" % (self.container_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -171,11 +177,14 @@ class Scripts:
         :raise `HTTPFailure`: If the replace failed or the stored procedure with given id does not exist.
 
         """
+        sproc_link = self._get_resource_link(sproc, ScriptType.StoredProcedure),
+        self.logger.debug(
+            "Replacing a StoredProcedure. sproc_link [%s], storedProcedure id [%s]" % (sproc_link, sproc['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReplaceStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc_link=sproc_link,
             sproc=body,
             options=request_options
         )
@@ -193,11 +202,13 @@ class Scripts:
         :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not exist in the container, a `404` error is returned.
 
         """
+        sproc_link = self._get_resource_link(sproc, ScriptType.StoredProcedure)
+        self.logger.debug("Deleting a StoredProcedure. sproc_link [%s]" % sproc_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         self.client_connection.DeleteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc_link=sproc_link,
             options=request_options
         )
 
@@ -221,7 +232,8 @@ class Scripts:
         :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with given id does not exists in the container.
 
         """
-
+        sproc_link = self._get_resource_link(sproc, ScriptType.StoredProcedure)
+        self.logger.debug("Executing a StoredProcedure. sproc_link [%s]" % sproc_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         if partition_key is not None:
@@ -231,7 +243,7 @@ class Scripts:
             request_options["enableScriptLogging"] = enable_script_logging
 
         return self.client_connection.ExecuteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc_link=sproc_link,
             params=params,
             options=request_options
         )
@@ -249,6 +261,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of triggers (dicts).
 
         """
+        self.logger.debug("Reading Triggers. collectionLink [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -276,6 +289,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of triggers (dicts).
 
         """
+        self.logger.debug("Querying Triggers. container_link [%s], query [%s]" % (self.container_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -304,11 +318,13 @@ class Scripts:
         :raise `HTTPFailure`: If the given trigger couldn't be retrieved.
 
         """
+        trigger_link = self._get_resource_link(trigger, ScriptType.Trigger)
+        self.logger.debug("Reading a Trigger. trigger_link [%s]" % trigger_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReadTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
+            trigger_link=trigger_link,
             options=request_options
         )
 
@@ -328,6 +344,7 @@ class Scripts:
         To replace an existing trigger, use the :func:`Container.scripts.replace_trigger` method.
 
         """
+        self.logger.debug("Creating a Trigger. container_link [%s], trigger id [%s]" % (self.container_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -353,11 +370,13 @@ class Scripts:
         :raise `HTTPFailure`: If the replace failed or the trigger with given id does not exist.
 
         """
+        trigger_link = self._get_resource_link(trigger, ScriptType.Trigger)
+        self.logger.debug("Replacing a Trigger. trigger_link [%s], trigger id [%s]" % (trigger_link, trigger['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReplaceTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
+            trigger_link=trigger_link,
             trigger=body,
             options=request_options
         )
@@ -375,11 +394,13 @@ class Scripts:
         :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not exist in the container, a `404` error is returned.
 
         """
+        trigger_link = self._get_resource_link(trigger, ScriptType.Trigger)
+        self.logger.debug("Deleting a Trigger. trigger_link [%s]" % trigger_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         self.client_connection.DeleteTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
+            trigger_link,
             options=request_options
         )
 
@@ -397,6 +418,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of user defined functions (dicts).
 
         """
+        self.logger.debug("Reading UserDefinedFunctions. container_link [%s]" % self.container_link)
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -424,6 +446,7 @@ class Scripts:
         :returns: A :class:`QueryIterable` instance representing an iterable of user defined functions (dicts).
 
         """
+        self.logger.debug("Querying UserDefinedFunctions. container_link [%s], query [%s]" % (self.container_link, query))
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
@@ -452,11 +475,14 @@ class Scripts:
         :raise `HTTPFailure`: If the given user defined function couldn't be retrieved.
 
         """
+        udf_link = self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+
+        self.logger.debug("Reading a UserDefinedFunction. udf_link [%s]" % udf_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReadUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+            udf_link=udf_link,
             options=request_options
         )
 
@@ -476,6 +502,8 @@ class Scripts:
         To replace an existing udf, use the :func:`Container.scripts.replace_user_defined_function` method.
 
         """
+        self.logger.debug(
+            "Creating a UserDefinedFunction. container_link [%s], udf id [%s]" % (self.container_link, body['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
@@ -501,11 +529,13 @@ class Scripts:
         :raise `HTTPFailure`: If the replace failed or the user defined function with given id does not exist.
 
         """
+        udf_link = self._get_resource_link(udf, ScriptType.UserDefinedFunction)
+        self.logger.debug("Replacing a UserDefinedFunction. udf_link [%s], udf id [%s]" % (udf_link, udf['id']))
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         return self.client_connection.ReplaceUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+            udf_link=udf_link,
             udf=body,
             options=request_options
         )
@@ -523,10 +553,12 @@ class Scripts:
         :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not exist in the container, a `404` error is returned.
 
         """
+        udf_link = self._get_resource_link(udf, ScriptType.UserDefinedFunction)
+        self.logger.debug("Deleting a UserDefinedFunction. udf_link [%s]" % udf_link)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
 
         self.client_connection.DeleteUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+            udf_link=udf_link,
             options=request_options
         )

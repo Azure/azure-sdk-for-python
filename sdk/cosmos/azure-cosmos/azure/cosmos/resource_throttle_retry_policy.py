@@ -22,6 +22,8 @@
 """Internal class for resource throttle retry policy implementation in the Azure Cosmos database service.
 """
 
+import logging
+import logging.config
 from . import http_constants
 
 class _ResourceThrottleRetryPolicy(object):
@@ -32,6 +34,7 @@ class _ResourceThrottleRetryPolicy(object):
         self._max_wait_time_in_milliseconds = max_wait_time_in_seconds * 1000
         self.current_retry_attempt_count = 0
         self.cummulative_wait_time_in_milliseconds = 0
+        self.logger = logging.getLogger(__name__)
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -53,7 +56,9 @@ class _ResourceThrottleRetryPolicy(object):
                 
             if self.cummulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
                 self.cummulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
+                self.logger.debug('Retrying again.')
                 return True
-            
+
+        self.logger.debug('Not retrying again.')
         return False
     
