@@ -45,6 +45,15 @@ class IoTSecuritySolutionModel(Model):
      ~azure.mgmt.security.models.DataSource]
     :param iot_hubs: Required. IoT Hub resource IDs
     :type iot_hubs: list[str]
+    :param user_defined_resources:
+    :type user_defined_resources:
+     ~azure.mgmt.security.models.UserDefinedResourcesProperties
+    :ivar auto_discovered_resources: List of resources that were automatically
+     discovered as relevant to the security solution.
+    :vartype auto_discovered_resources: list[str]
+    :param recommendations_configuration:
+    :type recommendations_configuration:
+     list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
     """
 
     _validation = {
@@ -54,6 +63,7 @@ class IoTSecuritySolutionModel(Model):
         'workspace': {'required': True},
         'display_name': {'required': True},
         'iot_hubs': {'required': True},
+        'auto_discovered_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,9 +78,12 @@ class IoTSecuritySolutionModel(Model):
         'export': {'key': 'properties.export', 'type': '[str]'},
         'disabled_data_sources': {'key': 'properties.disabledDataSources', 'type': '[str]'},
         'iot_hubs': {'key': 'properties.iotHubs', 'type': '[str]'},
+        'user_defined_resources': {'key': 'properties.userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
+        'auto_discovered_resources': {'key': 'properties.autoDiscoveredResources', 'type': '[str]'},
+        'recommendations_configuration': {'key': 'properties.recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
     }
 
-    def __init__(self, *, workspace: str, display_name: str, iot_hubs, tags=None, location: str=None, status="Enabled", export=None, disabled_data_sources=None, **kwargs) -> None:
+    def __init__(self, *, workspace: str, display_name: str, iot_hubs, tags=None, location: str=None, status="Enabled", export=None, disabled_data_sources=None, user_defined_resources=None, recommendations_configuration=None, **kwargs) -> None:
         super(IoTSecuritySolutionModel, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -83,3 +96,6 @@ class IoTSecuritySolutionModel(Model):
         self.export = export
         self.disabled_data_sources = disabled_data_sources
         self.iot_hubs = iot_hubs
+        self.user_defined_resources = user_defined_resources
+        self.auto_discovered_resources = None
+        self.recommendations_configuration = recommendations_configuration

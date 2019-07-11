@@ -37,12 +37,12 @@ from .operations.iot_security_solution_operations import IotSecuritySolutionOper
 from .operations.io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
 from .operations.io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
 from .operations.io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-from .operations.io_tsecurity_solutions_analytics_aggregated_alert_dismiss_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations
 from .operations.io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
 from .operations.io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
+from .operations.server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 from . import models
 
 
@@ -138,8 +138,6 @@ class SecurityCenter(SDKClient):
     :vartype io_tsecurity_solutions_analytics_aggregated_alerts: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
     :ivar io_tsecurity_solutions_analytics_aggregated_alert: IoTSecuritySolutionsAnalyticsAggregatedAlert operations
     :vartype io_tsecurity_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-    :ivar io_tsecurity_solutions_analytics_aggregated_alert_dismiss: IoTSecuritySolutionsAnalyticsAggregatedAlertDismiss operations
-    :vartype io_tsecurity_solutions_analytics_aggregated_alert_dismiss: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations
     :ivar io_tsecurity_solutions_analytics_recommendation: IoTSecuritySolutionsAnalyticsRecommendation operations
     :vartype io_tsecurity_solutions_analytics_recommendation: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationOperations
     :ivar io_tsecurity_solutions_analytics_recommendations: IoTSecuritySolutionsAnalyticsRecommendations operations
@@ -150,6 +148,8 @@ class SecurityCenter(SDKClient):
     :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
     :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
     :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
+    :ivar server_vulnerability_assessment: ServerVulnerabilityAssessment operations
+    :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -220,8 +220,6 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.io_tsecurity_solutions_analytics_aggregated_alert = IoTSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_aggregated_alert_dismiss = IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.io_tsecurity_solutions_analytics_recommendation = IoTSecuritySolutionsAnalyticsRecommendationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.io_tsecurity_solutions_analytics_recommendations = IoTSecuritySolutionsAnalyticsRecommendationsOperations(
@@ -231,4 +229,6 @@ class SecurityCenter(SDKClient):
         self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self.config, self._serialize, self._deserialize)

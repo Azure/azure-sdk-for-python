@@ -45,6 +45,15 @@ class IoTSecuritySolutionModel(Model):
      ~azure.mgmt.security.models.DataSource]
     :param iot_hubs: Required. IoT Hub resource IDs
     :type iot_hubs: list[str]
+    :param user_defined_resources:
+    :type user_defined_resources:
+     ~azure.mgmt.security.models.UserDefinedResourcesProperties
+    :ivar auto_discovered_resources: List of resources that were automatically
+     discovered as relevant to the security solution.
+    :vartype auto_discovered_resources: list[str]
+    :param recommendations_configuration:
+    :type recommendations_configuration:
+     list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
     """
 
     _validation = {
@@ -54,6 +63,7 @@ class IoTSecuritySolutionModel(Model):
         'workspace': {'required': True},
         'display_name': {'required': True},
         'iot_hubs': {'required': True},
+        'auto_discovered_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,6 +78,9 @@ class IoTSecuritySolutionModel(Model):
         'export': {'key': 'properties.export', 'type': '[str]'},
         'disabled_data_sources': {'key': 'properties.disabledDataSources', 'type': '[str]'},
         'iot_hubs': {'key': 'properties.iotHubs', 'type': '[str]'},
+        'user_defined_resources': {'key': 'properties.userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
+        'auto_discovered_resources': {'key': 'properties.autoDiscoveredResources', 'type': '[str]'},
+        'recommendations_configuration': {'key': 'properties.recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
     }
 
     def __init__(self, **kwargs):
@@ -83,3 +96,6 @@ class IoTSecuritySolutionModel(Model):
         self.export = kwargs.get('export', None)
         self.disabled_data_sources = kwargs.get('disabled_data_sources', None)
         self.iot_hubs = kwargs.get('iot_hubs', None)
+        self.user_defined_resources = kwargs.get('user_defined_resources', None)
+        self.auto_discovered_resources = None
+        self.recommendations_configuration = kwargs.get('recommendations_configuration', None)

@@ -12,16 +12,17 @@
 from msrest.serialization import Model
 
 
-class IoTSecurityDeviceAlertsList(Model):
-    """List of alerts with the count of raised alerts.
+class IoTSecuritySolutionAnalyticsModelList(Model):
+    """List of Security Analytics of a security solution.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of top alerts data
-    :type value: list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
+    :param value: Required. List of Security Analytics of a security solution
+    :type value:
+     list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -32,11 +33,11 @@ class IoTSecurityDeviceAlertsList(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IoTSecurityDeviceAlert]'},
+        'value': {'key': 'value', 'type': '[IoTSecuritySolutionAnalyticsModel]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(IoTSecurityDeviceAlertsList, self).__init__(**kwargs)
+        super(IoTSecuritySolutionAnalyticsModelList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None

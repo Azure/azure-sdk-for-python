@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IoTSecurityDeviceAlerts(Model):
+class IoTSecurityAlertedDevice(Model):
     """Statistic information about the number of alerts per device during the last
     period.
 
@@ -36,6 +36,6 @@ class IoTSecurityDeviceAlerts(Model):
     }
 
     def __init__(self, **kwargs):
-        super(IoTSecurityDeviceAlerts, self).__init__(**kwargs)
+        super(IoTSecurityAlertedDevice, self).__init__(**kwargs)
         self.device_id = None
         self.alerts_count = None

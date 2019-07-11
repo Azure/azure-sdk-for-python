@@ -23,7 +23,7 @@ class IoTSecuritySolutionsAnalyticsRecommendationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2019-05-01-preview".
+    :ivar api_version: API version for the operation. Constant value: "2017-08-01-preview".
     """
 
     models = models
@@ -33,7 +33,7 @@ class IoTSecuritySolutionsAnalyticsRecommendationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2017-08-01-preview"
 
         self.config = config
 
@@ -47,7 +47,7 @@ class IoTSecuritySolutionsAnalyticsRecommendationOperations(object):
         :param solution_name: The solution manager name
         :type solution_name: str
         :param aggregated_recommendation_name: Identifier of the aggregated
-         alert
+         recommendation
         :type aggregated_recommendation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -104,4 +104,4 @@ class IoTSecuritySolutionsAnalyticsRecommendationOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/Analytics/current/AggregatedRecommendation/{aggregatedRecommendationName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default/aggregatedRecommendations/{aggregatedRecommendationName}'}

@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class IoTSecuritySolutionAnalyticsModelDevicesMetricsItem(Model):
-    """IoTSecuritySolutionAnalyticsModelDevicesMetricsItem.
+class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(Model):
+    """IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem.
 
     :param date_property: the date of the metrics
     :type date_property: datetime
@@ -26,7 +26,7 @@ class IoTSecuritySolutionAnalyticsModelDevicesMetricsItem(Model):
         'devices_metrics': {'key': 'devicesMetrics', 'type': 'IoTSeverityMetrics'},
     }
 
-    def __init__(self, *, date_property=None, devices_metrics=None, **kwargs) -> None:
-        super(IoTSecuritySolutionAnalyticsModelDevicesMetricsItem, self).__init__(**kwargs)
-        self.date_property = date_property
-        self.devices_metrics = devices_metrics
+    def __init__(self, **kwargs):
+        super(IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem, self).__init__(**kwargs)
+        self.date_property = kwargs.get('date_property', None)
+        self.devices_metrics = kwargs.get('devices_metrics', None)

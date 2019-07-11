@@ -26,8 +26,6 @@ class IoTSecurityAggregatedAlert(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param location: The resource location.
-    :type location: str
     :ivar alert_type: Name of the alert type
     :vartype alert_type: str
     :ivar alert_display_name: Display name of the alert type
@@ -83,7 +81,6 @@ class IoTSecurityAggregatedAlert(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
         'alert_type': {'key': 'properties.alertType', 'type': 'str'},
         'alert_display_name': {'key': 'properties.alertDisplayName', 'type': 'str'},
         'aggregated_date_utc': {'key': 'properties.aggregatedDateUtc', 'type': 'date'},
@@ -98,13 +95,12 @@ class IoTSecurityAggregatedAlert(Model):
         'log_analytics_query': {'key': 'properties.logAnalyticsQuery', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(IoTSecurityAggregatedAlert, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.tags = tags
-        self.location = location
         self.alert_type = None
         self.alert_display_name = None
         self.aggregated_date_utc = None

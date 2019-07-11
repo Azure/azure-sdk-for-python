@@ -26,8 +26,6 @@ class IoTSecurityAggregatedAlert(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param location: The resource location.
-    :type location: str
     :ivar alert_type: Name of the alert type
     :vartype alert_type: str
     :ivar alert_display_name: Display name of the alert type
@@ -83,7 +81,6 @@ class IoTSecurityAggregatedAlert(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
         'alert_type': {'key': 'properties.alertType', 'type': 'str'},
         'alert_display_name': {'key': 'properties.alertDisplayName', 'type': 'str'},
         'aggregated_date_utc': {'key': 'properties.aggregatedDateUtc', 'type': 'date'},
@@ -104,7 +101,6 @@ class IoTSecurityAggregatedAlert(Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)
         self.alert_type = None
         self.alert_display_name = None
         self.aggregated_date_utc = None
