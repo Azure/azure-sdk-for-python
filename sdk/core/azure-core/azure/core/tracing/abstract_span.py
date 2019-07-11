@@ -76,7 +76,7 @@ class AbstractSpan(ABC):
         extracted from that dictionary.
 
         :param headers: A dictionary of the request header as key value pairs.
-        :type headers: Dict[str, str]
+        :type headers: dict
         """
         pass
 
