@@ -2,19 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-
 from azure.core.tracing import AbstractSpan
 from opencensus.trace import execution_context
 from opencensus.trace import tracer as tracer_module, Span
 from opencensus.trace.propagation import trace_context_http_header_format
-from opencensus.trace.samplers import ProbabilitySampler
-from opencensus.trace.tracers.noop_tracer import NoopTracer
-
-try:
-    from opencensus.ext.azure.trace_exporter import AzureExporter
-except:
-    AzureExporter = False
 
 try:
     from typing import TYPE_CHECKING
@@ -22,22 +13,24 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Union
+    from typing import Any, Dict, Optional
 
 
-class OpencensusSpanWrapper(AbstractSpan):
-    """Wraps a given Opencensus Span so that it implements azure.core.tracing.AbstractSpan"""
+class OpenCensusSpan(AbstractSpan):
+    """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="parent_span"):
-        # type: (Span, str) -> None
+        # type: (Optional[Span], Optional[str]) -> None
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
         configure the azure exporter else will just create a new tracer.
 
-        :param span: The opencensus span to wrap
-        :param name: The name of the opencensus span to create if a new span is needed
+        :param span: The OpenCensus span to wrap
+        :type span: Span
+        :param name: The name of the OpenCensus span to create if a new span is needed
+        :type name: str
         """
-        super(OpencensusSpanWrapper, self).__init__(span, name)
+        super(OpenCensusSpan, self).__init__(span, name)
         tracer = self.get_current_tracer()
         span = span or tracer.span(name=name)
         self._span_instance = span
@@ -51,11 +44,12 @@ class OpencensusSpanWrapper(AbstractSpan):
         return self._span_instance
 
     def span(self, name="child_span"):
-        # type: (str) -> OpencensusSpanWrapper
+        # type: (Optional[str]) -> OpenCensusSpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
-        :return: The OpencensusWrapper that is wrapping the child span instance
+        :type name: str
+        :return: The OpenCensusWrapper that is wrapping the child span instance
         """
         return self.__class__(self.span_instance.span(name=name))
 
@@ -70,7 +64,7 @@ class OpencensusSpanWrapper(AbstractSpan):
         self.span_instance.finish()
 
     def to_header(self):
-        # type: (Dict[str, str]) -> str
+        # type: () -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.
         :param headers: A key value pair dictionary
@@ -89,6 +83,7 @@ class OpencensusSpanWrapper(AbstractSpan):
         """
         Given a dictionary returns a new tracer with the span context extracted from that dictionary.
         :param headers: A key value pair dictionary
+        :type headers: Dict[str, str]
         :return: A tracer initialized with the span context extraction from headers.
         """
         ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(
@@ -117,6 +112,9 @@ class OpencensusSpanWrapper(AbstractSpan):
         # type: (Span) -> None
         """
         Set the given span as the current span in the execution context.
+
+        :param span: The span to set the current span as
+        :type span: Span
         """
         return execution_context.set_current_span(span)
 
@@ -125,5 +123,7 @@ class OpencensusSpanWrapper(AbstractSpan):
         # type: (tracer_module.Tracer) -> None
         """
         Set the given tracer as the current tracer in the execution context.
+        :param tracer: The tracer to set the current tracer as
+        :type tracer: Tracer
         """
         return execution_context.set_opencensus_tracer(tracer)

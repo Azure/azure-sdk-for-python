@@ -10,11 +10,19 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Optional
+
 
 class AbstractSpan(ABC):
     @abstractmethod
     def __init__(self, span=None, name=None):
-        # type: (Any, str) -> None
+        # type: (Optional[Any], Optional[str]) -> None
         """
         If a span is given wraps the span. Else a new span is created.
         The optional arguement name is given to the new span.
@@ -23,11 +31,11 @@ class AbstractSpan(ABC):
 
     @abstractmethod
     def span(self, name="child_span"):
-        # type: (str) -> AbstractSpan
+        # type: (Optional[str]) -> AbstractSpan
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
-         """
+        """
         pass
 
     @abstractmethod
@@ -44,7 +52,7 @@ class AbstractSpan(ABC):
 
     @abstractmethod
     def to_header(self):
-        # type: (Dict[str, str]) -> Dict[str, str]
+        # type: () -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.
         """
@@ -66,6 +74,9 @@ class AbstractSpan(ABC):
         """
         Given a dictionary returns a new tracer with the span context
         extracted from that dictionary.
+
+        :param headers: A dictionary of the request header as key value pairs.
+        :type headers: Dict[str, str]
         """
         pass
 
