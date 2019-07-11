@@ -19,18 +19,21 @@ import time
 
 
 class ContextHelper(object):
-    def __init__(self):
+    def __init__(self, environ={}):
         self.orig_tracer = OpencensusWrapper.get_current_tracer()
         self.orig_current_span = OpencensusWrapper.get_current_span()
+        self.os_env = mock.patch.dict(os.environ, environ)
 
     def __enter__(self):
         self.orig_tracer = OpencensusWrapper.get_current_tracer()
         self.orig_current_span = OpencensusWrapper.get_current_span()
+        self.os_env.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         OpencensusWrapper.set_current_tracer(self.orig_tracer)
         OpencensusWrapper.set_current_span(self.orig_current_span)
+        self.os_env.stop()
 
 
 class TestOpencensusWrapper(unittest.TestCase):
@@ -58,10 +61,9 @@ class TestOpencensusWrapper(unittest.TestCase):
             )
             wrapped_span.finish()
 
-    @mock.patch.dict(os.environ, {"APPINSIGHTS_INSTRUMENTATIONKEY": "some key"})
     def test_no_span_passed_in_with_environ(self):
-        with ContextHelper() as ctx:
-            assert os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] == "some key"
+        with ContextHelper(environ={"APPINSIGHTS_INSTRUMENTATIONKEY": "instrumentation_key"}) as ctx:
+            assert os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] == "instrumentation_key"
             wrapped_span = OpencensusWrapper()
             assert wrapped_span.span_instance.name == "parent_span"
             tracer = OpencensusWrapper.get_current_tracer()
