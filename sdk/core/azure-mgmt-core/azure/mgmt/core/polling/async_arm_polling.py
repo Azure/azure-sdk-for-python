@@ -78,7 +78,7 @@ class AsyncARMPolling(ARMPolling):
             else:
                 final_get_url = self._operation.initial_response.request.url
             self._response = await self.request_status(final_get_url)
-            self._operation.get_status_from_resource(self._response)
+            self._operation.parse_resource(self._response)
 
     async def _delay(self):
         """Check for a 'retry-after' header to set timeout,
