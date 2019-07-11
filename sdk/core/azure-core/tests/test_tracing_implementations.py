@@ -13,9 +13,7 @@ from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.ext.azure.trace_exporter import AzureExporter
-from opencensus.common.utils import timestamp_to_microseconds
 import os
-import time
 
 
 class ContextHelper(object):
@@ -103,16 +101,16 @@ class TestOpencensusWrapper(unittest.TestCase):
     def test_start_finish(self):
         with ContextHelper() as ctx:
             tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
-            wrapped_class = OpencensusWrapper()
+            parent = OpencensusWrapper()
+            wrapped_class = parent.span()
+            assert wrapped_class.span_instance.start_time is None
+            assert wrapped_class.span_instance.end_time is None
             wrapped_class.start()
-            time.sleep(1)
             wrapped_class.finish()
-            latency = timestamp_to_microseconds(
-                wrapped_class.span_instance.end_time
-            ) - timestamp_to_microseconds(wrapped_class.span_instance.start_time)
-            latency = int(latency / 10000)
-            assert latency == 100
-
+            assert wrapped_class.span_instance.start_time is not None
+            assert wrapped_class.span_instance.end_time is not None
+            parent.finish()
+            
     def test_to_and_from_header(self):
         with ContextHelper() as ctx:
             wrapped_class = OpencensusWrapper()
