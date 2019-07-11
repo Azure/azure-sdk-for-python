@@ -138,7 +138,7 @@ def convert_tracing_impl(value):
     :raises ValueError: If conversion to AbstractSpan fails
 
     """
-    if issubclass(value.__class__, AbstractSpan):
+    if issubclass(value.__class__, AbstractSpan) or value is None:
         return value
 
     _impl_dict = {"opencensus": get_opencensus_wrapper()}

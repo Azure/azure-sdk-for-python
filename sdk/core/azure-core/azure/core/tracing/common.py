@@ -42,7 +42,7 @@ def set_span_contexts(wrapped_span, span_instance=None):
         impl_wrapper.set_current_span(span_instance)
 
 
-def get_parent(kwargs, *args):
+def get_parent(*args, **kwargs):
     # type: (Any) -> Tuple(Any, Any, Any)
     """Returns the parent span that of the span that represents the function and the spans before that parent span"""
     parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
