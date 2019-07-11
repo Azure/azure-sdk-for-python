@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.3.0 (2019-07-12)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group ServiceTasksOperations
+
 2.2.0 (2019-05-21)
 ++++++++++++++++++
 
