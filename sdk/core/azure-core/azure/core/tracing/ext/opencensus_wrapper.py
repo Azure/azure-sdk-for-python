@@ -91,7 +91,7 @@ class OpencensusSpanWrapper(AbstractSpan):
         if self.was_created_by_azure_sdk:
             self.end_tracer(self.tracer)
 
-    def to_header(self, headers):
+    def to_header(self):
         # type: (Dict[str, str]) -> str
         """
         Returns a dictionary with the header labels and values.

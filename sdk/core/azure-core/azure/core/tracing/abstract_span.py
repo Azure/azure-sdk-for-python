@@ -43,7 +43,7 @@ class AbstractSpan(ABC):
         pass
 
     @abstractmethod
-    def to_header(self, headers):
+    def to_header(self):
         # type: (Dict[str, str]) -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.

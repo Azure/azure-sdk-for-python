@@ -119,7 +119,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             }
             tracer = wrapped_class.from_header(og_header)
             assert tracer.span_context.trace_id == "2578531519ed94423ceae67588eff2c9"
-            headers = wrapped_class.to_header({})
+            headers = wrapped_class.to_header()
             assert headers == og_header
 
     def test_end_tracer(self):
