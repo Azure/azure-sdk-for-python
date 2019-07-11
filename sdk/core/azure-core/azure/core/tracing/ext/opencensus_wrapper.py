@@ -10,6 +10,7 @@ from opencensus.trace import tracer as tracer_module, Span
 from opencensus.trace.propagation import trace_context_http_header_format
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracers.noop_tracer import NoopTracer
+
 try:
     from opencensus.ext.azure.trace_exporter import AzureExporter
 except:
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Union
 
 
-class OpencensusWrapper(AbstractSpan):
+class OpencensusSpanWrapper(AbstractSpan):
     """Wraps a given Opencensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="parent_span"):
@@ -36,14 +37,14 @@ class OpencensusWrapper(AbstractSpan):
         :param span: The opencensus span to wrap
         :param name: The name of the opencensus span to create if a new span is needed
         """
-        super(OpencensusWrapper, self).__init__(span, name)
+        super(OpencensusSpanWrapper, self).__init__(span, name)
         tracer = self.get_current_tracer()
         self.was_created_by_azure_sdk = False
         if span is None and (tracer is None or isinstance(tracer, NoopTracer)):
-            azure_exporter_instrumentation_key = self._get_environ(
-                "APPINSIGHTS_INSTRUMENTATIONKEY"
+            azure_exporter_instrumentation_key = os.environ.get(
+                "APPINSIGHTS_INSTRUMENTATIONKEY", None
             )
-            prob = float(self._get_environ("AZURE_TRACING_SAMPLER") or 0)
+            prob = float(os.environ.get("AZURE_TRACING_SAMPLER", None) or 0)
             if azure_exporter_instrumentation_key is not None and AzureExporter:
                 tracer = tracer_module.Tracer(
                     exporter=AzureExporter(
@@ -52,7 +53,9 @@ class OpencensusWrapper(AbstractSpan):
                     sampler=ProbabilitySampler(prob),
                 )
             else:
-                tracer = tracer or tracer_module.Tracer(sampler=ProbabilitySampler(prob))
+                tracer = tracer or tracer_module.Tracer(
+                    sampler=ProbabilitySampler(prob)
+                )
             self.was_created_by_azure_sdk = True
         span = span or tracer.span(name=name)
 
@@ -67,19 +70,8 @@ class OpencensusWrapper(AbstractSpan):
         """
         return self._span_instance
 
-    def _get_environ(self, key):
-        # type: (str) -> Union[str, None]
-        """
-        Gets the Environment Variable given. Will return None if no such environment variable is found.
-        :param key: The name of the environment variable
-        :return: The value of the variable or None if the variable does not exist.
-        """
-        if key in os.environ:
-            return os.environ[key]
-        return None
-
     def span(self, name="child_span"):
-        # type: (str) -> OpencensusWrapper
+        # type: (str) -> OpencensusSpanWrapper
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
