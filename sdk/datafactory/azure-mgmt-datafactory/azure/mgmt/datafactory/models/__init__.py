@@ -403,6 +403,7 @@ try:
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
+    from .binary_sink_py3 import BinarySink
     from .file_server_write_settings_py3 import FileServerWriteSettings
     from .azure_data_lake_store_write_settings_py3 import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings_py3 import AzureBlobFSWriteSettings
@@ -857,6 +858,7 @@ except (SyntaxError, ImportError):
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
+    from .binary_sink import BinarySink
     from .file_server_write_settings import FileServerWriteSettings
     from .azure_data_lake_store_write_settings import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings import AzureBlobFSWriteSettings
@@ -1384,6 +1386,7 @@ __all__ = [
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
+    'BinarySink',
     'FileServerWriteSettings',
     'AzureDataLakeStoreWriteSettings',
     'AzureBlobFSWriteSettings',
