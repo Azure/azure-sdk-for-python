@@ -26,7 +26,7 @@ class OpenCensusSpan(AbstractSpan):
         configure the azure exporter else will just create a new tracer.
 
         :param span: The OpenCensus span to wrap
-        :type span: opencensus.trace.Span
+        :type span: :class: opencensus.trace.Span
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
         """
@@ -113,7 +113,7 @@ class OpenCensusSpan(AbstractSpan):
         Set the given span as the current span in the execution context.
 
         :param span: The span to set the current span as
-        :type span: opencensus.trace.Span
+        :type span: :class: opencensus.trace.Span
         """
         return execution_context.set_current_span(span)
 
@@ -123,6 +123,6 @@ class OpenCensusSpan(AbstractSpan):
         """
         Set the given tracer as the current tracer in the execution context.
         :param tracer: The tracer to set the current tracer as
-        :type tracer: opencensus.trace.Tracer
+        :type tracer: :class: opencensus.trace.Tracer
         """
         return execution_context.set_opencensus_tracer(tracer)
