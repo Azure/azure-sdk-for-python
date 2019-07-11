@@ -333,6 +333,7 @@ class ProjectTaskProperties(Model):
     MigrateSqlServerSqlMITaskProperties, MigrateMongoDbTaskProperties,
     ConnectToTargetAzureDbForMySqlTaskProperties,
     ConnectToTargetSqlMISyncTaskProperties, ConnectToTargetSqlMITaskProperties,
+    GetUserTablesPostgreSqlTaskProperties, GetUserTablesOracleTaskProperties,
     GetUserTablesSqlSyncTaskProperties, GetUserTablesSqlTaskProperties,
     ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties,
     ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties,
@@ -383,7 +384,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.Sql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
+        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.Sql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
     }
 
     def __init__(self, **kwargs):
@@ -1744,6 +1745,9 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(Model):
     :ivar validation_errors: Validation errors associated with the task
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
+    :param database_schema_map: Mapping of schemas per database
+    :type database_schema_map:
+     list[~azure.mgmt.datamigration.models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem]
     """
 
     _validation = {
@@ -1758,6 +1762,7 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(Model):
         'databases': {'key': 'databases', 'type': '[str]'},
         'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+        'database_schema_map': {'key': 'databaseSchemaMap', 'type': '[ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem]'},
     }
 
     def __init__(self, **kwargs):
@@ -1766,6 +1771,27 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(Model):
         self.databases = None
         self.target_server_brand_version = None
         self.validation_errors = None
+        self.database_schema_map = kwargs.get('database_schema_map', None)
+
+
+class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem(Model):
+    """ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem.
+
+    :param database:
+    :type database: str
+    :param schemas:
+    :type schemas: list[str]
+    """
+
+    _attribute_map = {
+        'database': {'key': 'database', 'type': 'str'},
+        'schemas': {'key': 'schemas', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem, self).__init__(**kwargs)
+        self.database = kwargs.get('database', None)
+        self.schemas = kwargs.get('schemas', None)
 
 
 class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties):
@@ -3252,6 +3278,249 @@ class GetTdeCertificatesSqlTaskProperties(ProjectTaskProperties):
         self.input = kwargs.get('input', None)
         self.output = None
         self.task_type = 'GetTDECertificates.Sql'
+
+
+class GetUserTablesOracleTaskInput(Model):
+    """Input for the task that gets the list of tables contained within a provided
+    list of Oracle schemas.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_info: Required. Information for connecting to Oracle
+     source
+    :type connection_info:
+     ~azure.mgmt.datamigration.models.OracleConnectionInfo
+    :param selected_schemas: Required. List of Oracle schemas for which to
+     collect tables
+    :type selected_schemas: list[str]
+    """
+
+    _validation = {
+        'connection_info': {'required': True},
+        'selected_schemas': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_info': {'key': 'connectionInfo', 'type': 'OracleConnectionInfo'},
+        'selected_schemas': {'key': 'selectedSchemas', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesOracleTaskInput, self).__init__(**kwargs)
+        self.connection_info = kwargs.get('connection_info', None)
+        self.selected_schemas = kwargs.get('selected_schemas', None)
+
+
+class GetUserTablesOracleTaskOutput(Model):
+    """Output for the task that gets the list of tables contained within a
+    provided list of Oracle schemas.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar schema_name: The schema this result is for
+    :vartype schema_name: str
+    :ivar tables: List of valid tables found for this schema
+    :vartype tables: list[~azure.mgmt.datamigration.models.DatabaseTable]
+    :ivar validation_errors: Validation errors associated with the task
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    """
+
+    _validation = {
+        'schema_name': {'readonly': True},
+        'tables': {'readonly': True},
+        'validation_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'schema_name': {'key': 'schemaName', 'type': 'str'},
+        'tables': {'key': 'tables', 'type': '[DatabaseTable]'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesOracleTaskOutput, self).__init__(**kwargs)
+        self.schema_name = None
+        self.tables = None
+        self.validation_errors = None
+
+
+class GetUserTablesOracleTaskProperties(ProjectTaskProperties):
+    """Properties for the task that collects user tables for the given list of
+    Oracle schemas.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar errors: Array of errors. This is ignored if submitted.
+    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :ivar state: The state of the task. This is ignored if submitted. Possible
+     values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
+     'Failed', 'FailedInputValidation', 'Faulted'
+    :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
+    :param task_type: Required. Constant filled by server.
+    :type task_type: str
+    :param input: Task input
+    :type input: ~azure.mgmt.datamigration.models.GetUserTablesOracleTaskInput
+    :ivar output: Task output. This is ignored if submitted.
+    :vartype output:
+     list[~azure.mgmt.datamigration.models.GetUserTablesOracleTaskOutput]
+    """
+
+    _validation = {
+        'errors': {'readonly': True},
+        'state': {'readonly': True},
+        'commands': {'readonly': True},
+        'task_type': {'required': True},
+        'output': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'errors': {'key': 'errors', 'type': '[ODataError]'},
+        'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
+        'task_type': {'key': 'taskType', 'type': 'str'},
+        'input': {'key': 'input', 'type': 'GetUserTablesOracleTaskInput'},
+        'output': {'key': 'output', 'type': '[GetUserTablesOracleTaskOutput]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesOracleTaskProperties, self).__init__(**kwargs)
+        self.input = kwargs.get('input', None)
+        self.output = None
+        self.task_type = 'GetUserTablesOracle'
+
+
+class GetUserTablesPostgreSqlTaskInput(Model):
+    """Input for the task that gets the list of tables for a provided list of
+    PostgreSQL databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_info: Required. Information for connecting to PostgreSQL
+     source
+    :type connection_info:
+     ~azure.mgmt.datamigration.models.PostgreSqlConnectionInfo
+    :param selected_databases: Required. List of PostgreSQL databases for
+     which to collect tables
+    :type selected_databases: list[str]
+    """
+
+    _validation = {
+        'connection_info': {'required': True},
+        'selected_databases': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_info': {'key': 'connectionInfo', 'type': 'PostgreSqlConnectionInfo'},
+        'selected_databases': {'key': 'selectedDatabases', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesPostgreSqlTaskInput, self).__init__(**kwargs)
+        self.connection_info = kwargs.get('connection_info', None)
+        self.selected_databases = kwargs.get('selected_databases', None)
+
+
+class GetUserTablesPostgreSqlTaskOutput(Model):
+    """Output for the task that gets the list of tables for a provided list of
+    PostgreSQL databases.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar database_name: The database this result is for
+    :vartype database_name: str
+    :ivar tables: List of valid tables found for this database
+    :vartype tables: list[~azure.mgmt.datamigration.models.DatabaseTable]
+    :ivar validation_errors: Validation errors associated with the task
+    :vartype validation_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    """
+
+    _validation = {
+        'database_name': {'readonly': True},
+        'tables': {'readonly': True},
+        'validation_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'tables': {'key': 'tables', 'type': '[DatabaseTable]'},
+        'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesPostgreSqlTaskOutput, self).__init__(**kwargs)
+        self.database_name = None
+        self.tables = None
+        self.validation_errors = None
+
+
+class GetUserTablesPostgreSqlTaskProperties(ProjectTaskProperties):
+    """Properties for the task that collects user tables for the given list of
+    databases.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar errors: Array of errors. This is ignored if submitted.
+    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :ivar state: The state of the task. This is ignored if submitted. Possible
+     values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
+     'Failed', 'FailedInputValidation', 'Faulted'
+    :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
+    :param task_type: Required. Constant filled by server.
+    :type task_type: str
+    :param input: Task input
+    :type input:
+     ~azure.mgmt.datamigration.models.GetUserTablesPostgreSqlTaskInput
+    :ivar output: Task output. This is ignored if submitted.
+    :vartype output:
+     list[~azure.mgmt.datamigration.models.GetUserTablesPostgreSqlTaskOutput]
+    """
+
+    _validation = {
+        'errors': {'readonly': True},
+        'state': {'readonly': True},
+        'commands': {'readonly': True},
+        'task_type': {'required': True},
+        'output': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'errors': {'key': 'errors', 'type': '[ODataError]'},
+        'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
+        'task_type': {'key': 'taskType', 'type': 'str'},
+        'input': {'key': 'input', 'type': 'GetUserTablesPostgreSqlTaskInput'},
+        'output': {'key': 'output', 'type': '[GetUserTablesPostgreSqlTaskOutput]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetUserTablesPostgreSqlTaskProperties, self).__init__(**kwargs)
+        self.input = kwargs.get('input', None)
+        self.output = None
+        self.task_type = 'GetUserTablesPostgreSql'
 
 
 class GetUserTablesSqlSyncTaskInput(Model):

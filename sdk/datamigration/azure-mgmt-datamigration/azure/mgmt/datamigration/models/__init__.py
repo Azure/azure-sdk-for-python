@@ -49,6 +49,7 @@ try:
     from ._models_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
     from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
     from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem
     from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
     from ._models_py3 import ConnectToTargetSqlDbTaskInput
     from ._models_py3 import ConnectToTargetSqlDbTaskOutput
@@ -82,6 +83,12 @@ try:
     from ._models_py3 import GetTdeCertificatesSqlTaskInput
     from ._models_py3 import GetTdeCertificatesSqlTaskOutput
     from ._models_py3 import GetTdeCertificatesSqlTaskProperties
+    from ._models_py3 import GetUserTablesOracleTaskInput
+    from ._models_py3 import GetUserTablesOracleTaskOutput
+    from ._models_py3 import GetUserTablesOracleTaskProperties
+    from ._models_py3 import GetUserTablesPostgreSqlTaskInput
+    from ._models_py3 import GetUserTablesPostgreSqlTaskOutput
+    from ._models_py3 import GetUserTablesPostgreSqlTaskProperties
     from ._models_py3 import GetUserTablesSqlSyncTaskInput
     from ._models_py3 import GetUserTablesSqlSyncTaskOutput
     from ._models_py3 import GetUserTablesSqlSyncTaskProperties
@@ -295,6 +302,7 @@ except (SyntaxError, ImportError):
     from ._models import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
     from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
     from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem
     from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
     from ._models import ConnectToTargetSqlDbTaskInput
     from ._models import ConnectToTargetSqlDbTaskOutput
@@ -328,6 +336,12 @@ except (SyntaxError, ImportError):
     from ._models import GetTdeCertificatesSqlTaskInput
     from ._models import GetTdeCertificatesSqlTaskOutput
     from ._models import GetTdeCertificatesSqlTaskProperties
+    from ._models import GetUserTablesOracleTaskInput
+    from ._models import GetUserTablesOracleTaskOutput
+    from ._models import GetUserTablesOracleTaskProperties
+    from ._models import GetUserTablesPostgreSqlTaskInput
+    from ._models import GetUserTablesPostgreSqlTaskOutput
+    from ._models import GetUserTablesPostgreSqlTaskProperties
     from ._models import GetUserTablesSqlSyncTaskInput
     from ._models import GetUserTablesSqlSyncTaskOutput
     from ._models import GetUserTablesSqlSyncTaskProperties
@@ -594,6 +608,7 @@ __all__ = [
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties',
     'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput',
     'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem',
     'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties',
     'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskOutput',
@@ -627,6 +642,12 @@ __all__ = [
     'GetTdeCertificatesSqlTaskInput',
     'GetTdeCertificatesSqlTaskOutput',
     'GetTdeCertificatesSqlTaskProperties',
+    'GetUserTablesOracleTaskInput',
+    'GetUserTablesOracleTaskOutput',
+    'GetUserTablesOracleTaskProperties',
+    'GetUserTablesPostgreSqlTaskInput',
+    'GetUserTablesPostgreSqlTaskOutput',
+    'GetUserTablesPostgreSqlTaskProperties',
     'GetUserTablesSqlSyncTaskInput',
     'GetUserTablesSqlSyncTaskOutput',
     'GetUserTablesSqlSyncTaskProperties',
