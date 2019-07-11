@@ -50,15 +50,11 @@ try:
     from .delivery_rule_is_device_condition_py3 import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters_py3 import UrlRedirectActionParameters
     from .url_redirect_action_py3 import UrlRedirectAction
-    from .url_rewrite_action_parameters_py3 import UrlRewriteActionParameters
-    from .url_rewrite_action_py3 import UrlRewriteAction
     from .header_action_parameters_py3 import HeaderActionParameters
     from .delivery_rule_request_header_action_py3 import DeliveryRuleRequestHeaderAction
     from .delivery_rule_response_header_action_py3 import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters_py3 import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action_py3 import DeliveryRuleCacheExpirationAction
-    from .cache_key_query_string_action_parameters_py3 import CacheKeyQueryStringActionParameters
-    from .delivery_rule_cache_key_query_string_action_py3 import DeliveryRuleCacheKeyQueryStringAction
     from .purge_parameters_py3 import PurgeParameters
     from .load_parameters_py3 import LoadParameters
     from .origin_py3 import Origin
@@ -144,15 +140,11 @@ except (SyntaxError, ImportError):
     from .delivery_rule_is_device_condition import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters import UrlRedirectActionParameters
     from .url_redirect_action import UrlRedirectAction
-    from .url_rewrite_action_parameters import UrlRewriteActionParameters
-    from .url_rewrite_action import UrlRewriteAction
     from .header_action_parameters import HeaderActionParameters
     from .delivery_rule_request_header_action import DeliveryRuleRequestHeaderAction
     from .delivery_rule_response_header_action import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
-    from .cache_key_query_string_action_parameters import CacheKeyQueryStringActionParameters
-    from .delivery_rule_cache_key_query_string_action import DeliveryRuleCacheKeyQueryStringAction
     from .purge_parameters import PurgeParameters
     from .load_parameters import LoadParameters
     from .origin import Origin
@@ -227,7 +219,6 @@ from .cdn_management_client_enums import (
     DestinationProtocol,
     HeaderAction,
     CacheBehavior,
-    QueryStringBehavior,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
@@ -287,15 +278,11 @@ __all__ = [
     'DeliveryRuleIsDeviceCondition',
     'UrlRedirectActionParameters',
     'UrlRedirectAction',
-    'UrlRewriteActionParameters',
-    'UrlRewriteAction',
     'HeaderActionParameters',
     'DeliveryRuleRequestHeaderAction',
     'DeliveryRuleResponseHeaderAction',
     'CacheExpirationActionParameters',
     'DeliveryRuleCacheExpirationAction',
-    'CacheKeyQueryStringActionParameters',
-    'DeliveryRuleCacheKeyQueryStringAction',
     'PurgeParameters',
     'LoadParameters',
     'Origin',
@@ -369,7 +356,6 @@ __all__ = [
     'DestinationProtocol',
     'HeaderAction',
     'CacheBehavior',
-    'QueryStringBehavior',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
