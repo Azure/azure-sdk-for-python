@@ -12,7 +12,7 @@
       "no-async": ""
     },
     "advanced_options": {
-      "create_sdk_pull_requests": false,
+      "create_sdk_pull_requests": true,
       "sdk_generation_pull_request_base": "integration_branch"
     },
     "repotag": "azure-sdk-for-python",
