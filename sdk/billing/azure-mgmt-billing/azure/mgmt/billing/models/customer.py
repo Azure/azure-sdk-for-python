@@ -29,9 +29,9 @@ class Customer(Resource):
     :param enabled_azure_sk_us: Information about the product.
     :type enabled_azure_sk_us:
      list[~azure.mgmt.billing.models.EnabledAzureSKUs]
-    :param service_providers: The service providers which are allowed to
-     provide service to this customer.
-    :type service_providers: list[~azure.mgmt.billing.models.ServiceProvider]
+    :param resellers: The resellers which are allowed to provide service to
+     this customer.
+    :type resellers: list[~azure.mgmt.billing.models.Reseller]
     """
 
     _validation = {
@@ -46,11 +46,11 @@ class Customer(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'enabled_azure_sk_us': {'key': 'properties.enabledAzureSKUs', 'type': '[EnabledAzureSKUs]'},
-        'service_providers': {'key': 'properties.serviceProviders', 'type': '[ServiceProvider]'},
+        'resellers': {'key': 'properties.resellers', 'type': '[Reseller]'},
     }
 
     def __init__(self, **kwargs):
         super(Customer, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
         self.enabled_azure_sk_us = kwargs.get('enabled_azure_sk_us', None)
-        self.service_providers = kwargs.get('service_providers', None)
+        self.resellers = kwargs.get('resellers', None)

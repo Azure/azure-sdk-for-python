@@ -37,7 +37,7 @@ try:
     from .billing_account_update_properties_py3 import BillingAccountUpdateProperties
     from .billing_property_py3 import BillingProperty
     from .billing_profile_creation_parameters_py3 import BillingProfileCreationParameters
-    from .service_provider_py3 import ServiceProvider
+    from .reseller_py3 import Reseller
     from .customer_py3 import Customer
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
@@ -100,7 +100,7 @@ except (SyntaxError, ImportError):
     from .billing_account_update_properties import BillingAccountUpdateProperties
     from .billing_property import BillingProperty
     from .billing_profile_creation_parameters import BillingProfileCreationParameters
-    from .service_provider import ServiceProvider
+    from .reseller import Reseller
     from .customer import Customer
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
@@ -196,7 +196,7 @@ __all__ = [
     'BillingAccountUpdateProperties',
     'BillingProperty',
     'BillingProfileCreationParameters',
-    'ServiceProvider',
+    'Reseller',
     'Customer',
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',

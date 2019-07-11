@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class ServiceProvider(Model):
-    """Details about a service provider.
+class Reseller(Model):
+    """Details about a reseller.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar service_provider_id: The service provider id.
-    :vartype service_provider_id: str
-    :ivar description: A description of the service provider.
+    :ivar reseller_id: The reseller id.
+    :vartype reseller_id: str
+    :ivar description: A description of the reseller.
     :vartype description: str
     """
 
     _validation = {
-        'service_provider_id': {'readonly': True},
+        'reseller_id': {'readonly': True},
         'description': {'readonly': True},
     }
 
     _attribute_map = {
-        'service_provider_id': {'key': 'serviceProviderId', 'type': 'str'},
+        'reseller_id': {'key': 'resellerId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ServiceProvider, self).__init__(**kwargs)
-        self.service_provider_id = None
+        super(Reseller, self).__init__(**kwargs)
+        self.reseller_id = None
         self.description = None

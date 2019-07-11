@@ -123,8 +123,7 @@ class CustomersOperations(object):
         :type billing_account_name: str
         :param customer_name: Customer Id.
         :type customer_name: str
-        :param expand: May be used to expand enabledAzureSkus,
-         serviceProviders.
+        :param expand: May be used to expand enabledAzureSkus, resellers.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

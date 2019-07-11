@@ -57,10 +57,10 @@ class BillingSubscriptionSummary(Resource):
     :type sku_id: str
     :ivar sku_description: The sku description.
     :vartype sku_description: str
-    :param service_provider_id: The service provider id.
-    :type service_provider_id: str
-    :ivar service_provider_description: The service provider description.
-    :vartype service_provider_description: str
+    :param reseller_id: The reseller id.
+    :type reseller_id: str
+    :ivar description: The name of the reseller.
+    :vartype description: str
     """
 
     _validation = {
@@ -78,7 +78,7 @@ class BillingSubscriptionSummary(Resource):
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
         'sku_description': {'readonly': True},
-        'service_provider_description': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,11 +98,11 @@ class BillingSubscriptionSummary(Resource):
         'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
-        'service_provider_id': {'key': 'properties.serviceProviderId', 'type': 'str'},
-        'service_provider_description': {'key': 'properties.serviceProviderDescription', 'type': 'str'},
+        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, subscription_billing_status=None, sku_id: str=None, service_provider_id: str=None, **kwargs) -> None:
+    def __init__(self, *, subscription_billing_status=None, sku_id: str=None, reseller_id: str=None, **kwargs) -> None:
         super(BillingSubscriptionSummary, self).__init__(**kwargs)
         self.display_name = None
         self.subscription_id = None
@@ -117,5 +117,5 @@ class BillingSubscriptionSummary(Resource):
         self.invoice_section_name = None
         self.sku_id = sku_id
         self.sku_description = None
-        self.service_provider_id = service_provider_id
-        self.service_provider_description = None
+        self.reseller_id = reseller_id
+        self.description = None
