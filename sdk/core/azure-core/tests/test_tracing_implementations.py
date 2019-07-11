@@ -41,10 +41,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             with tracer.start_span(name="parent") as parent:
                 wrapped_span = OpenCensusSpan(parent)
             assert wrapped_span.span_instance.name == "parent"
-            assert (
-                wrapped_span.span_instance.context_tracer.trace_id
-                == tracer.span_context.trace_id
-            )
+            assert wrapped_span.span_instance.context_tracer.trace_id == tracer.span_context.trace_id
             wrapped_span.finish()
             tracer.finish()
 
@@ -53,10 +50,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             tracer = OpenCensusSpan.get_current_tracer()
             wrapped_span = OpenCensusSpan()
             assert wrapped_span.span_instance.name == "parent_span"
-            assert (
-                wrapped_span.span_instance.context_tracer.span_context.trace_id
-                == tracer.span_context.trace_id
-            )
+            assert wrapped_span.span_instance.context_tracer.span_context.trace_id == tracer.span_context.trace_id
             assert ctx.orig_tracer == tracer
             wrapped_span.finish()
 
@@ -65,10 +59,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
             wrapped_span = OpenCensusSpan()
             assert wrapped_span.span_instance.name == "parent_span"
-            assert (
-                wrapped_span.span_instance.context_tracer.trace_id
-                == tracer.span_context.trace_id
-            )
+            assert wrapped_span.span_instance.context_tracer.trace_id == tracer.span_context.trace_id
             wrapped_span.finish()
             tracer.finish()
 
@@ -78,10 +69,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class = OpenCensusSpan()
             child = wrapped_class.span()
             assert child.span_instance.name == "child_span"
-            assert (
-                child.span_instance.parent_span.context_tracer.trace_id
-                == tracer.span_context.trace_id
-            )
+            assert child.span_instance.parent_span.context_tracer.trace_id == tracer.span_context.trace_id
             assert len(wrapped_class.span_instance.children) == 1
             assert wrapped_class.span_instance.children[0] == child.span_instance
 
