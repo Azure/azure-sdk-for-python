@@ -23,7 +23,7 @@
 """
 
 from . import murmur_hash
-from . import consistent_hash_ring
+from . import _consistent_hash_ring
 
 class HashPartitionResolver(object):
     """HashPartitionResolver implements partitioning based on the value of a hash function, allowing you to evenly
@@ -53,7 +53,7 @@ class HashPartitionResolver(object):
         if hash_generator is None:
             hash_generator = murmur_hash._MurmurHash()
 
-        self.consistent_hash_ring = consistent_hash_ring._ConsistentHashRing(self.collection_links, default_number_of_virtual_nodes_per_collection, hash_generator)
+        self.consistent_hash_ring = _consistent_hash_ring.ConsistentHashRing(self.collection_links, default_number_of_virtual_nodes_per_collection, hash_generator)
 
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.

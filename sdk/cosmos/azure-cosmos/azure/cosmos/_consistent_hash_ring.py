@@ -29,7 +29,7 @@ from six.moves import xrange
 from . import partition
 
 
-class _ConsistentHashRing(object):
+class ConsistentHashRing(object):
     """The ConsistentHashRing class implements a consistent hash ring using the 
     hash generator specified.
     """

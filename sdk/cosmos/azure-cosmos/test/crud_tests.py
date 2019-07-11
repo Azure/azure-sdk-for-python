@@ -41,7 +41,7 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
-import azure.cosmos.consistent_hash_ring as consistent_hash_ring
+from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -884,19 +884,19 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(expected_hash_bytes, bytes)
 
     def test_get_bytes(self):
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("documentdb")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("documentdb")
         expected_bytes = bytearray(b'\x64\x6F\x63\x75\x6D\x65\x6E\x74\x64\x62')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("azure")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("azure")
         expected_bytes = bytearray(b'\x61\x7A\x75\x72\x65')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("json")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("json")
         expected_bytes = bytearray(b'\x6A\x73\x6F\x6E')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("nosql")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("nosql")
         expected_bytes = bytearray(b'\x6E\x6F\x73\x71\x6C')
         self.assertEqual(expected_bytes, actual_bytes)
 
