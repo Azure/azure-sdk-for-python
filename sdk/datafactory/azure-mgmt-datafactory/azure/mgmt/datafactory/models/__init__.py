@@ -173,10 +173,13 @@ try:
     from .oracle_linked_service_py3 import OracleLinkedService
     from .file_server_linked_service_py3 import FileServerLinkedService
     from .hd_insight_linked_service_py3 import HDInsightLinkedService
+    from .common_data_service_for_apps_linked_service_py3 import CommonDataServiceForAppsLinkedService
+    from .dynamics_crm_linked_service_py3 import DynamicsCrmLinkedService
     from .dynamics_linked_service_py3 import DynamicsLinkedService
     from .cosmos_db_linked_service_py3 import CosmosDbLinkedService
     from .azure_key_vault_linked_service_py3 import AzureKeyVaultLinkedService
     from .azure_batch_linked_service_py3 import AzureBatchLinkedService
+    from .azure_sql_mi_linked_service_py3 import AzureSqlMILinkedService
     from .azure_sql_database_linked_service_py3 import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service_py3 import SqlServerLinkedService
     from .azure_sql_dw_linked_service_py3 import AzureSqlDWLinkedService
@@ -250,11 +253,14 @@ try:
     from .office365_dataset_py3 import Office365Dataset
     from .azure_blob_fs_dataset_py3 import AzureBlobFSDataset
     from .azure_data_lake_store_dataset_py3 import AzureDataLakeStoreDataset
+    from .common_data_service_for_apps_entity_dataset_py3 import CommonDataServiceForAppsEntityDataset
+    from .dynamics_crm_entity_dataset_py3 import DynamicsCrmEntityDataset
     from .dynamics_entity_dataset_py3 import DynamicsEntityDataset
     from .document_db_collection_dataset_py3 import DocumentDbCollectionDataset
     from .custom_dataset_py3 import CustomDataset
     from .cassandra_table_dataset_py3 import CassandraTableDataset
     from .azure_sql_dw_table_dataset_py3 import AzureSqlDWTableDataset
+    from .azure_sql_mi_table_dataset_py3 import AzureSqlMITableDataset
     from .azure_sql_table_dataset_py3 import AzureSqlTableDataset
     from .azure_table_dataset_py3 import AzureTableDataset
     from .azure_blob_dataset_py3 import AzureBlobDataset
@@ -336,6 +342,7 @@ try:
     from .file_system_source_py3 import FileSystemSource
     from .sql_dw_source_py3 import SqlDWSource
     from .stored_procedure_parameter_py3 import StoredProcedureParameter
+    from .sql_mi_source_py3 import SqlMISource
     from .azure_sql_source_py3 import AzureSqlSource
     from .sql_server_source_py3 import SqlServerSource
     from .sql_source_py3 import SqlSource
@@ -347,6 +354,8 @@ try:
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
     from .relational_source_py3 import RelationalSource
+    from .common_data_service_for_apps_source_py3 import CommonDataServiceForAppsSource
+    from .dynamics_crm_source_py3 import DynamicsCrmSource
     from .dynamics_source_py3 import DynamicsSource
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
@@ -387,6 +396,8 @@ try:
     from .cosmos_db_mongo_db_api_sink_py3 import CosmosDbMongoDbApiSink
     from .salesforce_sink_py3 import SalesforceSink
     from .azure_data_explorer_sink_py3 import AzureDataExplorerSink
+    from .common_data_service_for_apps_sink_py3 import CommonDataServiceForAppsSink
+    from .dynamics_crm_sink_py3 import DynamicsCrmSink
     from .dynamics_sink_py3 import DynamicsSink
     from .odbc_sink_py3 import OdbcSink
     from .azure_search_index_sink_py3 import AzureSearchIndexSink
@@ -395,6 +406,7 @@ try:
     from .oracle_sink_py3 import OracleSink
     from .polybase_settings_py3 import PolybaseSettings
     from .sql_dw_sink_py3 import SqlDWSink
+    from .sql_mi_sink_py3 import SqlMISink
     from .azure_sql_sink_py3 import AzureSqlSink
     from .sql_server_sink_py3 import SqlServerSink
     from .sql_sink_py3 import SqlSink
@@ -625,10 +637,13 @@ except (SyntaxError, ImportError):
     from .oracle_linked_service import OracleLinkedService
     from .file_server_linked_service import FileServerLinkedService
     from .hd_insight_linked_service import HDInsightLinkedService
+    from .common_data_service_for_apps_linked_service import CommonDataServiceForAppsLinkedService
+    from .dynamics_crm_linked_service import DynamicsCrmLinkedService
     from .dynamics_linked_service import DynamicsLinkedService
     from .cosmos_db_linked_service import CosmosDbLinkedService
     from .azure_key_vault_linked_service import AzureKeyVaultLinkedService
     from .azure_batch_linked_service import AzureBatchLinkedService
+    from .azure_sql_mi_linked_service import AzureSqlMILinkedService
     from .azure_sql_database_linked_service import AzureSqlDatabaseLinkedService
     from .sql_server_linked_service import SqlServerLinkedService
     from .azure_sql_dw_linked_service import AzureSqlDWLinkedService
@@ -702,11 +717,14 @@ except (SyntaxError, ImportError):
     from .office365_dataset import Office365Dataset
     from .azure_blob_fs_dataset import AzureBlobFSDataset
     from .azure_data_lake_store_dataset import AzureDataLakeStoreDataset
+    from .common_data_service_for_apps_entity_dataset import CommonDataServiceForAppsEntityDataset
+    from .dynamics_crm_entity_dataset import DynamicsCrmEntityDataset
     from .dynamics_entity_dataset import DynamicsEntityDataset
     from .document_db_collection_dataset import DocumentDbCollectionDataset
     from .custom_dataset import CustomDataset
     from .cassandra_table_dataset import CassandraTableDataset
     from .azure_sql_dw_table_dataset import AzureSqlDWTableDataset
+    from .azure_sql_mi_table_dataset import AzureSqlMITableDataset
     from .azure_sql_table_dataset import AzureSqlTableDataset
     from .azure_table_dataset import AzureTableDataset
     from .azure_blob_dataset import AzureBlobDataset
@@ -788,6 +806,7 @@ except (SyntaxError, ImportError):
     from .file_system_source import FileSystemSource
     from .sql_dw_source import SqlDWSource
     from .stored_procedure_parameter import StoredProcedureParameter
+    from .sql_mi_source import SqlMISource
     from .azure_sql_source import AzureSqlSource
     from .sql_server_source import SqlServerSource
     from .sql_source import SqlSource
@@ -799,6 +818,8 @@ except (SyntaxError, ImportError):
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
     from .relational_source import RelationalSource
+    from .common_data_service_for_apps_source import CommonDataServiceForAppsSource
+    from .dynamics_crm_source import DynamicsCrmSource
     from .dynamics_source import DynamicsSource
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
@@ -839,6 +860,8 @@ except (SyntaxError, ImportError):
     from .cosmos_db_mongo_db_api_sink import CosmosDbMongoDbApiSink
     from .salesforce_sink import SalesforceSink
     from .azure_data_explorer_sink import AzureDataExplorerSink
+    from .common_data_service_for_apps_sink import CommonDataServiceForAppsSink
+    from .dynamics_crm_sink import DynamicsCrmSink
     from .dynamics_sink import DynamicsSink
     from .odbc_sink import OdbcSink
     from .azure_search_index_sink import AzureSearchIndexSink
@@ -847,6 +870,7 @@ except (SyntaxError, ImportError):
     from .oracle_sink import OracleSink
     from .polybase_settings import PolybaseSettings
     from .sql_dw_sink import SqlDWSink
+    from .sql_mi_sink import SqlMISink
     from .azure_sql_sink import AzureSqlSink
     from .sql_server_sink import SqlServerSink
     from .sql_sink import SqlSink
@@ -962,6 +986,8 @@ from .data_factory_management_client_enums import (
     TeradataAuthenticationType,
     Db2AuthenticationType,
     SybaseAuthenticationType,
+    DynamicsDeploymentType,
+    DynamicsAuthenticationType,
     AzureFunctionActivityMethod,
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
@@ -1150,10 +1176,13 @@ __all__ = [
     'OracleLinkedService',
     'FileServerLinkedService',
     'HDInsightLinkedService',
+    'CommonDataServiceForAppsLinkedService',
+    'DynamicsCrmLinkedService',
     'DynamicsLinkedService',
     'CosmosDbLinkedService',
     'AzureKeyVaultLinkedService',
     'AzureBatchLinkedService',
+    'AzureSqlMILinkedService',
     'AzureSqlDatabaseLinkedService',
     'SqlServerLinkedService',
     'AzureSqlDWLinkedService',
@@ -1227,11 +1256,14 @@ __all__ = [
     'Office365Dataset',
     'AzureBlobFSDataset',
     'AzureDataLakeStoreDataset',
+    'CommonDataServiceForAppsEntityDataset',
+    'DynamicsCrmEntityDataset',
     'DynamicsEntityDataset',
     'DocumentDbCollectionDataset',
     'CustomDataset',
     'CassandraTableDataset',
     'AzureSqlDWTableDataset',
+    'AzureSqlMITableDataset',
     'AzureSqlTableDataset',
     'AzureTableDataset',
     'AzureBlobDataset',
@@ -1313,6 +1345,7 @@ __all__ = [
     'FileSystemSource',
     'SqlDWSource',
     'StoredProcedureParameter',
+    'SqlMISource',
     'AzureSqlSource',
     'SqlServerSource',
     'SqlSource',
@@ -1324,6 +1357,8 @@ __all__ = [
     'SapCloudForCustomerSource',
     'SalesforceSource',
     'RelationalSource',
+    'CommonDataServiceForAppsSource',
+    'DynamicsCrmSource',
     'DynamicsSource',
     'DocumentDbCollectionSource',
     'BlobSource',
@@ -1364,6 +1399,8 @@ __all__ = [
     'CosmosDbMongoDbApiSink',
     'SalesforceSink',
     'AzureDataExplorerSink',
+    'CommonDataServiceForAppsSink',
+    'DynamicsCrmSink',
     'DynamicsSink',
     'OdbcSink',
     'AzureSearchIndexSink',
@@ -1372,6 +1409,7 @@ __all__ = [
     'OracleSink',
     'PolybaseSettings',
     'SqlDWSink',
+    'SqlMISink',
     'AzureSqlSink',
     'SqlServerSink',
     'SqlSink',
@@ -1486,6 +1524,8 @@ __all__ = [
     'TeradataAuthenticationType',
     'Db2AuthenticationType',
     'SybaseAuthenticationType',
+    'DynamicsDeploymentType',
+    'DynamicsAuthenticationType',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',

@@ -9,20 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceSink,
-    AzureDataExplorerSink, CommonDataServiceForAppsSink, DynamicsCrmSink,
-    DynamicsSink, OdbcSink, AzureSearchIndexSink, AzureBlobFSSink,
-    AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlMISink, AzureSqlSink,
-    SqlServerSink, SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
-    ParquetSink, AzureTableSink, AzureQueueSink, SapCloudForCustomerSink,
-    DelimitedTextSink
+class SqlMISink(CopySink):
+    """A copy activity Azure SQL Managed Instance sink.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,6 +40,22 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
+     Type: string (or Expression with resultType string).
+    :type sql_writer_stored_procedure_name: object
+    :param sql_writer_table_type: SQL writer table type. Type: string (or
+     Expression with resultType string).
+    :type sql_writer_table_type: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
+     with resultType string).
+    :type pre_copy_script: object
+    :param stored_procedure_parameters: SQL stored procedure parameters.
+    :type stored_procedure_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure
+     parameter name of the table type. Type: string (or Expression with
+     resultType string).
+    :type stored_procedure_table_type_parameter_name: object
     """
 
     _validation = {
@@ -63,18 +70,18 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
+        'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.type = None
+        super(SqlMISink, self).__init__(**kwargs)
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
+        self.type = 'SqlMISink'

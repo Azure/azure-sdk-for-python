@@ -321,6 +321,18 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
+class DynamicsDeploymentType(str, Enum):
+
+    online = "Online"
+    on_premises_with_ifd = "OnPremisesWithIfd"
+
+
+class DynamicsAuthenticationType(str, Enum):
+
+    office365 = "Office365"
+    ifd = "Ifd"
+
+
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"
