@@ -25,7 +25,7 @@
 import time
 
 from . import errors
-from . import endpoint_discovery_retry_policy
+from . import _endpoint_discovery_retry_policy
 from . import resource_throttle_retry_policy
 from . import _default_retry_policy
 from . import session_retry_policy
@@ -45,7 +45,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
     """
     # instantiate all retry policies here to be applied for each request execution
-    endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(client.connection_policy, global_endpoint_manager, *args)
+    endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(client.connection_policy, global_endpoint_manager, *args)
 
     resourceThrottle_retry_policy = resource_throttle_retry_policy._ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount, 
                                                                                                 client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds, 

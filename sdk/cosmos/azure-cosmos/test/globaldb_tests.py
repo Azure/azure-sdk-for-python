@@ -30,7 +30,7 @@ import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
-import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
+from azure.cosmos import _endpoint_discovery_retry_policy
 import azure.cosmos.retry_utility as retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import test_config
@@ -368,8 +368,8 @@ class Test_globaldb_tests(unittest.TestCase):
         max_retry_attempt_count = 10
         retry_after_in_milliseconds = 500
 
-        endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
-        endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = retry_after_in_milliseconds
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = retry_after_in_milliseconds
 
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',

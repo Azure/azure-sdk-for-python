@@ -5,7 +5,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
-import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
+from azure.cosmos import _endpoint_discovery_retry_policy
 from azure.cosmos.request_object import _RequestObject
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
@@ -106,7 +106,7 @@ class TestStreamingFailover(unittest.TestCase):
         self._read_counter = 0
         self._write_counter = 0
         request = _RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
-        endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
+        endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
         endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
@@ -114,7 +114,7 @@ class TestStreamingFailover(unittest.TestCase):
         self._read_counter = 0
         self._write_counter = 0
         request = _RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
-        endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
+        endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
         endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
