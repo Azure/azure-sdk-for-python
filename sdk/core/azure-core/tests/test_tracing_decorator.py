@@ -9,13 +9,21 @@ try:
 except ImportError:
     import mock
 
+import sys
 from azure.core.tracing import common
 from azure.core.tracing import tracing_context, AbstractSpan
 from azure.core.settings import settings
-from opencensus.trace import tracer as tracer_module
+from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
 
 
 class TestCommon(unittest.TestCase):
+    def test_get_opencensus_wrapper_if_opencensus_is_imported(self):
+        opencensus = sys.modules['opencensus']
+        del sys.modules["opencensus"]
+        assert common.get_opencensus_wrapper_if_opencensus_is_imported() == None
+        sys.modules['opencensus'] = opencensus
+        assert common.get_opencensus_wrapper_if_opencensus_is_imported() is OpencensusWrapper
+
     def test_set_span_context(self):
         wrapper = settings.tracing_implementation()
         assert tracing_context.current_span.get() is None
