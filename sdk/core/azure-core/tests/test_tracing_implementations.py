@@ -49,7 +49,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             tracer.finish()
 
     def test_no_span_passed_in_with_no_environ(self):
-        with ContextHelper():
+        with ContextHelper() as ctx:
             tracer = OpencensusSpanWrapper.get_current_tracer()
             wrapped_span = OpencensusSpanWrapper()
             assert wrapped_span.span_instance.name == "parent_span"
@@ -57,25 +57,7 @@ class TestOpencensusWrapper(unittest.TestCase):
                 wrapped_span.span_instance.context_tracer.span_context.trace_id
                 == tracer.span_context.trace_id
             )
-            wrapped_span.finish()
-
-    def test_no_span_passed_in_with_environ(self):
-        with ContextHelper(
-            environ={"APPINSIGHTS_INSTRUMENTATIONKEY": "instrumentation_key"}
-        ) as ctx:
-            assert os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] == "instrumentation_key"
-            wrapped_span = OpencensusSpanWrapper()
-            assert wrapped_span.span_instance.name == "parent_span"
-            tracer = OpencensusSpanWrapper.get_current_tracer()
-            assert (
-                wrapped_span.tracer.span_context.trace_id
-                == tracer.span_context.trace_id
-            )
-            assert (
-                not wrapped_span.span_instance.context_tracer.span_context.trace_id
-                == ctx.orig_tracer.span_context.trace_id
-            )
-            assert isinstance(tracer.exporter, AzureExporter)
+            assert ctx.orig_tracer == tracer
             wrapped_span.finish()
 
     def test_no_span_but_in_trace(self):
@@ -128,12 +110,6 @@ class TestOpencensusWrapper(unittest.TestCase):
                 )
             }
             assert headers == new_header
-
-    def test_end_tracer(self):
-        with ContextHelper() as ctx:
-            tracer = mock.Mock(spec=tracer_module.Tracer)
-            OpencensusSpanWrapper.end_tracer(tracer)
-            assert tracer.finish.called
 
 
 if __name__ == "__main__":

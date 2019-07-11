@@ -39,24 +39,6 @@ class OpencensusSpanWrapper(AbstractSpan):
         """
         super(OpencensusSpanWrapper, self).__init__(span, name)
         tracer = self.get_current_tracer()
-        self.was_created_by_azure_sdk = False
-        if span is None and (tracer is None or isinstance(tracer, NoopTracer)):
-            azure_exporter_instrumentation_key = os.environ.get(
-                "APPINSIGHTS_INSTRUMENTATIONKEY", None
-            )
-            prob = float(os.environ.get("AZURE_TRACING_SAMPLER", None) or 0)
-            if azure_exporter_instrumentation_key is not None and AzureExporter:
-                tracer = tracer_module.Tracer(
-                    exporter=AzureExporter(
-                        instrumentation_key=azure_exporter_instrumentation_key
-                    ),
-                    sampler=ProbabilitySampler(prob),
-                )
-            else:
-                tracer = tracer or tracer_module.Tracer(
-                    sampler=ProbabilitySampler(prob)
-                )
-            self.was_created_by_azure_sdk = True
         span = span or tracer.span(name=name)
 
         self.tracer = tracer
@@ -88,8 +70,6 @@ class OpencensusSpanWrapper(AbstractSpan):
         # type: () -> None
         """Set the end time for a span."""
         self.span_instance.finish()
-        if self.was_created_by_azure_sdk:
-            self.end_tracer(self.tracer)
 
     def to_header(self):
         # type: (Dict[str, str]) -> str
@@ -117,17 +97,6 @@ class OpencensusSpanWrapper(AbstractSpan):
             headers
         )
         return tracer_module.Tracer(span_context=ctx)
-
-    @classmethod
-    def end_tracer(cls, tracer):
-        # type: (tracer_module.Tracer) -> None
-        """
-        If a tracer exists, exports and ends the tracer.
-        :param tracer: The tracer to export and end
-        """
-        if tracer is not None:
-            tracer.end_span()
-            tracer.finish()
 
     @classmethod
     def get_current_span(cls):

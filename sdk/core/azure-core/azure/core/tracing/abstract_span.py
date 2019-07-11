@@ -71,15 +71,6 @@ class AbstractSpan(ABC):
 
     @classmethod
     @abstractmethod
-    def end_tracer(cls, tracer):
-        # type: (Any) -> None
-        """
-        If a tracer exists, exports and ends the tracer.
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
     def get_current_span(cls):
         # type: () -> Any
         """
