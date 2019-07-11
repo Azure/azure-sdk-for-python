@@ -370,7 +370,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         assert poll.result().name == TEST_NAME
-        assert poll._polling_method._response.randomFieldFromPollLocationHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
         # Test polling initial payload invalid (SQLDb)
         response_body = {}  # Empty will raise
@@ -381,7 +381,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         assert poll.result().name == TEST_NAME
-        assert poll._polling_method._response.randomFieldFromPollLocationHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
         # Test fail to poll from azure-asyncoperation header
         response = TestArmPolling.mock_send(
@@ -412,7 +412,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         assert poll.result().name == TEST_NAME
-        assert poll._polling_method._response.randomFieldFromPollLocationHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
@@ -434,7 +434,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         assert poll.result().name == TEST_NAME
-        assert poll._polling_method._response.randomFieldFromPollLocationHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
@@ -477,7 +477,7 @@ class TestArmPolling(object):
             ARMPolling(0))
         poll.wait()
         assert poll.result() is None
-        assert poll._polling_method._response.randomFieldFromPollAsyncOpHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     def test_long_running_post_legacy(self):
         # Former oooooold tests to refactor one day to something more readble
@@ -502,7 +502,7 @@ class TestArmPolling(object):
             ARMPolling(0))
         poll.wait()
         #self.assertIsNone(poll.result())
-        assert poll._polling_method._response.randomFieldFromPollAsyncOpHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from location header
         response = TestArmPolling.mock_send(
@@ -513,7 +513,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         assert poll.result().name == TEST_NAME
-        assert poll._polling_method._response.randomFieldFromPollLocationHeader is None
+        assert poll._polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
         # Test fail to poll from azure-asyncoperation header
         response = TestArmPolling.mock_send(

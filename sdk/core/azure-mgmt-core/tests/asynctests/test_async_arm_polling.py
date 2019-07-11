@@ -43,6 +43,8 @@ from msrest.exceptions import DeserializationError
 from azure.core.polling import async_poller
 from azure.core.configuration import Configuration
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import PipelineResponse, AsyncPipeline
+from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
 from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.async_arm_polling import (
@@ -85,9 +87,131 @@ ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
 CLIENT = AsyncPipelineClient("http://example.org", Configuration())
-async def mock_send(client_self, request, *, stream):
+async def mock_run(client_self, request, **kwargs):
     return TestArmPolling.mock_update(request.url)
-CLIENT.async_send = types.MethodType(mock_send, CLIENT)
+CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
+
+
+@pytest.fixture
+def async_pipeline_client_builder():
+    """Build a client that use the "send" callback as final transport layer
+
+    send will receive "request" and kwargs as any transport layer
+    """
+    def create_client(send_cb):
+        class TestHttpTransport(AsyncHttpTransport):
+            async def open(self): pass
+            async def close(self): pass
+            async def __aexit__(self, *args, **kwargs): pass
+
+            async def send(self, request, **kwargs):
+                return await send_cb(request, **kwargs)
+
+        return AsyncPipelineClient(
+            'http://example.org/',
+            Configuration(),
+            pipeline=AsyncPipeline(
+                transport=TestHttpTransport()
+            )
+        )
+    return create_client
+
+
+@pytest.mark.asyncio
+async def test_post(async_pipeline_client_builder):
+
+        # Test POST LRO with both Location and Azure-AsyncOperation
+
+        # The initial response contains both Location and Azure-AsyncOperation, a 202 and no Body
+        initial_response = TestArmPolling.mock_send(
+            'POST',
+            202,
+            {
+                'location': 'http://example.org/location',
+                'azure-asyncoperation': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        async def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                )
+            elif request.url == 'http://example.org/async_monitor':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                )
+            else:
+                pytest.fail("No other query allowed")
+
+        client = async_pipeline_client_builder(send)
+
+        def deserialization_cb(response):
+            return json.loads(response.text())
+
+        # Test 1, LRO options with Location final state
+        poll = async_poller(
+            client,
+            initial_response,
+            deserialization_cb,
+            AsyncARMPolling(0, lro_options={"final-state-via": "location"}))
+        result = await poll
+        assert result['location_result'] == True
+
+        # Test 2, LRO options with Azure-AsyncOperation final state
+        poll = async_poller(
+            client,
+            initial_response,
+            deserialization_cb,
+            AsyncARMPolling(0, lro_options={"final-state-via": "azure-async-operation"}))
+        result = await poll
+        assert result['status'] == 'Succeeded'
+
+        # Test 3, backward compat (no options, means "azure-async-operation")
+        poll = async_poller(
+            client,
+            initial_response,
+            deserialization_cb,
+            AsyncARMPolling(0))
+        result = await poll
+        assert result['status'] == 'Succeeded'
+
+        # Test 4, location has no body
+
+        async def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body=""
+                )
+            elif request.url == 'http://example.org/async_monitor':
+                return TestArmPolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                )
+            else:
+                pytest.fail("No other query allowed")
+
+        client = async_pipeline_client_builder(send)
+
+        poll = async_poller(
+            client,
+            initial_response,
+            deserialization_cb,
+            AsyncARMPolling(0, lro_options={"final-state-via": "location"}))
+        result = await poll
+        assert result is None
 
 
 class TestArmPolling(object):
@@ -95,7 +219,9 @@ class TestArmPolling(object):
     convert = re.compile('([a-z0-9])([A-Z])')
 
     @staticmethod
-    def mock_send(method, status, headers, body=None):
+    def mock_send(method, status, headers=None, body=None):
+        if headers is None:
+            headers = {}
         response = mock.create_autospec(Response)
         response.request = mock.create_autospec(Request)
         response.request.method = method
@@ -106,10 +232,25 @@ class TestArmPolling(object):
         response.status_code = status
         response.headers = headers
         response.headers.update({"content-type": "application/json; charset=utf8"})
+        response.reason = "OK"
         content = body if body is not None else RESPONSE_BODY
         response.text = json.dumps(content)
         response.json = lambda: json.loads(response.text)
-        return response
+
+        request = CLIENT._request(
+            response.request.method,
+            response.request.url,
+            None,  # params
+            response.request.headers,
+            content,
+            None,  # form_content
+            None  # stream_content
+        )
+
+        return AsyncioRequestsTransportResponse(
+            request,
+            response,
+        )
 
     @staticmethod
     def mock_update(url, headers=None):
@@ -118,6 +259,7 @@ class TestArmPolling(object):
         response.request.method = 'GET'
         response.headers = headers or {}
         response.headers.update({"content-type": "application/json; charset=utf8"})
+        response.reason = "OK"
 
         if url == ASYNC_URL:
             response.request.url = url
@@ -142,11 +284,29 @@ class TestArmPolling(object):
         else:
             raise Exception('URL does not match')
         response.json = lambda: json.loads(response.text)
-        return response
+
+        request = CLIENT._request(
+            response.request.method,
+            response.request.url,
+            None,  # params
+            {}, # request has no headers
+            None, # Request has no body
+            None,  # form_content
+            None  # stream_content
+        )
+
+        return PipelineResponse(
+            request,
+            AsyncioRequestsTransportResponse(
+                request,
+                response,
+            ),
+            None  # context
+        )
 
     @staticmethod
     def mock_outputs(response):
-        body = response.json()
+        body = json.loads(response.text())
         body = {TestArmPolling.convert.sub(r'\1_\2', k).lower(): v
                 for k, v in body.items()}
         properties = body.setdefault('properties', {})
@@ -216,7 +376,7 @@ async def test_long_running_put():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll.name == TEST_NAME
-    assert polling_method._response.randomFieldFromPollLocationHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test polling initial payload invalid (SQLDb)
     response_body = {}  # Empty will raise
@@ -228,7 +388,7 @@ async def test_long_running_put():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll.name == TEST_NAME
-    assert polling_method._response.randomFieldFromPollLocationHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test fail to poll from azure-asyncoperation header
     response = TestArmPolling.mock_send(
@@ -261,7 +421,7 @@ async def test_long_running_patch():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll.name == TEST_NAME
-    assert polling_method._response.randomFieldFromPollLocationHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
@@ -285,7 +445,7 @@ async def test_long_running_patch():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll.name == TEST_NAME
-    assert polling_method._response.randomFieldFromPollLocationHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
@@ -330,7 +490,7 @@ async def test_long_running_delete():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll is None
-    assert polling_method._response.randomFieldFromPollAsyncOpHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
 @pytest.mark.asyncio
 async def test_long_running_post():
@@ -355,7 +515,7 @@ async def test_long_running_post():
         TestArmPolling.mock_outputs,
         polling_method)
     #self.assertIsNone(poll)
-    assert polling_method._response.randomFieldFromPollAsyncOpHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from location header
     response = TestArmPolling.mock_send(
@@ -367,7 +527,7 @@ async def test_long_running_post():
         TestArmPolling.mock_outputs,
         polling_method)
     assert poll.name == TEST_NAME
-    assert polling_method._response.randomFieldFromPollLocationHeader is None
+    assert polling_method._response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test fail to poll from azure-asyncoperation header
     response = TestArmPolling.mock_send(
