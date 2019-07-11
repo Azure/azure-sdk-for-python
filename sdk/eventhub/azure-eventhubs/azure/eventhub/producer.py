@@ -13,7 +13,7 @@ from uamqp import constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
-from azure.eventhub.common import EventData, _BatchSendEventData
+from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import EventHubError, ConnectError, \
     AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
 
@@ -23,16 +23,16 @@ log = logging.getLogger(__name__)
 class EventHubProducer(object):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
-     grouped together in batches. Depending on the options specified at creation, the producer may
-     be created to allow event data to be automatically routed to an available partition or specific
-     to a partition.
+    grouped together in batches. Depending on the options specified at creation, the producer may
+    be created to allow event data to be automatically routed to an available partition or specific
+    to a partition.
 
     """
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
         Instantiate an EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient.
@@ -51,6 +51,7 @@ class EventHubProducer(object):
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        self._max_message_size_on_link = None
         self.running = False
         self.client = client
         self.target = target
@@ -108,6 +109,10 @@ class EventHubProducer(object):
         if not self.running:
             self._connect()
             self.running = True
+
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size if\
+                self._handler.message_handler._link.peer_max_message_size\
+                else constants.MAX_MESSAGE_LENGTH_BYTES
 
     def _connect(self):
         connected = self._build_connection()
@@ -298,6 +303,23 @@ class EventHubProducer(object):
         if outcome != constants.MessageSendResult.Ok:
             raise condition
 
+    def create_batch(self, max_message_size=None, partition_key=None):
+        """
+        Create an EventDataBatch object with max message size being max_message_size.
+        The max_message_size should be no greater than the max allowed message size defined by the service side.
+        :param max_message_size:
+        :param partition_key:
+        :return:
+        """
+        if not self._max_message_size_on_link:
+            self._open()
+
+        if max_message_size and max_message_size > self._max_message_size_on_link:
+            raise EventDataError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+                                 .format(max_message_size, self._max_message_size_on_link))
+
+        return EventDataBatch(max_message_size if max_message_size else self._max_message_size_on_link, partition_key)
+
     def send(self, event_data, partition_key=None):
         # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
         """
@@ -307,7 +329,8 @@ class EventHubProducer(object):
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
         :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
         :param partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
+         a particular partition of the Event Hub decided by the service. partition_key
+         will be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
         :type partition_key: str
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
@@ -327,13 +350,15 @@ class EventHubProducer(object):
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
-                event_data._set_partition_key(partition_key)
+                event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
         else:
-            event_data_with_pk = self._set_partition_key(event_data, partition_key)
-            wrapper_event_data = _BatchSendEventData(
-                event_data_with_pk,
-                partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
+            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
+                wrapper_event_data = event_data
+            else:
+                if partition_key:
+                    event_data = self._set_partition_key(event_data, partition_key)
+                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data()

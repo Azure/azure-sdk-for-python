@@ -9,8 +9,12 @@ import calendar
 import json
 import six
 
-from uamqp import BatchMessage, Message, types
+from azure.eventhub.error import EventDataError
+from uamqp import BatchMessage, Message, types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
+
+# event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
+_BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 
 def parse_sas_token(sas_token):
@@ -244,10 +248,25 @@ class EventData(object):
         return self.message.encode_message()
 
 
-class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, partition_key=None):
-        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+class EventDataBatch(object):
+    """
+    The EventDataBatch class is a holder of a batch of event date within max message size bytes.
+    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Do not instantiate an EventDataBatch object directly.
+    """
+    def __init__(self, max_message_size=None, partition_key=None):
+        self.max_message_size = max_message_size if max_message_size else constants.MAX_MESSAGE_LENGTH_BYTES
+        self._partition_key = partition_key
+        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+
         self._set_partition_key(partition_key)
+        self._size = self.message.gather()[0].get_message_encoded_size()
+
+    @staticmethod
+    def _from_batch(batch_data, partition_key=None):
+        batch_data_instance = EventDataBatch(partition_key=partition_key)
+        batch_data_instance.message._body_gen = batch_data
+        return batch_data_instance
 
     def _set_partition_key(self, value):
         if value:
@@ -259,6 +278,35 @@ class _BatchSendEventData(EventData):
             header.durable = True
             self.message.annotations = annotations
             self.message.header = header
+
+    def try_add(self, event_data):
+        """
+        The message size is a sum up of body, properties, header, etc.
+        :param event_data:
+        :return:
+        """
+        if not isinstance(event_data, EventData):
+            raise EventDataError('event_data should be type of EventData')
+
+        if self._partition_key:
+            if event_data.partition_key and not (event_data.partition_key == self._partition_key):
+                raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
+            if not event_data.partition_key:
+                event_data._set_partition_key(self._partition_key)
+
+        event_data_size = event_data.message.get_message_encoded_size()
+
+        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        #  message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = self._size + event_data_size\
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+
+        if size_after_add > self.max_message_size:
+            return False
+
+        self.message._body_gen.append(event_data)  # pylint: disable=protected-access
+        self._size = size_after_add
+        return True
 
 
 class EventPosition(object):

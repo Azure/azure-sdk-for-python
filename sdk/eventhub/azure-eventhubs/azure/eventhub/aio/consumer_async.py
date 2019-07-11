@@ -19,15 +19,15 @@ log = logging.getLogger(__name__)
 class EventHubConsumer(object):
     """
     A consumer responsible for reading EventData from a specific Event Hub
-     partition and as a member of a specific consumer group.
+    partition and as a member of a specific consumer group.
 
     A consumer may be exclusive, which asserts ownership over the partition for the consumer
-     group to ensure that only one consumer from that group is reading the from the partition.
-     These exclusive consumers are sometimes referred to as "Epoch Consumers."
+    group to ensure that only one consumer from that group is reading the from the partition.
+    These exclusive consumers are sometimes referred to as "Epoch Consumers."
 
     A consumer may also be non-exclusive, allowing multiple consumers from the same consumer
-     group to be actively reading events from the partition.  These non-exclusive consumers are
-     sometimes referred to as "Non-Epoch Consumers."
+    group to be actively reading events from the partition.  These non-exclusive consumers are
+    sometimes referred to as "Non-Epoch Consumers."
 
     """
     timeout = 0
@@ -38,7 +38,7 @@ class EventHubConsumer(object):
             keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
