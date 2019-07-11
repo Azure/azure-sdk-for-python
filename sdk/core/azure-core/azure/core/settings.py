@@ -63,9 +63,9 @@ def convert_bool(value):
         return value  # type: ignore
 
     val = value.lower()  # type: ignore
-    if val in ["yes", "1", "on"]:
+    if val in ["yes", "1", "on", "true", "True"]:
         return True
-    if val in ["no", "0", "off"]:
+    if val in ["no", "0", "off", "false", "False"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 

@@ -109,6 +109,8 @@ class TestCommon(unittest.TestCase):
         assert common.should_use_trace(parent_span)
         assert common.should_use_trace(None) == False
 
+class TestDecorator(unittest.TestCase):
+    pass
 
 if __name__ == "__main__":
     unittest.main()
