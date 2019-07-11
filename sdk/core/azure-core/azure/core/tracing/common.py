@@ -25,10 +25,17 @@
 # --------------------------------------------------------------------------
 from os import environ
 import re
+import sys
 
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.settings import settings, get_opencensus_wrapper
+
+
+def get_opencensus_wrapper_if_opencensus_is_inported():
+    if "opencensus" not in sys.modules:
+        return None
+    return get_opencensus_wrapper()
 
 
 def set_span_contexts(wrapped_span, span_instance=None):
@@ -52,7 +59,7 @@ def get_parent(*args, **kwargs):
     wrapper_class = (
         tracing_context.tracing_impl.get()
         or settings.tracing_implementation()
-        or get_opencensus_wrapper()
+        or get_opencensus_wrapper_if_opencensus_is_inported()
     )
     if wrapper_class is None:
         return None, orig_wrapped_span, None
