@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import functools
+
 import azure.core.tracing.common as common
 
 

@@ -113,12 +113,12 @@ def convert_logging(value):
 
 
 def get_opencensus_wrapper():
-    # type: () -> OpencensusSpanWrapper
-    """Returns the OpencensusSpanWrapper if opencensus is installed else returns None"""
+    # type: () -> OpenCensusSpan
+    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_wrapper import OpencensusSpanWrapper
+        from azure.core.tracing.ext.opencensus_wrapper import OpenCensusSpan
 
-        return OpencensusSpanWrapper
+        return OpenCensusSpan
     except ImportError:
         return None
 

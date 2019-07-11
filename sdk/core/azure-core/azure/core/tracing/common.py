@@ -49,7 +49,7 @@ def set_span_contexts(wrapped_span, span_instance=None):
         impl_wrapper.set_current_span(span_instance)
 
 
-def get_parent(*args, **kwargs):
+def get_parent(kwargs):
     # type: (Any) -> Tuple(AbstractSpan, AbstractSpan, Any)
     """Returns the parent span that of the span that represents the function and the spans before that parent span"""
     parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
@@ -80,7 +80,7 @@ def get_parent(*args, **kwargs):
 
 
 def should_use_trace(parent_span):
-    # type: (AbstractSpan, List[str], str)
+    # type: (AbstractSpan) -> bool
     """Given Parent Span Returns whether the function should be traced"""
     only_propagate = settings.tracing_should_only_propagate()
     return bool(parent_span and not only_propagate)
