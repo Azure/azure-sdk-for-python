@@ -40,8 +40,6 @@ class OpencensusSpanWrapper(AbstractSpan):
         super(OpencensusSpanWrapper, self).__init__(span, name)
         tracer = self.get_current_tracer()
         span = span or tracer.span(name=name)
-
-        self.tracer = tracer
         self._span_instance = span
 
     @property

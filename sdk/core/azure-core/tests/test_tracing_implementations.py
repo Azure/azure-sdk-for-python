@@ -78,7 +78,10 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class = OpencensusSpanWrapper()
             child = wrapped_class.span()
             assert child.span_instance.name == "child_span"
-            assert child.tracer.span_context.trace_id == tracer.span_context.trace_id
+            assert (
+                child.span_instance.parent_span.context_tracer.trace_id
+                == tracer.span_context.trace_id
+            )
             assert len(wrapped_class.span_instance.children) == 1
             assert wrapped_class.span_instance.children[0] == child.span_instance
 
