@@ -20,6 +20,8 @@ from .. import models
 class ReservationOperations(object):
     """ReservationOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -262,8 +264,7 @@ class ReservationOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -292,6 +293,11 @@ class ReservationOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -300,18 +306,16 @@ class ReservationOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations'}
 
     def get(
-            self, reservation_id, reservation_order_id, custom_headers=None, raw=False, **operation_config):
+            self, reservation_id, reservation_order_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get `Reservation` details.
 
         Get specific `Reservation` details.
@@ -320,6 +324,8 @@ class ReservationOperations(object):
         :type reservation_id: str
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
+        :param expand: Supported value of this query is renewProperties
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -342,6 +348,8 @@ class ReservationOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -361,7 +369,6 @@ class ReservationOperations(object):
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ReservationResponse', response)
 
@@ -493,8 +500,7 @@ class ReservationOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_revisions.metadata['url']
@@ -524,6 +530,11 @@ class ReservationOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -532,12 +543,10 @@ class ReservationOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ReservationResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_revisions.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}/revisions'}
