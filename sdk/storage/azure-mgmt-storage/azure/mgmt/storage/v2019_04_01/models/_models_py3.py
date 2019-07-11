@@ -488,8 +488,8 @@ class DateAfterCreation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_creation_greater_than: Required. Integer value
-     indicating the age in days after creation
+    :param days_after_creation_greater_than: Required. Value indicating the
+     age in days after creation
     :type days_after_creation_greater_than: float
     """
 
@@ -511,8 +511,8 @@ class DateAfterModification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_modification_greater_than: Required. Integer value
-     indicating the age in days after last modification
+    :param days_after_modification_greater_than: Required. Value indicating
+     the age in days after last modification
     :type days_after_modification_greater_than: float
     """
 
