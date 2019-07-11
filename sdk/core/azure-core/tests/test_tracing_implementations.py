@@ -60,7 +60,9 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_span.finish()
 
     def test_no_span_passed_in_with_environ(self):
-        with ContextHelper(environ={"APPINSIGHTS_INSTRUMENTATIONKEY": "instrumentation_key"}) as ctx:
+        with ContextHelper(
+            environ={"APPINSIGHTS_INSTRUMENTATIONKEY": "instrumentation_key"}
+        ) as ctx:
             assert os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] == "instrumentation_key"
             wrapped_span = OpencensusSpanWrapper()
             assert wrapped_span.span_instance.name == "parent_span"
@@ -110,17 +112,22 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
             parent.finish()
-            
+
     def test_to_and_from_header(self):
         with ContextHelper() as ctx:
-            wrapped_class = OpencensusSpanWrapper()
             og_header = {
                 "traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"
             }
-            tracer = wrapped_class.from_header(og_header)
+            tracer = OpencensusSpanWrapper.from_header(og_header)
             assert tracer.span_context.trace_id == "2578531519ed94423ceae67588eff2c9"
-            headers = wrapped_class.to_header({})
-            assert headers == og_header
+            wrapped_class = OpencensusSpanWrapper()
+            headers = wrapped_class.to_header()
+            new_header = {
+                "traceparent": "00-2578531519ed94423ceae67588eff2c9-{}-01".format(
+                    wrapped_class.span_instance.span_id
+                )
+            }
+            assert headers == new_header
 
     def test_end_tracer(self):
         with ContextHelper() as ctx:
