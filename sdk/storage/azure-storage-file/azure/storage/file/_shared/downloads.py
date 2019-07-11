@@ -40,22 +40,25 @@ def process_range_and_offset(start_range, end_range, length, encryption):
 
 
 def process_content(data, start_offset, end_offset, encryption):
-    if encryption.get('key') is not None or encryption.get('resolver') is not None:
+    if data is None:
+        raise ValueError("Response cannot be None.")
+    content = b"".join(list(response))
+    if content and encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
                 encryption.get('required'),
                 encryption.get('key'),
                 encryption.get('resolver'),
-                data,
+                content,
                 start_offset,
-                end_offset)
+                end_offset,
+                data.response.headers)
         except Exception as error:
             raise HttpResponseError(
                 message="Decryption failed.",
                 response=data.response,
                 error=error)
-    else:
-        return b"".join(list(data))
+    return content
 
 
 class _ChunkDownloader(object):

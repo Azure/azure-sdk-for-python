@@ -23,7 +23,7 @@ from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.upload_chunking import IterStreamer
-from ._shared.download_chunking import StorageStreamDownloader
+from ._shared.downloads import StorageStreamDownloader
 from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length

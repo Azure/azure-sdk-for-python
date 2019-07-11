@@ -23,7 +23,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.upload_chunking import IterStreamer
-from ._shared.download_chunking import StorageStreamDownloader
+from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
