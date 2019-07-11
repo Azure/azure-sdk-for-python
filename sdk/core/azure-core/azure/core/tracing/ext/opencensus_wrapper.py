@@ -82,7 +82,7 @@ class OpenCensusSpan(AbstractSpan):
         """
         Given a dictionary returns a new tracer with the span context extracted from that dictionary.
         :param headers: A key value pair dictionary
-        :type headers: Dict
+        :type headers: dict
         :return: A tracer initialized with the span context extraction from headers.
         """
         ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(
