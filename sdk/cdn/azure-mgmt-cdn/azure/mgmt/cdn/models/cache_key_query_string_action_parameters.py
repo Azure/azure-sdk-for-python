@@ -28,8 +28,8 @@ class CacheKeyQueryStringActionParameters(Model):
      Possible values include: 'Include', 'IncludeAll', 'Exclude', 'ExcludeAll'
     :type query_string_behavior: str or
      ~azure.mgmt.cdn.models.QueryStringBehavior
-    :param query_parameters: query parameters to include or exlude. (comma
-     separated)
+    :param query_parameters: query parameters to include or exclude (comma
+     separated).
     :type query_parameters: str
     """
 

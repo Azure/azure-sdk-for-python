@@ -25,13 +25,13 @@ class UrlRewriteActionParameters(Model):
     :vartype odatatype: str
     :param source_pattern: Required. define a request URI pattern that
      identifies the type of requests that may be rewritten. If value is blank,
-     all strings are matched
+     all strings are matched.
     :type source_pattern: str
     :param destination: Required. Define the relative URL to which the above
-     requests will be rewritten by
+     requests will be rewritten by.
     :type destination: str
     :param preserve_unmatched_path: Whether to preserve unmatched path.
-     Default value is true
+     Default value is true.
     :type preserve_unmatched_path: bool
     """
 
