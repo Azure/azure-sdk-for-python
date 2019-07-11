@@ -16,8 +16,9 @@ class DeliveryRuleAction(Model):
     """An action for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UrlRedirectAction, DeliveryRuleRequestHeaderAction,
-    DeliveryRuleResponseHeaderAction, DeliveryRuleCacheExpirationAction
+    sub-classes are: UrlRedirectAction, UrlRewriteAction,
+    DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction,
+    DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction
 
     All required parameters must be populated in order to send to Azure.
 
@@ -34,7 +35,7 @@ class DeliveryRuleAction(Model):
     }
 
     _subtype_map = {
-        'name': {'UrlRedirect': 'UrlRedirectAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'CacheExpiration': 'DeliveryRuleCacheExpirationAction'}
+        'name': {'UrlRedirect': 'UrlRedirectAction', 'UrlRewrite': 'UrlRewriteAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction'}
     }
 
     def __init__(self, **kwargs):

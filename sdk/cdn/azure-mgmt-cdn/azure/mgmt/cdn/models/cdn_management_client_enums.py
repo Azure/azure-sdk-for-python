@@ -210,6 +210,14 @@ class CacheBehavior(str, Enum):
     set_if_missing = "SetIfMissing"
 
 
+class QueryStringBehavior(str, Enum):
+
+    include = "Include"
+    include_all = "IncludeAll"
+    exclude = "Exclude"
+    exclude_all = "ExcludeAll"
+
+
 class OriginResourceState(str, Enum):
 
     creating = "Creating"
