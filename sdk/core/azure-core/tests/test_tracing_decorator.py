@@ -11,29 +11,35 @@ except ImportError:
 
 import sys
 import os
-from azure.core.tracing import common
-from azure.core.tracing import tracing_context, AbstractSpan
+from azure.core.tracing import common, AbstractSpan
+from azure.core.tracing.context import tracing_context
 from azure.core.settings import settings
-from azure.core.tracing.ext.opencensus_wrapper import OpencensusWrapper
+from azure.core.tracing.ext.opencensus_wrapper import OpencensusSpanWrapper
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 
 
 class ContextHelper(object):
     def __init__(self, environ={}):
-        self.orig_tracer = OpencensusWrapper.get_current_tracer()
-        self.orig_current_span = OpencensusWrapper.get_current_span()
+        self.orig_tracer = OpencensusSpanWrapper.get_current_tracer()
+        self.orig_current_span = OpencensusSpanWrapper.get_current_span()
+        self.orig_sdk_context_span = tracing_context.current_span.get()
+        self.orig_sdk_context_tracing_impl = tracing_context.tracing_impl.get()
         self.os_env = mock.patch.dict(os.environ, environ)
 
     def __enter__(self):
-        self.orig_tracer = OpencensusWrapper.get_current_tracer()
-        self.orig_current_span = OpencensusWrapper.get_current_span()
+        self.orig_tracer = OpencensusSpanWrapper.get_current_tracer()
+        self.orig_current_span = OpencensusSpanWrapper.get_current_span()
+        self.orig_sdk_context_span = tracing_context.current_span.get()
+        self.orig_sdk_context_tracing_impl = tracing_context.tracing_impl.get()
         self.os_env.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        OpencensusWrapper.set_current_tracer(self.orig_tracer)
-        OpencensusWrapper.set_current_span(self.orig_current_span)
+        OpencensusSpanWrapper.set_current_tracer(self.orig_tracer)
+        OpencensusSpanWrapper.set_current_span(self.orig_current_span)
+        tracing_context.current_span.set(self.orig_sdk_context_span)
+        tracing_context.tracing_impl.set(self.orig_sdk_context_tracing_impl)
         self.os_env.stop()
 
 
@@ -45,7 +51,7 @@ class TestCommon(unittest.TestCase):
         sys.modules["opencensus"] = opencensus
         assert (
             common.get_opencensus_wrapper_if_opencensus_is_imported()
-            is OpencensusWrapper
+            is OpencensusSpanWrapper
         )
 
     def test_set_span_context(self):
@@ -53,7 +59,7 @@ class TestCommon(unittest.TestCase):
             wrapper = settings.tracing_implementation()
             assert tracing_context.current_span.get() is None
             assert wrapper.get_current_span() is None
-            parent = OpencensusWrapper()
+            parent = OpencensusSpanWrapper()
             common.set_span_contexts(parent)
             assert parent.span_instance == wrapper.get_current_span()
             assert tracing_context.current_span.get() == parent
@@ -96,10 +102,10 @@ class TestCommon(unittest.TestCase):
 
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):
-            parent_span = OpencensusWrapper()
+            parent_span = OpencensusSpanWrapper()
             assert common.should_use_trace(parent_span) == False
             assert common.should_use_trace(None) == False
-        parent_span = OpencensusWrapper()
+        parent_span = OpencensusSpanWrapper()
         assert common.should_use_trace(parent_span)
         assert common.should_use_trace(None) == False
 
