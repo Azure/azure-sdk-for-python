@@ -50,21 +50,22 @@ class AbstractSpan(ABC):
         """
         pass
 
-    @abstractmethod
-    def from_header(self, headers):
-        # type: (Dict[str, str]) -> Any
-        """
-        Given a dictionary returns a new tracer with the span context
-        extracted from that dictionary.
-        """
-        pass
-
     @property
     @abstractmethod
     def span_instance(self):
         # type: () -> Any
         """
         Returns the span the class is wrapping.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def from_header(cls, headers):
+        # type: (Dict[str, str]) -> Any
+        """
+        Given a dictionary returns a new tracer with the span context
+        extracted from that dictionary.
         """
         pass
 
