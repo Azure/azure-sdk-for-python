@@ -23,7 +23,7 @@
 """
 from . import http_constants
 
-class _DefaultRetryPolicy(object):
+class DefaultRetryPolicy(object):
 
     error_codes = http_constants._ErrorCodes
     CONNECTION_ERROR_CODES = [
@@ -52,7 +52,7 @@ class _DefaultRetryPolicy(object):
         self.args = args
 
     def needsRetry(self, error_code):
-        if error_code in _DefaultRetryPolicy.CONNECTION_ERROR_CODES:
+        if error_code in DefaultRetryPolicy.CONNECTION_ERROR_CODES:
             if (len(self.args) > 0):
                 if (self.args[4]['method'] == 'GET') or (http_constants.HttpHeaders.IsQuery in self.args[4]['headers']):
                     return True

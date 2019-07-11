@@ -27,7 +27,7 @@ import time
 from . import errors
 from . import endpoint_discovery_retry_policy
 from . import resource_throttle_retry_policy
-from . import default_retry_policy
+from . import _default_retry_policy
 from . import session_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
@@ -50,7 +50,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     resourceThrottle_retry_policy = resource_throttle_retry_policy._ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount, 
                                                                                                 client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds, 
                                                                                                 client.connection_policy.RetryOptions.MaxWaitTimeInSeconds)
-    defaultRetry_policy = default_retry_policy._DefaultRetryPolicy(*args)
+    defaultRetry_policy = _default_retry_policy.DefaultRetryPolicy(*args)
 
     sessionRetry_policy = session_retry_policy._SessionRetryPolicy(client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args)
     while True:
