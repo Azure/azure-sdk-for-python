@@ -7,7 +7,7 @@ from azure.cosmos.http_constants import ResourceType
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos.request_object import _RequestObject
-from azure.cosmos.location_cache import LocationCache
+from azure.cosmos._location_cache import LocationCache
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.retry_utility as retry_utility
