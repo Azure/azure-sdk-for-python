@@ -28,7 +28,7 @@ import functools
 import azure.core.tracing.common as common
 
 
-def distributed_tracing_decorator(func):
+def distributed_tracing_decorator_async(func):
     # type: (Callable[[Any], Any]) -> Callable[[Any], Any]
     @functools.wraps(func)
     async def wrapper_use_tracer(self, *args, **kwargs):
