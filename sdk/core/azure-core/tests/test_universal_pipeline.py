@@ -88,7 +88,7 @@ def test_telemetry_policy_keep_existing_user_agent():
     request = pipeline_response.http_request
     user_agent = request.headers.get('User-Agent')
     assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
-    assert user_agent.endswith('ExistingUserAgentValue')
+    assert user_agent.find('ExistingUserAgentValue')
 
 
 def test_telemetry_policy_with_dynamic_telemetry():
