@@ -9,20 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
+class CommonDataServiceForAppsSink(CopySink):
+    """A copy activity Common Data Service for Apps sink.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceSink,
-    AzureDataExplorerSink, CommonDataServiceForAppsSink, DynamicsCrmSink,
-    DynamicsSink, OdbcSink, AzureSearchIndexSink, AzureBlobFSSink,
-    AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlMISink, AzureSqlSink,
-    SqlServerSink, SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
-    ParquetSink, AzureTableSink, AzureQueueSink, SapCloudForCustomerSink,
-    DelimitedTextSink
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,10 +43,18 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :ivar write_behavior: Required. The write behavior for the operation.
+     Default value: "Upsert" .
+    :vartype write_behavior: str
+    :param ignore_null_values: The flag indicating whether to ignore null
+     values from input dataset (except key fields) during write operation.
+     Default is false. Type: boolean (or Expression with resultType boolean).
+    :type ignore_null_values: object
     """
 
     _validation = {
         'type': {'required': True},
+        'write_behavior': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -63,18 +65,13 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
-    }
+    write_behavior = "Upsert"
 
     def __init__(self, **kwargs):
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.type = None
+        super(CommonDataServiceForAppsSink, self).__init__(**kwargs)
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.type = 'CommonDataServiceForAppsSink'

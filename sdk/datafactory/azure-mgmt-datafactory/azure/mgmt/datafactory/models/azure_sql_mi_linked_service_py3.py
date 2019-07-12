@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
-class TeradataLinkedService(LinkedService):
-    """Linked service for Teradata data source.
+class AzureSqlMILinkedService(LinkedService):
+    """Azure SQL Managed Instance linked service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,21 +33,23 @@ class TeradataLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Teradata ODBC connection string. Type: string,
+    :param connection_string: Required. The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
-    :type server: object
-    :param authentication_type: AuthenticationType to be used for connection.
-     Possible values include: 'Basic', 'Windows'
-    :type authentication_type: str or
-     ~azure.mgmt.datafactory.models.TeradataAuthenticationType
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
-    :type username: object
-    :param password: Password for authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param service_principal_id: The ID of the service principal used to
+     authenticate against Azure SQL Managed Instance. Type: string (or
+     Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_key: The key of the service principal used to
+     authenticate against Azure SQL Managed Instance.
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param tenant: The name or ID of the tenant to which the service principal
+     belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -56,6 +58,7 @@ class TeradataLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
+        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -66,19 +69,19 @@ class TeradataLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
-        'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
+        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(TeradataLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.server = kwargs.get('server', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
-        self.type = 'Teradata'
+    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, password=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None, **kwargs) -> None:
+        super(AzureSqlMILinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_string = connection_string
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.encrypted_credential = encrypted_credential
+        self.type = 'AzureSqlMI'

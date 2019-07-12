@@ -36,8 +36,8 @@ class TeradataLinkedService(LinkedService):
     :param connection_string: Teradata ODBC connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param server: Required. Server name for connection. Type: string (or
-     Expression with resultType string).
+    :param server: Server name for connection. Type: string (or Expression
+     with resultType string).
     :type server: object
     :param authentication_type: AuthenticationType to be used for connection.
      Possible values include: 'Basic', 'Windows'
@@ -56,7 +56,6 @@ class TeradataLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
     }
 
     _attribute_map = {
@@ -74,7 +73,7 @@ class TeradataLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, server=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
         super(TeradataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
         self.server = server
