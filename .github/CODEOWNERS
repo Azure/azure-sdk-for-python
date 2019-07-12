@@ -4,14 +4,6 @@
 # https://github.com/Azure/azure-sdk/blob/master/docs/engineering-system/codeowners.md
 
 ###########
-# Eng Sys
-###########
-/eng/   @weshaggard @scbedd @mitchdenny @danieljurek
-/**/tests.yml   @danieljurek
-/**/ci.yml      @mitchdenny
-
-
-###########
 # SDK
 ###########
 
@@ -43,3 +35,10 @@
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
 /sdk/servicebus/azure-servicebus/ @annatisch
+
+###########
+# Eng Sys
+###########
+/eng/   @weshaggard @scbedd @mitchdenny @danieljurek
+/**/tests.yml   @danieljurek
+/**/ci.yml      @mitchdenny
