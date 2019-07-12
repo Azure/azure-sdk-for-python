@@ -244,7 +244,7 @@ class LongRunningOperation(object):
             else:
                 raise OperationFailed("Invalid status found")
             return
-        raise OperationFailed("Operation failed or cancelled")
+        raise OperationFailed("Operation failed or canceled")
 
     def get_status_from_location(self, response):
         """Process the latest status update retrieved from a 'location'
@@ -407,7 +407,7 @@ class ARMPolling(PollingMethod):
 
         :param callable update_cmd: The function to call to retrieve the
          latest status of the long running operation.
-        :raises: OperationFailed if operation status 'Failed' or 'Cancelled'.
+        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
@@ -417,7 +417,7 @@ class ARMPolling(PollingMethod):
             self.update_status()
 
         if failed(self._operation.status):
-            raise OperationFailed("Operation failed or cancelled")
+            raise OperationFailed("Operation failed or canceled")
 
         elif self._operation.should_do_final_get():
             if self._operation.method == 'POST' and self._operation.location_url:
