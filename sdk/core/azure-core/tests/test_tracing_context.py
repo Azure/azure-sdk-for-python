@@ -10,24 +10,25 @@ except ImportError:
     import mock
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing import AbstractSpan
+from azure.core.settings import settings
 import os
 
 
 class ContextHelper(object):
-    def __init__(self, environ={}):
+    def __init__(self, environ={}, tracer_to_use=None):
         self.orig_sdk_context_span = tracing_context.current_span.get()
-        self.orig_sdk_context_tracing_impl = tracing_context.tracing_impl.get()
         self.os_env = mock.patch.dict(os.environ, environ)
+        self.tracer_to_use = tracer_to_use
 
     def __enter__(self):
         self.orig_sdk_context_span = tracing_context.current_span.get()
-        self.orig_sdk_context_tracing_impl = tracing_context.tracing_impl.get()
+        settings.tracing_implementation.set_value(self.tracer_to_use)
         self.os_env.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         tracing_context.current_span.set(self.orig_sdk_context_span)
-        tracing_context.tracing_impl.set(self.orig_sdk_context_tracing_impl)
+        settings.tracing_implementation.unset_value()
         self.os_env.stop()
 
 
@@ -46,19 +47,10 @@ class TestContext(unittest.TestCase):
             tracing_context.current_span.set(val)
             assert tracing_context.current_span.get() == val
 
-    def test_tracing_impl(self):
-        with ContextHelper():
-            assert tracing_context.tracing_impl.get() is None
-            val = AbstractSpan
-            tracing_context.tracing_impl.set(val)
-            assert tracing_context.tracing_impl.get() == val
-
     def test_with_current_context(self):
-        with ContextHelper():
+        with ContextHelper(tracer_to_use=mock.Mock(AbstractSpan)):
             from threading import Thread
 
-            mock_impl = AbstractSpan
-            tracing_context.tracing_impl.set(mock_impl)
             current_span = mock.Mock(spec=AbstractSpan)
             tracing_context.current_span.set(current_span)
 

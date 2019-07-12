@@ -120,7 +120,6 @@ class TracingContext:
     def __init__(self):
         # type: () -> None
         self.current_span = TracingContext._get_context_class("current_span", None)
-        self.tracing_impl = TracingContext._get_context_class("tracing_impl", None)
 
     def with_current_context(self, func):
         # type: (Callable[[Any], Any]) -> Any
@@ -130,7 +129,7 @@ class TracingContext:
         :return: The target the pass in instead of the function
         """
         wrapped_span = tracing_context.current_span.get()
-        wrapper_class = self.tracing_impl.get() or settings.tracing_implementation()
+        wrapper_class = settings.tracing_implementation()
         if wrapper_class is not None:
             current_impl_span = wrapper_class.get_current_span()
             current_impl_tracer = wrapper_class.get_current_tracer()
@@ -141,7 +140,6 @@ class TracingContext:
                 wrapper_class.set_current_tracer(current_impl_tracer)
                 current_span = wrapped_span or wrapper_class(current_impl_span)
                 self.current_span.set(current_span)
-                self.tracing_impl.set(wrapper_class)
             return func(*args, **kwargs)
 
         return call_with_current_context

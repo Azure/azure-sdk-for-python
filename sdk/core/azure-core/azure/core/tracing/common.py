@@ -42,7 +42,6 @@ def set_span_contexts(wrapped_span, span_instance=None):
     # type: (AbstractSpan, AbstractSpan) -> None
     tracing_context.current_span.set(wrapped_span)
     impl_wrapper = settings.tracing_implementation()
-    tracing_context.tracing_impl.set(impl_wrapper.__class__)
     if wrapped_span is not None:
         span_instance = wrapped_span.span_instance
     if impl_wrapper is not None:
@@ -56,18 +55,12 @@ def get_parent(kwargs):
     orig_wrapped_span = tracing_context.current_span.get()
 
     # wrapper class get from tracing_context, settings or assume OpencensusWrapper if opencesus is installed
-    wrapper_class = (
-        tracing_context.tracing_impl.get()
-        or settings.tracing_implementation()
-        or get_opencensus_wrapper_if_opencensus_is_imported()
-    )
+    wrapper_class = settings.tracing_implementation() or get_opencensus_wrapper_if_opencensus_is_imported()
     if wrapper_class is None:
         return None, orig_wrapped_span, None
     original_wrapper_span_instance = wrapper_class.get_current_span()
     # parent span is given, get from my context, get from the implementation context or make our own
-    parent_span = (
-        orig_wrapped_span if parent_span is None else wrapper_class(parent_span)
-    )
+    parent_span = orig_wrapped_span if parent_span is None else wrapper_class(parent_span)
     if parent_span is None:
         current_span = wrapper_class.get_current_span()
         parent_span = (
