@@ -147,6 +147,7 @@ try:
     from .sap_open_hub_linked_service_py3 import SapOpenHubLinkedService
     from .sap_ecc_linked_service_py3 import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service_py3 import SapCloudForCustomerLinkedService
+    from .salesforce_service_cloud_linked_service_py3 import SalesforceServiceCloudLinkedService
     from .salesforce_linked_service_py3 import SalesforceLinkedService
     from .office365_linked_service_py3 import Office365LinkedService
     from .azure_blob_fs_linked_service_py3 import AzureBlobFSLinkedService
@@ -162,6 +163,8 @@ try:
     from .web_linked_service_py3 import WebLinkedService
     from .odata_linked_service_py3 import ODataLinkedService
     from .hdfs_linked_service_py3 import HdfsLinkedService
+    from .microsoft_access_linked_service_py3 import MicrosoftAccessLinkedService
+    from .informix_linked_service_py3 import InformixLinkedService
     from .odbc_linked_service_py3 import OdbcLinkedService
     from .azure_ml_linked_service_py3 import AzureMLLinkedService
     from .teradata_linked_service_py3 import TeradataLinkedService
@@ -241,7 +244,10 @@ try:
     from .sap_hana_table_dataset_py3 import SapHanaTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
+    from .salesforce_service_cloud_object_dataset_py3 import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
+    from .microsoft_access_table_dataset_py3 import MicrosoftAccessTableDataset
+    from .informix_table_dataset_py3 import InformixTableDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
@@ -352,7 +358,10 @@ try:
     from .sap_hana_source_py3 import SapHanaSource
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
+    from .salesforce_service_cloud_source_py3 import SalesforceServiceCloudSource
     from .salesforce_source_py3 import SalesforceSource
+    from .microsoft_access_source_py3 import MicrosoftAccessSource
+    from .informix_source_py3 import InformixSource
     from .relational_source_py3 import RelationalSource
     from .common_data_service_for_apps_source_py3 import CommonDataServiceForAppsSource
     from .dynamics_crm_source_py3 import DynamicsCrmSource
@@ -394,11 +403,14 @@ try:
     from .redirect_incompatible_row_settings_py3 import RedirectIncompatibleRowSettings
     from .staging_settings_py3 import StagingSettings
     from .cosmos_db_mongo_db_api_sink_py3 import CosmosDbMongoDbApiSink
+    from .salesforce_service_cloud_sink_py3 import SalesforceServiceCloudSink
     from .salesforce_sink_py3 import SalesforceSink
     from .azure_data_explorer_sink_py3 import AzureDataExplorerSink
     from .common_data_service_for_apps_sink_py3 import CommonDataServiceForAppsSink
     from .dynamics_crm_sink_py3 import DynamicsCrmSink
     from .dynamics_sink_py3 import DynamicsSink
+    from .microsoft_access_sink_py3 import MicrosoftAccessSink
+    from .informix_sink_py3 import InformixSink
     from .odbc_sink_py3 import OdbcSink
     from .azure_search_index_sink_py3 import AzureSearchIndexSink
     from .azure_blob_fs_sink_py3 import AzureBlobFSSink
@@ -611,6 +623,7 @@ except (SyntaxError, ImportError):
     from .sap_open_hub_linked_service import SapOpenHubLinkedService
     from .sap_ecc_linked_service import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service import SapCloudForCustomerLinkedService
+    from .salesforce_service_cloud_linked_service import SalesforceServiceCloudLinkedService
     from .salesforce_linked_service import SalesforceLinkedService
     from .office365_linked_service import Office365LinkedService
     from .azure_blob_fs_linked_service import AzureBlobFSLinkedService
@@ -626,6 +639,8 @@ except (SyntaxError, ImportError):
     from .web_linked_service import WebLinkedService
     from .odata_linked_service import ODataLinkedService
     from .hdfs_linked_service import HdfsLinkedService
+    from .microsoft_access_linked_service import MicrosoftAccessLinkedService
+    from .informix_linked_service import InformixLinkedService
     from .odbc_linked_service import OdbcLinkedService
     from .azure_ml_linked_service import AzureMLLinkedService
     from .teradata_linked_service import TeradataLinkedService
@@ -705,7 +720,10 @@ except (SyntaxError, ImportError):
     from .sap_hana_table_dataset import SapHanaTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
+    from .salesforce_service_cloud_object_dataset import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
+    from .microsoft_access_table_dataset import MicrosoftAccessTableDataset
+    from .informix_table_dataset import InformixTableDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
     from .oracle_table_dataset import OracleTableDataset
@@ -816,7 +834,10 @@ except (SyntaxError, ImportError):
     from .sap_hana_source import SapHanaSource
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
+    from .salesforce_service_cloud_source import SalesforceServiceCloudSource
     from .salesforce_source import SalesforceSource
+    from .microsoft_access_source import MicrosoftAccessSource
+    from .informix_source import InformixSource
     from .relational_source import RelationalSource
     from .common_data_service_for_apps_source import CommonDataServiceForAppsSource
     from .dynamics_crm_source import DynamicsCrmSource
@@ -858,11 +879,14 @@ except (SyntaxError, ImportError):
     from .redirect_incompatible_row_settings import RedirectIncompatibleRowSettings
     from .staging_settings import StagingSettings
     from .cosmos_db_mongo_db_api_sink import CosmosDbMongoDbApiSink
+    from .salesforce_service_cloud_sink import SalesforceServiceCloudSink
     from .salesforce_sink import SalesforceSink
     from .azure_data_explorer_sink import AzureDataExplorerSink
     from .common_data_service_for_apps_sink import CommonDataServiceForAppsSink
     from .dynamics_crm_sink import DynamicsCrmSink
     from .dynamics_sink import DynamicsSink
+    from .microsoft_access_sink import MicrosoftAccessSink
+    from .informix_sink import InformixSink
     from .odbc_sink import OdbcSink
     from .azure_search_index_sink import AzureSearchIndexSink
     from .azure_blob_fs_sink import AzureBlobFSSink
@@ -1150,6 +1174,7 @@ __all__ = [
     'SapOpenHubLinkedService',
     'SapEccLinkedService',
     'SapCloudForCustomerLinkedService',
+    'SalesforceServiceCloudLinkedService',
     'SalesforceLinkedService',
     'Office365LinkedService',
     'AzureBlobFSLinkedService',
@@ -1165,6 +1190,8 @@ __all__ = [
     'WebLinkedService',
     'ODataLinkedService',
     'HdfsLinkedService',
+    'MicrosoftAccessLinkedService',
+    'InformixLinkedService',
     'OdbcLinkedService',
     'AzureMLLinkedService',
     'TeradataLinkedService',
@@ -1244,7 +1271,10 @@ __all__ = [
     'SapHanaTableDataset',
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
+    'SalesforceServiceCloudObjectDataset',
     'SalesforceObjectDataset',
+    'MicrosoftAccessTableDataset',
+    'InformixTableDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
     'OracleTableDataset',
@@ -1355,7 +1385,10 @@ __all__ = [
     'SapHanaSource',
     'SapEccSource',
     'SapCloudForCustomerSource',
+    'SalesforceServiceCloudSource',
     'SalesforceSource',
+    'MicrosoftAccessSource',
+    'InformixSource',
     'RelationalSource',
     'CommonDataServiceForAppsSource',
     'DynamicsCrmSource',
@@ -1397,11 +1430,14 @@ __all__ = [
     'RedirectIncompatibleRowSettings',
     'StagingSettings',
     'CosmosDbMongoDbApiSink',
+    'SalesforceServiceCloudSink',
     'SalesforceSink',
     'AzureDataExplorerSink',
     'CommonDataServiceForAppsSink',
     'DynamicsCrmSink',
     'DynamicsSink',
+    'MicrosoftAccessSink',
+    'InformixSink',
     'OdbcSink',
     'AzureSearchIndexSink',
     'AzureBlobFSSink',
