@@ -31,6 +31,7 @@
 from collections import namedtuple
 import logging
 import os
+import six
 import sys
 
 try:
@@ -152,21 +153,11 @@ def convert_tracing_impl(value):
     :raises ValueError: If conversion to AbstractSpan fails
 
     """
-    if issubclass(value.__class__, AbstractSpan):
-        return value
-
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    wrapper_class = _tracing_implementation_dict.get(value.lower(), None)
-    if wrapper_class is None:
-        raise ValueError(
-            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
-                value, ", ".join(_tracing_implementation_dict)
-            )
-        )
-
-    return wrapper_class
+    value = value.lower() if isinstance(value, six.string_types) else value
+    return _tracing_implementation_dict.get(value, value)
 
 
 class PrioritizedSetting(object):
