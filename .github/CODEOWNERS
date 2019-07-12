@@ -15,6 +15,9 @@
 /sdk/core/azure-core/ @xiangyan99 @bryevdv
 
 # Service team
+# /sdk/identity/
+# /sdk/eventhub/
+# /sdk/storage/
 /sdk/applicationinsights/ @alexeldeib
 /sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
@@ -22,7 +25,7 @@
 /sdk/loganalytics/ @alexeldeib
 /sdk/consumption/ @sandeepnl
 /sdk/containerinstance/ @samkreter @xizhamsft
-/sdk/containerregistry/ @djyou 
+/sdk/containerregistry/ @djyou
 /sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
 /sdk/cosmos/ @dmakwana
 /sdk/datafactory/ @hvermis
