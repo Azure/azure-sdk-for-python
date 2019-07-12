@@ -19,7 +19,7 @@ from azure.core.tracing import common
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.decorator import distributed_tracing_decorator
 from azure.core.settings import settings
-from azure.core.tracing.ext.opencensus_wrapper import OpenCensusSpan
+from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
@@ -86,12 +86,12 @@ class MockClient:
 
 
 class TestCommon(unittest.TestCase):
-    def test_get_opencensus_wrapper_if_opencensus_is_imported(self):
+    def test_get_opencensus_span_if_opencensus_is_imported(self):
         opencensus = sys.modules["opencensus"]
         del sys.modules["opencensus"]
-        assert common.get_opencensus_wrapper_if_opencensus_is_imported() == None
+        assert common.get_opencensus_span_if_opencensus_is_imported() == None
         sys.modules["opencensus"] = opencensus
-        assert common.get_opencensus_wrapper_if_opencensus_is_imported() is OpenCensusSpan
+        assert common.get_opencensus_span_if_opencensus_is_imported() is OpenCensusSpan
 
     def test_set_span_context(self):
         with ContextHelper(environ={"AZURE_SDK_TRACING_IMPLEMENTATION": "opencensus"}):
@@ -186,13 +186,18 @@ class TestDecorator(unittest.TestCase):
             with trace.start_span(name="OverAll") as parent:
                 client = MockClient()
                 client.make_request(2)
-                with parent.span("child") as child:
-                    client.make_request(2, parent_span=child)
-                client.make_request(2)
-                assert len(parent.children) == 4
+                with trace.span("child") as child:
+                    client.make_request(2, parent_span=parent)
+                    assert OpenCensusSpan.get_current_span() == child
+                    client.make_request(2)
+                assert len(parent.children) == 3
                 assert parent.children[0].name == "MockClient.__init__"
                 assert parent.children[1].name == "MockClient.make_request"
-                assert parent.children[2].children[0].name == "MockClient.make_request"
+                assert parent.children[1].children[0].name == "MockClient.get_foo"
+                assert parent.children[1].children[1].name == "MockClient.make_request"
+                assert parent.children[2].name == "MockClient.make_request"
+                assert parent.children[2].children[0].name == "MockClient.get_foo"
+                assert parent.children[2].children[1].name == "MockClient.make_request"
                 children = parent.children[1].children
                 assert len(children) == 2
             trace.finish()

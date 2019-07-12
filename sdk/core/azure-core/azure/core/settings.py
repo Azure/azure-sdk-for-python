@@ -112,11 +112,11 @@ def convert_logging(value):
     return level
 
 
-def get_opencensus_wrapper():
+def get_opencensus_span():
     # type: () -> OpenCensusSpan
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_wrapper import OpenCensusSpan
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 
         return OpenCensusSpan
     except ImportError:
@@ -141,8 +141,8 @@ def convert_tracing_impl(value):
     if issubclass(value.__class__, AbstractSpan) or value is None:
         return value
 
-    _impl_dict = {"opencensus": get_opencensus_wrapper()}
-    wrapper_class = _impl_dict.get(value, None)
+    _impl_dict = {"opencensus": get_opencensus_span()}
+    wrapper_class = _impl_dict.get(value.lower(), None)
     if wrapper_class is None:
         raise ValueError(
             "Cannot convert {} to AbstractSpan, valid values are: {}".format(
