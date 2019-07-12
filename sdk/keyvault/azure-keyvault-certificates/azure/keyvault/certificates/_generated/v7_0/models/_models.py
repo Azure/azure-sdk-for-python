@@ -537,7 +537,7 @@ class CertificateOperation(Model):
     :type error: ~azure.keyvault.v7_0.models.Error
     :param target: Location which contains the result of the certificate
      operation.
-    :type target: str
+    :type target: strX509CertificateProperties
     :param request_id: Identifier for the certificate operation.
     :type request_id: str
     """

@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: PUT
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Jul 2019 23:05:02 GMT
+      - Mon, 15 Jul 2019 17:38:46 GMT
       expires:
       - '-1'
       pragma:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.160.125;act_addr_fam=InterNetwork;
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
@@ -64,7 +64,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Jul 2019 23:05:02 GMT
+      - Mon, 15 Jul 2019 17:38:46 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.160.125;act_addr_fam=InterNetwork;
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
@@ -115,7 +115,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -130,7 +130,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Jul 2019 23:05:02 GMT
+      - Mon, 15 Jul 2019 17:38:46 GMT
       expires:
       - '-1'
       pragma:
@@ -144,7 +144,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.160.125;act_addr_fam=InterNetwork;
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
@@ -164,7 +164,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -178,7 +178,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Jul 2019 23:05:03 GMT
+      - Mon, 15 Jul 2019 17:38:46 GMT
       expires:
       - '-1'
       pragma:
@@ -192,7 +192,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.160.125;act_addr_fam=InterNetwork;
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
