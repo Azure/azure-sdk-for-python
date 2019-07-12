@@ -108,7 +108,7 @@ class ODataV4Error(HttpResponseError):
         # Ensure field are declared, whatever can happen afterwards
         self.odata_json = None  # type: Optional[dict[str, Any]]
         try:
-            self.odata_json = json.loads(response.body())
+            self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
         except Exception:
             # If the body is not JSON valid, just stop now

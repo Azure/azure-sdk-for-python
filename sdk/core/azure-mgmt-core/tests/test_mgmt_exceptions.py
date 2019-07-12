@@ -45,6 +45,7 @@ def _build_response(json_body):
 
         def body(self):
             return self._body
+
     return MockResponse()
 
 
@@ -65,7 +66,7 @@ def test_odata_v4_exception():
             }
         }
     }
-    exp = ODataV4Error(_build_response(json.dumps(message)))
+    exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
 
     assert exp.code == "501"
     assert exp.message == "Unsupported functionality"
@@ -76,7 +77,7 @@ def test_odata_v4_exception():
     assert "context" in exp.innererror
 
     message = {}
-    exp = ODataV4Error(_build_response(json.dumps(message)))
+    exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
     assert exp.message == "Operation returned an invalid status 'Bad Request'"
 
     exp = ODataV4Error(_build_response(b""))
@@ -111,7 +112,7 @@ def test_arm_exception():
             ]
         }
     }
-    cloud_exp = ARMError(_build_response(json.dumps(message)))
+    cloud_exp = ARMError(_build_response(json.dumps(message).encode("utf-8")))
     assert cloud_exp.target ==  'query'
     assert cloud_exp.details[0].target ==  '$search'
     assert cloud_exp.innererror['customKey'] ==  'customValue'
@@ -156,7 +157,7 @@ def test_arm_exception():
             ]
         }
     }
-    cloud_exp = ARMError(_build_response(json.dumps(message)))
+    cloud_exp = ARMError(_build_response(json.dumps(message).encode("utf-8")))
     assert cloud_exp.target ==  'query'
     assert cloud_exp.details[0].target ==  '$search'
     assert cloud_exp.additional_info[0].type ==  'SomeErrorType'
