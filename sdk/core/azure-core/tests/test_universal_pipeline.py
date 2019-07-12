@@ -33,6 +33,7 @@ import requests
 
 import pytest
 
+from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
 from azure.core.configuration import Configuration
 from azure.core.pipeline import (
@@ -49,8 +50,104 @@ from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.policies.universal import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    HeadersPolicy,
+    TelemetryPolicy
 )
+
+
+def test_telemetry_policy():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="AzCopy/10.0.4-Preview"
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+
+
+def test_telemetry_policy_keep_existing_user_agent():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="AzCopy/10.0.4-Preview"
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+    assert user_agent.endswith('ExistingUserAgentValue')
+
+
+def test_telemetry_policy_with_dynamic_telemetry():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="AzCopy/10.0.4-Preview",
+        telemetry="class=BlobClient;method=DownloadFile;blobType=Block"
+    )
+
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    telemetry = request.headers.get('X-MS-AZSDK-Telemetry')
+    assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+    assert telemetry == 'class=BlobClient;method=DownloadFile;blobType=Block'
+
+
+def test_telemetry_policy_with_telemetry_disabled():
+    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': "True"}):
+        policy = TelemetryPolicy('storage/1.01')
+
+        request = HttpRequest('GET', 'https://bing.com')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        assert request.headers.get("user-agent", None) is None
+
+
+def test_telemetry_policy_with_overwrite():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="OverwritingUserAgent",
+        user_agent_overwrite=True
+    )
+
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent == 'OverwritingUserAgent'
+
+
+def test_telemetry_policy_from_environment():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': "UserAgentFromEnv"}):
+        policy = TelemetryPolicy(user_agent_use_env=True)
+
+        request = HttpRequest('GET', 'https://bing.com')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        assert request.headers["user-agent"].endswith("UserAgentFromEnv")
+
 
 def test_user_agent():
 

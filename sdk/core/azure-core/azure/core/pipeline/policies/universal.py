@@ -105,11 +105,8 @@ class TelemetryPolicy(SansIOHTTPPolicy):
 
     Clients can prepend additional information indicating the name and version of the client application.
 
-    :param str package_user_agent: The package information in the following format:
-        <package_name>/<package_version>
-
-        Example:
-        "storage/4.0.0"
+    :param str package_user_agent: The package information in the following format: <package_name>/<package_version>.
+        Example: "storage/4.0.0"
 
     **Keyword arguments:**
 
@@ -120,7 +117,6 @@ class TelemetryPolicy(SansIOHTTPPolicy):
 
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
-    _X_MS_USER_AGENT = "X-MS-UserAgent"
     _X_MS_AZSDK_Telemetry = "X-MS-AZSDK-Telemetry"
 
     def __init__(self, package_user_agent=None, **kwargs):
@@ -173,7 +169,7 @@ class TelemetryPolicy(SansIOHTTPPolicy):
 
         http_request = request.http_request
         options = request.context.options # type: ignore
-        existing = request.http_request.headers.get(self._USERAGENT, "")
+        existing = request.http_request.headers.get(self._USERAGENT, "") # type: ignore
 
         if existing:
             self._user_agent = "{} {}".format(self.user_agent, existing)
@@ -183,15 +179,13 @@ class TelemetryPolicy(SansIOHTTPPolicy):
             if options.pop('user_agent_overwrite', self.overwrite):
                 http_request.headers[self._USERAGENT] = user_agent # type: ignore
             else:
-                http_request.headers[self._USERAGENT] = "{} {}".format(user_agent, self.user_agent)  # type: ignore
+                http_request.headers[self._USERAGENT] = "{} {}".format(user_agent, self.user_agent) # type: ignore
 
         elif self.overwrite or self._USERAGENT not in http_request.headers: # type: ignore
             http_request.headers[self._USERAGENT] = self.user_agent # type: ignore
 
         if 'telemetry' in options:
             http_request.headers[self._X_MS_AZSDK_Telemetry] = options.pop('telemetry') # type: ignore
-
-        http_request.headers[self._X_MS_USER_AGENT] = http_request.headers[self._USERAGENT] # type: ignore
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):

@@ -32,6 +32,7 @@ from .retry import RetryPolicy
 from .universal import (
     HeadersPolicy,
     UserAgentPolicy,
+    TelemetryPolicy,
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
     ProxyPolicy
@@ -43,6 +44,7 @@ __all__ = [
     'BearerTokenCredentialPolicy',
     'HeadersPolicy',
     'UserAgentPolicy',
+    'TelemetryPolicy',
     'NetworkTraceLoggingPolicy',
     'ContentDecodePolicy',
     'RetryPolicy',

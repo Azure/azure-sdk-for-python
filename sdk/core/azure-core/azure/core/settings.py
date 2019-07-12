@@ -281,7 +281,7 @@ class Settings(object):
     :type log_level: PrioritizedSetting
     :cvar tracing_enabled: Whether tracing should be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
     :type tracing_enabled: PrioritizedSetting
-    :cvar telemetry_disabled: Whether telemetry be disabled across Azure SDKs (AZURE_TRACING_DISABLED)
+    :cvar telemetry_disabled: Whether telemetry be disabled across Azure SDKs (AZURE_TELEMETRY_DISABLED)
     :type telemetry_disabled: PrioritizedSetting
 
     :Example:
