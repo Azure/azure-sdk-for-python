@@ -43,16 +43,16 @@ class AsyncARMPolling(ARMPolling):
     async def run(self):
         try:
             await self._poll()
-        except BadStatus:
+        except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response)
+            raise ARMError(self._response, error=err)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response, message=str(err))
+            raise ARMError(self._response, message=str(err), error=err)
 
-        except OperationFailed:
-            raise ARMError(self._response)
+        except OperationFailed as err:
+            raise ARMError(self._response, error=err)
 
     async def _poll(self):
         """Poll status of operation so long as operation is incomplete and

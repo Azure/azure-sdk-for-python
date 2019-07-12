@@ -139,7 +139,7 @@ class LongRunningOperation(object):
            (code == 204 and self.method in {'DELETE', 'POST'}):
             return
         raise BadStatus(
-            "Invalid return status for {!r} operation".format(self.method))
+            "Invalid return status {!r} for {!r} operation".format(code, self.method))
 
     def _is_empty(self, response):
         """Check if response body contains meaningful content.
@@ -378,28 +378,28 @@ class ARMPolling(PollingMethod):
         self._operation = LongRunningOperation(initial_response, deserialization_callback, self._lro_options)
         try:
             self._operation.set_initial_status(initial_response)
-        except BadStatus:
+        except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(initial_response)
+            raise ARMError(initial_response, error=err)
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(initial_response, message=str(err))
-        except OperationFailed:
-            raise ARMError(initial_response)
+            raise ARMError(initial_response, message=str(err), error=err)
+        except OperationFailed as err:
+            raise ARMError(initial_response, error=err)
 
     def run(self):
         try:
             self._poll()
-        except BadStatus:
+        except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response)
+            raise ARMError(self._response, error=err)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response, message=str(err))
+            raise ARMError(self._response, message=str(err), error=err)
 
-        except OperationFailed:
-            raise ARMError(self._response)
+        except OperationFailed as err:
+            raise ARMError(self._response, error=err)
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
