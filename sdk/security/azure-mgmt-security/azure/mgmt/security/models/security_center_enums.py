@@ -100,12 +100,73 @@ class AlertsToAdmins(str, Enum):
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
 
 
+class SecuritySolutionStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ExportData(str, Enum):
+
+    raw_events = "RawEvents"  #: Agent raw events
+
+
+class DataSource(str, Enum):
+
+    twin_data = "TwinData"  #: Devices twin data
+
+
+class RecommendationType(str, Enum):
+
+    open_ports_on_device = "OpenPortsOnDevice"  #: A listening endpoint was found on the device.
+    permissive_firewall_policy = "PermissiveFirewallPolicy"  #: Allowed firewall policy found (INPUT/OUTPUT). Firewall policy should deny all traffic by default, and define rules to allow necessary communication to/from the device.
+    permissive_firewall_rule_input = "PermissiveFirewallRuleInput"  #: A rule in the firewall in the input chain has been found that contains a permissive pattern for a wide range of IP addresses or ports.
+    permissive_firewall_rule_out = "PermissiveFirewallRuleOut"  #: A rule in the firewall in the output chain has been found that contains a permissive pattern for a wide range of IP addresses or ports.
+    operation_system_not_valid = "OperationSystemNotValid"  #: Device doesn't comply with CIS Linux benchmarks.
+    unutilized_messages_from_agent = "UnutilizedMessagesFromAgent"  #: 10% or more of security messages were smaller than 4kb during the last 24 hours.
+    security_twin_configuration_not_optimal = "SecurityTwinConfigurationNotOptimal"  #: Security twin configuration is not optimal.
+    security_twin_configuration_conflict = "SecurityTwinConfigurationConflict"  #: Conflicts were identified in the security twin configuration.
+    identical_authentication_credentials = "IdenticalAuthenticationCredentials"  #: IoT Hub authentication credentials are used by multiple devices. This may indicate an illegitimate device impersonating a legitimate device. Duplicate credential use increases the risk of device impersonation by a malicious actor.
+    deny_default_ip_policy = "DenyDefaultIpPolicy"  #: IP filter configuration should have rules defined for allowed traffic, and should by default, deny all other traffic by default.
+    too_large_ip_range = "TooLargeIPRange"  #: An allow IP filter rule source IP range is too large. Overly permissive rules can expose your IoT hub to malicious actors.
+    enable_diagnostics_log = "EnableDiagnosticsLog"  #: Enable logs and retain them for up to a year. Retaining logs enables you to recreate activity trails for investigation purposes when a security incident occurs or your network is compromised.
+
+
+class RecommendationConfigStatus(str, Enum):
+
+    turned_off = "TurnedOff"
+    turned_on = "TurnedOn"
+
+
 class State(str, Enum):
 
     passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
     failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
     skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
     unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
+class Category(str, Enum):
+
+    compute = "Compute"
+    network = "Network"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class RequiredPricingBundle(str, Enum):
+
+    virtual_machines = "VirtualMachines"
+    sql_servers = "SqlServers"
+    app_services = "AppServices"
+    storage_accounts = "StorageAccounts"
+
+
+class AssessmentType(str, Enum):
+
+    built_in = "BuiltIn"
+    custom = "Custom"
 
 
 class ConnectionType(str, Enum):
