@@ -31,6 +31,8 @@ except ImportError:
     from urllib.parse import urlparse
 
 from msrest.exceptions import DeserializationError
+
+from azure.core.exceptions import DecodeError
 from azure.core.polling import PollingMethod
 
 from ..exceptions import ARMError
@@ -143,7 +145,7 @@ class LongRunningOperation(object):
         """Check if response body contains meaningful content.
 
         :rtype: bool
-        :raises: DeserializationError if response body contains invalid json data.
+        :raises: DecodeError if response body contains invalid json data.
         """
         # Assume ClientResponse has "body", and otherwise it's a requests.Response
         content = response.text() if hasattr(response, "body") else response.text
@@ -152,7 +154,7 @@ class LongRunningOperation(object):
         try:
             return not json.loads(content)
         except ValueError:
-            raise DeserializationError(
+            raise DecodeError(
                 "Error occurred in deserializing the response body.")
 
     def _as_json(self, response):
@@ -160,14 +162,14 @@ class LongRunningOperation(object):
 
         Result/exceptions is not determined if you call this method without testing _is_empty.
 
-        :raises: DeserializationError if response body contains invalid json data.
+        :raises: DecodeError if response body contains invalid json data.
         """
         # Assume ClientResponse has "body", and otherwise it's a requests.Response
         content = response.text() if hasattr(response, "body") else response.text
         try:
             return json.loads(content)
         except ValueError:
-            raise DeserializationError(
+            raise DecodeError(
                 "Error occurred in deserializing the response body.")
 
     def _deserialize(self, response):

@@ -38,9 +38,9 @@ import pytest
 from requests import Request, Response
 
 from msrest import Deserializer, Configuration
-from msrest.exceptions import DeserializationError
 
 from azure.core.polling import async_poller
+from azure.core.exceptions import DecodeError
 from azure.core.configuration import Configuration
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
@@ -319,7 +319,7 @@ class TestArmPolling(object):
             body.update(properties)
             resource = SimpleResource(**body)
         else:
-            raise DeserializationError("Impossible to deserialize")
+            raise DecodeError("Impossible to deserialize")
             resource = SimpleResource(**body)
         return resource
 
@@ -563,7 +563,7 @@ async def test_long_running_negative():
         TestArmPolling.mock_outputs,
         AsyncARMPolling(0)
     )
-    with pytest.raises(DeserializationError):
+    with pytest.raises(DecodeError):
         await poll
 
     LOCATION_BODY = '{\'"}'
@@ -573,7 +573,7 @@ async def test_long_running_negative():
     poll = async_poller(CLIENT, response,
         TestArmPolling.mock_outputs,
         AsyncARMPolling(0))
-    with pytest.raises(DeserializationError):
+    with pytest.raises(DecodeError):
         await poll
 
     LOCATION_BODY = '{'

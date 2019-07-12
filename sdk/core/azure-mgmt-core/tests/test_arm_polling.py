@@ -39,9 +39,9 @@ import pytest
 from requests import Request, Response
 
 from msrest import Deserializer, Configuration
-from msrest.exceptions import DeserializationError
 
 from azure.core.polling import LROPoller
+from azure.core.exceptions import DecodeError
 from azure.core.configuration import Configuration
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
@@ -317,7 +317,7 @@ class TestArmPolling(object):
             body.update(properties)
             resource = SimpleResource(**body)
         else:
-            raise DeserializationError("Impossible to deserialize")
+            raise DecodeError("Impossible to deserialize")
             resource = SimpleResource(**body)
         return resource
 
@@ -548,7 +548,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0)
         )
-        with pytest.raises(DeserializationError):
+        with pytest.raises(DecodeError):
             poll.wait()
 
         LOCATION_BODY = '{\'"}'
@@ -558,7 +558,7 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response,
             TestArmPolling.mock_outputs,
             ARMPolling(0))
-        with pytest.raises(DeserializationError):
+        with pytest.raises(DecodeError):
             poll.wait()
 
         LOCATION_BODY = '{'
