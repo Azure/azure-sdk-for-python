@@ -90,6 +90,7 @@ class AsyncPipelineClient(PipelineClientBase):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
+            config.telemetry_policy,
             config.authentication_policy,
             ContentDecodePolicy(),
             config.redirect_policy,

@@ -96,7 +96,102 @@ class HeadersPolicy(SansIOHTTPPolicy):
         request.http_request.headers.update(self.headers) # type: ignore
         additional_headers = request.context.options.pop('headers', {}) # type: ignore
         if additional_headers:
-            request.http_request.headers.update(additional_headers) # type: ignore
+            request.http_request.headers.update(additional_headers)  # type: ignore
+
+
+class TelemetryPolicy(SansIOHTTPPolicy):
+    """Telemetry policy for monitoring what SDK language, client library version,
+    and language/platform info a client is using to call into their service.
+
+    Clients can prepend additional information indicating the name and version of the client application.
+
+    :param str package_user_agent: The package information in the following format:
+        <package_name>/<package_version>
+
+        Example:
+        "storage/4.0.0"
+
+    **Keyword arguments:**
+
+    *user_agent_overwrite (bool)* - Overwrites User-Agent when True. Defaults to False.
+
+    *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
+    """
+
+    _USERAGENT = "User-Agent"
+    _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
+    _X_MS_USER_AGENT = "X-MS-UserAgent"
+    _X_MS_AZSDK_Telemetry = "X-MS-AZSDK-Telemetry"
+
+    def __init__(self, package_user_agent=None, **kwargs):
+        # type: (Optional[str], Any) -> None
+        self.overwrite = kwargs.pop('user_agent_overwrite', False)
+        self.use_env = kwargs.pop('user_agent_use_env', True)
+        self.package_user_agent = package_user_agent
+
+        if package_user_agent is None:
+            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
+                azcore_version,
+                platform.python_version(),
+                platform.platform(),
+            )
+        else:
+            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
+                package_user_agent,
+                platform.python_version(),
+                platform.platform(),
+            )
+
+    @property
+    def user_agent(self):
+        # type: () -> str
+        """The current user agent value."""
+        if self.use_env:
+            add_user_agent_header = os.environ.get(self._ENV_ADDITIONAL_USER_AGENT, None)
+            if add_user_agent_header is not None:
+                return "{} {}".format(self._user_agent, add_user_agent_header)
+        return self._user_agent
+
+    def add_user_agent(self, value):
+        # type: (str) -> None
+        """Add value to current user agent with a space.
+
+        :param str value: value to add to user agent.
+        """
+        self._user_agent = "{} {}".format(self._user_agent, value)
+
+    def on_request(self, request, **kwargs):
+        # type: (PipelineRequest, Any) -> None
+        """Modifies the User-Agent header before the request is sent.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        telemetry_disabled = os.environ.get('AZURE_TELEMETRY_DISABLED', False)
+        if telemetry_disabled:
+            return
+
+        http_request = request.http_request
+        options = request.context.options # type: ignore
+        existing = request.http_request.headers.get(self._USERAGENT, "")
+
+        if existing:
+            self._user_agent = "{} {}".format(self.user_agent, existing)
+
+        if 'user_agent' in options:
+            user_agent = options.pop('user_agent')
+            if options.pop('user_agent_overwrite', self.overwrite):
+                http_request.headers[self._USERAGENT] = user_agent # type: ignore
+            else:
+                http_request.headers[self._USERAGENT] = "{} {}".format(user_agent, self.user_agent)  # type: ignore
+
+        elif self.overwrite or self._USERAGENT not in http_request.headers: # type: ignore
+            http_request.headers[self._USERAGENT] = self.user_agent # type: ignore
+
+        if 'telemetry' in options:
+            http_request.headers[self._X_MS_AZSDK_Telemetry] = options.pop('telemetry') # type: ignore
+
+        http_request.headers[self._X_MS_USER_AGENT] = http_request.headers[self._USERAGENT] # type: ignore
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):

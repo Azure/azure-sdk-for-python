@@ -279,8 +279,10 @@ class Settings(object):
     :type defaults_only: bool
     :cvar log_level: a log level to use across all Azure client SDKs (AZURE_LOG_LEVEL)
     :type log_level: PrioritizedSetting
-    :cvar tracing_enabled: Whether tracing shoudl be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
+    :cvar tracing_enabled: Whether tracing should be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
     :type tracing_enabled: PrioritizedSetting
+    :cvar telemetry_disabled: Whether telemetry be disabled across Azure SDKs (AZURE_TRACING_DISABLED)
+    :type telemetry_disabled: PrioritizedSetting
 
     :Example:
 
@@ -361,5 +363,11 @@ class Settings(object):
         default=False,
     )
 
+    telemetry_disabled = PrioritizedSetting(
+        "telemetry_disabled",
+        env_var="AZURE_TELEMETRY_DISABLED",
+        convert=convert_bool,
+        default=False
+    )
 
 settings = Settings()

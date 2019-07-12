@@ -85,6 +85,9 @@ class Configuration(object):
         # Authentication configuration
         self.authentication_policy = None
 
+        # Telemetry configuration
+        self.telemetry_policy = None
+
         # HTTP Transport
         self.transport = transport
 
