@@ -49,7 +49,3 @@ class TestContext(unittest.TestCase):
         span = tracing_context.current_span.get()
         assert span == current_span
         assert getattr(span, "in_worker", False)
-
-
-if __name__ == "__main__":
-    unittest.main()
