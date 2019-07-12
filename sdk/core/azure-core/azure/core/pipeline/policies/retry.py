@@ -75,7 +75,7 @@ class RetryPolicy(HTTPPolicy):
     *retry_backoff_max (int)* - The maximum back off time. Default value is 120 seconds (2 minutes).
 
     Example:
-        .. literalinclude:: ../examples/examples_sync.py
+        .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START retry_policy]
             :end-before: [END retry_policy]
             :language: python

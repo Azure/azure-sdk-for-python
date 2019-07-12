@@ -1,3 +1,7 @@
+## Changes in 4.0.0b1 : ##
+
+- Alpha release for new object model.
+
 ## Changes in 3.0.2 : ##
 
 - Added Support for MultiPolygon Datatype
@@ -17,8 +21,8 @@
   - DocumentClient to CosmosClient
   - Collection to Container
   - Document to Item
-  - Package name updated to “azure-cosmos”
-  - Namespace updated to “azure.cosmos”
+  - Package name updated to "azure-cosmos"
+  - Namespace updated to "azure.cosmos"
 
 ## Changes in 2.3.3 : ##
 
@@ -74,17 +78,17 @@
 
 ## Changes in 1.9.0 : ##
 
-- Added retry policy support for throttled requests. (Throttled requests receive a request rate too large exception, error code 429.) 
-  By default, DocumentDB retries nine times for each request when error code 429 is encountered, honoring the retryAfter time in the response header. 
-  A fixed retry interval time can now be set as part of the RetryOptions property on the ConnectionPolicy object if you want to ignore the retryAfter time returned by server between the retries. 
+- Added retry policy support for throttled requests. (Throttled requests receive a request rate too large exception, error code 429.)
+  By default, DocumentDB retries nine times for each request when error code 429 is encountered, honoring the retryAfter time in the response header.
+  A fixed retry interval time can now be set as part of the RetryOptions property on the ConnectionPolicy object if you want to ignore the retryAfter time returned by server between the retries.
   DocumentDB now waits for a maximum of 30 seconds for each request that is being throttled (irrespective of retry count) and returns the response with error code 429.
   This time can also be overriden in the RetryOptions property on ConnectionPolicy object.
 
-- DocumentDB now returns x-ms-throttle-retry-count and x-ms-throttle-retry-wait-time-ms as the response headers in every request to denote the throttle retry count 
+- DocumentDB now returns x-ms-throttle-retry-count and x-ms-throttle-retry-wait-time-ms as the response headers in every request to denote the throttle retry count
   and the cummulative time the request waited between the retries.
 
-- Removed the RetryPolicy class and the corresponding property (retry_policy) exposed on the document_client class and instead introduced a RetryOptions class 
-  exposing the RetryOptions property on ConnectionPolicy class that can be used to override some of the default retry options. 
+- Removed the RetryPolicy class and the corresponding property (retry_policy) exposed on the document_client class and instead introduced a RetryOptions class
+  exposing the RetryOptions property on ConnectionPolicy class that can be used to override some of the default retry options.
 
 ## Changes in 1.8.0 : ##
 

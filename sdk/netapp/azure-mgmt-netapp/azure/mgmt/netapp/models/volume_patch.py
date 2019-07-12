@@ -34,8 +34,8 @@ class VolumePatch(Model):
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
      a file system in bytes. This is a soft quota used for alerting only.
-     Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
-     107374182400 .
+     Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
+     Default value: 107374182400 .
     :type usage_threshold: long
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
