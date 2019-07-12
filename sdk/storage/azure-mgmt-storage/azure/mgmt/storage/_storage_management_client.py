@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from .version import VERSION
 from ._configuration import StorageManagementClientConfiguration
 
 
@@ -51,8 +50,8 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
             'usage': '2018-02-01',
-            None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
     )

@@ -149,6 +149,8 @@ class StorageAccountsOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('StorageAccount', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -180,12 +182,10 @@ class StorageAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns StorageAccount or
-         ClientRawResponse<StorageAccount> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.storage.v2019_04_01.models.StorageAccount]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storage.v2019_04_01.models.StorageAccount]]
+        :return: An instance of LROPoller that returns object or
+         ClientRawResponse<object> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
@@ -198,7 +198,7 @@ class StorageAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('StorageAccount', response)
+            deserialized = self._deserialize('object', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
