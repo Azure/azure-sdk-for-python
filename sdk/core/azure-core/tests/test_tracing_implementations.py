@@ -9,7 +9,7 @@ try:
 except ImportError:
     import mock
 
-from azure.core.tracing.ext.opencensus_wrapper import OpenCensusSpan
+from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.ext.azure.trace_exporter import AzureExporter
