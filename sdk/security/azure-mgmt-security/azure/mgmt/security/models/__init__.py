@@ -85,6 +85,7 @@ try:
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
+    from .security_assessment_metadata_py3 import SecurityAssessmentMetadata
     from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
     from .server_vulnerability_assessments_list_py3 import ServerVulnerabilityAssessmentsList
 except (SyntaxError, ImportError):
@@ -163,6 +164,7 @@ except (SyntaxError, ImportError):
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
+    from .security_assessment_metadata import SecurityAssessmentMetadata
     from .server_vulnerability_assessment import ServerVulnerabilityAssessment
     from .server_vulnerability_assessments_list import ServerVulnerabilityAssessmentsList
 from .compliance_result_paged import ComplianceResultPaged
@@ -187,6 +189,7 @@ from .io_tsecurity_aggregated_recommendation_paged import IoTSecurityAggregatedR
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
+from .security_assessment_metadata_paged import SecurityAssessmentMetadataPaged
 from .security_center_enums import (
     ResourceStatus,
     PricingTier,
@@ -207,6 +210,9 @@ from .security_center_enums import (
     RecommendationType,
     RecommendationConfigStatus,
     State,
+    Category,
+    RequiredPricingBundle,
+    AssessmentType,
     ConnectionType,
 )
 
@@ -286,6 +292,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
+    'SecurityAssessmentMetadata',
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentsList',
     'ComplianceResultPaged',
@@ -310,6 +317,7 @@ __all__ = [
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
+    'SecurityAssessmentMetadataPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -329,5 +337,8 @@ __all__ = [
     'RecommendationType',
     'RecommendationConfigStatus',
     'State',
+    'Category',
+    'RequiredPricingBundle',
+    'AssessmentType',
     'ConnectionType',
 ]

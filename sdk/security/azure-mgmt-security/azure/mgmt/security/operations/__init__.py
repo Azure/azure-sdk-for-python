@@ -38,6 +38,8 @@ from .io_tsecurity_solutions_analytics_recommendations_operations import IoTSecu
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
+from .assessments_metadata_operations import AssessmentsMetadataOperations
+from .assessments_metadata_subscription_operations import AssessmentsMetadataSubscriptionOperations
 from .server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 
 __all__ = [
@@ -70,5 +72,7 @@ __all__ = [
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
+    'AssessmentsMetadataOperations',
+    'AssessmentsMetadataSubscriptionOperations',
     'ServerVulnerabilityAssessmentOperations',
 ]
