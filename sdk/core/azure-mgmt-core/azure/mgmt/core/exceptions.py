@@ -99,6 +99,7 @@ class ODataV4Error(HttpResponseError):
     :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
     :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
     """
+
     _ERROR_FORMAT = ODataV4Format
 
     def __init__(self, response, **kwargs):
@@ -120,17 +121,21 @@ class ODataV4Error(HttpResponseError):
         self.innererror = {}  # type: Optional[Dict[str, Any]]
 
         if self.message and "message" not in kwargs:
-            kwargs['message'] = self.message
+            kwargs["message"] = self.message
 
-        super(ODataV4Error, self).__init__(
-            response=response, **kwargs
-        )
+        super(ODataV4Error, self).__init__(response=response, **kwargs)
 
         if self.odata_json:
             try:
                 error_node = self.odata_json["error"]
                 self._error_format = self._ERROR_FORMAT(error_node)
-                self.__dict__.update(self._error_format.__dict__)
+                self.__dict__.update(
+                    {
+                        k: v
+                        for k, v in self._error_format.__dict__.items()
+                        if v is not None
+                    }
+                )
             except Exception:
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
                 self._error_format = "JSON was invalid for this format"
@@ -192,4 +197,5 @@ class ARMError(ODataV4Error):
 
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
+
     _ERROR_FORMAT = ARMErrorFormat

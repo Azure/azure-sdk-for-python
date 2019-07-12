@@ -75,6 +75,10 @@ def test_odata_v4_exception():
     assert "trace" in exp.innererror
     assert "context" in exp.innererror
 
+    message = {}
+    exp = ODataV4Error(_build_response(json.dumps(message)))
+    assert exp.message == "Operation returned an invalid status 'Bad Request'"
+
 def test_arm_exception():
 
     message = {
