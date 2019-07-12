@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-
+import sys
 import pytest
 
 # module under test
@@ -101,9 +101,7 @@ class TestPrioritizedSetting(object):
         assert ps() == 10
 
         # 1. system value
-        ps = m.PrioritizedSetting(
-            "foo", env_var="AZURE_FOO", convert=int, default=10, system_hook=lambda: 20
-        )
+        ps = m.PrioritizedSetting("foo", env_var="AZURE_FOO", convert=int, default=10, system_hook=lambda: 20)
         assert ps() == 20
 
         # 2. environment variable
@@ -137,15 +135,11 @@ class TestPrioritizedSetting(object):
 
 
 class TestConverters(object):
-    @pytest.mark.parametrize(
-        "value", ["Yes", "YES", "yes", "1", "ON", "on", "true", "True", True]
-    )
+    @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on", "true", "True", True])
     def test_convert_bool(self, value):
         assert m.convert_bool(value)
 
-    @pytest.mark.parametrize(
-        "value", ["No", "NO", "no", "0", "OFF", "off", "false", "False", False]
-    )
+    @pytest.mark.parametrize("value", ["No", "NO", "no", "0", "OFF", "off", "false", "False", False])
     def test_convert_bool_false(self, value):
         assert not m.convert_bool(value)
 
@@ -172,6 +166,12 @@ class TestConverters(object):
     def test_convert_logging_bad(self):
         with pytest.raises(ValueError):
             m.convert_logging("junk")
+
+    def test_get_opencensus_span_if_opencensus_is_imported(self):
+        del sys.modules['opencensus']
+        assert m.get_opencensus_span_if_opencensus_is_imported() == None
+        import opencensus
+        assert m.get_opencensus_span_if_opencensus_is_imported() is not None
 
 
 _standard_settings = ["log_level", "tracing_enabled"]
@@ -211,10 +211,7 @@ class TestStandardSettings(object):
         val = m.settings.defaults
         # assert isinstance(val, tuple)
         defaults = m.settings.config(
-            log_level=20,
-            tracing_enabled=False,
-            tracing_implementation=None,
-            tracing_should_only_propagate=False,
+            log_level=20, tracing_enabled=False, tracing_implementation=None, tracing_should_only_propagate=False
         )
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled
@@ -222,10 +219,7 @@ class TestStandardSettings(object):
         assert val.tracing_should_only_propagate == defaults.tracing_should_only_propagate
         os.environ["AZURE_LOG_LEVEL"] = "debug"
         defaults = m.settings.config(
-            log_level=20,
-            tracing_enabled=False,
-            tracing_implementation=None,
-            tracing_should_only_propagate=False,
+            log_level=20, tracing_enabled=False, tracing_implementation=None, tracing_should_only_propagate=False
         )
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled

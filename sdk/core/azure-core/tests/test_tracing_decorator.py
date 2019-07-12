@@ -86,13 +86,6 @@ class MockClient:
 
 
 class TestCommon(unittest.TestCase):
-    def test_get_opencensus_span_if_opencensus_is_imported(self):
-        opencensus = sys.modules["opencensus"]
-        del sys.modules["opencensus"]
-        assert common.get_opencensus_span_if_opencensus_is_imported() == None
-        sys.modules["opencensus"] = opencensus
-        assert common.get_opencensus_span_if_opencensus_is_imported() is OpenCensusSpan
-
     def test_set_span_context(self):
         with ContextHelper(environ={"AZURE_SDK_TRACING_IMPLEMENTATION": "opencensus"}):
             wrapper = settings.tracing_implementation()
