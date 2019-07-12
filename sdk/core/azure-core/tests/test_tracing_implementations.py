@@ -91,16 +91,12 @@ class TestOpencensusWrapper(unittest.TestCase):
 
     def test_to_and_from_header(self):
         with ContextHelper() as ctx:
-            og_header = {
-                "traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"
-            }
+            og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
             tracer = OpenCensusSpan.from_header(og_header)
             assert tracer.span_context.trace_id == "2578531519ed94423ceae67588eff2c9"
             wrapped_class = OpenCensusSpan()
             headers = wrapped_class.to_header()
             new_header = {
-                "traceparent": "00-2578531519ed94423ceae67588eff2c9-{}-01".format(
-                    wrapped_class.span_instance.span_id
-                )
+                "traceparent": "00-2578531519ed94423ceae67588eff2c9-{}-01".format(wrapped_class.span_instance.span_id)
             }
             assert headers == new_header
