@@ -125,6 +125,7 @@ class ODataV4Error(HttpResponseError):
 
         super(ODataV4Error, self).__init__(response=response, **kwargs)
 
+        self._error_format = None
         if self.odata_json:
             try:
                 error_node = self.odata_json["error"]
@@ -138,10 +139,12 @@ class ODataV4Error(HttpResponseError):
                 )
             except Exception:
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for this format"
+                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
 
     def __str__(self):
-        return str(self._error_format)
+        if self._error_format:
+            return str(self._error_format)
+        return super(ODataV4Error, self).__str__()
 
 
 class TypedErrorInfo:
