@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.tracing import AbstractSpan
-from opencensus.trace import execution_context
-from opencensus.trace import tracer as tracer_module, Span
+from opencensus.trace import tracer as tracer_module, Span, execution_context
+from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
 try:
@@ -16,7 +15,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
 
 
-class OpenCensusSpan(AbstractSpan):
+class OpenCensusSpan(object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="span"):
@@ -30,7 +29,6 @@ class OpenCensusSpan(AbstractSpan):
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
         """
-        super(OpenCensusSpan, self).__init__(span, name)
         tracer = self.get_current_tracer()
         if not span:
             current_span = self.get_current_span()
@@ -83,16 +81,17 @@ class OpenCensusSpan(AbstractSpan):
         return temp_headers
 
     @classmethod
-    def from_header(cls, headers):
-        # type: (Dict[str, str]) -> Any
+    def link(cls, headers):
+        # type: (Dict[str, str]) -> None
         """
-        Given a dictionary returns a new tracer with the span context extracted from that dictionary.
+        Given a dictionary, extracts the context and links the context to the current tracer.
+      
         :param headers: A key value pair dictionary
         :type headers: dict
-        :return: A tracer initialized with the span context extraction from headers.
         """
         ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
-        return tracer_module.Tracer(span_context=ctx)
+        current_span = cls.get_current_span()
+        current_span.add_link(Link(ctx.trace_id, ctx.span_id))
 
     @classmethod
     def get_current_span(cls):

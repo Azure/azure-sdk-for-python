@@ -89,11 +89,11 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.end_time is not None
             parent.finish()
 
-    def test_to_and_from_header(self):
+    def test_to_header(self):
         with ContextHelper() as ctx:
             og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
-            tracer = OpenCensusSpan.from_header(og_header)
-            assert tracer.span_context.trace_id == "2578531519ed94423ceae67588eff2c9"
+            ctx = tracer_module.trace_context_http_header_format.TraceContextPropagator().from_headers(og_header)
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), span_context=ctx)
             wrapped_class = OpenCensusSpan()
             headers = wrapped_class.to_header()
             new_header = {
