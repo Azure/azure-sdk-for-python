@@ -27,7 +27,6 @@ try:
     from ._models_py3 import DedicatedHost
     from ._models_py3 import DedicatedHostAllocatableVM
     from ._models_py3 import DedicatedHostAvailableCapacity
-    from ._models_py3 import DedicatedHostCapacity
     from ._models_py3 import DedicatedHostGroup
     from ._models_py3 import DedicatedHostGroupUpdate
     from ._models_py3 import DedicatedHostInstanceView
@@ -199,7 +198,6 @@ except (SyntaxError, ImportError):
     from ._models import DedicatedHost
     from ._models import DedicatedHostAllocatableVM
     from ._models import DedicatedHostAvailableCapacity
-    from ._models import DedicatedHostCapacity
     from ._models import DedicatedHostGroup
     from ._models import DedicatedHostGroupUpdate
     from ._models import DedicatedHostInstanceView
@@ -429,7 +427,6 @@ __all__ = [
     'DedicatedHost',
     'DedicatedHostAllocatableVM',
     'DedicatedHostAvailableCapacity',
-    'DedicatedHostCapacity',
     'DedicatedHostGroup',
     'DedicatedHostGroupUpdate',
     'DedicatedHostInstanceView',
