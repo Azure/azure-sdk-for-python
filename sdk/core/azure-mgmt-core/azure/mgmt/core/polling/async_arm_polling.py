@@ -23,8 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
-
 from ..exceptions import ARMError
 from .arm_polling import (
     failed,
@@ -80,16 +78,19 @@ class AsyncARMPolling(ARMPolling):
             self._response = await self.request_status(final_get_url)
             self._operation.parse_resource(self._response)
 
+    async def _sleep(self, delay):
+        await self._transport.sleep(delay)
+
     async def _delay(self):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         if self._response is None:
-            await asyncio.sleep(0)
+            await self._sleep(0)
         if self._response.headers.get('retry-after'):
-            await asyncio.sleep(int(self._response.headers['retry-after']))
+            await self._sleep(int(self._response.headers['retry-after']))
         else:
-            await asyncio.sleep(self._timeout)
+            await self._sleep(self._timeout)
 
     async def update_status(self):
         """Update the current status of the LRO.

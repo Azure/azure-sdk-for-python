@@ -374,6 +374,7 @@ class ARMPolling(PollingMethod):
         :raises: ARMError if initial status is incorrect LRO state
         """
         self._client = client
+        self._transport = self._client._pipeline._transport
         self._response = initial_response
         self._operation = LongRunningOperation(initial_response, deserialization_callback, self._lro_options)
         try:
@@ -427,6 +428,9 @@ class ARMPolling(PollingMethod):
             self._response = self.request_status(final_get_url)
             self._operation.parse_resource(self._response)
 
+    def _sleep(self, delay):
+        self._transport.sleep(delay)
+
     def _delay(self):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
@@ -434,9 +438,9 @@ class ARMPolling(PollingMethod):
         if self._response is None:
             return
         if self._response.headers.get('retry-after'):
-            time.sleep(int(self._response.headers['retry-after']))
+            self._sleep(int(self._response.headers['retry-after']))
         else:
-            time.sleep(self._timeout)
+            self._sleep(self._timeout)
 
     def update_status(self):
         """Update the current status of the LRO.
