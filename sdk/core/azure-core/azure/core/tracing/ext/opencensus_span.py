@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class OpenCensusSpan(AbstractSpan):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
-    def __init__(self, span=None, name="parent_span"):
+    def __init__(self, span=None, name="span"):
         # type: (Optional[Span], Optional[str]) -> None
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
@@ -32,7 +32,13 @@ class OpenCensusSpan(AbstractSpan):
         """
         super(OpenCensusSpan, self).__init__(span, name)
         tracer = self.get_current_tracer()
-        span = span or tracer.span(name=name)
+        if not span:
+            current_span = self.get_current_span()
+            span = tracer.span(name=name)
+            # The logic is needed until opencensus fixes their bug
+            # https://github.com/census-instrumentation/opencensus-python/issues/466
+            if current_span and span not in current_span.children:
+                current_span._child_spans.append(span)
         self._span_instance = span
 
     @property
@@ -43,7 +49,7 @@ class OpenCensusSpan(AbstractSpan):
         """
         return self._span_instance
 
-    def span(self, name="child_span"):
+    def span(self, name="span"):
         # type: (Optional[str]) -> OpenCensusSpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
@@ -51,7 +57,7 @@ class OpenCensusSpan(AbstractSpan):
         :type name: str
         :return: The  that is wrapping the child span instance
         """
-        return self.__class__(self.span_instance.span(name=name))
+        return self.__class__(name=name)
 
     def start(self):
         # type: () -> None
@@ -85,9 +91,7 @@ class OpenCensusSpan(AbstractSpan):
         :type headers: dict
         :return: A tracer initialized with the span context extraction from headers.
         """
-        ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(
-            headers
-        )
+        ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
         return tracer_module.Tracer(span_context=ctx)
 
     @classmethod
