@@ -31,8 +31,17 @@ from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.settings import settings, get_opencensus_span
 
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+
+
 def set_span_contexts(wrapped_span, span_instance=None):
-    # type: (AbstractSpan, AbstractSpan) -> None
+    # type: (AbstractSpan, Optional[AbstractSpan]) -> None
     tracing_context.current_span.set(wrapped_span)
     impl_wrapper = settings.tracing_implementation()
     if wrapped_span is not None:

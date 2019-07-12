@@ -31,8 +31,16 @@
 from collections import namedtuple
 import logging
 import os
-from typing import Any, Union
 import sys
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Union
+
 
 from azure.core.tracing import AbstractSpan
 
