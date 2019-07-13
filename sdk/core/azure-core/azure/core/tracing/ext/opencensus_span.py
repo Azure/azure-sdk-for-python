@@ -12,7 +12,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Dict, Optional, Union
 
 
 class OpenCensusSpan(object):
@@ -43,7 +43,7 @@ class OpenCensusSpan(object):
     def span_instance(self):
         # type: () -> Span
         """
-        :return: The openencensus span that is being wrapped.
+        :return: The OpenCensus span that is being wrapped.
         """
         return self._span_instance
 
@@ -79,6 +79,18 @@ class OpenCensusSpan(object):
             ctx = tracer_from_context.span_context
             temp_headers = tracer_from_context.propagator.to_headers(ctx)
         return temp_headers
+
+    def add_attribute(self, key, value):
+        # type: (str, Union[str, int]) -> None
+        """
+        Add attribute (key value pair) to the current span.
+
+        :param key: The key of the key value pair
+        :type key: str
+        :param value: The value of the key value pair
+        :type value: str
+        """
+        self.span_instance.add_attribute(key, value)
 
     @classmethod
     def link(cls, headers):
