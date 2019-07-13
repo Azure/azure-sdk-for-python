@@ -3,11 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import unittest
-
 try:
     from unittest import mock
 except ImportError:
     import mock
+
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing import AbstractSpan
 from azure.core.settings import settings
