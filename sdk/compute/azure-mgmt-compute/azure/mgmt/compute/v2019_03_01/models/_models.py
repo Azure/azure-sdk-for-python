@@ -652,7 +652,7 @@ class DedicatedHost(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param platform_fault_domain: Fault domain of the dedicated host within a
-     dedicated host group. Supported values 0,1,2.
+     dedicated host group.
     :type platform_fault_domain: int
     :param auto_replace_on_failure: Specifies whether the dedicated host
      should be replaced automatically in case of a failure. The value is
@@ -692,6 +692,7 @@ class DedicatedHost(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -799,7 +800,7 @@ class DedicatedHostGroup(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param platform_fault_domain_count: Required. Number of fault domains that
-     the host group can span. Supported values 1,2,3.
+     the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
@@ -817,7 +818,7 @@ class DedicatedHostGroup(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'platform_fault_domain_count': {'required': True},
+        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
@@ -851,7 +852,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param platform_fault_domain_count: Required. Number of fault domains that
-     the host group can span. Supported values 1,2,3.
+     the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
@@ -865,7 +866,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain_count': {'required': True},
+        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
@@ -927,7 +928,7 @@ class DedicatedHostUpdate(UpdateResource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param platform_fault_domain: Fault domain of the dedicated host within a
-     dedicated host group. Supported values 0,1,2.
+     dedicated host group.
     :type platform_fault_domain: int
     :param auto_replace_on_failure: Specifies whether the dedicated host
      should be replaced automatically in case of a failure. The value is
@@ -959,6 +960,7 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
+        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
