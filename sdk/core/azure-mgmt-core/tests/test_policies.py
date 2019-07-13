@@ -52,7 +52,8 @@ def sleepless(monkeypatch):
 
 
 @httpretty.activate
-def test_register_rp_policy(sleepless):
+@pytest.mark.usefixtures("sleepless")
+def test_register_rp_policy():
     """Protocol:
     - We call the provider and get a 409 provider error
     - Now we POST register provider and get "Registering"
@@ -118,7 +119,8 @@ def test_register_rp_policy(sleepless):
 
 
 @httpretty.activate
-def test_register_failed_policy(sleepless):
+@pytest.mark.usefixtures("sleepless")
+def test_register_failed_policy():
     """Protocol:
     - We call the provider and get a 409 provider error
     - Now we POST register provider and get "Registering"
