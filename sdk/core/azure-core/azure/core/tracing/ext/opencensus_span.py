@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from opencensus.trace import tracer as tracer_module, Span, execution_context
+from opencensus.trace import tracer as Span, execution_context
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
