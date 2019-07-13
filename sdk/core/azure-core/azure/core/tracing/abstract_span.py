@@ -8,7 +8,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Union
 
 try:
     from typing_extensions import Protocol
@@ -49,6 +49,18 @@ class AbstractSpan(Protocol):
         # type: () -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.
+        """
+        pass
+
+    def add_attribute(self, key, value):
+        # type: (str, Union[str, int]) -> None
+        """
+        Add attribute (key value pair) to the current span.
+
+        :param key: The key of the key value pair
+        :type key: str
+        :param value: The value of the key value pair
+        :type value: str
         """
         pass
 

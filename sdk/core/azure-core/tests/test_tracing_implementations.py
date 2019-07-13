@@ -111,3 +111,12 @@ class TestOpencensusWrapper(unittest.TestCase):
             link = wrapped_class.span_instance.links[0]
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
             assert link.span_id == "231ebdc614cb9ddd"
+
+    def test_add_attribute(self):
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(span=parent)
+            wrapped_class.add_attribute("test", "test2")
+            assert wrapped_class.span_instance.attributes["test"] == "test2"
+            assert parent.attributes["test"] == "test2"
