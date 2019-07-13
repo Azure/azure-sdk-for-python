@@ -757,9 +757,6 @@ class DedicatedHostAllocatableVM(Model):
 class DedicatedHostAvailableCapacity(Model):
     """Dedicated host unutilized capacity.
 
-    :param available_vcpus: The number of virtual CPUs available for new
-     allocations.
-    :type available_vcpus: float
     :param allocatable_vms: The unutilized capacity of the dedicated host
      represented in terms of each VM size that is allowed to be deployed to the
      dedicated host.
@@ -768,13 +765,11 @@ class DedicatedHostAvailableCapacity(Model):
     """
 
     _attribute_map = {
-        'available_vcpus': {'key': 'availableVCpus', 'type': 'float'},
         'allocatable_vms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
     }
 
-    def __init__(self, *, available_vcpus: float=None, allocatable_vms=None, **kwargs) -> None:
+    def __init__(self, *, allocatable_vms=None, **kwargs) -> None:
         super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
-        self.available_vcpus = available_vcpus
         self.allocatable_vms = allocatable_vms
 
 
