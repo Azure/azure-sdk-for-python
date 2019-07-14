@@ -17,7 +17,9 @@ class DataConnectorKind1(Model):
 
     :param kind: The kind of the data connector. Possible values include:
      'AzureActiveDirectory', 'AzureSecurityCenter',
-     'MicrosoftCloudAppSecurity', 'ThreatIntelligence', 'Office365'
+     'MicrosoftCloudAppSecurity', 'ThreatIntelligence', 'Office365',
+     'AmazonWebServicesCloudTrail', 'AzureAdvancedThreatProtection',
+     'MicrosoftDefenderAdvancedThreatProtection'
     :type kind: str or ~azure.mgmt.securityinsight.models.DataConnectorKind
     """
 

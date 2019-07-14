@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .data_connector_py3 import DataConnector
 
 
-class DataConnector(Model):
-    """Data connector.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: OfficeDataConnector, TIDataConnector,
-    AwsCloudTrailDataConnector, AADDataConnector, ASCDataConnector,
-    MCASDataConnector, AATPDataConnector, MDATPDataConnector
+class AwsCloudTrailDataConnector(DataConnector):
+    """Represents Amazon Web Services CloudTrail data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +30,12 @@ class DataConnector(Model):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :param aws_role_arn: The Aws Role Arn (with CloudTrailReadOnly policy)
+     that is used to access the Aws account.
+    :type aws_role_arn: str
+    :param data_types: The available data types for the connector.
+    :type data_types:
+     ~azure.mgmt.securityinsight.models.AwsCloudTrailDataConnectorDataTypes
     """
 
     _validation = {
@@ -50,16 +51,12 @@ class DataConnector(Model):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'aws_role_arn': {'key': 'properties.awsRoleArn', 'type': 'str'},
+        'data_types': {'key': 'properties.dataTypes', 'type': 'AwsCloudTrailDataConnectorDataTypes'},
     }
 
-    _subtype_map = {
-        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'AmazonWebServicesCloudTrail': 'AwsCloudTrailDataConnector', 'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector', 'AzureAdvancedThreatProtection': 'AATPDataConnector', 'MicrosoftDefenderAdvancedThreatProtection': 'MDATPDataConnector'}
-    }
-
-    def __init__(self, **kwargs):
-        super(DataConnector, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.etag = kwargs.get('etag', None)
-        self.kind = None
+    def __init__(self, *, etag: str=None, aws_role_arn: str=None, data_types=None, **kwargs) -> None:
+        super(AwsCloudTrailDataConnector, self).__init__(etag=etag, **kwargs)
+        self.aws_role_arn = aws_role_arn
+        self.data_types = data_types
+        self.kind = 'AmazonWebServicesCloudTrail'
