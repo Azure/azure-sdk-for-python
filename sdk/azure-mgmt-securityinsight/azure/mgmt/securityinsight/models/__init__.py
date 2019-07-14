@@ -39,8 +39,8 @@ try:
     from .mcas_data_connector_data_types_discovery_logs_py3 import MCASDataConnectorDataTypesDiscoveryLogs
     from .mcas_data_connector_data_types_py3 import MCASDataConnectorDataTypes
     from .mcas_data_connector_py3 import MCASDataConnector
-    from .aatp_data_connector_py3 import AATPDataConnector
-    from .mdatp_data_connector_py3 import MDATPDataConnector
+    from .azure_advanced_threat_protection_data_connector_py3 import AzureAdvancedThreatProtectionDataConnector
+    from .microsoft_defender_advanced_threat_protection_data_connector_py3 import MicrosoftDefenderAdvancedThreatProtectionDataConnector
     from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
@@ -90,8 +90,8 @@ except (SyntaxError, ImportError):
     from .mcas_data_connector_data_types_discovery_logs import MCASDataConnectorDataTypesDiscoveryLogs
     from .mcas_data_connector_data_types import MCASDataConnectorDataTypes
     from .mcas_data_connector import MCASDataConnector
-    from .aatp_data_connector import AATPDataConnector
-    from .mdatp_data_connector import MDATPDataConnector
+    from .azure_advanced_threat_protection_data_connector import AzureAdvancedThreatProtectionDataConnector
+    from .microsoft_defender_advanced_threat_protection_data_connector import MicrosoftDefenderAdvancedThreatProtectionDataConnector
     from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
@@ -167,8 +167,8 @@ __all__ = [
     'MCASDataConnectorDataTypesDiscoveryLogs',
     'MCASDataConnectorDataTypes',
     'MCASDataConnector',
-    'AATPDataConnector',
-    'MDATPDataConnector',
+    'AzureAdvancedThreatProtectionDataConnector',
+    'MicrosoftDefenderAdvancedThreatProtectionDataConnector',
     'DataConnectorWithAlertsProperties',
     'DataConnectorDataTypeCommon',
     'Entity',

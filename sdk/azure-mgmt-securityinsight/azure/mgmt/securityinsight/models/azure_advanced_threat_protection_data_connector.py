@@ -12,9 +12,8 @@
 from .data_connector import DataConnector
 
 
-class MDATPDataConnector(DataConnector):
-    """Represents MDATP (Microsoft Defender Advanced Threat Protection) data
-    connector.
+class AzureAdvancedThreatProtectionDataConnector(DataConnector):
+    """Represents Azure Advanced Threat Protection data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -56,7 +55,7 @@ class MDATPDataConnector(DataConnector):
     }
 
     def __init__(self, **kwargs):
-        super(MDATPDataConnector, self).__init__(**kwargs)
+        super(AzureAdvancedThreatProtectionDataConnector, self).__init__(**kwargs)
         self.tenant_id = kwargs.get('tenant_id', None)
         self.data_types = kwargs.get('data_types', None)
-        self.kind = 'MicrosoftDefenderAdvancedThreatProtection'
+        self.kind = 'AzureAdvancedThreatProtection'

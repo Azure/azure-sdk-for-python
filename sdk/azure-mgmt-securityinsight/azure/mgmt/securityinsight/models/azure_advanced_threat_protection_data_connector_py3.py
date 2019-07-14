@@ -12,8 +12,8 @@
 from .data_connector_py3 import DataConnector
 
 
-class AATPDataConnector(DataConnector):
-    """Represents AATP (Azure Advanced Threat Protection) data connector.
+class AzureAdvancedThreatProtectionDataConnector(DataConnector):
+    """Represents Azure Advanced Threat Protection data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -55,7 +55,7 @@ class AATPDataConnector(DataConnector):
     }
 
     def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(AATPDataConnector, self).__init__(etag=etag, **kwargs)
+        super(AzureAdvancedThreatProtectionDataConnector, self).__init__(etag=etag, **kwargs)
         self.tenant_id = tenant_id
         self.data_types = data_types
         self.kind = 'AzureAdvancedThreatProtection'
