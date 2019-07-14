@@ -18,26 +18,35 @@ class SubAssessmentStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar severity: The sub-assessment severity level. Possible values
-     include: 'Unknown', 'Healthy', 'OffByPolicy', 'NotApplicable', 'Low',
-     'Medium', 'High'
-    :vartype severity: str or ~azure.mgmt.security.models.Severity
-    :ivar cause: The cause of the assessment status. Optional field in case
-     the severity level requires additional data.
+    :ivar code: Programmatic code for the status of the assessment. Possible
+     values include: 'Healthy', 'Unhealthy', 'NotApplicable'
+    :vartype code: str or ~azure.mgmt.security.models.SubAssessmentStatusCode
+    :ivar cause: Programmatic code for the cause of the assessment status
     :vartype cause: str
+    :ivar description: Human readable description of the assessment status
+    :vartype description: str
+    :ivar severity: The sub-assessment severity level. Possible values
+     include: 'Low', 'Medium', 'High'
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
     """
 
     _validation = {
-        'severity': {'readonly': True},
+        'code': {'readonly': True},
         'cause': {'readonly': True},
+        'description': {'readonly': True},
+        'severity': {'readonly': True},
     }
 
     _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
         'cause': {'key': 'cause', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'severity': {'key': 'severity', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SubAssessmentStatus, self).__init__(**kwargs)
-        self.severity = None
+        self.code = None
         self.cause = None
+        self.description = None
+        self.severity = None

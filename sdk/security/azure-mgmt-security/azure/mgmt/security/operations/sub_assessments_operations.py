@@ -123,11 +123,13 @@ class SubAssessmentsOperations(object):
     list.metadata = {'url': '/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments'}
 
     def get(
-            self, resource_id, assessment_name, sub_assessment_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, assessment_name, sub_assessment_name, custom_headers=None, raw=False, **operation_config):
         """Get a security sub-assessment on your scanned resource.
 
-        :param resource_id: The identifier of the resource.
-        :type resource_id: str
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management
+         group (/providers/Microsoft.Management/managementGroups/mgName).
+        :type scope: str
         :param assessment_name: The Assessment Key - Unique key for the
          assessment type
         :type assessment_name: str
@@ -147,7 +149,7 @@ class SubAssessmentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str'),
             'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str'),
             'subAssessmentName': self._serialize.url("sub_assessment_name", sub_assessment_name, 'str')
         }
@@ -186,4 +188,4 @@ class SubAssessmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments/{subAssessmentName}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments/{subAssessmentName}'}

@@ -32,9 +32,18 @@ from .operations.information_protection_policies_operations import InformationPr
 from .operations.security_contacts_operations import SecurityContactsOperations
 from .operations.workspace_settings_operations import WorkspaceSettingsOperations
 from .operations.sub_assessments_operations import SubAssessmentsOperations
+from .operations.io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
+from .operations.io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
+from .operations.iot_security_solution_operations import IotSecuritySolutionOperations
+from .operations.io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
+from .operations.io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+from .operations.io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+from .operations.io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from .operations.io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
+from .operations.server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 from . import models
 
 
@@ -120,12 +129,30 @@ class SecurityCenter(SDKClient):
     :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
     :ivar sub_assessments: SubAssessments operations
     :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
+    :ivar io_tsecurity_solutions: IoTSecuritySolutions operations
+    :vartype io_tsecurity_solutions: azure.mgmt.security.operations.IoTSecuritySolutionsOperations
+    :ivar io_tsecurity_solutions_resource_group: IoTSecuritySolutionsResourceGroup operations
+    :vartype io_tsecurity_solutions_resource_group: azure.mgmt.security.operations.IoTSecuritySolutionsResourceGroupOperations
+    :ivar iot_security_solution: IotSecuritySolution operations
+    :vartype iot_security_solution: azure.mgmt.security.operations.IotSecuritySolutionOperations
+    :ivar io_tsecurity_solutions_analytics: IoTSecuritySolutionsAnalytics operations
+    :vartype io_tsecurity_solutions_analytics: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsOperations
+    :ivar io_tsecurity_solutions_analytics_aggregated_alerts: IoTSecuritySolutionsAnalyticsAggregatedAlerts operations
+    :vartype io_tsecurity_solutions_analytics_aggregated_alerts: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+    :ivar io_tsecurity_solutions_analytics_aggregated_alert: IoTSecuritySolutionsAnalyticsAggregatedAlert operations
+    :vartype io_tsecurity_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+    :ivar io_tsecurity_solutions_analytics_recommendation: IoTSecuritySolutionsAnalyticsRecommendation operations
+    :vartype io_tsecurity_solutions_analytics_recommendation: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationOperations
+    :ivar io_tsecurity_solutions_analytics_recommendations: IoTSecuritySolutionsAnalyticsRecommendations operations
+    :vartype io_tsecurity_solutions_analytics_recommendations: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationsOperations
     :ivar regulatory_compliance_standards: RegulatoryComplianceStandards operations
     :vartype regulatory_compliance_standards: azure.mgmt.security.operations.RegulatoryComplianceStandardsOperations
     :ivar regulatory_compliance_controls: RegulatoryComplianceControls operations
     :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
     :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
     :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
+    :ivar server_vulnerability_assessment: ServerVulnerabilityAssessment operations
+    :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -186,9 +213,27 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.sub_assessments = SubAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions = IoTSecuritySolutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_resource_group = IoTSecuritySolutionsResourceGroupOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.iot_security_solution = IotSecuritySolutionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_analytics = IoTSecuritySolutionsAnalyticsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_analytics_aggregated_alerts = IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_analytics_aggregated_alert = IoTSecuritySolutionsAnalyticsAggregatedAlertOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_analytics_recommendation = IoTSecuritySolutionsAnalyticsRecommendationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.io_tsecurity_solutions_analytics_recommendations = IoTSecuritySolutionsAnalyticsRecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self.config, self._serialize, self._deserialize)

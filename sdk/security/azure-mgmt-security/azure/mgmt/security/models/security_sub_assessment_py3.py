@@ -24,7 +24,7 @@ class SecuritySubAssessment(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar security_sub_assessment_id: Vulnerability ID.
+    :ivar security_sub_assessment_id: Vulnerability ID
     :vartype security_sub_assessment_id: str
     :ivar display_name: User friendly display name of the sub-assessment
     :vartype display_name: str

@@ -16,9 +16,8 @@ class AdditionalData(Model):
     """Details of the sub-assessment.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SqlServerVulnerabilitySubAssessmentProperties,
-    ContainerRegistryVulnerabilitySubAssessmentProperties,
-    ServerVulnerabilitySubAssessmentProperties
+    sub-classes are: SqlServerVulnerabilityProperties,
+    ContainerRegistryVulnerabilityProperties, ServerVulnerabilityProperties
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,7 +34,7 @@ class AdditionalData(Model):
     }
 
     _subtype_map = {
-        'assessed_resource_type': {'SqlServerVulnerabilitySubAssessment': 'SqlServerVulnerabilitySubAssessmentProperties', 'ContainerRegistryVulnerabilitySubAssessment': 'ContainerRegistryVulnerabilitySubAssessmentProperties', 'ServerVulnerabilityAssessment': 'ServerVulnerabilitySubAssessmentProperties'}
+        'assessed_resource_type': {'SqlServerVulnerability': 'SqlServerVulnerabilityProperties', 'ContainerRegistryVulnerability': 'ContainerRegistryVulnerabilityProperties', 'ServerVulnerabilityAssessment': 'ServerVulnerabilityProperties'}
     }
 
     def __init__(self, **kwargs):

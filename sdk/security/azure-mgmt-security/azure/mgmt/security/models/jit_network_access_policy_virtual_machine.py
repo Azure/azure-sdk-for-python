@@ -22,6 +22,9 @@ class JitNetworkAccessPolicyVirtualMachine(Model):
     :type id: str
     :param ports: Required. Port configurations for the virtual machine
     :type ports: list[~azure.mgmt.security.models.JitNetworkAccessPortRule]
+    :param public_ip_address: Public IP address of the Azure Firewall that is
+     linked to this policy, if applicable
+    :type public_ip_address: str
     """
 
     _validation = {
@@ -32,9 +35,11 @@ class JitNetworkAccessPolicyVirtualMachine(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'ports': {'key': 'ports', 'type': '[JitNetworkAccessPortRule]'},
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(JitNetworkAccessPolicyVirtualMachine, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.ports = kwargs.get('ports', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
