@@ -31,14 +31,9 @@ class OpenCensusSpan(object):
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
         """
-        tracer = self.get_current_tracer()
         if not span:
-            current_span = self.get_current_span()
+            tracer = self.get_current_tracer()
             span = tracer.span(name=name)
-            # The logic is needed until opencensus fixes their bug
-            # https://github.com/census-instrumentation/opencensus-python/issues/466
-            if current_span and span not in current_span.children:
-                current_span._child_spans.append(span) # pylint: disable=protected-access
         self._span_instance = span
 
     @property

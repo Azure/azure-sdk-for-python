@@ -23,9 +23,20 @@ from azure.core.tracing.decorator import distributed_tracing_decorator
 from azure.core.settings import settings
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
+from opencensus.trace.span_data import SpanData
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
+from opencensus.common.utils import timestamp_to_microseconds
+import time
 import pytest
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import List
 
 
 class ContextHelper(object):
@@ -75,6 +86,7 @@ class MockClient:
 
     @distributed_tracing_decorator
     def make_request(self, numb_times, **kwargs):
+        time.sleep(0.01)
         if numb_times < 1:
             return None
         response = self.pipeline.run(self.request, **kwargs)
@@ -84,7 +96,44 @@ class MockClient:
 
     @distributed_tracing_decorator
     def get_foo(self):
+        time.sleep(0.01)
         return 5
+
+
+class Node:
+    def __init__(self, span_data):
+        self.span_data = span_data  # type: SpanData
+        self.parent = None
+        self.children = []
+
+
+class MockExporter(Exporter):
+    def __init__(self):
+        self.root = None
+        self._all_nodes = []
+
+    def export(self, span_datas):
+        # type: (List[SpanData]) -> None
+        sp = span_datas[0]  # type: SpanData
+        node = Node(sp)
+        if not node.span_data.parent_span_id:
+            self.root = node
+        self._all_nodes.append(node)
+
+    def build_tree(self):
+        parent_dict = {}
+        for node in self._all_nodes:
+            parent_span_id = node.span_data.parent_span_id
+            if parent_span_id not in parent_dict:
+                parent_dict[parent_span_id] = []
+            parent_dict[parent_span_id].append(node)
+
+        for node in self._all_nodes:
+            if node.span_data.span_id in parent_dict:
+                node.children = sorted(
+                    parent_dict[node.span_data.span_id],
+                    key=lambda x: timestamp_to_microseconds(x.span_data.start_time),
+                )
 
 
 class TestCommon(unittest.TestCase):
@@ -162,22 +211,26 @@ class TestDecorator(unittest.TestCase):
 
     def test_with_opencencus_used(self):
         with ContextHelper():
-            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             parent = trace.start_span(name="OverAll")
             client = MockClient(policies=[])
             client.get_foo(parent_span=parent)
             client.get_foo()
-            assert len(parent.children) == 3
-            assert parent.children[0].name == "MockClient.__init__"
-            assert not parent.children[0].children
-            assert parent.children[1].name == "MockClient.get_foo"
-            assert not parent.children[1].children
             parent.finish()
             trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 3
+            assert parent.children[0].span_data.name == "MockClient.__init__"
+            assert not parent.children[0].children
+            assert parent.children[1].span_data.name == "MockClient.get_foo"
+            assert not parent.children[1].children
 
     def for_test_different_settings(self):
         with ContextHelper():
-            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=mock.Mock(Exporter))
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             with trace.start_span(name="OverAll") as parent:
                 client = MockClient()
                 client.make_request(2)
@@ -185,17 +238,21 @@ class TestDecorator(unittest.TestCase):
                     client.make_request(2, parent_span=parent)
                     assert OpenCensusSpan.get_current_span() == child
                     client.make_request(2)
-                assert len(parent.children) == 3
-                assert parent.children[0].name == "MockClient.__init__"
-                assert parent.children[1].name == "MockClient.make_request"
-                assert parent.children[1].children[0].name == "MockClient.get_foo"
-                assert parent.children[1].children[1].name == "MockClient.make_request"
-                assert parent.children[2].name == "MockClient.make_request"
-                assert parent.children[2].children[0].name == "MockClient.get_foo"
-                assert parent.children[2].children[1].name == "MockClient.make_request"
-                children = parent.children[1].children
-                assert len(children) == 2
             trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 4
+            assert parent.children[0].span_data.name == "MockClient.__init__"
+            assert parent.children[1].span_data.name == "MockClient.make_request"
+            assert parent.children[1].children[0].span_data.name == "MockClient.get_foo"
+            assert parent.children[1].children[1].span_data.name == "MockClient.make_request"
+            assert parent.children[2].span_data.name == "child"
+            assert parent.children[2].children[0].span_data.name == "MockClient.make_request"
+            assert parent.children[3].span_data.name == "MockClient.make_request"
+            assert parent.children[3].children[0].span_data.name == "MockClient.get_foo"
+            assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
+            children = parent.children[1].children
+            assert len(children) == 2
 
     def test_span_with_opencensus_complicated(self):
         self.for_test_different_settings()
