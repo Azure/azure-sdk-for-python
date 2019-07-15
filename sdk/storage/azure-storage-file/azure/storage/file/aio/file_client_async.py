@@ -31,8 +31,8 @@ from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
 from ..file_client import FileClient as FileClientBase
+from ._polling_async import CloseHandlesAsync
 from .models import HandlesPaged
-from .polling_async import CopyStatusPoller, CloseHandlesAsync
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -271,15 +271,18 @@ class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
             self._config,
             **kwargs)
 
-    async def copy_file_from_url(
+    async def start_copy_from_url(
             self, source_url, # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
         # type: (...) -> Any
-        """Copies the file from the provided URL to the file referenced by
-        the client.
+        """Initiates the copying of data from a source URL into the file
+        referenced by the client.
+
+        The status of this copy operation can be found using the `get_properties`
+        method.
 
         :param str source_url:
             Specifies the URL of the source file.
@@ -288,8 +291,7 @@ class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: Polling object in order to wait on or abort the operation
-        :rtype: ~azure.storage.file.polling.CopyStatusPoller
+        :rtype: dict(str, Any)
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_file.py
@@ -303,7 +305,7 @@ class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
 
         try:
-            start_copy = await self._client.file.start_copy(
+            return await self._client.file.start_copy(
                 source_url,
                 timeout=None,
                 metadata=metadata,
@@ -313,11 +315,27 @@ class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        poller = CopyStatusPoller(
-            self, start_copy,
-            configuration=self._config,
-            timeout=timeout)
-        return poller
+    async def abort_copy(self, copy_id, timeout=None, **kwargs):
+        # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
+        """Abort an ongoing copy operation.
+
+        This will leave a destination file with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :param copy_id:
+            The copy operation to abort. This can be either an ID, or an
+            instance of FileProperties.
+        :type copy_id: str or ~azure.storage.file.models.FileProperties
+        :rtype: None
+        """
+        try:
+            copy_id = copy_id.copy.id
+        except AttributeError:
+            pass
+        try:
+            await self._client.file.abort_copy(copy_id=copy_id, timeout=None, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     async def download_file(
             self, offset=None,  # type: Optional[int]
