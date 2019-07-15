@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""The tests for opencensus_span.py"""
+
 import unittest
 
 try:
@@ -12,8 +14,44 @@ except ImportError:
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
-from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.base_exporter import Exporter
+from opencensus.common.utils import timestamp_to_microseconds
 import os
+
+
+class Node:
+    def __init__(self, span_data):
+        self.span_data = span_data  # type: SpanData
+        self.parent = None
+        self.children = []
+
+
+class MockExporter(Exporter):
+    def __init__(self):
+        self.root = None
+        self._all_nodes = []
+
+    def export(self, span_datas):
+        # type: (List[SpanData]) -> None
+        sp = span_datas[0]  # type: SpanData
+        node = Node(sp)
+        if not node.span_data.parent_span_id:
+            self.root = node
+        self._all_nodes.append(node)
+
+    def build_tree(self):
+        parent_dict = {}
+        for node in self._all_nodes:
+            parent_span_id = node.span_data.parent_span_id
+            if parent_span_id not in parent_dict:
+                parent_dict[parent_span_id] = []
+            parent_dict[parent_span_id].append(node)
+
+        for node in self._all_nodes:
+            if node.span_data.span_id in parent_dict:
+                node.children = sorted(
+                    parent_dict[node.span_data.span_id], key=lambda x: timestamp_to_microseconds(x.span_data.start_time)
+                )
 
 
 class ContextHelper(object):
@@ -64,8 +102,9 @@ class TestOpencensusWrapper(unittest.TestCase):
             tracer.finish()
 
     def test_span(self):
+        exporter = MockExporter()
         with ContextHelper() as ctx:
-            tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            tracer = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             assert OpenCensusSpan.get_current_tracer() is tracer
             wrapped_class = OpenCensusSpan()
             assert tracer.current_span() == wrapped_class.span_instance
@@ -74,8 +113,11 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert child.span_instance.name == "span"
             assert child.span_instance.context_tracer.trace_id == tracer.span_context.trace_id
             assert child.span_instance.parent_span is wrapped_class.span_instance
-            assert len(wrapped_class.span_instance.children) == 1
-            assert wrapped_class.span_instance.children[0] == child.span_instance
+            tracer.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 1
+        assert parent.children[0].span_data.span_id == child.span_instance.span_id
 
     def test_start_finish(self):
         with ContextHelper() as ctx:
