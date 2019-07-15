@@ -27,6 +27,7 @@ from azure.eventhub.common import parse_sas_token, EventPosition
 from azure.eventhub.error import ConnectError
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
+from .connection_manager import _ConnectionManager
 
 
 log = logging.getLogger(__name__)
@@ -46,6 +47,23 @@ class EventHubClient(EventHubClientAbstract):
             :caption: Create a new instance of the Event Hub client
 
     """
+
+    def __init__(self, host, event_hub_path, credential, **kwargs):
+        super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")
+        }
+        self._conn_manager = _ConnectionManager()
+
+    def __del__(self):
+        self._conn_manager.close_connection()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def _create_auth(self, username=None, password=None):
         """
@@ -100,15 +118,18 @@ class EventHubClient(EventHubClientAbstract):
         while True:
             connect_count += 1
             mgmt_auth = self._create_auth(**alt_creds)
-            mgmt_client = uamqp.AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
+            mgmt_client = uamqp.AMQPClient(self.mgmt_target)
             try:
-                mgmt_client.open()
+                conn = self._conn_manager.get_connection()
+                mgmt_client.open(connection=self._conn_manager.get_connection())
+                print(conn._state)
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     constants.READ_OPERATION,
                     op_type=op_type,
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
+                print(conn._state)
                 return response
             except (errors.AMQPConnectionError, errors.TokenAuthFailure, compat.TimeoutException) as failure:
                 if connect_count >= self.config.max_retries:
@@ -268,3 +289,6 @@ class EventHubClient(EventHubClientAbstract):
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler
+
+    def close(self):
+        self._conn_manager.close_connection()
