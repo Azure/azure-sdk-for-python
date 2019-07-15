@@ -15,24 +15,27 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.polling import LROPoller
+from azure.core.polling import async_poller
 
-from ._generated import AzureFileStorage
+from ._generated.aio import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers
-from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._deserialize import deserialize_directory_properties
-from .file_client import FileClient
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.policies_async import ExponentialRetry
+from .._shared.request_handlers import add_metadata_headers
+from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._deserialize import deserialize_directory_properties
+from ..directory_client import DirectoryClient as DirectoryClientBase
+from .file_client_async import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
-from .polling import CloseHandles
+from .polling_async import CloseHandlesAsync
 
 if TYPE_CHECKING:
     from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
     from ._generated.models import HandleItem
 
-class DirectoryClient(StorageAccountHostsMixin):
+
+class DirectoryClient(DirectoryClientBase, AsyncStorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -78,92 +81,21 @@ class DirectoryClient(StorageAccountHostsMixin):
             directory_path=None, # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
+            loop=None,  # type: Any
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
-        try:
-            if not directory_url.lower().startswith('http'):
-                directory_url = "https://" + directory_url
-        except AttributeError:
-            raise ValueError("Share URL must be a string.")
-        parsed_url = urlparse(directory_url.rstrip('/'))
-        if not parsed_url.path and not share:
-            raise ValueError("Please specify a share name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(directory_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
-
-        share, path_dir = "", ""
-        if parsed_url.path:
-            share, _, path_dir = parsed_url.path.lstrip('/').partition('/')
-        path_snapshot, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(share)
-        self.directory_path = directory_path or path_dir
-
-        self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
-        super(DirectoryClient, self).__init__(parsed_url, 'file', credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        share_name = self.share_name
-        if isinstance(share_name, six.text_type):
-            share_name = share_name.encode('UTF-8')
-        directory_path = ""
-        if self.directory_path:
-            directory_path = "/" + quote(self.directory_path, safe='~')
-        return "{}://{}/{}{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            directory_path,
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
-            credential=None, # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> DirectoryClient
-        """Create DirectoryClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
-            or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
-        :param str directory_path:
-            The directory path.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
-            shared access key.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(DirectoryClient, self).__init__(
+            directory_url,
+            share=share,
+            directory_path=directory_path,
+            snapshot=snapshot,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
         """Get a client to interact with a specific file.
@@ -180,7 +112,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         return FileClient(
             self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, **kwargs)
+            _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         """Get a client to interact with a specific subdirectory.
@@ -204,9 +136,9 @@ class DirectoryClient(StorageAccountHostsMixin):
         return DirectoryClient(
             self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, **kwargs)
+            _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
-    def create_directory( # type: ignore
+    async def create_directory( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
@@ -233,7 +165,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.directory.create( # type: ignore
+            return await self._client.directory.create( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -241,7 +173,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def delete_directory(self, timeout=None, **kwargs):
+    async def delete_directory(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> None
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
@@ -259,7 +191,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Deletes a directory.
         """
         try:
-            self._client.directory.delete(timeout=timeout, **kwargs)
+            await self._client.directory.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -321,7 +253,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
 
-    def close_handles(
+    async def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             recursive=False,  # type: bool
             timeout=None, # type: Optional[int]
@@ -358,18 +290,18 @@ class DirectoryClient(StorageAccountHostsMixin):
             cls=return_response_headers,
             **kwargs)
         try:
-            start_close = command()
+            start_close = await command()
         except StorageErrorException as error:
             process_storage_error(error)
 
         polling_method = CloseHandles(self._config.copy_polling_interval)
-        return LROPoller(
+        return async_poller(
             command,
             start_close,
             None,
             polling_method)
 
-    def get_directory_properties(self, timeout=None, **kwargs):
+    async def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties
         """Returns all user-defined metadata and system properties for the
         specified directory. The data returned does not include the directory's
@@ -381,7 +313,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.models.DirectoryProperties
         """
         try:
-            response = self._client.directory.get_properties(
+            response = await self._client.directory.get_properties(
                 timeout=timeout,
                 cls=deserialize_directory_properties,
                 **kwargs)
@@ -389,7 +321,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return response # type: ignore
 
-    def set_directory_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
+    async def set_directory_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
@@ -408,7 +340,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.directory.set_metadata( # type: ignore
+            return await self._client.directory.set_metadata( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -416,7 +348,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_subdirectory(
+    async def create_subdirectory(
             self, directory_name,  # type: str
             metadata=None, #type: Optional[Dict[str, Any]]
             timeout=None, # type: Optional[int]
@@ -445,10 +377,10 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Create a subdirectory.
         """
         subdir = self.get_subdirectory_client(directory_name)
-        subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
+        await subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
         return subdir # type: ignore
 
-    def delete_subdirectory(
+    async def delete_subdirectory(
             self, directory_name,  # type: str
             timeout=None, # type: Optional[int]
             **kwargs
@@ -471,9 +403,9 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Delete a subdirectory.
         """
         subdir = self.get_subdirectory_client(directory_name)
-        subdir.delete_directory(timeout=timeout, **kwargs)
+        await subdir.delete_directory(timeout=timeout, **kwargs)
 
-    def upload_file(
+    async def upload_file(
             self, file_name,  # type: str
             data, # type: Any
             length=None, # type: Optional[int]
@@ -525,7 +457,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Upload a file to a directory.
         """
         file_client = self.get_file_client(file_name)
-        file_client.upload_file(
+        await file_client.upload_file(
             data,
             length=length,
             metadata=metadata,
@@ -537,7 +469,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs)
         return file_client # type: ignore
 
-    def delete_file(
+    async def delete_file(
             self, file_name,  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs  # type: Optional[Any]
@@ -561,4 +493,4 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Delete a file in a directory.
         """
         file_client = self.get_file_client(file_name)
-        file_client.delete_file(timeout, **kwargs)
+        await file_client.delete_file(timeout, **kwargs)

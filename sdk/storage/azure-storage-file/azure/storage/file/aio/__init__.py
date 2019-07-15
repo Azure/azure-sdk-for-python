@@ -4,24 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .version import VERSION
-from .file_client import FileClient
-from .directory_client import DirectoryClient
-from .share_client import ShareClient
-from .file_service_client import FileServiceClient
-from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
-from ._shared.models import(
+from .file_client_async import FileClient
+from .directory_client_async import DirectoryClient
+from .share_client_async import ShareClient
+from .file_service_client_async import FileServiceClient
+from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
+from .._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountPermissions,
     StorageErrorCode)
-from .models import (
-    ShareProperties,
-    SharePropertiesPaged,
-    DirectoryProperties,
-    DirectoryPropertiesPaged,
+from ..models import (
     Handle,
-    HandlesPaged,
+    ShareProperties,
+    DirectoryProperties,
     FileProperties,
     Metrics,
     RetentionPolicy,
@@ -30,9 +26,10 @@ from .models import (
     FilePermissions,
     SharePermissions,
     ContentSettings)
-
-
-__version__ = VERSION
+from .models import (
+    HandlesPaged,
+    SharePropertiesPaged,
+    DirectoryPropertiesPaged)
 
 
 __all__ = [
@@ -50,6 +47,8 @@ __all__ = [
     'Metrics',
     'RetentionPolicy',
     'CorsRule',
+    'Handle',
+    'HandlesPaged',
     'AccessPolicy',
     'FilePermissions',
     'SharePermissions',

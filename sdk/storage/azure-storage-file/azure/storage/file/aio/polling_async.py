@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import asyncio
 import logging
 import time
 from typing import Any, Callable
-from azure.core.polling import PollingMethod, LROPoller
+from azure.core.polling import AsyncPollingMethod, LROPoller
 
 from ._shared.response_handlers import process_storage_error
 from ._generated.models import StorageErrorException
@@ -36,7 +38,7 @@ class CopyStatusPoller(LROPoller):
         """
         return self._polling_method.id
 
-    def abort(self):
+    async def abort(self):
         # type: () -> None
         """Abort the copy operation.
 
@@ -66,7 +68,7 @@ class CopyStatusPoller(LROPoller):
         return super(CopyStatusPoller, self).result(timeout=timeout)
 
 
-class CopyFile(PollingMethod):
+class CopyFile(AsyncPollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
     def __init__(self, interval, **kwargs):
@@ -107,15 +109,14 @@ class CopyFile(PollingMethod):
         """Empty run, no polling.
         """
 
-    def abort(self):
+    async def abort(self):
         try:
-            return self._client._client.file.abort_copy(  # pylint: disable=protected-access
+            return await self._client._client.file.abort_copy(  # pylint: disable=protected-access
                 self.id, **self.kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     def status(self):
-        self._update_status()
         return self._status
 
     def finished(self):
@@ -127,7 +128,6 @@ class CopyFile(PollingMethod):
 
     def resource(self):
         # type: () -> Any
-        self._update_status()
         return self.file
 
 
@@ -164,7 +164,7 @@ class CopyFilePolling(CopyFile):
         return self.file
 
 
-class CloseHandles(PollingMethod):
+class CloseHandlesAsync(AsyncPollingMethod):
 
     def __init__(self, interval):
         self._command = None
@@ -173,9 +173,9 @@ class CloseHandles(PollingMethod):
         self.handles_closed = 0
         self.polling_interval = interval
 
-    def _update_status(self):
+    async def _update_status(self):
         try:
-            status = self._command()  # pylint: disable=protected-access
+            status = await self._command()  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
         self._status = status.get('marker')
@@ -187,18 +187,17 @@ class CloseHandles(PollingMethod):
         self._status = initial_status['marker']
         self.handles_closed = initial_status['number_of_handles_closed']
 
-    def run(self):
+    async def run(self):
         # type: () -> None
         try:
             while not self.finished():
-                self._update_status()
-                time.sleep(self.polling_interval)
+                await self._update_status()
+                await asyncio.sleep(self.polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise
 
     def status(self):
-        self._update_status()
         return self.handles_closed
 
     def finished(self):
@@ -210,6 +209,4 @@ class CloseHandles(PollingMethod):
 
     def resource(self):
         # type: () -> Any
-        if not self.finished:
-            self._update_status()
         return self.handles_closed

@@ -17,28 +17,30 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.polling import LROPoller
+from azure.core.polling import async_poller
 
-from ._generated import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, FileHTTPHeaders
-from ._shared.uploads import IterStreamer, upload_file_chunks
-from ._shared.downloads import StorageStreamDownloader
-from ._shared.shared_access_signature import FileSharedAccessSignature
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, get_length
-from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._deserialize import deserialize_file_properties, deserialize_file_stream
+from .._generated.aio import AzureFileStorage
+from .._generated.version import VERSION
+from .._generated.models import StorageErrorException, FileHTTPHeaders
+from .._shared.policies_async import ExponentialRetry
+from .._shared.uploads_async import IterStreamer, upload_file_chunks
+from .._shared.downloads_async import StorageStreamDownloader
+from .._shared.shared_access_signature import FileSharedAccessSignature
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.request_handlers import add_metadata_headers, get_length
+from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._deserialize import deserialize_file_properties, deserialize_file_stream
+from ..file_client import FileClient as FileClientBase
 from .models import HandlesPaged
-from .polling import CopyStatusPoller, CloseHandles
+from .polling_async import CopyStatusPoller, CloseHandlesAsync
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .models import ShareProperties, FilePermissions, ContentSettings, FileProperties
-    from ._generated.models import HandleItem
+    from ..models import ShareProperties, FilePermissions, ContentSettings, FileProperties
+    from .._generated.models import HandleItem
 
 
-def _upload_file_helper(
+async def _upload_file_helper(
         client,
         stream,
         size,
@@ -52,7 +54,7 @@ def _upload_file_helper(
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
-        response = client.create_file(
+        response = await client.create_file(
             size,
             content_settings=content_settings,
             metadata=metadata,
@@ -62,7 +64,7 @@ def _upload_file_helper(
         if size == 0:
             return response
 
-        return upload_file_chunks(
+        return await upload_file_chunks(
             file_service=client,
             file_size=size,
             block_size=file_settings.max_range_size,
@@ -75,7 +77,7 @@ def _upload_file_helper(
         process_storage_error(error)
 
 
-class FileClient(StorageAccountHostsMixin):
+class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:
@@ -117,202 +119,23 @@ class FileClient(StorageAccountHostsMixin):
             file_path=None,  # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
+            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not file_url.lower().startswith('http'):
-                file_url = "https://" + file_url
-        except AttributeError:
-            raise ValueError("File URL must be a string.")
-        parsed_url = urlparse(file_url.rstrip('/'))
-        if not parsed_url.path and not (share and file_path):
-            raise ValueError("Please specify a share and file name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(file_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(FileClient, self).__init__(
+            file_url,
+            share=share,
+            file_path=file_path,
+            snapshot=snapshot,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
-        path_share, path_file = "", ""
-        path_snapshot = None
-        if parsed_url.path:
-            path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
-        path_snapshot, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(path_share) # type: ignore
-        if file_path:
-            self.file_path = file_path.split('/')
-        else:
-            self.file_path = [unquote(p) for p in path_file.split('/')]
-
-        self.file_name = self.file_path[-1]
-        self.directory_path = "/".join(self.file_path[:-1])
-        self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, 'file', credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        share_name = self.share_name
-        if isinstance(share_name, six.text_type):
-            share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            "/".join([quote(p, safe='~') for p in self.file_path]),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            file_path=None, # type: Optional[str]
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> FileClient
-        """Create FileClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
-            or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
-        :param str file_path:
-            The file path.
-        :param str snapshot:
-            An optional file snapshot on which to operate.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
-            shared access key.
-
-        Example:
-            .. literalinclude:: ../tests/test_file_samples_hello_world.py
-                :start-after: [START create_file_client]
-                :end-before: [END create_file_client]
-                :language: python
-                :dedent: 12
-                :caption: Creates the file client with connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
-
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[FilePermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None  # type: Optional[str]
-        ):
-        # type: (...) -> str
-        """Generates a shared access signature for the file.
-
-        Use the returned signature with the credential parameter of any FileServiceClient,
-        ShareClient, DirectoryClient, or FileClient.
-
-        :param ~azure.storage.file.models.FilePermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :param str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :param str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :param str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :param str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :param str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        if len(self.file_path) > 1:
-            file_path = '/'.join(self.file_path[:-1])
-        else:
-            file_path = None # type: ignore
-        return sas.generate_file( # type: ignore
-            self.share_name,
-            file_path,
-            self.file_name,
-            permission,
-            expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-            cache_control=cache_control,
-            content_disposition=content_disposition,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_type=content_type)
-
-    def create_file( # type: ignore
+    async def create_file( # type: ignore
             self, size, # type: int
             content_settings=None, # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -360,7 +183,7 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_disposition=content_settings.content_disposition
             )
         try:
-            return self._client.file.create( # type: ignore
+            return await self._client.file.create( # type: ignore
                 file_content_length=size,
                 timeout=timeout,
                 metadata=metadata,
@@ -371,7 +194,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_file(
+    async def upload_file(
             self, data, # type: Any
             length=None, # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -436,7 +259,7 @@ class FileClient(StorageAccountHostsMixin):
             stream = IterStreamer(data, encoding=encoding) # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return upload_file_helper( # type: ignore
+        return await _upload_file_helper( # type: ignore
             self,
             stream,
             length,
@@ -448,7 +271,7 @@ class FileClient(StorageAccountHostsMixin):
             self._config,
             **kwargs)
 
-    def copy_file_from_url(
+    async def copy_file_from_url(
             self, source_url, # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None, # type: Optional[int]
@@ -480,7 +303,7 @@ class FileClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
 
         try:
-            start_copy = self._client.file.start_copy(
+            start_copy = await self._client.file.start_copy(
                 source_url,
                 timeout=None,
                 metadata=metadata,
@@ -496,7 +319,7 @@ class FileClient(StorageAccountHostsMixin):
             timeout=timeout)
         return poller
 
-    def download_file(
+    async def download_file(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: bool
@@ -554,7 +377,7 @@ class FileClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
-    def delete_file(self, timeout=None, **kwargs):
+    async def delete_file(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
@@ -572,11 +395,11 @@ class FileClient(StorageAccountHostsMixin):
                 :caption: Delete a file.
         """
         try:
-            self._client.file.delete(timeout=timeout, **kwargs)
+            await self._client.file.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_file_properties(self, timeout=None, **kwargs):
+    async def get_file_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
@@ -587,7 +410,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.models.FileProperties
         """
         try:
-            file_props = self._client.file.get_properties(
+            file_props = await self._client.file.get_properties(
                 sharesnapshot=self.snapshot,
                 timeout=timeout,
                 cls=deserialize_file_properties,
@@ -598,7 +421,7 @@ class FileClient(StorageAccountHostsMixin):
         file_props.share_name = self.share_name
         return file_props # type: ignore
 
-    def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
+    async def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
         #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
@@ -619,7 +442,7 @@ class FileClient(StorageAccountHostsMixin):
             file_content_disposition=content_settings.content_disposition
         )
         try:
-            return self._client.file.set_http_headers( # type: ignore
+            return await self._client.file.set_http_headers( # type: ignore
                 timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
@@ -628,7 +451,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
+    async def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
         #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
@@ -648,7 +471,7 @@ class FileClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.file.set_metadata( # type: ignore
+            return await self._client.file.set_metadata( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -657,7 +480,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_range( # type: ignore
+    async def upload_range( # type: ignore
             self, data,  # type: bytes
             start_range, # type: int
             end_range, # type: int
@@ -703,7 +526,7 @@ class FileClient(StorageAccountHostsMixin):
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         content_length = end_range - start_range + 1
         try:
-            return self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range( # type: ignore
                 range=content_range,
                 content_length=content_length,
                 optionalbody=data,
@@ -714,7 +537,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_ranges( # type: ignore
+    async def get_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
             timeout=None, # type: Optional[int]
@@ -746,7 +569,7 @@ class FileClient(StorageAccountHostsMixin):
             else:
                 content_range = 'bytes={0}-'.format(start_range)
         try:
-            ranges = self._client.file.get_range_list(
+            ranges = await self._client.file.get_range_list(
                 sharesnapshot=self.snapshot,
                 timeout=timeout,
                 range=content_range,
@@ -755,7 +578,7 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': b.start, 'end': b.end} for b in ranges]
 
-    def clear_range( # type: ignore
+    async def clear_range( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
             timeout=None,  # type: Optional[int]
@@ -789,7 +612,7 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("end_range must be an integer that aligns with 512 file size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         try:
-            return self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
@@ -799,7 +622,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def resize_file(self, size, timeout=None, **kwargs): # type: ignore
+    async def resize_file(self, size, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
@@ -811,7 +634,7 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: Dict[str, Any]
         """
         try:
-            return self._client.file.set_http_headers( # type: ignore
+            return await self._client.file.set_http_headers( # type: ignore
                 timeout=timeout,
                 file_content_length=size,
                 cls=return_response_headers,
@@ -839,7 +662,7 @@ class FileClient(StorageAccountHostsMixin):
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
 
-    def close_handles(
+    async def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             timeout=None, # type: Optional[int]
             **kwargs # type: Any
@@ -871,12 +694,12 @@ class FileClient(StorageAccountHostsMixin):
             cls=return_response_headers,
             **kwargs)
         try:
-            start_close = command()
+            start_close = await command()
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.copy_polling_interval)
-        return LROPoller(
+        polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
+        return async_poller(
             command,
             start_close,
             None,

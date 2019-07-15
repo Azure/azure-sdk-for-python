@@ -15,28 +15,31 @@ except ImportError:
 
 import six
 
-from ._shared.shared_access_signature import FileSharedAccessSignature
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.response_handlers import (
+from .._shared.policies_async import ExponentialRetry
+from .._shared.shared_access_signature import FileSharedAccessSignature
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from ._generated import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import (
+from .._deserialize import deserialize_share_properties
+from .._generated.aio import AzureFileStorage
+from .._generated.version import VERSION
+from .._generated.models import (
     StorageErrorException,
     SignedIdentifier,
     DeleteSnapshotsOptionType)
-from ._deserialize import deserialize_share_properties
-from .directory_client import DirectoryClient
-from .file_client import FileClient
+from .._deserialize import deserialize_share_properties
+from ..share_client import ShareClient as ShareClientBase
+from .directory_client_async import DirectoryClient
+from .file_client_async import FileClient
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy
+    from ..models import ShareProperties, AccessPolicy
 
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(ShareClientBase, AsyncStorageAccountHostsMixin):
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -76,182 +79,20 @@ class ShareClient(StorageAccountHostsMixin):
             share=None,  # type: Optional[Union[str, ShareProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
+            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not share_url.lower().startswith('http'):
-                share_url = "https://" + share_url
-        except AttributeError:
-            raise ValueError("Share URL must be a string.")
-        parsed_url = urlparse(share_url.rstrip('/'))
-        if not parsed_url.path and not share:
-            raise ValueError("Please specify a share name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(share_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
-
-        path_share = ""
-        path_snapshot = None
-        if parsed_url.path:
-            path_share = parsed_url.path.lstrip('/').partition('/')[0]
-        path_snapshot, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(path_share)
-        self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareClient, self).__init__(parsed_url, 'file', credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        share_name = self.share_name
-        if isinstance(share_name, six.text_type):
-            share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            share, # type: Union[str, ShareProperties]
-            snapshot=None,  # type: Optional[str]
-            credential=None, # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareClient
-        """Create ShareClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
-            or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
-        :param str snapshot:
-            The optional share snapshot on which to operate.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
-            shared access key.
-
-        Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
-                :start-after: [START create_share_client_from_conn_string]
-                :end-before: [END create_share_client_from_conn_string]
-                :language: python
-                :dedent: 8
-                :caption: Gets the share client from connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
-
-    def generate_shared_access_signature(
-            self, permission=None,
-            expiry=None,
-            start=None,
-            policy_id=None,
-            ip=None,
-            protocol=None,
-            cache_control=None,
-            content_disposition=None,
-            content_encoding=None,
-            content_language=None,
-            content_type=None):
-        """Generates a shared access signature for the share.
-        Use the returned signature with the credential parameter of any FileServiceClient,
-        ShareClient, DirectoryClient, or FileClient.
-
-        :param ~azure.storage.file.models.SharePermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_share_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. Possible values are
-            both HTTPS and HTTP (https,http) or HTTPS only (https). The default value
-            is https,http. Note that HTTP only is not a permitted value.
-        :param str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :param str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :param str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :param str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :param str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_share(
-            self.share_name,
-            permission,
-            expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-            cache_control=cache_control,
-            content_disposition=content_disposition,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_type=content_type,
-        )
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(ShareClient, self).__init__(
+            share_url,
+            share=share,
+            snapshot=snapshot,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
     def get_directory_client(self, directory_path=None):
         """Get a client to interact with the specified directory.
@@ -265,7 +106,7 @@ class ShareClient(StorageAccountHostsMixin):
         return DirectoryClient(
             self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode)
+            _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
         """Get a client to interact with the specified file.
@@ -278,9 +119,9 @@ class ShareClient(StorageAccountHostsMixin):
         """
         return FileClient(
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
 
-    def create_share( # type: ignore
+    async def create_share( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             quota=None, # type: Optional[int]
             timeout=None, # type: Optional[int]
@@ -312,7 +153,7 @@ class ShareClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
         try:
-            return self._client.share.create( # type: ignore
+            return await self._client.share.create( # type: ignore
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
@@ -322,7 +163,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_snapshot( # type: ignore
+    async def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
             **kwargs # type: Optional[Any]
@@ -357,7 +198,7 @@ class ShareClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.share.create_snapshot( # type: ignore
+            return await self._client.share.create_snapshot( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -365,7 +206,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def delete_share(
+    async def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -392,7 +233,7 @@ class ShareClient(StorageAccountHostsMixin):
         if delete_snapshots:
             delete_include = DeleteSnapshotsOptionType.include
         try:
-            self._client.share.delete(
+            await self._client.share.delete(
                 timeout=timeout,
                 sharesnapshot=self.snapshot,
                 delete_snapshots=delete_include,
@@ -400,7 +241,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_share_properties(self, timeout=None, **kwargs):
+    async def get_share_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> ShareProperties
         """Returns all user-defined metadata and system properties for the
         specified share. The data returned does not include the shares's
@@ -420,7 +261,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :caption: Gets the share properties.
         """
         try:
-            props = self._client.share.get_properties(
+            props = await self._client.share.get_properties(
                 timeout=timeout,
                 sharesnapshot=self.snapshot,
                 cls=deserialize_share_properties,
@@ -431,7 +272,7 @@ class ShareClient(StorageAccountHostsMixin):
         props.snapshot = self.snapshot
         return props # type: ignore
 
-    def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
+    async def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Any) ->  Dict[str, Any]
         """Sets the quota for the share.
 
@@ -452,7 +293,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :caption: Sets the share quota.
         """
         try:
-            return self._client.share.set_quota( # type: ignore
+            return await self._client.share.set_quota( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 cls=return_response_headers,
@@ -460,7 +301,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
+    async def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
@@ -487,7 +328,7 @@ class ShareClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.share.set_metadata( # type: ignore
+            return await self._client.share.set_metadata( # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -495,7 +336,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_share_access_policy(self, timeout=None, **kwargs):
+    async def get_share_access_policy(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the share. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -506,7 +347,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: dict[str, str]
         """
         try:
-            response, identifiers = self._client.share.get_access_policy(
+            response, identifiers = await self._client.share.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
                 **kwargs)
@@ -517,7 +358,7 @@ class ShareClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
-    def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
+    async def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], **Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
@@ -547,7 +388,7 @@ class ShareClient(StorageAccountHostsMixin):
             signed_identifiers = identifiers # type: ignore
 
         try:
-            return self._client.share.set_access_policy( # type: ignore
+            return await self._client.share.set_access_policy( # type: ignore
                 share_acl=signed_identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
@@ -555,7 +396,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_share_stats(self, timeout=None, **kwargs): # type: ignore
+    async def get_share_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
 
@@ -568,7 +409,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: int
         """
         try:
-            stats = self._client.share.get_statistics(
+            stats = await self._client.share.get_statistics(
                 timeout=timeout,
                 **kwargs)
             return stats.share_usage_bytes # type: ignore
@@ -610,7 +451,7 @@ class ShareClient(StorageAccountHostsMixin):
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
-    def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
+    async def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
         # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
         """Creates a directory in the share and returns a client to interact
         with the directory.
@@ -626,5 +467,5 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
-        directory.create_directory(metadata, timeout, **kwargs)
+        await directory.create_directory(metadata, timeout, **kwargs)
         return directory # type: ignore

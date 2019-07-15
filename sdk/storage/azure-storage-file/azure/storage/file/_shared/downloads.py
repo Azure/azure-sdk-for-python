@@ -42,7 +42,7 @@ def process_range_and_offset(start_range, end_range, length, encryption):
 def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = b"".join(list(response))
+    content = b"".join(list(data))
     if content and encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(

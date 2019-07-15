@@ -437,6 +437,13 @@ class StorageRetryPolicy(HTTPPolicy):
 
         return min(retry_counts) < 0
 
+    def retry_hook(self, settings, **kwargs):
+        if retry_settings['hook']:
+            retry_settings['hook'](
+                retry_count=retry_settings['count'] - 1,
+                location_mode=retry_settings['mode'],
+                **kwargs)
+
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
 
@@ -482,13 +489,6 @@ class StorageRetryPolicy(HTTPPolicy):
                 except UnsupportedOperation:
                     # if body is not seekable, then retry would not work
                     return False
-            if settings['hook']:
-                settings['hook'](
-                    request=request,
-                    response=response,
-                    error=error,
-                    retry_count=settings['count'],
-                    location_mode=settings['mode'])
             settings['count'] += 1
             return True
         return False
@@ -506,14 +506,23 @@ class StorageRetryPolicy(HTTPPolicy):
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
+                        self.retry_hook(
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None)
                         self.sleep(retry_settings, request.context.transport)
-
                         continue
                 break
             except AzureError as err:
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
+                    self.retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err)
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err

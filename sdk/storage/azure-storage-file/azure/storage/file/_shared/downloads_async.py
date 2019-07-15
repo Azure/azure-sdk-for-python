@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-import threading
+import asyncio
 from io import BytesIO
 
 from azure.core.exceptions import HttpResponseError
@@ -137,3 +137,264 @@ class _AsyncChunkDownloader(object):
             self.request_options['modified_access_conditions'].if_match = response.properties.etag
 
         return chunk_data
+
+class StorageStreamDownloader(object):
+    """A streaming object to download from Azure Storage.
+
+    The stream downloader can iterated, or download to open file or stream
+    over multiple threads.
+    """
+
+    def __init__(
+            self, service=None,
+            config=None,
+            offset=None,
+            length=None,
+            validate_content=None,
+            encryption_options=None,
+            extra_properties=None,
+            **kwargs):
+        self.service = service
+        self.config = config
+        self.offset = offset
+        self.length = length
+        self.validate_content = validate_content
+        self.encryption_options = encryption_options or {}
+        self.request_options = kwargs
+        self.location_mode = None
+        self._download_complete = False
+
+        # The service only provides transactional MD5s for chunks under 4MB.
+        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # chunk so a transactional MD5 can be retrieved.
+        self.first_get_size = self.config.max_single_get_size if not self.validate_content \
+            else self.config.max_chunk_get_size
+        initial_request_start = self.offset if self.offset is not None else 0
+        if self.length is not None and self.length - self.offset < self.first_get_size:
+            initial_request_end = self.length
+        else:
+            initial_request_end = initial_request_start + self.first_get_size - 1
+
+        self.initial_range, self.initial_offset = process_range_and_offset(
+            initial_request_start, initial_request_end, self.length, self.encryption_options)
+
+        self.download_size = None
+        self.file_size = None
+        self.response = self._initial_request()
+        self.properties = self.response.properties
+
+        # Set the content length to the download size instead of the size of
+        # the last range
+        self.properties.size = self.download_size
+
+        # Overwrite the content range to the user requested range
+        self.properties.content_range = 'bytes {0}-{1}/{2}'.format(self.offset, self.length, self.file_size)
+
+        # Set additional properties according to download type
+        if extra_properties:
+            for prop, value in extra_properties.items():
+                setattr(self.properties, prop, value)
+
+        # Overwrite the content MD5 as it is the MD5 for the last range instead
+        # of the stored MD5
+        # TODO: Set to the stored MD5 when the service returns this
+        self.properties.content_md5 = None
+
+    def __len__(self):
+        return self.download_size
+
+    def __iter__(self):
+        raise TypeError("Async stream must be iterated asynchronously.")
+
+    def __aiter__(self):
+        if self.download_size == 0:
+            content = b""
+        else:
+            content = process_content(
+                self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
+
+        if content is not None:
+            yield content
+        if self._download_complete:
+            return
+
+        data_end = self.file_size
+        if self.length is not None:
+            # Use the length unless it is over the end of the file
+            data_end = min(self.file_size, self.length + 1)
+
+        downloader = _AsyncChunkDownloader(
+            service=self.service,
+            total_size=self.download_size,
+            chunk_size=self.config.max_chunk_get_size,
+            current_progress=self.first_get_size,
+            start_range=self.initial_range[1] + 1,  # start where the first download ended
+            end_range=data_end,
+            stream=stream,
+            validate_content=self.validate_content,
+            encryption_options=self.encryption_options,
+            use_location=self.location_mode,
+            **self.request_options)
+
+        for chunk in downloader.get_chunk_offsets():
+            yield await downloader.yield_chunk(chunk)
+
+    def _initial_request(self):
+        range_header, range_validation = validate_and_format_range_headers(
+            self.initial_range[0],
+            self.initial_range[1],
+            start_range_required=False,
+            end_range_required=False,
+            check_content_md5=self.validate_content)
+
+        try:
+            location_mode, response = self.service.download(
+                range=range_header,
+                range_get_content_md5=range_validation,
+                validate_content=self.validate_content,
+                data_stream_total=None,
+                download_stream_current=0,
+                **self.request_options)
+
+            # Check the location we read from to ensure we use the same one
+            # for subsequent requests.
+            self.location_mode = location_mode
+
+            # Parse the total file size and adjust the download size if ranges
+            # were specified
+            self.file_size = parse_length_from_content_range(response.properties.content_range)
+            if self.length is not None:
+                # Use the length unless it is over the end of the file
+                self.download_size = min(self.file_size, self.length - self.offset + 1)
+            elif self.offset is not None:
+                self.download_size = self.file_size - self.offset
+            else:
+                self.download_size = self.file_size
+
+        except HttpResponseError as error:
+            if self.offset is None and error.response.status_code == 416:
+                # Get range will fail on an empty file. If the user did not
+                # request a range, do a regular get request in order to get
+                # any properties.
+                try:
+                    _, response = self.service.download(
+                        validate_content=self.validate_content,
+                        data_stream_total=0,
+                        download_stream_current=0,
+                        **self.request_options)
+                except HttpResponseError as error:
+                    process_storage_error(error)
+
+                # Set the download size to empty
+                self.download_size = 0
+                self.file_size = 0
+            else:
+                process_storage_error(error)
+
+        # If the file is small, the download is complete at this point.
+        # If file size is large, download the rest of the file in chunks.
+        if response.properties.size != self.download_size:
+            # Lock on the etag. This can be overriden by the user by specifying '*'
+            if self.request_options.get('modified_access_conditions'):
+                if not self.request_options['modified_access_conditions'].if_match:
+                    self.request_options['modified_access_conditions'].if_match = response.properties.etag
+        else:
+            self._download_complete = True
+
+        return response
+
+    async def content_as_bytes(self, max_connections=1):
+        """Download the contents of this file.
+
+        This operation is blocking until all data is downloaded.
+
+        :param int max_connections:
+            The number of parallel connections with which to download.
+        :rtype: bytes
+        """
+        stream = BytesIO()
+        await self.download_to_stream(stream, max_connections=max_connections)
+        return stream.getvalue()
+
+    async def content_as_text(self, max_connections=1, encoding='UTF-8'):
+        """Download the contents of this file, and decode as text.
+
+        This operation is blocking until all data is downloaded.
+
+        :param int max_connections:
+            The number of parallel connections with which to download.
+        :rtype: str
+        """
+        content = await self.content_as_bytes(max_connections=max_connections)
+        return content.decode(encoding)
+
+    async def download_to_stream(self, stream, max_connections=1):
+        """Download the contents of this file to a stream.
+
+        :param stream:
+            The stream to download to. This can be an open file-handle,
+            or any writable stream. The stream must be seekable if the download
+            uses more than one parallel connection.
+        :returns: The properties of the downloaded file.
+        :rtype: Any
+        """
+        # the stream must be seekable if parallel download is required
+        if max_connections > 1:
+            error_message = "Target stream handle must be seekable."
+            if sys.version_info >= (3,) and not stream.seekable():
+                raise ValueError(error_message)
+
+            try:
+                stream.seek(stream.tell())
+            except (NotImplementedError, AttributeError):
+                raise ValueError(error_message)
+
+        if self.download_size == 0:
+            content = b""
+        else:
+            content = process_content(
+                self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
+
+        # Write the content to the user stream
+        if content is not None:
+            stream.write(content)
+        if self._download_complete:
+            return self.properties
+
+        data_end = self.file_size
+        if self.length is not None:
+            # Use the length unless it is over the end of the file
+            data_end = min(self.file_size, self.length + 1)
+
+        downloader = _AsyncChunkDownloader(
+            service=self.service,
+            total_size=self.download_size,
+            chunk_size=self.config.max_chunk_get_size,
+            current_progress=self.first_get_size,
+            start_range=self.initial_range[1] + 1,  # start where the first download ended
+            end_range=data_end,
+            stream=stream,
+            validate_content=self.validate_content,
+            encryption_options=self.encryption_options,
+            use_location=self.location_mode,
+            **self.request_options)
+
+        dl_tasks = downloader.get_chunk_offsets()
+        running_futures = [
+            asyncio.ensure_future(downloader.process_chunk(d))
+            for d in islice(dl_tasks, 0, max_connections)
+        ]
+        while True:
+            # Wait for some download to finish before adding a new one
+            _done, running_futures = await asyncio.wait(
+                running_futures, return_when=asyncio.FIRST_COMPLETED)
+            try:
+                next_chunk = next(dl_tasks)
+            except StopIteration:
+                break
+            else:
+                running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
+
+        # Wait for the remaining downloads to finish
+        await asyncio.wait(running_futures)
+        return self.properties
