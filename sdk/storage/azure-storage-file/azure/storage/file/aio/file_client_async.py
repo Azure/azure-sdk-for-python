@@ -23,7 +23,7 @@ from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
-from .._shared.uploads_async import IterStreamer, upload_file_chunks
+from .._shared.uploads_async import upload_data_chunks, IterStreamer
 from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.shared_access_signature import FileSharedAccessSignature
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
@@ -64,7 +64,7 @@ async def _upload_file_helper(
         if size == 0:
             return response
 
-        return await upload_file_chunks(
+        return await upload_data_chunks(
             file_service=client,
             file_size=size,
             block_size=file_settings.max_range_size,

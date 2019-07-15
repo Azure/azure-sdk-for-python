@@ -8,6 +8,7 @@
 import base64
 import os
 import unittest
+import time
 from datetime import datetime, timedelta
 
 import requests
@@ -655,12 +656,12 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        copy = file_client.copy_file_from_url(source_client.url)
+        copy = file_client.start_copy_from_url(source_client.url)
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertEqual(copy.status(), 'success')
-        self.assertIsNotNone(copy.copy_id())
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
 
         copy_file = file_client.download_file().content_as_bytes()
         self.assertEqual(copy_file, self.short_byte_data)
@@ -679,7 +680,7 @@ class StorageFileTest(FileTestCase):
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         with self.assertRaises(HttpResponseError) as e:
-            file_client.copy_file_from_url(source_file.url)
+            file_client.start_copy_from_url(source_file.url)
 
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
@@ -703,13 +704,14 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_url)
+        copy_resp = file_client.start_copy_from_url(source_url)
 
         # Assert
-        status = copy_resp.status()
-        self.assertTrue(status in ['success', 'pending'])
-        if status == 'pending':
-            copy_resp.wait()
+        self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
+        while copy_resp['copy_status'] =! 'success':
+            properties = file_client.get_file_properties()
+            copy_resp['copy_status'] = properties.copy.status
+            time.sleep(3)
 
         actual_data = file_client.download_file().content_as_bytes()
         self.assertEqual(actual_data, data)
@@ -733,9 +735,9 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_url)
-        self.assertEqual(copy_resp.status(), 'pending')
-        copy_resp.abort()
+        copy_resp = file_client.start_copy_from_url(source_url)
+        self.assertEqual(copy_resp['copy_status'], 'pending')
+        file_client.abort_copy(copy_resp)
 
         # Assert
         target_file = file_client.download_file()
@@ -754,13 +756,13 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_file.url)
+        copy_resp = file_client.start_copy_from_url(source_file.url)
 
         with self.assertRaises(HttpResponseError):
-            copy_resp.abort()
+            file_client.abort_copy(copy_resp)
 
         # Assert
-        self.assertEqual(copy_resp.status(), 'success')
+        self.assertEqual(copy_resp['copy_status'], 'success')
 
     @record
     def test_unicode_get_file_unicode_name(self):

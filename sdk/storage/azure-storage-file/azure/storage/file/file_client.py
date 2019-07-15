@@ -22,7 +22,7 @@ from azure.core.polling import LROPoller
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
-from ._shared.uploads import IterStreamer, upload_file_chunks
+from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 from ._shared.downloads import StorageStreamDownloader
 from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -62,10 +62,11 @@ def _upload_file_helper(
         if size == 0:
             return response
 
-        return upload_file_chunks(
-            file_service=client,
-            file_size=size,
-            block_size=file_settings.max_range_size,
+        return upload_data_chunks(
+            service=client,
+            uploader_class=FileChunkUploader,
+            total_size=size,
+            chunk_size=file_settings.max_range_size,
             stream=stream,
             max_connections=max_connections,
             validate_content=validate_content,
@@ -436,7 +437,7 @@ class FileClient(StorageAccountHostsMixin):
             stream = IterStreamer(data, encoding=encoding) # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return upload_file_helper( # type: ignore
+        return _upload_file_helper( # type: ignore
             self,
             stream,
             length,
@@ -508,7 +509,10 @@ class FileClient(StorageAccountHostsMixin):
         try:
             copy_id = copy_id.copy.id
         except AttributeError:
-            pass
+            try:
+                copy_id = copy_id['copy_id']
+            except TypeError:
+                pass
         try:
             self._client.file.abort_copy(copy_id=copy_id, timeout=None, **kwargs)
         except StorageErrorException as error:

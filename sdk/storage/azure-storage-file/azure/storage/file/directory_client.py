@@ -24,9 +24,9 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._deserialize import deserialize_directory_properties
+from ._polling import CloseHandles
 from .file_client import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
-from .polling import CloseHandles
 
 if TYPE_CHECKING:
     from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
