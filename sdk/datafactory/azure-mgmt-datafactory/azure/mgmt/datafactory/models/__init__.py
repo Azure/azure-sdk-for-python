@@ -242,6 +242,11 @@ try:
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
+    from .sybase_table_dataset_py3 import SybaseTableDataset
+    from .sap_bw_cube_dataset_py3 import SapBwCubeDataset
+    from .postgre_sql_table_dataset_py3 import PostgreSqlTableDataset
+    from .my_sql_table_dataset_py3 import MySqlTableDataset
+    from .odbc_table_dataset_py3 import OdbcTableDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
@@ -297,6 +302,7 @@ try:
     from .responsys_source_py3 import ResponsysSource
     from .salesforce_marketing_cloud_source_py3 import SalesforceMarketingCloudSource
     from .vertica_source_py3 import VerticaSource
+    from .netezza_partition_settings_py3 import NetezzaPartitionSettings
     from .netezza_source_py3 import NetezzaSource
     from .zoho_source_py3 import ZohoSource
     from .xero_source_py3 import XeroSource
@@ -334,6 +340,7 @@ try:
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
+    from .oracle_partition_settings_py3 import OraclePartitionSettings
     from .oracle_source_py3 import OracleSource
     from .azure_data_explorer_source_py3 import AzureDataExplorerSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
@@ -347,12 +354,20 @@ try:
     from .sql_server_source_py3 import SqlServerSource
     from .sql_source_py3 import SqlSource
     from .rest_source_py3 import RestSource
+    from .sap_table_partition_settings_py3 import SapTablePartitionSettings
     from .sap_table_source_py3 import SapTableSource
     from .sap_open_hub_source_py3 import SapOpenHubSource
     from .sap_hana_source_py3 import SapHanaSource
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
+    from .odata_source_py3 import ODataSource
+    from .sybase_source_py3 import SybaseSource
+    from .sap_bw_source_py3 import SapBwSource
+    from .postgre_sql_source_py3 import PostgreSqlSource
+    from .my_sql_source_py3 import MySqlSource
+    from .odbc_source_py3 import OdbcSource
+    from .db2_source_py3 import Db2Source
     from .relational_source_py3 import RelationalSource
     from .common_data_service_for_apps_source_py3 import CommonDataServiceForAppsSource
     from .dynamics_crm_source_py3 import DynamicsCrmSource
@@ -422,6 +437,7 @@ try:
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
+    from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
     from .format_write_settings_py3 import FormatWriteSettings
     from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
     from .delimited_text_sink_py3 import DelimitedTextSink
@@ -706,6 +722,11 @@ except (SyntaxError, ImportError):
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
+    from .sybase_table_dataset import SybaseTableDataset
+    from .sap_bw_cube_dataset import SapBwCubeDataset
+    from .postgre_sql_table_dataset import PostgreSqlTableDataset
+    from .my_sql_table_dataset import MySqlTableDataset
+    from .odbc_table_dataset import OdbcTableDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
     from .oracle_table_dataset import OracleTableDataset
@@ -761,6 +782,7 @@ except (SyntaxError, ImportError):
     from .responsys_source import ResponsysSource
     from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
     from .vertica_source import VerticaSource
+    from .netezza_partition_settings import NetezzaPartitionSettings
     from .netezza_source import NetezzaSource
     from .zoho_source import ZohoSource
     from .xero_source import XeroSource
@@ -798,6 +820,7 @@ except (SyntaxError, ImportError):
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
+    from .oracle_partition_settings import OraclePartitionSettings
     from .oracle_source import OracleSource
     from .azure_data_explorer_source import AzureDataExplorerSource
     from .azure_my_sql_source import AzureMySqlSource
@@ -811,12 +834,20 @@ except (SyntaxError, ImportError):
     from .sql_server_source import SqlServerSource
     from .sql_source import SqlSource
     from .rest_source import RestSource
+    from .sap_table_partition_settings import SapTablePartitionSettings
     from .sap_table_source import SapTableSource
     from .sap_open_hub_source import SapOpenHubSource
     from .sap_hana_source import SapHanaSource
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
+    from .odata_source import ODataSource
+    from .sybase_source import SybaseSource
+    from .sap_bw_source import SapBwSource
+    from .postgre_sql_source import PostgreSqlSource
+    from .my_sql_source import MySqlSource
+    from .odbc_source import OdbcSource
+    from .db2_source import Db2Source
     from .relational_source import RelationalSource
     from .common_data_service_for_apps_source import CommonDataServiceForAppsSource
     from .dynamics_crm_source import DynamicsCrmSource
@@ -886,6 +917,7 @@ except (SyntaxError, ImportError):
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
+    from .azure_postgre_sql_sink import AzurePostgreSqlSink
     from .format_write_settings import FormatWriteSettings
     from .delimited_text_write_settings import DelimitedTextWriteSettings
     from .delimited_text_sink import DelimitedTextSink
@@ -990,8 +1022,11 @@ from .data_factory_management_client_enums import (
     DynamicsAuthenticationType,
     AzureFunctionActivityMethod,
     WebActivityMethod,
+    NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
+    OraclePartitionOption,
     StoredProcedureParameterType,
+    SapTablePartitionOption,
     SalesforceSourceReadBehavior,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
@@ -1245,6 +1280,11 @@ __all__ = [
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
     'SalesforceObjectDataset',
+    'SybaseTableDataset',
+    'SapBwCubeDataset',
+    'PostgreSqlTableDataset',
+    'MySqlTableDataset',
+    'OdbcTableDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
     'OracleTableDataset',
@@ -1300,6 +1340,7 @@ __all__ = [
     'ResponsysSource',
     'SalesforceMarketingCloudSource',
     'VerticaSource',
+    'NetezzaPartitionSettings',
     'NetezzaSource',
     'ZohoSource',
     'XeroSource',
@@ -1337,6 +1378,7 @@ __all__ = [
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
+    'OraclePartitionSettings',
     'OracleSource',
     'AzureDataExplorerSource',
     'AzureMySqlSource',
@@ -1350,12 +1392,20 @@ __all__ = [
     'SqlServerSource',
     'SqlSource',
     'RestSource',
+    'SapTablePartitionSettings',
     'SapTableSource',
     'SapOpenHubSource',
     'SapHanaSource',
     'SapEccSource',
     'SapCloudForCustomerSource',
     'SalesforceSource',
+    'ODataSource',
+    'SybaseSource',
+    'SapBwSource',
+    'PostgreSqlSource',
+    'MySqlSource',
+    'OdbcSource',
+    'Db2Source',
     'RelationalSource',
     'CommonDataServiceForAppsSource',
     'DynamicsCrmSource',
@@ -1425,6 +1475,7 @@ __all__ = [
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
+    'AzurePostgreSqlSink',
     'FormatWriteSettings',
     'DelimitedTextWriteSettings',
     'DelimitedTextSink',
@@ -1528,8 +1579,11 @@ __all__ = [
     'DynamicsAuthenticationType',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
+    'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
+    'OraclePartitionOption',
     'StoredProcedureParameterType',
+    'SapTablePartitionOption',
     'SalesforceSourceReadBehavior',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
