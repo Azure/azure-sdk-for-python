@@ -23,6 +23,8 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""The decorator to apply if you want the given function traced."""
+
 import functools
 
 import azure.core.tracing.common as common

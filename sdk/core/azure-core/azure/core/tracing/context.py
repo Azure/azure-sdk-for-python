@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""The context for the azure.core.tracing. Holds global variables in a thread and async safe way."""
+
 import threading
 from azure.core.settings import settings
 

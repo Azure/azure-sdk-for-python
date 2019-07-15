@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""The tests for decorators.py and common.py"""
+
 import unittest
 
 try:

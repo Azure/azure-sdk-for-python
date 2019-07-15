@@ -23,6 +23,8 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""Common functions shared by both the sync and the async decorators."""
+
 from os import environ
 import re
 
