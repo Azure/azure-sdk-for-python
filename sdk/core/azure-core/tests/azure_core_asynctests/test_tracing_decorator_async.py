@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""The tests for decorators_async.py"""
+
 import unittest
 
 try:
@@ -23,7 +25,44 @@ from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
+from opencensus.common.utils import timestamp_to_microseconds
 import pytest
+
+
+class Node:
+    def __init__(self, span_data):
+        self.span_data = span_data  # type: SpanData
+        self.parent = None
+        self.children = []
+
+
+class MockExporter(Exporter):
+    def __init__(self):
+        self.root = None
+        self._all_nodes = []
+
+    def export(self, span_datas):
+        # type: (List[SpanData]) -> None
+        sp = span_datas[0]  # type: SpanData
+        node = Node(sp)
+        if not node.span_data.parent_span_id:
+            self.root = node
+        self._all_nodes.append(node)
+
+    def build_tree(self):
+        parent_dict = {}
+        for node in self._all_nodes:
+            parent_span_id = node.span_data.parent_span_id
+            if parent_span_id not in parent_dict:
+                parent_dict[parent_span_id] = []
+            parent_dict[parent_span_id].append(node)
+
+        for node in self._all_nodes:
+            if node.span_data.span_id in parent_dict:
+                node.children = sorted(
+                    parent_dict[node.span_data.span_id],
+                    key=lambda x: timestamp_to_microseconds(x.span_data.start_time),
+                )
 
 
 class ContextHelper(object):
@@ -103,23 +142,27 @@ async def test_with_opencensus_imported_but_not_used():
 @pytest.mark.asyncio
 async def test_with_opencencus_used():
     with ContextHelper():
-        trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         parent = trace.start_span(name="OverAll")
         client = MockClient(policies=[])
         await client.get_foo(parent_span=parent)
         await client.get_foo()
-        assert len(parent.children) == 3
-        assert parent.children[0].name == "MockClient.__init__"
-        assert not parent.children[0].children
-        assert parent.children[1].name == "MockClient.get_foo"
-        assert not parent.children[1].children
         parent.finish()
         trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 3
+        assert parent.children[0].span_data.name == "MockClient.__init__"
+        assert not parent.children[0].children
+        assert parent.children[1].span_data.name == "MockClient.get_foo"
+        assert not parent.children[1].children
 
 @pytest.mark.asyncio
 async def for_test_different_settings():
     with ContextHelper():
-        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=mock.Mock(Exporter))
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.start_span(name="OverAll") as parent:
             client = MockClient()
             await client.make_request(2)
@@ -127,17 +170,21 @@ async def for_test_different_settings():
                 await client.make_request(2, parent_span=parent)
                 assert OpenCensusSpan.get_current_span() == child
                 await client.make_request(2)
-            assert len(parent.children) == 3
-            assert parent.children[0].name == "MockClient.__init__"
-            assert parent.children[1].name == "MockClient.make_request"
-            assert parent.children[1].children[0].name == "MockClient.get_foo"
-            assert parent.children[1].children[1].name == "MockClient.make_request"
-            assert parent.children[2].name == "MockClient.make_request"
-            assert parent.children[2].children[0].name == "MockClient.get_foo"
-            assert parent.children[2].children[1].name == "MockClient.make_request"
-            children = parent.children[1].children
-            assert len(children) == 2
         trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 4
+        assert parent.children[0].span_data.name == "MockClient.__init__"
+        assert parent.children[1].span_data.name == "MockClient.make_request"
+        assert parent.children[1].children[0].span_data.name == "MockClient.get_foo"
+        assert parent.children[1].children[1].span_data.name == "MockClient.make_request"
+        assert parent.children[2].span_data.name == "child"
+        assert parent.children[2].children[0].span_data.name == "MockClient.make_request"
+        assert parent.children[3].span_data.name == "MockClient.make_request"
+        assert parent.children[3].children[0].span_data.name == "MockClient.get_foo"
+        assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
+        children = parent.children[1].children
+        assert len(children) == 2
 
 @pytest.mark.asyncio
 async def test_span_with_opencensus_complicated():

@@ -23,6 +23,8 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""Common functions shared by both the sync and the async decorators."""
+
 from os import environ
 import re
 
@@ -42,6 +44,14 @@ if TYPE_CHECKING:
 
 def set_span_contexts(wrapped_span, span_instance=None):
     # type: (AbstractSpan, Optional[AbstractSpan]) -> None
+    """
+    Set the sdk context and the implementation context. `span_instance` will be used to set the implementation context
+    if passed in else will use `wrapped_span.span_instance`.
+
+    :param wrapped_span: The `AbstractSpan` to set as the sdk context
+    :type wrapped_span: `azure.core.tracing.abstract_span.AbstractSpan`
+    :param span_instance: The span to set as the current span for the implementation context
+    """
     tracing_context.current_span.set(wrapped_span)
     impl_wrapper = settings.tracing_implementation()
     if wrapped_span is not None:
@@ -52,7 +62,18 @@ def set_span_contexts(wrapped_span, span_instance=None):
 
 def get_parent_and_original_contexts(kwargs):
     # type: (Any) -> Tuple(AbstractSpan, AbstractSpan, Any)
-    """Returns the parent span that of the span that represents the function and the spans before that parent span"""
+    """
+    Returns the current span so that the function's span will be its child. It will create a new span if there is
+    no current span in any of the context. Because it creates a new span in those cases, also returns the original
+    span as well. If it does not create a new span then the orig_wrapped_span should be the same as the parent span.
+
+    `AbstractSpan = azure.core.tracing.abstract_span.AbstractSpan`
+
+    :param kwargs: The dictionary of named variables that the user passed into the top level azure function
+    :param kwargs: dict
+    :returns: The parent_span, the original wrapped span, the original implementation span
+    :rtype: `AbstractSpan`, `AbstractSpan`, implementation span
+    """
     parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
     orig_wrapped_span = tracing_context.current_span.get()
 

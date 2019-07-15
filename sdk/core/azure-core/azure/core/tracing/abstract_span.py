@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Protocol that defines what functions wrappers of tracing libraries should implement."""
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -19,7 +21,7 @@ except ImportError:
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(self, span=None, name=None):
+    def __init__(self, span=None, name=None): # pylint: disable=super-init-not-called
         # type: (Optional[Any], Optional[str]) -> None
         """
         If a span is given wraps the span. Else a new span is created.
