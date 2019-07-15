@@ -300,7 +300,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_queues(
+    async def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             marker=None,  # type: Optional[str]
@@ -343,7 +343,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            await self._client.service.list_queues_segment,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
@@ -351,7 +351,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return QueuePropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def create_queue(
+    async def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
@@ -381,11 +381,11 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Create a queue in the service.
         """
         queue = self.get_queue_client(name)
-        queue.create_queue(
+        await queue.create_queue(
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
-    def delete_queue(
+    async def delete_queue(
             self, queue,  # type: Union[QueueProperties, str]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -418,7 +418,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Delete a queue in the service.
         """
         queue_client = self.get_queue_client(queue)
-        queue_client.delete_queue(timeout=timeout, **kwargs)
+        await queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):
         # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient

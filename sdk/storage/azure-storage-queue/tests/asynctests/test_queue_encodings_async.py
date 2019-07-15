@@ -6,11 +6,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
 from azure.storage.queue import (
-    QueueClient,
-    QueueServiceClient,
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,
@@ -18,11 +17,17 @@ from azure.storage.queue import (
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
     NoEncodePolicy,
-    NoDecodePolicy)
+    NoDecodePolicy
+)
+
+from azure.storage.queue.aio import (
+    QueueClient,
+    QueueServiceClient
+)
 
 from queuetestcase import (
     QueueTestCase,
-    record,
+    record
 )
 
 # ------------------------------------------------------------------------------
@@ -56,60 +61,64 @@ class StorageQueueEncodingTest(QueueTestCase):
         self.test_queues.append(queue)
         return queue
 
-    def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
+    async def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
         queue = self._get_queue_reference(prefix)
         try:
-            created = queue.create_queue()
+            created = await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
 
-    def _validate_encoding(self, queue, message):
+    async def _validate_encoding(self, queue, message):
         # Arrange
         try:
-            created = queue.create_queue()
+            created = await queue.create_queue()
         except ResourceExistsError:
             pass
 
         # Action.
-        queue.enqueue_message(message)
+        await queue.enqueue_message(message)
 
         # Asserts
-        dequeued = next(queue.receive_messages())
+        dequeued = await next(queue.receive_messages())
         self.assertEqual(message, dequeued.content)
 
     # --------------------------------------------------------------------------
 
     @record
-    def test_message_text_xml(self):
+    @pytest.mark.asyncio
+    async def test_message_text_xml(self):
         # Arrange.
         message = u'<message1>'
         queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        self._validate_encoding(queue, message)
+        await self._validate_encoding(queue, message)
 
     @record
-    def test_message_text_xml_whitespace(self):
+    @pytest.mark.asyncio
+    async def test_message_text_xml_whitespace(self):
         # Arrange.
         message = u'  mess\t age1\n'
         queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        self._validate_encoding(queue, message)
+        await self._validate_encoding(queue, message)
 
     @record
-    def test_message_text_xml_invalid_chars(self):
+    @pytest.mark.asyncio
+    async def test_message_text_xml_invalid_chars(self):
         # Action.
         queue = self._get_queue_reference()
         message = u'\u0001'
 
         # Asserts
         with self.assertRaises(HttpResponseError):
-            queue.enqueue_message(message)
+            await queue.enqueue_message(message)
 
     @record
-    def test_message_text_base64(self):
+    @pytest.mark.asyncio
+    async def test_message_text_base64(self):
         # Arrange.
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -123,10 +132,11 @@ class StorageQueueEncodingTest(QueueTestCase):
         message = u'\u0001'
 
         # Asserts
-        self._validate_encoding(queue, message)
+        await self._validate_encoding(queue, message)
 
     @record
-    def test_message_bytes_base64(self):
+    @pytest.mark.asyncio
+    async def test_message_bytes_base64(self):
         # Arrange.
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -140,23 +150,25 @@ class StorageQueueEncodingTest(QueueTestCase):
         message = b'xyz'
 
         # Asserts
-        self._validate_encoding(queue, message)
+        await self._validate_encoding(queue, message)
 
     @record
-    def test_message_bytes_fails(self):
+    @pytest.mark.asyncio
+    async def test_message_bytes_fails(self):
         # Arrange
         queue = self._get_queue_reference()
 
         # Action.
         with self.assertRaises(TypeError) as e:
             message = b'xyz'
-            queue.enqueue_message(message)
+            await queue.enqueue_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
     @record
-    def test_message_text_fails(self):
+    @pytest.mark.asyncio
+    async def test_message_text_fails(self):
         # Arrange
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -170,13 +182,14 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = u'xyz'
-            queue.enqueue_message(message)
+            await queue.enqueue_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
     @record
-    def test_message_base64_decode_fails(self):
+    @pytest.mark.asyncio
+    async def test_message_base64_decode_fails(self):
         # Arrange
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -187,15 +200,15 @@ class StorageQueueEncodingTest(QueueTestCase):
             message_encode_policy=TextXMLEncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy())
         try:
-            queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
         message = u'xyz'
-        queue.enqueue_message(message)
+        await queue.enqueue_message(message)
 
         # Action.
         with self.assertRaises(DecodeError) as e:
-            queue.peek_messages()
+            await queue.peek_messages()
 
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
