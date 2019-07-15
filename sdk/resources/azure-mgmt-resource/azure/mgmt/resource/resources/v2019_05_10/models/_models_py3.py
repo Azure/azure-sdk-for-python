@@ -26,10 +26,10 @@ class AliasPathType(Model):
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, path: str=None, api_versions=None, **kwargs) -> None:
         super(AliasPathType, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.api_versions = kwargs.get('api_versions', None)
+        self.path = path
+        self.api_versions = api_versions
 
 
 class AliasType(Model):
@@ -39,7 +39,7 @@ class AliasType(Model):
     :type name: str
     :param paths: The paths for an alias.
     :type paths:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.AliasPathType]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.AliasPathType]
     """
 
     _attribute_map = {
@@ -47,10 +47,10 @@ class AliasType(Model):
         'paths': {'key': 'paths', 'type': '[AliasPathType]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, paths=None, **kwargs) -> None:
         super(AliasType, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.paths = kwargs.get('paths', None)
+        self.name = name
+        self.paths = paths
 
 
 class BasicDependency(Model):
@@ -70,11 +70,11 @@ class BasicDependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, resource_type: str=None, resource_name: str=None, **kwargs) -> None:
         super(BasicDependency, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.resource_name = kwargs.get('resource_name', None)
+        self.id = id
+        self.resource_type = resource_type
+        self.resource_name = resource_name
 
 
 class CloudError(Model):
@@ -102,9 +102,9 @@ class DebugSetting(Model):
         'detail_level': {'key': 'detailLevel', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, detail_level: str=None, **kwargs) -> None:
         super(DebugSetting, self).__init__(**kwargs)
-        self.detail_level = kwargs.get('detail_level', None)
+        self.detail_level = detail_level
 
 
 class Dependency(Model):
@@ -112,7 +112,7 @@ class Dependency(Model):
 
     :param depends_on: The list of dependencies.
     :type depends_on:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.BasicDependency]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.BasicDependency]
     :param id: The ID of the dependency.
     :type id: str
     :param resource_type: The dependency resource type.
@@ -128,12 +128,12 @@ class Dependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, depends_on=None, id: str=None, resource_type: str=None, resource_name: str=None, **kwargs) -> None:
         super(Dependency, self).__init__(**kwargs)
-        self.depends_on = kwargs.get('depends_on', None)
-        self.id = kwargs.get('id', None)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.resource_name = kwargs.get('resource_name', None)
+        self.depends_on = depends_on
+        self.id = id
+        self.resource_type = resource_type
+        self.resource_name = resource_name
 
 
 class Deployment(Model):
@@ -145,7 +145,7 @@ class Deployment(Model):
     :type location: str
     :param properties: Required. The deployment properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentProperties
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentProperties
     """
 
     _validation = {
@@ -157,10 +157,10 @@ class Deployment(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties, location: str=None, **kwargs) -> None:
         super(Deployment, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.location = location
+        self.properties = properties
 
 
 class DeploymentExportResult(Model):
@@ -174,9 +174,9 @@ class DeploymentExportResult(Model):
         'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, template=None, **kwargs) -> None:
         super(DeploymentExportResult, self).__init__(**kwargs)
-        self.template = kwargs.get('template', None)
+        self.template = template
 
 
 class DeploymentExtended(Model):
@@ -195,7 +195,7 @@ class DeploymentExtended(Model):
     :type location: str
     :param properties: Deployment properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentPropertiesExtended
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentPropertiesExtended
     """
 
     _validation = {
@@ -212,13 +212,13 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str=None, properties=None, **kwargs) -> None:
         super(DeploymentExtended, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.location = location
+        self.properties = properties
 
 
 class DeploymentExtendedFilter(Model):
@@ -232,9 +232,9 @@ class DeploymentExtendedFilter(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provisioning_state: str=None, **kwargs) -> None:
         super(DeploymentExtendedFilter, self).__init__(**kwargs)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = provisioning_state
 
 
 class DeploymentOperation(Model):
@@ -249,7 +249,7 @@ class DeploymentOperation(Model):
     :vartype operation_id: str
     :param properties: Deployment properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationProperties
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentOperationProperties
     """
 
     _validation = {
@@ -263,11 +263,11 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(DeploymentOperation, self).__init__(**kwargs)
         self.id = None
         self.operation_id = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
 
 
 class DeploymentOperationProperties(Model):
@@ -290,13 +290,13 @@ class DeploymentOperationProperties(Model):
     :vartype status_message: object
     :ivar target_resource: The target resource.
     :vartype target_resource:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.TargetResource
+     ~azure.mgmt.resource.resources.v2019_05_10.models.TargetResource
     :ivar request: The HTTP request message.
     :vartype request:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.HttpMessage
+     ~azure.mgmt.resource.resources.v2019_05_10.models.HttpMessage
     :ivar response: The HTTP response message.
     :vartype response:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.HttpMessage
+     ~azure.mgmt.resource.resources.v2019_05_10.models.HttpMessage
     """
 
     _validation = {
@@ -323,7 +323,7 @@ class DeploymentOperationProperties(Model):
         'response': {'key': 'response', 'type': 'HttpMessage'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(DeploymentOperationProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.timestamp = None
@@ -349,7 +349,7 @@ class DeploymentProperties(Model):
     :param template_link: The URI of the template. Use either the templateLink
      property or the template property, but not both.
     :type template_link:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.TemplateLink
+     ~azure.mgmt.resource.resources.v2019_05_10.models.TemplateLink
     :param parameters: Name and value pairs that define the deployment
      parameters for the template. You use this element when you want to provide
      the parameter values directly in the request rather than link to an
@@ -361,7 +361,7 @@ class DeploymentProperties(Model):
      to link to an existing parameters file. Use either the parametersLink
      property or the parameters property, but not both.
     :type parameters_link:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ParametersLink
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ParametersLink
     :param mode: Required. The mode that is used to deploy resources. This
      value can be either Incremental or Complete. In Incremental mode,
      resources are deployed without deleting existing resources that are not
@@ -371,13 +371,13 @@ class DeploymentProperties(Model):
      unintentionally delete resources. Possible values include: 'Incremental',
      'Complete'
     :type mode: str or
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentMode
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DebugSetting
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeployment
+     ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeployment
     """
 
     _validation = {
@@ -394,15 +394,15 @@ class DeploymentProperties(Model):
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, **kwargs) -> None:
         super(DeploymentProperties, self).__init__(**kwargs)
-        self.template = kwargs.get('template', None)
-        self.template_link = kwargs.get('template_link', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
-        self.debug_setting = kwargs.get('debug_setting', None)
-        self.on_error_deployment = kwargs.get('on_error_deployment', None)
+        self.template = template
+        self.template_link = template_link
+        self.parameters = parameters
+        self.parameters_link = parameters_link
+        self.mode = mode
+        self.debug_setting = debug_setting
+        self.on_error_deployment = on_error_deployment
 
 
 class DeploymentPropertiesExtended(Model):
@@ -424,34 +424,34 @@ class DeploymentPropertiesExtended(Model):
     :param providers: The list of resource providers needed for the
      deployment.
     :type providers:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.Provider]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.Provider]
     :param dependencies: The list of deployment dependencies.
     :type dependencies:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.Dependency]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.Dependency]
     :param template: The template content. Use only one of Template or
      TemplateLink.
     :type template: object
     :param template_link: The URI referencing the template. Use only one of
      Template or TemplateLink.
     :type template_link:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.TemplateLink
+     ~azure.mgmt.resource.resources.v2019_05_10.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters: object
     :param parameters_link: The URI referencing the parameters. Use only one
      of Parameters or ParametersLink.
     :type parameters_link:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ParametersLink
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ParametersLink
     :param mode: The deployment mode. Possible values are Incremental and
      Complete. Possible values include: 'Incremental', 'Complete'
     :type mode: str or
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentMode
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DebugSetting
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeploymentExtended
+     ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentExtended
     """
 
     _validation = {
@@ -478,22 +478,22 @@ class DeploymentPropertiesExtended(Model):
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, on_error_deployment=None, **kwargs) -> None:
         super(DeploymentPropertiesExtended, self).__init__(**kwargs)
         self.provisioning_state = None
         self.correlation_id = None
         self.timestamp = None
         self.duration = None
-        self.outputs = kwargs.get('outputs', None)
-        self.providers = kwargs.get('providers', None)
-        self.dependencies = kwargs.get('dependencies', None)
-        self.template = kwargs.get('template', None)
-        self.template_link = kwargs.get('template_link', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
-        self.debug_setting = kwargs.get('debug_setting', None)
-        self.on_error_deployment = kwargs.get('on_error_deployment', None)
+        self.outputs = outputs
+        self.providers = providers
+        self.dependencies = dependencies
+        self.template = template
+        self.template_link = template_link
+        self.parameters = parameters
+        self.parameters_link = parameters_link
+        self.mode = mode
+        self.debug_setting = debug_setting
+        self.on_error_deployment = on_error_deployment
 
 
 class DeploymentValidateResult(Model):
@@ -501,10 +501,10 @@ class DeploymentValidateResult(Model):
 
     :param error: Validation error.
     :type error:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceManagementErrorWithDetails
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceManagementErrorWithDetails
     :param properties: The template deployment properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentPropertiesExtended
+     ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentPropertiesExtended
     """
 
     _attribute_map = {
@@ -512,10 +512,10 @@ class DeploymentValidateResult(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, properties=None, **kwargs) -> None:
         super(DeploymentValidateResult, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-        self.properties = kwargs.get('properties', None)
+        self.error = error
+        self.properties = properties
 
 
 class ExportTemplateRequest(Model):
@@ -536,10 +536,10 @@ class ExportTemplateRequest(Model):
         'options': {'key': 'options', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resources=None, options: str=None, **kwargs) -> None:
         super(ExportTemplateRequest, self).__init__(**kwargs)
-        self.resources = kwargs.get('resources', None)
-        self.options = kwargs.get('options', None)
+        self.resources = resources
+        self.options = options
 
 
 class Resource(Model):
@@ -574,13 +574,13 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
 
 
 class GenericResource(Resource):
@@ -600,7 +600,7 @@ class GenericResource(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param plan: The plan of the resource.
-    :type plan: ~azure.mgmt.resource.resources.v2019_05_01.models.Plan
+    :type plan: ~azure.mgmt.resource.resources.v2019_05_10.models.Plan
     :param properties: The resource properties.
     :type properties: object
     :param kind: The kind of the resource.
@@ -608,9 +608,9 @@ class GenericResource(Resource):
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: ~azure.mgmt.resource.resources.v2019_05_01.models.Sku
+    :type sku: ~azure.mgmt.resource.resources.v2019_05_10.models.Sku
     :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.resource.resources.v2019_05_01.models.Identity
+    :type identity: ~azure.mgmt.resource.resources.v2019_05_10.models.Identity
     """
 
     _validation = {
@@ -634,14 +634,14 @@ class GenericResource(Resource):
         'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, **kwargs):
-        super(GenericResource, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
-        self.properties = kwargs.get('properties', None)
-        self.kind = kwargs.get('kind', None)
-        self.managed_by = kwargs.get('managed_by', None)
-        self.sku = kwargs.get('sku', None)
-        self.identity = kwargs.get('identity', None)
+    def __init__(self, *, location: str=None, tags=None, plan=None, properties=None, kind: str=None, managed_by: str=None, sku=None, identity=None, **kwargs) -> None:
+        super(GenericResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.plan = plan
+        self.properties = properties
+        self.kind = kind
+        self.managed_by = managed_by
+        self.sku = sku
+        self.identity = identity
 
 
 class GenericResourceFilter(Model):
@@ -661,11 +661,11 @@ class GenericResourceFilter(Model):
         'tagvalue': {'key': 'tagvalue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resource_type: str=None, tagname: str=None, tagvalue: str=None, **kwargs) -> None:
         super(GenericResourceFilter, self).__init__(**kwargs)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.tagname = kwargs.get('tagname', None)
-        self.tagvalue = kwargs.get('tagvalue', None)
+        self.resource_type = resource_type
+        self.tagname = tagname
+        self.tagvalue = tagvalue
 
 
 class HttpMessage(Model):
@@ -679,9 +679,9 @@ class HttpMessage(Model):
         'content': {'key': 'content', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, content=None, **kwargs) -> None:
         super(HttpMessage, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
+        self.content = content
 
 
 class Identity(Model):
@@ -697,13 +697,13 @@ class Identity(Model):
     :param type: The identity type. Possible values include: 'SystemAssigned',
      'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceIdentityType
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the resource. The user identity dictionary key references will be ARM
      resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.resource.resources.v2019_05_01.models.IdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.resource.resources.v2019_05_10.models.IdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -718,12 +718,12 @@ class Identity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{IdentityUserAssignedIdentitiesValue}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class IdentityUserAssignedIdentitiesValue(Model):
@@ -748,7 +748,7 @@ class IdentityUserAssignedIdentitiesValue(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(IdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -761,7 +761,7 @@ class OnErrorDeployment(Model):
      LastSuccessful and SpecificDeployment. Possible values include:
      'LastSuccessful', 'SpecificDeployment'
     :type type: str or
-     ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeploymentType
+     ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
     """
@@ -771,10 +771,10 @@ class OnErrorDeployment(Model):
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, deployment_name: str=None, **kwargs) -> None:
         super(OnErrorDeployment, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.deployment_name = kwargs.get('deployment_name', None)
+        self.type = type
+        self.deployment_name = deployment_name
 
 
 class OnErrorDeploymentExtended(Model):
@@ -790,7 +790,7 @@ class OnErrorDeploymentExtended(Model):
      LastSuccessful and SpecificDeployment. Possible values include:
      'LastSuccessful', 'SpecificDeployment'
     :type type: str or
-     ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeploymentType
+     ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
     """
@@ -805,11 +805,11 @@ class OnErrorDeploymentExtended(Model):
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, deployment_name: str=None, **kwargs) -> None:
         super(OnErrorDeploymentExtended, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.type = kwargs.get('type', None)
-        self.deployment_name = kwargs.get('deployment_name', None)
+        self.type = type
+        self.deployment_name = deployment_name
 
 
 class Operation(Model):
@@ -819,7 +819,7 @@ class Operation(Model):
     :type name: str
     :param display: The object that represents the operation.
     :type display:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.OperationDisplay
+     ~azure.mgmt.resource.resources.v2019_05_10.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -827,10 +827,10 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.name = name
+        self.display = display
 
 
 class OperationDisplay(Model):
@@ -854,12 +854,12 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class ParametersLink(Model):
@@ -883,10 +883,10 @@ class ParametersLink(Model):
         'content_version': {'key': 'contentVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, uri: str, content_version: str=None, **kwargs) -> None:
         super(ParametersLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
-        self.content_version = kwargs.get('content_version', None)
+        self.uri = uri
+        self.content_version = content_version
 
 
 class Plan(Model):
@@ -912,13 +912,13 @@ class Plan(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, publisher: str=None, product: str=None, promotion_code: str=None, version: str=None, **kwargs) -> None:
         super(Plan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
-        self.promotion_code = kwargs.get('promotion_code', None)
-        self.version = kwargs.get('version', None)
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code
+        self.version = version
 
 
 class Provider(Model):
@@ -938,7 +938,7 @@ class Provider(Model):
     :vartype registration_policy: str
     :ivar resource_types: The collection of provider resource types.
     :vartype resource_types:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.ProviderResourceType]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.ProviderResourceType]
     """
 
     _validation = {
@@ -956,10 +956,10 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, namespace: str=None, **kwargs) -> None:
         super(Provider, self).__init__(**kwargs)
         self.id = None
-        self.namespace = kwargs.get('namespace', None)
+        self.namespace = namespace
         self.registration_state = None
         self.registration_policy = None
         self.resource_types = None
@@ -975,7 +975,7 @@ class ProviderResourceType(Model):
     :type locations: list[str]
     :param aliases: The aliases that are supported by this resource type.
     :type aliases:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.AliasType]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
     :param capabilities: The additional capabilities offered by this resource
@@ -994,14 +994,14 @@ class ProviderResourceType(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, capabilities: str=None, properties=None, **kwargs) -> None:
         super(ProviderResourceType, self).__init__(**kwargs)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.locations = kwargs.get('locations', None)
-        self.aliases = kwargs.get('aliases', None)
-        self.api_versions = kwargs.get('api_versions', None)
-        self.capabilities = kwargs.get('capabilities', None)
-        self.properties = kwargs.get('properties', None)
+        self.resource_type = resource_type
+        self.locations = locations
+        self.aliases = aliases
+        self.api_versions = api_versions
+        self.capabilities = capabilities
+        self.properties = properties
 
 
 class ResourceGroup(Model):
@@ -1020,7 +1020,7 @@ class ResourceGroup(Model):
     :vartype type: str
     :param properties: The resource group properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroupProperties
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroupProperties
     :param location: Required. The location of the resource group. It cannot
      be changed after the resource group has been created. It must be one of
      the supported Azure locations.
@@ -1049,15 +1049,15 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
         super(ResourceGroup, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
-        self.managed_by = kwargs.get('managed_by', None)
-        self.tags = kwargs.get('tags', None)
+        self.properties = properties
+        self.location = location
+        self.managed_by = managed_by
+        self.tags = tags
 
 
 class ResourceGroupExportResult(Model):
@@ -1067,7 +1067,7 @@ class ResourceGroupExportResult(Model):
     :type template: object
     :param error: The error.
     :type error:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceManagementErrorWithDetails
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceManagementErrorWithDetails
     """
 
     _attribute_map = {
@@ -1075,10 +1075,10 @@ class ResourceGroupExportResult(Model):
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, template=None, error=None, **kwargs) -> None:
         super(ResourceGroupExportResult, self).__init__(**kwargs)
-        self.template = kwargs.get('template', None)
-        self.error = kwargs.get('error', None)
+        self.template = template
+        self.error = error
 
 
 class ResourceGroupFilter(Model):
@@ -1095,10 +1095,10 @@ class ResourceGroupFilter(Model):
         'tag_value': {'key': 'tagValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tag_name: str=None, tag_value: str=None, **kwargs) -> None:
         super(ResourceGroupFilter, self).__init__(**kwargs)
-        self.tag_name = kwargs.get('tag_name', None)
-        self.tag_value = kwargs.get('tag_value', None)
+        self.tag_name = tag_name
+        self.tag_value = tag_value
 
 
 class ResourceGroupPatchable(Model):
@@ -1108,7 +1108,7 @@ class ResourceGroupPatchable(Model):
     :type name: str
     :param properties: The resource group properties.
     :type properties:
-     ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroupProperties
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroupProperties
     :param managed_by: The ID of the resource that manages this resource
      group.
     :type managed_by: str
@@ -1123,12 +1123,12 @@ class ResourceGroupPatchable(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
         super(ResourceGroupPatchable, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
-        self.managed_by = kwargs.get('managed_by', None)
-        self.tags = kwargs.get('tags', None)
+        self.name = name
+        self.properties = properties
+        self.managed_by = managed_by
+        self.tags = tags
 
 
 class ResourceGroupProperties(Model):
@@ -1149,7 +1149,7 @@ class ResourceGroupProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ResourceGroupProperties, self).__init__(**kwargs)
         self.provisioning_state = None
 
@@ -1168,7 +1168,7 @@ class ResourceManagementErrorWithDetails(Model):
     :vartype target: str
     :ivar details: Validation error.
     :vartype details:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.ResourceManagementErrorWithDetails]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.ResourceManagementErrorWithDetails]
     """
 
     _validation = {
@@ -1185,7 +1185,7 @@ class ResourceManagementErrorWithDetails(Model):
         'details': {'key': 'details', 'type': '[ResourceManagementErrorWithDetails]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ResourceManagementErrorWithDetails, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1216,13 +1216,13 @@ class ResourceProviderOperationDisplayProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, publisher: str=None, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(ResourceProviderOperationDisplayProperties, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.publisher = publisher
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class ResourcesMoveInfo(Model):
@@ -1239,10 +1239,10 @@ class ResourcesMoveInfo(Model):
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resources=None, target_resource_group: str=None, **kwargs) -> None:
         super(ResourcesMoveInfo, self).__init__(**kwargs)
-        self.resources = kwargs.get('resources', None)
-        self.target_resource_group = kwargs.get('target_resource_group', None)
+        self.resources = resources
+        self.target_resource_group = target_resource_group
 
 
 class Sku(Model):
@@ -1271,14 +1271,14 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, tier: str=None, size: str=None, family: str=None, model: str=None, capacity: int=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
-        self.model = kwargs.get('model', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = name
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.model = model
+        self.capacity = capacity
 
 
 class SubResource(Model):
@@ -1292,9 +1292,9 @@ class SubResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, **kwargs) -> None:
         super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class TagCount(Model):
@@ -1311,10 +1311,10 @@ class TagCount(Model):
         'value': {'key': 'value', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type: str=None, value: int=None, **kwargs) -> None:
         super(TagCount, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.value = kwargs.get('value', None)
+        self.type = type
+        self.value = value
 
 
 class TagDetails(Model):
@@ -1330,10 +1330,10 @@ class TagDetails(Model):
     :param count: The total number of resources that use the resource tag.
      When a tag is initially created and has no associated resources, the value
      is 0.
-    :type count: ~azure.mgmt.resource.resources.v2019_05_01.models.TagCount
+    :type count: ~azure.mgmt.resource.resources.v2019_05_10.models.TagCount
     :param values: The list of tag values.
     :type values:
-     list[~azure.mgmt.resource.resources.v2019_05_01.models.TagValue]
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.TagValue]
     """
 
     _validation = {
@@ -1347,12 +1347,12 @@ class TagDetails(Model):
         'values': {'key': 'values', 'type': '[TagValue]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tag_name: str=None, count=None, values=None, **kwargs) -> None:
         super(TagDetails, self).__init__(**kwargs)
         self.id = None
-        self.tag_name = kwargs.get('tag_name', None)
-        self.count = kwargs.get('count', None)
-        self.values = kwargs.get('values', None)
+        self.tag_name = tag_name
+        self.count = count
+        self.values = values
 
 
 class TagValue(Model):
@@ -1366,7 +1366,7 @@ class TagValue(Model):
     :param tag_value: The tag value.
     :type tag_value: str
     :param count: The tag value count.
-    :type count: ~azure.mgmt.resource.resources.v2019_05_01.models.TagCount
+    :type count: ~azure.mgmt.resource.resources.v2019_05_10.models.TagCount
     """
 
     _validation = {
@@ -1379,11 +1379,11 @@ class TagValue(Model):
         'count': {'key': 'count', 'type': 'TagCount'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tag_value: str=None, count=None, **kwargs) -> None:
         super(TagValue, self).__init__(**kwargs)
         self.id = None
-        self.tag_value = kwargs.get('tag_value', None)
-        self.count = kwargs.get('count', None)
+        self.tag_value = tag_value
+        self.count = count
 
 
 class TargetResource(Model):
@@ -1403,11 +1403,11 @@ class TargetResource(Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, resource_name: str=None, resource_type: str=None, **kwargs) -> None:
         super(TargetResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.resource_name = kwargs.get('resource_name', None)
-        self.resource_type = kwargs.get('resource_type', None)
+        self.id = id
+        self.resource_name = resource_name
+        self.resource_type = resource_type
 
 
 class TemplateLink(Model):
@@ -1431,7 +1431,7 @@ class TemplateLink(Model):
         'content_version': {'key': 'contentVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, uri: str, content_version: str=None, **kwargs) -> None:
         super(TemplateLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
-        self.content_version = kwargs.get('content_version', None)
+        self.uri = uri
+        self.content_version = content_version

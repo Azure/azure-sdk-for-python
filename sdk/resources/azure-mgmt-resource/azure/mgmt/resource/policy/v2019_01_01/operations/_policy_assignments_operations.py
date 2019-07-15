@@ -24,7 +24,7 @@ class PolicyAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the operation. Constant value: "2018-03-01".
+    :ivar api_version: The API version to use for the operation. Constant value: "2019-01-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PolicyAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -66,10 +66,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -133,7 +133,7 @@ class PolicyAssignmentsOperations(object):
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment.
         :type parameters:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -141,10 +141,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create.metadata['url']
@@ -216,10 +216,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -294,9 +294,9 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PolicyAssignment
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment]
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -411,9 +411,9 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PolicyAssignment
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment]
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -501,9 +501,9 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PolicyAssignment
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment]
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -583,10 +583,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete_by_id.metadata['url']
@@ -651,7 +651,7 @@ class PolicyAssignmentsOperations(object):
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment.
         :type parameters:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -659,10 +659,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_by_id.metadata['url']
@@ -733,10 +733,10 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: PolicyAssignment or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.v2019_01_01.models.PolicyAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2018_03_01.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2019_01_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_id.metadata['url']

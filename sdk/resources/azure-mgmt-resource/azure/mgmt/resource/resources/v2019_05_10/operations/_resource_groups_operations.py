@@ -27,7 +27,7 @@ class ResourceGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-05-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-05-10".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ResourceGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01"
+        self.api_version = "2019-05-10"
 
         self.config = config
 
@@ -106,7 +106,7 @@ class ResourceGroupsOperations(object):
         :param parameters: Parameters supplied to the create or update a
          resource group.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroup
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -114,7 +114,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ResourceGroup or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroup or
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -260,7 +260,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ResourceGroup or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroup or
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -320,7 +320,7 @@ class ResourceGroupsOperations(object):
         :type resource_group_name: str
         :param parameters: Parameters supplied to update a resource group.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroupPatchable
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroupPatchable
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -328,7 +328,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ResourceGroup or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroup or
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -400,7 +400,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ResourceGroupExportResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroupExportResult
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroupExportResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -470,7 +470,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceGroup
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroupPaged[~azure.mgmt.resource.resources.v2019_05_01.models.ResourceGroup]
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroupPaged[~azure.mgmt.resource.resources.v2019_05_10.models.ResourceGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
