@@ -26,7 +26,7 @@ After taking care of the above, go to this Url: https://aka.ms/pysdkrelease
 
 Et voila :). Azure Dev Ops will tests one last time the package, dependencies, and the distributions (sdist/wheel) and ask for approval prior to pushing to PyPI using the user [azure-sdk](https://pypi.org/user/azure-sdk/).
 
-Validate artifacts prior to clicking `approve` on the pre-deployment approval you will have received in mail.
+Validate artifacts prior to clicking `approve` on the pre-deployment confirmation mail waiting in your inbox. Please allow ~5 minutes for the email to be sent by Azure DevOps
 
 ### Production - Deploy manually
 
