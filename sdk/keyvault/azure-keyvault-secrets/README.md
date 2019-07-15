@@ -122,7 +122,6 @@ The following section provides several code snippets using the above created `se
     updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
     print(updated_secret.name)
-    print(updated_secret.value)
     print(updated_secret.version)
     print(updated_secret.updated)
     print(updated_secret.content_type)
@@ -133,7 +132,7 @@ The following section provides several code snippets using the above created `se
 ### Delete a Secret
 `delete_secret` deletes a secret previously stored in the Key Vault. When [soft-delete][soft_delete] is not enabled for the Key Vault, this operation permanently deletes the secret.
 ```python
-    secret = secret_client.delete_secret("secret-name")
+    deleted_secret = secret_client.delete_secret("secret-name")
 
     print(deleted_secret.name)
     print(deleted_secret.deleted_date)
