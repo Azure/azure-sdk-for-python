@@ -26,8 +26,11 @@ class Pricing(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param pricing_tier: Required. The pricing tier value. Possible values
-     include: 'Free', 'Standard'
+    :param pricing_tier: Required. The pricing tier value. Azure Security
+     Center is provided in two pricing tiers: free and standard, with the
+     standard tier available with a trial period. The standard tier offers
+     advanced security capabilities, while the free tier offers basic security
+     features. Possible values include: 'Free', 'Standard'
     :type pricing_tier: str or ~azure.mgmt.security.models.PricingTier
     :ivar free_trial_remaining_time: The duration left for the subscriptions
      free trial period - in ISO 8601 format (e.g. P3Y6M4DT12H30M5S).

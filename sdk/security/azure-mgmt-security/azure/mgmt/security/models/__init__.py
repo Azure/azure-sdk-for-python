@@ -65,6 +65,23 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .tags_resource_py3 import TagsResource
+    from .user_defined_resources_properties_py3 import UserDefinedResourcesProperties
+    from .recommendation_configuration_properties_py3 import RecommendationConfigurationProperties
+    from .io_tsecurity_solution_model_py3 import IoTSecuritySolutionModel
+    from .update_iot_security_solution_data_py3 import UpdateIotSecuritySolutionData
+    from .io_tseverity_metrics_py3 import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_properties_devices_metrics_item_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from .io_tsecurity_alerted_device_py3 import IoTSecurityAlertedDevice
+    from .io_tsecurity_alerted_devices_list_py3 import IoTSecurityAlertedDevicesList
+    from .io_tsecurity_device_alert_py3 import IoTSecurityDeviceAlert
+    from .io_tsecurity_device_alerts_list_py3 import IoTSecurityDeviceAlertsList
+    from .io_tsecurity_device_recommendation_py3 import IoTSecurityDeviceRecommendation
+    from .io_tsecurity_device_recommendations_list_py3 import IoTSecurityDeviceRecommendationsList
+    from .io_tsecurity_solution_analytics_model_py3 import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_solution_analytics_model_list_py3 import IoTSecuritySolutionAnalyticsModelList
+    from .io_tsecurity_aggregated_alert_py3 import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_recommendation_py3 import IoTSecurityAggregatedRecommendation
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
@@ -126,6 +143,23 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .tags_resource import TagsResource
+    from .user_defined_resources_properties import UserDefinedResourcesProperties
+    from .recommendation_configuration_properties import RecommendationConfigurationProperties
+    from .io_tsecurity_solution_model import IoTSecuritySolutionModel
+    from .update_iot_security_solution_data import UpdateIotSecuritySolutionData
+    from .io_tseverity_metrics import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_properties_devices_metrics_item import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from .io_tsecurity_alerted_device import IoTSecurityAlertedDevice
+    from .io_tsecurity_alerted_devices_list import IoTSecurityAlertedDevicesList
+    from .io_tsecurity_device_alert import IoTSecurityDeviceAlert
+    from .io_tsecurity_device_alerts_list import IoTSecurityDeviceAlertsList
+    from .io_tsecurity_device_recommendation import IoTSecurityDeviceRecommendation
+    from .io_tsecurity_device_recommendations_list import IoTSecurityDeviceRecommendationsList
+    from .io_tsecurity_solution_analytics_model import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_solution_analytics_model_list import IoTSecuritySolutionAnalyticsModelList
+    from .io_tsecurity_aggregated_alert import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_recommendation import IoTSecurityAggregatedRecommendation
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
@@ -147,6 +181,9 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .io_tsecurity_solution_model_paged import IoTSecuritySolutionModelPaged
+from .io_tsecurity_aggregated_alert_paged import IoTSecurityAggregatedAlertPaged
+from .io_tsecurity_aggregated_recommendation_paged import IoTSecurityAggregatedRecommendationPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
@@ -164,6 +201,11 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    SecuritySolutionStatus,
+    ExportData,
+    DataSource,
+    RecommendationType,
+    RecommendationConfigStatus,
     State,
     ConnectionType,
 )
@@ -224,6 +266,23 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'TagsResource',
+    'UserDefinedResourcesProperties',
+    'RecommendationConfigurationProperties',
+    'IoTSecuritySolutionModel',
+    'UpdateIotSecuritySolutionData',
+    'IoTSeverityMetrics',
+    'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',
+    'IoTSecurityAlertedDevice',
+    'IoTSecurityAlertedDevicesList',
+    'IoTSecurityDeviceAlert',
+    'IoTSecurityDeviceAlertsList',
+    'IoTSecurityDeviceRecommendation',
+    'IoTSecurityDeviceRecommendationsList',
+    'IoTSecuritySolutionAnalyticsModel',
+    'IoTSecuritySolutionAnalyticsModelList',
+    'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedRecommendation',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
@@ -245,6 +304,9 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'IoTSecuritySolutionModelPaged',
+    'IoTSecurityAggregatedAlertPaged',
+    'IoTSecurityAggregatedRecommendationPaged',
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
@@ -261,6 +323,11 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'SecuritySolutionStatus',
+    'ExportData',
+    'DataSource',
+    'RecommendationType',
+    'RecommendationConfigStatus',
     'State',
     'ConnectionType',
 ]
