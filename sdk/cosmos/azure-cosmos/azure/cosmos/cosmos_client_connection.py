@@ -24,6 +24,8 @@
 import requests
 
 import six
+import logging
+import logging.config
 from typing import cast
 from . import base
 from . import documents
@@ -154,6 +156,7 @@ class CosmosClientConnection(object):
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount()
         self._global_endpoint_manager.force_refresh(database_account)
+        self.logger = logging.getLogger(__name__)
 
     @property
     def Session(self):

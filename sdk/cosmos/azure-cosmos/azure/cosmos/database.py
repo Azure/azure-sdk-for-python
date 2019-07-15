@@ -23,6 +23,8 @@
 """
 
 import six
+import logging
+import logging.config
 from .cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
@@ -77,6 +79,8 @@ class Database(object):
         self.id = id
         self.database_link = u"dbs/{}".format(self.id)
         self._properties = properties
+        self.logger = logging.getLogger(__name__)
+
 
     @staticmethod
     def _get_container_id(container_or_id):
@@ -211,7 +215,7 @@ class Database(object):
         """
 
         self.logger.debug(
-            "Creating a Container. database_link: [%s], container id: [%s], partition_key" % (self.database_link, id, partition_key))
+            "Creating a Container. database_link: [%s], container id: [%s], partition_key: [%s]" % (self.database_link, id, partition_key))
         definition = dict(id=id)  # type: Dict[str, Any]
         if partition_key:
             definition["partitionKey"] = partition_key

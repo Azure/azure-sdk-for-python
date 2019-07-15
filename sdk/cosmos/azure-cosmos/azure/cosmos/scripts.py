@@ -23,6 +23,8 @@
 """
 
 import six
+import logging
+import logging.config
 from azure.cosmos.cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from.query_iterable import QueryIterable
@@ -47,6 +49,7 @@ class Scripts:
         self.client_connection = client_connection
         self.container_link = container_link
         self.is_system_key = is_system_key
+        self.logger = logging.getLogger(__name__)
 
     def _get_resource_link(self, script_or_id, type):
         # type: (Union[Dict[str, Any], str], str) -> str

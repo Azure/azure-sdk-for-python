@@ -23,6 +23,8 @@
 """
 
 import six
+import logging
+import logging.config
 from .cosmos_client_connection import CosmosClientConnection
 from typing import (
     Any,
@@ -42,6 +44,7 @@ class User:
         self.id = id
         self.user_link = u"{}/users/{}".format(database_link, id)
         self._properties = properties
+        self.logger = logging.getLogger(__name__)
 
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str

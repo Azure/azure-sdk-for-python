@@ -23,6 +23,8 @@
 """
 
 import six
+import logging
+import logging.config
 from .cosmos_client_connection import CosmosClientConnection
 from .errors import HTTPFailure
 from .http_constants import StatusCodes
@@ -66,6 +68,7 @@ class Container:
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts = None
+        self.logger = logging.getLogger(__name__)
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
