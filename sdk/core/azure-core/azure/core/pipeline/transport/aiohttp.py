@@ -61,7 +61,7 @@ class AioHttpTransport(AsyncHttpTransport):
     :param bool session_owner: Session owner. Defaults True.
 
     Example:
-        .. literalinclude:: ../examples/examples_async.py
+        .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START aiohttp]
             :end-before: [END aiohttp]
             :language: python

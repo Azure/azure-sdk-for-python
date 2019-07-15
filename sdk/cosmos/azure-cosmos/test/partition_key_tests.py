@@ -42,9 +42,6 @@ class PartitionKeyTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
-    created_db = test_config._test_config.create_database_if_not_exist(client)
-    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
 
     @classmethod
     def tearDownClass(cls):
@@ -52,8 +49,12 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+
         # Create a non partitioned collection using the rest API and older version
-        client = requests.Session()
+        requests_client = requests.Session()
         base_url_split = cls.host.split(":");
         resource_url = base_url_split[0] + ":" + base_url_split[1] + ":" + base_url_split[2].split("/")[0] + "//dbs/" + cls.created_db.id + "/colls/"
         verb = "post"
@@ -65,7 +66,7 @@ class PartitionKeyTests(unittest.TestCase):
         headers["x-ms-version"] = "2018-09-17"
         headers["x-ms-date"] = (datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))
         headers['authorization'] = cls.get_authorization(cls.created_db.client_connection, verb, resource_id_or_fullname, resource_type, headers)
-        response = client.request(verb,
+        response = requests_client.request(verb,
                                   resource_url,
                                   data=data,
                                   headers=headers,
@@ -89,7 +90,7 @@ class PartitionKeyTests(unittest.TestCase):
 
         headers['authorization'] = cls.get_authorization(cls.created_db.client_connection, verb,
                                                          resource_id_or_fullname, resource_type, headers)
-        response = client.request(verb,
+        response = requests_client.request(verb,
                                   resource_url,
                                   data=data,
                                   headers=headers,
