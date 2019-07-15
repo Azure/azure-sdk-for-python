@@ -108,7 +108,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     :param list policies: List of configured policies.
 
     Example:
-        .. literalinclude:: ../examples/examples_sync.py
+        .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START build_pipeline]
             :end-before: [END build_pipeline]
             :language: python

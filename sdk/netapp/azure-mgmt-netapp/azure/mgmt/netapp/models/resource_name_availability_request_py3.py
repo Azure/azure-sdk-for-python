@@ -20,10 +20,10 @@ class ResourceNameAvailabilityRequest(Model):
     :param name: Required. Resource name to verify.
     :type name: str
     :param type: Required. Resource type used for verification. Possible
-     values include: 'Microsoft.NetApp/netAppAccount',
-     'Microsoft.NetApp/netAppAccount/capacityPools',
-     'Microsoft.NetApp/netAppAccount/capacityPools/volumes',
-     'Microsoft.NetApp/netAppAccount/capacityPools/volumes/snapshots'
+     values include: 'Microsoft.NetApp/netAppAccounts',
+     'Microsoft.NetApp/netAppAccounts/capacityPools',
+     'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
+     'Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots'
     :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
     :param resource_group: Required. Resource group name.
     :type resource_group: str

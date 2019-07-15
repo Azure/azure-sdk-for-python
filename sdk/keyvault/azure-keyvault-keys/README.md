@@ -3,7 +3,7 @@ Azure Key Vault allows you to create and store keys in the Key Vault. Azure Key 
 
 Multiple keys, and multiple versions of the same key, can be kept in the Key Vault. Cryptographic keys in Key Vault are represented as [JSON Web Key (JWK)][JWK] objects. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the keys and its versions.
 
-[Source code][keys_client_src] | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][key_samples]
+[Source code][key_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][key_samples]
 ## Getting started
 ### Install the package
 Install the Azure Key Vault Keys client library for Python with [pip][pip]:
@@ -22,7 +22,7 @@ pip install azure-keyvault-keys
     ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity][azure_identity].
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient][key_client_docs] class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity][azure_identity].
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get client secret credentials.
@@ -61,7 +61,7 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
     ```
 
 #### Create Key client
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI for example "<https://myvault.vault.azure.net>", you can create the [KeyClient](TODO-rst-docs):
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI for example "<https://myvault.vault.azure.net>", you can create the [KeyClient][key_client_docs]:
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -238,7 +238,7 @@ key = key_client.get_key("key-name", logging_enable=True)
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
-* [test_examples_keys.py][test_examples_keys] and [test_examples_keys_async.py][test_example_keys_async] - Contains the code snippets working with Key Vault keys.
+* [test_samples_keys.py][test_examples_keys] and [test_samples_keys_async.py][test_example_keys_async] - Contains the code snippets working with Key Vault keys.
 * [hello_world.py][hello_world_sample] and [hello_world_async.py][hello_world_async_sample] - Python code for working with Azure Key Vault, including:
   * Create a key
   * Get an existing key
@@ -251,7 +251,7 @@ Several KeyVault Python SDK samples are available to you in the SDK's GitHub rep
   * Use backed up key bytes to restore the deleted key
 
  ###  Additional Documentation
-For more extensive documentation on Azure Key Vault, see the [API reference documentation](TODO).
+For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
@@ -273,10 +273,13 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
 [pip]: https://pypi.org/project/pip/
-[keys_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
+[pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
+[reference_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html
+[key_client_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient
+[key_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
-[test_examples_keys]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_examples_keys.py
-[test_example_keys_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_examples_keys_async.py
+[test_examples_keys]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys.py
+[test_example_keys_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys_async.py
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FFREADME.png)

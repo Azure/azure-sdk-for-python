@@ -22,6 +22,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
     """
 
     models = models
@@ -31,15 +32,14 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-06-01"
 
         self.config = config
 
     def list(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the operations.
 
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,7 +56,7 @@ class Operations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

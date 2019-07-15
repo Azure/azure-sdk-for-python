@@ -65,7 +65,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
     asynchronous methods. Uses the built-in asyncio event loop.
 
     Example:
-        .. literalinclude:: ../examples/examples_async.py
+        .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START asyncio]
             :end-before: [END asyncio]
             :language: python
