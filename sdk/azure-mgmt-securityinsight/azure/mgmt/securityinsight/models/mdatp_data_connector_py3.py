@@ -12,8 +12,9 @@
 from .data_connector_py3 import DataConnector
 
 
-class MicrosoftDefenderAdvancedThreatProtectionDataConnector(DataConnector):
-    """Represents Microsoft Defender Advanced Threat Protection data connector.
+class MDATPDataConnector(DataConnector):
+    """Represents MDATP (Microsoft Defender Advanced Threat Protection) data
+    connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -55,7 +56,7 @@ class MicrosoftDefenderAdvancedThreatProtectionDataConnector(DataConnector):
     }
 
     def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(MicrosoftDefenderAdvancedThreatProtectionDataConnector, self).__init__(etag=etag, **kwargs)
+        super(MDATPDataConnector, self).__init__(etag=etag, **kwargs)
         self.tenant_id = tenant_id
         self.data_types = data_types
         self.kind = 'MicrosoftDefenderAdvancedThreatProtection'
