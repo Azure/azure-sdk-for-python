@@ -42,6 +42,8 @@ from .operations.io_tsecurity_solutions_analytics_recommendations_operations imp
 from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
+from .operations.assessments_metadata_operations import AssessmentsMetadataOperations
+from .operations.assessments_metadata_subscription_operations import AssessmentsMetadataSubscriptionOperations
 from .operations.server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 from . import models
 
@@ -148,6 +150,10 @@ class SecurityCenter(SDKClient):
     :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
     :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
     :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
+    :ivar assessments_metadata: AssessmentsMetadata operations
+    :vartype assessments_metadata: azure.mgmt.security.operations.AssessmentsMetadataOperations
+    :ivar assessments_metadata_subscription: AssessmentsMetadataSubscription operations
+    :vartype assessments_metadata_subscription: azure.mgmt.security.operations.AssessmentsMetadataSubscriptionOperations
     :ivar server_vulnerability_assessment: ServerVulnerabilityAssessment operations
     :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
 
@@ -229,6 +235,10 @@ class SecurityCenter(SDKClient):
         self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments_metadata = AssessmentsMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments_metadata_subscription = AssessmentsMetadataSubscriptionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self.config, self._serialize, self._deserialize)

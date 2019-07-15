@@ -146,6 +146,29 @@ class State(str, Enum):
     unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
 
 
+class Category(str, Enum):
+
+    compute = "Compute"
+    network = "Network"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class RequiredPricingBundle(str, Enum):
+
+    virtual_machines = "VirtualMachines"
+    sql_servers = "SqlServers"
+    app_services = "AppServices"
+    storage_accounts = "StorageAccounts"
+
+
+class AssessmentType(str, Enum):
+
+    built_in = "BuiltIn"
+    custom = "Custom"
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"
