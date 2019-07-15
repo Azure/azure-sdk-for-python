@@ -64,6 +64,7 @@ class DataConnectorKind(str, Enum):
     microsoft_cloud_app_security = "MicrosoftCloudAppSecurity"
     threat_intelligence = "ThreatIntelligence"
     office365 = "Office365"
+    amazon_web_services_cloud_trail = "AmazonWebServicesCloudTrail"
 
 
 class DataTypeState(str, Enum):

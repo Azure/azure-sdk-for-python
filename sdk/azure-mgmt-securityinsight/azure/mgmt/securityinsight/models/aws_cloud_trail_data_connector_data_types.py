@@ -12,20 +12,18 @@
 from msrest.serialization import Model
 
 
-class DataConnectorKind1(Model):
-    """Describes an Azure resource with kind.
+class AwsCloudTrailDataConnectorDataTypes(Model):
+    """The available data types for Amazon Web Services CloudTrail data connector.
 
-    :param kind: The kind of the data connector. Possible values include:
-     'AzureActiveDirectory', 'AzureSecurityCenter',
-     'MicrosoftCloudAppSecurity', 'ThreatIntelligence', 'Office365',
-     'AmazonWebServicesCloudTrail'
-    :type kind: str or ~azure.mgmt.securityinsight.models.DataConnectorKind
+    :param logs: Logs data type.
+    :type logs:
+     ~azure.mgmt.securityinsight.models.AwsCloudTrailDataConnectorDataTypesLogs
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'logs': {'key': 'logs', 'type': 'AwsCloudTrailDataConnectorDataTypesLogs'},
     }
 
     def __init__(self, **kwargs):
-        super(DataConnectorKind1, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        super(AwsCloudTrailDataConnectorDataTypes, self).__init__(**kwargs)
+        self.logs = kwargs.get('logs', None)
