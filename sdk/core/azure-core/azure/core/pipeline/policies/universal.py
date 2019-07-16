@@ -43,6 +43,7 @@ from azure.core.exceptions import (
     raise_with_traceback
 )
 
+from azure.core.settings import settings
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .base import SansIOHTTPPolicy
 
@@ -126,17 +127,13 @@ class TelemetryPolicy(SansIOHTTPPolicy):
         self.package_user_agent = package_user_agent
 
         if package_user_agent is None:
-            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
-                azcore_version,
-                platform.python_version(),
-                platform.platform(),
-            )
-        else:
-            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
-                package_user_agent,
-                platform.python_version(),
-                platform.platform(),
-            )
+            package_user_agent = "core/{}".format(azcore_version)
+
+        self._user_agent = "azsdk-python-{} Python/{} ({})".format(
+            package_user_agent,
+            platform.python_version(),
+            platform.platform(),
+        )
 
     @property
     def user_agent(self):
@@ -144,7 +141,7 @@ class TelemetryPolicy(SansIOHTTPPolicy):
         """The current user agent value."""
         if self.use_env:
             add_user_agent_header = os.environ.get(self._ENV_ADDITIONAL_USER_AGENT, None)
-            if add_user_agent_header is not None:
+            if add_user_agent_header is not None and add_user_agent_header not in self._user_agent:
                 return "{} {}".format(self._user_agent, add_user_agent_header)
         return self._user_agent
 
@@ -163,8 +160,7 @@ class TelemetryPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        telemetry_disabled = os.environ.get('AZURE_TELEMETRY_DISABLED', False)
-        if telemetry_disabled:
+        if settings.telemetry_disabled():
             return
 
         http_request = request.http_request
@@ -173,6 +169,7 @@ class TelemetryPolicy(SansIOHTTPPolicy):
 
         if existing:
             self._user_agent = "{} {}".format(self.user_agent, existing)
+            http_request.headers[self._USERAGENT] = self._user_agent
 
         if 'user_agent' in options:
             user_agent = options.pop('user_agent')

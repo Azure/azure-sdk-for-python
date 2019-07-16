@@ -48,8 +48,8 @@ def convert_bool(value):
     If a boolean is passed in, it is returned as-is. Otherwise the function
     maps the following strings, ignoring case:
 
-    * "yes", "1", "on" -> True
-    " "no", "0", "off" -> False
+    * "yes", "1", "on", "True" -> True
+    " "no", "0", "off", "False" -> False
 
     :param value: the value to convert
     :type value: string
@@ -61,9 +61,9 @@ def convert_bool(value):
         return value  # type: ignore
 
     val = value.lower()  # type: ignore
-    if val in ["yes", "1", "on"]:
+    if val in ["yes", "1", "on", "true"]:
         return True
-    if val in ["no", "0", "off"]:
+    if val in ["no", "0", "off", "false"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 

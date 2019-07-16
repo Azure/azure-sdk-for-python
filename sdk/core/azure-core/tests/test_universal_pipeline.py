@@ -56,7 +56,23 @@ from azure.core.pipeline.policies.universal import (
 )
 
 
-def test_telemetry_policy():
+def test_telemetry_policy_no_headers():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('azsdk-python-core')
+
+
+def test_telemetry_policy_on_request():
     url = "https://bing.com"
     config = Configuration()
     config.headers_policy = HeadersPolicy()
@@ -71,6 +87,37 @@ def test_telemetry_policy():
     request = pipeline_response.http_request
     user_agent = request.headers.get('User-Agent')
     assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+
+
+def test_telemetry_policy_nothing_on_request():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request)
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('azsdk-python-storage/1.01')
+
+
+def test_telemetry_policy_headers_only_on_request():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="AzCopy/10.0.4-Preview"
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-core')
 
 
 def test_telemetry_policy_keep_existing_user_agent():
@@ -88,6 +135,41 @@ def test_telemetry_policy_keep_existing_user_agent():
     request = pipeline_response.http_request
     user_agent = request.headers.get('User-Agent')
     assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+    assert user_agent.find('ExistingUserAgentValue')
+
+
+def test_telemetry_policy_only_existing_user_agent():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('azsdk-python-core')
+    assert user_agent.find('ExistingUserAgentValue')
+
+
+def test_telemetry_policy_existing_user_agent_and_on_request():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="AzCopy/10.0.4-Preview"
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-core')
     assert user_agent.find('ExistingUserAgentValue')
 
 
@@ -112,19 +194,89 @@ def test_telemetry_policy_with_dynamic_telemetry():
     assert telemetry == 'class=BlobClient;method=DownloadFile;blobType=Block'
 
 
-def test_telemetry_policy_with_telemetry_disabled():
-    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': "True"}):
+def test_telemetry_policy_with_only_dynamic_telemetry():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        telemetry="class=BlobClient;method=DownloadFile;blobType=Block"
+    )
+
+    request = pipeline_response.http_request
+    telemetry = request.headers.get('X-MS-AZSDK-Telemetry')
+    assert telemetry == 'class=BlobClient;method=DownloadFile;blobType=Block'
+
+
+def test_telemetry_policy_with_telemetry_disabled_and_use_env():
+    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': 'True', 'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
         policy = TelemetryPolicy('storage/1.01')
 
         request = HttpRequest('GET', 'https://bing.com')
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
-        assert request.headers.get("user-agent", None) is None
+        assert request.headers.get("User-Agent") is None
+
+
+def test_telemetry_policy_with_telemetry_disabled():
+    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': 'True'}):
+        policy = TelemetryPolicy('storage/1.01')
+
+        request = HttpRequest('GET', 'https://bing.com')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        assert request.headers.get("User-Agent") is None
+
+
+def test_telemetry_policy_with_telemetry_disabled_no_headers():
+    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': 'True'}):
+        policy = TelemetryPolicy()
+
+        request = HttpRequest('GET', 'https://bing.com')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        assert request.headers.get("User-Agent") is None
+
+
+def test_telemetry_policy_with_telemetry_disabled_and_existing_headers():
+    with mock.patch.dict('os.environ', {'AZURE_TELEMETRY_DISABLED': 'True'}):
+        url = "https://bing.com"
+        config = Configuration()
+        config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+        config.telemetry_policy = TelemetryPolicy('storage/1.01')
+
+        client = PipelineClient(base_url=url, config=config)
+        request = client.get(url)
+        pipeline_response = client._pipeline.run(request)
+
+        request = pipeline_response.http_request
+        user_agent = request.headers.get("User-Agent")
+        assert user_agent == 'ExistingUserAgentValue'
+
+
+def test_telemetry_policy_overwrite_when_existing_header():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="OverwritingUserAgent",
+        user_agent_overwrite=True
+    )
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent == 'OverwritingUserAgent'
 
 
 def test_telemetry_policy_with_overwrite():
     url = "https://bing.com"
     config = Configuration()
-    config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+    config.headers_policy = HeadersPolicy()
     config.telemetry_policy = TelemetryPolicy("storage/1.01")
 
     client = PipelineClient(base_url=url, config=config)
@@ -140,13 +292,141 @@ def test_telemetry_policy_with_overwrite():
     assert user_agent == 'OverwritingUserAgent'
 
 
-def test_telemetry_policy_from_environment():
-    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': "UserAgentFromEnv"}):
+def test_telemetry_policy_with_overwrite_no_headers():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="OverwritingUserAgent",
+        user_agent_overwrite=True
+    )
+
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent == 'OverwritingUserAgent'
+
+
+def test_telemetry_policy_with_overwrite_false():
+    url = "https://bing.com"
+    config = Configuration()
+    config.headers_policy = HeadersPolicy()
+    config.telemetry_policy = TelemetryPolicy("storage/1.01")
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(
+        request,
+        user_agent="UserAgent",
+        user_agent_overwrite=False
+    )
+
+    request = pipeline_response.http_request
+    user_agent = request.headers.get('User-Agent')
+    assert user_agent.startswith('UserAgent azsdk-python-storage/1.01')
+
+
+def test_telemetry_policy_use_env():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
         policy = TelemetryPolicy(user_agent_use_env=True)
 
         request = HttpRequest('GET', 'https://bing.com')
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
-        assert request.headers["user-agent"].endswith("UserAgentFromEnv")
+        user_agent = request.headers.get('User-Agent')
+        assert user_agent.startswith("azsdk-python-core")
+        assert user_agent.find("UserAgentFromEnv")
+
+
+def test_telemetry_policy_do_not_use_env():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
+        policy = TelemetryPolicy(user_agent_use_env=False)
+
+        request = HttpRequest('GET', 'https://bing.com')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        user_agent = request.headers.get("User-Agent")
+        assert user_agent.startswith("azsdk-python-core")
+        assert 'UserAgentFromEnv' not in user_agent
+
+
+def test_telemetry_use_env_and_on_request():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
+        url = "https://bing.com"
+        config = Configuration()
+        config.headers_policy = HeadersPolicy()
+        config.telemetry_policy = TelemetryPolicy("storage/1.01", user_agent_use_env=True)
+
+        client = PipelineClient(base_url=url, config=config)
+        request = client.get(url)
+        pipeline_response = client._pipeline.run(
+            request,
+            user_agent="AzCopy/10.0.4-Preview"
+        )
+        request = pipeline_response.http_request
+        user_agent = request.headers.get('User-Agent')
+        assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+        assert user_agent.find('UserAgentFromEnv')
+
+
+def test_telemetry_policy_use_env_and_overwrite():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
+        url = "https://bing.com"
+        config = Configuration()
+        config.headers_policy = HeadersPolicy()
+        config.telemetry_policy = TelemetryPolicy(user_agent_use_env=True)
+
+        client = PipelineClient(base_url=url, config=config)
+        request = client.get(url)
+        pipeline_response = client._pipeline.run(
+            request,
+            user_agent="UserAgent",
+            user_agent_overwrite=True
+        )
+        request = pipeline_response.http_request
+        user_agent = request.headers.get('User-Agent')
+        assert user_agent == 'UserAgent'
+
+
+def test_telemetry_policy_use_env_and_existing_headers_and_on_request():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
+        url = "https://bing.com"
+        config = Configuration()
+        config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+        config.telemetry_policy = TelemetryPolicy("storage/1.01", user_agent_use_env=True)
+
+        client = PipelineClient(base_url=url, config=config)
+        request = client.get(url)
+        pipeline_response = client._pipeline.run(
+            request,
+            user_agent="AzCopy/10.0.4-Preview"
+        )
+        request = pipeline_response.http_request
+        user_agent = request.headers.get('User-Agent')
+        assert user_agent.startswith('AzCopy/10.0.4-Preview azsdk-python-storage/1.01')
+        assert user_agent.find('UserAgentFromEnv')
+        assert user_agent.find('ExistingUserAgentValue')
+
+
+def test_telemetry_policy_use_env_and_existing_headers_and_on_request_and_overwrite():
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': 'UserAgentFromEnv'}):
+        url = "https://bing.com"
+        config = Configuration()
+        config.headers_policy = HeadersPolicy({'User-Agent': 'ExistingUserAgentValue'})
+        config.telemetry_policy = TelemetryPolicy("storage/1.01", user_agent_use_env=True)
+
+        client = PipelineClient(base_url=url, config=config)
+        request = client.get(url)
+        pipeline_response = client._pipeline.run(
+            request,
+            user_agent="UserAgent",
+            user_agent_overwrite=True
+        )
+        request = pipeline_response.http_request
+        user_agent = request.headers.get('User-Agent')
+        assert user_agent == 'UserAgent'
 
 
 def test_user_agent():
