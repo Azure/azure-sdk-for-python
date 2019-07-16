@@ -41,11 +41,12 @@ class MsalTransportResponse:
         raise ClientAuthenticationError("authentication failed", self._response)
 
 
-class MsalTransportAdapter:
+class MsalTransportAdapter(object):
     """Wraps an azure-core pipeline with the shape of requests.Session"""
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
+        super(MsalTransportAdapter, self).__init__()
         self._pipeline = self._build_pipeline(**kwargs)
 
     @staticmethod
