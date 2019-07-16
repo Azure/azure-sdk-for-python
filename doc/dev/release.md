@@ -16,13 +16,17 @@ Python packages are uploaded to [PyPI](https://pypi.org/). Once you've uploaded 
 
 ### Production - Deploy with Azure Dev Ops
 
-Go to this Url: https://aka.ms/pysdkrelease
+To avoid "accidental" pushes to our target repositories, [approval](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [wiki page](https://aka.ms/python-approval-groups) and click on `Release to PyPI Approvers` to add yourself to the group for PyPI publishing. 
+
+After taking care of the above, go to this Url: https://aka.ms/pysdkrelease
 
 - Click on "Run pipeline"
 - Change "BuildTargetingString" to the name of your package. Example: azure-mgmt-compute
 - Change "CandidateForRelease" value to `True` (it should be defaulted to `False`)
 
-Et voila :). Azure Dev Ops will tests one last time the package, dependencies, and the distributions (sdist/wheel) and push to PyPI using the user [azure-sdk](https://pypi.org/user/azure-sdk/).
+Et voila :). Azure Dev Ops will tests one last time the package, dependencies, and the distributions (sdist/wheel) and ask for approval prior to pushing to PyPI using the user [azure-sdk](https://pypi.org/user/azure-sdk/).
+
+Validate artifacts prior to clicking `approve` on the pre-deployment confirmation mail waiting in your inbox. Please allow ~5 minutes for the email to be sent by Azure DevOps
 
 ### Production - Deploy manually
 
