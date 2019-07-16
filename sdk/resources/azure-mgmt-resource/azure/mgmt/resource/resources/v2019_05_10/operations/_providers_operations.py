@@ -235,7 +235,7 @@ class ProvidersOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers'}
 
-    def list_all(
+    def list_at_tenant_scope(
             self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets all resource providers for the tenant.
 
@@ -260,7 +260,7 @@ class ProvidersOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_all.metadata['url']
+                url = self.list_at_tenant_scope.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -307,7 +307,7 @@ class ProvidersOperations(object):
         deserialized = models.ProviderPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_all.metadata = {'url': '/providers'}
+    list_at_tenant_scope.metadata = {'url': '/providers'}
 
     def get(
             self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -373,7 +373,7 @@ class ProvidersOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'}
 
-    def get_at_tenant(
+    def get_at_tenant_scope(
             self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets the specified resource provider at the tenant level.
 
@@ -394,7 +394,7 @@ class ProvidersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_at_tenant.metadata['url']
+        url = self.get_at_tenant_scope.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
         }
@@ -434,4 +434,4 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
-    get_at_tenant.metadata = {'url': '/providers/{resourceProviderNamespace}'}
+    get_at_tenant_scope.metadata = {'url': '/providers/{resourceProviderNamespace}'}
