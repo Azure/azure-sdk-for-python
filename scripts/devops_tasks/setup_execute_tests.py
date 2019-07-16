@@ -95,9 +95,7 @@ if __name__ == '__main__':
     if args.disablecov:
         test_results_arg.append('--no-cov')
     else:
-        test_results_arg.append('--durations=10')
-        test_results_arg.append('--cov')
-        test_results_arg.append('--cov-report=')
+        test_results_arg.extend(['--durations=10', '--cov', '--cov-report='])
 
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
