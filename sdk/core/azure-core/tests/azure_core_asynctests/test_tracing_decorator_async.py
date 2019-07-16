@@ -47,7 +47,7 @@ class MockClient:
 
     @distributed_trace_async
     async def make_request(self, numb_times, **kwargs):
-        time.sleep(0.001)
+        time.sleep(0.01)
         if numb_times < 1:
             return None
         response = self.pipeline.run(self.request, **kwargs)
@@ -57,7 +57,7 @@ class MockClient:
 
     @distributed_trace_async
     async def get_foo(self):
-        time.sleep(0.001)
+        time.sleep(0.01)
         return 5
 
 
@@ -130,13 +130,13 @@ async def for_test_different_settings():
 
 @pytest.mark.asyncio
 async def test_span_with_opencensus_complicated():
-    for_test_different_settings()
+    await for_test_different_settings()
 
 
 @pytest.mark.asyncio
 async def test_span_with_opencensus_passed_in_complicated():
     with ContextHelper(tracer_to_use="opencensus"):
-        for_test_different_settings()
+        await for_test_different_settings()
 
 
 @pytest.mark.asyncio
