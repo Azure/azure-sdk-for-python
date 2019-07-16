@@ -29,6 +29,11 @@ def test_distributed_tracing_policy_solo():
         response.headers = request.headers
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
+
+        ctx = trace.span_context
+        header = trace.propagator.to_headers(ctx)
+        assert request.headers.get("traceparent") == header.get("traceparent")
+
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
         trace.finish()
@@ -54,6 +59,10 @@ def test_distributed_tracing_policy_exception():
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
+
+        ctx = trace.span_context
+        header = trace.propagator.to_headers(ctx)
+        assert request.headers.get("traceparent") == header.get("traceparent")
 
         policy.on_exception(pipeline_request)
 
@@ -89,6 +98,11 @@ def test_distributed_tracing_policy_with_usergent():
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
         pipeline_response = PipelineResponse(request, response, PipelineContext(None))
+
+        ctx = trace.span_context
+        header = trace.propagator.to_headers(ctx)
+        assert request.headers.get("traceparent") == header.get("traceparent")
+
         policy.on_response(pipeline_request, pipeline_response)
         user_agent.on_response(pipeline_request, pipeline_response)
 
