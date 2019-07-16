@@ -68,7 +68,7 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
+    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True, **kwargs):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
