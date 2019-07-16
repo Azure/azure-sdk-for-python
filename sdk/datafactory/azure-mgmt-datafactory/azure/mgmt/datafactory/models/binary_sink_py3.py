@@ -9,20 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink_py3 import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceSink,
-    AzureDataExplorerSink, CommonDataServiceForAppsSink, DynamicsCrmSink,
-    DynamicsSink, OdbcSink, AzureSearchIndexSink, AzureBlobFSSink,
-    AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlMISink, AzureSqlSink,
-    SqlServerSink, SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
-    BinarySink, ParquetSink, AzureTableSink, AzureQueueSink,
-    SapCloudForCustomerSink, DelimitedTextSink
+class BinarySink(CopySink):
+    """A copy activity Binary sink.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,6 +40,8 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param store_settings: Binary store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
     """
 
     _validation = {
@@ -63,18 +56,10 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
     }
 
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
-    }
-
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.write_batch_size = write_batch_size
-        self.write_batch_timeout = write_batch_timeout
-        self.sink_retry_count = sink_retry_count
-        self.sink_retry_wait = sink_retry_wait
-        self.max_concurrent_connections = max_concurrent_connections
-        self.type = None
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
+        super(BinarySink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.store_settings = store_settings
+        self.type = 'BinarySink'

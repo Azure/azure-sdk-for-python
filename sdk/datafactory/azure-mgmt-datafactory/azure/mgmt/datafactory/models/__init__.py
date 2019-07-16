@@ -274,6 +274,7 @@ try:
     from .azure_blob_fs_location_py3 import AzureBlobFSLocation
     from .azure_blob_storage_location_py3 import AzureBlobStorageLocation
     from .dataset_location_py3 import DatasetLocation
+    from .binary_dataset_py3 import BinaryDataset
     from .delimited_text_dataset_py3 import DelimitedTextDataset
     from .parquet_dataset_py3 import ParquetDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
@@ -360,8 +361,6 @@ try:
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
     from .azure_table_source_py3 import AzureTableSource
-    from .format_read_settings_py3 import FormatReadSettings
-    from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .hdfs_read_settings_py3 import HdfsReadSettings
     from .http_read_settings_py3 import HttpReadSettings
     from .sftp_read_settings_py3 import SftpReadSettings
@@ -372,6 +371,9 @@ try:
     from .azure_blob_fs_read_settings_py3 import AzureBlobFSReadSettings
     from .azure_blob_storage_read_settings_py3 import AzureBlobStorageReadSettings
     from .store_read_settings_py3 import StoreReadSettings
+    from .binary_source_py3 import BinarySource
+    from .format_read_settings_py3 import FormatReadSettings
+    from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
     from .parquet_source_py3 import ParquetSource
     from .copy_source_py3 import CopySource
@@ -413,6 +415,7 @@ try:
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
+    from .binary_sink_py3 import BinarySink
     from .file_server_write_settings_py3 import FileServerWriteSettings
     from .azure_data_lake_store_write_settings_py3 import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings_py3 import AzureBlobFSWriteSettings
@@ -738,6 +741,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_fs_location import AzureBlobFSLocation
     from .azure_blob_storage_location import AzureBlobStorageLocation
     from .dataset_location import DatasetLocation
+    from .binary_dataset import BinaryDataset
     from .delimited_text_dataset import DelimitedTextDataset
     from .parquet_dataset import ParquetDataset
     from .amazon_s3_dataset import AmazonS3Dataset
@@ -824,8 +828,6 @@ except (SyntaxError, ImportError):
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
     from .azure_table_source import AzureTableSource
-    from .format_read_settings import FormatReadSettings
-    from .delimited_text_read_settings import DelimitedTextReadSettings
     from .hdfs_read_settings import HdfsReadSettings
     from .http_read_settings import HttpReadSettings
     from .sftp_read_settings import SftpReadSettings
@@ -836,6 +838,9 @@ except (SyntaxError, ImportError):
     from .azure_blob_fs_read_settings import AzureBlobFSReadSettings
     from .azure_blob_storage_read_settings import AzureBlobStorageReadSettings
     from .store_read_settings import StoreReadSettings
+    from .binary_source import BinarySource
+    from .format_read_settings import FormatReadSettings
+    from .delimited_text_read_settings import DelimitedTextReadSettings
     from .delimited_text_source import DelimitedTextSource
     from .parquet_source import ParquetSource
     from .copy_source import CopySource
@@ -877,6 +882,7 @@ except (SyntaxError, ImportError):
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
+    from .binary_sink import BinarySink
     from .file_server_write_settings import FileServerWriteSettings
     from .azure_data_lake_store_write_settings import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings import AzureBlobFSWriteSettings
@@ -1277,6 +1283,7 @@ __all__ = [
     'AzureBlobFSLocation',
     'AzureBlobStorageLocation',
     'DatasetLocation',
+    'BinaryDataset',
     'DelimitedTextDataset',
     'ParquetDataset',
     'AmazonS3Dataset',
@@ -1363,8 +1370,6 @@ __all__ = [
     'DocumentDbCollectionSource',
     'BlobSource',
     'AzureTableSource',
-    'FormatReadSettings',
-    'DelimitedTextReadSettings',
     'HdfsReadSettings',
     'HttpReadSettings',
     'SftpReadSettings',
@@ -1375,6 +1380,9 @@ __all__ = [
     'AzureBlobFSReadSettings',
     'AzureBlobStorageReadSettings',
     'StoreReadSettings',
+    'BinarySource',
+    'FormatReadSettings',
+    'DelimitedTextReadSettings',
     'DelimitedTextSource',
     'ParquetSource',
     'CopySource',
@@ -1416,6 +1424,7 @@ __all__ = [
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
+    'BinarySink',
     'FileServerWriteSettings',
     'AzureDataLakeStoreWriteSettings',
     'AzureBlobFSWriteSettings',
