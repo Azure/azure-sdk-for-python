@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.tracing import common
 from azure.core.tracing.context import tracing_context
-from azure.core.tracing.decorator import distributed_tracing_decorator
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.settings import settings
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 class MockClient:
-    @distributed_tracing_decorator
+    @distributed_trace
     def __init__(self, policies=None, assert_current_span=False):
         self.request = HttpRequest("GET", "https://bing.com")
         if policies is None:
@@ -57,7 +57,7 @@ class MockClient:
             assert current_span is not None
         return self.expected_response
 
-    @distributed_tracing_decorator
+    @distributed_trace
     def make_request(self, numb_times, **kwargs):
         time.sleep(0.001)
         if numb_times < 1:
@@ -67,7 +67,7 @@ class MockClient:
         self.make_request(numb_times - 1, **kwargs)
         return response
 
-    @distributed_tracing_decorator
+    @distributed_trace
     def get_foo(self):
         time.sleep(0.001)
         return 5
@@ -84,41 +84,30 @@ class TestCommon(unittest.TestCase):
             assert parent.span_instance == wrapper.get_current_span()
             assert tracing_context.current_span.get() == parent
 
-    def test_get_parent_and_original_contexts(self):
+    def test_get_parent_span(self):
         with ContextHelper():
             opencensus = sys.modules["opencensus"]
             del sys.modules["opencensus"]
 
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent is None
-            assert orig_tracing_context is None
 
             sys.modules["opencensus"] = opencensus
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-            assert orig_tracing_context is None
 
             tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-            assert orig_tracing_context is None
             parent.finish()
 
             some_span = tracer.start_span(name="some_span")
-            new_parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst == some_span
+            new_parent = common.get_parent_span(None)
             assert new_parent.span_instance.name == "some_span"
-            assert orig_tracing_context is None
+            some_span.finish()
 
-            kwarg = {"parent_span": parent.span_instance}
-            should_be_old_parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts(kwarg)
-            assert kwarg.get("parent_span") is None
-            assert orig_span_inst == some_span
+            should_be_old_parent = common.get_parent_span(parent.span_instance)
             assert should_be_old_parent.span_instance == parent.span_instance
-            assert orig_tracing_context is None
 
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):

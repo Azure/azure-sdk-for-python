@@ -15,8 +15,8 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.tracing.context import tracing_context
-from azure.core.tracing.decorator import distributed_tracing_decorator
-from azure.core.tracing.decorator_async import distributed_tracing_decorator_async
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
@@ -26,7 +26,7 @@ import time
 
 
 class MockClient:
-    @distributed_tracing_decorator
+    @distributed_trace
     def __init__(self, policies=None, assert_current_span=False):
         self.request = HttpRequest("GET", "https://bing.com")
         if policies is None:
@@ -45,7 +45,7 @@ class MockClient:
             assert current_span is not None
         return self.expected_response
 
-    @distributed_tracing_decorator_async
+    @distributed_trace_async
     async def make_request(self, numb_times, **kwargs):
         time.sleep(0.001)
         if numb_times < 1:
@@ -55,7 +55,7 @@ class MockClient:
         await self.make_request(numb_times - 1, **kwargs)
         return response
 
-    @distributed_tracing_decorator_async
+    @distributed_trace_async
     async def get_foo(self):
         time.sleep(0.001)
         return 5
