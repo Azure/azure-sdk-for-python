@@ -7,7 +7,7 @@ import threading
 from uamqp import Connection, TransportType
 
 
-class _ConnectionManager(object):
+class _SharedConnectionManager(object):
     def __init__(self, **kwargs):
         self._lock = threading.Lock()
         self._conn = None
@@ -42,9 +42,23 @@ class _ConnectionManager(object):
                     encoding=self._encoding)
             return self._conn
 
-    def close_connection(self):
+    def close_connection(self, conn=None):
         with self._lock:
             if self._conn:
                 self._conn.destroy()
             self._conn = None
 
+
+class _SeparateConnectionManager(object):
+    def __init__(self, **kwargs):
+        pass
+
+    def get_connection(self, host, auth):
+        return None
+
+    def close_connection(self):
+        pass
+
+
+def get_connection_manager(**kwargs):
+    return _SeparateConnectionManager(**kwargs)

@@ -15,7 +15,7 @@ from uamqp import SendClient
 
 from azure.eventhub.common import EventData, _BatchSendEventData
 from azure.eventhub.error import EventHubError, ConnectError, \
-    AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
+    AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler, _handle_exception
 
 log = logging.getLogger(__name__)
 
@@ -131,82 +131,15 @@ class EventHubProducer(object):
         self.client._conn_manager.close_connection()  # close the shared connection.
 
     def _handle_exception(self, exception, retry_count, max_retries):
-        if isinstance(exception, KeyboardInterrupt):
-            log.info("EventHubConsumer stops due to keyboard interrupt")
-            self.close()
-            raise
-        elif isinstance(exception, (
-                errors.MessageAccepted,
-                errors.MessageAlreadySettled,
-                errors.MessageModified,
-                errors.MessageRejected,
-                errors.MessageReleased,
-                errors.MessageContentTooLarge)
-                ):
-            log.error("Event data error (%r)", exception)
-            error = EventDataError(str(exception), exception)
-            self.close(exception)
-            raise error
-        elif isinstance(exception, errors.MessageException):
-            log.error("Event data send error (%r)", exception)
-            error = EventDataSendError(str(exception), exception)
-            self.close(exception)
-            raise error
-        elif retry_count >= max_retries:
-            log.info("EventHubConsumer has an error and has exhausted retrying. (%r)", exception)
-            if isinstance(exception, errors.AuthenticationException):
-                log.info("EventHubConsumer authentication failed. Shutting down.")
-                error = AuthenticationError(str(exception), exception)
-            elif isinstance(exception, errors.LinkDetach):
-                log.info("EventHubConsumer link detached. Shutting down.")
-                error = ConnectionLostError(str(exception), exception)
-            elif isinstance(exception, errors.ConnectionClose):
-                log.info("EventHubConsumer connection closed. Shutting down.")
-                error = ConnectionLostError(str(exception), exception)
-            elif isinstance(exception, errors.MessageHandlerError):
-                log.info("EventHubConsumer detached. Shutting down.")
-                error = ConnectionLostError(str(exception), exception)
-            elif isinstance(exception, errors.AMQPConnectionError):
-                log.info("EventHubConsumer connection lost. Shutting down.")
-                error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
-                    else ConnectError
-                error = error_type(str(exception), exception)
-            elif isinstance(exception, compat.TimeoutException):
-                log.info("EventHubConsumer timed out. Shutting down.")
-                error = ConnectionLostError(str(exception), exception)
-            else:
-                log.error("Unexpected error occurred (%r). Shutting down.", exception)
-                error = EventHubError("Receive failed: {}".format(exception), exception)
-            self.close(exception=error)
-            raise error
-        else:
-            log.info("EventHubConsumer has an exception (%r). Retrying...", exception)
-            if isinstance(exception, errors.AuthenticationException):
-                self._close_connection()
-            elif isinstance(exception, errors.LinkRedirect):
-                log.info("EventHubConsumer link redirected. Redirecting...")
-                redirect = exception
-                self._redirect(redirect)
-            elif isinstance(exception, errors.LinkDetach):
-                self._close_handler()
-            elif isinstance(exception, errors.ConnectionClose):
-                self._close_connection()
-            elif isinstance(exception, errors.MessageHandlerError):
-                self._close_handler()
-            elif isinstance(exception, errors.AMQPConnectionError):
-                self._close_connection()
-            elif isinstance(exception, compat.TimeoutException):
-                pass  # Timeout doesn't need to recreate link or exception
-            else:
-                self._close_connection()
+        _handle_exception(exception, retry_count, max_retries, self, log)
 
     def _send_event_data(self):
-        self._open()
         max_retries = self.client.config.max_retries
         retry_count = 0
         while True:
             try:
                 if self.unsent_events:
+                    self._open()
                     self._handler.queue_message(*self.unsent_events)
                     self._handler.wait()
                     self.unsent_events = self._handler.pending_messages

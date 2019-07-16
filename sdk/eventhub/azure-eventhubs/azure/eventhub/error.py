@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import six
 
-from uamqp import constants, errors
+from uamqp import constants, errors, compat
 
 
 _NO_RETRY_ERRORS = (
@@ -128,3 +128,77 @@ class EventDataSendError(EventHubError):
 
     """
     pass
+
+
+def _handle_exception(exception, retry_count, max_retries, closable, log):
+    if isinstance(exception, KeyboardInterrupt):
+        log.info("EventHubConsumer stops due to keyboard interrupt")
+        closable.close()
+        raise
+    elif isinstance(exception, (
+            errors.MessageAccepted,
+            errors.MessageAlreadySettled,
+            errors.MessageModified,
+            errors.MessageRejected,
+            errors.MessageReleased,
+            errors.MessageContentTooLarge)
+            ):
+        log.error("Event data error (%r)", exception)
+        error = EventDataError(str(exception), exception)
+        closable.close(exception)
+        raise error
+    elif isinstance(exception, errors.MessageException):
+        log.error("Event data send error (%r)", exception)
+        error = EventDataSendError(str(exception), exception)
+        closable.close(exception)
+        raise error
+    elif retry_count >= max_retries:
+        log.info("EventHubConsumer has an error and has exhausted retrying. (%r)", exception)
+        if isinstance(exception, errors.AuthenticationException):
+            log.info("EventHubConsumer authentication failed. Shutting down.")
+            error = AuthenticationError(str(exception), exception)
+        elif isinstance(exception, errors.VendorLinkDetach):
+            log.info("EventHubConsumer link detached. Shutting down.")
+            error = ConnectError(str(exception), exception)
+        elif isinstance(exception, errors.LinkDetach):
+            log.info("EventHubConsumer link detached. Shutting down.")
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.ConnectionClose):
+            log.info("EventHubConsumer connection closed. Shutting down.")
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.MessageHandlerError):
+            log.info("EventHubConsumer detached. Shutting down.")
+            error = ConnectionLostError(str(exception), exception)
+        elif isinstance(exception, errors.AMQPConnectionError):
+            log.info("EventHubConsumer connection lost. Shutting down.")
+            error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
+                else ConnectError
+            error = error_type(str(exception), exception)
+        elif isinstance(exception, compat.TimeoutException):
+            log.info("EventHubConsumer timed out. Shutting down.")
+            error = ConnectionLostError(str(exception), exception)
+        else:
+            log.error("Unexpected error occurred (%r). Shutting down.", exception)
+            error = EventHubError("Receive failed: {}".format(exception), exception)
+        closable.close(exception=error)
+        raise error
+    else:
+        log.info("EventHubConsumer has an exception (%r). Retrying...", exception)
+        if isinstance(exception, errors.AuthenticationException):
+            closable._close_connection()
+        elif isinstance(exception, errors.LinkRedirect):
+            log.info("EventHubConsumer link redirected. Redirecting...")
+            redirect = exception
+            closable._redirect(redirect)
+        elif isinstance(exception, errors.LinkDetach):
+            closable._close_handler()
+        elif isinstance(exception, errors.ConnectionClose):
+            closable._close_connection()
+        elif isinstance(exception, errors.MessageHandlerError):
+            closable._close_handler()
+        elif isinstance(exception, errors.AMQPConnectionError):
+            closable._close_connection()
+        elif isinstance(exception, compat.TimeoutException):
+            pass  # Timeout doesn't need to recreate link or exception
+        else:
+            closable._close_connection()
