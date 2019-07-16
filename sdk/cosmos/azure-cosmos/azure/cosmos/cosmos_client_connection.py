@@ -36,7 +36,7 @@ from . import synchronized_request
 from . import global_endpoint_manager
 from .routing import routing_map_provider as routing_map_provider
 from . import session
-from . import utils
+from . import _utils
 from .partition_key import _Undefined, _Empty
 
 
@@ -110,7 +110,7 @@ class CosmosClientConnection(object):
             http_constants.HttpHeaders.Version:
                 http_constants.Versions.CurrentVersion,
             http_constants.HttpHeaders.UserAgent:
-                utils._get_user_agent(),
+                _utils.get_user_agent(),
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False
