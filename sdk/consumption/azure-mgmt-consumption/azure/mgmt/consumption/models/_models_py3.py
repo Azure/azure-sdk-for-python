@@ -1732,7 +1732,7 @@ class UsageDetail(Resource):
      ~azure.mgmt.consumption.models.MeterDetailsResponse
     :ivar quantity: The usage quantity.
     :vartype quantity: decimal.Decimal
-    :ivar effective_price: Effective Price that�s charged for the usage.
+    :ivar effective_price: Effective Price that’s charged for the usage.
     :vartype effective_price: decimal.Decimal
     :ivar cost: The amount of cost before tax.
     :vartype cost: decimal.Decimal
