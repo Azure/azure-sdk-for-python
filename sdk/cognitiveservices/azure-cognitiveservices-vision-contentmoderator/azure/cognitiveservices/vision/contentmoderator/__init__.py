@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_moderator_client import ContentModeratorClient
-from .version import VERSION
+from ._configuration import ContentModeratorClientConfiguration
+from ._content_moderator_client import ContentModeratorClient
+__all__ = ['ContentModeratorClient', 'ContentModeratorClientConfiguration']
 
-__all__ = ['ContentModeratorClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -17,6 +17,8 @@ from .. import models
 class ListManagementTermListsOperations(object):
     """ListManagementTermListsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -77,7 +79,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TermList', response)
 
@@ -129,7 +130,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('str', response)
 
@@ -193,7 +193,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TermList', response)
 
@@ -254,7 +253,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TermList', response)
 
@@ -305,7 +303,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[TermList]', response)
 
@@ -362,7 +359,6 @@ class ListManagementTermListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RefreshIndex', response)
 

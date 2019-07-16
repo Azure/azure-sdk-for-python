@@ -17,6 +17,8 @@ from .. import models
 class ReviewsOperations(object):
     """ReviewsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -80,7 +82,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Review', response)
 
@@ -136,7 +137,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Job', response)
 
@@ -226,7 +226,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[str]', response)
 
@@ -349,7 +348,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('JobId', response)
 
@@ -515,7 +513,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Frames', response)
 
@@ -774,7 +771,6 @@ class ReviewsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[str]', response)
 

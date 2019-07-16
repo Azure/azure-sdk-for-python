@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_moderation_operations import ImageModerationOperations
-from .text_moderation_operations import TextModerationOperations
-from .list_management_image_lists_operations import ListManagementImageListsOperations
-from .list_management_term_lists_operations import ListManagementTermListsOperations
-from .list_management_image_operations import ListManagementImageOperations
-from .list_management_term_operations import ListManagementTermOperations
-from .reviews_operations import ReviewsOperations
+from ._image_moderation_operations import ImageModerationOperations
+from ._text_moderation_operations import TextModerationOperations
+from ._list_management_image_lists_operations import ListManagementImageListsOperations
+from ._list_management_term_lists_operations import ListManagementTermListsOperations
+from ._list_management_image_operations import ListManagementImageOperations
+from ._list_management_term_operations import ListManagementTermOperations
+from ._reviews_operations import ReviewsOperations
 
 __all__ = [
     'ImageModerationOperations',

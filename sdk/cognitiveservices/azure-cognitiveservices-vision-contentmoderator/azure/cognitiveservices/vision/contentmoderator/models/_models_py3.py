@@ -13,6 +13,26 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Address(Model):
+    """Address details.
+
+    :param text: Detected Address.
+    :type text: str
+    :param index: Index(Location) of the Address in the input text content.
+    :type index: int
+    """
+
+    _attribute_map = {
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
+    }
+
+    def __init__(self, *, text: str=None, index: int=None, **kwargs) -> None:
+        super(Address, self).__init__(**kwargs)
+        self.text = text
+        self.index = index
+
+
 class APIError(Model):
     """Error information returned by the API.
 
@@ -41,26 +61,6 @@ class APIErrorException(HttpOperationError):
         super(APIErrorException, self).__init__(deserialize, response, 'APIError', *args)
 
 
-class Address(Model):
-    """Address details.
-
-    :param text: Detected Address.
-    :type text: str
-    :param index: Index(Location) of the Address in the input text content.
-    :type index: int
-    """
-
-    _attribute_map = {
-        'text': {'key': 'Text', 'type': 'str'},
-        'index': {'key': 'Index', 'type': 'int'},
-    }
-
-    def __init__(self, *, text: str=None, index: int=None, **kwargs) -> None:
-        super(Address, self).__init__(**kwargs)
-        self.text = text
-        self.index = index
-
-
 class Body(Model):
     """Body.
 
@@ -83,26 +83,6 @@ class Body(Model):
         self.name = name
         self.description = description
         self.metadata = metadata
-
-
-class BodyModel(Model):
-    """BodyModel.
-
-    :param data_representation:  Default value: "URL" .
-    :type data_representation: str
-    :param value:
-    :type value: str
-    """
-
-    _attribute_map = {
-        'data_representation': {'key': 'DataRepresentation', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
-    }
-
-    def __init__(self, *, data_representation: str="URL", value: str=None, **kwargs) -> None:
-        super(BodyModel, self).__init__(**kwargs)
-        self.data_representation = data_representation
-        self.value = value
 
 
 class Candidate(Model):
@@ -771,30 +751,6 @@ class Frames(Model):
         self.video_frames = video_frames
 
 
-class IPA(Model):
-    """IP Address details.
-
-    :param sub_type: Subtype of the detected IP Address.
-    :type sub_type: str
-    :param text: Detected IP Address.
-    :type text: str
-    :param index: Index(Location) of the IP Address in the input text content.
-    :type index: int
-    """
-
-    _attribute_map = {
-        'sub_type': {'key': 'SubType', 'type': 'str'},
-        'text': {'key': 'Text', 'type': 'str'},
-        'index': {'key': 'Index', 'type': 'int'},
-    }
-
-    def __init__(self, *, sub_type: str=None, text: str=None, index: int=None, **kwargs) -> None:
-        super(IPA, self).__init__(**kwargs)
-        self.sub_type = sub_type
-        self.text = text
-        self.index = index
-
-
 class Image(Model):
     """Image Properties.
 
@@ -900,6 +856,50 @@ class ImageList(Model):
         self.name = name
         self.description = description
         self.metadata = metadata
+
+
+class ImageUrl(Model):
+    """ImageUrl.
+
+    :param data_representation:  Default value: "URL" .
+    :type data_representation: str
+    :param value:
+    :type value: str
+    """
+
+    _attribute_map = {
+        'data_representation': {'key': 'DataRepresentation', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
+    }
+
+    def __init__(self, *, data_representation: str="URL", value: str=None, **kwargs) -> None:
+        super(ImageUrl, self).__init__(**kwargs)
+        self.data_representation = data_representation
+        self.value = value
+
+
+class IPA(Model):
+    """IP Address details.
+
+    :param sub_type: Subtype of the detected IP Address.
+    :type sub_type: str
+    :param text: Detected IP Address.
+    :type text: str
+    :param index: Index(Location) of the IP Address in the input text content.
+    :type index: int
+    """
+
+    _attribute_map = {
+        'sub_type': {'key': 'SubType', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
+    }
+
+    def __init__(self, *, sub_type: str=None, text: str=None, index: int=None, **kwargs) -> None:
+        super(IPA, self).__init__(**kwargs)
+        self.sub_type = sub_type
+        self.text = text
+        self.index = index
 
 
 class Job(Model):
@@ -1134,6 +1134,31 @@ class OCR(Model):
         self.candidates = candidates
 
 
+class Phone(Model):
+    """Phone Property details.
+
+    :param country_code: CountryCode of the detected Phone number.
+    :type country_code: str
+    :param text: Detected Phone number.
+    :type text: str
+    :param index: Index(Location) of the Phone number in the input text
+     content.
+    :type index: int
+    """
+
+    _attribute_map = {
+        'country_code': {'key': 'CountryCode', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
+    }
+
+    def __init__(self, *, country_code: str=None, text: str=None, index: int=None, **kwargs) -> None:
+        super(Phone, self).__init__(**kwargs)
+        self.country_code = country_code
+        self.text = text
+        self.index = index
+
+
 class PII(Model):
     """Personal Identifier Information details.
 
@@ -1169,31 +1194,6 @@ class PII(Model):
         self.ipa = ipa
         self.phone = phone
         self.address = address
-
-
-class Phone(Model):
-    """Phone Property details.
-
-    :param country_code: CountryCode of the detected Phone number.
-    :type country_code: str
-    :param text: Detected Phone number.
-    :type text: str
-    :param index: Index(Location) of the Phone number in the input text
-     content.
-    :type index: int
-    """
-
-    _attribute_map = {
-        'country_code': {'key': 'CountryCode', 'type': 'str'},
-        'text': {'key': 'Text', 'type': 'str'},
-        'index': {'key': 'Index', 'type': 'int'},
-    }
-
-    def __init__(self, *, country_code: str=None, text: str=None, index: int=None, **kwargs) -> None:
-        super(Phone, self).__init__(**kwargs)
-        self.country_code = country_code
-        self.text = text
-        self.index = index
 
 
 class RefreshIndex(Model):
@@ -1283,26 +1283,6 @@ class Review(Model):
         self.callback_endpoint = callback_endpoint
 
 
-class SSN(Model):
-    """Detected SSN details.
-
-    :param text: Detected SSN in the input text content.
-    :type text: str
-    :param index: Index(Location) of the SSN in the input text content.
-    :type index: int
-    """
-
-    _attribute_map = {
-        'text': {'key': 'Text', 'type': 'str'},
-        'index': {'key': 'Index', 'type': 'int'},
-    }
-
-    def __init__(self, *, text: str=None, index: int=None, **kwargs) -> None:
-        super(SSN, self).__init__(**kwargs)
-        self.text = text
-        self.index = index
-
-
 class Screen(Model):
     """The response for a Screen text request.
 
@@ -1356,6 +1336,26 @@ class Screen(Model):
         self.language = language
         self.terms = terms
         self.tracking_id = tracking_id
+
+
+class SSN(Model):
+    """Detected SSN details.
+
+    :param text: Detected SSN in the input text content.
+    :type text: str
+    :param index: Index(Location) of the SSN in the input text content.
+    :type index: int
+    """
+
+    _attribute_map = {
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
+    }
+
+    def __init__(self, *, text: str=None, index: int=None, **kwargs) -> None:
+        super(SSN, self).__init__(**kwargs)
+        self.text = text
+        self.index = index
 
 
 class Status(Model):
