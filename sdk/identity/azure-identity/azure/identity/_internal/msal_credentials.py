@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from typing import Any, Mapping, Optional, Union
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 import msal
 
 from .msal_transport_adapter import MsalTransportAdapter
@@ -80,5 +81,8 @@ class ConfidentialClientCredential(MsalCredential):
         # Failing that, acquire a new token.
         app = self._app  # type: msal.ConfidentialClientApplication
         result = app.acquire_token_silent(scopes, account=None) or app.acquire_token_for_client(scopes)
+
+        if "access_token" not in result:
+            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
 
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
