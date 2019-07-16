@@ -12,7 +12,6 @@ from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.tracing import common
 from azure.core.tracing.context import tracing_context
-from azure.core.tracing.decorator import distributed_tracing_decorator
 from azure.core.settings import settings
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module

@@ -32,7 +32,7 @@ from azure.core.settings import settings
 from azure.core.tracing.context import tracing_context
 
 
-def distributed_tracing_decorator_async(func):
+def distributed_trace_async(func):
     # type: (Callable[[Any], Any]) -> Callable[[Any], Any]
     @functools.wraps(func)
     async def wrapper_use_tracer(self, *args, **kwargs):
