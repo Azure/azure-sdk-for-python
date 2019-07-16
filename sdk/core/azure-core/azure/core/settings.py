@@ -135,7 +135,7 @@ def get_opencensus_span_if_opencensus_is_imported():
     return get_opencensus_span()
 
 
-_tracing_implementation_dict = {"opencensus": get_opencensus_span()}
+_tracing_implementation_dict = {"opencensus": get_opencensus_span}
 
 
 def convert_tracing_impl(value):
@@ -156,8 +156,21 @@ def convert_tracing_impl(value):
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    value = value.lower() if isinstance(value, six.string_types) else value
-    return _tracing_implementation_dict.get(value, value)
+    wrapper_class = None
+    if isinstance(value, six.string_types):
+        value = value.lower()
+        get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
+        wrapper_class = get_wrapper_class()
+        if wrapper_class is _Unset:
+            raise ValueError(
+                "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                    value, ", ".join(_tracing_implementation_dict)
+                )
+            )
+    else:
+        wrapper_class = value
+
+    return wrapper_class
 
 
 class PrioritizedSetting(object):
