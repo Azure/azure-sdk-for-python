@@ -60,18 +60,18 @@ class MockExporter(Exporter):
         for node in self._all_nodes:
             if node.span_data.span_id in parent_dict:
                 node.children = sorted(
-                    parent_dict[node.span_data.span_id],
-                    key=lambda x: timestamp_to_microseconds(x.span_data.start_time),
+                    parent_dict[node.span_data.span_id], key=lambda x: timestamp_to_microseconds(x.span_data.start_time)
                 )
 
 
 class ContextHelper(object):
-    def __init__(self, environ={}, tracer_to_use=None):
+    def __init__(self, environ={}, tracer_to_use=None, should_only_propagate=None):
         self.orig_tracer = OpenCensusSpan.get_current_tracer()
         self.orig_current_span = OpenCensusSpan.get_current_span()
         self.orig_sdk_context_span = tracing_context.current_span.get()
         self.os_env = mock.patch.dict(os.environ, environ)
         self.tracer_to_use = tracer_to_use
+        self.should_only_propagate = should_only_propagate
 
     def __enter__(self):
         self.orig_tracer = OpenCensusSpan.get_current_tracer()
@@ -79,6 +79,8 @@ class ContextHelper(object):
         self.orig_sdk_context_span = tracing_context.current_span.get()
         if self.tracer_to_use is not None:
             settings.tracing_implementation.set_value(self.tracer_to_use)
+        if self.should_only_propagate is not None:
+            settings.tracing_should_only_propagate.set_value(self.should_only_propagate)
         self.os_env.start()
         return self
 
@@ -87,6 +89,7 @@ class ContextHelper(object):
         OpenCensusSpan.set_current_span(self.orig_current_span)
         tracing_context.current_span.set(self.orig_sdk_context_span)
         settings.tracing_implementation.unset_value()
+        settings.tracing_should_only_propagate.unset_value()
         self.os_env.stop()
 
 
@@ -123,6 +126,7 @@ class MockClient:
     async def get_foo(self):
         return 5
 
+
 @pytest.mark.asyncio
 async def test_with_nothing_imported():
     with ContextHelper():
@@ -133,11 +137,13 @@ async def test_with_nothing_imported():
             await client.make_request(3)
         sys.modules["opencensus"] = opencensus
 
+
 @pytest.mark.asyncio
 async def test_with_opencensus_imported_but_not_used():
     with ContextHelper():
         client = MockClient(assert_current_span=True)
         await client.make_request(3)
+
 
 @pytest.mark.asyncio
 async def test_with_opencencus_used():
@@ -157,6 +163,7 @@ async def test_with_opencencus_used():
         assert not parent.children[0].children
         assert parent.children[1].span_data.name == "MockClient.get_foo"
         assert not parent.children[1].children
+
 
 @pytest.mark.asyncio
 async def for_test_different_settings():
@@ -186,11 +193,33 @@ async def for_test_different_settings():
         children = parent.children[1].children
         assert len(children) == 2
 
+
 @pytest.mark.asyncio
 async def test_span_with_opencensus_complicated():
     for_test_different_settings()
+
 
 @pytest.mark.asyncio
 async def test_span_with_opencensus_passed_in_complicated():
     with ContextHelper(tracer_to_use="opencensus"):
         for_test_different_settings()
+
+
+@pytest.mark.asyncio
+async def test_should_only_propagate():
+    with ContextHelper(should_only_propagate=True):
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+        with trace.start_span(name="OverAll") as parent:
+            client = MockClient()
+            await client.make_request(2)
+            with trace.span("child") as child:
+                await client.make_request(2, parent_span=parent)
+                assert OpenCensusSpan.get_current_span() == child
+                await client.make_request(2)
+        trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 1
+        assert parent.children[0].span_data.name == "child"
+        assert not parent.children[0].children
