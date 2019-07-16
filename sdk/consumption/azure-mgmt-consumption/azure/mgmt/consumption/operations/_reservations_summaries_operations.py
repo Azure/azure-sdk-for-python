@@ -114,7 +114,7 @@ class ReservationsSummariesOperations(object):
         return deserialized
     list_by_reservation_order.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/providers/Microsoft.Consumption/reservationSummaries'}
 
-    def list_by_billing_account_id(
+    def list_by_reservation_order_and_reservation(
             self, reservation_order_id, reservation_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations summaries for daily or monthly grain.
 
@@ -142,7 +142,7 @@ class ReservationsSummariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_account_id.metadata['url']
+                url = self.list_by_reservation_order_and_reservation.metadata['url']
                 path_format_arguments = {
                     'reservationOrderId': self._serialize.url("reservation_order_id", reservation_order_id, 'str'),
                     'reservationId': self._serialize.url("reservation_id", reservation_id, 'str')
@@ -191,9 +191,9 @@ class ReservationsSummariesOperations(object):
         deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'}
+    list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'}
 
-    def list_by_reservation_order_and_reservation(
+    def list_by_reservation_order_and_reservation1(
             self, billing_account_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations summaries for daily or monthly grain.
 
@@ -219,7 +219,7 @@ class ReservationsSummariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_reservation_order_and_reservation.metadata['url']
+                url = self.list_by_reservation_order_and_reservation1.metadata['url']
                 path_format_arguments = {
                     'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
                 }
@@ -267,4 +267,4 @@ class ReservationsSummariesOperations(object):
         deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationsummaries'}
+    list_by_reservation_order_and_reservation1.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationsummaries'}

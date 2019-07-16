@@ -26,13 +26,13 @@ try:
     from ._models_py3 import ManagementGroupAggregatedCostResult
     from ._models_py3 import Marketplace
     from ._models_py3 import MeterDetails
+    from ._models_py3 import MeterDetailsResponse
     from ._models_py3 import Notification
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PriceSheetProperties
     from ._models_py3 import PriceSheetResult
     from ._models_py3 import ProxyResource
-    from ._models_py3 import QueryOptions
     from ._models_py3 import ReservationDetail
     from ._models_py3 import ReservationRecommendation
     from ._models_py3 import ReservationSummary
@@ -58,13 +58,13 @@ except (SyntaxError, ImportError):
     from ._models import ManagementGroupAggregatedCostResult
     from ._models import Marketplace
     from ._models import MeterDetails
+    from ._models import MeterDetailsResponse
     from ._models import Notification
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PriceSheetProperties
     from ._models import PriceSheetResult
     from ._models import ProxyResource
-    from ._models import QueryOptions
     from ._models import ReservationDetail
     from ._models import ReservationRecommendation
     from ._models import ReservationSummary
@@ -90,6 +90,7 @@ from ._consumption_management_client_enums import (
     ChargeType,
     Bound,
     Datagrain,
+    Metrictype,
 )
 
 __all__ = [
@@ -109,13 +110,13 @@ __all__ = [
     'ManagementGroupAggregatedCostResult',
     'Marketplace',
     'MeterDetails',
+    'MeterDetailsResponse',
     'Notification',
     'Operation',
     'OperationDisplay',
     'PriceSheetProperties',
     'PriceSheetResult',
     'ProxyResource',
-    'QueryOptions',
     'ReservationDetail',
     'ReservationRecommendation',
     'ReservationSummary',
@@ -140,4 +141,5 @@ __all__ = [
     'ChargeType',
     'Bound',
     'Datagrain',
+    'Metrictype',
 ]

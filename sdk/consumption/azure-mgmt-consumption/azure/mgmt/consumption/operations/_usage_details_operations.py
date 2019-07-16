@@ -39,12 +39,14 @@ class UsageDetailsOperations(object):
         self.config = config
 
     def list(
-            self, scope, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, expand=None, filter=None, skiptoken=None, top=None, metric=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details for the defined scope. Usage details are
         available via this API only for May 1, 2014 or later.
 
         :param scope: The scope associated with usage details operations. This
          includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
+         for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
          Billing Account scope,
          '/providers/Microsoft.Billing/departments/{departmentId}' for
@@ -59,18 +61,19 @@ class UsageDetailsOperations(object):
          e.g. to specify billing period at department scope use
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
         :type scope: str
-        :param expand: May be used to expand the
-         properties/additionalProperties or properties/meterDetails within a
-         list of usage details. By default, these fields are not included when
-         listing usage details.
+        :param expand: May be used to expand the properties/additionalInfo or
+         properties/meterDetails within a list of usage details. By default,
+         these fields are not included when listing usage details.
         :type expand: str
         :param filter: May be used to filter usageDetails by
-         properties/usageEnd (Utc time), properties/usageStart (Utc time),
-         properties/resourceGroup, properties/instanceName,
-         properties/instanceId or tags. The filter supports 'eq', 'lt', 'gt',
-         'le', 'ge', and 'and'. It does not currently support 'ne', 'or', or
-         'not'. Tag filter is a key value pair string where key and value is
-         separated by a colon (:).
+         properties/resourceGroup, properties/resourceName,
+         properties/resourceId, properties/chargeType,
+         properties/reservationId, properties/publisherType or tags. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
+         string where key and value is separated by a colon (:). PublisherType
+         Filter accepts two values azure and marketplace and it is currently
+         supported for Web Direct Offer Type
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
@@ -80,8 +83,10 @@ class UsageDetailsOperations(object):
         :param top: May be used to limit the number of results to the most
          recent N usageDetails.
         :type top: int
-        :param query_options: Additional parameters for the operation
-        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
+        :param metric: Allows to select different type of cost/usage records.
+         Possible values include: 'ActualCostMetricType',
+         'AmortizedCostMetricType', 'UsageMetricType'
+        :type metric: str or ~azure.mgmt.consumption.models.Metrictype
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -93,10 +98,6 @@ class UsageDetailsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        apply = None
-        if query_options is not None:
-            apply = query_options.apply
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -117,8 +118,8 @@ class UsageDetailsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if apply is not None:
-                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                if metric is not None:
+                    query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
 
             else:
                 url = next_link
