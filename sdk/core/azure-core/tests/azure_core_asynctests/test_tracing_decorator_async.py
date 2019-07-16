@@ -47,7 +47,7 @@ class MockClient:
 
     @distributed_trace_async
     async def make_request(self, numb_times, **kwargs):
-        time.sleep(0.01)
+        time.sleep(0.001)
         if numb_times < 1:
             return None
         response = self.pipeline.run(self.request, **kwargs)
@@ -57,7 +57,7 @@ class MockClient:
 
     @distributed_trace_async
     async def get_foo(self):
-        time.sleep(0.01)
+        time.sleep(0.001)
         return 5
 
 
