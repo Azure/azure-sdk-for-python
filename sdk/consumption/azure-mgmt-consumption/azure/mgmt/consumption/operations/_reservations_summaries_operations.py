@@ -267,4 +267,4 @@ class ReservationsSummariesOperations(object):
         deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationsummaries'}
+    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationSummaries'}
