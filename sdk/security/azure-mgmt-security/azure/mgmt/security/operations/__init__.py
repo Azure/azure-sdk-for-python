@@ -17,6 +17,7 @@ from .allowed_connections_operations import AllowedConnectionsOperations
 from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
+from .adaptive_application_controls_operations import AdaptiveApplicationControlsOperations
 from .locations_operations import LocationsOperations
 from .operations import Operations
 from .tasks_operations import TasksOperations
@@ -49,6 +50,7 @@ __all__ = [
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
     'JitNetworkAccessPoliciesOperations',
+    'AdaptiveApplicationControlsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',

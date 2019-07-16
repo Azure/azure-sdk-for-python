@@ -47,6 +47,14 @@ try:
     from .jit_network_access_policy_initiate_virtual_machine_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request_py3 import JitNetworkAccessPolicyInitiateRequest
     from .kind_py3 import Kind
+    from .app_whitelisting_issue_summary_py3 import AppWhitelistingIssueSummary
+    from .vm_recommendation_py3 import VmRecommendation
+    from .publisher_info_py3 import PublisherInfo
+    from .user_recommendation_py3 import UserRecommendation
+    from .path_recommendation_py3 import PathRecommendation
+    from .app_whitelisting_group_py3 import AppWhitelistingGroup
+    from .app_whitelisting_groups_py3 import AppWhitelistingGroups
+    from .app_whitelisting_put_group_data_py3 import AppWhitelistingPutGroupData
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .security_task_parameters_py3 import SecurityTaskParameters
@@ -125,6 +133,14 @@ except (SyntaxError, ImportError):
     from .jit_network_access_policy_initiate_virtual_machine import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request import JitNetworkAccessPolicyInitiateRequest
     from .kind import Kind
+    from .app_whitelisting_issue_summary import AppWhitelistingIssueSummary
+    from .vm_recommendation import VmRecommendation
+    from .publisher_info import PublisherInfo
+    from .user_recommendation import UserRecommendation
+    from .path_recommendation import PathRecommendation
+    from .app_whitelisting_group import AppWhitelistingGroup
+    from .app_whitelisting_groups import AppWhitelistingGroups
+    from .app_whitelisting_put_group_data import AppWhitelistingPutGroupData
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .security_task_parameters import SecurityTaskParameters
@@ -248,6 +264,14 @@ __all__ = [
     'JitNetworkAccessPolicyInitiateVirtualMachine',
     'JitNetworkAccessPolicyInitiateRequest',
     'Kind',
+    'AppWhitelistingIssueSummary',
+    'VmRecommendation',
+    'PublisherInfo',
+    'UserRecommendation',
+    'PathRecommendation',
+    'AppWhitelistingGroup',
+    'AppWhitelistingGroups',
+    'AppWhitelistingPutGroupData',
     'OperationDisplay',
     'Operation',
     'SecurityTaskParameters',

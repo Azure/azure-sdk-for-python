@@ -21,6 +21,7 @@ from .operations.allowed_connections_operations import AllowedConnectionsOperati
 from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
+from .operations.adaptive_application_controls_operations import AdaptiveApplicationControlsOperations
 from .operations.locations_operations import LocationsOperations
 from .operations.operations import Operations
 from .operations.tasks_operations import TasksOperations
@@ -106,6 +107,8 @@ class SecurityCenter(SDKClient):
     :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
     :ivar jit_network_access_policies: JitNetworkAccessPolicies operations
     :vartype jit_network_access_policies: azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
+    :ivar adaptive_application_controls: AdaptiveApplicationControls operations
+    :vartype adaptive_application_controls: azure.mgmt.security.operations.AdaptiveApplicationControlsOperations
     :ivar locations: Locations operations
     :vartype locations: azure.mgmt.security.operations.LocationsOperations
     :ivar operations: Operations operations
@@ -187,6 +190,8 @@ class SecurityCenter(SDKClient):
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adaptive_application_controls = AdaptiveApplicationControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
