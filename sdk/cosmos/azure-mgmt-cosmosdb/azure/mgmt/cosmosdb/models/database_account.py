@@ -78,6 +78,12 @@ class DatabaseAccount(Resource):
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
+    :param enable_cassandra_connector: Enables the cassandra connector on the
+     Cosmos DB C* account
+    :type enable_cassandra_connector: bool
+    :param connector_offer: The cassandra connector offer type for the Cosmos
+     DB database C* account. Possible values include: 'Small'
+    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
     """
 
     _validation = {
@@ -111,6 +117,8 @@ class DatabaseAccount(Resource):
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
+        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
+        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -129,3 +137,5 @@ class DatabaseAccount(Resource):
         self.failover_policies = None
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
         self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)

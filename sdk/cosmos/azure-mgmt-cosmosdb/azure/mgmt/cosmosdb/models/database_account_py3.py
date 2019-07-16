@@ -78,6 +78,12 @@ class DatabaseAccount(Resource):
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
+    :param enable_cassandra_connector: Enables the cassandra connector on the
+     Cosmos DB C* account
+    :type enable_cassandra_connector: bool
+    :param connector_offer: The cassandra connector offer type for the Cosmos
+     DB database C* account. Possible values include: 'Small'
+    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
     """
 
     _validation = {
@@ -111,9 +117,11 @@ class DatabaseAccount(Resource):
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
+        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
+        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, **kwargs) -> None:
         super(DatabaseAccount, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -129,3 +137,5 @@ class DatabaseAccount(Resource):
         self.failover_policies = None
         self.virtual_network_rules = virtual_network_rules
         self.enable_multiple_write_locations = enable_multiple_write_locations
+        self.enable_cassandra_connector = enable_cassandra_connector
+        self.connector_offer = connector_offer
