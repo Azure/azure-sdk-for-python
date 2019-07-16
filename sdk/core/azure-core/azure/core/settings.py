@@ -156,7 +156,7 @@ def convert_tracing_impl(value):
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    wrapper_class = None
+    wrapper_class = value
     if isinstance(value, six.string_types):
         value = value.lower()
         get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
@@ -167,8 +167,6 @@ def convert_tracing_impl(value):
                     value, ", ".join(_tracing_implementation_dict)
                 )
             )
-    else:
-        wrapper_class = value
 
     return wrapper_class
 
