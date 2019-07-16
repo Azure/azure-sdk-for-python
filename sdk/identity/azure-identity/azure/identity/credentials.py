@@ -6,6 +6,7 @@
 Credentials for Azure SDK authentication.
 """
 import os
+import time
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
@@ -14,6 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
+from ._internal import PublicClientCredential
 from ._managed_identity import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
 
@@ -233,3 +235,59 @@ class ChainedTokenCredential(object):
             else:
                 attempts.append(credential.__class__.__name__)
         return "No valid token received. {}".format(". ".join(attempts))
+
+
+class UsernamePasswordCredential(PublicClientCredential):
+    """
+    Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
+    authentication, because it's less secure than other authentication flows.
+
+    Authentication with this credential is not interactive, so it is **not compatible with any form of
+    multi-factor authentication or consent prompting**. The application must already have the user's consent.
+
+    This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
+    See this document for more information about account types:
+    https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/sign-up-organization
+
+    :param str client_id: the application's client ID
+    :param str username: the user's username (usually an email address)
+    :param str password: the user's password
+    """
+
+    def __init__(self, client_id, username, password, **kwargs):
+        # type: (str, str, str, Any) -> None
+        super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
+        self._username = username
+        self._password = password
+
+    def get_token(self, *scopes):
+        # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+
+        # MSAL requires scopes be a list
+        scopes = list(scopes)  # type: ignore
+        now = int(time.time())
+
+        accounts = self._app.get_accounts(username=self._username)
+        result = None
+        for account in accounts:
+            result = self._app.acquire_token_silent(scopes, account=account)
+            if result:
+                break
+
+        if not result:
+            # cache miss -> request a new token
+            result = self._app.acquire_token_by_username_password(
+                username=self._username, password=self._password, scopes=scopes
+            )
+
+        if "access_token" not in result:
+            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
+
+        return AccessToken(result["access_token"], now + int(result["expires_in"]))
