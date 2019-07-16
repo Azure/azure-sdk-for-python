@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
 
-    def __init__(self, name_of_spans="Azure Call"):
+    def __init__(self, name_of_spans="span - http call"):
         # type: (str, str, str) -> None
         self.name_of_child_span = name_of_spans
         self.parent_span_dict = {}
