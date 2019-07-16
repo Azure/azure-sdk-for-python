@@ -27,7 +27,7 @@ import threading
 
 from . import base
 from . import http_constants
-from .vector_session_token import VectorSessionToken
+from ._vector_session_token import VectorSessionToken
 from .errors import HTTPFailure
 
 class SessionContainer(object):
