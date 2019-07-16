@@ -15,7 +15,10 @@ try:
     from azure.core.pipeline.transport import AioHttpTransport as AsyncTransport
 except ImportError:
     from azure.core.pipeline.transport import AsyncioRequestsTransport as AsyncTransport
-from azure.core.pipeline.policies import ContentDecodePolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
+    AsyncRedirectPolicy)
 
 from .constants import STORAGE_OAUTH_SCOPE
 from .authentication import SharedKeyCredentialPolicy
@@ -29,10 +32,9 @@ from .base_client import (
 from .policies import (
     StorageContentValidation,
     StorageRequestHook,
-    StorageResponseHook,
     StorageHosts,
     QueueMessagePolicy)
-from .policies_async import ExponentialRetry
+from .policies_async import ExponentialRetry, AsyncStorageResponseHook
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,10 +79,10 @@ class AsyncStorageAccountHostsMixin(object):
             StorageRequestHook(**kwargs),
             credential_policy,
             ContentDecodePolicy(),
-            config.redirect_policy,
+            AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
-            StorageResponseHook(**kwargs),
+            AsyncStorageResponseHook(**kwargs),
         ]
-        return config, Pipeline(config.transport, policies=policies)
+        return config, AsyncPipeline(config.transport, policies=policies)

@@ -167,7 +167,7 @@ class StorageAccountHostsMixin(object):
             StorageRequestHook(**kwargs),
             credential_policy,
             ContentDecodePolicy(),
-            config.redirect_policy,
+            RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
@@ -249,7 +249,6 @@ def create_configuration(**kwargs):
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-    config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 

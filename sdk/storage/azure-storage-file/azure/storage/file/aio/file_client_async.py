@@ -77,7 +77,7 @@ async def _upload_file_helper(
         process_storage_error(error)
 
 
-class FileClient(FileClientBase, AsyncStorageAccountHostsMixin):
+class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:

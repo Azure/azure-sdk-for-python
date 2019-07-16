@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from ..models import ShareProperties, AccessPolicy
 
 
-class ShareClient(ShareClientBase, AsyncStorageAccountHostsMixin):
+class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for

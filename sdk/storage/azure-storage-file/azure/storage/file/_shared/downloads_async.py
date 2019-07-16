@@ -207,6 +207,9 @@ class StorageStreamDownloader(object):
         raise TypeError("Async stream must be iterated asynchronously.")
 
     def __aiter__(self):
+        return self._async_data_iterator()
+
+    async def _async_data_iterator(self):
         if self.download_size == 0:
             content = b""
         else:

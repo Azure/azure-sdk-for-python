@@ -10,8 +10,8 @@ import time
 from typing import Any, Callable
 from azure.core.polling import AsyncPollingMethod
 
-from ._shared.response_handlers import process_storage_error
-from ._generated.models import StorageErrorException
+from .._shared.response_handlers import process_storage_error
+from .._generated.models import StorageErrorException
 
 
 logger = logging.getLogger(__name__)

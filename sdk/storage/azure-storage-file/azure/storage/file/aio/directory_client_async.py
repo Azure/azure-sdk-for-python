@@ -17,25 +17,25 @@ except ImportError:
 import six
 from azure.core.polling import async_poller
 
-from ._generated.aio import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import StorageErrorException
+from .._generated.aio import AzureFileStorage
+from .._generated.version import VERSION
+from .._generated.models import StorageErrorException
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
 from ..directory_client import DirectoryClient as DirectoryClientBase
+from ._polling_async import CloseHandlesAsync
 from .file_client_async import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
-from .polling_async import CloseHandlesAsync
 
 if TYPE_CHECKING:
     from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
     from ._generated.models import HandleItem
 
 
-class DirectoryClient(DirectoryClientBase, AsyncStorageAccountHostsMixin):
+class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those

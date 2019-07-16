@@ -223,10 +223,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
     async def process_substream_block(self, block_data):
         return await self._upload_substream_block_with_progress(block_data[0], block_data[1])
 
-    def _upload_substream_block(self, block_id, block_stream):
+    async def _upload_substream_block(self, block_id, block_stream):
         raise NotImplementedError("Must be implemented by child class.")
 
-    def _upload_substream_block_with_progress(self, block_id, block_stream):
+    async def _upload_substream_block_with_progress(self, block_id, block_stream):
         range_id = self._upload_substream_block(block_id, block_stream)
         await self._update_progress(len(block_stream))
         return range_id

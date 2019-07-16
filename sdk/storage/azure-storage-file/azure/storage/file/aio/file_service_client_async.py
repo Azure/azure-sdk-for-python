@@ -18,6 +18,7 @@ from .._shared.shared_access_signature import SharedAccessSignature
 from .._shared.models import Services
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
 from .._shared.response_handlers import process_storage_error
+from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureFileStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties
 from .._generated.version import VERSION
@@ -31,7 +32,7 @@ if TYPE_CHECKING:
     from .models import Metrics, CorsRule, ShareProperties
 
 
-class FileServiceClient(FileServiceClientBase, AsyncStorageAccountHostsMixin):
+class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
     """A client to interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
