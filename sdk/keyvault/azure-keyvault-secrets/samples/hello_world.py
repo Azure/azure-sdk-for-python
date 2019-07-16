@@ -1,6 +1,6 @@
 import datetime
 import os
-from azure.keyvault import SecretClient
+from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -44,7 +44,7 @@ def run_sample():
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n1. Create Secret")
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        secret = client.set_secret("secretName", "secretValue", expires=expires)
+        secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
         print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.expires))
 

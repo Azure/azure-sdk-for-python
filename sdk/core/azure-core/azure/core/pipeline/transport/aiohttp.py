@@ -97,9 +97,7 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, **config):
-        verify = config.get('connection_verify', self.config.connection.verify)
-        cert = config.get('connection_cert', self.config.connection.cert)
+    def _build_ssl_config(self, cert, verify):
         ssl_ctx = None
 
         if cert or verify not in (True, False):
@@ -144,7 +142,10 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.open()
         error = None
         response = None
-        config['ssl'] = self._build_ssl_config(**config)
+        config['ssl'] = self._build_ssl_config(
+            cert=config.pop('connection_cert', self.config.connection.cert),
+            verify=config.pop('connection_verify', self.config.connection.verify)
+        )
         try:
             stream_response = config.pop("stream", False)
             result = await self.session.request(
@@ -152,7 +153,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 request.url,
                 headers=request.headers,
                 data=self._get_request_data(request),
-                timeout=config.get('connection_timeout', self.config.connection.timeout),
+                timeout=config.pop('connection_timeout', self.config.connection.timeout),
                 allow_redirects=False,
                 **config
             )

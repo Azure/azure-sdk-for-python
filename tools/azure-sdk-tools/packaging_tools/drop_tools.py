@@ -45,18 +45,22 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     else:
         _LOGGER.info("Return code: %s", process.returncode)
 
-def build_package_from_pr_number(gh_token, sdk_id, pr_number, output_folder, *, with_comment=False):
-    """Will clone the given PR branch and vuild the package with the given name."""
-
-    con = Github(gh_token)
-    repo = con.get_repo(sdk_id)
-    sdk_pr = repo.get_pull(pr_number)
+def get_package_names(sdk_pr):
     files = [one_file.filename for one_file in sdk_pr.get_files() if one_file.status not in ['removed']]
     # "get_files" of Github only download the first 300 files. Might not be enough.
     package_names = {('.', f.split('/')[0]) for f in files if f.startswith("azure")}
     # Handle the SDK folder as well
     matches = {_SDK_FOLDER_RE.search(f) for f in files}
     package_names.update({match.groups() for match in matches if match is not None})
+    return package_names
+
+def build_package_from_pr_number(gh_token, sdk_id, pr_number, output_folder, *, with_comment=False):
+    """Will clone the given PR branch and vuild the package with the given name."""
+
+    con = Github(gh_token)
+    repo = con.get_repo(sdk_id)
+    sdk_pr = repo.get_pull(pr_number)
+    package_names = get_package_names(sdk_pr)
 
     absolute_output_folder = Path(output_folder).resolve()
 
@@ -95,11 +99,10 @@ def build_download_message(sdk_pr, files):
     return message
 
 def build_installation_message(sdk_pr):
-    # Package starts with "azure" and is at the root of the repo
-    package_names = {f.filename.split('/')[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    package_names = get_package_names(sdk_pr)
 
     result = ["# Installation instruction"]
-    for package in package_names:
+    for _, package in package_names:
         result.append("## Package {}".format(package))
         result.append(pr_message_for_package(sdk_pr, package))
     return "\n".join(result)
