@@ -357,6 +357,8 @@ from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_cluster_paged import VirtualClusterPaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
+from .server_blob_auditing_policy_paged import ServerBlobAuditingPolicyPaged
+from .database_blob_auditing_policy_paged import DatabaseBlobAuditingPolicyPaged
 from .database_vulnerability_assessment_paged import DatabaseVulnerabilityAssessmentPaged
 from .job_agent_paged import JobAgentPaged
 from .job_credential_paged import JobCredentialPaged
@@ -664,6 +666,8 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ServerBlobAuditingPolicyPaged',
+    'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
