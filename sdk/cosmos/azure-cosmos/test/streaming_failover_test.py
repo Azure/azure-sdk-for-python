@@ -4,7 +4,7 @@ import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import azure.cosmos.retry_utility as retry_utility
+from azure.cosmos import _retry_utility
 from azure.cosmos import _endpoint_discovery_retry_policy
 from azure.cosmos.request_object import _RequestObject
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
@@ -30,8 +30,8 @@ class TestStreamingFailover(unittest.TestCase):
     endpoint_sequence = []
 
     def test_streaming_failover(self):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
         connection_policy = documents.ConnectionPolicy()
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
         connection_policy.DisableSSLVerification = True
@@ -62,7 +62,7 @@ class TestStreamingFailover(unittest.TestCase):
                 self.assertEqual(self.endpoint_sequence[i], self.WRITE_ENDPOINT2)
 
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def mock_get_database_account(self, url_connection = None):
         database_account = documents.DatabaseAccount()

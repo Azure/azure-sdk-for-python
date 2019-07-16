@@ -52,7 +52,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
-import azure.cosmos.retry_utility as retry_utility
+from azure.cosmos import _retry_utility
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -298,11 +298,11 @@ class CRUDTests(unittest.TestCase):
                                            }
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["WA"]')
         del self.last_headers[:]
 
@@ -315,11 +315,11 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
         del self.last_headers[:]
 
@@ -331,11 +331,11 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
         del self.last_headers[:]
 
@@ -358,10 +358,10 @@ class CRUDTests(unittest.TestCase):
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val1"]')
         del self.last_headers[:]
 
@@ -385,11 +385,11 @@ class CRUDTests(unittest.TestCase):
                                'level\" 1*()': {'le/vel2': 'val2'}
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val2"]')
         del self.last_headers[:]
 

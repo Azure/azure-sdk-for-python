@@ -31,7 +31,7 @@ from . import _default_retry_policy
 from . import session_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
-def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
+def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies
 
     :param object client:
@@ -56,9 +56,9 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     while True:
         try:
             if args:
-                result = _ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
+                result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
-                result = _ExecuteFunction(function, *args, **kwargs)
+                result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
             
@@ -94,7 +94,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 # Wait for retry_after_in_milliseconds time before the next retry
                 time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 
-def _ExecuteFunction(function, *args, **kwargs):
+def ExecuteFunction(function, *args, **kwargs):
     """ Stub method so that it can be used for mocking purposes as well.
     """
     return function(*args, **kwargs)

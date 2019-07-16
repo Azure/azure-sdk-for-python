@@ -30,7 +30,7 @@ import six
 from . import documents
 from . import errors
 from . import http_constants
-from . import retry_utility
+from . import _retry_utility
 
 def _IsReadableStream(obj):
     """Checks whether obj is a file-like readable stream.
@@ -224,5 +224,5 @@ def SynchronizedRequest(client,
         request_options['headers'][http_constants.HttpHeaders.ContentLength] = 0
 
     # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
-    return retry_utility._Execute(client, global_endpoint_manager, _Request, request, connection_policy, requests_session, path, request_options, request_body)
+    return _retry_utility.Execute(client, global_endpoint_manager, _Request, request, connection_policy, requests_session, path, request_options, request_body)
 

@@ -23,7 +23,7 @@
 """
 
 from collections import deque
-from .. import retry_utility
+from .. import _retry_utility
 from .. import http_constants
 from .. import base
 
@@ -140,7 +140,7 @@ class _QueryExecutionContextBase(object):
         def callback():
             return self._fetch_items_helper_no_retries(fetch_function)
                 
-        return retry_utility._Execute(self._client, self._client._global_endpoint_manager, callback)
+        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
     
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
