@@ -28,6 +28,8 @@
 import functools
 
 import azure.core.tracing.common as common
+from azure.core.settings import settings
+from azure.core.tracing.context import tracing_context
 
 
 def distributed_tracing_decorator(func):
@@ -35,9 +37,13 @@ def distributed_tracing_decorator(func):
     @functools.wraps(func)
     def wrapper_use_tracer(self, *args, **kwargs):
         # type: (Any) -> Any
-        parent_span, original_span_from_sdk_context, original_span_instance = common.get_parent_and_original_contexts(
-            kwargs
-        )
+        passed_in_parent = kwargs.pop("parent_span", None)
+        orig_wrapped_span = tracing_context.current_span.get()
+        wrapper_class = settings.tracing_implementation()
+        original_span_instance = None
+        if wrapper_class is not None:
+            original_span_instance = wrapper_class.get_current_span()
+        parent_span = common.get_parent_span(passed_in_parent)
         ans = None
         if common.should_use_trace(parent_span):
             common.set_span_contexts(parent_span)
@@ -48,9 +54,9 @@ def distributed_tracing_decorator(func):
             ans = func(self, *args, **kwargs)
             child.finish()
             common.set_span_contexts(parent_span)
-            if getattr(parent_span, "was_created_by_azure_sdk", False):
+            if orig_wrapped_span is None and passed_in_parent is None:
                 parent_span.finish()
-            common.set_span_contexts(original_span_from_sdk_context, span_instance=original_span_instance)
+            common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
         else:
             ans = func(self, *args, **kwargs)
         return ans

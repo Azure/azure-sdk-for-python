@@ -84,41 +84,30 @@ class TestCommon(unittest.TestCase):
             assert parent.span_instance == wrapper.get_current_span()
             assert tracing_context.current_span.get() == parent
 
-    def test_get_parent_and_original_contexts(self):
+    def test_get_parent_span(self):
         with ContextHelper():
             opencensus = sys.modules["opencensus"]
             del sys.modules["opencensus"]
 
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent is None
-            assert orig_tracing_context is None
 
             sys.modules["opencensus"] = opencensus
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-            assert orig_tracing_context is None
 
             tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
-            parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst is None
+            parent = common.get_parent_span(None)
             assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-            assert orig_tracing_context is None
             parent.finish()
 
             some_span = tracer.start_span(name="some_span")
-            new_parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts({})
-            assert orig_span_inst == some_span
+            new_parent = common.get_parent_span(None)
             assert new_parent.span_instance.name == "some_span"
-            assert orig_tracing_context is None
+            some_span.finish()
 
-            kwarg = {"parent_span": parent.span_instance}
-            should_be_old_parent, orig_tracing_context, orig_span_inst = common.get_parent_and_original_contexts(kwarg)
-            assert kwarg.get("parent_span") is None
-            assert orig_span_inst == some_span
+            should_be_old_parent = common.get_parent_span(parent.span_instance)
             assert should_be_old_parent.span_instance == parent.span_instance
-            assert orig_tracing_context is None
 
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):

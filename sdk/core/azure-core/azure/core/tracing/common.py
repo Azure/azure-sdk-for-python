@@ -57,27 +57,21 @@ def set_span_contexts(wrapped_span, span_instance=None):
         impl_wrapper.set_current_span(span_instance)
 
 
-def get_parent_and_original_contexts(kwargs):
+def get_parent_span(parent_span):
     # type: (Any) -> Tuple(AbstractSpan, AbstractSpan, Any)
     """
     Returns the current span so that the function's span will be its child. It will create a new span if there is
-    no current span in any of the context. Because it creates a new span in those cases, also returns the original
-    span as well. If it does not create a new span then the orig_wrapped_span should be the same as the parent span.
+    no current span in any of the context.
 
-    `AbstractSpan = azure.core.tracing.abstract_span.AbstractSpan`
-
-    :param kwargs: The dictionary of named variables that the user passed into the top level azure function
-    :param kwargs: dict
-    :returns: The parent_span, the original wrapped span, the original implementation span
-    :rtype: `AbstractSpan`, `AbstractSpan`, implementation span
+    :param parent_span: The parent_span arg that the user passes into the top level function
+    :returns: the parent_span of the function to be traced
+    :rtype: `azure.core.tracing.abstract_span.AbstractSpan`
     """
-    parent_span = kwargs.pop("parent_span", None)  # type: AbstractSpan
-    orig_wrapped_span = tracing_context.current_span.get()
-
     wrapper_class = settings.tracing_implementation()
     if wrapper_class is None:
-        return None, orig_wrapped_span, None
-    original_wrapper_span_instance = wrapper_class.get_current_span()
+        return None
+
+    orig_wrapped_span = tracing_context.current_span.get()
     # parent span is given, get from my context, get from the implementation context or make our own
     parent_span = orig_wrapped_span if parent_span is None else wrapper_class(parent_span)
     if parent_span is None:
@@ -88,7 +82,7 @@ def get_parent_and_original_contexts(kwargs):
             else wrapper_class(name="azure-sdk-for-python-first_parent_span")
         )
 
-    return parent_span, orig_wrapped_span, original_wrapper_span_instance
+    return parent_span
 
 
 def should_use_trace(parent_span):
