@@ -86,3 +86,11 @@ class ConfidentialClientCredential(MsalCredential):
             raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
 
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
+
+
+class PublicClientCredential(MsalCredential):
+    """Wraps an MSAL PublicClientApplication with the TokenCredential API"""
+
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        super(PublicClientCredential, self).__init__(app_class=msal.PublicClientApplication, **kwargs)
