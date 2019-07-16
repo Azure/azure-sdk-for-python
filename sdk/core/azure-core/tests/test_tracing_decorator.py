@@ -23,10 +23,8 @@ from azure.core.tracing.decorator import distributed_tracing_decorator
 from azure.core.settings import settings
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
-from opencensus.trace.span_data import SpanData
 from opencensus.trace.samplers import AlwaysOnSampler
-from opencensus.trace.base_exporter import Exporter
-from opencensus.common.utils import timestamp_to_microseconds
+from tracing_common import ContextHelper, MockExporter
 import time
 import pytest
 
@@ -37,31 +35,6 @@ except ImportError:
 
 if TYPE_CHECKING:
     from typing import List
-
-
-class ContextHelper(object):
-    def __init__(self, environ={}, tracer_to_use=None):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.orig_sdk_context_span = tracing_context.current_span.get()
-        self.os_env = mock.patch.dict(os.environ, environ)
-        self.tracer_to_use = tracer_to_use
-
-    def __enter__(self):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.orig_sdk_context_span = tracing_context.current_span.get()
-        if self.tracer_to_use is not None:
-            settings.tracing_implementation.set_value(self.tracer_to_use)
-        self.os_env.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        OpenCensusSpan.set_current_tracer(self.orig_tracer)
-        OpenCensusSpan.set_current_span(self.orig_current_span)
-        tracing_context.current_span.set(self.orig_sdk_context_span)
-        settings.tracing_implementation.unset_value()
-        self.os_env.stop()
 
 
 class MockClient:
@@ -98,43 +71,6 @@ class MockClient:
     def get_foo(self):
         time.sleep(0.001)
         return 5
-
-
-class Node:
-    def __init__(self, span_data):
-        self.span_data = span_data  # type: SpanData
-        self.parent = None
-        self.children = []
-
-
-class MockExporter(Exporter):
-    def __init__(self):
-        self.root = None
-        self._all_nodes = []
-
-    def export(self, span_datas):
-        # type: (List[SpanData]) -> None
-        sp = span_datas[0]  # type: SpanData
-        node = Node(sp)
-        if not node.span_data.parent_span_id:
-            self.root = node
-        self._all_nodes.append(node)
-
-    def build_tree(self):
-        parent_dict = {}
-        for node in self._all_nodes:
-            parent_span_id = node.span_data.parent_span_id
-            if parent_span_id not in parent_dict:
-                parent_dict[parent_span_id] = []
-            parent_dict[parent_span_id].append(node)
-
-        for node in self._all_nodes:
-            if node.span_data.span_id in parent_dict:
-                node.children = sorted(
-                    parent_dict[node.span_data.span_id],
-                    key=lambda x: timestamp_to_microseconds(x.span_data.start_time),
-                )
-
 
 class TestCommon(unittest.TestCase):
     def test_set_span_context(self):
@@ -261,6 +197,20 @@ class TestDecorator(unittest.TestCase):
         with ContextHelper(tracer_to_use="opencensus"):
             self.for_test_different_settings()
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_should_only_propagate(self):
+        with ContextHelper(should_only_propagate=True):
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+            with trace.start_span(name="OverAll") as parent:
+                client = MockClient()
+                client.make_request(2)
+                with trace.span("child") as child:
+                    client.make_request(2, parent_span=parent)
+                    assert OpenCensusSpan.get_current_span() == child
+                    client.make_request(2)
+            trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 1
+            assert parent.children[0].span_data.name == "child"
+            assert not parent.children[0].children
