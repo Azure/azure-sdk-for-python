@@ -25,12 +25,9 @@
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
 
-from os import environ
-import re
-
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.abstract_span import AbstractSpan
-from azure.core.settings import settings, get_opencensus_span
+from azure.core.settings import settings
 
 
 try:
