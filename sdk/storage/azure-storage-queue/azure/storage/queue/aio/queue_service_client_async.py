@@ -16,11 +16,9 @@ except ImportError:
 
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature
 from azure.storage.queue._shared.models import LocationMode, Services
-from azure.storage.queue._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    parse_connection_str,
-    process_storage_error)
+from azure.storage.queue._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
+from azure.storage.queue._shared.response_handlers import process_storage_error
 from azure.storage.queue._generated import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageServiceProperties, StorageErrorException
 

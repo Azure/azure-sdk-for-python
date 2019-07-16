@@ -17,16 +17,12 @@ except ImportError:
 import six
 
 from azure.storage.queue._shared.shared_access_signature import QueueSharedAccessSignature
-from azure.storage.queue._shared.utils import (
-    StorageAccountHostsMixin,
-    add_metadata_headers,
-    process_storage_error,
+from azure.storage.queue._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
+from azure.storage.queue._shared.response_handlers import (
     return_response_headers,
-    return_headers_and_deserialized,
-    parse_query,
-    serialize_iso,
-    parse_connection_str
-)
+    process_storage_error,
+    return_headers_and_deserialized)
 from azure.storage.queue._queue_utils import (
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
