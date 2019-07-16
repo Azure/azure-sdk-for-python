@@ -30,6 +30,7 @@ from azure.core.tracing.context import tracing_context
 from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.tracing.common import get_parent_span
 from azure.core.settings import settings
 
 try:
@@ -70,7 +71,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None
-        parent_span = tracing_context.current_span.get()  # type: AbstractSpan
+        parent_span = get_parent_span(None)  # type: AbstractSpan
 
         if parent_span is None:
             return
