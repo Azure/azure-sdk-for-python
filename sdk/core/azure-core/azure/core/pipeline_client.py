@@ -52,7 +52,7 @@ class PipelineClient(PipelineClientBase):
 
     *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
 
-    *transport* - The HTTP Transport type. If omitted, RequestsTransport is used for synchronous transport.
+    *transport* - The HTTP Transport instance. If omitted, RequestsTransport is used for synchronous transport.
 
     Example:
         .. literalinclude:: ../examples/test_example_sync.py

@@ -52,7 +52,7 @@ class AsyncPipelineClient(PipelineClientBase):
 
     *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
 
-    *transport* - The HTTP Transport type. If omitted, AioHttpTransport is use for asynchronous transport.
+    *transport* - The HTTP Transport instance. If omitted, AioHttpTransport is use for asynchronous transport.
 
     Example:
         .. literalinclude:: ../examples/test_example_async.py

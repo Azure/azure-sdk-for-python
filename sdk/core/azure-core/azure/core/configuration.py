@@ -46,8 +46,6 @@ class Configuration(object):
      User-Agent header.
     :param authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
-    :param transport: The Http Transport type. E.g. RequestsTransport, AsyncioRequestsTransport,
-     TrioRequestsTransport, AioHttpTransport.
     :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     Example:
@@ -58,7 +56,7 @@ class Configuration(object):
             :caption: Creates the service configuration and adds policies.
     """
 
-    def __init__(self, transport=None, **kwargs):
+    def __init__(self, **kwargs):
         # Communication configuration - applied per transport.
         self.connection = ConnectionConfiguration(**kwargs)
 
@@ -85,9 +83,6 @@ class Configuration(object):
 
         # Authentication configuration
         self.authentication_policy = None
-
-        # HTTP Transport
-        self.transport = transport
 
         # Polling interval if no retry-after in polling calls results
         self.polling_interval = kwargs.get("polling_interval", 30)
