@@ -41,10 +41,11 @@ try:
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
     from .entity_kind1_py3 import EntityKind1
+    from .entity_common_properties_py3 import EntityCommonProperties
     from .account_entity_py3 import AccountEntity
     from .host_entity_py3 import HostEntity
     from .file_entity_py3 import FileEntity
-    from .entity_common_properties_py3 import EntityCommonProperties
+    from .security_alert_properties_confidence_reasons_item_py3 import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert_py3 import SecurityAlert
     from .file_hash_py3 import FileHash
     from .malware_entity_py3 import MalwareEntity
@@ -109,10 +110,11 @@ except (SyntaxError, ImportError):
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
     from .entity_kind1 import EntityKind1
+    from .entity_common_properties import EntityCommonProperties
     from .account_entity import AccountEntity
     from .host_entity import HostEntity
     from .file_entity import FileEntity
-    from .entity_common_properties import EntityCommonProperties
+    from .security_alert_properties_confidence_reasons_item import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert import SecurityAlert
     from .file_hash import FileHash
     from .malware_entity import MalwareEntity
@@ -151,6 +153,7 @@ from .action_paged import ActionPaged
 from .case_paged import CasePaged
 from .bookmark_paged import BookmarkPaged
 from .data_connector_paged import DataConnectorPaged
+from .entity_paged import EntityPaged
 from .office_consent_paged import OfficeConsentPaged
 from .entity_query_paged import EntityQueryPaged
 from .security_insights_enums import (
@@ -164,11 +167,9 @@ from .security_insights_enums import (
     DataTypeState,
     EntityKind,
     OSFamily,
-    ConfidenceReason,
     ConfidenceScoreStatus,
     KillChainIntent,
     ConfidenceLevel,
-    Severity,
     AlertStatus,
     FileHashAlgorithm,
     ElevationToken,
@@ -213,10 +214,11 @@ __all__ = [
     'DataConnectorDataTypeCommon',
     'Entity',
     'EntityKind1',
+    'EntityCommonProperties',
     'AccountEntity',
     'HostEntity',
     'FileEntity',
-    'EntityCommonProperties',
+    'SecurityAlertPropertiesConfidenceReasonsItem',
     'SecurityAlert',
     'FileHash',
     'MalwareEntity',
@@ -255,6 +257,7 @@ __all__ = [
     'CasePaged',
     'BookmarkPaged',
     'DataConnectorPaged',
+    'EntityPaged',
     'OfficeConsentPaged',
     'EntityQueryPaged',
     'AlertRuleKind',
@@ -267,11 +270,9 @@ __all__ = [
     'DataTypeState',
     'EntityKind',
     'OSFamily',
-    'ConfidenceReason',
     'ConfidenceScoreStatus',
     'KillChainIntent',
     'ConfidenceLevel',
-    'Severity',
     'AlertStatus',
     'FileHashAlgorithm',
     'ElevationToken',

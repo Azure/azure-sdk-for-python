@@ -101,12 +101,6 @@ class OSFamily(str, Enum):
     ios = "IOS"  #: Host with IOS operating system.
 
 
-class ConfidenceReason(str, Enum):
-
-    type = "Type"  #: The type (category) of the reason
-    reason = "Reason"  #: The reason's description
-
-
 class ConfidenceScoreStatus(str, Enum):
 
     not_applicable = "NotApplicable"  #: Score will not be calculated for this alert as it is not supported by virtual analyst
@@ -138,14 +132,6 @@ class ConfidenceLevel(str, Enum):
     unknown = "Unknown"  #: Unknown confidence, the is the default value
     low = "Low"  #: Low confidence, meaning we have some doubts this is indeed malicious or part of an attack
     high = "High"  #: High confidence that the alert is true positive malicious
-
-
-class Severity(str, Enum):
-
-    informational = "Informational"  #: Informational severity (aka Silent)
-    low = "Low"  #: Low severity
-    medium = "Medium"  #: Medium severity
-    high = "High"  #: High severity
 
 
 class AlertStatus(str, Enum):

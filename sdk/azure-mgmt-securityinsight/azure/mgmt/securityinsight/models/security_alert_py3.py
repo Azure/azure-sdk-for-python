@@ -39,8 +39,8 @@ class SecurityAlert(Entity):
      product.
     :vartype system_alert_id: str
     :ivar confidence_reasons: The confidence reasons
-    :vartype confidence_reasons: list[str or
-     ~azure.mgmt.securityinsight.models.ConfidenceReason]
+    :vartype confidence_reasons:
+     list[~azure.mgmt.securityinsight.models.SecurityAlertPropertiesConfidenceReasonsItem]
     :ivar confidence_score_status: The confidence score calculation status,
      i.e. indicating if score calculation is pending for this alert, not
      applicable or final. Possible values include: 'NotApplicable',
@@ -66,9 +66,9 @@ class SecurityAlert(Entity):
      values include: 'Unknown', 'Low', 'High'
     :vartype confidence_level: str or
      ~azure.mgmt.securityinsight.models.ConfidenceLevel
-    :ivar severity: The severity of the alert. Possible values include:
-     'Informational', 'Low', 'Medium', 'High'
-    :vartype severity: str or ~azure.mgmt.securityinsight.models.Severity
+    :param severity: The severity of the alert. Possible values include:
+     'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :ivar vendor_name: The name of the vendor that raise the alert.
     :vartype vendor_name: str
     :ivar product_name: The name of the product which published this alert.
@@ -115,7 +115,6 @@ class SecurityAlert(Entity):
         'description': {'readonly': True},
         'remediation_steps': {'readonly': True},
         'confidence_level': {'readonly': True},
-        'severity': {'readonly': True},
         'vendor_name': {'readonly': True},
         'product_name': {'readonly': True},
         'product_component_name': {'readonly': True},
@@ -137,7 +136,7 @@ class SecurityAlert(Entity):
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'system_alert_id': {'key': 'properties.systemAlertId', 'type': 'str'},
-        'confidence_reasons': {'key': 'properties.confidenceReasons', 'type': '[str]'},
+        'confidence_reasons': {'key': 'properties.confidenceReasons', 'type': '[SecurityAlertPropertiesConfidenceReasonsItem]'},
         'confidence_score_status': {'key': 'properties.confidenceScoreStatus', 'type': 'str'},
         'intent': {'key': 'properties.intent', 'type': 'str'},
         'confidence_score': {'key': 'properties.confidenceScore', 'type': 'float'},
@@ -145,7 +144,7 @@ class SecurityAlert(Entity):
         'description': {'key': 'properties.description', 'type': 'str'},
         'remediation_steps': {'key': 'properties.remediationSteps', 'type': '[str]'},
         'confidence_level': {'key': 'properties.confidenceLevel', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
         'vendor_name': {'key': 'properties.vendorName', 'type': 'str'},
         'product_name': {'key': 'properties.productName', 'type': 'str'},
         'product_component_name': {'key': 'properties.productComponentName', 'type': 'str'},
@@ -159,7 +158,7 @@ class SecurityAlert(Entity):
         'compromised_entity': {'key': 'properties.compromisedEntity', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, severity=None, **kwargs) -> None:
         super(SecurityAlert, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
@@ -172,7 +171,7 @@ class SecurityAlert(Entity):
         self.description = None
         self.remediation_steps = None
         self.confidence_level = None
-        self.severity = None
+        self.severity = severity
         self.vendor_name = None
         self.product_name = None
         self.product_component_name = None
