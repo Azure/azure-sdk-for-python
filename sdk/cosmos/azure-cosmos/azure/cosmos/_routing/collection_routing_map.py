@@ -23,11 +23,11 @@
 """
 
 import bisect
-from azure.cosmos.routing import routing_range
-from azure.cosmos.routing.routing_range import _PartitionKeyRange
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.routing_range import PartitionKeyRange
 from six.moves import xrange
 
-class _CollectionRoutingMap(object):
+class CollectionRoutingMap(object):
     """Stores partition key ranges in an efficient way with some additional information and provides
      convenience methods for working with set of ranges.
     """
@@ -40,7 +40,7 @@ class _CollectionRoutingMap(object):
         self._rangeByInfo = range_by_info
         self._orderedPartitionKeyRanges = ordered_partition_key_ranges
         
-        self._orderedRanges = [routing_range._Range(pkr[_PartitionKeyRange.MinInclusive], pkr[_PartitionKeyRange.MaxExclusive], True, False) for pkr in ordered_partition_key_ranges]
+        self._orderedRanges = [routing_range.Range(pkr[PartitionKeyRange.MinInclusive], pkr[PartitionKeyRange.MaxExclusive], True, False) for pkr in ordered_partition_key_ranges]
         self._orderedPartitionInfo = ordered_partition_info
         self._collectionUniqueId = collection_unique_id
 
@@ -51,15 +51,15 @@ class _CollectionRoutingMap(object):
 
         sortedRanges = []
         for r in partition_key_range_info_tupple_list:
-            rangeById[r[0][_PartitionKeyRange.Id]] = r
+            rangeById[r[0][PartitionKeyRange.Id]] = r
             rangeByInfo[r[1]] = r[0]
             sortedRanges.append(r)
 
-        sortedRanges.sort(key = lambda r: r[0][_PartitionKeyRange.MinInclusive])
+        sortedRanges.sort(key = lambda r: r[0][PartitionKeyRange.MinInclusive])
         partitionKeyOrderedRange = [r[0] for r in sortedRanges]
         orderedPartitionInfo = [r[1] for r in sortedRanges]
 
-        if not _CollectionRoutingMap.is_complete_set_of_range(partitionKeyOrderedRange): return None
+        if not CollectionRoutingMap.is_complete_set_of_range(partitionKeyOrderedRange): return None
         return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id)
 
     def get_ordered_partition_key_ranges(self):
@@ -80,10 +80,10 @@ class _CollectionRoutingMap(object):
             The partition key range.
         :rtype: dict
         """
-        if _CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey == effective_partition_key_value:
+        if CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey == effective_partition_key_value:
             return self._orderedPartitionKeyRanges[0]
         
-        if _CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey == effective_partition_key_value:
+        if CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey == effective_partition_key_value:
             return None
         
         sortedLow = [(r.min, not r.isMinInclusive) for r in self._orderedRanges]
@@ -118,7 +118,7 @@ class _CollectionRoutingMap(object):
         :rtype: list
         """
 
-        if isinstance(provided_partition_key_ranges, routing_range._Range):
+        if isinstance(provided_partition_key_ranges, routing_range.Range):
             return self.get_overlapping_ranges([provided_partition_key_ranges])
 
         minToPartitionRange = {}
@@ -135,14 +135,14 @@ class _CollectionRoutingMap(object):
                 maxIndex = maxIndex - 1
             
             for i in xrange(minIndex, maxIndex + 1):
-                if routing_range._Range.overlaps(self._orderedRanges[i], providedRange):
-                    minToPartitionRange[self._orderedPartitionKeyRanges[i][_PartitionKeyRange.MinInclusive]] = self._orderedPartitionKeyRanges[i]
+                if routing_range.Range.overlaps(self._orderedRanges[i], providedRange):
+                    minToPartitionRange[self._orderedPartitionKeyRanges[i][PartitionKeyRange.MinInclusive]] = self._orderedPartitionKeyRanges[i]
 
 
         overlapping_partition_key_ranges = list(minToPartitionRange.values())
 
         def getKey(r):
-            return r[_PartitionKeyRange.MinInclusive]
+            return r[PartitionKeyRange.MinInclusive]
         overlapping_partition_key_ranges.sort(key = getKey)
         return overlapping_partition_key_ranges
         
@@ -153,16 +153,16 @@ class _CollectionRoutingMap(object):
 
             firstRange = ordered_partition_key_range_list[0]
             lastRange = ordered_partition_key_range_list[-1]
-            isComplete = (firstRange[_PartitionKeyRange.MinInclusive] == _CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey)
-            isComplete &= (lastRange[_PartitionKeyRange.MaxExclusive] == _CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey)
+            isComplete = (firstRange[PartitionKeyRange.MinInclusive] == CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey)
+            isComplete &= (lastRange[PartitionKeyRange.MaxExclusive] == CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey)
 
             for i in range(1, len(ordered_partition_key_range_list)):
                 previousRange = ordered_partition_key_range_list[i - 1]
                 currentRange = ordered_partition_key_range_list[i]
-                isComplete &= previousRange[_PartitionKeyRange.MaxExclusive] == currentRange[_PartitionKeyRange.MinInclusive]
+                isComplete &= previousRange[PartitionKeyRange.MaxExclusive] == currentRange[PartitionKeyRange.MinInclusive]
 
                 if not isComplete:
-                    if previousRange[_PartitionKeyRange.MaxExclusive] > currentRange[_PartitionKeyRange.MinInclusive]:
+                    if previousRange[PartitionKeyRange.MaxExclusive] > currentRange[PartitionKeyRange.MinInclusive]:
                         raise ValueError("Ranges overlap")
                     break
 

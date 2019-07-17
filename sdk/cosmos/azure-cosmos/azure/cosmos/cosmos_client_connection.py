@@ -34,7 +34,7 @@ from . import runtime_constants
 from . import request_object
 from . import synchronized_request
 from . import global_endpoint_manager
-from .routing import routing_map_provider as routing_map_provider
+from ._routing import routing_map_provider as routing_map_provider
 from . import session
 from . import _utils
 from .partition_key import _Undefined, _Empty
@@ -150,7 +150,7 @@ class CosmosClientConnection(object):
         self._query_compatibility_mode = CosmosClientConnection._QueryCompatibilityMode.Default
 
         # Routing map provider
-        self._routing_map_provider = routing_map_provider._SmartRoutingMapProvider(self)
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount()
         self._global_endpoint_manager.force_refresh(database_account)
