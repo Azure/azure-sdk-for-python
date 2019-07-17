@@ -2,9 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-
 import datetime
-from typing import Any, Dict, Mapping, Optional
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Generator, Mapping, Optional
+
 from collections import namedtuple
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models

@@ -2,8 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Generator, Mapping, Optional, List
 from datetime import datetime
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Generator, Mapping, Optional
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
