@@ -118,16 +118,18 @@ class StorageFileTest(FileTestCase):
         remote_file.upload_file(file_data)
         return remote_file
 
-    def _wait_for_async_copy(self, share_name, dir_name, file_name):
+    def _wait_for_async_copy(self, share_name, file_path):
         count = 0
-        file = self.fs.get_file_properties(share_name, dir_name, file_name)
-        while file.properties.copy.status != 'success':
+        share_client = self.fsc.get_share_client(share_name)
+        file_client = share_client.get_file_client(file_path)
+        properties = file_client.get_file_properties()
+        while properties.copy.status != 'success':
             count = count + 1
             if count > 10:
                 self.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
-            file = self.fs.get_file_properties(share_name, dir_name, file_name)
-        self.assertEqual(file.properties.copy.status, 'success')
+            properties = file_client.get_file_properties()
+        self.assertEqual(properties.copy.status, 'success')
 
     def assertFileEqual(self, file_client, expected_data):
         actual_data = file_client.download_file().content_as_bytes()
@@ -708,10 +710,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
-        while copy_resp['copy_status'] =! 'success':
-            properties = file_client.get_file_properties()
-            copy_resp['copy_status'] = properties.copy.status
-            time.sleep(3)
+        self._wait_for_async_copy(self.share_name, target_file_name)
 
         actual_data = file_client.download_file().content_as_bytes()
         self.assertEqual(actual_data, data)
