@@ -1,8 +1,8 @@
 interactions:
 - request:
-    body: '{"contacts": [{"email": "admin@contoso.com", "name": "John Doe", "phone":
-      "1111111111"}, {"email": "admin2@contoso.com", "name": "John Doe2", "phone":
-      "2222222222"}]}'
+    body: '{"provider": "Test", "credentials": {"account_id": "keyvaultuser"}, "org_details":
+      {"admin_details": [{"first_name": "John", "last_name": "Doe", "email": "admin@microsoft.com",
+      "phone": "4255555555"}]}, "attributes": {"enabled": true}}'
     headers:
       Accept:
       - application/json
@@ -11,26 +11,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '166'
+      - '235'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: PUT
-    uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault629d10e9.vault.azure.net/certificates/issuers/izzy?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault851e11ad.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
+      string: '{"id":"https://vault629d10e9.vault.azure.net/certificates/issuers/izzy","provider":"Test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"John","last_name":"Doe","email":"admin@microsoft.com","phone":"4255555555"}]},"attributes":{"enabled":true,"created":1563401926,"updated":1563401926}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '339'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Jul 2019 22:18:08 GMT
+      - Wed, 17 Jul 2019 22:18:46 GMT
       expires:
       - '-1'
       pragma:
@@ -66,20 +65,73 @@ interactions:
       User-Agent:
       - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault629d10e9.vault.azure.net/certificates/issuers/izzy?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault851e11ad.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
+      string: '{"id":"https://vault629d10e9.vault.azure.net/certificates/issuers/izzy","provider":"Test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"John","last_name":"Doe","email":"admin@microsoft.com","phone":"4255555555"}]},"attributes":{"enabled":true,"created":1563401926,"updated":1563401926}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '339'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Jul 2019 22:18:08 GMT
+      - Wed, 17 Jul 2019 22:18:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.872
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"org_details": {"admin_details": [{"first_name": "Jane", "last_name":
+      "Doe", "email": "admin@microsoft.com", "phone": "4255555555"}]}, "attributes":
+      {"enabled": true}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '168'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
+    method: PATCH
+    uri: https://vault629d10e9.vault.azure.net/certificates/issuers/izzy?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault629d10e9.vault.azure.net/certificates/issuers/izzy","provider":"Test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane","last_name":"Doe","email":"admin@microsoft.com","phone":"4255555555"}]},"attributes":{"enabled":true,"created":1563401926,"updated":1563401927}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '339'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Jul 2019 22:18:46 GMT
       expires:
       - '-1'
       pragma:
@@ -117,20 +169,19 @@ interactions:
       User-Agent:
       - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: DELETE
-    uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault629d10e9.vault.azure.net/certificates/issuers/izzy?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault851e11ad.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
+      string: '{"id":"https://vault629d10e9.vault.azure.net/certificates/issuers/izzy","provider":"Test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane","last_name":"Doe","email":"admin@microsoft.com","phone":"4255555555"}]},"attributes":{"enabled":true,"created":1563401926,"updated":1563401927}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '339'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Jul 2019 22:18:08 GMT
+      - Wed, 17 Jul 2019 22:18:46 GMT
       expires:
       - '-1'
       pragma:
@@ -166,19 +217,20 @@ interactions:
       User-Agent:
       - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault629d10e9.vault.azure.net/certificates/issuers/izzy?api-version=7.0
   response:
     body:
-      string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'
+      string: '{"error":{"code":"CertificateIssuerNotFound","message":"Issuer not
+        found"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '68'
+      - '75'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Jul 2019 22:18:08 GMT
+      - Wed, 17 Jul 2019 22:18:46 GMT
       expires:
       - '-1'
       pragma:

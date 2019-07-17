@@ -2598,6 +2598,7 @@ class KeyVaultClientOperationsMixin(object):
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
+        print(url)
 
         # Construct parameters
         query_parameters = {}

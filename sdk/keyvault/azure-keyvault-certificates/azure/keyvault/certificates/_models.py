@@ -31,13 +31,13 @@ class AdministratorDetails(object):
 
     @classmethod
     def _from_admin_details_bundle(cls, admin_details_bundle):
-        # type: (models.IssuerBundle) -> Issuer
+        # type: (models.AdministratorDetails) -> AdministratorDetails
         """Construct a AdministratorDetails from an autorest-generated AdministratorDetailsBundle"""
         return cls(
-            email=admin_details_bundle.email,
+            email=admin_details_bundle.email_address,
             first_name=admin_details_bundle.first_name,
-            last_name=admin_details_bundle.admin_details_bundle.last_name,
-            phone=admin_details_bundle.phone,
+            last_name=admin_details_bundle.last_name,
+            phone=admin_details_bundle.phone
         )
 
     @property
@@ -88,7 +88,7 @@ class Error(object):
 
 class CertificateBase(object):
     def __init__(self, attributes, cert_id, thumbprint, **kwargs):
-        # type: (models.CertificateAttributes, Optional[str], Mapping[str, Any]) -> None
+        # type: (models.CertificateAttributes, str, bytes, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = cert_id
         self._vault_id = _parse_vault_id(cert_id)
@@ -170,11 +170,11 @@ class CertificateBase(object):
 
 
 class Certificate(CertificateBase):
-    def __init__(self, attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs):
+    def __init__(self, attributes, cert_id, thumbprint, key_id, secret_id, policy, cer, **kwargs):
         # type: (models.CertificateAttributes, str, str, str, models.CertificatePolicy, bytes, Mapping[str, Any]) -> None
         super(Certificate, self).__init__(attributes, cert_id, thumbprint, **kwargs)
-        self._kid = kid
-        self._sid = sid
+        self._key_id = key_id
+        self._secret_id = secret_id
         self._policy = policy
         self._cer = cer
 
@@ -186,8 +186,8 @@ class Certificate(CertificateBase):
             attributes=certificate_bundle.attributes,
             cert_id=certificate_bundle.id,
             thumbprint=certificate_bundle.x509_thumbprint,
-            kid=certificate_bundle.kid,
-            sid=certificate_bundle.sid,
+            key_id=certificate_bundle.kid,
+            secret_id=certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
             cer=certificate_bundle.cer,
             tags=certificate_bundle.tags,
@@ -196,12 +196,12 @@ class Certificate(CertificateBase):
     @property
     def kid(self):
         # type: () -> str
-        return self._kid
+        return self._key_id
 
     @property
     def sid(self):
         # type: () -> str
-        return self._sid
+        return self._secret_id
 
     @property
     def policy(self):
@@ -334,9 +334,9 @@ class CertificatePolicy(object):
         key_properties,
         content_type,
         subject_name,
-        sans_emails,
-        sans_dns_names,
-        sans_upns,
+        san_emails,
+        san_dns_names,
+        san_upns,
         validity_in_months,
         lifetime_actions,
         issuer_name,
@@ -349,9 +349,9 @@ class CertificatePolicy(object):
         self._key_properties = key_properties
         self._content_type = content_type
         self._subject_name = subject_name
-        self._sans_emails = sans_emails
-        self._sans_dns_names = sans_dns_names
-        self._sans_upns = sans_upns
+        self._san_emails = san_emails
+        self._san_dns_names = san_dns_names
+        self._san_upns = san_upns
         self._validity_in_months = validity_in_months
         self._lifetime_actions = lifetime_actions
         self._issuer_name = issuer_name
@@ -377,9 +377,9 @@ class CertificatePolicy(object):
                 for item in certificate_policy_bundle.lifetime_actions
             ],
             subject_name=certificate_policy_bundle.x509_certificate_properties.subject,
-            sans_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
-            sans_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
-            sans_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            san_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            san_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            san_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
             validity_in_months=certificate_policy_bundle.x509_certificate_properties.validity_in_months,
             key_properties=KeyProperties(
                 exportable=certificate_policy_bundle.key_properties.exportable,
@@ -414,19 +414,19 @@ class CertificatePolicy(object):
         return self._subject_name
 
     @property
-    def sans_emails(self):
+    def san_emails(self):
         # type: () -> list[str]
-        return self._sans_emails
+        return self._san_emails
 
     @property
-    def sans_dns_names(self):
+    def san_dns_names(self):
         # type: () -> list[str]
-        return self._sans_dns_names
+        return self._san_dns_names
 
     @property
-    def sans_upns(self):
+    def san_upns(self):
         # type: () -> list[str]
-        return self._sans_upns
+        return self._san_upns
 
     @property
     def validity_in_months(self):
@@ -537,7 +537,8 @@ class IssuerBase(object):
     @property
     def name(self):
         # type: () -> str
-        return self._vault_id.name
+        # Issuer name is listed under version under vault_id
+        return self._vault_id.version
 
     @property
     def provider(self):
@@ -552,10 +553,10 @@ class IssuerBase(object):
 
 class Issuer(IssuerBase):
     def __init__(
-        self, attributes, issuer_id, provider, account_id, password, organization_id=None, admin_details=None, **kwargs
+        self, attributes, provider, issuer_id, account_id, password=None,  organization_id=None, admin_details=[None], **kwargs
     ):
-        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[List[[str]], Mapping[str, Any]) -> None
-        super(Issuer, self).__init__(attributes, issuer_id, provider, admin_details, **kwargs)
+        # type: (models.IssuerAttributes, str, str, str, Optional[str], Optional[str], Optional[List[[AdministratorDetails]], Mapping[str, Any]) -> None
+        super(Issuer, self).__init__(attributes, issuer_id, provider, **kwargs)
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
@@ -565,14 +566,18 @@ class Issuer(IssuerBase):
     def _from_issuer_bundle(cls, issuer_bundle):
         # type: (models.IssuerBundle) -> Issuer
         """Construct a Issuer from an autorest-generated IssuerBundle"""
+        admin_details = []
+        admin_details_service = issuer_bundle.organization_details.admin_details
+        for admin_detail in admin_details_service:
+            admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
         return cls(
             attributes=issuer_bundle.attributes,
             issuer_id=issuer_bundle.id,
             provider=issuer_bundle.provider,
-            account_id=issuer_bundle.account_id,
-            password=issuer_bundle.password,
+            account_id=issuer_bundle.credentials.account_id,
+            password=issuer_bundle.credentials.password,
             organization_id=issuer_bundle.organization_details.id,
-            admin_details=[AdministratorDetails._from_admin_details_bundle(item) for item in issuer_bundle],
+            admin_details=admin_details
         )
 
     @property
@@ -592,7 +597,7 @@ class Issuer(IssuerBase):
 
     @property
     def admin_details(self):
-        # type: () -> str
+        # type: () -> List[AdministratorDetails]
         return self._admin_details
 
 
@@ -672,8 +677,8 @@ class DeletedCertificate(Certificate):
         attributes,
         cert_id,
         thumbprint,
-        kid=None,
-        sid=None,
+        key_id=None,
+        secret_id=None,
         policy=None,
         cer=None,
         deleted_date=None,
@@ -682,7 +687,7 @@ class DeletedCertificate(Certificate):
         **kwargs
     ):
         # type: (models.CertificateAttributes, str, Optional[str], Optional[str], Optional[str], Optional[models.CertificatePolicy], Optional[bytes], optional[datetime], Optional[str], Optional[datetime], Mapping[str, Mapping[str, Any]) -> None
-        super(DeletedCertificate, self).__init__(attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs)
+        super(DeletedCertificate, self).__init__(attributes, cert_id, thumbprint, key_id, secret_id, policy, cer, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -695,8 +700,8 @@ class DeletedCertificate(Certificate):
             attributes=deleted_certificate_item.attributes,
             cert_id=deleted_certificate_item.id,
             thumbprint=deleted_certificate_item.x509_thumbprint,
-            kid=None,
-            sid=None,
+            key_id=None,
+            secret_id=None,
             policy=None,
             cer=None,
             recovery_id=deleted_certificate_item.recovery_id,
@@ -712,8 +717,8 @@ class DeletedCertificate(Certificate):
             attributes=deleted_certificate_bundle.attributes,
             cert_id=deleted_certificate_bundle.id,
             thumbprint=deleted_certificate_bundle.x509_thumbprint,
-            kid=deleted_certificate_bundle.kid,
-            sid=deleted_certificate_bundle.sid,
+            key_id=deleted_certificate_bundle.kid,
+            secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
             recovery_id=deleted_certificate_bundle.recovery_id,

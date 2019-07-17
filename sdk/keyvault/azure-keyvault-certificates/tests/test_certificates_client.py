@@ -1,13 +1,16 @@
 import itertools
 import time
 
+from azure.keyvault.certificates import Issuer
 from azure.keyvault.certificates._key_vault_id import KeyVaultId
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._generated.v7_0.models import (
     SecretProperties, KeyProperties, CertificatePolicy, IssuerParameters, X509CertificateProperties,
-    SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType)
+    SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
+from azure.keyvault.certificates._models import AdministratorDetails
+
 
 class CertificateClientTests(KeyVaultTestCase):
     def _import_common_certificate(self, client, cert_name):
@@ -59,17 +62,17 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_policy_x509_props.subject,
                          cert_bundle_policy.subject_name)
         if cert_policy_x509_props.subject_alternative_names.emails:
-            for (sans_email, policy_email) in itertools.zip_longest(
-                    cert_policy_x509_props.subject_alternative_names.emails, cert_bundle_policy.sans_emails):
-                self.assertEqual(sans_email, policy_email)
+            for (san_email, policy_email) in itertools.zip_longest(
+                    cert_policy_x509_props.subject_alternative_names.emails, cert_bundle_policy.san_emails):
+                self.assertEqual(san_email, policy_email)
         if cert_policy_x509_props.subject_alternative_names.upns:
-            for (sans_upns, policy_upns) in itertools.zip_longest(cert_policy_x509_props.subject_alternative_names.upns,
-                                                                  cert_bundle_policy.sans_upns):
-                self.assertEqual(sans_upns, policy_upns)
+            for (san_upns, policy_upns) in itertools.zip_longest(cert_policy_x509_props.subject_alternative_names.upns,
+                                                                  cert_bundle_policy.san_upns):
+                self.assertEqual(san_upns, policy_upns)
         if cert_policy_x509_props.subject_alternative_names.dns_names:
-            for (sans_dns_name, policy_dns_name) in itertools.zip_longest(
-                    cert_policy_x509_props.subject_alternative_names.dns_names, cert_bundle_policy.sans_dns_names):
-                self.assertEqual(sans_dns_name, policy_dns_name)
+            for (san_dns_name, policy_dns_name) in itertools.zip_longest(
+                    cert_policy_x509_props.subject_alternative_names.dns_names, cert_bundle_policy.san_dns_names):
+                self.assertEqual(san_dns_name, policy_dns_name)
 
     def _validate_key_properties(self, cert_bundle_key_props, cert_policy_key_props):
         self.assertIsNotNone(cert_bundle_key_props)
@@ -106,6 +109,24 @@ class CertificateClientTests(KeyVaultTestCase):
         for contact in contacts:
             exp_contact = next(x for x in expected if x.email_address == contact.email_address)
             self.assertEqual(contact, exp_contact)
+
+    def _admin_detail_equal(self, admin_detail, exp_admin_detail):
+        return (admin_detail.first_name == exp_admin_detail.first_name and
+               admin_detail.last_name == exp_admin_detail.last_name and
+               admin_detail.email == exp_admin_detail.email and
+               admin_detail.phone == exp_admin_detail.phone)
+
+    def _validate_certificate_issuer(self, issuer, expected):
+        self.assertEqual(issuer.name, expected.name)
+        self.assertEqual(issuer.provider, expected.provider)
+        self.assertEqual(issuer.account_id, expected.account_id)
+        self.assertEqual(len(issuer.admin_details), len(expected.admin_details))
+        for admin_detail in issuer.admin_details:
+            exp_admin_detail = next((ad for ad in expected.admin_details if self._admin_detail_equal(admin_detail, ad)), None)
+            self.assertIsNotNone(exp_admin_detail)
+        self.assertEqual(issuer.password, expected.password)
+        self.assertEqual(issuer.organization_id, expected.organization_id)
+        self.assertEqual(issuer.vault_url, expected.vault_url)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -218,7 +239,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
-    def test_list_versions(self, vault_client, **kwargs):
+    def test_list_certificate_versions(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name('certver')
@@ -242,7 +263,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificate versions
-        self._validate_certificate_list(certificates=(client.list_versions(cert_name)), expected=expected)
+        self._validate_certificate_list(certificates=(client.list_certificate_versions(cert_name)), expected=expected)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -366,7 +387,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client.create_certificate(name=cert_name, policy=cert_policy)
 
         # cancel certificate operation
-        cancel_operation = client.cancel_certificate_operation(name=cert_name, cancellation_requested=True)
+        cancel_operation = client.cancel_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(cancel_operation, 'cancellation_requested'))
         self.assertTrue(cancel_operation.cancellation_requested)
         self._validate_certificate_operation(
@@ -431,3 +452,70 @@ class CertificateClientTests(KeyVaultTestCase):
         client.update_policy(name=cert_name, policy=cert_policy)
         updated_cert_policy = client.get_policy(name=cert_name)
         self.assertIsNotNone(updated_cert_policy)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_crud_issuer(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+        issuer_name = "izzy"
+        admin_details = [AdministratorDetails(
+                first_name="John",
+                last_name="Doe",
+                email="admin@microsoft.com",
+                phone="4255555555"
+        )]
+
+
+
+        # create certificate issuer
+        issuer = client.create_issuer(
+            name=issuer_name,
+            provider="Test",
+            account_id="keyvaultuser",
+            admin_details=admin_details,
+            enabled=True
+        )
+
+        expected = Issuer(
+            provider="Test",
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
+            account_id="keyvaultuser",
+            admin_details=admin_details,
+            attributes=IssuerAttributes(enabled=True)
+        )
+
+        self._validate_certificate_issuer(issuer=issuer, expected=expected)
+
+        # get certificate issuer
+        issuer = client.get_issuer(name=issuer_name)
+        self._validate_certificate_issuer(issuer=issuer, expected=expected)
+
+        # update certificate issuer
+        admin_details = [AdministratorDetails(
+            first_name="Jane",
+            last_name="Doe",
+            email="admin@microsoft.com",
+            phone="4255555555"
+        )]
+
+        expected = Issuer(
+            provider="Test",
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
+            account_id="keyvaultuser",
+            admin_details=admin_details,
+            attributes=IssuerAttributes(enabled=True)
+        )
+        issuer = client.update_issuer(name=issuer_name, admin_details=admin_details)
+        self._validate_certificate_issuer(issuer=issuer, expected=expected)
+
+        # delete certificate issuer
+        issuer = client.delete_issuer(name=issuer_name)
+
+        # get certificate issuer returns not found
+        try:
+            issuer = client.get_issuer(name=issuer_name)
+            self.fail('Get should fail')
+        except Exception as ex:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
+                raise ex

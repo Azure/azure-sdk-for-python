@@ -33,8 +33,8 @@ class CertificateClient(_KeyVaultClientBase):
     """
     # pylint:disable=protected-access
 
-    def create_certificate(self, name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, Optional[CertificatePolicy], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
+    def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
+        # type: (str, CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -103,7 +103,7 @@ class CertificateClient(_KeyVaultClientBase):
 
     def delete_certificate(self, name, **kwargs):
         # type: (str) -> DeletedCertificate
-        """Deletes a certificate from a specified key vault.
+        """Deletes a certificate from the key vault.
 
         Deletes all versions of a certificate object along with its associated
         policy. Delete certificate cannot be used to remove individual versions
@@ -129,7 +129,7 @@ class CertificateClient(_KeyVaultClientBase):
 
         :param name: The name of the certificate.
         :type name: str
-        :return: The delete certificate
+        :return: The deleted certificate
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         """
         bundle = self._client.get_deleted_certificate(
@@ -178,16 +178,16 @@ class CertificateClient(_KeyVaultClientBase):
         self,
         name,
         base64_encoded_certificate,
+        policy,
         password=None,
-        policy=None,
         enabled=None,
         not_before=None,
         expires=None,
         tags=None,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[CertificatePolicy], Optional[bool],Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
-        """Imports a certificate into a specified key vault.
+        # type: (str, str, CertificatePolicy, Optional[str], Optional[bool],Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
+        """Imports a certificate into the key vault.
 
         Imports an existing valid certificate, containing a private key, into
         Azure Key Vault. The certificate to be imported can be in either PFX or
@@ -201,12 +201,11 @@ class CertificateClient(_KeyVaultClientBase):
          the certificate object to import. This certificate needs to contain
          the private key.
         :type base64_encoded_certificate: str
-        :param password: If the private key in base64EncodedCertificate is
-         encrypted, the password used for encryption.
-        :type password: str
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.security.keyvault.v7_0.models.CertificatePolicy
+        :param password: Password that protecting the certificate to import.
+        :type password: str
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param not_before: Not before date of the secret in UTC
@@ -241,7 +240,7 @@ class CertificateClient(_KeyVaultClientBase):
         # type: (str) -> CertificatePolicy
         """Gets the policy for a certificate.
 
-        Returns the specified certificate policy resources in the specified key
+        Returns the specified certificate policy resources in the key
         vault. This operation requires the certificates/get permission.
 
         :param name: The name of the certificate in a given key vault.
@@ -387,10 +386,10 @@ class CertificateClient(_KeyVaultClientBase):
 
     def list_certificates(self, include_pending=None, **kwargs):
         # type: (Optional[bool]) -> Generator[CertificateBase]
-        """List certificates in a specified key vault.
+        """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
-        in the specified key vault. This operation requires the
+        in the key vault. This operation requires the
         certificates/list permission.
 
         :param include_pending: Specifies whether to include certificates
@@ -409,12 +408,12 @@ class CertificateClient(_KeyVaultClientBase):
         )
         return (CertificateBase._from_certificate_item(certificate_item=item) for item in pages)
 
-    def list_versions(self, name, **kwargs):
+    def list_certificate_versions(self, name, **kwargs):
         # type: (str) -> Generator[CertificateBase]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
-        certificate in the specified key vault. This operation requires the
+        certificate in the key vault. This operation requires the
         certificates/list permission.
 
         :param name: The name of the certificate.
@@ -433,9 +432,9 @@ class CertificateClient(_KeyVaultClientBase):
 
     def create_contacts(self, contacts, **kwargs):
         # type: (Iterable[Contact]) -> Iterable[Contact]
-        """Sets the certificate contacts for the specified key vault.
+        """Sets the certificate contacts for the key vault.
 
-        Sets the certificate contacts for the specified key vault. This
+        Sets the certificate contacts for the key vault. This
         operation requires the certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
@@ -448,13 +447,13 @@ class CertificateClient(_KeyVaultClientBase):
 
     def list_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        """Lists the certificate contacts for a specified key vault.
+        """Lists the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
-        key vault. This operaiton requires the certificates/managecontacts
+        key vault. This operation requires the certificates/managecontacts
         permission.
 
-        :return: The certificate contacts for the specified key vault.
+        :return: The certificate contacts for the key vault.
         :rtype: ~azure.security.keyvault.certificates._models.Contacts
         """
         pages = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
@@ -462,9 +461,9 @@ class CertificateClient(_KeyVaultClientBase):
 
     def delete_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        """Deletes the certificate contacts for a specified key vault.
+        """Deletes the certificate contacts for the key vault.
 
-        Deletes the certificate contacts for a specified key vault certificate.
+        Deletes the certificate contacts for the key vault certificate.
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
@@ -505,7 +504,7 @@ class CertificateClient(_KeyVaultClientBase):
         bundle = self._client.delete_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
-    def cancel_certificate_operation(self, name, cancellation_requested, **kwargs):
+    def cancel_certificate_operation(self, name, **kwargs):
         # type: (str) -> CertificateOperation
         """Updates a certificate operation.
 
@@ -523,14 +522,14 @@ class CertificateClient(_KeyVaultClientBase):
         bundle = self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            cancellation_requested=cancellation_requested,
+            cancellation_requested=True,
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     def merge_certificate(
         self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, list[str], Optional[bool], Optional[Dict[str, str]]) -> Certificate
+        # type: (str, list[bytearray], Optional[bool], Optional[datetime], Optional[datetime]Optional[Dict[str, str]]) -> Certificate
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         Performs the merging of a certificate or certificate chain with a key pair currently
@@ -569,15 +568,26 @@ class CertificateClient(_KeyVaultClientBase):
 
 
     def get_pending_certificate_signing_request(self, name, **kwargs):
-        # type: (str) -> str
-        return self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        # type: (str) -> CertificateOperation
+        """Gets the pending certificate signing request.
+
+        Gets the pending certificate signing request for the specified certificate.
+        This operation requires the certificates/get permission.
+
+        :param name: The name of the certificate
+        :type name: str
+        :return: Certificate operation detailing the certificate signing request.
+        :rtype: ~azure.security.keyvault.v7_0.models.CertificateOperation
+        """
+        bundle = self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     def get_issuer(self, name, **kwargs):
-        # type: (str) -> Issuer)
+        # type: (str) -> Issuer
         """Gets the specified certificate issuer.
 
-        Returns the specified certificate issuer resources in the specified key vault.
-        This operation requires the certificates/manageissues/getissuers permission.
+        Returns the specified certificate issuer resources in the key vault.
+        This operation requires the certificates/manageissuers/getissuers permission.
 
         :param name: The name of the issuer.
         :type name: str
@@ -594,14 +604,11 @@ class CertificateClient(_KeyVaultClientBase):
         account_id=None,
         password=None,
         organization_id=None,
-        first_name=None,
-        last_name=None,
-        email=None,
-        phone=None,
+        admin_details=[None],
         enabled=None,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Mapping[str, Any]) -> Issuer
+        # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]], Optional[bool], Mapping[str, Any]) -> Issuer
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified
@@ -618,14 +625,7 @@ class CertificateClient(_KeyVaultClientBase):
         :type password: str
         :param organization_id: Id of the organization.
         :type organization_id: str
-        :param first_name: First name.
-        :type first_name: str
-        :param last_name: Last name.
-        :type last_name: str
-        :param email: Email address.
-        :type email: str
-        :param phone: Phone number.
-        :type phone: str
+        :param admin_details:
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :returns: The created Issuer
@@ -635,12 +635,21 @@ class CertificateClient(_KeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if first_name or last_name or email or phone:
-            administrator_details = self._client.models.AdministratorDetails(first_name=first_name, last_name=last_name, email_address=email, phone=phone)
+        if admin_details[0]:
+            admin_details_to_pass = []
+            for admin_detail in admin_details:
+                admin_details_to_pass.append(
+                    self._client.models.AdministratorDetails(
+                        first_name=admin_detail.first_name,
+                        last_name=admin_detail.last_name,
+                        email_address=admin_detail.email,
+                        phone=admin_detail.phone
+                    )
+                )
         else:
-            administrator_details = None
-        if organization_id or administrator_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=administrator_details)
+            admin_details_to_pass = admin_details
+        if organization_id or admin_details:
+            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
         else:
             organization_details = None
         if enabled is not None:
@@ -665,14 +674,11 @@ class CertificateClient(_KeyVaultClientBase):
         account_id=None,
         password=None,
         organization_id=None,
-        first_name=None,
-        last_name=None,
-        email=None,
-        phone=None,
+        admin_details=[None],
         enabled=True,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Mapping[str, Any]) -> Issuer
+        # type: (str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]], Optional[bool], Mapping[str, Any]) -> Issuer
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
@@ -705,12 +711,21 @@ class CertificateClient(_KeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if first_name or last_name or email or phone:
-            administrator_details = self._client.models.AdministratorDetails(first_name=first_name, last_name=last_name, email_address=email, phone=phone)
+        if admin_details[0]:
+            admin_details_to_pass = []
+            for admin_detail in admin_details:
+                admin_details_to_pass.append(
+                    self._client.models.AdministratorDetails(
+                        first_name=admin_detail.first_name,
+                        last_name=admin_detail.last_name,
+                        email_address=admin_detail.email,
+                        phone=admin_detail.phone
+                    )
+                )
         else:
-            administrator_details = None
-        if organization_id or administrator_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=administrator_details)
+            admin_details_to_pass = admin_details
+        if organization_id or admin_details:
+            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
         else:
             organization_details = None
         if enabled is not None:
@@ -723,18 +738,37 @@ class CertificateClient(_KeyVaultClientBase):
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
-            attribute=issuer_attributes,
+            attributes=issuer_attributes,
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     def delete_issuer(self, name, **kwargs):
         # type: (str) -> Issuer
+        """Deletes the specified certificate issuer.
+
+        Permanently removes the specified certificate issuer from the vault.
+        This operation requires the certificates/manageissuers/deleteissuers permission.
+
+        :param name: The name of the issuer.
+        :type name: str
+        :return: Issuer
+        :rtype: ~azure.security.keyvault.certificates._models.Issuer
+        """
         issuer_bundle = self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     def list_issuers(self, **kwargs):
         # type: () -> Iterable[IssuerBase]
+        """List certificate issuers for the key vault.
+
+        Returns the set of certificate issuer resources in the key
+        vault. This operaiton requires the certificates/manageissuers/getissuers
+        permission.
+
+        :return: An iterator like instance of Issuers
+        :rtype: Iterable[~azure.security.keyvault.certificates._models.Issuer]
+        """
         max_page_size = kwargs.get("max_page_size", None)
         paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
         return (Issuer._from_issuer_item(issuer_item=item) for item in paged_certificate_issuer_items)
