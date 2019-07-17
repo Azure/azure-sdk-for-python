@@ -32,6 +32,10 @@ from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.tracing.common import get_parent_span
 from azure.core.settings import settings
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 try:
     from typing import TYPE_CHECKING
@@ -48,9 +52,8 @@ if TYPE_CHECKING:
 class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
 
-    def __init__(self, name_of_spans="span - http call"):
+    def __init__(self):
         # type: (str, str, str) -> None
-        self.name_of_child_span = name_of_spans
         self.parent_span_dict = {}
         self._request_id = "x-ms-request-id"
 
@@ -74,7 +77,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             self.set_header(request, parent_span)
             return
 
-        child = parent_span.span(name=self.name_of_child_span)
+        path = urlparse(request.http_request.url).path
+        if not path:
+            path = '/'
+        child = parent_span.span(name=path)
         child.start()
 
         set_span_contexts(child)

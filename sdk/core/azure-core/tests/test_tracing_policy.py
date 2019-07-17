@@ -40,7 +40,7 @@ def test_distributed_tracing_policy_solo():
         exporter.build_tree()
         parent = exporter.root
         network_span = parent.children[0]
-        assert network_span.span_data.name == "span - http call"
+        assert network_span.span_data.name == "/"
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
@@ -56,7 +56,7 @@ def test_distributed_tracing_policy_exception():
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/")
+        request = HttpRequest("GET", "http://127.0.0.1/temp")
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
@@ -71,10 +71,10 @@ def test_distributed_tracing_policy_exception():
         exporter.build_tree()
         parent = exporter.root
         network_span = parent.children[0]
-        assert network_span.span_data.name == "span - http call"
+        assert network_span.span_data.name == "/temp"
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
+        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp"
         assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504
@@ -87,7 +87,7 @@ def test_distributed_tracing_policy_with_usergent():
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/")
+        request = HttpRequest("GET", "http://127.0.0.1")
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
 
@@ -112,10 +112,10 @@ def test_distributed_tracing_policy_with_usergent():
         exporter.build_tree()
         parent = exporter.root
         network_span = parent.children[0]
-        assert network_span.span_data.name == "span - http call"
+        assert network_span.span_data.name == "/"
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
+        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
         assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
         assert network_span.span_data.attributes.get("http.status_code") == 202
