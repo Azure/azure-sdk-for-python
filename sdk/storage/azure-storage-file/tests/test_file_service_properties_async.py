@@ -81,6 +81,8 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(props.cors, list())
 
     def test_file_service_properties_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_service_properties_async())
 
@@ -97,6 +99,8 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     def test_set_hour_metrics_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_hour_metrics_async())
 
@@ -113,6 +117,8 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     def test_set_minute_metrics_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_minute_metrics_async())
 
@@ -142,6 +148,8 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(received_props.cors, cors)
 
     def test_set_cors_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_cors_async())
 
@@ -159,6 +167,8 @@ class FileServicePropertiesTest(FileTestCase):
             await self.fsc.set_service_properties(None, None, cors)       
 
     def test_too_many_cors_rules_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_too_many_cors_rules_async())
 

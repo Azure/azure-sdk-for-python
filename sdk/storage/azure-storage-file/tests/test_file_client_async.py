@@ -258,6 +258,8 @@ class StorageFileClientTest(FileTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     def test_user_agent_default_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_default_async())
 
@@ -287,6 +289,8 @@ class StorageFileClientTest(FileTestCase):
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
     def test_user_agent_custom_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_custom_async())
 
@@ -305,6 +309,8 @@ class StorageFileClientTest(FileTestCase):
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
     def test_user_agent_append_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append_async())
 

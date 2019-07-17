@@ -173,6 +173,8 @@ class StorageFileTestAsync(FileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
     
     def test_make_file_url_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_async())
 
@@ -189,6 +191,8 @@ class StorageFileTestAsync(FileTestCase):
                          + '.file.core.windows.net/vhds/my.vhd')
 
     def test_make_file_url_no_directory_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_no_directory_async())
 
@@ -207,6 +211,8 @@ class StorageFileTestAsync(FileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     def test_make_file_url_with_protocol(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_with_protocol())
 
@@ -228,6 +234,8 @@ class StorageFileTestAsync(FileTestCase):
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
     def test_make_file_url_with_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_with_sas())
 

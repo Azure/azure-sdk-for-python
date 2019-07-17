@@ -132,6 +132,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(file_content, file_data)
 
     def test_unicode_get_file_unicode_data_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_file_unicode_data_async())
 
@@ -159,6 +161,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(file_content, binary_data)
 
     def test_unicode_get_file_binary_data_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_file_binary_data_async())
 
@@ -185,6 +189,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(0, file_output.properties.size)
 
     def test_get_file_no_content_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_no_content_async())
 
@@ -211,6 +217,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(self.byte_data, file_content)
 
     def test_get_file_to_bytes_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_bytes_async())
 
@@ -249,6 +257,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_bytes_with_progress_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_bytes_with_progress_async())
 
@@ -283,6 +293,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_bytes_non_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_bytes_non_parallel_async())
 
@@ -320,6 +332,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_bytes_small_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_bytes_small_async())
 
@@ -350,6 +364,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     def test_get_file_to_stream_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_async())
 
@@ -392,6 +408,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_with_progress_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_with_progress_async())
 
@@ -430,6 +448,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_non_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_non_parallel_async())
 
@@ -471,6 +491,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_small_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_small_async())
 
@@ -512,6 +534,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     def test_get_file_to_stream_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_from_snapshot_async())
 
@@ -565,6 +589,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_with_progress_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_with_progress_from_snapshot_async())
 
@@ -614,6 +640,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_non_parallel_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_non_parallel_from_snapshot_async())
 
@@ -667,6 +695,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_stream_small_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_small_from_snapshot_async())
 
@@ -698,6 +728,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
 
     def test_ranged_get_file_to_path_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_async())
 
@@ -730,6 +762,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[0], actual[0])
 
     def test_ranged_get_file_to_path_with_single_byte_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_with_single_byte_async())
 
@@ -758,6 +792,8 @@ class StorageGetFileTest(FileTestCase):
             await props.content_as_bytes()
 
     def test_ranged_get_file_to_bytes_with_zero_byte_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_bytes_with_zero_byte_async())
 
@@ -802,6 +838,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_ranged_get_file_to_path_with_progress_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_with_progress_async())
 
@@ -828,6 +866,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[1:5], actual)
 
     def test_ranged_get_file_to_path_small_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_small_async())
 
@@ -854,6 +894,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[1:4], actual)
 
     def test_ranged_get_file_to_path_non_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_non_parallel_async())
 
@@ -889,6 +931,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(file_data[1:file_size], actual)
 
     def test_ranged_get_file_to_path_invalid_range_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_invalid_range_parallel_async())
 
@@ -921,6 +965,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(file_data[1:file_size], actual)
 
     def test_ranged_get_file_to_path_invalid_range_non_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_file_to_path_invalid_range_non_parallel_async())
 
@@ -950,6 +996,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(text_data, file_content)
 
     def test_get_file_to_text_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_async())
 
@@ -991,6 +1039,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_text_with_progress_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_with_progress_async())
 
@@ -1028,6 +1078,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_text_non_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_non_parallel_async())
 
@@ -1065,6 +1117,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_text_small_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_small_async())
 
@@ -1091,6 +1145,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(text, file_content)
 
     def test_get_file_to_text_with_encoding_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_with_encoding_async())
 
@@ -1129,6 +1185,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_to_text_with_encoding_and_progress_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_text_with_encoding_and_progress_async())
 
@@ -1156,6 +1214,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     def test_get_file_non_seekable_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_non_seekable_async())
 
@@ -1185,6 +1245,8 @@ class StorageGetFileTest(FileTestCase):
                 # Assert
 
     def test_get_file_non_seekable_parallel_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_non_seekable_parallel_async())
 
@@ -1223,6 +1285,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     def test_get_file_non_seekable_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_non_seekable_from_snapshot_async())
 
@@ -1261,6 +1325,8 @@ class StorageGetFileTest(FileTestCase):
                 await data.download_to_stream(non_seekable_stream, max_connections=2)
 
     def test_get_file_non_seekable_parallel_from_snapshot_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_non_seekable_parallel_from_snapshot_async())
 
@@ -1298,6 +1364,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_exact_get_size_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_exact_get_size_async())
 
@@ -1339,6 +1407,8 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     def test_get_file_exact_chunk_size_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_exact_chunk_size_async())
 
@@ -1365,6 +1435,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(self.byte_data, file_bytes)
 
     def test_get_file_with_md5_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_with_md5_async())
 
@@ -1399,6 +1471,8 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
 
     def test_get_file_range_with_md5_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_range_with_md5_async())
 
@@ -1424,6 +1498,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertFalse(file_content.properties.server_encrypted)
 
     def test_get_file_server_encryption_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_server_encryption_async())
 
@@ -1449,6 +1525,8 @@ class StorageGetFileTest(FileTestCase):
             self.assertFalse(props.server_encrypted)
 
     def test_get_file_properties_server_encryption_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_properties_server_encryption_async())
 
