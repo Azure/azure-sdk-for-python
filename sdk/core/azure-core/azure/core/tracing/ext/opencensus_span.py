@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from opencensus.trace import tracer as tracer_module, Span, execution_context
+"""Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
+
+from opencensus.trace import Span, execution_context
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
@@ -29,14 +31,9 @@ class OpenCensusSpan(object):
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
         """
-        tracer = self.get_current_tracer()
         if not span:
-            current_span = self.get_current_span()
-            span = tracer.span(name=name)
-            # The logic is needed until opencensus fixes their bug
-            # https://github.com/census-instrumentation/opencensus-python/issues/466
-            if current_span and span not in current_span.children:
-                current_span._child_spans.append(span)
+            tracer = self.get_current_tracer()
+            span = tracer.span(name=name) # type: Span
         self._span_instance = span
 
     @property
@@ -97,7 +94,7 @@ class OpenCensusSpan(object):
         # type: (Dict[str, str]) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
-      
+
         :param headers: A key value pair dictionary
         :type headers: dict
         """
