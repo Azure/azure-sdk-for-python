@@ -153,13 +153,17 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        **Keyword arguments:**
+
+        *session* - will override the driver session and use yours. Should NOT be done unless really required.
+        Anything else is sent straight to requests.
+        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if self.config.proxy_policy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await trio.run_sync_in_worker_thread(
                 functools.partial(
