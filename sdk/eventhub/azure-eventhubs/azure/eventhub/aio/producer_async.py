@@ -5,7 +5,7 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterator, Generator, List, Union
+from typing import Iterable
 
 from uamqp import constants, errors, compat
 from uamqp import SendClientAsync
@@ -318,13 +318,13 @@ class EventHubProducer(object):
             await self._open()
 
         if max_message_size and max_message_size > self._max_message_size_on_link:
-            raise EventDataError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
                                  .format(max_message_size, self._max_message_size_on_link))
 
         return EventDataBatch(max_message_size if max_message_size else self._max_message_size_on_link, partition_key)
 
     async def send(self, event_data, partition_key=None):
-        # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.

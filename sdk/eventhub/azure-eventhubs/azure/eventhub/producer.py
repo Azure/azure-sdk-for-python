@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import uuid
 import logging
 import time
-from typing import Iterator, Generator, List, Union
+from typing import Iterable, Union
 
 from uamqp import constants, errors
 from uamqp import compat
@@ -110,9 +110,8 @@ class EventHubProducer(object):
             self._connect()
             self.running = True
 
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size if\
-                self._handler.message_handler._link.peer_max_message_size\
-                else constants.MAX_MESSAGE_LENGTH_BYTES
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
 
     def _connect(self):
         connected = self._build_connection()
@@ -315,13 +314,13 @@ class EventHubProducer(object):
             self._open()
 
         if max_message_size and max_message_size > self._max_message_size_on_link:
-            raise EventDataError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
                                  .format(max_message_size, self._max_message_size_on_link))
 
-        return EventDataBatch(max_message_size if max_message_size else self._max_message_size_on_link, partition_key)
+        return EventDataBatch(max_message_size or self._max_message_size_on_link, partition_key)
 
     def send(self, event_data, partition_key=None):
-        # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.

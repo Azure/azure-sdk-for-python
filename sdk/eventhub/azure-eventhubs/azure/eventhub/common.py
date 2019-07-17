@@ -261,6 +261,18 @@ class EventDataBatch(object):
 
         self._set_partition_key(partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
+        self._count = 0
+
+    def __len__(self):
+        return self._count
+
+    @property
+    def size(self):
+        """The size in bytes
+
+        :return: int
+        """
+        return self._size
 
     @staticmethod
     def _from_batch(batch_data, partition_key=None):
@@ -306,6 +318,7 @@ class EventDataBatch(object):
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
+        self._count += 1
         return True
 
 
