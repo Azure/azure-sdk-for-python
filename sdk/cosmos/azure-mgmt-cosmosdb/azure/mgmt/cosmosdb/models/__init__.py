@@ -26,6 +26,7 @@ try:
     from .unique_key_policy_py3 import UniqueKeyPolicy
     from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
     from .sql_container_py3 import SqlContainer
+    from .sql_stored_procedure_py3 import SqlStoredProcedure
     from .mongo_db_database_py3 import MongoDBDatabase
     from .mongo_db_collection_py3 import MongoDBCollection
     from .table_py3 import Table
@@ -52,6 +53,8 @@ try:
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource_py3 import SqlContainerResource
     from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
+    from .sql_stored_procedure_resource_py3 import SqlStoredProcedureResource
+    from .sql_stored_procedure_create_update_parameters_py3 import SqlStoredProcedureCreateUpdateParameters
     from .mongo_db_database_resource_py3 import MongoDBDatabaseResource
     from .mongo_db_database_create_update_parameters_py3 import MongoDBDatabaseCreateUpdateParameters
     from .mongo_index_keys_py3 import MongoIndexKeys
@@ -102,6 +105,7 @@ except (SyntaxError, ImportError):
     from .unique_key_policy import UniqueKeyPolicy
     from .conflict_resolution_policy import ConflictResolutionPolicy
     from .sql_container import SqlContainer
+    from .sql_stored_procedure import SqlStoredProcedure
     from .mongo_db_database import MongoDBDatabase
     from .mongo_db_collection import MongoDBCollection
     from .table import Table
@@ -128,6 +132,8 @@ except (SyntaxError, ImportError):
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource import SqlContainerResource
     from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
+    from .sql_stored_procedure_resource import SqlStoredProcedureResource
+    from .sql_stored_procedure_create_update_parameters import SqlStoredProcedureCreateUpdateParameters
     from .mongo_db_database_resource import MongoDBDatabaseResource
     from .mongo_db_database_create_update_parameters import MongoDBDatabaseCreateUpdateParameters
     from .mongo_index_keys import MongoIndexKeys
@@ -167,6 +173,7 @@ from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .sql_database_paged import SqlDatabasePaged
 from .sql_container_paged import SqlContainerPaged
+from .sql_stored_procedure_paged import SqlStoredProcedurePaged
 from .mongo_db_database_paged import MongoDBDatabasePaged
 from .mongo_db_collection_paged import MongoDBCollectionPaged
 from .table_paged import TablePaged
@@ -210,6 +217,7 @@ __all__ = [
     'UniqueKeyPolicy',
     'ConflictResolutionPolicy',
     'SqlContainer',
+    'SqlStoredProcedure',
     'MongoDBDatabase',
     'MongoDBCollection',
     'Table',
@@ -236,6 +244,8 @@ __all__ = [
     'SqlDatabaseCreateUpdateParameters',
     'SqlContainerResource',
     'SqlContainerCreateUpdateParameters',
+    'SqlStoredProcedureResource',
+    'SqlStoredProcedureCreateUpdateParameters',
     'MongoDBDatabaseResource',
     'MongoDBDatabaseCreateUpdateParameters',
     'MongoIndexKeys',
@@ -275,6 +285,7 @@ __all__ = [
     'MetricDefinitionPaged',
     'SqlDatabasePaged',
     'SqlContainerPaged',
+    'SqlStoredProcedurePaged',
     'MongoDBDatabasePaged',
     'MongoDBCollectionPaged',
     'TablePaged',
