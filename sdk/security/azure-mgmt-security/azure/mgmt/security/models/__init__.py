@@ -47,6 +47,14 @@ try:
     from .jit_network_access_policy_initiate_virtual_machine_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request_py3 import JitNetworkAccessPolicyInitiateRequest
     from .kind_py3 import Kind
+    from .app_whitelisting_issue_summary_py3 import AppWhitelistingIssueSummary
+    from .vm_recommendation_py3 import VmRecommendation
+    from .publisher_info_py3 import PublisherInfo
+    from .user_recommendation_py3 import UserRecommendation
+    from .path_recommendation_py3 import PathRecommendation
+    from .app_whitelisting_group_py3 import AppWhitelistingGroup
+    from .app_whitelisting_groups_py3 import AppWhitelistingGroups
+    from .app_whitelisting_put_group_data_py3 import AppWhitelistingPutGroupData
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .security_task_parameters_py3 import SecurityTaskParameters
@@ -70,6 +78,18 @@ try:
     from .recommendation_configuration_properties_py3 import RecommendationConfigurationProperties
     from .io_tsecurity_solution_model_py3 import IoTSecuritySolutionModel
     from .update_iot_security_solution_data_py3 import UpdateIotSecuritySolutionData
+    from .io_tseverity_metrics_py3 import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_properties_devices_metrics_item_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from .io_tsecurity_alerted_device_py3 import IoTSecurityAlertedDevice
+    from .io_tsecurity_alerted_devices_list_py3 import IoTSecurityAlertedDevicesList
+    from .io_tsecurity_device_alert_py3 import IoTSecurityDeviceAlert
+    from .io_tsecurity_device_alerts_list_py3 import IoTSecurityDeviceAlertsList
+    from .io_tsecurity_device_recommendation_py3 import IoTSecurityDeviceRecommendation
+    from .io_tsecurity_device_recommendations_list_py3 import IoTSecurityDeviceRecommendationsList
+    from .io_tsecurity_solution_analytics_model_py3 import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_solution_analytics_model_list_py3 import IoTSecuritySolutionAnalyticsModelList
+    from .io_tsecurity_aggregated_alert_py3 import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_recommendation_py3 import IoTSecurityAggregatedRecommendation
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
@@ -113,6 +133,14 @@ except (SyntaxError, ImportError):
     from .jit_network_access_policy_initiate_virtual_machine import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request import JitNetworkAccessPolicyInitiateRequest
     from .kind import Kind
+    from .app_whitelisting_issue_summary import AppWhitelistingIssueSummary
+    from .vm_recommendation import VmRecommendation
+    from .publisher_info import PublisherInfo
+    from .user_recommendation import UserRecommendation
+    from .path_recommendation import PathRecommendation
+    from .app_whitelisting_group import AppWhitelistingGroup
+    from .app_whitelisting_groups import AppWhitelistingGroups
+    from .app_whitelisting_put_group_data import AppWhitelistingPutGroupData
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .security_task_parameters import SecurityTaskParameters
@@ -136,6 +164,18 @@ except (SyntaxError, ImportError):
     from .recommendation_configuration_properties import RecommendationConfigurationProperties
     from .io_tsecurity_solution_model import IoTSecuritySolutionModel
     from .update_iot_security_solution_data import UpdateIotSecuritySolutionData
+    from .io_tseverity_metrics import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_properties_devices_metrics_item import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from .io_tsecurity_alerted_device import IoTSecurityAlertedDevice
+    from .io_tsecurity_alerted_devices_list import IoTSecurityAlertedDevicesList
+    from .io_tsecurity_device_alert import IoTSecurityDeviceAlert
+    from .io_tsecurity_device_alerts_list import IoTSecurityDeviceAlertsList
+    from .io_tsecurity_device_recommendation import IoTSecurityDeviceRecommendation
+    from .io_tsecurity_device_recommendations_list import IoTSecurityDeviceRecommendationsList
+    from .io_tsecurity_solution_analytics_model import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_solution_analytics_model_list import IoTSecuritySolutionAnalyticsModelList
+    from .io_tsecurity_aggregated_alert import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_recommendation import IoTSecurityAggregatedRecommendation
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
@@ -158,6 +198,8 @@ from .information_protection_policy_paged import InformationProtectionPolicyPage
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .io_tsecurity_solution_model_paged import IoTSecuritySolutionModelPaged
+from .io_tsecurity_aggregated_alert_paged import IoTSecurityAggregatedAlertPaged
+from .io_tsecurity_aggregated_recommendation_paged import IoTSecurityAggregatedRecommendationPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
@@ -222,6 +264,14 @@ __all__ = [
     'JitNetworkAccessPolicyInitiateVirtualMachine',
     'JitNetworkAccessPolicyInitiateRequest',
     'Kind',
+    'AppWhitelistingIssueSummary',
+    'VmRecommendation',
+    'PublisherInfo',
+    'UserRecommendation',
+    'PathRecommendation',
+    'AppWhitelistingGroup',
+    'AppWhitelistingGroups',
+    'AppWhitelistingPutGroupData',
     'OperationDisplay',
     'Operation',
     'SecurityTaskParameters',
@@ -245,6 +295,18 @@ __all__ = [
     'RecommendationConfigurationProperties',
     'IoTSecuritySolutionModel',
     'UpdateIotSecuritySolutionData',
+    'IoTSeverityMetrics',
+    'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',
+    'IoTSecurityAlertedDevice',
+    'IoTSecurityAlertedDevicesList',
+    'IoTSecurityDeviceAlert',
+    'IoTSecurityDeviceAlertsList',
+    'IoTSecurityDeviceRecommendation',
+    'IoTSecurityDeviceRecommendationsList',
+    'IoTSecuritySolutionAnalyticsModel',
+    'IoTSecuritySolutionAnalyticsModelList',
+    'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedRecommendation',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
@@ -267,6 +329,8 @@ __all__ = [
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'IoTSecuritySolutionModelPaged',
+    'IoTSecurityAggregatedAlertPaged',
+    'IoTSecurityAggregatedRecommendationPaged',
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',

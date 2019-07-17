@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PricingsOperations(object):
-    """PricingsOperations operations.
+class AdaptiveApplicationControlsOperations(object):
+    """AdaptiveApplicationControlsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2018-06-01".
+    :ivar api_version: API version for the operation. Constant value: "2015-06-01-preview".
     """
 
     models = models
@@ -33,24 +33,26 @@ class PricingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01"
+        self.api_version = "2015-06-01-preview"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+            self, include_path_recommendations=None, summary=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of application control VM/server groups for the
+        subscription.
 
+        :param include_path_recommendations: Include the policy rules
+        :type include_path_recommendations: bool
+        :param summary: Return output in a summarized form
+        :type summary: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PricingList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.PricingList or
+        :return: AppWhitelistingGroups or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.AppWhitelistingGroups or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -64,6 +66,10 @@ class PricingsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if include_path_recommendations is not None:
+            query_parameters['includePathRecommendations'] = self._serialize.query("include_path_recommendations", include_path_recommendations, 'bool')
+        if summary is not None:
+            query_parameters['summary'] = self._serialize.query("summary", summary, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -87,31 +93,28 @@ class PricingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PricingList', response)
+            deserialized = self._deserialize('AppWhitelistingGroups', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/applicationWhitelistings'}
 
     def get(
-            self, pricing_name, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+            self, group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an application control VM/server group.
 
-        :param pricing_name: name of the pricing configuration
-        :type pricing_name: str
+        :param group_name: Name of an application control VM/server group
+        :type group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Pricing or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Pricing or
+        :return: AppWhitelistingGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.AppWhitelistingGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -119,7 +122,8 @@ class PricingsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'pricingName': self._serialize.url("pricing_name", pricing_name, 'str')
+            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
+            'groupName': self._serialize.url("group_name", group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -149,47 +153,39 @@ class PricingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Pricing', response)
+            deserialized = self._deserialize('AppWhitelistingGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
 
-    def update(
-            self, pricing_name, pricing_tier, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+    def put(
+            self, group_name, body, custom_headers=None, raw=False, **operation_config):
+        """Update an application control VM/server group.
 
-        :param pricing_name: name of the pricing configuration
-        :type pricing_name: str
-        :param pricing_tier: The pricing tier value. Azure Security Center is
-         provided in two pricing tiers: free and standard, with the standard
-         tier available with a trial period. The standard tier offers advanced
-         security capabilities, while the free tier offers basic security
-         features. Possible values include: 'Free', 'Standard'
-        :type pricing_tier: str or ~azure.mgmt.security.models.PricingTier
+        :param group_name: Name of an application control VM/server group
+        :type group_name: str
+        :param body: The updated VM/server group data
+        :type body: ~azure.mgmt.security.models.AppWhitelistingPutGroupData
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Pricing or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Pricing or
+        :return: AppWhitelistingGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.AppWhitelistingGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        pricing = models.Pricing(pricing_tier=pricing_tier)
-
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.put.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'pricingName': self._serialize.url("pricing_name", pricing_name, 'str')
+            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
+            'groupName': self._serialize.url("group_name", group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -209,7 +205,7 @@ class PricingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(pricing, 'Pricing')
+        body_content = self._serialize.body(body, 'AppWhitelistingPutGroupData')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -223,11 +219,11 @@ class PricingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Pricing', response)
+            deserialized = self._deserialize('AppWhitelistingGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}'}
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}

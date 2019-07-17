@@ -17,6 +17,7 @@ from .allowed_connections_operations import AllowedConnectionsOperations
 from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
+from .adaptive_application_controls_operations import AdaptiveApplicationControlsOperations
 from .locations_operations import LocationsOperations
 from .operations import Operations
 from .tasks_operations import TasksOperations
@@ -30,6 +31,11 @@ from .workspace_settings_operations import WorkspaceSettingsOperations
 from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
 from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
 from .iot_security_solution_operations import IotSecuritySolutionOperations
+from .io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
+from .io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+from .io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+from .io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from .io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
@@ -44,6 +50,7 @@ __all__ = [
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
     'JitNetworkAccessPoliciesOperations',
+    'AdaptiveApplicationControlsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',
@@ -57,6 +64,11 @@ __all__ = [
     'IoTSecuritySolutionsOperations',
     'IoTSecuritySolutionsResourceGroupOperations',
     'IotSecuritySolutionOperations',
+    'IoTSecuritySolutionsAnalyticsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
