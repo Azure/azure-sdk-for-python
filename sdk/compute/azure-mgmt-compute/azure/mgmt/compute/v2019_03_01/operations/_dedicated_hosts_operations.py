@@ -104,7 +104,7 @@ class DedicatedHostsOperations(object):
         :type host_group_name: str
         :param host_name: The name of the dedicated host .
         :type host_name: str
-        :param parameters: Parameters supplied to the Create Dedicated Host .
+        :param parameters: Parameters supplied to the Create Dedicated Host.
         :type parameters: ~azure.mgmt.compute.v2019_03_01.models.DedicatedHost
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
