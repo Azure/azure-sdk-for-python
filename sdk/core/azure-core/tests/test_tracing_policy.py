@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from tracing_common import ContextHelper, MockExporter
-
+import time
 
 def test_distributed_tracing_policy_solo():
     """Test policy with no other policy and happy path"""
@@ -35,7 +35,7 @@ def test_distributed_tracing_policy_solo():
         assert request.headers.get("traceparent") == header.get("traceparent")
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
-
+        time.sleep(0.001)
         policy.on_request(pipeline_request)
         policy.on_exception(pipeline_request)
 
