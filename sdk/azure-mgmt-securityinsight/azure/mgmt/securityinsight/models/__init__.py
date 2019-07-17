@@ -39,6 +39,11 @@ try:
     from .mcas_data_connector_py3 import MCASDataConnector
     from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
+    from .entity_py3 import Entity
+    from .entity_kind1_py3 import EntityKind1
+    from .account_entity_py3 import AccountEntity
+    from .host_entity_py3 import HostEntity
+    from .file_entity_py3 import FileEntity
     from .office_consent_py3 import OfficeConsent
     from .resource_py3 import Resource
     from .settings_py3 import Settings
@@ -51,12 +56,7 @@ try:
     from .cases_aggregation_by_status_properties_py3 import CasesAggregationByStatusProperties
     from .cases_aggregation_py3 import CasesAggregation
     from .entity_query_py3 import EntityQuery
-    from .entity_py3 import Entity
-    from .entity_kind1_py3 import EntityKind1
     from .entity_common_properties_py3 import EntityCommonProperties
-    from .account_entity_py3 import AccountEntity
-    from .host_entity_py3 import HostEntity
-    from .file_entity_py3 import FileEntity
     from .security_alert_py3 import SecurityAlert
     from .file_hash_py3 import FileHash
     from .malware_entity_py3 import MalwareEntity
@@ -107,6 +107,11 @@ except (SyntaxError, ImportError):
     from .mcas_data_connector import MCASDataConnector
     from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
+    from .entity import Entity
+    from .entity_kind1 import EntityKind1
+    from .account_entity import AccountEntity
+    from .host_entity import HostEntity
+    from .file_entity import FileEntity
     from .office_consent import OfficeConsent
     from .resource import Resource
     from .settings import Settings
@@ -119,12 +124,7 @@ except (SyntaxError, ImportError):
     from .cases_aggregation_by_status_properties import CasesAggregationByStatusProperties
     from .cases_aggregation import CasesAggregation
     from .entity_query import EntityQuery
-    from .entity import Entity
-    from .entity_kind1 import EntityKind1
     from .entity_common_properties import EntityCommonProperties
-    from .account_entity import AccountEntity
-    from .host_entity import HostEntity
-    from .file_entity import FileEntity
     from .security_alert import SecurityAlert
     from .file_hash import FileHash
     from .malware_entity import MalwareEntity
@@ -162,13 +162,13 @@ from .security_insights_enums import (
     CloseReason,
     DataConnectorKind,
     DataTypeState,
+    EntityKind,
+    OSFamily,
     SettingKind,
     StatusInMcas,
     LicenseStatus,
     AggregationsKind,
     EntityType,
-    EntityKind,
-    OSFamily,
     ConfidenceReason,
     ConfidenceScoreStatus,
     KillChainIntent,
@@ -211,6 +211,11 @@ __all__ = [
     'MCASDataConnector',
     'DataConnectorWithAlertsProperties',
     'DataConnectorDataTypeCommon',
+    'Entity',
+    'EntityKind1',
+    'AccountEntity',
+    'HostEntity',
+    'FileEntity',
     'OfficeConsent',
     'Resource',
     'Settings',
@@ -223,12 +228,7 @@ __all__ = [
     'CasesAggregationByStatusProperties',
     'CasesAggregation',
     'EntityQuery',
-    'Entity',
-    'EntityKind1',
     'EntityCommonProperties',
-    'AccountEntity',
-    'HostEntity',
-    'FileEntity',
     'SecurityAlert',
     'FileHash',
     'MalwareEntity',
@@ -265,13 +265,13 @@ __all__ = [
     'CloseReason',
     'DataConnectorKind',
     'DataTypeState',
+    'EntityKind',
+    'OSFamily',
     'SettingKind',
     'StatusInMcas',
     'LicenseStatus',
     'AggregationsKind',
     'EntityType',
-    'EntityKind',
-    'OSFamily',
     'ConfidenceReason',
     'ConfidenceScoreStatus',
     'KillChainIntent',

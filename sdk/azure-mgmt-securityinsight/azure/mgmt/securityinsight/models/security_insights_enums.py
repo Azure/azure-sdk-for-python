@@ -73,6 +73,34 @@ class DataTypeState(str, Enum):
     disabled = "Disabled"
 
 
+class EntityKind(str, Enum):
+
+    account = "Account"  #: Entity represents account in the system.
+    host = "Host"  #: Entity represents host in the system.
+    file = "File"  #: Entity represents file in the system.
+    azure_resource = "AzureResource"  #: Entity represents azure resource in the system.
+    cloud_application = "CloudApplication"  #: Entity represents cloud application in the system.
+    dns_resolution = "DnsResolution"  #: Entity represents dns resolution in the system.
+    file_hash = "FileHash"  #: Entity represents file hash in the system.
+    ip = "Ip"  #: Entity represents ip in the system.
+    malware = "Malware"  #: Entity represents malware in the system.
+    process = "Process"  #: Entity represents process in the system.
+    registry_key = "RegistryKey"  #: Entity represents registry key in the system.
+    registry_value = "RegistryValue"  #: Entity represents registry value in the system.
+    security_group = "SecurityGroup"  #: Entity represents security group in the system.
+    url = "Url"  #: Entity represents url in the system.
+    security_alert = "SecurityAlert"  #: Entity represents security alert in the system.
+    bookmark = "Bookmark"  #: Entity represents bookmark in the system.
+
+
+class OSFamily(str, Enum):
+
+    linux = "Linux"  #: Host with Linux operating system.
+    windows = "Windows"  #: Host with Windows operating system.
+    android = "Android"  #: Host with Android operating system.
+    ios = "IOS"  #: Host with IOS operating system.
+
+
 class SettingKind(str, Enum):
 
     ueba_settings = "UebaSettings"
@@ -114,34 +142,6 @@ class EntityType(str, Enum):
     url = "URL"  #: Entity represents url in the system.
     security_alert = "SecurityAlert"  #: Entity represents security alert in the system.
     hunting_bookmark = "HuntingBookmark"  #: Entity represents HuntingBookmark in the system.
-
-
-class EntityKind(str, Enum):
-
-    account = "Account"  #: Entity represents account in the system.
-    host = "Host"  #: Entity represents host in the system.
-    file = "File"  #: Entity represents file in the system.
-    azure_resource = "AzureResource"  #: Entity represents azure resource in the system.
-    cloud_application = "CloudApplication"  #: Entity represents cloud application in the system.
-    dns_resolution = "DnsResolution"  #: Entity represents dns resolution in the system.
-    file_hash = "FileHash"  #: Entity represents file hash in the system.
-    ip = "Ip"  #: Entity represents ip in the system.
-    malware = "Malware"  #: Entity represents malware in the system.
-    process = "Process"  #: Entity represents process in the system.
-    registry_key = "RegistryKey"  #: Entity represents registry key in the system.
-    registry_value = "RegistryValue"  #: Entity represents registry value in the system.
-    security_group = "SecurityGroup"  #: Entity represents security group in the system.
-    url = "Url"  #: Entity represents url in the system.
-    security_alert = "SecurityAlert"  #: Entity represents security alert in the system.
-    bookmark = "Bookmark"  #: Entity represents bookmark in the system.
-
-
-class OSFamily(str, Enum):
-
-    linux = "Linux"  #: Host with Linux operating system.
-    windows = "Windows"  #: Host with Windows operating system.
-    android = "Android"  #: Host with Android operating system.
-    ios = "IOS"  #: Host with IOS operating system.
 
 
 class ConfidenceReason(str, Enum):
