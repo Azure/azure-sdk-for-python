@@ -23,7 +23,7 @@ from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
-from .._shared.uploads_async import upload_data_chunks, IterStreamer
+from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
 from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.shared_access_signature import FileSharedAccessSignature
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
@@ -65,9 +65,10 @@ async def _upload_file_helper(
             return response
 
         return await upload_data_chunks(
-            file_service=client,
-            file_size=size,
-            block_size=file_settings.max_range_size,
+            service=client,
+            uploader_class=FileChunkUploader,
+            total_size=size,
+            chunk_size=file_settings.max_range_size,
             stream=stream,
             max_connections=max_connections,
             validate_content=validate_content,
@@ -331,7 +332,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         try:
             copy_id = copy_id.copy.id
         except AttributeError:
-            pass
+            try:
+                copy_id = copy_id['copy_id']
+            except TypeError:
+                pass
         try:
             await self._client.file.abort_copy(copy_id=copy_id, timeout=None, **kwargs)
         except StorageErrorException as error:
@@ -379,21 +383,23 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None is length is set.")
 
-        return StorageStreamDownloader(
+        downloader = StorageStreamDownloader(
             service=self._client.file,
             config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,
             encryption_options=None,
+            cls=deserialize_file_stream,
+            timeout=timeout,
+            **kwargs)
+        await downloader.setup(
             extra_properties={
                 'share': self.share_name,
                 'name': self.file_name,
                 'path': '/'.join(self.file_path),
-            },
-            cls=deserialize_file_stream,
-            timeout=timeout,
-            **kwargs)
+            })
+        return downloader
 
     async def delete_file(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
@@ -436,7 +442,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
         file_props.name = self.file_name
-        file_props.share_name = self.share_name
+        file_props.share = self.share_name
+        file_props.snapshot = self.snapshot
+        file_props.path = '/'.join(self.file_path)
         return file_props # type: ignore
 
     async def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore

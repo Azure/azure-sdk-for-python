@@ -7,6 +7,7 @@
 import sys
 import asyncio
 from io import BytesIO
+from itertools import islice
 
 from azure.core.exceptions import HttpResponseError
 
@@ -152,7 +153,6 @@ class StorageStreamDownloader(object):
             length=None,
             validate_content=None,
             encryption_options=None,
-            extra_properties=None,
             **kwargs):
         self.service = service
         self.config = config
@@ -180,7 +180,22 @@ class StorageStreamDownloader(object):
 
         self.download_size = None
         self.file_size = None
-        self.response = self._initial_request()
+        self.response = None
+        self.properties = None
+
+    def __len__(self):
+        return self.download_size
+
+    def __iter__(self):
+        raise TypeError("Async stream must be iterated asynchronously.")
+
+    def __aiter__(self):
+        return self._async_data_iterator()
+
+    async def setup(self, extra_properties=None):
+        if self.response:
+            raise ValueError("Download stream already initialized.")
+        self.response = await self._initial_request()
         self.properties = self.response.properties
 
         # Set the content length to the download size instead of the size of
@@ -200,20 +215,11 @@ class StorageStreamDownloader(object):
         # TODO: Set to the stored MD5 when the service returns this
         self.properties.content_md5 = None
 
-    def __len__(self):
-        return self.download_size
-
-    def __iter__(self):
-        raise TypeError("Async stream must be iterated asynchronously.")
-
-    def __aiter__(self):
-        return self._async_data_iterator()
-
     async def _async_data_iterator(self):
         if self.download_size == 0:
             content = b""
         else:
-            content = process_content(
+            content = await process_content(
                 self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
 
         if content is not None:
@@ -242,7 +248,7 @@ class StorageStreamDownloader(object):
         for chunk in downloader.get_chunk_offsets():
             yield await downloader.yield_chunk(chunk)
 
-    def _initial_request(self):
+    async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
             self.initial_range[0],
             self.initial_range[1],
@@ -251,7 +257,7 @@ class StorageStreamDownloader(object):
             check_content_md5=self.validate_content)
 
         try:
-            location_mode, response = self.service.download(
+            location_mode, response = await self.service.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -280,7 +286,7 @@ class StorageStreamDownloader(object):
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = self.service.download(
+                    _, response = await self.service.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -303,7 +309,6 @@ class StorageStreamDownloader(object):
                     self.request_options['modified_access_conditions'].if_match = response.properties.etag
         else:
             self._download_complete = True
-
         return response
 
     async def content_as_bytes(self, max_connections=1):
@@ -355,7 +360,7 @@ class StorageStreamDownloader(object):
         if self.download_size == 0:
             content = b""
         else:
-            content = process_content(
+            content = await process_content(
                 self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
 
         # Write the content to the user stream

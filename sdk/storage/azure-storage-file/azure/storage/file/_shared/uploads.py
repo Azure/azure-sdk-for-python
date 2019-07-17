@@ -8,7 +8,7 @@
 from concurrent import futures
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from threading import Lock
-
+from itertools import islice
 from math import ceil
 
 import six

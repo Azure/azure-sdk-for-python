@@ -617,7 +617,9 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
         file_props.name = self.file_name
-        file_props.share_name = self.share_name
+        file_props.share = self.share_name
+        file_props.snapshot = self.snapshot
+        file_props.path = '/'.join(self.file_path)
         return file_props # type: ignore
 
     def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore

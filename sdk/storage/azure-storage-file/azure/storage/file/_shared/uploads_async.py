@@ -8,6 +8,7 @@
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 import asyncio
 from asyncio import Lock
+from itertools import islice
 
 from math import ceil
 
@@ -39,8 +40,9 @@ async def _parallel_uploads(uploader, pending, running):
             running.add(asyncio.ensure_future(uploader.process_chunk(next_chunk)))
 
     # Wait for the remaining uploads to finish
-    done, _running = await asyncio.wait(running)
-    range_ids.extend([chunk.result() for chunk in done])
+    if running:
+        done, _running = await asyncio.wait(running)
+        range_ids.extend([chunk.result() for chunk in done])
     return range_ids
 
 
@@ -123,7 +125,7 @@ async def upload_substream_blocks(
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor, padder, **kwargs):
+    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor=None, padder=None, **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
