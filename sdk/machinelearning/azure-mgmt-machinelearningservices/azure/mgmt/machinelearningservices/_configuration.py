@@ -23,11 +23,14 @@ class AzureMachineLearningWorkspacesConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription identifier.
     :type subscription_id: str
+    :param expand_children: Specifies if detailed usages of child resources
+     are required.
+    :type expand_children: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, expand_children=None, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -46,3 +49,4 @@ class AzureMachineLearningWorkspacesConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.expand_children = expand_children
