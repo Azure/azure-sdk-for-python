@@ -89,7 +89,7 @@ class Configuration(object):
         self.transport = transport
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval = kwargs.get("lro_polling_interval", 30)
+        self.polling_interval = kwargs.get("polling_interval", 30)
 
 
 class ConnectionConfiguration(object):

@@ -172,8 +172,8 @@ class ODataV4Format(object):
     :param dict json_object: A Python dict representing a ODataV4 JSON
     :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
-    :ivar str target: The target of the particular error (for example, the name of the property in error).
-    :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar str target: The target of the particular error (for example, the name of the property in error). This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
     :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
     """
 
@@ -220,8 +220,8 @@ class ODataV4Error(HttpResponseError):
     :ivar dict odata_json: The parsed JSON body as attribute for convenience.
     :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
-    :ivar str target: The target of the particular error (for example, the name of the property in error).
-    :ivar list details: Array of JSON objects that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar str target: The target of the particular error (for example, the name of the property in error). This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
     :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
     """
 
