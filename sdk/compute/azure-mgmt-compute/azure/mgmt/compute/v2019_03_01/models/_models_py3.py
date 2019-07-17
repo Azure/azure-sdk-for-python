@@ -651,15 +651,16 @@ class DedicatedHost(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param platform_fault_domain: Fault domain of the host within a group.
-     Supported values 0,1,2.
+    :param platform_fault_domain: Fault domain of the dedicated host within a
+     dedicated host group.
     :type platform_fault_domain: int
-    :param auto_replace_on_failure: Whether the host should be replaced
-     automatically in case of a failure. The value is defaulted to true when
-     not provided.
+    :param auto_replace_on_failure: Specifies whether the dedicated host
+     should be replaced automatically in case of a failure. The value is
+     defaulted to 'true' when not provided.
     :type auto_replace_on_failure: bool
     :ivar host_id: A unique id generated and assigned to the dedicated host by
-     the platform.
+     the platform. <br><br> Does not change throughout the lifetime of the
+     host.
     :vartype host_id: str
     :ivar virtual_machines: A list of references to all virtual machines in
      the Dedicated Host.
@@ -672,7 +673,7 @@ class DedicatedHost(Resource):
      include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
     :type license_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
-    :ivar provisioning_time: The date when the host was first created.
+    :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: datetime
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
@@ -680,9 +681,9 @@ class DedicatedHost(Resource):
     :ivar instance_view: The dedicated host instance view.
     :vartype instance_view:
      ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostInstanceView
-    :param sku: Sku of the dedicated host for Hardware Generation and VM
-     family, The only name is required to be set. See DedicatedHostSkuTypes for
-     possible set of values.
+    :param sku: Required. SKU of the dedicated host for Hardware Generation
+     and VM family. Only name is required to be set. List Microsoft.Compute
+     SKUs for a list of possible values.
     :type sku: ~azure.mgmt.compute.v2019_03_01.models.Sku
     """
 
@@ -691,11 +692,13 @@ class DedicatedHost(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
+        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -715,7 +718,7 @@ class DedicatedHost(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str, tags=None, platform_fault_domain: int=None, auto_replace_on_failure: bool=None, license_type=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, platform_fault_domain: int=None, auto_replace_on_failure: bool=None, license_type=None, **kwargs) -> None:
         super(DedicatedHost, self).__init__(location=location, tags=tags, **kwargs)
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
@@ -754,8 +757,6 @@ class DedicatedHostAllocatableVM(Model):
 class DedicatedHostAvailableCapacity(Model):
     """Dedicated host unutilized capacity.
 
-    :param available_vcpus: The total number of CPUs.
-    :type available_vcpus: float
     :param allocatable_vms: The unutilized capacity of the dedicated host
      represented in terms of each VM size that is allowed to be deployed to the
      dedicated host.
@@ -764,41 +765,19 @@ class DedicatedHostAvailableCapacity(Model):
     """
 
     _attribute_map = {
-        'available_vcpus': {'key': 'availableVCpus', 'type': 'float'},
         'allocatable_vms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
     }
 
-    def __init__(self, *, available_vcpus: float=None, allocatable_vms=None, **kwargs) -> None:
+    def __init__(self, *, allocatable_vms=None, **kwargs) -> None:
         super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
-        self.available_vcpus = available_vcpus
         self.allocatable_vms = allocatable_vms
-
-
-class DedicatedHostCapacity(Model):
-    """Dedicated host total capacity.
-
-    :param total_cores: The total number of cores.
-    :type total_cores: float
-    :param total_vcpus: The total number of CPUs.
-    :type total_vcpus: float
-    """
-
-    _attribute_map = {
-        'total_cores': {'key': 'totalCores', 'type': 'float'},
-        'total_vcpus': {'key': 'totalVCpus', 'type': 'float'},
-    }
-
-    def __init__(self, *, total_cores: float=None, total_vcpus: float=None, **kwargs) -> None:
-        super(DedicatedHostCapacity, self).__init__(**kwargs)
-        self.total_cores = total_cores
-        self.total_vcpus = total_vcpus
 
 
 class DedicatedHostGroup(Resource):
     """Specifies information about the dedicated host group that the dedicated
-    hosts should be assigned to. <br><br> Currently, a Dedicated host can only
-    be added to Dedicated Host Group at creation time. An existing Dedicated
-    Host cannot be added to a dedicated host group.
+    hosts should be assigned to. <br><br> Currently, a dedicated host can only
+    be added to a dedicated host group at creation time. An existing dedicated
+    host cannot be added to another dedicated host group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -815,8 +794,8 @@ class DedicatedHostGroup(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param platform_fault_domain_count: Number of fault domains that the host
-     group can span. Supported values 1,2,3.
+    :param platform_fault_domain_count: Required. Number of fault domains that
+     the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
@@ -824,8 +803,8 @@ class DedicatedHostGroup(Resource):
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
     :param zones: Availability Zone to use for this host group � only single
      zone is supported. The zone can be assigned only during creation. If not
-     provided, the group supports all zones in the region. If provided, enforce
-     each host in the group is in the same zone.
+     provided, the group supports all zones in the region. If provided,
+     enforces each host in the group to be in the same zone.
     :type zones: list[str]
     """
 
@@ -834,6 +813,7 @@ class DedicatedHostGroup(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
@@ -848,7 +828,7 @@ class DedicatedHostGroup(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, platform_fault_domain_count: int=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, platform_fault_domain_count: int, tags=None, zones=None, **kwargs) -> None:
         super(DedicatedHostGroup, self).__init__(location=location, tags=tags, **kwargs)
         self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
@@ -862,10 +842,12 @@ class DedicatedHostGroupUpdate(UpdateResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param platform_fault_domain_count: Number of fault domains that the host
-     group can span. Supported values 1,2,3.
+    :param platform_fault_domain_count: Required. Number of fault domains that
+     the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
@@ -873,12 +855,13 @@ class DedicatedHostGroupUpdate(UpdateResource):
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
     :param zones: Availability Zone to use for this host group � only single
      zone is supported. The zone can be assigned only during creation. If not
-     provided, the group supports all zones in the region. If provided, enforce
-     each host in the group is in the same zone.
+     provided, the group supports all zones in the region. If provided,
+     enforces each host in the group to be in the same zone.
     :type zones: list[str]
     """
 
     _validation = {
+        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
@@ -889,7 +872,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, platform_fault_domain_count: int=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, platform_fault_domain_count: int, tags=None, zones=None, **kwargs) -> None:
         super(DedicatedHostGroupUpdate, self).__init__(tags=tags, **kwargs)
         self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
@@ -902,12 +885,9 @@ class DedicatedHostInstanceView(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar asset_id: Specifies the unique of the dedicated physical machine on
-     which the dedicated host resides.
+    :ivar asset_id: Specifies the unique id of the dedicated physical machine
+     on which the dedicated host resides.
     :vartype asset_id: str
-    :param capacity: The total capacity of the dedicated host.
-    :type capacity:
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostCapacity
     :param available_capacity: Unutilized capacity of the dedicated host.
     :type available_capacity:
      ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostAvailableCapacity
@@ -922,15 +902,13 @@ class DedicatedHostInstanceView(Model):
 
     _attribute_map = {
         'asset_id': {'key': 'assetId', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'DedicatedHostCapacity'},
         'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, *, capacity=None, available_capacity=None, statuses=None, **kwargs) -> None:
+    def __init__(self, *, available_capacity=None, statuses=None, **kwargs) -> None:
         super(DedicatedHostInstanceView, self).__init__(**kwargs)
         self.asset_id = None
-        self.capacity = capacity
         self.available_capacity = available_capacity
         self.statuses = statuses
 
@@ -944,15 +922,16 @@ class DedicatedHostUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param platform_fault_domain: Fault domain of the host within a group.
-     Supported values 0,1,2.
+    :param platform_fault_domain: Fault domain of the dedicated host within a
+     dedicated host group.
     :type platform_fault_domain: int
-    :param auto_replace_on_failure: Whether the host should be replaced
-     automatically in case of a failure. The value is defaulted to true when
-     not provided.
+    :param auto_replace_on_failure: Specifies whether the dedicated host
+     should be replaced automatically in case of a failure. The value is
+     defaulted to 'true' when not provided.
     :type auto_replace_on_failure: bool
     :ivar host_id: A unique id generated and assigned to the dedicated host by
-     the platform.
+     the platform. <br><br> Does not change throughout the lifetime of the
+     host.
     :vartype host_id: str
     :ivar virtual_machines: A list of references to all virtual machines in
      the Dedicated Host.
@@ -965,7 +944,7 @@ class DedicatedHostUpdate(UpdateResource):
      include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
     :type license_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
-    :ivar provisioning_time: The date when the host was first created.
+    :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: datetime
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
@@ -976,6 +955,7 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
+        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
