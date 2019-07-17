@@ -93,6 +93,11 @@ def test_distributed_tracing_policy_with_user_agent():
             assert request.headers.get("traceparent") == header.get("traceparent")
 
             policy.on_response(pipeline_request, pipeline_response)
+            
+            time.sleep(0.001)
+            policy.on_request(pipeline_request)
+            policy.on_exception(pipeline_request)
+
             user_agent.on_response(pipeline_request, pipeline_response)
 
         trace.finish()
@@ -106,3 +111,12 @@ def test_distributed_tracing_policy_with_user_agent():
         assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
         assert network_span.span_data.attributes.get("http.status_code") == 202
+
+        network_span = parent.children[1]
+        assert network_span.span_data.name == "/"
+        assert network_span.span_data.attributes.get("http.method") == "GET"
+        assert network_span.span_data.attributes.get("component") == "http"
+        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
+        assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
+        assert network_span.span_data.attributes.get("x-ms-request-id") is None
+        assert network_span.span_data.attributes.get("http.status_code") == 504
