@@ -14,7 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ._internal import ImdsCredential, MsiCredential
+from ._managed_identity import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import ChainedTokenCredential
