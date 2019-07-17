@@ -26,15 +26,34 @@
 
 import logging
 
-from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import (
+        List,
+        Any,
+        Dict,
+        Union,
+        IO,
+        Tuple,
+        Optional,
+        Callable,
+        Iterator,
+        cast,
+    )  # pylint: disable=unused-import
 
 from .pipeline import AsyncPipeline
 from .pipeline.transport.base import PipelineClientBase
 from .pipeline.policies import ContentDecodePolicy
 from .pipeline.transport import AioHttpTransport
+from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
 
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class AsyncPipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -62,16 +81,17 @@ class AsyncPipelineClient(PipelineClientBase):
             :dedent: 4
             :caption: Builds the async pipeline client.
     """
+
     def __init__(self, base_url, config, **kwargs):
         super(AsyncPipelineClient, self).__init__(base_url)
         if config is None:
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
-        if kwargs.get('pipeline'):
-            self._pipeline = kwargs['pipeline']
+        if kwargs.get("pipeline"):
+            self._pipeline = kwargs["pipeline"]
         else:
-            transport = kwargs.get('transport')
+            transport = kwargs.get("transport")
             if not transport:
                 transport = AioHttpTransport(config, **kwargs)
             self._pipeline = self._build_pipeline(config, transport)
@@ -86,7 +106,7 @@ class AsyncPipelineClient(PipelineClientBase):
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, transport): # pylint: disable=no-self-use
+    def _build_pipeline(self, config, transport):  # pylint: disable=no-self-use
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -96,5 +116,6 @@ class AsyncPipelineClient(PipelineClientBase):
             config.retry_policy,
             config.custom_hook_policy,
             config.logging_policy,
+            DistributedTracingPolicy()
         ]
         return AsyncPipeline(transport, policies)
