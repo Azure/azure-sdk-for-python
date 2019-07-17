@@ -40,6 +40,7 @@ if TYPE_CHECKING:
 class MockClient:
     @distributed_trace
     def __init__(self, policies=None, assert_current_span=False):
+        time.sleep(0.001)
         self.request = HttpRequest("GET", "https://bing.com")
         if policies is None:
             policies = []
@@ -72,7 +73,7 @@ class MockClient:
         time.sleep(0.001)
         return 5
 
-class TestCommon(unittest.TestCase):
+class TestCommon(object):
     def test_set_span_context(self):
         with ContextHelper(environ={"AZURE_SDK_TRACING_IMPLEMENTATION": "opencensus"}):
             wrapper = settings.tracing_implementation()
@@ -119,7 +120,7 @@ class TestCommon(unittest.TestCase):
         assert common.should_use_trace(None) == False
 
 
-class TestDecorator(unittest.TestCase):
+class TestDecorator(object):
     def test_with_nothing_imported(self):
         with ContextHelper():
             opencensus = sys.modules["opencensus"]
@@ -152,8 +153,9 @@ class TestDecorator(unittest.TestCase):
             assert parent.children[1].span_data.name == "MockClient.get_foo"
             assert not parent.children[1].children
 
-    def for_test_different_settings(self):
-        with ContextHelper():
+    @pytest.mark.parametrize("value", ["opencensus", None])
+    def test_span_with_opencensus_complicated(self, value):
+        with ContextHelper(tracer_to_use=value) as ctx:
             exporter = MockExporter()
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             with trace.start_span(name="OverAll") as parent:
@@ -178,13 +180,6 @@ class TestDecorator(unittest.TestCase):
             assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
             children = parent.children[1].children
             assert len(children) == 2
-
-    def test_span_with_opencensus_complicated(self):
-        self.for_test_different_settings()
-
-    def test_span_with_opencensus_passed_in_complicated(self):
-        with ContextHelper(tracer_to_use="opencensus"):
-            self.for_test_different_settings()
 
     def test_should_only_propagate(self):
         with ContextHelper(should_only_propagate=True):

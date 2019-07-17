@@ -18,7 +18,6 @@ from opencensus.trace import tracer as tracer_module
 from opencensus.trace.span_data import SpanData
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
-from opencensus.common.utils import timestamp_to_microseconds
 
 try:
     from unittest import mock
@@ -85,6 +84,5 @@ class MockExporter(Exporter):
         for node in self._all_nodes:
             if node.span_data.span_id in parent_dict:
                 node.children = sorted(
-                    parent_dict[node.span_data.span_id], key=lambda x: timestamp_to_microseconds(x.span_data.start_time)
+                    parent_dict[node.span_data.span_id], key=lambda x: x.span_data.start_time
                 )
-

@@ -28,6 +28,7 @@ import time
 class MockClient:
     @distributed_trace
     def __init__(self, policies=None, assert_current_span=False):
+        time.sleep(0.001)
         self.request = HttpRequest("GET", "https://bing.com")
         if policies is None:
             policies = []
@@ -99,9 +100,10 @@ async def test_with_opencencus_used():
         assert not parent.children[1].children
 
 
+@pytest.mark.parametrize("value", [None, "opencensus"])
 @pytest.mark.asyncio
-async def for_test_different_settings():
-    with ContextHelper():
+async def test_span_with_opencensus_complicated(value):
+    with ContextHelper(tracer_to_use=value):
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.start_span(name="OverAll") as parent:
@@ -126,17 +128,6 @@ async def for_test_different_settings():
         assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
         children = parent.children[1].children
         assert len(children) == 2
-
-
-@pytest.mark.asyncio
-async def test_span_with_opencensus_complicated():
-    await for_test_different_settings()
-
-
-@pytest.mark.asyncio
-async def test_span_with_opencensus_passed_in_complicated():
-    with ContextHelper(tracer_to_use="opencensus"):
-        await for_test_different_settings()
 
 
 @pytest.mark.asyncio

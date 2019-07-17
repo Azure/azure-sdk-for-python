@@ -33,7 +33,7 @@ class OpenCensusSpan(object):
         """
         if not span:
             tracer = self.get_current_tracer()
-            span = tracer.span(name=name)
+            span = tracer.span(name=name) # type: Span
         self._span_instance = span
 
     @property
