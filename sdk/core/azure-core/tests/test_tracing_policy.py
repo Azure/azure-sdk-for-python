@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from tracing_common import ContextHelper, MockExporter
-
+import time
 
 def test_distributed_tracing_policy_solo():
     """Test policy with no other policy and happy path"""
@@ -20,7 +20,7 @@ def test_distributed_tracing_policy_solo():
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/")
+        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
@@ -35,36 +35,8 @@ def test_distributed_tracing_policy_solo():
         assert request.headers.get("traceparent") == header.get("traceparent")
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
-
-        trace.finish()
-        exporter.build_tree()
-        parent = exporter.root
-        network_span = parent.children[0]
-        assert network_span.span_data.name == "/"
-        assert network_span.span_data.attributes.get("http.method") == "GET"
-        assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
-        assert network_span.span_data.attributes.get("http.user_agent") is None
-        assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
-        assert network_span.span_data.attributes.get("http.status_code") == 202
-
-
-def test_distributed_tracing_policy_exception():
-    """Test Policy on when an exception happens."""
-    with ContextHelper():
-        exporter = MockExporter()
-        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-        policy = DistributedTracingPolicy()
-
-        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
-
-        pipeline_request = PipelineRequest(request, PipelineContext(None))
+        time.sleep(0.001)
         policy.on_request(pipeline_request)
-
-        ctx = trace.span_context
-        header = trace.propagator.to_headers(ctx)
-        assert request.headers.get("traceparent") == header.get("traceparent")
-
         policy.on_exception(pipeline_request)
 
         trace.finish()
@@ -76,11 +48,20 @@ def test_distributed_tracing_policy_exception():
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
         assert network_span.span_data.attributes.get("http.user_agent") is None
-        assert network_span.span_data.attributes.get("x-ms-request-id") is None
+        assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
+        assert network_span.span_data.attributes.get("http.status_code") == 202
+
+        network_span = parent.children[1]
+        assert network_span.span_data.name == "/temp"
+        assert network_span.span_data.attributes.get("http.method") == "GET"
+        assert network_span.span_data.attributes.get("component") == "http"
+        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+        assert network_span.span_data.attributes.get("http.user_agent") is None
+        assert network_span.span_data.attributes.get("x-ms-request-id") == None
         assert network_span.span_data.attributes.get("http.status_code") == 504
 
 
-def test_distributed_tracing_policy_with_usergent():
+def test_distributed_tracing_policy_with_user_agent():
     """Test policy working with user agent."""
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()

@@ -107,7 +107,7 @@ class OpenCensusSpan(object):
         :param response: The response received by the server. Is None if no response received.
         :type response: HttpResponse
         """
-        self._span_instance.span_id = SpanKind.CLIENT
+        self._span_instance.span_kind = SpanKind.CLIENT
         self.span_instance.add_attribute(self._span_component, "http")
         self.span_instance.add_attribute(self._http_method, request.method)
         self.span_instance.add_attribute(self._http_url, request.url)
