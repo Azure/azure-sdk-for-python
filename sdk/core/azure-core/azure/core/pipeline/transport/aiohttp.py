@@ -148,8 +148,21 @@ class AioHttpTransport(AsyncHttpTransport):
         **Keyword argument:**
 
         *stream (bool)* - Defaults to False.
+        *proxies* - dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        *proxy* - will define the proxy to use all the time
         """
         await self.open()
+
+        proxies = config.pop('proxies', None)
+        if proxies and 'proxy' not in config:
+            # aiohttp needs a single proxy, so iterating until we found the right protocol
+
+            # Sort by longest string first, so "http" is not used for "https" ;-)
+            for protocol in sorted(proxies.keys(), reverse=True):
+                if request.url.startswith(protocol):
+                    config['proxy'] = proxies[protocol]
+                    break
+
         error = None
         response = None
         config['ssl'] = self._build_ssl_config(**config)

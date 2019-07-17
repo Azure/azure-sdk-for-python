@@ -404,3 +404,9 @@ class ProxyPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        ctxt = request.context.options
+        if self.proxies and "proxies" not in ctxt:
+            ctxt["proxies"] = self.proxies
