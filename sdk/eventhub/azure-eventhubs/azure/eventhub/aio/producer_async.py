@@ -13,6 +13,8 @@ from uamqp import SendClientAsync
 from azure.eventhub.common import EventData, _BatchSendEventData
 from azure.eventhub.error import EventHubError, ConnectError, \
     AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
+from .error_async import _handle_exception
+from ..producer import _error, _set_partition_key
 
 log = logging.getLogger(__name__)
 
@@ -68,16 +70,7 @@ class EventHubProducer(object):
         if partition:
             self.target += "/Partitions/" + partition
             self.name += "-partition{}".format(partition)
-        self._handler = SendClientAsync(
-            self.target,
-            auth=self.client.get_auth(),
-            debug=self.client.config.network_tracing,
-            msg_timeout=self.timeout,
-            error_policy=self.retry_policy,
-            keep_alive_interval=self.keep_alive,
-            client_name=self.name,
-            properties=self.client._create_properties(self.client.config.user_agent),  # pylint: disable=protected-access
-            loop=self.loop)
+        self._handler = None
         self._outcome = None
         self._condition = None
 
@@ -87,6 +80,24 @@ class EventHubProducer(object):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close(exc_val)
 
+    def _create_handler(self):
+        self._handler = SendClientAsync(
+            self.target,
+            auth=self.client.get_auth(),
+            debug=self.client.config.network_tracing,
+            msg_timeout=self.timeout,
+            error_policy=self.retry_policy,
+            keep_alive_interval=self.keep_alive,
+            client_name=self.name,
+            properties=self.client._create_properties(
+                self.client.config.user_agent),  # pylint: disable=protected-access
+            loop=self.loop)
+
+    async def _redirect(self, redirect):
+        self.redirected = redirect
+        self.running = False
+        await self._close_connection()
+
     async def _open(self):
         """
         Open the EventHubProducer using the supplied connection.
@@ -94,188 +105,49 @@ class EventHubProducer(object):
         context will be used to create a new handler before opening it.
 
         """
-        if self.redirected:
-            self.target = self.redirected.address
-            self._handler = SendClientAsync(
-                self.target,
-                auth=self.client.get_auth(),
-                debug=self.client.config.network_tracing,
-                msg_timeout=self.timeout,
-                error_policy=self.retry_policy,
-                keep_alive_interval=self.keep_alive,
-                client_name=self.name,
-                properties=self.client._create_properties(self.client.config.user_agent),  # pylint: disable=protected-access
-                loop=self.loop)
         if not self.running:
-            await self._connect()
-            self.running = True
-
-    async def _connect(self):
-        connected = await self._build_connection()
-        if not connected:
-            await asyncio.sleep(self.reconnect_backoff)
-            while not await self._build_connection(is_reconnect=True):
-                await asyncio.sleep(self.reconnect_backoff)
-
-    async def _build_connection(self, is_reconnect=False):
-        """
-
-        :param is_reconnect: True - trying to reconnect after fail to connect or a connection is lost.
-                             False - the 1st time to connect
-        :return: True - connected.  False - not connected
-        """
-        # pylint: disable=protected-access
-        if is_reconnect:
-            await self._handler.close_async()
-            self._handler = SendClientAsync(
-                self.target,
-                auth=self.client.get_auth(),
-                debug=self.client.config.network_tracing,
-                msg_timeout=self.timeout,
-                error_policy=self.retry_policy,
-                keep_alive_interval=self.keep_alive,
-                client_name=self.name,
-                properties=self.client._create_properties(self.client.config.user_agent),
-                loop=self.loop)
-        try:
-            await self._handler.open_async()
+            if self.redirected:
+                self.target = self.redirected.address
+            self._create_handler()
+            await self._handler.open_async(connection=await self.client._conn_manager.get_connection(
+                self.client.address.hostname,
+                self.client.get_auth()
+            ))
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
-            return True
-        except errors.AuthenticationException as shutdown:
-            if is_reconnect:
-                log.info("EventHubProducer couldn't authenticate. Shutting down. (%r)", shutdown)
-                error = AuthenticationError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubProducer couldn't authenticate. Attempting reconnect.")
-                return False
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
-                log.info("EventHubProducer detached. Attempting reconnect.")
-                return False
-            else:
-                log.info("EventHubProducer detached. Shutting down.")
-                error = ConnectError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
-        except errors.MessageHandlerError as shutdown:
-            if is_reconnect:
-                log.info("EventHubProducer detached. Shutting down.")
-                error = ConnectError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubProducer detached. Attempting reconnect.")
-                return False
-        except errors.AMQPConnectionError as shutdown:
-            if is_reconnect:
-                log.info("EventHubProducer connection error (%r). Shutting down.", shutdown)
-                error = AuthenticationError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubProducer couldn't authenticate. Attempting reconnect.")
-                return False
-        except compat.TimeoutException as shutdown:
-            if is_reconnect:
-                log.info("EventHubProducer authentication timed out. Shutting down.")
-                error = AuthenticationError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubProducer authentication timed out. Attempting reconnect.")
-                return False
-        except Exception as e:
-            log.info("Unexpected error occurred when building connection (%r). Shutting down.", e)
-            error = EventHubError("Unexpected error occurred when building connection", e)
-            await self.close(exception=error)
-            raise error
+            self.running = True
 
-    async def _reconnect(self):
-        return await self._build_connection(is_reconnect=True)
+    async def _close_handler(self):
+        await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
+        self.running = False
+
+    async def _close_connection(self):
+        await self._close_handler()
+        await self.client._conn_manager.close_connection()  # close the shared connection.
+
+    async def _handle_exception(self, exception, retry_count, max_retries):
+        await _handle_exception(exception, retry_count, max_retries, self, log)
 
     async def _send_event_data(self):
-        await self._open()
         max_retries = self.client.config.max_retries
-        connecting_count = 0
+        retry_count = 0
         while True:
-            connecting_count += 1
             try:
                 if self.unsent_events:
+                    await self._open()
                     self._handler.queue_message(*self.unsent_events)
                     await self._handler.wait_async()
                     self.unsent_events = self._handler.pending_messages
                 if self._outcome != constants.MessageSendResult.Ok:
-                    EventHubProducer._error(self._outcome, self._condition)
+                    _error(self._outcome, self._condition)
                 return
-            except (errors.MessageAccepted,
-                    errors.MessageAlreadySettled,
-                    errors.MessageModified,
-                    errors.MessageRejected,
-                    errors.MessageReleased,
-                    errors.MessageContentTooLarge) as msg_error:
-                raise EventDataError(str(msg_error), msg_error)
-            except errors.MessageException as failed:
-                log.error("Send event data error (%r)", failed)
-                error = EventDataSendError(str(failed), failed)
-                await self.close(exception=error)
-                raise error
-            except errors.AuthenticationException as auth_error:
-                if connecting_count < max_retries:
-                    log.info("EventHubProducer disconnected due to token error. Attempting reconnect.")
-                    await self._reconnect()
-                else:
-                    log.info("EventHubProducer authentication failed. Shutting down.")
-                    error = AuthenticationError(str(auth_error), auth_error)
-                    await self.close(auth_error)
-                    raise error
-            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-                if shutdown.action.retry:
-                    log.info("EventHubProducer detached. Attempting reconnect.")
-                    await self._reconnect()
-                else:
-                    log.info("EventHubProducer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    await self.close(exception=error)
-                    raise error
-            except errors.MessageHandlerError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubProducer detached. Attempting reconnect.")
-                    await self._reconnect()
-                else:
-                    log.info("EventHubProducer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    await self.close(error)
-                    raise error
-            except errors.AMQPConnectionError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubProducer connection lost. Attempting reconnect.")
-                    await self._reconnect()
-                else:
-                    log.info("EventHubProducer connection lost. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    await self.close(error)
-                    raise error
-            except compat.TimeoutException as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubProducer timed out sending event data. Attempting reconnect.")
-                    await self._reconnect()
-                else:
-                    log.info("EventHubProducer timed out. Shutting down.")
-                    await self.close(shutdown)
-                    raise ConnectionLostError(str(shutdown), shutdown)
-            except Exception as e:
-                log.info("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Send failed: {}".format(e), e)
-                await self.close(exception=error)
-                raise error
+            except Exception as exception:
+                await self._handle_exception(exception, retry_count, max_retries)
+                retry_count += 1
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This producer has been closed. Please create a new producer to send event data.",
-                                self.error)
+            raise EventHubError("This producer has been closed. Please create a new producer to send event data.")
 
     def _on_outcome(self, outcome, condition):
         """
@@ -289,20 +161,8 @@ class EventHubProducer(object):
         self._outcome = outcome
         self._condition = condition
 
-    @staticmethod
-    def _error(outcome, condition):
-        if outcome != constants.MessageSendResult.Ok:
-            raise condition
-
-    @staticmethod
-    def _set_partition_key(event_datas, partition_key):
-        ed_iter = iter(event_datas)
-        for ed in ed_iter:
-            ed._set_partition_key(partition_key)
-            yield ed
-
     async def send(self, event_data, partition_key=None):
-        # type:(Union[EventData, Union[List[EventData], Iterator[EventData], Generator[EventData]]], Union[str, bytes]) -> None
+        # type:(Union[EventData, Iterable[EventData]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -332,7 +192,7 @@ class EventHubProducer(object):
                 event_data._set_partition_key(partition_key)
             wrapper_event_data = event_data
         else:
-            event_data_with_pk = self._set_partition_key(event_data, partition_key)
+            event_data_with_pk = _set_partition_key(event_data, partition_key)
             wrapper_event_data = _BatchSendEventData(
                 event_data_with_pk,
                 partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)

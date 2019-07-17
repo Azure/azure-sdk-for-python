@@ -28,7 +28,7 @@ from azure.eventhub.error import ConnectError, EventHubError
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
-
+from .error import _handle_exception
 
 log = logging.getLogger(__name__)
 
@@ -50,10 +50,6 @@ class EventHubClient(EventHubClientAbstract):
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")
-        }
         self._conn_manager = get_connection_manager(**kwargs)
 
     def __del__(self):
@@ -110,10 +106,16 @@ class EventHubClient(EventHubClientAbstract):
                                                get_jwt_token, http_proxy=http_proxy,
                                                transport_type=transport_type)
 
+    def _handle_exception(self, exception, retry_count, max_retries):
+        _handle_exception(exception, retry_count, max_retries, self, log)
+
+    def _close_connection(self):
+        self._conn_manager.reset_connection_if_broken()
+
     def _management_request(self, mgmt_msg, op_type):
+        max_retries = self.config.max_retries
         retry_count = 0
         while retry_count <= self.config.max_retries:
-            retry_count += 1
             mgmt_auth = self._create_auth()
             mgmt_client = uamqp.AMQPClient(self.mgmt_target)
             try:
@@ -126,19 +128,9 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except (errors.AMQPConnectionError, errors.TokenAuthFailure, compat.TimeoutException) as failure:
-                if retry_count >= self.config.max_retries:
-                    err = ConnectError(
-                        "Can not connect to EventHubs or get management info from the service. "
-                        "Please make sure the connection string or token is correct and retry. "
-                        "Besides, this method doesn't work if you use an IoT connection string.",
-                        failure
-                    )
-                    raise err
-            except Exception as failure:
-                if retry_count >= self.config.max_retries:
-                    err = EventHubError("Unexpected error happened during management request", failure)
-                    raise err
+            except Exception as exception:
+                self._handle_exception(exception, retry_count, max_retries)
+                retry_count += 1
             finally:
                 mgmt_client.close()
 

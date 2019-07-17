@@ -67,15 +67,7 @@ class EventHubProducer(object):
         if partition:
             self.target += "/Partitions/" + partition
             self.name += "-partition{}".format(partition)
-        self._handler = SendClient(
-            self.target,
-            auth=self.client.get_auth(),
-            debug=self.client.config.network_tracing,
-            msg_timeout=self.timeout,
-            error_policy=self.retry_policy,
-            keep_alive_interval=self.keep_alive,
-            client_name=self.name,
-            properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
+        self._handler = None
         self._outcome = None
         self._condition = None
 
@@ -99,7 +91,6 @@ class EventHubProducer(object):
     def _redirect(self, redirect):
         self.redirected = redirect
         self.running = False
-        self.messages_iter = None
         self._close_connection()
 
     def _open(self):
@@ -128,7 +119,7 @@ class EventHubProducer(object):
 
     def _close_connection(self):
         self._close_handler()
-        self.client._conn_manager.close_connection()  # close the shared connection.
+        self.client._conn_manager.reset_connection_if_broken()
 
     def _handle_exception(self, exception, retry_count, max_retries):
         _handle_exception(exception, retry_count, max_retries, self, log)
@@ -152,14 +143,7 @@ class EventHubProducer(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This producer has been closed. Please create a new producer to send event data.", self.error)
-
-    @staticmethod
-    def _set_partition_key(event_datas, partition_key):
-        ed_iter = iter(event_datas)
-        for ed in ed_iter:
-            ed._set_partition_key(partition_key)
-            yield ed
+            raise EventHubError("This producer has been closed. Please create a new producer to send event data.")
 
     def _on_outcome(self, outcome, condition):
         """
@@ -205,7 +189,7 @@ class EventHubProducer(object):
                 event_data._set_partition_key(partition_key)
             wrapper_event_data = event_data
         else:
-            event_data_with_pk = self._set_partition_key(event_data, partition_key)
+            event_data_with_pk = _set_partition_key(event_data, partition_key)
             wrapper_event_data = _BatchSendEventData(
                 event_data_with_pk,
                 partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
@@ -250,3 +234,10 @@ class EventHubProducer(object):
 def _error(outcome, condition):
     if outcome != constants.MessageSendResult.Ok:
         raise condition
+
+
+def _set_partition_key(event_datas, partition_key):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._set_partition_key(partition_key)
+        yield ed

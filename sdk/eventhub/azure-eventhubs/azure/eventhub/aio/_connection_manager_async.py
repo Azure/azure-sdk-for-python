@@ -3,14 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from threading import RLock
-from uamqp import Connection, TransportType, c_uamqp
+from asyncio import Lock
+from uamqp import TransportType, c_uamqp
+from uamqp.async_ops import ConnectionAsync
 
 
 class _SharedConnectionManager(object):
     def __init__(self, **kwargs):
-        self._lock = RLock()
-        self._conn = None  # type: Connection
+        self._lock = Lock()
+        self._conn = None
 
         self._container_id = kwargs.get("container_id")
         self._debug = kwargs.get("debug")
@@ -24,11 +25,11 @@ class _SharedConnectionManager(object):
         self._idle_timeout = kwargs.get("idle_timeout")
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
 
-    def get_connection(self, host, auth):
-        # type: (...) -> Connection
-        with self._lock:
+    async def get_connection(self, host, auth):
+        # type: (...) -> ConnectionAsync
+        async with self._lock:
             if self._conn is None:
-                self._conn = Connection(
+                self._conn = ConnectionAsync(
                     host,
                     auth,
                     container_id=self._container_id,
@@ -42,10 +43,10 @@ class _SharedConnectionManager(object):
                     encoding=self._encoding)
             return self._conn
 
-    def close_connection(self):
-        with self._lock:
+    async def close_connection(self):
+        async with self._lock:
             if self._conn:
-                self._conn.destroy()
+                await self._conn.destroy_async()
             self._conn = None
 
     def reset_connection_if_broken(self):
@@ -58,15 +59,14 @@ class _SharedConnectionManager(object):
             ):
                 self._conn = None
 
-
 class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, host, auth):
-        return None
+    async def get_connection(self, host, auth):
+        pass  # return None
 
-    def close_connection(self):
+    async def close_connection(self):
         pass
 
     def reset_connection_if_broken(self):

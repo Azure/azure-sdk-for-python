@@ -102,8 +102,7 @@ class EventHubConsumer(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.",
-                                self.error)
+            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.")
 
     def _create_handler(self):
         alt_creds = {
@@ -164,7 +163,7 @@ class EventHubConsumer(object):
 
     def _close_connection(self):
         self._close_handler()
-        self.client._conn_manager.close_connection()  # close the shared connection.
+        self.client._conn_manager.reset_connection_if_broken()
 
     def _handle_exception(self, exception, retry_count, max_retries):
         _handle_exception(exception, retry_count, max_retries, self, log)

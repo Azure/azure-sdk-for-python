@@ -131,8 +131,9 @@ class EventDataSendError(EventHubError):
 
 
 def _handle_exception(exception, retry_count, max_retries, closable, log):
+    type_name = type(closable).__name__
     if isinstance(exception, KeyboardInterrupt):
-        log.info("EventHubConsumer stops due to keyboard interrupt")
+        log.info("{} stops due to keyboard interrupt".format(type_name))
         closable.close()
         raise
     elif isinstance(exception, (
@@ -153,52 +154,58 @@ def _handle_exception(exception, retry_count, max_retries, closable, log):
         closable.close(exception)
         raise error
     elif retry_count >= max_retries:
-        log.info("EventHubConsumer has an error and has exhausted retrying. (%r)", exception)
+        log.info("{} has an error and has exhausted retrying. (%r)".format(type_name), exception)
         if isinstance(exception, errors.AuthenticationException):
-            log.info("EventHubConsumer authentication failed. Shutting down.")
+            log.info("{} authentication failed. Shutting down.".format(type_name))
             error = AuthenticationError(str(exception), exception)
         elif isinstance(exception, errors.VendorLinkDetach):
-            log.info("EventHubConsumer link detached. Shutting down.")
+            log.info("{} link detached. Shutting down.".format(type_name))
             error = ConnectError(str(exception), exception)
         elif isinstance(exception, errors.LinkDetach):
-            log.info("EventHubConsumer link detached. Shutting down.")
+            log.info("{} link detached. Shutting down.".format(type_name))
             error = ConnectionLostError(str(exception), exception)
         elif isinstance(exception, errors.ConnectionClose):
-            log.info("EventHubConsumer connection closed. Shutting down.")
+            log.info("{} connection closed. Shutting down.".format(type_name))
             error = ConnectionLostError(str(exception), exception)
         elif isinstance(exception, errors.MessageHandlerError):
-            log.info("EventHubConsumer detached. Shutting down.")
+            log.info("{} detached. Shutting down.".format(type_name))
             error = ConnectionLostError(str(exception), exception)
         elif isinstance(exception, errors.AMQPConnectionError):
-            log.info("EventHubConsumer connection lost. Shutting down.")
+            log.info("{} connection lost. Shutting down.".format(type_name))
             error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
                 else ConnectError
             error = error_type(str(exception), exception)
         elif isinstance(exception, compat.TimeoutException):
-            log.info("EventHubConsumer timed out. Shutting down.")
+            log.info("{} timed out. Shutting down.".format(type_name))
             error = ConnectionLostError(str(exception), exception)
         else:
             log.error("Unexpected error occurred (%r). Shutting down.", exception)
             error = EventHubError("Receive failed: {}".format(exception), exception)
-        closable.close(exception=error)
+        closable.close()
         raise error
     else:
-        log.info("EventHubConsumer has an exception (%r). Retrying...", exception)
+        log.info("{} has an exception (%r). Retrying...".format(type_name), exception)
         if isinstance(exception, errors.AuthenticationException):
             closable._close_connection()
         elif isinstance(exception, errors.LinkRedirect):
-            log.info("EventHubConsumer link redirected. Redirecting...")
+            log.info("{} link redirected. Redirecting...".format(type_name))
             redirect = exception
-            closable._redirect(redirect)
+            if hasattr(closable, "_redirect"):
+                closable._redirect(redirect)
         elif isinstance(exception, errors.LinkDetach):
-            closable._close_handler()
+            if hasattr(closable, "_close_handler"):
+                closable._close_handler()
         elif isinstance(exception, errors.ConnectionClose):
-            closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()
         elif isinstance(exception, errors.MessageHandlerError):
-            closable._close_handler()
+            if hasattr(closable, "_close_handler"):
+                closable._close_handler()
         elif isinstance(exception, errors.AMQPConnectionError):
-            closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()
         elif isinstance(exception, compat.TimeoutException):
-            pass  # Timeout doesn't need to recreate link or exception
+            pass  # Timeout doesn't need to recreate link or connection to retry
         else:
-            closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()

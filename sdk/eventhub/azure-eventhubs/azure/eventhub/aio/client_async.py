@@ -22,6 +22,8 @@ from ..client_abstract import EventHubClientAbstract
 
 from .producer_async import EventHubProducer
 from .consumer_async import EventHubConsumer
+from ._connection_manager_async import get_connection_manager
+from .error_async import _handle_exception
 
 
 log = logging.getLogger(__name__)
@@ -41,6 +43,16 @@ class EventHubClient(EventHubClientAbstract):
             :caption: Create a new instance of the Event Hub client async.
 
     """
+
+    def __init__(self, host, event_hub_path, credential, **kwargs):
+        super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        self._conn_manager = get_connection_manager(**kwargs)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
 
     def _create_auth(self, username=None, password=None):
         """
@@ -85,17 +97,21 @@ class EventHubClient(EventHubClientAbstract):
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
 
+    async def _handle_exception(self, exception, retry_count, max_retries):
+        await _handle_exception(exception, retry_count, max_retries, self, log)
+
+    async def _close_connection(self):
+        self._conn_manager.reset_connection_if_broken()
+
     async def _management_request(self, mgmt_msg, op_type):
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")}
-        connect_count = 0
+        max_retries = self.config.max_retries
+        retry_count = 0
         while True:
-            connect_count += 1
-            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
             try:
-                await mgmt_client.open_async()
+                conn = await self._conn_manager.get_connection(self.host, mgmt_auth)
+                await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
                     constants.READ_OPERATION,
@@ -103,15 +119,9 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except (errors.AMQPConnectionError, errors.TokenAuthFailure, compat.TimeoutException) as failure:
-                if connect_count >= self.config.max_retries:
-                    err = ConnectError(
-                        "Can not connect to EventHubs or get management info from the service. "
-                        "Please make sure the connection string or token is correct and retry. "
-                        "Besides, this method doesn't work if you use an IoT connection string.",
-                        failure
-                    )
-                    raise err
+            except Exception as exception:
+                await self._handle_exception(exception, retry_count, max_retries)
+                retry_count += 1
             finally:
                 await mgmt_client.close_async()
 
@@ -263,3 +273,6 @@ class EventHubClient(EventHubClientAbstract):
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
         return handler
+
+    async def close(self):
+        await self._conn_manager.close_connection()
