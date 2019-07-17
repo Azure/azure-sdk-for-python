@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
+class SalesforceServiceCloudObjectDataset(Dataset):
+    """The Salesforce Service Cloud object dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,6 +43,9 @@ class SapBwCubeDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
+    :param object_api_name: The Salesforce Service Cloud object API name.
+     Type: string (or Expression with resultType string).
+    :type object_api_name: object
     """
 
     _validation = {
@@ -60,8 +63,10 @@ class SapBwCubeDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
+        'object_api_name': {'key': 'typeProperties.objectApiName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(SapBwCubeDataset, self).__init__(**kwargs)
-        self.type = 'SapBwCube'
+        super(SalesforceServiceCloudObjectDataset, self).__init__(**kwargs)
+        self.object_api_name = kwargs.get('object_api_name', None)
+        self.type = 'SalesforceServiceCloudObject'

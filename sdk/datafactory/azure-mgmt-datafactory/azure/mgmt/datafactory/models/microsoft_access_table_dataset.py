@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
+class MicrosoftAccessTableDataset(Dataset):
+    """The Microsoft Access table dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,6 +43,9 @@ class SapBwCubeDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
+    :param table_name: The Microsoft Access table name. Type: string (or
+     Expression with resultType string).
+    :type table_name: object
     """
 
     _validation = {
@@ -60,8 +63,10 @@ class SapBwCubeDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
+        'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(SapBwCubeDataset, self).__init__(**kwargs)
-        self.type = 'SapBwCube'
+        super(MicrosoftAccessTableDataset, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
+        self.type = 'MicrosoftAccessTable'
