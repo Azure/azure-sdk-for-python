@@ -80,7 +80,7 @@ def test_distributed_tracing_policy_exception():
         assert network_span.span_data.attributes.get("http.status_code") == 504
 
 
-def test_distributed_tracing_policy_with_usergent():
+def test_distributed_tracing_policy_with_user_agent():
     """Test policy working with user agent."""
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()

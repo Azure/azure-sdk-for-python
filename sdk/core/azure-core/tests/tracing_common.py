@@ -18,6 +18,7 @@ from opencensus.trace import tracer as tracer_module
 from opencensus.trace.span_data import SpanData
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
+from collections import defaultdict
 
 try:
     from unittest import mock
@@ -65,7 +66,7 @@ class MockExporter(Exporter):
     def __init__(self):
         self.root = None
         self._all_nodes = []
-        self.parent_dict = {}
+        self.parent_dict = defaultdict(list)
 
     def export(self, span_datas):
         # type: (List[SpanData]) -> None
@@ -74,8 +75,6 @@ class MockExporter(Exporter):
         if not node.span_data.parent_span_id:
             self.root = node
         parent_span_id = node.span_data.parent_span_id
-        if parent_span_id not in self.parent_dict:
-            self.parent_dict[parent_span_id] = []
         self.parent_dict[parent_span_id].append(node)
         self._all_nodes.append(node)
 

@@ -89,7 +89,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     def end_span(self, request, response=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
-        span = tracing_context.current_span.get()  # type: AbstractSpan
+        span = get_parent_span(None)   # type: AbstractSpan
         only_propagate = settings.tracing_should_only_propagate()
         if span and not only_propagate:
             span.set_http_attributes(request, response=response)
