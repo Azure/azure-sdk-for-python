@@ -9,20 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceServiceCloudSink,
-    SalesforceSink, AzureDataExplorerSink, CommonDataServiceForAppsSink,
-    DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
-    AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
-    SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, ParquetSink,
-    AzureTableSink, AzureQueueSink, SapCloudForCustomerSink, DelimitedTextSink
+class MicrosoftAccessSink(CopySink):
+    """A copy activity Microsoft Access sink.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,6 +40,9 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param pre_copy_script: A query to execute before starting the copy. Type:
+     string (or Expression with resultType string).
+    :type pre_copy_script: object
     """
 
     _validation = {
@@ -63,18 +57,10 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.type = None
+        super(MicrosoftAccessSink, self).__init__(**kwargs)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.type = 'MicrosoftAccessSink'

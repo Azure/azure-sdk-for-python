@@ -9,20 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .copy_sink import CopySink
 
 
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceServiceCloudSink,
-    SalesforceSink, AzureDataExplorerSink, CommonDataServiceForAppsSink,
-    DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
-    AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
-    SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, ParquetSink,
-    AzureTableSink, AzureQueueSink, SapCloudForCustomerSink, DelimitedTextSink
+class SalesforceServiceCloudSink(CopySink):
+    """A copy activity Salesforce Service Cloud sink.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,6 +40,23 @@ class CopySink(Model):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param write_behavior: The write behavior for the operation. Default is
+     Insert. Possible values include: 'Insert', 'Upsert'
+    :type write_behavior: str or
+     ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
+    :param external_id_field_name: The name of the external ID field for
+     upsert operation. Default value is 'Id' column. Type: string (or
+     Expression with resultType string).
+    :type external_id_field_name: object
+    :param ignore_null_values: The flag indicating whether or not to ignore
+     null values from input dataset (except key fields) during write operation.
+     Default value is false. If set it to true, it means ADF will leave the
+     data in the destination object unchanged when doing upsert/update
+     operation and insert defined default value when doing insert operation,
+     versus ADF will update the data in the destination object to NULL when
+     doing upsert/update operation and insert NULL value when doing insert
+     operation. Type: boolean (or Expression with resultType boolean).
+    :type ignore_null_values: object
     """
 
     _validation = {
@@ -63,18 +71,14 @@ class CopySink(Model):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.type = None
+        super(SalesforceServiceCloudSink, self).__init__(**kwargs)
+        self.write_behavior = kwargs.get('write_behavior', None)
+        self.external_id_field_name = kwargs.get('external_id_field_name', None)
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.type = 'SalesforceServiceCloudSink'
