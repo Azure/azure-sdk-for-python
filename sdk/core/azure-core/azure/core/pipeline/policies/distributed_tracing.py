@@ -52,11 +52,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         # type: (str, str, str) -> None
         self.name_of_child_span = name_of_spans
         self.parent_span_dict = {}
-        self._span_component = ("component", "http")
-        self._http_user_agent = "http.user_agent"
-        self._http_method = "http.method"
-        self._http_url = "http.url"
-        self._http_status_code = "http.status_code"
         self._request_id = "x-ms-request-id"
 
     def set_header(self, request, span):
@@ -66,10 +61,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         """
         headers = span.to_header()
         request.http_request.headers.update(headers)
-        span.add_attribute(self._http_method, request.http_request.method)
-        span.add_attribute(self._http_url, request.http_request.url)
-        span.add_attribute(self._http_user_agent, request.http_request.headers.get("User-Agent", ""))
-        span.add_attribute(*self._span_component)
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None
@@ -90,25 +81,22 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         self.parent_span_dict[child] = parent_span
         self.set_header(request, child)
 
-    def end_span(self, response=None):
-        # type: (Optional[PipelineResponse[HTTPRequestType, HTTPResponseType]]) -> None
+    def end_span(self, request, response=None):
+        # type: (HTTPRequestType, Optional[HTTPResponseType]) -> None
         """Ends the span that is tracing the network and updates its status."""
         span = tracing_context.current_span.get()  # type: AbstractSpan
         only_propagate = settings.tracing_should_only_propagate()
         if span and not only_propagate:
-            # span.add_attribute("http.url", request.http_request)
-            if response:
-                span.add_attribute(self._http_status_code, response.http_response.status_code)
-                span.add_attribute(self._request_id, response.http_response.headers.get(self._request_id, ""))
-            else:
-                span.add_attribute(self._http_status_code, 504)
+            span.set_http_attributes(request, response=response)
+            if response and self._request_id in response.headers:
+                span.add_attribute(self._request_id, response.headers[self._request_id])
             span.finish()
             set_span_contexts(self.parent_span_dict[span])
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType], Any) -> None
-        self.end_span(response=response)
+        self.end_span(request.http_request, response=response.http_response)
 
     def on_exception(self, _request, **kwargs):  # pylint: disable=unused-argument
         # type: (PipelineRequest[HTTPRequestType], Any) -> bool
-        self.end_span()
+        self.end_span(_request.http_request)

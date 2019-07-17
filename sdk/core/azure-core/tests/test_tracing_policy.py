@@ -44,7 +44,7 @@ def test_distributed_tracing_policy_solo():
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
-        assert network_span.span_data.attributes.get("http.user_agent") == ""
+        assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
         assert network_span.span_data.attributes.get("http.status_code") == 202
 
@@ -75,7 +75,7 @@ def test_distributed_tracing_policy_exception():
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
-        assert network_span.span_data.attributes.get("http.user_agent") == ""
+        assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504
 

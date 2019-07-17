@@ -10,7 +10,10 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional, Union, TypeVar
+
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
 try:
     from typing_extensions import Protocol
@@ -21,7 +24,7 @@ except ImportError:
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(self, span=None, name=None): # pylint: disable=super-init-not-called
+    def __init__(self, span=None, name=None):  # pylint: disable=super-init-not-called
         # type: (Optional[Any], Optional[str]) -> None
         """
         If a span is given wraps the span. Else a new span is created.
@@ -63,6 +66,18 @@ class AbstractSpan(Protocol):
         :type key: str
         :param value: The value of the key value pair
         :type value: str
+        """
+        pass
+
+    def set_http_attributes(self, request, response=None):
+        # type: (HTTPRequestType, HTTPResponseType) -> None
+        """
+        Add correct attributes for a http client span.
+
+        :param request: The request make
+        :type request: HTTPRequestType
+        :param response: The response received by the server. Is None if no response received.
+        :type response: HTTPResponseType
         """
         pass
 
