@@ -14,62 +14,7 @@ except ImportError:
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
-from opencensus.trace.base_exporter import Exporter
-from opencensus.common.utils import timestamp_to_microseconds
-import os
-
-
-class Node:
-    def __init__(self, span_data):
-        self.span_data = span_data  # type: SpanData
-        self.parent = None
-        self.children = []
-
-
-class MockExporter(Exporter):
-    def __init__(self):
-        self.root = None
-        self._all_nodes = []
-
-    def export(self, span_datas):
-        # type: (List[SpanData]) -> None
-        sp = span_datas[0]  # type: SpanData
-        node = Node(sp)
-        if not node.span_data.parent_span_id:
-            self.root = node
-        self._all_nodes.append(node)
-
-    def build_tree(self):
-        parent_dict = {}
-        for node in self._all_nodes:
-            parent_span_id = node.span_data.parent_span_id
-            if parent_span_id not in parent_dict:
-                parent_dict[parent_span_id] = []
-            parent_dict[parent_span_id].append(node)
-
-        for node in self._all_nodes:
-            if node.span_data.span_id in parent_dict:
-                node.children = sorted(
-                    parent_dict[node.span_data.span_id], key=lambda x: timestamp_to_microseconds(x.span_data.start_time)
-                )
-
-
-class ContextHelper(object):
-    def __init__(self, environ={}):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env = mock.patch.dict(os.environ, environ)
-
-    def __enter__(self):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        OpenCensusSpan.set_current_tracer(self.orig_tracer)
-        OpenCensusSpan.set_current_span(self.orig_current_span)
-        self.os_env.stop()
+from tracing_common import MockExporter, ContextHelper
 
 
 class TestOpencensusWrapper(unittest.TestCase):
@@ -130,6 +75,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
             parent.finish()
+            tracer.finish()
 
     def test_to_header(self):
         with ContextHelper() as ctx:

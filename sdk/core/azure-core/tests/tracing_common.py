@@ -4,25 +4,20 @@
 # ------------------------------------
 """Code shared between the async and the sync test_decorator files."""
 
-import sys
 import os
-from azure.core import HttpRequest
-from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport
-from azure.core.tracing import common
-from azure.core.tracing.context import tracing_context
+
 from azure.core.settings import settings
+from azure.core.tracing.context import tracing_context
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
-from opencensus.trace import tracer as tracer_module
-from opencensus.trace.span_data import SpanData
-from opencensus.trace.samplers import AlwaysOnSampler
+from opencensus.trace import execution_context
 from opencensus.trace.base_exporter import Exporter
+from opencensus.trace.span_data import SpanData
 
 try:
     from unittest import mock
 except ImportError:
     import mock
+
 
 class ContextHelper(object):
     def __init__(self, environ={}, tracer_to_use=None, should_only_propagate=None):
@@ -42,6 +37,8 @@ class ContextHelper(object):
         if self.should_only_propagate is not None:
             settings.tracing_should_only_propagate.set_value(self.should_only_propagate)
         self.os_env.start()
+        execution_context.clear()
+        tracing_context.current_span.clear()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -62,7 +59,7 @@ class Node:
 
 class MockExporter(Exporter):
     def __init__(self):
-        self.root = None
+        self.root = None  # type: SpanData
         self._all_nodes = []
 
     def export(self, span_datas):
