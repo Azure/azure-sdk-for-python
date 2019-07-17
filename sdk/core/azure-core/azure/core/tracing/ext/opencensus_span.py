@@ -102,7 +102,7 @@ class OpenCensusSpan(object):
         """
         Add correct attributes for a http client span.
 
-        :param request: The request make
+        :param request: The request made
         :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
         :type response: HttpResponse

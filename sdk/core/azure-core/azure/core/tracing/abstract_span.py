@@ -10,7 +10,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union, TypeVar
+    from typing import Any, Dict, Optional, Union
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -73,7 +73,7 @@ class AbstractSpan(Protocol):
         """
         Add correct attributes for a http client span.
 
-        :param request: The request make
+        :param request: The request made
         :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
         :type response: HttpResponse
