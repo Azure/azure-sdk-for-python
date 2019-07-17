@@ -43,16 +43,13 @@ class AzureMachineLearningWorkspaces(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription identifier.
     :type subscription_id: str
-    :param expand_children: Specifies if detailed usages of child resources
-     are required.
-    :type expand_children: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, expand_children=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureMachineLearningWorkspacesConfiguration(credentials, subscription_id, expand_children, base_url)
+        self.config = AzureMachineLearningWorkspacesConfiguration(credentials, subscription_id, base_url)
         super(AzureMachineLearningWorkspaces, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
