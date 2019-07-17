@@ -30,7 +30,6 @@ from azure.core.tracing.context import tracing_context
 from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.tracing.common import get_parent_span
 from azure.core.settings import settings
 
 try:
@@ -66,7 +65,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest[HttpRequest], Any) -> None
-        parent_span = get_parent_span(None)  # type: AbstractSpan
+        parent_span = tracing_context.current_span.get()  # type: AbstractSpan
 
         if parent_span is None:
             return
@@ -89,7 +88,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     def end_span(self, request, response=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
-        span = get_parent_span(None)   # type: AbstractSpan
+        span = tracing_context.current_span.get()   # type: AbstractSpan
         only_propagate = settings.tracing_should_only_propagate()
         if span and not only_propagate:
             span.set_http_attributes(request, response=response)

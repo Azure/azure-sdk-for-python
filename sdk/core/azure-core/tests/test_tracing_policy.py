@@ -4,12 +4,14 @@
 # ------------------------------------
 """Tests for the distributed tracing policy."""
 
+from azure.core.tracing.context import tracing_context
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies.universal import UserAgentPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
+from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from tracing_common import ContextHelper, MockExporter
 import time
 
@@ -18,26 +20,28 @@ def test_distributed_tracing_policy_solo():
     with ContextHelper():
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-        policy = DistributedTracingPolicy()
+        with trace.span("parent"):
+            tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
+            policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+            request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
 
-        pipeline_request = PipelineRequest(request, PipelineContext(None))
-        policy.on_request(pipeline_request)
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
-        response.headers = request.headers
-        response.status_code = 202
-        response.headers["x-ms-request-id"] = "some request id"
+            response = HttpResponse(request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            response.headers["x-ms-request-id"] = "some request id"
 
-        ctx = trace.span_context
-        header = trace.propagator.to_headers(ctx)
-        assert request.headers.get("traceparent") == header.get("traceparent")
+            ctx = trace.span_context
+            header = trace.propagator.to_headers(ctx)
+            assert request.headers.get("traceparent") == header.get("traceparent")
 
-        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
-        time.sleep(0.001)
-        policy.on_request(pipeline_request)
-        policy.on_exception(pipeline_request)
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+            time.sleep(0.001)
+            policy.on_request(pipeline_request)
+            policy.on_exception(pipeline_request)
 
         trace.finish()
         exporter.build_tree()
@@ -66,28 +70,30 @@ def test_distributed_tracing_policy_with_user_agent():
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-        policy = DistributedTracingPolicy()
+        with trace.span("parent"):
+            tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
+            policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1")
+            request = HttpRequest("GET", "http://127.0.0.1")
 
-        pipeline_request = PipelineRequest(request, PipelineContext(None))
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
 
-        user_agent = UserAgentPolicy()
-        user_agent.on_request(pipeline_request)
-        policy.on_request(pipeline_request)
+            user_agent = UserAgentPolicy()
+            user_agent.on_request(pipeline_request)
+            policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
-        response.headers = request.headers
-        response.status_code = 202
-        response.headers["x-ms-request-id"] = "some request id"
-        pipeline_response = PipelineResponse(request, response, PipelineContext(None))
+            response = HttpResponse(request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            response.headers["x-ms-request-id"] = "some request id"
+            pipeline_response = PipelineResponse(request, response, PipelineContext(None))
 
-        ctx = trace.span_context
-        header = trace.propagator.to_headers(ctx)
-        assert request.headers.get("traceparent") == header.get("traceparent")
+            ctx = trace.span_context
+            header = trace.propagator.to_headers(ctx)
+            assert request.headers.get("traceparent") == header.get("traceparent")
 
-        policy.on_response(pipeline_request, pipeline_response)
-        user_agent.on_response(pipeline_request, pipeline_response)
+            policy.on_response(pipeline_request, pipeline_response)
+            user_agent.on_response(pipeline_request, pipeline_response)
 
         trace.finish()
         exporter.build_tree()
