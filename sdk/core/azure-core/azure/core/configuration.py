@@ -48,6 +48,7 @@ class Configuration(object):
      header to requests.
     :param transport: The Http Transport type. E.g. RequestsTransport, AsyncioRequestsTransport,
      TrioRequestsTransport, AioHttpTransport.
+    :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     Example:
         .. literalinclude:: ../examples/test_example_config.py
