@@ -52,6 +52,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         # type: (str, str, str) -> None
         self.name_of_child_span = name_of_spans
         self.parent_span_dict = {}
+        self._span_component = ("component", "http")
         self._http_user_agent = "http.user_agent"
         self._http_method = "http.method"
         self._http_url = "http.url"
@@ -68,6 +69,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         span.add_attribute(self._http_method, request.http_request.method)
         span.add_attribute(self._http_url, request.http_request.url)
         span.add_attribute(self._http_user_agent, request.http_request.headers.get("User-Agent", ""))
+        span.add_attribute(*self._span_component)
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None

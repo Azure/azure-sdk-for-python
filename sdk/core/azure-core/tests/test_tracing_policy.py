@@ -42,6 +42,7 @@ def test_distributed_tracing_policy_solo():
         network_span = parent.children[0]
         assert network_span.span_data.name == "span - http call"
         assert network_span.span_data.attributes.get("http.method") == "GET"
+        assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
         assert network_span.span_data.attributes.get("http.user_agent") == ""
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
@@ -72,6 +73,7 @@ def test_distributed_tracing_policy_exception():
         network_span = parent.children[0]
         assert network_span.span_data.name == "span - http call"
         assert network_span.span_data.attributes.get("http.method") == "GET"
+        assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
         assert network_span.span_data.attributes.get("http.user_agent") == ""
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
@@ -112,6 +114,7 @@ def test_distributed_tracing_policy_with_usergent():
         network_span = parent.children[0]
         assert network_span.span_data.name == "span - http call"
         assert network_span.span_data.attributes.get("http.method") == "GET"
+        assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/"
         assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
