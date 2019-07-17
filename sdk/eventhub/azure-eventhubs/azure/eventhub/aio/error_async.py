@@ -60,20 +60,27 @@ async def _handle_exception(exception, retry_count, max_retries, closable, log):
     else:
         log.info("{} has an exception (%r). Retrying...".format(type_name), exception)
         if isinstance(exception, errors.AuthenticationException):
-            await closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                await closable._close_connection()
         elif isinstance(exception, errors.LinkRedirect):
             log.info("{} link redirected. Redirecting...".format(type_name))
             redirect = exception
-            await closable._redirect(redirect)
+            if hasattr(closable, "_redirect"):
+                await closable._redirect(redirect)
         elif isinstance(exception, errors.LinkDetach):
-            await closable._close_handler()
+            if hasattr(closable, "_close_handler"):
+                await closable._close_handler()
         elif isinstance(exception, errors.ConnectionClose):
-            await closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                await closable._close_connection()
         elif isinstance(exception, errors.MessageHandlerError):
-            await closable._close_handler()
+            if hasattr(closable, "_close_handler"):
+                await closable._close_handler()
         elif isinstance(exception, errors.AMQPConnectionError):
-            await closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                await closable._close_connection()
         elif isinstance(exception, compat.TimeoutException):
             pass  # Timeout doesn't need to recreate link or connection to retry
         else:
-            await closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                await closable._close_connection()
