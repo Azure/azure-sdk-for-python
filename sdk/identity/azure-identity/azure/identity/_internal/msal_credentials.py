@@ -29,16 +29,16 @@ import msal
 from .msal_transport_adapter import MsalTransportAdapter
 
 
-class MsalCredential(MsalTransportAdapter):
+class MsalCredential(object):
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(self, client_id, authority, app_class, client_credential=None, **kwargs):
         # type: (str, str, msal.ClientApplication, Optional[Union[str, Mapping[str, str]]], Any) -> None
-        super(MsalCredential, self).__init__(**kwargs)
-
         self._authority = authority
         self._client_credential = client_credential
         self._client_id = client_id
+
+        self._adapter = kwargs.pop("msal_adapter", None) or MsalTransportAdapter(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
         self._app_class = app_class
@@ -51,13 +51,13 @@ class MsalCredential(MsalTransportAdapter):
 
         if not self._msal_app:
             # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-            with mock.patch("msal.authority.requests", self):
+            with mock.patch("msal.authority.requests", self._adapter):
                 app = self._app_class(
                     client_id=self._client_id, client_credential=self._client_credential, authority=self._authority
                 )
 
             # monkeypatch the app to replace requests.Session with MsalTransportAdapter
-            app.client.session = self
+            app.client.session = self._adapter
             self._msal_app = app
 
         return self._msal_app
