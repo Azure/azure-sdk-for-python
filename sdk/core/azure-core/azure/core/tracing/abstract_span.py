@@ -10,7 +10,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union, TypeVar
+    from typing import Any, Dict, Optional, Union
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
