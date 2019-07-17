@@ -158,3 +158,19 @@ class TestExceptions(object):
         exp = ODataV4Error(_build_response(b""))
         assert exp.message == "Operation returned an invalid status 'Bad Request'"
         assert str(exp) == "Operation returned an invalid status 'Bad Request'"
+
+    def test_odata_v4_minimal(self):
+        """Minimal valid OData v4 is code/message and nothing else.
+        """
+        message = {
+            "error": {
+                "code": "501",
+                "message": "Unsupported functionality",
+            }
+        }
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.code == "501"
+        assert exp.message == "Unsupported functionality"
+        assert exp.target is None
+        assert exp.details == []
+        assert exp.innererror == {}
