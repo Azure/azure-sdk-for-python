@@ -28,6 +28,13 @@ class AccountEntity(Entity):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :ivar friendly_name: The graph item display name which is a short humanly
+     readable description of the graph item instance. This property is optional
+     and might be system generated.
+    :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar account_name: The name of the account. This field should hold only
      the name without any domain added to it, i.e. administrator.
     :vartype account_name: str
@@ -47,10 +54,15 @@ class AccountEntity(Entity):
     :vartype puid: str
     :ivar is_domain_joined: Determines whether this is a domain account.
     :vartype is_domain_joined: bool
+    :ivar display_name: The display name of the account.
+    :vartype display_name: str
     :ivar object_guid: The objectGUID attribute is a single-value attribute
      that is the unique identifier for the object, assigned by active
      directory.
     :vartype object_guid: str
+    :ivar host_entity_id: The Host entity id that contains the account in case
+     it is a local account (not domain joined)
+    :vartype host_entity_id: str
     """
 
     _validation = {
@@ -58,6 +70,8 @@ class AccountEntity(Entity):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
+        'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
         'account_name': {'readonly': True},
         'nt_domain': {'readonly': True},
         'upn_suffix': {'readonly': True},
@@ -66,7 +80,9 @@ class AccountEntity(Entity):
         'aad_user_id': {'readonly': True},
         'puid': {'readonly': True},
         'is_domain_joined': {'readonly': True},
+        'display_name': {'readonly': True},
         'object_guid': {'readonly': True},
+        'host_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -74,6 +90,8 @@ class AccountEntity(Entity):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'nt_domain': {'key': 'properties.ntDomain', 'type': 'str'},
         'upn_suffix': {'key': 'properties.upnSuffix', 'type': 'str'},
@@ -82,11 +100,15 @@ class AccountEntity(Entity):
         'aad_user_id': {'key': 'properties.aadUserId', 'type': 'str'},
         'puid': {'key': 'properties.puid', 'type': 'str'},
         'is_domain_joined': {'key': 'properties.isDomainJoined', 'type': 'bool'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'object_guid': {'key': 'properties.objectGuid', 'type': 'str'},
+        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(AccountEntity, self).__init__(**kwargs)
+        self.friendly_name = None
+        self.additional_data = None
         self.account_name = None
         self.nt_domain = None
         self.upn_suffix = None
@@ -95,5 +117,7 @@ class AccountEntity(Entity):
         self.aad_user_id = None
         self.puid = None
         self.is_domain_joined = None
+        self.display_name = None
         self.object_guid = None
+        self.host_entity_id = None
         self.kind = 'Account'

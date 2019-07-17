@@ -34,7 +34,7 @@ class Case(Resource):
     :type created_time_utc: datetime
     :param end_time_utc: The end time of the case
     :type end_time_utc: datetime
-    :param start_time_utc: The start time of the case
+    :param start_time_utc: Required. The start time of the case
     :type start_time_utc: datetime
     :param labels: List of labels relevant to this case
     :type labels: list[str]
@@ -53,12 +53,21 @@ class Case(Resource):
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
+    :param closed_reason_text: the case close reason details
+    :type closed_reason_text: str
+    :param related_alert_ids: List of related alert identifiers
+    :type related_alert_ids: list[str]
+    :param case_number: a sequential number
+    :type case_number: int
+    :param last_comment: the last comment in the case
+    :type last_comment: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'start_time_utc': {'required': True},
         'title': {'required': True},
         'severity': {'required': True},
         'status': {'required': True},
@@ -80,9 +89,13 @@ class Case(Resource):
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
+        'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
+        'related_alert_ids': {'key': 'properties.relatedAlertIds', 'type': '[str]'},
+        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
+        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
     }
 
-    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
+    def __init__(self, *, start_time_utc, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, closed_reason_text: str=None, related_alert_ids=None, case_number: int=None, last_comment: str=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
         self.last_updated_time_utc = last_updated_time_utc
@@ -96,3 +109,7 @@ class Case(Resource):
         self.severity = severity
         self.status = status
         self.close_reason = close_reason
+        self.closed_reason_text = closed_reason_text
+        self.related_alert_ids = related_alert_ids
+        self.case_number = case_number
+        self.last_comment = last_comment

@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class EntityPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Entity <azure.mgmt.securityinsight.models.Entity>` object
+class EntityExpandResponseValue(Model):
+    """The expansion result values.
+
+    :param entities: Array of the expansion result entities.
+    :type entities: list[~azure.mgmt.securityinsight.models.Entity]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Entity]'}
+        'entities': {'key': 'entities', 'type': '[Entity]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(EntityPaged, self).__init__(*args, **kwargs)
+    def __init__(self, *, entities=None, **kwargs) -> None:
+        super(EntityExpandResponseValue, self).__init__(**kwargs)
+        self.entities = entities
