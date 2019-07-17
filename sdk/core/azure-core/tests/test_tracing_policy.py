@@ -93,7 +93,7 @@ def test_distributed_tracing_policy_with_user_agent():
             assert request.headers.get("traceparent") == header.get("traceparent")
 
             policy.on_response(pipeline_request, pipeline_response)
-            
+
             time.sleep(0.001)
             policy.on_request(pipeline_request)
             policy.on_exception(pipeline_request)
