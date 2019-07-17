@@ -170,6 +170,10 @@ class RequestsTransport(HttpTransport):
     :type session: requests.Session
     :param bool session_owner: Defaults to True.
 
+    **Keyword argument:**
+
+    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
+
     Example:
         .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START requests]
@@ -186,6 +190,7 @@ class RequestsTransport(HttpTransport):
         self._session_owner = session_owner
         self.config = configuration or Configuration()
         self.session = session
+        self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     def __enter__(self):
         # type: () -> RequestsTransport
@@ -201,8 +206,7 @@ class RequestsTransport(HttpTransport):
 
         This is initialization I want to do once only on a session.
         """
-        if self.config.proxy_policy:
-            session.trust_env = self.config.proxy_policy.use_env_settings
+        session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
         adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:

@@ -394,10 +394,6 @@ class ProxyPolicy(SansIOHTTPPolicy):
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
 
-    **Keyword argument:**
-
-    *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
-
     Example:
         .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START proxy_policy]
@@ -408,4 +404,3 @@ class ProxyPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
-        self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)

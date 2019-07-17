@@ -60,6 +60,10 @@ class AioHttpTransport(AsyncHttpTransport):
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
 
+    **Keyword argument:**
+
+    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
+
     Example:
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START aiohttp]
@@ -73,6 +77,7 @@ class AioHttpTransport(AsyncHttpTransport):
         self._session_owner = session_owner
         self.session = session
         self.config = configuration or Configuration()
+        self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     async def __aenter__(self):
         await self.open()
@@ -85,7 +90,10 @@ class AioHttpTransport(AsyncHttpTransport):
         """Opens the connection.
         """
         if not self.session and self._session_owner:
-            self.session = aiohttp.ClientSession(loop=self._loop)
+            self.session = aiohttp.ClientSession(
+                loop=self._loop,
+                trust_env=self._use_env_settings
+            )
         if self.session is not None:
             await self.session.__aenter__()
 
