@@ -40,8 +40,8 @@ class FileEntity(Entity):
     :ivar file_name: The file name without path (some alerts might not include
      path).
     :vartype file_name: str
-    :ivar host_id: The Host which the file belongs to
-    :vartype host_id: str
+    :ivar host_entity_id: The Host entity id which the file belongs to
+    :vartype host_entity_id: str
     :ivar file_hash_entity_ids: The file hash entity identifiers associated
      with this file
     :vartype file_hash_entity_ids: list[str]
@@ -56,7 +56,7 @@ class FileEntity(Entity):
         'additional_data': {'readonly': True},
         'directory': {'readonly': True},
         'file_name': {'readonly': True},
-        'host_id': {'readonly': True},
+        'host_entity_id': {'readonly': True},
         'file_hash_entity_ids': {'readonly': True},
     }
 
@@ -69,7 +69,7 @@ class FileEntity(Entity):
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'directory': {'key': 'properties.directory', 'type': 'str'},
         'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_id': {'key': 'properties.hostId', 'type': 'str'},
+        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
         'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
     }
 
@@ -79,6 +79,6 @@ class FileEntity(Entity):
         self.additional_data = None
         self.directory = None
         self.file_name = None
-        self.host_id = None
+        self.host_entity_id = None
         self.file_hash_entity_ids = None
         self.kind = 'File'
