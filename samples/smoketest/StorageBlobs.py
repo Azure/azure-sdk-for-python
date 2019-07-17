@@ -6,20 +6,20 @@ class StorageBlob:
         connectionString = os.environ["STORAGE_CONNECTION_STRING"]
         self.blob = BlobClient.from_connection_string(connectionString, container="mycontainer", blob="pyTestBlob.txt")
 
-    def uploadBLob(self):
+    def UploadBLob(self):
         print("uploading blob...")
         self.data = "This is a sample data for Python Test"
         self.blob.upload_blob(self.data)
         print("\tdone")
 
-    def downloadBlob(self):
+    def DownloadBlob(self):
         print("downloading blob...")
         with open("./downloadedBlob.txt", "wb+") as my_blob:
             my_blob.writelines(self.blob.download_blob())
 
         print("\tdone")
 
-    def deleteBlob(self):
+    def DeleteBlob(self):
         print("Cleaning up the resource...")
         self.blob.delete_blob()
         print("\tdone")
@@ -36,12 +36,12 @@ class StorageBlob:
         
         #Ensure that the blob does not exists before the tests
         try:
-            self.deleteBlob()
+            self.DeleteBlob()
         except:
             pass
         
         try:
-            self.uploadBLob()
-            self.downloadBlob()
+            self.UploadBLob()
+            self.DownloadBlob()
         finally:
-            self.deleteBlob()
+            self.DeleteBlob()

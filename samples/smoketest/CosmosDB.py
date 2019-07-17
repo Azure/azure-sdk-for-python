@@ -9,18 +9,18 @@ class CosmosDB:
         KEY = os.environ["COSMOS_KEY"]
         self.client = cosmos_client.CosmosClient(URL,{'masterKey': KEY})
 
-    def createDatabase(self):
+    def CreateDatabase(self):
         dbName="pySolarSystem"
         print("Creating '{0}' database...".format(dbName))
         return self.client.create_database(dbName)
 
-    def createContainer(self, db):
+    def CreateContainer(self, db):
         collectionName = "Planets"
         print("Creating '{0}' collection...".format(collectionName))
         partition_key = PartitionKey(path='/id', kind='Hash')
         return db.create_container(id="Planets", partition_key=partition_key)
 
-    def createDocuments(self, container):
+    def CreateDocuments(self, container):
         planets = []
 
         # Cosmos will look for an 'id' field in the items, if the 'id' is not specify Cosmos is going to assing a random key.
@@ -57,7 +57,7 @@ class CosmosDB:
             print("\t'{0}' created".format(planet['id']))
         print("\tdone")
 
-    def simpleQuery(self, container):
+    def SimpleQuery(self, container):
         print("Quering the container...")
         items = list(container.query_items(
             query="SELECT c.id FROM c",
@@ -65,7 +65,7 @@ class CosmosDB:
         ))
         print("\tdone: {0}".format(items))
     
-    def deleteDatabase(self):
+    def DeleteDatabase(self):
         print("Cleaning up the resource...")
         self.client.delete_database("pySolarSystem")
         print("\tdone")
@@ -83,15 +83,15 @@ class CosmosDB:
         
         # Ensure that the database does not exists
         try:
-            self.deleteDatabase()
+            self.DeleteDatabase()
         except:
             pass
         
         try:
-            db = self.createDatabase()
-            container = self.createContainer(db=db)
-            self.createDocuments(container=container)
-            self.simpleQuery(container=container)            
+            db = self.CreateDatabase()
+            container = self.CreateContainer(db=db)
+            self.CreateDocuments(container=container)
+            self.SimpleQuery(container=container)            
         finally:
             # if something goes wrong, the resource should be cleaned anyway
-            self.deleteDatabase()
+            self.DeleteDatabase()

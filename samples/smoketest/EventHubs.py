@@ -10,13 +10,13 @@ class EventHub:
         eventHubName = 'myeventhub'
         self.client = EventHubClient.from_connection_string(connectionString, eventHubName)
 
-    def getPartitionIds(self):
+    def GetPartitionIds(self):
         print("Getting partitions id...")
         partition_ids = self.client.get_partition_ids()
         print("\tdone")
         return partition_ids      
 
-    def sendAndReceiveEvents(self, partitionID):
+    def SendAndReceiveEvents(self, partitionID):
         consumer = self.client.create_consumer(consumer_group="$default", partition_id=partitionID, event_position=EventPosition(datetime.utcnow()))
 
         print("Sending events...")
@@ -46,7 +46,7 @@ class EventHub:
         print("3) Consume Events")
         print()
 
-        partitionID = self.getPartitionIds()
+        partitionID = self.GetPartitionIds()
         #In this sample the same partition id is going to be used for the producer and consumer,
         #It is the first one, but it could be any (is not relevant as long as it is the same in both producer and consumer)
-        self.sendAndReceiveEvents(partitionID[0])
+        self.SendAndReceiveEvents(partitionID[0])

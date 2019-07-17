@@ -11,17 +11,17 @@ class KeyVault:
         credential = DefaultAzureCredential()
         self.secret_client = SecretClient(vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential)
 
-    def setSecret(self):
+    def SetSecret(self):
         print("Setting a secret...")
         self.secret_client.set_secret("secret-name", "secret-value")
         print("\tdone")
 
-    def getSecret(self):
+    def GetSecret(self):
         print("Getting a secret...")
         secret = self.secret_client.get_secret("secret-name")
         print("\tdone: " + secret.name)
 
-    def deleteSecret(self):
+    def DeleteSecret(self):
         print("Deleting a secret...")
         deleted_secret = self.secret_client.delete_secret("secret-name")
         print("\tdone: " + deleted_secret.name)
@@ -37,7 +37,7 @@ class KeyVault:
         print()
 
         try:
-            self.setSecret()
-            self.getSecret()
+            self.SetSecret()
+            self.GetSecret()
         finally:
-            self.deleteSecret()
+            self.DeleteSecret()
