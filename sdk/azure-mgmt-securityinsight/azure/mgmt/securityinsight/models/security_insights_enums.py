@@ -101,49 +101,6 @@ class OSFamily(str, Enum):
     ios = "IOS"  #: Host with IOS operating system.
 
 
-class SettingKind(str, Enum):
-
-    ueba_settings = "UebaSettings"
-    toggle_settings = "ToggleSettings"
-
-
-class StatusInMcas(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class LicenseStatus(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class AggregationsKind(str, Enum):
-
-    cases_aggregation = "CasesAggregation"
-
-
-class EntityType(str, Enum):
-
-    account = "Account"  #: Entity represents account in the system.
-    host = "Host"  #: Entity represents host in the system.
-    file = "File"  #: Entity represents file in the system.
-    azure_resource = "AzureResource"  #: Entity represents azure resource in the system.
-    cloud_application = "CloudApplication"  #: Entity represents cloud application in the system.
-    dns = "DNS"  #: Entity represents dns in the system.
-    file_hash = "FileHash"  #: Entity represents file hash in the system.
-    ip = "IP"  #: Entity represents ip in the system.
-    malware = "Malware"  #: Entity represents malware in the system.
-    process = "Process"  #: Entity represents process in the system.
-    registry_key = "RegistryKey"  #: Entity represents registry key in the system.
-    registry_value = "RegistryValue"  #: Entity represents registry value in the system.
-    security_group = "SecurityGroup"  #: Entity represents security group in the system.
-    url = "URL"  #: Entity represents url in the system.
-    security_alert = "SecurityAlert"  #: Entity represents security alert in the system.
-    hunting_bookmark = "HuntingBookmark"  #: Entity represents HuntingBookmark in the system.
-
-
 class ConfidenceReason(str, Enum):
 
     type = "Type"  #: The type (category) of the reason
@@ -240,3 +197,46 @@ class RegistryValueKind(str, Enum):
     dword = "DWord"  #: DWord value type
     multi_string = "MultiString"  #: MultiString value type
     qword = "QWord"  #: QWord value type
+
+
+class SettingKind(str, Enum):
+
+    ueba_settings = "UebaSettings"
+    toggle_settings = "ToggleSettings"
+
+
+class StatusInMcas(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class LicenseStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class AggregationsKind(str, Enum):
+
+    cases_aggregation = "CasesAggregation"
+
+
+class EntityType(str, Enum):
+
+    account = "Account"  #: Entity represents account in the system.
+    host = "Host"  #: Entity represents host in the system.
+    file = "File"  #: Entity represents file in the system.
+    azure_resource = "AzureResource"  #: Entity represents azure resource in the system.
+    cloud_application = "CloudApplication"  #: Entity represents cloud application in the system.
+    dns = "DNS"  #: Entity represents dns in the system.
+    file_hash = "FileHash"  #: Entity represents file hash in the system.
+    ip = "IP"  #: Entity represents ip in the system.
+    malware = "Malware"  #: Entity represents malware in the system.
+    process = "Process"  #: Entity represents process in the system.
+    registry_key = "RegistryKey"  #: Entity represents registry key in the system.
+    registry_value = "RegistryValue"  #: Entity represents registry value in the system.
+    security_group = "SecurityGroup"  #: Entity represents security group in the system.
+    url = "URL"  #: Entity represents url in the system.
+    security_alert = "SecurityAlert"  #: Entity represents security alert in the system.
+    hunting_bookmark = "HuntingBookmark"  #: Entity represents HuntingBookmark in the system.

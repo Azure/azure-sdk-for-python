@@ -44,18 +44,6 @@ try:
     from .account_entity_py3 import AccountEntity
     from .host_entity_py3 import HostEntity
     from .file_entity_py3 import FileEntity
-    from .office_consent_py3 import OfficeConsent
-    from .resource_py3 import Resource
-    from .settings_py3 import Settings
-    from .settings_kind_py3 import SettingsKind
-    from .ueba_settings_py3 import UebaSettings
-    from .toggle_settings_py3 import ToggleSettings
-    from .aggregations_py3 import Aggregations
-    from .aggregations_kind1_py3 import AggregationsKind1
-    from .cases_aggregation_by_severity_properties_py3 import CasesAggregationBySeverityProperties
-    from .cases_aggregation_by_status_properties_py3 import CasesAggregationByStatusProperties
-    from .cases_aggregation_py3 import CasesAggregation
-    from .entity_query_py3 import EntityQuery
     from .entity_common_properties_py3 import EntityCommonProperties
     from .security_alert_py3 import SecurityAlert
     from .file_hash_py3 import FileHash
@@ -77,6 +65,18 @@ try:
     from .expansion_result_aggregation_py3 import ExpansionResultAggregation
     from .expansion_results_metadata_py3 import ExpansionResultsMetadata
     from .entity_expand_response_py3 import EntityExpandResponse
+    from .office_consent_py3 import OfficeConsent
+    from .resource_py3 import Resource
+    from .settings_py3 import Settings
+    from .settings_kind_py3 import SettingsKind
+    from .ueba_settings_py3 import UebaSettings
+    from .toggle_settings_py3 import ToggleSettings
+    from .aggregations_py3 import Aggregations
+    from .aggregations_kind1_py3 import AggregationsKind1
+    from .cases_aggregation_by_severity_properties_py3 import CasesAggregationBySeverityProperties
+    from .cases_aggregation_by_status_properties_py3 import CasesAggregationByStatusProperties
+    from .cases_aggregation_py3 import CasesAggregation
+    from .entity_query_py3 import EntityQuery
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -112,18 +112,6 @@ except (SyntaxError, ImportError):
     from .account_entity import AccountEntity
     from .host_entity import HostEntity
     from .file_entity import FileEntity
-    from .office_consent import OfficeConsent
-    from .resource import Resource
-    from .settings import Settings
-    from .settings_kind import SettingsKind
-    from .ueba_settings import UebaSettings
-    from .toggle_settings import ToggleSettings
-    from .aggregations import Aggregations
-    from .aggregations_kind1 import AggregationsKind1
-    from .cases_aggregation_by_severity_properties import CasesAggregationBySeverityProperties
-    from .cases_aggregation_by_status_properties import CasesAggregationByStatusProperties
-    from .cases_aggregation import CasesAggregation
-    from .entity_query import EntityQuery
     from .entity_common_properties import EntityCommonProperties
     from .security_alert import SecurityAlert
     from .file_hash import FileHash
@@ -145,6 +133,18 @@ except (SyntaxError, ImportError):
     from .expansion_result_aggregation import ExpansionResultAggregation
     from .expansion_results_metadata import ExpansionResultsMetadata
     from .entity_expand_response import EntityExpandResponse
+    from .office_consent import OfficeConsent
+    from .resource import Resource
+    from .settings import Settings
+    from .settings_kind import SettingsKind
+    from .ueba_settings import UebaSettings
+    from .toggle_settings import ToggleSettings
+    from .aggregations import Aggregations
+    from .aggregations_kind1 import AggregationsKind1
+    from .cases_aggregation_by_severity_properties import CasesAggregationBySeverityProperties
+    from .cases_aggregation_by_status_properties import CasesAggregationByStatusProperties
+    from .cases_aggregation import CasesAggregation
+    from .entity_query import EntityQuery
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
@@ -164,11 +164,6 @@ from .security_insights_enums import (
     DataTypeState,
     EntityKind,
     OSFamily,
-    SettingKind,
-    StatusInMcas,
-    LicenseStatus,
-    AggregationsKind,
-    EntityType,
     ConfidenceReason,
     ConfidenceScoreStatus,
     KillChainIntent,
@@ -179,6 +174,11 @@ from .security_insights_enums import (
     ElevationToken,
     RegistryHive,
     RegistryValueKind,
+    SettingKind,
+    StatusInMcas,
+    LicenseStatus,
+    AggregationsKind,
+    EntityType,
 )
 
 __all__ = [
@@ -216,18 +216,6 @@ __all__ = [
     'AccountEntity',
     'HostEntity',
     'FileEntity',
-    'OfficeConsent',
-    'Resource',
-    'Settings',
-    'SettingsKind',
-    'UebaSettings',
-    'ToggleSettings',
-    'Aggregations',
-    'AggregationsKind1',
-    'CasesAggregationBySeverityProperties',
-    'CasesAggregationByStatusProperties',
-    'CasesAggregation',
-    'EntityQuery',
     'EntityCommonProperties',
     'SecurityAlert',
     'FileHash',
@@ -249,6 +237,18 @@ __all__ = [
     'ExpansionResultAggregation',
     'ExpansionResultsMetadata',
     'EntityExpandResponse',
+    'OfficeConsent',
+    'Resource',
+    'Settings',
+    'SettingsKind',
+    'UebaSettings',
+    'ToggleSettings',
+    'Aggregations',
+    'AggregationsKind1',
+    'CasesAggregationBySeverityProperties',
+    'CasesAggregationByStatusProperties',
+    'CasesAggregation',
+    'EntityQuery',
     'OperationPaged',
     'AlertRulePaged',
     'ActionPaged',
@@ -267,11 +267,6 @@ __all__ = [
     'DataTypeState',
     'EntityKind',
     'OSFamily',
-    'SettingKind',
-    'StatusInMcas',
-    'LicenseStatus',
-    'AggregationsKind',
-    'EntityType',
     'ConfidenceReason',
     'ConfidenceScoreStatus',
     'KillChainIntent',
@@ -282,4 +277,9 @@ __all__ = [
     'ElevationToken',
     'RegistryHive',
     'RegistryValueKind',
+    'SettingKind',
+    'StatusInMcas',
+    'LicenseStatus',
+    'AggregationsKind',
+    'EntityType',
 ]
