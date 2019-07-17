@@ -12,8 +12,7 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union, TypeVar
 
-    HTTPResponseType = TypeVar("HTTPResponseType")
-    HTTPRequestType = TypeVar("HTTPRequestType")
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 try:
     from typing_extensions import Protocol
@@ -70,14 +69,14 @@ class AbstractSpan(Protocol):
         pass
 
     def set_http_attributes(self, request, response=None):
-        # type: (HTTPRequestType, HTTPResponseType) -> None
+        # type: (HttpRequest, HttpResponse) -> None
         """
         Add correct attributes for a http client span.
 
         :param request: The request make
-        :type request: HTTPRequestType
+        :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
-        :type response: HTTPResponseType
+        :type response: HttpResponse
         """
         pass
 

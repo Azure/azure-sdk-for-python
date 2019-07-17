@@ -56,7 +56,7 @@ def test_distributed_tracing_policy_exception():
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/temp")
+        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
@@ -74,7 +74,7 @@ def test_distributed_tracing_policy_exception():
         assert network_span.span_data.name == "/temp"
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp"
+        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
         assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504

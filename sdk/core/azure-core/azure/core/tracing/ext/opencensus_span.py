@@ -17,8 +17,7 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Dict, Optional, Union, TypeVar
 
-    HTTPResponseType = TypeVar("HTTPResponseType")
-    HTTPRequestType = TypeVar("HTTPRequestType")
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 
 class OpenCensusSpan(object):
@@ -99,14 +98,14 @@ class OpenCensusSpan(object):
         self.span_instance.add_attribute(key, value)
 
     def set_http_attributes(self, request, response=None):
-        # type: (HTTPRequestType, Optional[HTTPResponseType]) -> None
+        # type: (HttpRequest, Optional[HttpResponse]) -> None
         """
         Add correct attributes for a http client span.
 
         :param request: The request make
-        :type request: HTTPRequestType
+        :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
-        :type response: HTTPResponseType
+        :type response: HttpResponse
         """
         self._span_instance.span_id = SpanKind.CLIENT
         self.span_instance.add_attribute(self._span_component, "http")
