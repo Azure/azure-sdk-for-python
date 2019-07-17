@@ -43,7 +43,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, TypeVar, Optional
+    from typing import Any, Optional
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 
