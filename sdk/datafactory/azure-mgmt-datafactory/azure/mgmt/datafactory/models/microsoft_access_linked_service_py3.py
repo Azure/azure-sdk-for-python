@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .linked_service import LinkedService
+from .linked_service_py3 import LinkedService
 
 
-class TeradataLinkedService(LinkedService):
-    """Linked service for Teradata data source.
+class MicrosoftAccessLinkedService(LinkedService):
+    """Microsoft Access linked service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,20 +33,21 @@ class TeradataLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Teradata ODBC connection string. Type: string,
-     SecureString or AzureKeyVaultSecretReference.
+    :param connection_string: Required. The non-access credential portion of
+     the connection string as well as an optional encrypted credential. Type:
+     string, SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
-    :type server: object
-    :param authentication_type: AuthenticationType to be used for connection.
-     Possible values include: 'Basic', 'Windows'
-    :type authentication_type: str or
-     ~azure.mgmt.datafactory.models.TeradataAuthenticationType
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
-    :type username: object
-    :param password: Password for authentication.
+    :param authentication_type: Type of authentication used to connect to the
+     Microsoft Access as ODBC data store. Possible values are: Anonymous and
+     Basic. Type: string (or Expression with resultType string).
+    :type authentication_type: object
+    :param credential: The access credential portion of the connection string
+     specified in driver-specific property-value format.
+    :type credential: ~azure.mgmt.datafactory.models.SecretBase
+    :param user_name: User name for Basic authentication. Type: string (or
+     Expression with resultType string).
+    :type user_name: object
+    :param password: Password for Basic authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
@@ -56,6 +57,7 @@ class TeradataLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
+        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -66,19 +68,19 @@ class TeradataLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
-        'username': {'key': 'typeProperties.username', 'type': 'object'},
+        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
+        'credential': {'key': 'typeProperties.credential', 'type': 'SecretBase'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(TeradataLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.server = kwargs.get('server', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
-        self.type = 'Teradata'
+    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, credential=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
+        super(MicrosoftAccessLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.credential = credential
+        self.user_name = user_name
+        self.password = password
+        self.encrypted_credential = encrypted_credential
+        self.type = 'MicrosoftAccess'

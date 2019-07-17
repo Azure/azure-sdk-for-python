@@ -366,6 +366,13 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_serial = "LOCAL_SERIAL"
 
 
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
