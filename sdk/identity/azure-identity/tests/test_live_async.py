@@ -48,3 +48,16 @@ async def test_default_credential(live_identity_settings):
     assert token
     assert token.token
     assert token.expires_on
+
+
+@pytest.mark.asyncio
+async def test_confidential_client_credential(live_identity_settings):
+    credential = ConfidentialClientCredential(
+        client_id=live_identity_settings["client_id"],
+        client_credential=live_identity_settings["client_secret"],
+        authority="https://login.microsoftonline.com/" + live_identity_settings["tenant_id"],
+    )
+    token = await credential.get_token(ARM_SCOPE)
+    assert token
+    assert token.token
+    assert token.expires_on
