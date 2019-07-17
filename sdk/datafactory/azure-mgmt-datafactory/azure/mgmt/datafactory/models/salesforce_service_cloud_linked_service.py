@@ -12,8 +12,8 @@
 from .linked_service import LinkedService
 
 
-class TeradataLinkedService(LinkedService):
-    """Linked service for Teradata data source.
+class SalesforceServiceCloudLinkedService(LinkedService):
+    """Linked service for Salesforce Service Cloud.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,21 +33,24 @@ class TeradataLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Teradata ODBC connection string. Type: string,
-     SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
-    :type server: object
-    :param authentication_type: AuthenticationType to be used for connection.
-     Possible values include: 'Basic', 'Windows'
-    :type authentication_type: str or
-     ~azure.mgmt.datafactory.models.TeradataAuthenticationType
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
+    :param environment_url: The URL of Salesforce Service Cloud instance.
+     Default is 'https://login.salesforce.com'. To copy data from sandbox,
+     specify 'https://test.salesforce.com'. To copy data from custom domain,
+     specify, for example, 'https://[domain].my.salesforce.com'. Type: string
+     (or Expression with resultType string).
+    :type environment_url: object
+    :param username: The username for Basic authentication of the Salesforce
+     instance. Type: string (or Expression with resultType string).
     :type username: object
-    :param password: Password for authentication.
+    :param password: The password for Basic authentication of the Salesforce
+     instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param security_token: The security token is required to remotely access
+     Salesforce instance.
+    :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param extended_properties: Extended properties appended to the connection
+     string. Type: string (or Expression with resultType string).
+    :type extended_properties: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -65,20 +68,20 @@ class TeradataLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
+        'environment_url': {'key': 'typeProperties.environmentUrl', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(TeradataLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.server = kwargs.get('server', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
+        super(SalesforceServiceCloudLinkedService, self).__init__(**kwargs)
+        self.environment_url = kwargs.get('environment_url', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+        self.security_token = kwargs.get('security_token', None)
+        self.extended_properties = kwargs.get('extended_properties', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
-        self.type = 'Teradata'
+        self.type = 'SalesforceServiceCloud'

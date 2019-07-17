@@ -321,6 +321,18 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
+class DynamicsDeploymentType(str, Enum):
+
+    online = "Online"
+    on_premises_with_ifd = "OnPremisesWithIfd"
+
+
+class DynamicsAuthenticationType(str, Enum):
+
+    office365 = "Office365"
+    ifd = "Ifd"
+
+
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"
@@ -352,6 +364,13 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_one = "LOCAL_ONE"
     serial = "SERIAL"
     local_serial = "LOCAL_SERIAL"
+
+
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
 
 
 class StoredProcedureParameterType(str, Enum):
