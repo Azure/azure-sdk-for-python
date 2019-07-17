@@ -7,11 +7,11 @@ from datetime import datetime
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
-from ._internal import _KeyVaultClientBase
+from ._shared import KeyVaultClientBase
 from ._models import Secret, DeletedSecret, SecretAttributes
 
 
-class SecretClient(_KeyVaultClientBase):
+class SecretClient(KeyVaultClientBase):
     """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
