@@ -6,8 +6,8 @@
 import datetime
 from typing import Any, Dict, Mapping, Optional
 from collections import namedtuple
-from ._internal import _parse_vault_id
-from ._generated.v7_0 import models
+from ._shared import parse_vault_id
+from ._shared._generated.v7_0 import models
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -19,7 +19,7 @@ class KeyBase(object):
         # type: (models.KeyAttributes, str, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = vault_id
-        self._vault_id = _parse_vault_id(vault_id)
+        self._vault_id = parse_vault_id(vault_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
