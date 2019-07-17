@@ -73,7 +73,7 @@ class UsagesOperations(object):
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if expand_children is not None:
-                    query_parameters['$expandChildren'] = self._serialize.query("expand_children", expand_children, 'str')
+                    query_parameters['expandChildren'] = self._serialize.query("expand_children", expand_children, 'str')
 
             else:
                 url = next_link
