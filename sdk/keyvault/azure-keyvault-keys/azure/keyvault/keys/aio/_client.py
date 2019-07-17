@@ -8,10 +8,10 @@ from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 from azure.keyvault.keys._models import Key, DeletedKey, KeyBase, KeyOperationResult
-from ._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
 
 
-class KeyClient(_AsyncKeyVaultClientBase):
+class KeyClient(AsyncKeyVaultClientBase):
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
 
     Example:
