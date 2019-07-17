@@ -56,6 +56,14 @@ class CosmosDB:
             container.create_item(planet)
             print("\t'{0}' created".format(planet['id']))
         print("\tdone")
+
+    def simpleQuery(self, container):
+        print("Quering the container...")
+        items = list(container.query_items(
+            query="SELECT c.id FROM c",
+            enable_cross_partition_query = True
+        ))
+        print("\tdone: {0}".format(items))
     
     def deleteDatabase(self):
         print("Cleaning up the resource...")
@@ -82,7 +90,8 @@ class CosmosDB:
         try:
             db = self.createDatabase()
             container = self.createContainer(db=db)
-            self.createDocuments(container=container)            
+            self.createDocuments(container=container)
+            self.simpleQuery(container=container)            
         finally:
             # if something goes wrong, the resource should be cleaned anyway
             self.deleteDatabase()
