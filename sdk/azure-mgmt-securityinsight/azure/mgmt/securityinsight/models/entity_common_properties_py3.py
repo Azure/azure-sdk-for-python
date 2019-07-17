@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EntityCommonProperties(Model):
-    """Entity commom property bag.
+    """Entity common property bag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

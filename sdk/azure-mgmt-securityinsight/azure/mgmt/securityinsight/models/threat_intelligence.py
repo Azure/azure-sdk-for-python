@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ThreatIntelligence(Model):
-    """Ip entity property bag.
+    """ThreatIntelligence property bag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

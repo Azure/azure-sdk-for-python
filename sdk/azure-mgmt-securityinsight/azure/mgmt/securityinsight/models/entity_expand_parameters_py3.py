@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class EntityExpandParameters(Model):
     """The parameters required to execute an expand operation on the given entity.
 
-    :param expansion_id: The Id of the expnsion to perform.
+    :param expansion_id: The Id of the expansion to perform.
     :type expansion_id: str
     :param start_time: The start date filter, so the only expansion results
      returned are after this date.

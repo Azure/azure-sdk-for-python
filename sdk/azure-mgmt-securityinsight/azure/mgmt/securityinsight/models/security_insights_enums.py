@@ -80,7 +80,7 @@ class EntityKind(str, Enum):
     file = "File"  #: Entity represents file in the system.
     azure_resource = "AzureResource"  #: Entity represents azure resource in the system.
     cloud_application = "CloudApplication"  #: Entity represents cloud application in the system.
-    dns_resolution = "DnsResolution"  #: Entity represents dns resoultion in the system.
+    dns_resolution = "DnsResolution"  #: Entity represents dns resolution in the system.
     file_hash = "FileHash"  #: Entity represents file hash in the system.
     ip = "Ip"  #: Entity represents ip in the system.
     malware = "Malware"  #: Entity represents malware in the system.

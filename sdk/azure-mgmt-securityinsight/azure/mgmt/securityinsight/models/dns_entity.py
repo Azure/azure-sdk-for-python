@@ -37,7 +37,7 @@ class DnsEntity(Entity):
     :vartype additional_data: dict[str, object]
     :ivar domain_name: The name of the dns record associated with the alert
     :vartype domain_name: str
-    :ivar ip_address_entity_ids: Ip Entitiy identifiers for the resolved ip
+    :ivar ip_address_entity_ids: Ip entity identifiers for the resolved ip
      address.
     :vartype ip_address_entity_ids: list[str]
     :ivar dns_server_ip_entity_id: An ip entity id for the dns server

@@ -40,8 +40,8 @@ class IpEntity(Entity):
     :vartype address: str
     :param location: The geo-location context attached to the ip entity
     :type location: ~azure.mgmt.securityinsight.models.GeoLocation
-    :ivar threat_intelligence: Ip Entitiy identifiers for the resolved ip
-     address.
+    :ivar threat_intelligence: A list of TI contexts attached to the ip
+     entity.
     :vartype threat_intelligence:
      list[~azure.mgmt.securityinsight.models.ThreatIntelligence]
     """
