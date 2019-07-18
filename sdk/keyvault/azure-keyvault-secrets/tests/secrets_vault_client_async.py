@@ -10,9 +10,8 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
-from azure.keyvault.secrets._generated import KeyVaultClient
+from azure.keyvault.secrets._shared import AsyncKeyVaultClientBase
 from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets.aio._internal import _AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     try:
@@ -24,7 +23,7 @@ if TYPE_CHECKING:
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
 
-class VaultClient(_AsyncKeyVaultClientBase):
+class VaultClient(AsyncKeyVaultClientBase):
     def __init__(
         self,
         vault_url: str,

@@ -2,16 +2,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Generator, Mapping, Optional, List
 from datetime import datetime
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Generator, Mapping, Optional
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
-from ._internal import _KeyVaultClientBase
+from ._shared import KeyVaultClientBase
 from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
-class KeyClient(_KeyVaultClientBase):
+class KeyClient(KeyVaultClientBase):
     """KeyClient is a high-level interface for managing a vault's keys.
 
     Example:
