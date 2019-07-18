@@ -73,7 +73,7 @@ class AsyncPipelineClient(PipelineClientBase):
         else:
             transport = kwargs.get('transport')
             if not transport:
-                transport = AioHttpTransport(config, **kwargs)
+                transport = AioHttpTransport(**kwargs)
             self._pipeline = self._build_pipeline(config, transport)
 
     async def __aenter__(self):

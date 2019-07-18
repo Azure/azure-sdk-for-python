@@ -73,7 +73,7 @@ class PipelineClient(PipelineClientBase):
         else:
             transport = kwargs.get('transport')
             if not transport:
-                transport = RequestsTransport(config)
+                transport = RequestsTransport()
             self._pipeline = self._build_pipeline(config, transport)
 
     def __enter__(self):

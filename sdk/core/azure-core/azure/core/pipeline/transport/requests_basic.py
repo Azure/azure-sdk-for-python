@@ -31,7 +31,7 @@ import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 import requests
 
-from azure.core.configuration import Configuration
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
@@ -164,8 +164,6 @@ class RequestsTransport(HttpTransport):
     - You provide the configured session if you want to, or a basic session is created.
     - All kwargs received by "send" are sent to session.request directly
 
-    :param configuration: The service configuration.
-    :type configuration: ~azure.core.Configuration
     :param session: The session.
     :type session: requests.Session
     :param bool session_owner: Defaults to True.
@@ -185,10 +183,10 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ['http://', 'https://']
 
-    def __init__(self, configuration=None, session=None, session_owner=True, **kwargs):
+    def __init__(self, session=None, session_owner=True, **kwargs):
         # type: (Optional[Configuration], Optional[requests.Session], bool) -> None
         self._session_owner = session_owner
-        self.config = configuration or Configuration()
+        self.connection_config = ConnectionConfiguration(**kwargs)
         self.session = session
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
@@ -249,9 +247,9 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
                 **kwargs)
 
@@ -269,4 +267,4 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)

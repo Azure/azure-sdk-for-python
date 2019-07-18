@@ -34,8 +34,6 @@ class Configuration(object):
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
 
-    :param connection: Provides the configuration parameters for the transport.
-    :type connection: ~azure.core.ConnectionConfiguration
     :param headers_policy: Provides parameters for custom or additional headers to be sent with the request.
     :param proxy_policy: Provides configuration parameters for proxy.
     :param redirect_policy: Provides configuration parameters for redirects.
@@ -57,9 +55,6 @@ class Configuration(object):
     """
 
     def __init__(self, **kwargs):
-        # Communication configuration - applied per transport.
-        self.connection = ConnectionConfiguration(**kwargs)
-
         # Headers (sent with every request)
         self.headers_policy = None
 

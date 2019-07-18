@@ -107,9 +107,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                     headers=request.headers,
                     data=request.data,
                     files=request.files,
-                    verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                    timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                    cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
                     **kwargs))
 
@@ -128,7 +128,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):

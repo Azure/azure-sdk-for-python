@@ -30,7 +30,7 @@ import logging
 import asyncio
 import aiohttp
 
-from azure.core.configuration import Configuration
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 
@@ -54,8 +54,6 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    :param configuration: The service configuration.
-    :type configuration: ~azure.core.Configuration
     :param session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
@@ -72,11 +70,11 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True, **kwargs):
+    def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
-        self.config = configuration or Configuration()
+        self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     async def __aenter__(self):
@@ -106,8 +104,8 @@ class AioHttpTransport(AsyncHttpTransport):
             self.session = None
 
     def _build_ssl_config(self, **config):
-        verify = config.get('connection_verify', self.config.connection.verify)
-        cert = config.get('connection_cert', self.config.connection.cert)
+        verify = config.get('connection_verify', self.connection_config.verify)
+        cert = config.get('connection_cert', self.connection_config.cert)
         ssl_ctx = None
 
         if cert or verify not in (True, False):
@@ -173,11 +171,11 @@ class AioHttpTransport(AsyncHttpTransport):
                 request.url,
                 headers=request.headers,
                 data=self._get_request_data(request),
-                timeout=config.get('connection_timeout', self.config.connection.timeout),
+                timeout=config.get('connection_timeout', self.connection_config.timeout),
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result, self.config.connection.data_block_size)
+            response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
