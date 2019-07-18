@@ -2518,7 +2518,7 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedprocedures'}
+    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedProcedures'}
 
     def get_sql_stored_procedure(
             self, resource_group_name, account_name, database_name, container_name, stored_procedure_name, custom_headers=None, raw=False, **operation_config):
@@ -2590,7 +2590,7 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedprocedures/{storedProcedureName}'}
+    get_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}'}
 
 
     def _create_update_sql_stored_procedure_initial(
@@ -2708,7 +2708,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedprocedures/{storedProcedureName}'}
+    create_update_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}'}
 
 
     def _delete_sql_stored_procedure_initial(
@@ -2799,7 +2799,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedprocedures/{storedProcedureName}'}
+    delete_sql_stored_procedure.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}'}
 
     def list_mongo_db_databases(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
