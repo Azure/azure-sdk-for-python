@@ -47,10 +47,12 @@ try:
 except NameError:
     _unicode_type = str
 
-
-_LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def encode_base64(data):
     if isinstance(data, _unicode_type):
@@ -100,25 +102,6 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(
                 request.http_request.url,
                 message_id)
-
-
-class StorageBlobSettings(object):
-
-    def __init__(self, **kwargs):
-        self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
-        self.copy_polling_interval = 15
-
-        # Block blob uploads
-        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
-        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
-
-        # Page blob uploads
-        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
-
-        # Blob downloads
-        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
-        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -251,7 +234,9 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._application = kwargs.pop('user_agent', None)
-        self._user_agent = "azsdk-python-storage-queue/{} Python/{} ({})".format(
+        storage_sdk = kwargs.pop('storage_sdk')
+        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
+            storage_sdk,
             VERSION,
             platform.python_version(),
             platform.platform())

@@ -47,16 +47,32 @@ try:
 except NameError:
     _unicode_type = str
 
-
-_LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def encode_base64(data):
     if isinstance(data, _unicode_type):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
+
+
+def is_exhausted(settings):
+    """Are we out of retries?"""
+    retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
+    retry_counts = list(filter(None, retry_counts))
+    if not retry_counts:
+        return False
+    return min(retry_counts) < 0
+
+
+def retry_hook(settings, **kwargs):
+    if settings['hook']:
+        settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
 def is_retry(response, mode):
@@ -100,28 +116,6 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(
                 request.http_request.url,
                 message_id)
-
-
-class StorageDataSettings(object):
-
-    def __init__(self, **kwargs):
-        self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
-        self.copy_polling_interval = 15
-
-        # Block blob uploads
-        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
-        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
-
-        # Page blob uploads
-        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
-
-        # Blob downloads
-        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
-        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
-
-        # File uploads
-        self.max_range_size = kwargs.get('max_range_size', 4 * 1024 * 1024)
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -254,7 +248,9 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._application = kwargs.pop('user_agent', None)
-        self._user_agent = "azsdk-python-storage-file/{} Python/{} ({})".format(
+        storage_sdk = kwargs.pop('storage_sdk')
+        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
+            storage_sdk,
             VERSION,
             platform.python_version(),
             platform.platform())
@@ -446,15 +442,6 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def is_exhausted(self, settings):  # pylint: disable=no-self-use
-        """Are we out of retries?"""
-        retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
-        retry_counts = list(filter(None, retry_counts))
-        if not retry_counts:
-            return False
-
-        return min(retry_counts) < 0
-
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
 
@@ -485,7 +472,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))
 
-        if not self.is_exhausted(settings):
+        if not is_exhausted(settings):
             if request.method not in ['PUT'] and settings['retry_secondary']:
                 self._set_next_host_location(settings, request)
 
@@ -500,13 +487,6 @@ class StorageRetryPolicy(HTTPPolicy):
                 except UnsupportedOperation:
                     # if body is not seekable, then retry would not work
                     return False
-            if settings['hook']:
-                settings['hook'](
-                    request=request,
-                    response=response,
-                    error=error,
-                    retry_count=settings['count'],
-                    location_mode=settings['mode'])
             settings['count'] += 1
             return True
         return False
@@ -524,14 +504,23 @@ class StorageRetryPolicy(HTTPPolicy):
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
+                        retry_hook(
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None)
                         self.sleep(retry_settings, request.context.transport)
-
                         continue
                 break
             except AzureError as err:
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
+                    retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err)
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err

@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from azure.storage.queue._shared.utils import _decode_base64_to_bytes
+from azure.storage.queue._shared import decode_base64_to_bytes
 from azure.storage.queue._shared.encryption import (
     _ERROR_OBJECT_INVALID,
     _WrappedContentKey,
@@ -407,7 +407,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         cipher = Cipher(algorithm, mode, backend)
 
         # decode and decrypt data
-        decrypted_data = _decode_base64_to_bytes(message)
+        decrypted_data = decode_base64_to_bytes(message)
         decryptor = cipher.decryptor()
         decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
 

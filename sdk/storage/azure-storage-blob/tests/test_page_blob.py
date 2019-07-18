@@ -575,8 +575,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
-        self.assert_upload_progress(
-            LARGE_BLOB_SIZE, self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
     def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
@@ -657,7 +656,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -763,7 +762,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_stream_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -810,7 +809,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        self.assert_upload_progress(blob_size, self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
 
     @record
     def test_create_blob_with_md5_small(self):

@@ -11,10 +11,8 @@ from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.paging import Paged
 
-from ._shared.utils import (
-    decode_base64,
-    return_context_and_deserialized,
-    process_storage_error)
+from ._shared import decode_base64_to_text
+from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -805,7 +803,7 @@ class BlobBlock(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         block = cls()
-        block.id = decode_base64(generated.name)
+        block.id = decode_base64_to_text(generated.name)
         block.size = generated.size
         return block
 

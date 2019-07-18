@@ -279,6 +279,29 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
+    def test_get_file_with_iter(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=self.directory_name + '/' + self.byte_file,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+
+        # Act
+        with open(FILE_PATH, 'wb') as stream:
+            for data in file_client.download_file():
+                stream.write(data)
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(self.byte_data, actual)
+
     def test_get_file_to_stream(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
