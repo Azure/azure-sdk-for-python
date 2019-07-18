@@ -9,8 +9,8 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
-from azure.keyvault.keys._generated import KeyVaultClient
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy
+from ._generated import KeyVaultClient
+from . import AsyncChallengeAuthPolicy
 
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ class AsyncPagingAdapter:
         # TODO: expected type Model got Coroutine instead?
 
 
-class _AsyncKeyVaultClientBase:
+class AsyncKeyVaultClientBase:
     """
     :param credential:  A credential or credential provider which can be used to authenticate to the vault,
         a ValueError will be raised if the entity is not provided
