@@ -30,8 +30,8 @@ class PaymentMethod(Resource):
      ~azure.mgmt.billing.models.PaymentMethodType
     :ivar details: Details about the payment method.
     :vartype details: str
-    :ivar expiration: Expiration date.
-    :vartype expiration: datetime
+    :ivar expiration: Expiration month and year.
+    :vartype expiration: str
     :ivar currency: The currency associated with the payment method.
     :vartype currency: str
     """
@@ -51,7 +51,7 @@ class PaymentMethod(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'payment_method_type': {'key': 'properties.paymentMethodType', 'type': 'str'},
         'details': {'key': 'properties.details', 'type': 'str'},
-        'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
+        'expiration': {'key': 'properties.expiration', 'type': 'str'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
     }
 
