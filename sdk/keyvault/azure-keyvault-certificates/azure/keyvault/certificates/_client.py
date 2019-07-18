@@ -763,7 +763,7 @@ class CertificateClient(_KeyVaultClientBase):
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
-        vault. This operaiton requires the certificates/manageissuers/getissuers
+        vault. This operation requires the certificates/manageissuers/getissuers
         permission.
 
         :return: An iterator like instance of Issuers
@@ -771,4 +771,4 @@ class CertificateClient(_KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
-        return (Issuer._from_issuer_item(issuer_item=item) for item in paged_certificate_issuer_items)
+        return (IssuerBase._from_issuer_item(issuer_item=item) for item in paged_certificate_issuer_items)

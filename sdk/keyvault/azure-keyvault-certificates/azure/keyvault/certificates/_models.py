@@ -501,33 +501,17 @@ class Contact:
 
 
 class IssuerBase(object):
-    def __init__(self, attributes, issuer_id, provider):
-        # type: (models.IssuerAttributes, str, str) -> None
-        self._attributes = attributes
+    def __init__(self, issuer_id, provider):
+        # type: (str, str) -> None
         self._id = issuer_id
         self._vault_id = _parse_vault_id(issuer_id)
         self._provider = provider
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
-        # type: (models.IssuerItem) -> IssuerBase
+        # type: (models.CertificateIssuerItem) -> IssuerBase
         """Construct a IssuerBase from an autorest-generated IssuerItem"""
-        return cls(attributes=issuer_item.attributes, issuer_id=issuer_item.id, provider=issuer_item.provider)
-
-    @property
-    def enabled(self):
-        # type: () -> bool
-        return self._attributes.enabled
-
-    @property
-    def created(self):
-        # type: () -> datetime
-        return self._attributes.created
-
-    @property
-    def updated(self):
-        # type: () -> datetime
-        return self._attributes.updated
+        return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
     def id(self):
@@ -556,7 +540,8 @@ class Issuer(IssuerBase):
         self, attributes, provider, issuer_id, account_id, password=None,  organization_id=None, admin_details=[None], **kwargs
     ):
         # type: (models.IssuerAttributes, str, str, str, Optional[str], Optional[str], Optional[List[[AdministratorDetails]], Mapping[str, Any]) -> None
-        super(Issuer, self).__init__(attributes, issuer_id, provider, **kwargs)
+        super(Issuer, self).__init__(issuer_id, provider, **kwargs)
+        self._attributes = attributes
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
@@ -579,6 +564,21 @@ class Issuer(IssuerBase):
             organization_id=issuer_bundle.organization_details.id,
             admin_details=admin_details
         )
+
+    @property
+    def enabled(self):
+        # type: () -> bool
+        return self._attributes.enabled
+
+    @property
+    def created(self):
+        # type: () -> datetime
+        return self._attributes.created
+
+    @property
+    def updated(self):
+        # type: () -> datetime
+        return self._attributes.updated
 
     @property
     def account_id(self):
