@@ -67,13 +67,13 @@ class StorageFileTestAsync(FileTestCase):
         if not self.is_playback():
             loop = asyncio.get_event_loop()
             try:
-                loop.run_until_complete(self.fsc.delete_share(self.share_name, delete_snapshots='include'))
+                loop.run_until_complete(self.fsc.delete_share(self.share_name, delete_snapshots=True))
             except:
                 pass
 
             if self.remote_share_name:
                 try:
-                    loop.run_until_complete(self.fs2.delete_share(self.remote_share_name, delete_snapshots='include'))
+                    loop.run_until_complete(self.fs2.delete_share(self.remote_share_name, delete_snapshots=True))
                 except:
                     pass
 

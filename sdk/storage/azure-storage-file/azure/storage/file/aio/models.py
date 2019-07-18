@@ -53,12 +53,12 @@ class SharePropertiesPaged(Paged):
     async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         try:
             self.location_mode, self._response = await self._async_get_next(
@@ -104,12 +104,12 @@ class HandlesPaged(Paged):
     async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         try:
             self.location_mode, self._response = await self._async_get_next(
@@ -160,12 +160,12 @@ class DirectoryPropertiesPaged(Paged):
     async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
         This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         try:
             self.location_mode, self._response = await self._async_get_next(
