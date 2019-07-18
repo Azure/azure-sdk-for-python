@@ -14,7 +14,7 @@ from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
 from .polling import CopyStatusPoller
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
-from ._shared.downloads import StorageStreamDownloader
+from ._shared.download_chunking import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
