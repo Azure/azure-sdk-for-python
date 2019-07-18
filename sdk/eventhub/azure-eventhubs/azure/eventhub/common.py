@@ -8,6 +8,7 @@ import datetime
 import calendar
 import json
 import six
+import logging
 
 from azure.eventhub.error import EventDataError
 from uamqp import BatchMessage, Message, types, constants, errors
@@ -254,6 +255,9 @@ class EventDataBatch(object):
     Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
     Do not instantiate an EventDataBatch object directly.
     """
+
+    log = logging.getLogger(__name__)
+
     def __init__(self, max_size=None, partition_key=None):
         self.max_size = max_size if max_size else constants.MAX_MESSAGE_LENGTH_BYTES
         self._partition_key = partition_key
@@ -297,6 +301,9 @@ class EventDataBatch(object):
         :param event_data:
         :return:
         """
+        if event_data is None:
+            self.log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            return
         if not isinstance(event_data, EventData):
             raise TypeError('event_data should be type of EventData')
 
