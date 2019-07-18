@@ -7,7 +7,7 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
-from azure.keyvault.keys._internal import _KeyVaultClientBase
+from azure.keyvault.keys._shared import KeyVaultClientBase
 from azure.keyvault.keys import KeyClient
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
 
-class VaultClient(_KeyVaultClientBase):
+class VaultClient(KeyVaultClientBase):
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
         # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         super(VaultClient, self).__init__(
