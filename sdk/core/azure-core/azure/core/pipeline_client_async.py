@@ -55,7 +55,7 @@ class AsyncPipelineClient(PipelineClientBase):
     *transport* - The HTTP Transport type. If omitted, AioHttpTransport is use for asynchronous transport.
 
     Example:
-        .. literalinclude:: ../examples/examples_async.py
+        .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START build_async_pipeline_client]
             :end-before: [END build_async_pipeline_client]
             :language: python

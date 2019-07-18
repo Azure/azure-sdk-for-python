@@ -8,14 +8,14 @@ from typing import Any, AsyncIterable, Mapping, Optional, Dict
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 from azure.keyvault.secrets._models import Secret, DeletedSecret, SecretAttributes
-from ._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
+from .._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
 
 
-class SecretClient(_AsyncKeyVaultClientBase):
+class SecretClient(AsyncKeyVaultClientBase):
     """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_secrets_async.py
+        .. literalinclude:: ../tests/test_samples_secrets_async.py
             :start-after: [START create_secret_client]
             :end-before: [END create_secret_client]
             :language: python
@@ -39,7 +39,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if client failed to retrieve the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START get_secret]
                 :end-before: [END get_secret]
                 :language: python
@@ -83,7 +83,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets._models.Secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START set_secret]
                 :end-before: [END set_secret]
                 :language: python
@@ -132,7 +132,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START update_secret]
                 :end-before: [END update_secret]
                 :language: python
@@ -168,7 +168,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START list_secrets]
                 :end-before: [END list_secrets]
                 :language: python
@@ -193,7 +193,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START list_secret_versions]
                 :end-before: [END list_secret_versions]
                 :language: python
@@ -218,7 +218,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
          Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]
                 :language: python
@@ -242,7 +242,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceExistsError, if client failed to restore the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START restore_secret]
                 :end-before: [END restore_secret]
                 :language: python
@@ -267,7 +267,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError, if client failed to delete the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START delete_secret]
                 :end-before: [END delete_secret]
                 :language: python
@@ -291,7 +291,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ResourceNotFoundError, if client failed to retrieve the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START get_deleted_secret]
                 :end-before: [END get_deleted_secret]
                 :language: python
@@ -315,7 +315,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.secrets._models.DeletedSecret]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START list_deleted_secrets]
                 :end-before: [END list_deleted_secrets]
                 :language: python
@@ -359,7 +359,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets_async.py
+            .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START recover_deleted_secret]
                 :end-before: [END recover_deleted_secret]
                 :language: python

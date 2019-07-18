@@ -31,7 +31,19 @@
 from collections import namedtuple
 import logging
 import os
-from typing import Any, Union
+import six
+import sys
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Union
+
+
+from azure.core.tracing import AbstractSpan
 
 
 __all__ = ("settings",)
@@ -61,9 +73,9 @@ def convert_bool(value):
         return value  # type: ignore
 
     val = value.lower()  # type: ignore
-    if val in ["yes", "1", "on"]:
+    if val in ["yes", "1", "on", "true", "True"]:
         return True
-    if val in ["no", "0", "off"]:
+    if val in ["no", "0", "off", "false", "False"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 
@@ -102,12 +114,61 @@ def convert_logging(value):
     val = value.upper()  # type: ignore
     level = _levels.get(val)
     if not level:
-        raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
-            )
-        )
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
+
+
+def get_opencensus_span():
+    # type: () -> OpenCensusSpan
+    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
+    try:
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+
+        return OpenCensusSpan
+    except ImportError:
+        return None
+
+
+def get_opencensus_span_if_opencensus_is_imported():
+    if "opencensus" not in sys.modules:
+        return None
+    return get_opencensus_span()
+
+
+_tracing_implementation_dict = {"opencensus": get_opencensus_span}
+
+
+def convert_tracing_impl(value):
+    # type: (Union[str, AbstractSpan]) -> AbstractSpan
+    """Convert a string to AbstractSpan
+
+    If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
+    understands the following strings, ignoring case:
+
+    * "opencensus"
+
+    :param value: the value to convert
+    :type value: string
+    :returns: AbstractSpan
+    :raises ValueError: If conversion to AbstractSpan fails
+
+    """
+    if value is None:
+        return get_opencensus_span_if_opencensus_is_imported()
+
+    wrapper_class = value
+    if isinstance(value, six.string_types):
+        value = value.lower()
+        get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
+        wrapper_class = get_wrapper_class()
+        if wrapper_class is _Unset:
+            raise ValueError(
+                "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                    value, ", ".join(_tracing_implementation_dict)
+                )
+            )
+
+    return wrapper_class
 
 
 class PrioritizedSetting(object):
@@ -138,9 +199,7 @@ class PrioritizedSetting(object):
 
     """
 
-    def __init__(
-        self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-    ):
+    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -311,11 +370,7 @@ class Settings(object):
         """ Return implicit default values for all settings, ignoring environment and system.
 
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
@@ -335,11 +390,7 @@ class Settings(object):
         settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 
@@ -348,17 +399,19 @@ class Settings(object):
         return Config(**props)
 
     log_level = PrioritizedSetting(
-        "log_level",
-        env_var="AZURE_LOG_LEVEL",
-        convert=convert_logging,
-        default=logging.INFO,
+        "log_level", env_var="AZURE_LOG_LEVEL", convert=convert_logging, default=logging.INFO
     )
 
     tracing_enabled = PrioritizedSetting(
-        "tracing_enbled",
-        env_var="AZURE_TRACING_ENABLED",
-        convert=convert_bool,
-        default=False,
+        "tracing_enbled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
+    )
+
+    tracing_implementation = PrioritizedSetting(
+        "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
+    )
+
+    tracing_should_only_propagate = PrioritizedSetting(
+        "tracing_should_only_propagate", env_var="AZURE_TRACING_ONLY_PROPAGATE", convert=convert_bool, default=False
     )
 
 

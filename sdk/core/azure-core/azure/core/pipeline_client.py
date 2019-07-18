@@ -55,7 +55,7 @@ class PipelineClient(PipelineClientBase):
     *transport* - The HTTP Transport type. If omitted, RequestsTransport is used for synchronous transport.
 
     Example:
-        .. literalinclude:: ../examples/examples_sync.py
+        .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START build_pipeline_client]
             :end-before: [END build_pipeline_client]
             :language: python
