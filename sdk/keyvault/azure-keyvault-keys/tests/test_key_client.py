@@ -5,6 +5,7 @@
 import codecs
 from dateutil import parser as date_parse
 import functools
+import hashlib
 import time
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -15,6 +16,8 @@ from devtools_testutils import ResourceGroupPreparer
 
 
 class KeyClientTests(KeyVaultTestCase):
+    test_plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -351,21 +354,56 @@ class KeyClientTests(KeyVaultTestCase):
         # create key
         created_bundle = client.create_key(key_name, "RSA")
         self.assertIsNotNone(created_bundle)
-        plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
         # wrap without version
-        result = client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text)
+        result = client.wrap_key(created_bundle.name, "RSA-OAEP", self.test_plain_text)
         cipher_text = result.value
 
         # unwrap without version
         result = client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text)
-        self.assertEqual(plain_text, result.value)
+        self.assertEqual(self.test_plain_text, result.value)
 
         # wrap with version
-        result = client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text, version=created_bundle.version)
+        result = client.wrap_key(created_bundle.name, "RSA-OAEP", self.test_plain_text, version=created_bundle.version)
         cipher_text = result.value
         self.assertIsNotNone(cipher_text)
 
         # unwrap with version
         result = client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text, version=created_bundle.version)
-        self.assertEqual(plain_text, result.value)
+        self.assertEqual(self.test_plain_text, result.value)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_key_encrypt_and_decrypt(self, vault_client, **kwargs):
+        client = vault_client.keys
+        key_name = self.get_resource_name("keycrypt")
+        key = self._import_test_key(client, key_name)
+
+        # en/decrypt should round-trip
+        cipher_text = client.encrypt(key.name, "RSA-OAEP", self.test_plain_text)
+        plain_text = client.decrypt(key.name, "RSA-OAEP", cipher_text)
+        self.assertEqual(self.test_plain_text, plain_text)
+
+        cipher_text = client.encrypt(key.name, "RSA-OAEP", plain_text)
+        plain_text = client.decrypt(key.name, "RSA-OAEP", cipher_text, key_version=key.version)
+        self.assertEqual(self.test_plain_text, plain_text)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_key_sign_and_verify(self, vault_client, **kwargs):
+        client = vault_client.keys
+        key_name = self.get_resource_name("keysign")
+        key = self._import_test_key(client, key_name)
+
+        md = hashlib.sha256()
+        md.update(self.test_plain_text)
+        digest = md.digest()
+
+
+        signature = client.sign(key.name, "RS256", digest)
+        result = client.verify(key.name, "RS256", digest, signature)
+        self.assertTrue(result)
+
+        signature = client.sign(key.name, "RS256", digest)
+        result = client.verify(key.name, "RS256", digest, signature, key_version=key.version)
+        self.assertTrue(result)
