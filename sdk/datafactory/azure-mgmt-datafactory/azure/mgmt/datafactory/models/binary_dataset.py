@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
+class BinaryDataset(Dataset):
+    """Binary dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,11 +43,17 @@ class SapBwCubeDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
+    :param location: Required. The location of the Binary storage.
+    :type location: ~azure.mgmt.datafactory.models.DatasetLocation
+    :param compression: The data compression method used for the binary
+     dataset.
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -60,8 +66,12 @@ class SapBwCubeDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
+        'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
     def __init__(self, **kwargs):
-        super(SapBwCubeDataset, self).__init__(**kwargs)
-        self.type = 'SapBwCube'
+        super(BinaryDataset, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.compression = kwargs.get('compression', None)
+        self.type = 'Binary'

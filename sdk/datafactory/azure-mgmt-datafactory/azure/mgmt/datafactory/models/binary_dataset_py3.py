@@ -12,8 +12,8 @@
 from .dataset_py3 import Dataset
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
+class BinaryDataset(Dataset):
+    """Binary dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,11 +43,17 @@ class SapBwCubeDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
+    :param location: Required. The location of the Binary storage.
+    :type location: ~azure.mgmt.datafactory.models.DatasetLocation
+    :param compression: The data compression method used for the binary
+     dataset.
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -60,8 +66,12 @@ class SapBwCubeDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
+        'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
-        super(SapBwCubeDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type = 'SapBwCube'
+    def __init__(self, *, linked_service_name, location, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, compression=None, **kwargs) -> None:
+        super(BinaryDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.location = location
+        self.compression = compression
+        self.type = 'Binary'
