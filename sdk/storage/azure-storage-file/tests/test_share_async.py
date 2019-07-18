@@ -342,7 +342,9 @@ class StorageShareTest(FileTestCase):
         # Arrange
         share = await self._create_share()
         # Act
-        shares = [s async for s in self.fsc.list_shares()]
+        shares = []
+        async for s in self.fsc.list_shares():
+            shares.append(s)
 
         # Assert
         self.assertIsNotNone(shares)
@@ -368,7 +370,9 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertIsNotNone(shares)
-        all_shares = [s async for s in shares]
+        all_shares = []
+        async for s in shares:
+            all_shares.append(s)
         self.assertEqual(len(all_shares), 3)
         self.assertNamedItemInContainer(all_shares, share.share_name)
         self.assertNamedItemInContainer(all_shares, snapshot1['snapshot'])
@@ -386,7 +390,9 @@ class StorageShareTest(FileTestCase):
         await share.create_share()
 
         # Act
-        shares = [s async for s in self.fsc.list_shares(name_starts_with=share.share_name)]
+        shares = []
+        async for s in self.fsc.list_shares(name_starts_with=share.share_name):
+            shares.append(s)
 
         # Assert
         self.assertEqual(len(shares), 1)
@@ -407,8 +413,9 @@ class StorageShareTest(FileTestCase):
         await share.create_share(metadata)
 
         # Act
-
-        shares = [s async for s in self.fsc.list_shares(share.share_name, include_metadata=True)]
+        shares = []
+        async for s in self.fsc.list_shares(share.share_name, include_metadata=True):
+            shares.append(s)
 
         # Assert
         self.assertIsNotNone(shares)
@@ -722,7 +729,9 @@ class StorageShareTest(FileTestCase):
         await dir2.create_directory()
 
         # Act
-        resp = [s async for s in share.list_directories_and_files()]
+        resp = []
+        async for d in share.list_directories_and_files():
+            resp.append(d)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -754,7 +763,9 @@ class StorageShareTest(FileTestCase):
 
         # Act
         snapshot_client = self.fsc.get_share_client(share_name.share_name, snapshot=snapshot1)
-        resp = [s async for s in snapshot_client.list_directories_and_files()]
+        resp = []
+        async for d in snapshot_client.list_directories_and_files():
+            resp.append(d)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -843,7 +854,9 @@ class StorageShareTest(FileTestCase):
         await dir1.upload_file('file3', '1025')
 
         # Act
-        resp = [s async for s in share.list_directories_and_files('dir1', name_starts_with='pref')]
+        resp = []
+        async for d in share.list_directories_and_files('dir1', name_starts_with='pref'):
+            resp.append(d)
 
         # Assert
         self.assertIsNotNone(resp)

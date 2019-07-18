@@ -438,7 +438,9 @@ class StorageDirectoryTest(FileTestCase):
             directory.upload_file("file3", "data3"))
 
         # Act
-        list_dir = [d async for d in directory.list_directories_and_files()]
+        list_dir = []
+        async for d in directory.list_directories_and_files():
+            list_dir.append(d)
 
         # Assert
         expected = [
@@ -472,7 +474,9 @@ class StorageDirectoryTest(FileTestCase):
             directory.upload_file("file3", "data3"))
 
         # Act
-        list_dir = [d async for d in directory.list_directories_and_files(name_starts_with="sub")]
+        list_dir = []
+        async for d in directory.list_directories_and_files(name_starts_with="sub"):
+            list_dir.append(d)
 
         # Assert
         expected = [
@@ -509,7 +513,9 @@ class StorageDirectoryTest(FileTestCase):
         snapshot_dir = share_client.get_directory_client('dir1')
 
         # Act
-        list_dir = [d async for d in snapshot_dir.list_directories_and_files()]
+        list_dir = []
+        async for d in snapshot_dir.list_directories_and_files():
+            list_dir.append(d)
 
         # Assert
         expected = [
@@ -540,7 +546,9 @@ class StorageDirectoryTest(FileTestCase):
             subdir.upload_file("file3", "data3"))
 
         # Act
-        list_dir = [d async for d in directory.list_directories_and_files()]
+        list_dir = []
+        async for d in directory.list_directories_and_files():
+            list_dir.append(d)
 
         # Assert
         expected = [
