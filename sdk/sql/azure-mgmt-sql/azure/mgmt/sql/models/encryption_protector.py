@@ -26,9 +26,9 @@ class EncryptionProtector(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Kind of encryption protector. This is metadata used for the
+    :ivar kind: Kind of encryption protector. This is metadata used for the
      Azure portal experience.
-    :type kind: str
+    :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
@@ -49,6 +49,7 @@ class EncryptionProtector(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
         'server_key_type': {'required': True},
@@ -71,7 +72,7 @@ class EncryptionProtector(ProxyResource):
 
     def __init__(self, **kwargs):
         super(EncryptionProtector, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        self.kind = None
         self.location = None
         self.subregion = None
         self.server_key_name = kwargs.get('server_key_name', None)
