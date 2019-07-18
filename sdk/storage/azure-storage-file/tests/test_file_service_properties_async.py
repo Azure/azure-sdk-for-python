@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import asyncio
 
 from azure.core.exceptions import HttpResponseError
 
@@ -18,6 +19,7 @@ from azure.storage.file.aio import (
 
 from filetestcase import (
     FileTestCase,
+    TestMode,
     record,
     not_for_emulator,
 )

@@ -14,6 +14,7 @@ from azure.storage.file.aio import (
     FileClient)
 
 from filetestcase import (
+    TestMode,
     FileTestCase,
     record,
 )
