@@ -25,7 +25,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
-import azure.cosmos.retry_options as retry_options
+import azure.cosmos._retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility
 import test_config
