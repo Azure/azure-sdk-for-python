@@ -12,6 +12,8 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
 
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 try:
     from typing_extensions import Protocol
 except ImportError:
@@ -21,7 +23,7 @@ except ImportError:
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(self, span=None, name=None): # pylint: disable=super-init-not-called
+    def __init__(self, span=None, name=None):  # pylint: disable=super-init-not-called
         # type: (Optional[Any], Optional[str]) -> None
         """
         If a span is given wraps the span. Else a new span is created.
@@ -63,6 +65,18 @@ class AbstractSpan(Protocol):
         :type key: str
         :param value: The value of the key value pair
         :type value: str
+        """
+        pass
+
+    def set_http_attributes(self, request, response=None):
+        # type: (HttpRequest, HttpResponse) -> None
+        """
+        Add correct attributes for a http client span.
+
+        :param request: The request made
+        :type request: HttpRequest
+        :param response: The response received by the server. Is None if no response received.
+        :type response: HttpResponse
         """
         pass
 
