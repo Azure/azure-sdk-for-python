@@ -32,11 +32,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         key is symmetric, then no key material is released in the response.
         This operation requires the keys/get permission.
 
-        :param name: The name of the key to get.
-        :type name: str
-        :param version: Retrieves a specific version of a key. If the version is None or an empty string,
-         the latest version of the key is returned
-        :type version: str
+        :param str name: The name of the key to get.
+        :param str version: Version of the key to get. If unspecified, the latest version of the key is returned.
         :returns: Key
         :rtype: ~azure.keyvault.keys._models.Key
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
@@ -76,32 +73,21 @@ class KeyClient(AsyncKeyVaultClientBase):
         Key Vault. If the named key already exists, Azure Key Vault creates a
         new version of the key. It requires the keys/create permission.
 
-        :param name: The name for the new key. The system will generate
-         the version name for the new key.
-        :type name: str
-        :param key_type: The type of key to create. For valid values, see
-         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
-         'RSA-HSM', 'oct'
-        :param size: The key size in bits. For example: 2048, 3072, or
-         4096 for RSA.
-        :type size: int
-        :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
-         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
-         'P-521', 'SECP256K1'
-        :type curve: str or
-        :type key_type: str or ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyType
+        :param str name: The name for the new key. Key Vault will generate a version for the new key.
+        :param key_type: The type of key to create. For valid values, see ~azure.keyvault.keys.enums.JsonWebKeyType
+        :type key_type: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+        :param int size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :param key_operations: Supported key operations.
-        :type key_operations: list[str or
-         ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :type key_operations: list[str or ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
+        :param bool enabled: Determines whether the key is enabled.
         :param expires: Expiry date of the key in UTC.
         :type expires: datetime.datetime
-        :param not_before: Not before date of the key in UTC
+        :param not_before: Not before date of the key in UTC.
         :type not_before: datetime.datetime
-        :param tags: Application specific metadata in the form of key-value
-         pairs.
+        :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: Dict[str, str]
+        :param curve: Elliptic curve name. If not provided, defaults to 'P-256'. See ~azure.keyvault.keys.enums.JsonWebKeyCurveName for valid values.
+        :type curve: str or ~azure.keyvault.keys.enums.JsonWebKeyCurveName
         :returns: The created key
         :rtype: ~azure.keyvault.keys._models.Key
 
@@ -143,24 +129,20 @@ class KeyClient(AsyncKeyVaultClientBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Mapping[str, Any]
     ) -> Key:
-        """Creates a new RSA type key, stores it, then returns the key to the client.
+        """Creates a new RSA type key, stores it, then returns key to the client.
 
         The create key operation can be used to create any key type in Azure
         Key Vault. If the named key already exists, Azure Key Vault creates a
         new version of the key. It requires the keys/create permission.
 
-        :param name: The name for the new key. The system will generate
-         the version name for the new key.
-        :type name: str
-        :param hsm: Whether to import as a hardware key (HSM) or software key.
-        :type hsm: bool
-        :param size: The key size in bits. For example: 2048, 3072, or
-         4096 for RSA.
+        :param str name: The name for the new key. Key Vault will generate a version for the new key.
+        :param bool hsm: Whether to create the key in a hardware security module.
+        :param size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :type size: int
         :param key_operations: Supported key operations.
         :type key_operations: list[str or
          ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
-        :param enabled: Determines whether the object is enabled.
+        :param bool enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
         :type expires: datetime.datetime
@@ -206,35 +188,24 @@ class KeyClient(AsyncKeyVaultClientBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Mapping[str, Any]
     ) -> Key:
-        """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
+        """Creates a new elliptic curve key, stores it, then returns it to the client.
 
-        The create key operation can be used to create any key type in Azure
-        Key Vault. If the named key already exists, Azure Key Vault creates a
-        new version of the key. It requires the keys/create permission.
+        This requires the keys/create permission. If the named key already exists, Azure Key Vault creates a new version of the key.
 
-        :param name: The name for the new key. The system will generate
-         the version name for the new key.
-        :type name: str
-        :param hsm: Whether to import as a hardware key (HSM) or software key.
-        :type hsm: bool
-        :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
-         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
-         'P-521', 'SECP256K1'
-        :type curve: str or
-         ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyCurveName
+        :param str name: The name for the new key. Key Vault will generate a version for the new key.
+        :param bool hsm: Whether to create the key in a hardware security module.
+        :param curve: Elliptic curve name. If not provided, defaults to 'P-256'. See ~azure.keyvault.keys.enums.JsonWebKeyCurveName for valid values.
+        :type curve: str or ~azure.keyvault.keys.enums.JsonWebKeyCurveName
         :param key_operations: Supported key operations.
-        :type key_operations: list[str or
-         ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :type key_operations: list[str or ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
+        :param bool enabled: Determines whether the object is enabled.
         :param expires: Expiry date of the key in UTC.
         :type expires: datetime.datetime
         :param not_before: Not before date of the key in UTC
         :type not_before: datetime.datetime
-        :param tags: Application specific metadata in the form of key-value
-         pairs.
+        :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: Dict[str, str]
-        :returns: The created EC key
+        :returns: The created key
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
@@ -278,15 +249,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         Key Vault. Note: The cryptographic material of a key itself cannot be
         changed. This operation requires the keys/update permission.
 
-        :param name: The name of key to update.
-        :type name: str
-        :param version: The version of the key to update.
-        :type version: str
+        :param str name: The name of key to update.
+        :param str version: The version of the key to update.
         :param key_operations: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
-        :type key_operations: list[str or
-         ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
-        :param enabled: Determines whether the object is enabled.
+        :type key_operations: list[str or ~azure.keyvault.keys._generated.v7_0.models.JsonWebKeyOperation]
+        :param bool enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
         :type expires: datetime.datetime
@@ -296,7 +264,7 @@ class KeyClient(AsyncKeyVaultClientBase):
          pairs.
         :type tags: Dict[str, str]
         :returns: The updated key
-        :rtype: ~azure.security.keyvault.v7_0.models.Key
+        :rtype: ~azure.keyvault.keys._models.Key
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
 
         Example:
@@ -357,8 +325,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         The full key identifier, attributes, and tags are provided in the
         response. This operation requires the keys/list permission.
 
-        :param name: The name of the key.
-        :type name: str
+        :param str name: The name of the key.
         :returns: An iterator like instance of KeyBase
         :rtype:
          typing.AsyncIterable[~azure.keyvault.keys._models.KeyBase]
@@ -394,8 +361,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         geographical area cannot be restored in an EU geographical area. This
         operation requires the key/backup permission.
 
-        :param name: The name of the key.
-        :type name: str
+        :param str name: The name of the key.
         :return: The raw bytes of the key backup.
         :rtype: bytes
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
@@ -457,8 +423,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         Wrap/Unwrap or Encrypt/Decrypt operations. This operation requires the
         keys/delete permission.
 
-        :param name: The name of the key to delete.
-        :type name: str
+        :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys._models.DeletedKey
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to delete the key
@@ -482,8 +447,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         an error if invoked on a non soft-delete enabled vault. This operation
         requires the keys/get permission.
 
-        :param name: The name of the key.
-        :type name: str
+        :param str name: The name of the key.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys._models.DeletedKey
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
@@ -537,10 +501,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         an error if invoked on a non soft-delete enabled vault. This operation
         requires the keys/purge permission.
 
-        :param name: The name of the key
-        :type name: str
-        :returns: None
-        :rtype: None
+        :param str name: The name of the key
 
         Example:
             .. code-block:: python
@@ -562,9 +523,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         on soft-delete enabled vaults. This operation requires the keys/recover
         permission.
 
-        :param name: The name of the deleted key.
-        :type name: str
-        :returns: The recovered deleted key
+        :param str name: The name of the deleted key.
+        :returns: The recovered key
         :rtype: ~azure.keyvault.keys._models.Key
 
         Example:
@@ -596,15 +556,14 @@ class KeyClient(AsyncKeyVaultClientBase):
         creates a new version of the key. This operation requires the
         keys/import permission.
 
-        :param name: Name for the imported key.
-        :type name: str
+        :param str name: Name for the imported key.
         :param key: The Json web key
         :type key: ~azure.security.keyvault.v7_0.models.JsonWebKey
         :param hsm: Whether to import as a hardware key (HSM) or software key.
         :type hsm: bool
-        :param enabled: Determines whether the object is enabled.
+        :param bool enabled: Determines whether the object is enabled.
         :type enabled: bool
-        :param expires: Expiry date of the key  in UTC.
+        :param expires: Expiry date of the key in UTC.
         :type expires: datetime.datetime
         :param not_before: Not before date of the key in UTC
         :type not_before: datetime.datetime
@@ -638,15 +597,11 @@ class KeyClient(AsyncKeyVaultClientBase):
         key-reference but do not have access to the public key material. This
         operation requires the keys/wrapKey permission.
 
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
+        :param str name: The name of the key.
+        :param str version: The version of the key to use. If unspecified, the latest version of the key is used.
+        :param algorithm: algorithm identifier to use
+        :type algorithm: str or ~azure.keyvault.keys.enums.JsonWebKeyEncryptionAlgorithm
+        :param value: The key to wrap.
         :type value: bytes
         :returns: The wrapped symmetric key.
         :rtype: ~azure.keyvault.keys._models.KeyOperationResult
@@ -672,14 +627,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         keys stored in Azure Key Vault since it uses the private portion of the
         key. This operation requires the keys/unwrapKey permission.
 
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
+        :param str name: The name of the key.
+        :param str version: The version of the key to use. If unspecified, the latest version of the key is used.
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
         :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+         ~azure.keyvault.keys.enums.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :returns: The unwrapped symmetric key.
