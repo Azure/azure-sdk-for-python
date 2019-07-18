@@ -43,7 +43,6 @@ class QueueServiceStatsTestAsync(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @record
     async def _test_queue_service_stats_f(self):
         # Arrange
         url = self._get_queue_url()
@@ -62,7 +61,6 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_service_stats_f())
 
-    @record
     async def _test_queue_service_stats_when_unavailable(self):
         # Arrange
         url = self._get_queue_url()
