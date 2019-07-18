@@ -13,14 +13,13 @@ from msrest.serialization import Model
 
 
 class BillingSubscriptionsListResult(Model):
-    """Result of listing billing subscriptions summary.
+    """Result of listing billing subscriptions.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of billing subscriptions summary.
-    :vartype value:
-     list[~azure.mgmt.billing.models.BillingSubscriptionSummary]
+    :ivar value: The list of billing subscriptions.
+    :vartype value: list[~azure.mgmt.billing.models.BillingSubscription]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
@@ -31,7 +30,7 @@ class BillingSubscriptionsListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BillingSubscriptionSummary]'},
+        'value': {'key': 'value', 'type': '[BillingSubscription]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 

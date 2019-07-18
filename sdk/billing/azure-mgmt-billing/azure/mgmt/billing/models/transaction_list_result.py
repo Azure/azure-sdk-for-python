@@ -12,14 +12,14 @@
 from msrest.serialization import Model
 
 
-class TransactionsListResult(Model):
-    """Result of listing reservation transactions summary.
+class TransactionListResult(Model):
+    """Result of listing reservation transactions.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of reservation transactions summary.
-    :vartype value: list[~azure.mgmt.billing.models.TransactionsSummary]
+    :ivar value: The list of reservation transactions.
+    :vartype value: list[~azure.mgmt.billing.models.Transaction]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
@@ -30,11 +30,11 @@ class TransactionsListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TransactionsSummary]'},
+        'value': {'key': 'value', 'type': '[Transaction]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(TransactionsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(TransactionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class EnabledAzureSKUs(Model):
-    """Details about the enabled azure sku.
+class AzurePlan(Model):
+    """Details about the azure plan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,6 +34,6 @@ class EnabledAzureSKUs(Model):
     }
 
     def __init__(self, **kwargs):
-        super(EnabledAzureSKUs, self).__init__(**kwargs)
+        super(AzurePlan, self).__init__(**kwargs)
         self.sku_id = kwargs.get('sku_id', None)
         self.sku_description = None

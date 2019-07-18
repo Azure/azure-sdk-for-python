@@ -26,9 +26,6 @@ class InvoiceSection(Resource):
     :vartype type: str
     :param display_name: The name of the InvoiceSection.
     :type display_name: str
-    :param billing_profiles: The billing profiles associated to the billing
-     account.
-    :type billing_profiles: list[~azure.mgmt.billing.models.BillingProfile]
     """
 
     _validation = {
@@ -42,10 +39,8 @@ class InvoiceSection(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
     }
 
-    def __init__(self, *, display_name: str=None, billing_profiles=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, **kwargs) -> None:
         super(InvoiceSection, self).__init__(**kwargs)
         self.display_name = display_name
-        self.billing_profiles = billing_profiles

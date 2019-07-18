@@ -115,6 +115,30 @@ class ReservationType(str, Enum):
     usage_charge = "Usage Charge"
 
 
+class MarketplacePurchasesPolicy(str, Enum):
+
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
+
+
+class ReservationPurchasesPolicy(str, Enum):
+
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
+
+
+class ViewChargesPolicy(str, Enum):
+
+    none = "None"
+    subscription_owner = "SubscriptionOwner"
+
+
+class FreeMarketplacePurchasesPolicy(str, Enum):
+
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
+
+
 class PaymentMethodType(str, Enum):
 
     credits = "Credits"

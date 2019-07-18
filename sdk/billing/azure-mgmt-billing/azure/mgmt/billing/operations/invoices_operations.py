@@ -22,7 +22,7 @@ class InvoicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class InvoicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -180,8 +180,8 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: InvoiceSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.InvoiceSummary or
+        :return: Invoice or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Invoice or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -219,7 +219,7 @@ class InvoicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('InvoiceSummary', response)
+            deserialized = self._deserialize('Invoice', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

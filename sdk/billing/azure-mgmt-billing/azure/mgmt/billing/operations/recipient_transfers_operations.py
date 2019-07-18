@@ -208,7 +208,7 @@ class RecipientTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}/'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):

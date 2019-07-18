@@ -12,8 +12,8 @@
 from .resource_py3 import Resource
 
 
-class TransactionsSummary(Resource):
-    """A reservation transaction summary resource.
+class Transaction(Resource):
+    """A reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,15 +53,15 @@ class TransactionsSummary(Resource):
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
-    :ivar invoice_section_name: Invoice section name to which this product
-     belongs.
-    :vartype invoice_section_name: str
+    :ivar invoice_section_display_name: Invoice section display name to which
+     this product belongs.
+    :vartype invoice_section_display_name: str
     :ivar billing_profile_id: Billing Profile id to which this product
      belongs.
     :vartype billing_profile_id: str
-    :ivar billing_profile_name: Billing Profile name to which this product
-     belongs.
-    :vartype billing_profile_name: str
+    :ivar billing_profile_display_name: Billing Profile display name to which
+     this product belongs.
+    :vartype billing_profile_display_name: str
     :ivar subscription_id: The subscription id.
     :vartype subscription_id: str
     :ivar subscription_name: The subscription name.
@@ -83,9 +83,9 @@ class TransactionsSummary(Resource):
         'transaction_amount': {'readonly': True},
         'quantity': {'readonly': True},
         'invoice_section_id': {'readonly': True},
-        'invoice_section_name': {'readonly': True},
+        'invoice_section_display_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
+        'billing_profile_display_name': {'readonly': True},
         'subscription_id': {'readonly': True},
         'subscription_name': {'readonly': True},
     }
@@ -107,15 +107,15 @@ class TransactionsSummary(Resource):
         'transaction_amount': {'key': 'properties.transactionAmount', 'type': 'Amount'},
         'quantity': {'key': 'properties.quantity', 'type': 'int'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
         'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
     }
 
     def __init__(self, *, kind=None, transaction_type=None, **kwargs) -> None:
-        super(TransactionsSummary, self).__init__(**kwargs)
+        super(Transaction, self).__init__(**kwargs)
         self.kind = kind
         self.date_property = None
         self.invoice = None
@@ -129,8 +129,8 @@ class TransactionsSummary(Resource):
         self.transaction_amount = None
         self.quantity = None
         self.invoice_section_id = None
-        self.invoice_section_name = None
+        self.invoice_section_display_name = None
         self.billing_profile_id = None
-        self.billing_profile_name = None
+        self.billing_profile_display_name = None
         self.subscription_id = None
         self.subscription_name = None

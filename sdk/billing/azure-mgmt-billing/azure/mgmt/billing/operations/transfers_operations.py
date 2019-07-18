@@ -35,16 +35,15 @@ class TransfersOperations(object):
         self.config = config
 
     def initiate(
-            self, billing_account_name, invoice_section_name, billing_profile_id=None, recipient_email_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, recipient_email_id=None, custom_headers=None, raw=False, **operation_config):
         """Initiates the request to transfer the legacy subscriptions or RIs.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param billing_profile_id: Target Usage context for devTest
-         subscriptions.
-        :type billing_profile_id: str
         :param recipient_email_id: Email Id of recipient for transfer.
         :type recipient_email_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -58,12 +57,13 @@ class TransfersOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        body = models.InitiateTransferRequest(billing_profile_id=billing_profile_id, recipient_email_id=recipient_email_id)
+        body = models.InitiateTransferRequest(recipient_email_id=recipient_email_id)
 
         # Construct URL
         url = self.initiate.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -102,14 +102,16 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/initiateTransfer'}
+    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/initiateTransfer'}
 
     def get(
-            self, billing_account_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Gets the transfer details for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param transfer_name: Transfer Name.
@@ -129,6 +131,7 @@ class TransfersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
@@ -164,14 +167,16 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
 
     def cancel(
-            self, billing_account_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Cancels the transfer for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param transfer_name: Transfer Name.
@@ -191,6 +196,7 @@ class TransfersOperations(object):
         url = self.cancel.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
@@ -226,14 +232,16 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
+    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
 
     def list(
-            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists all transfer's details initiated from given invoice section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -254,6 +262,7 @@ class TransfersOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
                     'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -293,4 +302,4 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/transfers'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers'}

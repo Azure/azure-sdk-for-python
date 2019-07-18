@@ -26,6 +26,8 @@ class TransferDetails(Model):
     :vartype invoice_section_id: str
     :ivar billing_account_id: Target billing account Id.
     :vartype billing_account_id: str
+    :ivar billing_profile_id: Target billing profile Id.
+    :vartype billing_profile_id: str
     :ivar transfer_status: Overall transfer status. Possible values include:
      'Pending', 'InProgress', 'Completed', 'CompletedWithErrors', 'Failed',
      'Canceled', 'Declined'
@@ -48,6 +50,7 @@ class TransferDetails(Model):
         'expiration_time': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'billing_account_id': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
         'transfer_status': {'readonly': True},
         'recipient_email_id': {'readonly': True},
         'initiator_email_id': {'readonly': True},
@@ -61,6 +64,7 @@ class TransferDetails(Model):
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'transfer_status': {'key': 'properties.transferStatus', 'type': 'str'},
         'recipient_email_id': {'key': 'properties.recipientEmailId', 'type': 'str'},
         'initiator_email_id': {'key': 'properties.initiatorEmailId', 'type': 'str'},
@@ -75,6 +79,7 @@ class TransferDetails(Model):
         self.expiration_time = None
         self.invoice_section_id = None
         self.billing_account_id = None
+        self.billing_profile_id = None
         self.transfer_status = None
         self.recipient_email_id = None
         self.initiator_email_id = None

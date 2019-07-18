@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class BillingProfileCreationParameters(Model):
-    """The parameters for creating a new billing profile.
+class BillingProfileCreationRequest(Model):
+    """The request parameters for creating a new billing profile.
 
     :param display_name: The billing profile name.
     :type display_name: str
@@ -24,9 +24,8 @@ class BillingProfileCreationParameters(Model):
     :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :type invoice_email_opt_in: bool
-    :param enable_azure_sk_us: Azure skus to enable for this billing profile..
-    :type enable_azure_sk_us:
-     list[~azure.mgmt.billing.models.EnabledAzureSKUs]
+    :param enabled_azure_plans: Enabled azure plans for this billing profile.
+    :type enabled_azure_plans: list[~azure.mgmt.billing.models.AzurePlan]
     """
 
     _attribute_map = {
@@ -34,13 +33,13 @@ class BillingProfileCreationParameters(Model):
         'po_number': {'key': 'poNumber', 'type': 'str'},
         'address': {'key': 'address', 'type': 'Address'},
         'invoice_email_opt_in': {'key': 'invoiceEmailOptIn', 'type': 'bool'},
-        'enable_azure_sk_us': {'key': 'enableAzureSKUs', 'type': '[EnabledAzureSKUs]'},
+        'enabled_azure_plans': {'key': 'enabledAzurePlans', 'type': '[AzurePlan]'},
     }
 
-    def __init__(self, *, display_name: str=None, po_number: str=None, address=None, invoice_email_opt_in: bool=None, enable_azure_sk_us=None, **kwargs) -> None:
-        super(BillingProfileCreationParameters, self).__init__(**kwargs)
-        self.display_name = display_name
-        self.po_number = po_number
-        self.address = address
-        self.invoice_email_opt_in = invoice_email_opt_in
-        self.enable_azure_sk_us = enable_azure_sk_us
+    def __init__(self, **kwargs):
+        super(BillingProfileCreationRequest, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.po_number = kwargs.get('po_number', None)
+        self.address = kwargs.get('address', None)
+        self.invoice_email_opt_in = kwargs.get('invoice_email_opt_in', None)
+        self.enabled_azure_plans = kwargs.get('enabled_azure_plans', None)

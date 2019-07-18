@@ -24,7 +24,7 @@ class BillingAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class BillingAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -42,7 +42,7 @@ class BillingAccountsOperations(object):
             self, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all billing accounts for a user which he has access to.
 
-        :param expand: May be used to expand the invoiceSections and
+        :param expand: May be used to expand the address, invoiceSections and
          billingProfiles.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -100,7 +100,7 @@ class BillingAccountsOperations(object):
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param expand: May be used to expand the invoiceSections and
+        :param expand: May be used to expand the address, invoiceSections and
          billingProfiles.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -182,7 +182,7 @@ class BillingAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BillingAccountUpdateProperties')
+        body_content = self._serialize.body(parameters, 'BillingAccountUpdateRequest')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -208,10 +208,10 @@ class BillingAccountsOperations(object):
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param parameters: Parameters supplied to the update billing account
-         operation.
+        :param parameters: Request parameters supplied to the update billing
+         account operation.
         :type parameters:
-         ~azure.mgmt.billing.models.BillingAccountUpdateProperties
+         ~azure.mgmt.billing.models.BillingAccountUpdateRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

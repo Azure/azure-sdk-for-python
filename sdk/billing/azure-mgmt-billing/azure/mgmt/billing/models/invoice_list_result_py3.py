@@ -19,7 +19,7 @@ class InvoiceListResult(Model):
     sending a request.
 
     :ivar value: The list of invoices.
-    :vartype value: list[~azure.mgmt.billing.models.InvoiceSummary]
+    :vartype value: list[~azure.mgmt.billing.models.Invoice]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
@@ -30,7 +30,7 @@ class InvoiceListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[InvoiceSummary]'},
+        'value': {'key': 'value', 'type': '[Invoice]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 

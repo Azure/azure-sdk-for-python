@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class ProductsListResult(Model):
-    """Result of listing products summary. It contains a list of available
-    products summaries in reverse chronological order by purchase date.
+    """Result of listing products. It contains a list of available products
+    summaries in reverse chronological order by purchase date.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of products summary.
-    :vartype value: list[~azure.mgmt.billing.models.ProductSummary]
+    :ivar value: The list of products.
+    :vartype value: list[~azure.mgmt.billing.models.Product]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
@@ -31,7 +31,7 @@ class ProductsListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProductSummary]'},
+        'value': {'key': 'value', 'type': '[Product]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
