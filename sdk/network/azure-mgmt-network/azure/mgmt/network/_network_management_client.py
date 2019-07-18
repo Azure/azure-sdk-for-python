@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from .version import VERSION
 from ._configuration import NetworkManagementClientConfiguration
 from ._operations_mixin import NetworkManagementClientOperationsMixin
 
@@ -403,19 +402,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2019_02_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def available_resource_group_private_endpoint_types(self):
-        """Instance depends on the API version:
-
-           * 2019-04-01: :class:`AvailableResourceGroupPrivateEndpointTypesOperations<azure.mgmt.network.v2019_04_01.operations.AvailableResourceGroupPrivateEndpointTypesOperations>`
-        """
-        api_version = self._get_api_version('available_resource_group_private_endpoint_types')
-        if api_version == '2019-04-01':
-            from .v2019_04_01.operations import AvailableResourceGroupPrivateEndpointTypesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

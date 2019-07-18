@@ -790,11 +790,8 @@ class ApplicationGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationGatewayAvailableServerVariablesResult or
-         ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.network.v2018_11_01.models.ApplicationGatewayAvailableServerVariablesResult
-         or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[str] or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_11_01.models.ErrorException>`
         """
@@ -828,7 +825,7 @@ class ApplicationGatewaysOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationGatewayAvailableServerVariablesResult', response)
+            deserialized = self._deserialize('[str]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -846,11 +843,8 @@ class ApplicationGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationGatewayAvailableRequestHeadersResult or
-         ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.network.v2018_11_01.models.ApplicationGatewayAvailableRequestHeadersResult
-         or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[str] or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_11_01.models.ErrorException>`
         """
@@ -884,7 +878,7 @@ class ApplicationGatewaysOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationGatewayAvailableRequestHeadersResult', response)
+            deserialized = self._deserialize('[str]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -902,11 +896,8 @@ class ApplicationGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationGatewayAvailableResponseHeadersResult or
-         ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.network.v2018_11_01.models.ApplicationGatewayAvailableResponseHeadersResult
-         or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[str] or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2018_11_01.models.ErrorException>`
         """
@@ -940,7 +931,7 @@ class ApplicationGatewaysOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationGatewayAvailableResponseHeadersResult', response)
+            deserialized = self._deserialize('[str]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
