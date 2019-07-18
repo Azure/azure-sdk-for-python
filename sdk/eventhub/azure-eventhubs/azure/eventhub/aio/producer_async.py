@@ -306,7 +306,7 @@ class EventHubProducer(object):
             ed._set_partition_key(partition_key)
             yield ed
 
-    async def create_batch(self, max_message_size=None, partition_key=None):
+    async def create_batch(self, max_size=None, partition_key=None):
         """
         Create an EventDataBatch object with max message size being max_message_size.
         The max_message_size should be no greater than the max allowed message size defined by the service side.
@@ -317,11 +317,11 @@ class EventHubProducer(object):
         if not self._max_message_size_on_link:
             await self._open()
 
-        if max_message_size and max_message_size > self._max_message_size_on_link:
+        if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
-                                 .format(max_message_size, self._max_message_size_on_link))
+                                 .format(max_size, self._max_message_size_on_link))
 
-        return EventDataBatch(max_message_size if max_message_size else self._max_message_size_on_link, partition_key)
+        return EventDataBatch(max_size or self._max_message_size_on_link, partition_key)
 
     async def send(self, event_data, partition_key=None):
         # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes]) -> None

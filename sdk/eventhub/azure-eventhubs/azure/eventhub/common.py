@@ -254,8 +254,8 @@ class EventDataBatch(object):
     Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
     Do not instantiate an EventDataBatch object directly.
     """
-    def __init__(self, max_message_size=None, partition_key=None):
-        self.max_message_size = max_message_size if max_message_size else constants.MAX_MESSAGE_LENGTH_BYTES
+    def __init__(self, max_size=None, partition_key=None):
+        self.max_size = max_size if max_size else constants.MAX_MESSAGE_LENGTH_BYTES
         self._partition_key = partition_key
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
 
@@ -298,7 +298,7 @@ class EventDataBatch(object):
         :return:
         """
         if not isinstance(event_data, EventData):
-            raise EventDataError('event_data should be type of EventData')
+            raise TypeError('event_data should be type of EventData')
 
         if self._partition_key:
             if event_data.partition_key and not (event_data.partition_key == self._partition_key):
@@ -313,13 +313,12 @@ class EventDataBatch(object):
         size_after_add = self._size + event_data_size\
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
 
-        if size_after_add > self.max_message_size:
-            return False
+        if size_after_add > self.max_size:
+            raise ValueError("EventDataBatch has reached its size limit {}".format(self.max_size))
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
-        return True
 
 
 class EventPosition(object):
