@@ -629,3 +629,87 @@ class KeyClient(KeyVaultClientBase):
             self.vault_url, name, key_version=version or "", algorithm=algorithm, value=value, **kwargs
         )
         return KeyOperationResult(id=bundle.kid, value=bundle.result)
+
+    def decrypt(self, key_name, algorithm, encrypted_bytes, key_version=None, **kwargs):
+        """Decrypts a single block of encrypted data using the named key and specified
+        algorithm. Only a single block of data may be decrypted. The size of this block
+        depends on the key and algorithm to be used.
+
+        This operation requires the keys/decrypt permission.
+
+        :param str key_name: name of the key to use
+        :param str key_version: Version of the key to use. If unspecified, the latest version is used.
+        :param algorithm: algorithm to use
+        :type algorithm: str or ~azure.keyvault.keys.enums.JsonWebKeyEncryptionAlgorithm
+        :param bytes encrypted_bytes: bytes to decrypt
+        :returns: decrypted bytes
+        :rtype: bytes
+        """
+        result = self._client.decrypt(
+            self._vault_url, key_name, key_version or "", algorithm, encrypted_bytes, **kwargs
+        )
+        return result.result
+
+    def encrypt(self, key_name, algorithm, value, key_version=None, **kwargs):
+        """Encrypts an arbitrary sequence of bytes using an encryption key stored in the vault.
+
+        This method encrypts only a single block of data per call. The size of the block depends
+        on the key and algorithm used.
+
+        This is only strictly necessary for symmetric keys, because encryption with an
+        asymmetric key can be done with its public material. However, it is supported
+        by this method as a convenience for callers that have a reference to a key but not access to
+        its public material.
+
+        This operation requires the keys/encrypt permission.
+
+        :param str key_name: name of the key to use
+        :param str key_version: Version of the key to use. If unspecified, the latest version is used.
+        :param algorithm: algorithm to use
+        :type algorithm: str or ~azure.keyvault.keys.enums.JsonWebKeyEncryptionAlgorithm
+        :param bytes value: bytes to encrypt
+        :returns: encrypted bytes
+        :rtype: bytes
+        """
+        result = self._client.encrypt(self._vault_url, key_name, key_version or "", algorithm, value, **kwargs)
+        return result.result
+
+    def sign(self, key_name, algorithm, digest, key_version=None, **kwargs):
+        """Creates a signature from a digest using the specified key.
+
+        Signing is applicable to both symmetric and asymmetric keys because it uses the private portion of the key.
+
+        This operation requires the keys/sign permission.
+
+        :param str key_name: name of the key to use
+        :param str key_version: Version of the key to use. If unspecified, the latest version is used.
+        :param algorithm: signing/verification algorithm
+        :type algorithm: str or ~azure.keyvault.keys.enums.JsonWebKeySignatureAlgorithm
+        :param bytes digest: digest to sign
+        :rtype: str
+        """
+        result = self._client.sign(self._vault_url, key_name, key_version or "", algorithm, digest, **kwargs)
+        return result.result
+
+    def verify(self, key_name, algorithm, digest, signature, key_version=None, **kwargs):
+        """Verifies a signature using a specified key.
+
+        This isn't strictly necessary for asymmetric keys since signature verification can be performed using the
+        public portion of the key. However, this method supports asymmetric keys as a convenience for callers who
+        have a reference to a key but not its public material.
+
+        This operation requires the keys/verify permission.
+
+        :param str key_name: name of the key to use
+        :param str key_version: Version of the key to use. If unspecified, the latest version is used.
+        :param algorithm: signing/verification algorithm
+        :type algorithm: str or ~azure.keyvault.keys.enums.JsonWebKeySignatureAlgorithm
+        :param bytes digest: digest used for signing
+        :param bytes signature: signature to verify
+        :returns: ``True``, if the signature is valid; ``False``, if it isn't
+        :rtype: bool
+        """
+        result = self._client.verify(
+            self._vault_url, key_name, key_version or "", algorithm, digest, signature, **kwargs
+        )
+        return result.value
