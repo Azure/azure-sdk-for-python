@@ -11,7 +11,7 @@ from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.keys._generated.v7_0.models import JsonWebKey
+from azure.keyvault.keys._shared._generated.v7_0.models import JsonWebKey
 
 from dateutil import parser as date_parse
 

@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ._internal import ImdsCredential, MsiCredential
+from ._managed_identity import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
 
 try:

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from collections import namedtuple
 from typing import TYPE_CHECKING
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
@@ -15,41 +14,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
 
-try:
-    import urllib.parse as parse
-except ImportError:
-    import urlparse as parse  # pylint: disable=import-error
-
-from ._shared.challenge_auth_policy import ChallengeAuthPolicy
-
-_VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
+from .challenge_auth_policy import ChallengeAuthPolicy
 
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
 
-def _parse_vault_id(url):
-    try:
-        parsed_uri = parse.urlparse(url)
-    except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid url".format(url))
-    if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid url".format(url))
-
-    path = list(filter(None, parsed_uri.path.split("/")))
-
-    if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid vault url".format(url))
-
-    return _VaultId(
-        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
-        collection=path[0],
-        name=path[1],
-        version=path[2] if len(path) == 3 else None,
-    )
-
-
-class _KeyVaultClientBase(object):
+class KeyVaultClientBase(object):
     """
     :param credential:  A credential or credential provider which can be used to authenticate to the vault,
         a ValueError will be raised if the entity is not provided

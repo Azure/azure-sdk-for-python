@@ -9,11 +9,10 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys._models import Key, DeletedKey, KeyBase, KeyOperationResult
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
 
-from ._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
 
-
-class KeyClient(_AsyncKeyVaultClientBase):
+class KeyClient(AsyncKeyVaultClientBase):
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
 
     Example:
