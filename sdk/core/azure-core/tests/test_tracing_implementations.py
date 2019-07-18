@@ -13,63 +13,12 @@ except ImportError:
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
+from opencensus.trace.span import SpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
 from opencensus.common.utils import timestamp_to_microseconds
+from tracing_common import MockExporter, ContextHelper
 import os
-
-
-class Node:
-    def __init__(self, span_data):
-        self.span_data = span_data  # type: SpanData
-        self.parent = None
-        self.children = []
-
-
-class MockExporter(Exporter):
-    def __init__(self):
-        self.root = None
-        self._all_nodes = []
-
-    def export(self, span_datas):
-        # type: (List[SpanData]) -> None
-        sp = span_datas[0]  # type: SpanData
-        node = Node(sp)
-        if not node.span_data.parent_span_id:
-            self.root = node
-        self._all_nodes.append(node)
-
-    def build_tree(self):
-        parent_dict = {}
-        for node in self._all_nodes:
-            parent_span_id = node.span_data.parent_span_id
-            if parent_span_id not in parent_dict:
-                parent_dict[parent_span_id] = []
-            parent_dict[parent_span_id].append(node)
-
-        for node in self._all_nodes:
-            if node.span_data.span_id in parent_dict:
-                node.children = sorted(
-                    parent_dict[node.span_data.span_id], key=lambda x: timestamp_to_microseconds(x.span_data.start_time)
-                )
-
-
-class ContextHelper(object):
-    def __init__(self, environ={}):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env = mock.patch.dict(os.environ, environ)
-
-    def __enter__(self):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        OpenCensusSpan.set_current_tracer(self.orig_tracer)
-        OpenCensusSpan.set_current_span(self.orig_current_span)
-        self.os_env.stop()
 
 
 class TestOpencensusWrapper(unittest.TestCase):
@@ -162,3 +111,26 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.add_attribute("test", "test2")
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
+
+    def test_set_http_attributes(self):
+        with ContextHelper():
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(span=parent)
+            request = mock.Mock()
+            setattr(request, "method", "GET")
+            setattr(request, "url", "some url")
+            response = mock.Mock()
+            setattr(request, "headers", {})
+            setattr(response, "status_code", 200)
+            wrapped_class.set_http_attributes(request)
+            assert wrapped_class.span_instance.span_kind == SpanKind.CLIENT
+            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("component") == "http"
+            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") is None
+            request.headers["User-Agent"] = "some user agent"
+            wrapped_class.set_http_attributes(request, response)
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") == request.headers.get("User-Agent")
