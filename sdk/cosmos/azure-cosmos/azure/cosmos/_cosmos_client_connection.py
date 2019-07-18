@@ -29,7 +29,7 @@ from . import base
 from . import documents
 from . import constants
 from . import http_constants
-from . import query_iterable
+from . import _query_iterable as query_iterable
 from . import runtime_constants
 from . import request_object
 from . import synchronized_request

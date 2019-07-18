@@ -25,7 +25,7 @@ import pytest
 import azure.cosmos.documents as documents
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import query_iterable
+from azure.cosmos import _query_iterable as query_iterable
 import azure.cosmos.base as base
 from six.moves import xrange
 import test_config
