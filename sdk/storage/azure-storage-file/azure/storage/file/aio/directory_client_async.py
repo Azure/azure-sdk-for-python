@@ -8,19 +8,13 @@ import functools
 from typing import ( # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
 
-import six
 from azure.core.polling import async_poller
 
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import StorageErrorException
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -31,8 +25,8 @@ from .file_client_async import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
-    from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
-    from ._generated.models import HandleItem
+    from ..models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
+    from .._generated.models import HandleItem
 
 
 class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
@@ -294,7 +288,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.copy_polling_interval)
+        polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
         return async_poller(
             command,
             start_close,

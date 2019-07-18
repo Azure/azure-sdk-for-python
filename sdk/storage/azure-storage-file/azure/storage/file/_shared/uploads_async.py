@@ -110,7 +110,7 @@ async def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        **kwargs)    
+        **kwargs)
 
     if parallel:
         upload_tasks = uploader.get_substream_blocks()
@@ -220,9 +220,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         last_block_size = self.chunk_size if blob_length % self.chunk_size == 0 else blob_length % self.chunk_size
 
         for i in range(blocks):
-            yield ('BlockId{}'.format("%05d" % i),
-                   SubStream(self.stream, i * self.chunk_size, last_block_size if i == blocks - 1 else self.chunk_size,
-                              lock))
+            index = i * self.chunk_size
+            length = last_block_size if i == blocks - 1 else self.chunk_size
+            yield ('BlockId{}'.format("%05d" % i), SubStream(self.stream, index, length, lock))
 
     async def process_substream_block(self, block_data):
         return await self._upload_substream_block_with_progress(block_data[0], block_data[1])

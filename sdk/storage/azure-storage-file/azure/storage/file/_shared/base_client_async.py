@@ -22,19 +22,13 @@ from azure.core.pipeline.policies import (
 
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
-from .base_client import (
-    StorageAccountHostsMixin,
-    parse_query,
-    is_credential_sastoken,
-    format_shared_key_credential,
-    create_configuration,
-    parse_connection_str)
+from .base_client import create_configuration
 from .policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
     QueueMessagePolicy)
-from .policies_async import ExponentialRetry, AsyncStorageResponseHook
+from .policies_async import AsyncStorageResponseHook
 
 
 _LOGGER = logging.getLogger(__name__)

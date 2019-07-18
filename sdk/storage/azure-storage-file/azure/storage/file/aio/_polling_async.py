@@ -6,7 +6,6 @@
 
 import asyncio
 import logging
-import time
 from typing import Any, Callable
 from azure.core.polling import AsyncPollingMethod
 

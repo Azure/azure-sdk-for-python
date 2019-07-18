@@ -10,7 +10,6 @@ from io import BytesIO
 
 from azure.core.exceptions import HttpResponseError
 
-from .models import ModifiedAccessConditions
 from .request_handlers import validate_and_format_range_headers
 from .response_handlers import process_storage_error, parse_length_from_content_range
 from .encryption import decrypt_blob
@@ -212,7 +211,7 @@ class SequentialChunkDownloader(_ChunkDownloader):
         self.stream.write(chunk_data)
 
 
-class StorageStreamDownloader(object):
+class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     The stream downloader can iterated, or download to open file or stream

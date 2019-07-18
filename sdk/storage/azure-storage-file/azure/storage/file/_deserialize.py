@@ -4,15 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
-from io import BytesIO
-
 from .models import ShareProperties, DirectoryProperties, FileProperties
-from ._generated.models import StorageErrorException
-from ._shared.response_handlers import (
-    process_storage_error,
-    parse_length_from_content_range,
-    deserialize_metadata)
+from ._shared.response_handlers import deserialize_metadata
 
 
 def deserialize_share_properties(response, obj, headers):

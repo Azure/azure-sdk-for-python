@@ -9,14 +9,8 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
 
-from .._shared.shared_access_signature import SharedAccessSignature
-from .._shared.models import Services
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureFileStorage
@@ -28,8 +22,8 @@ from .models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._shared.models import ResourceTypes, AccountPermissions
-    from .models import Metrics, CorsRule, ShareProperties
+    from .._shared.models import ResourceTypes, AccountPermissions
+    from ..models import Metrics, CorsRule, ShareProperties
 
 
 class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):

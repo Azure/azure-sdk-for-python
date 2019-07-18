@@ -366,7 +366,7 @@ def generate_blob_encryption_data(key_encryption_key):
 
 
 def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
-                  content, start_offset, end_offset, response_headers):
+                 content, start_offset, end_offset, response_headers):
     '''
     Decrypts the given blob contents and returns only the requested range.
 

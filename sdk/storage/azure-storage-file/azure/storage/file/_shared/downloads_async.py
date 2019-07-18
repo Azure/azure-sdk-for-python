@@ -11,7 +11,6 @@ from itertools import islice
 
 from azure.core.exceptions import HttpResponseError
 
-from .models import ModifiedAccessConditions
 from .request_handlers import validate_and_format_range_headers
 from .response_handlers import process_storage_error, parse_length_from_content_range
 from .encryption import decrypt_blob
@@ -40,7 +39,7 @@ async def process_content(data, start_offset, end_offset, encryption):
     return content
 
 
-class _AsyncChunkDownloader(object):
+class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self, service=None,
@@ -150,7 +149,7 @@ class _AsyncChunkDownloader(object):
 
         return chunk_data
 
-class StorageStreamDownloader(object):
+class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     The stream downloader can iterated, or download to open file or stream
@@ -176,6 +175,7 @@ class StorageStreamDownloader(object):
         self._download_complete = False
         self._current_content = None
         self._iter_downloader = None
+        self._iter_chunks = None
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first

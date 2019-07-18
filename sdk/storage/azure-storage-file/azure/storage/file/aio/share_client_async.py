@@ -7,23 +7,14 @@
 from typing import ( # pylint: disable=unused-import
     Optional, Union, Dict, Any, TYPE_CHECKING
 )
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
-
-import six
 
 from .._shared.policies_async import ExponentialRetry
-from .._shared.shared_access_signature import FileSharedAccessSignature
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from .._deserialize import deserialize_share_properties
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import (

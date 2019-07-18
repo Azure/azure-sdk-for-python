@@ -58,5 +58,7 @@ __all__ = [
     'DirectoryProperties',
     'DirectoryPropertiesPaged',
     'FileProperties',
-    'ContentSettings'
+    'ContentSettings',
+    'Handle',
+    'HandlesPaged'
 ]

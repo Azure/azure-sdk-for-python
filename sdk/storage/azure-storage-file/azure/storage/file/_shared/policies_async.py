@@ -5,55 +5,34 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-import base64
-import hashlib
-import re
 import random
-from time import time
-from io import SEEK_SET, UnsupportedOperation
 import logging
-import uuid
-import types
-import platform
 from typing import Any, TYPE_CHECKING
-from wsgiref.handlers import format_date_time
-try:
-    from urllib.parse import (
-        urlparse,
-        parse_qsl,
-        urlunparse,
-        urlencode,
-    )
-except ImportError:
-    from urllib import urlencode # type: ignore
-    from urlparse import ( # type: ignore
-        urlparse,
-        parse_qsl,
-        urlunparse,
-    )
 
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    SansIOHTTPPolicy,
-    NetworkTraceLoggingPolicy,
-    AsyncHTTPPolicy)
-from azure.core.pipeline.policies.base import RequestHistory
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.exceptions import AzureError
 
-from ..version import VERSION
-from .models import LocationMode
 from .policies import is_retry, StorageRetryPolicy
-
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def retry_hook(settings, **kwargs):
+    if settings['hook']:
+        if asyncio.iscoroutine(settings['hook']):
+            await settings['hook'](
+                retry_count=settings['count'] - 1,
+                location_mode=settings['mode'],
+                **kwargs)
+        else:
+            settings['hook'](
+                retry_count=settings['count'] - 1,
+                location_mode=settings['mode'],
+                **kwargs)
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
@@ -111,19 +90,6 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
             return
         await transport.sleep(backoff)
 
-    async def retry_hook(self, settings, **kwargs):
-        if retry_settings['hook']:
-            if asyncio.iscoroutine(retry_settings['hook']):
-                await retry_settings['hook'](
-                    retry_count=retry_settings['count'] - 1,
-                    location_mode=retry_settings['mode'],
-                    **kwargs)
-            else:
-                retry_settings['hook'](
-                    retry_count=retry_settings['count'] - 1,
-                    location_mode=retry_settings['mode'],
-                    **kwargs)
-
     async def send(self, request):
         retries_remaining = True
         response = None
@@ -137,7 +103,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
-                        await self.retry_hook(
+                        await retry_hook(
                             retry_settings,
                             request=request.http_request,
                             response=response.http_response,
@@ -149,7 +115,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    await self.retry_hook(
+                    await retry_hook(
                         retry_settings,
                         request=request.http_request,
                         response=None,

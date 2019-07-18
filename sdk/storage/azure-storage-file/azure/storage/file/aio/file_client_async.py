@@ -10,11 +10,6 @@ from typing import ( # pylint: disable=unused-import
     Optional, Union, IO, List, Dict, Any, Iterable,
     TYPE_CHECKING
 )
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
 
 import six
 from azure.core.polling import async_poller
@@ -25,8 +20,7 @@ from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
 from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
 from .._shared.downloads_async import StorageStreamDownloader
-from .._shared.shared_access_signature import FileSharedAccessSignature
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
@@ -308,7 +302,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         try:
             return await self._client.file.start_copy(
                 source_url,
-                timeout=None,
+                timeout=timeout,
                 metadata=metadata,
                 headers=headers,
                 cls=return_response_headers,
@@ -337,7 +331,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             except TypeError:
                 pass
         try:
-            await self._client.file.abort_copy(copy_id=copy_id, timeout=None, **kwargs)
+            await self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 

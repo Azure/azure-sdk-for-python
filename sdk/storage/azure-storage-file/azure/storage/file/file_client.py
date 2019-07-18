@@ -485,7 +485,7 @@ class FileClient(StorageAccountHostsMixin):
         try:
             return self._client.file.start_copy(
                 source_url,
-                timeout=None,
+                timeout=timeout,
                 metadata=metadata,
                 headers=headers,
                 cls=return_response_headers,
@@ -514,7 +514,7 @@ class FileClient(StorageAccountHostsMixin):
             except TypeError:
                 pass
         try:
-            self._client.file.abort_copy(copy_id=copy_id, timeout=None, **kwargs)
+            self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 

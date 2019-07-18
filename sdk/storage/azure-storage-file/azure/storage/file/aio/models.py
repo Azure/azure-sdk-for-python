@@ -9,7 +9,6 @@
 from azure.core.paging import Paged
 
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from .._shared.models import DictMixin, get_enum_value
 from .._generated.models import StorageErrorException
 from .._generated.models import DirectoryItem
 from ..models import Handle, ShareProperties
