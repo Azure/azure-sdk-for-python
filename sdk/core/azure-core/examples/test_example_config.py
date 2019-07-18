@@ -58,7 +58,7 @@ class FooServiceClient():
 
     def __init__(self, configuration=None, **kwargs):
         config = configuration or FooServiceClient.create_config(**kwargs)
-        transport = kwargs.get('transport', RequestsTransport(config))
+        transport = kwargs.get('transport', RequestsTransport(**kwargs))
         policies = [
             config.user_agent_policy,
             config.headers_policy,

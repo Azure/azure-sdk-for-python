@@ -60,10 +60,10 @@ class KeyVaultClientBase(object):
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
         config = config or self.create_config(credential, api_version=api_version, **kwargs)
-        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport)
+        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=False, **kwargs)
 
-    def _build_pipeline(self, config, transport):
+    def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport) -> Pipeline
         policies = [
             config.headers_policy,
@@ -76,7 +76,7 @@ class KeyVaultClientBase(object):
         ]
 
         if transport is None:
-            transport = RequestsTransport(config)
+            transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies=policies)
 

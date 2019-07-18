@@ -501,7 +501,7 @@ def create_pipeline(credential, **kwargs):
         return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
     if not transport:
-        transport = RequestsTransport(config)
+        transport = RequestsTransport(**kwargs)
     policies = [
         QueueMessagePolicy(),
         config.headers_policy,

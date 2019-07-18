@@ -61,7 +61,7 @@ class MsalTransportAdapter(object):
         config = config or self.create_config(**kwargs)
         policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy]
         if not transport:
-            transport = RequestsTransport(configuration=config)
+            transport = RequestsTransport(**kwargs)
         return Pipeline(transport=transport, policies=policies)
 
     def get(self, url, headers=None, params=None, timeout=None, verify=None, **kwargs):
