@@ -1,6 +1,11 @@
 [MASTER]
 ignore-patterns=test_*
 reports=no
+init-hook='sys.path = list(); sys.path.insert(0, os.path.normcase(os.getcwd().split("azure-sdk-for-python")[0] + "azure-sdk-for-python/plugins"))'
+# init-hook='sys.path = list(); sys.path.insert(0, "C:\\Users\\krpratic\\azure-sdk-for-python\\plugins")'
+# init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.getcwd(), "plugins")))'
+# init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.path.abspath(os.path.dirname(__file__)), "plugins")))'
+load-plugins=pylint_guidelines_checker,pylint.extensions.docparams
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
