@@ -26,7 +26,7 @@ import six
 import numbers
 from collections import deque
 from azure.cosmos import base
-from azure.cosmos.execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from six.moves import xrange
 
 class _DocumentProducer(object):

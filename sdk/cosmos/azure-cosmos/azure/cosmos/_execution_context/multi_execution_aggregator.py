@@ -23,8 +23,8 @@
 """
 
 import heapq
-from azure.cosmos.execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos.execution_context import document_producer
+from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):

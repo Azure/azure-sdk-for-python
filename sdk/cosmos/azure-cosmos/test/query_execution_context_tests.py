@@ -24,7 +24,7 @@ import uuid
 import pytest
 from six.moves import xrange
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.execution_context import base_execution_context as base_execution_context
+from azure.cosmos._execution_context import base_execution_context as base_execution_context
 import azure.cosmos.base as base
 import test_config
 from azure.cosmos.partition_key import PartitionKey

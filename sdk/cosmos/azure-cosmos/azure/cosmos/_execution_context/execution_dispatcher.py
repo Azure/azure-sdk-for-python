@@ -25,11 +25,11 @@
 import json
 from six.moves import xrange
 from azure.cosmos.errors import HTTPFailure
-from azure.cosmos.execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos.execution_context.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos.execution_context.query_execution_info import _PartitionedQueryExecutionInfo
-from azure.cosmos.execution_context import endpoint_component
-from azure.cosmos.execution_context import multi_execution_aggregator
+from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+from azure.cosmos._execution_context import endpoint_component
+from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
