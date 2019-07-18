@@ -12,6 +12,7 @@ from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import execution_context
 from opencensus.trace.base_exporter import Exporter
 from opencensus.trace.span_data import SpanData
+from collections import defaultdict
 
 try:
     from unittest import mock
@@ -61,6 +62,7 @@ class MockExporter(Exporter):
     def __init__(self):
         self.root = None  # type: SpanData
         self._all_nodes = []
+        self.parent_dict = defaultdict(list)
 
     def export(self, span_datas):
         # type: (List[SpanData]) -> None
@@ -68,18 +70,14 @@ class MockExporter(Exporter):
         node = Node(sp)
         if not node.span_data.parent_span_id:
             self.root = node
+        parent_span_id = node.span_data.parent_span_id
+        self.parent_dict[parent_span_id].append(node)
         self._all_nodes.append(node)
 
     def build_tree(self):
-        parent_dict = {}
         for node in self._all_nodes:
-            parent_span_id = node.span_data.parent_span_id
-            if parent_span_id not in parent_dict:
-                parent_dict[parent_span_id] = []
-            parent_dict[parent_span_id].append(node)
-
-        for node in self._all_nodes:
-            if node.span_data.span_id in parent_dict:
+            if node.span_data.span_id in self.parent_dict:
                 node.children = sorted(
-                    parent_dict[node.span_data.span_id], key=lambda x: x.span_data.start_time
+                    self.parent_dict[node.span_data.span_id],
+                    key=lambda x: x.span_data.start_time,
                 )

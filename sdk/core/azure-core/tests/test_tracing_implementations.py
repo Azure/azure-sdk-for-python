@@ -13,8 +13,11 @@ except ImportError:
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
+from opencensus.trace.span import SpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
+from opencensus.trace.base_exporter import Exporter
 from tracing_common import MockExporter, ContextHelper
+import os
 
 
 class TestOpencensusWrapper(unittest.TestCase):
@@ -108,3 +111,26 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.add_attribute("test", "test2")
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
+
+    def test_set_http_attributes(self):
+        with ContextHelper():
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(span=parent)
+            request = mock.Mock()
+            setattr(request, "method", "GET")
+            setattr(request, "url", "some url")
+            response = mock.Mock()
+            setattr(request, "headers", {})
+            setattr(response, "status_code", 200)
+            wrapped_class.set_http_attributes(request)
+            assert wrapped_class.span_instance.span_kind == SpanKind.CLIENT
+            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("component") == "http"
+            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") is None
+            request.headers["User-Agent"] = "some user agent"
+            wrapped_class.set_http_attributes(request, response)
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") == request.headers.get("User-Agent")
