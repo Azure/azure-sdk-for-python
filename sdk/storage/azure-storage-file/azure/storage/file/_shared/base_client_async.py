@@ -20,7 +20,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncRedirectPolicy)
 
-from .constants import STORAGE_OAUTH_SCOPE
+from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import (
     StorageAccountHostsMixin,
@@ -65,6 +65,8 @@ class AsyncStorageAccountHostsMixin(object):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
+        if 'connection_timeout' not in kwargs:
+            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0]
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
