@@ -4,7 +4,7 @@ import pytest
 from time import sleep
 
 from azure.cosmos.http_constants import ResourceType
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos.request_object import _RequestObject
 from azure.cosmos._location_cache import LocationCache

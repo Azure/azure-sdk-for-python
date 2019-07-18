@@ -23,7 +23,7 @@
 """
 
 import six
-from azure.cosmos.cosmos_client_connection import CosmosClientConnection
+from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from.query_iterable import QueryIterable
 from typing import (

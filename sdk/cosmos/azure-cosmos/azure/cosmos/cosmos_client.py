@@ -23,7 +23,7 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
 from .query_iterable import QueryIterable

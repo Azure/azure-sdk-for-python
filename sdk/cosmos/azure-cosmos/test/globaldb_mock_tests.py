@@ -23,7 +23,7 @@ import unittest
 import json
 import pytest
 
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.constants as constants

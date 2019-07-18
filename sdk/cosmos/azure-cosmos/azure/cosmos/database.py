@@ -23,7 +23,7 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
 from .http_constants import StatusCodes
