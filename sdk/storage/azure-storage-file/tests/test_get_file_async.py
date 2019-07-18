@@ -369,6 +369,37 @@ class StorageGetFileTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_to_stream_async())
 
+    async def _test_get_file_with_iter_async(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        await self._setup()
+        file_client = FileClient(
+            self.get_file_url(),
+            share=self.share_name,
+            file_path=self.directory_name + '/' + self.byte_file,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+
+        # Act
+        with open(FILE_PATH, 'wb') as stream:
+            download = await file_client.download_file()
+            async for data in download:
+                stream.write(data)
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(self.byte_data, actual)
+
+    def test_get_file_with_iter_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_file_with_iter_async())
+
     async def _test_get_file_to_stream_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):

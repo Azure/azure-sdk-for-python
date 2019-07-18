@@ -294,14 +294,14 @@ class StorageStreamDownloader(object):
             # Use the length unless it is over the end of the file
             data_end = min(self.file_size, self.length + 1)
 
-        downloader = SequentialBlobChunkDownloader(
+        downloader = SequentialChunkDownloader(
             service=self.service,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,
             start_range=self.initial_range[1] + 1,  # start where the first download ended
             end_range=data_end,
-            stream=stream,
+            stream=None,
             validate_content=self.validate_content,
             encryption_options=self.encryption_options,
             use_location=self.location_mode,

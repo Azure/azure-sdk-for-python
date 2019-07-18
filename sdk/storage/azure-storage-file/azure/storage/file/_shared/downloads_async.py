@@ -174,6 +174,8 @@ class StorageStreamDownloader(object):
         self.request_options = kwargs
         self.location_mode = None
         self._download_complete = False
+        self._current_content = None
+        self._iter_downloader = None
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -200,7 +202,45 @@ class StorageStreamDownloader(object):
         raise TypeError("Async stream must be iterated asynchronously.")
 
     def __aiter__(self):
-        return self._async_data_iterator()
+        return self
+
+    async def __anext__(self):
+        """Iterate through responses."""
+        if self._current_content is None:
+            if self.download_size == 0:
+                self._current_content = b""
+            else:
+                self._current_content = await process_content(
+                    self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
+            if not self._download_complete:
+                data_end = self.file_size
+                if self.length is not None:
+                    # Use the length unless it is over the end of the file
+                    data_end = min(self.file_size, self.length + 1)
+                self._iter_downloader = _AsyncChunkDownloader(
+                    service=self.service,
+                    total_size=self.download_size,
+                    chunk_size=self.config.max_chunk_get_size,
+                    current_progress=self.first_get_size,
+                    start_range=self.initial_range[1] + 1,  # start where the first download ended
+                    end_range=data_end,
+                    stream=None,
+                    parallel=False,
+                    validate_content=self.validate_content,
+                    encryption_options=self.encryption_options,
+                    use_location=self.location_mode,
+                    **self.request_options)
+                self._iter_chunks = self._iter_downloader.get_chunk_offsets()
+        elif self._download_complete:
+            raise StopAsyncIteration("Download complete")
+        else:
+            try:
+                chunk = next(self._iter_chunks)
+            except StopIteration:
+                raise StopAsyncIteration("DownloadComplete")
+            self._current_content = await self._iter_downloader.yield_chunk(chunk)
+
+        return self._current_content
 
     async def setup(self, extra_properties=None):
         if self.response:
@@ -224,40 +264,6 @@ class StorageStreamDownloader(object):
         # of the stored MD5
         # TODO: Set to the stored MD5 when the service returns this
         self.properties.content_md5 = None
-
-    async def _async_data_iterator(self):
-        if self.download_size == 0:
-            content = b""
-        else:
-            content = await process_content(
-                self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
-
-        if content is not None:
-            yield content
-        if self._download_complete:
-            return
-
-        data_end = self.file_size
-        if self.length is not None:
-            # Use the length unless it is over the end of the file
-            data_end = min(self.file_size, self.length + 1)
-
-        downloader = _AsyncChunkDownloader(
-            service=self.service,
-            total_size=self.download_size,
-            chunk_size=self.config.max_chunk_get_size,
-            current_progress=self.first_get_size,
-            start_range=self.initial_range[1] + 1,  # start where the first download ended
-            end_range=data_end,
-            stream=stream,
-            parallel=False,
-            validate_content=self.validate_content,
-            encryption_options=self.encryption_options,
-            use_location=self.location_mode,
-            **self.request_options)
-
-        for chunk in downloader.get_chunk_offsets():
-            yield await downloader.yield_chunk(chunk)
 
     async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -357,6 +363,9 @@ class StorageStreamDownloader(object):
         :returns: The properties of the downloaded file.
         :rtype: Any
         """
+        if self._iter_downloader:
+            raise ValueError("Stream is currently being iterated.")
+
         # the stream must be seekable if parallel download is required
         parallel = max_connections > 1
         if parallel:
