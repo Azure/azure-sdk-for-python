@@ -41,7 +41,7 @@ IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED = True
 #   - Playback: run against stored recordings
 #   - Record: run tests against live storage and update recordings
 #   - RunLiveNoRecord: run tests against live storage without altering recordings
-TEST_MODE = 'Playback'
+TEST_MODE = 'RunLiveNoRecord'
 
 # Set to true to enable logging for the tests
 # logging is not enabled by default because it pollutes the CI logs

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import asyncio
 from datetime import datetime, timedelta
 
 try:
@@ -21,7 +22,7 @@ from queuetestcase import (
 )
 
 
-class TestMessageQueueSamples(QueueTestCase):
+class TestMessageQueueSamplesAsync(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
     storage_url = "{}://{}.queue.core.windows.net".format(
@@ -29,8 +30,7 @@ class TestMessageQueueSamples(QueueTestCase):
         settings.STORAGE_ACCOUNT_NAME
     )
 
-    @pytest.mark.asyncio
-    async def test_set_access_policy(self):
+    async def _test_set_access_policy(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -81,9 +81,14 @@ class TestMessageQueueSamples(QueueTestCase):
             # Delete the queue
             await queue_client.delete_queue()
 
+    def test_set_access_policy(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_policy())
+
     @record
-    @pytest.mark.asyncio
-    async def test_queue_metadata(self):
+    async def _test_queue_metadata(self):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -107,9 +112,14 @@ class TestMessageQueueSamples(QueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
+    def test_queue_metadata(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_metadata())
+
     @record
-    @pytest.mark.asyncio
-    async def test_enqueue_and_receive_messages(self):
+    async def _test_enqueue_and_receive_messages(self):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -149,9 +159,14 @@ class TestMessageQueueSamples(QueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
+    def test_enqueue_and_receive_messages(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_enqueue_and_receive_messages())
+
     @record
-    @pytest.mark.asyncio
-    async def test_delete_and_clear_messages(self):
+    async def _test_delete_and_clear_messages(self):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -184,9 +199,14 @@ class TestMessageQueueSamples(QueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
+    def test_delete_and_clear_messages(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_and_clear_messages())
+
     @record
-    @pytest.mark.asyncio
-    async def test_peek_messages(self):
+    async def _test_peek_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "peekqueue")
@@ -218,9 +238,14 @@ class TestMessageQueueSamples(QueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
+    def test_peek_messages(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_peek_messages())
+
     @record
-    @pytest.mark.asyncio
-    async def test_update_message(self):
+    async def _test_update_message(self):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -250,3 +275,9 @@ class TestMessageQueueSamples(QueueTestCase):
         finally:
             # Delete the queue
             await queue.delete_queue()
+
+    def test_update_message(self):
+            if TestMode.need_recording_file(self.test_mode):
+                return
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self._test_update_message())

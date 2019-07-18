@@ -14,15 +14,16 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from ..queue_service_client import QueueServiceClient as QueueServiceClientBase
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature
 from azure.storage.queue._shared.models import LocationMode, Services
-from azure.storage.queue._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import process_storage_error
 from azure.storage.queue._generated import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageServiceProperties, StorageErrorException
 
-from azure.storage.queue.models import QueuePropertiesPaged
+from azure.storage.queue.aio.models import QueuePropertiesPaged
 from .queue_client_async import QueueClient
 
 if TYPE_CHECKING:
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
     from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
-    from azure.storage.queue.models import (
+    from azure.storage.queue.aio.models import (
         QueueProperties,
         Logging,
         Metrics,
@@ -38,7 +39,7 @@ if TYPE_CHECKING:
     )
 
 
-class QueueServiceClient(StorageAccountHostsMixin):
+class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -85,111 +86,17 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
+            loop=None, # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        """Create QueueServiceClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-
-        Example:
-            .. literalinclude:: ../tests/test_queue_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the QueueServiceClient with a connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
-
-    def generate_shared_access_signature(
-            self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
-            expiry,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            ip=None,  # type: Optional[str]
-            protocol=None  # type: Optional[str]
-        ):
-        """Generates a shared access signature for the queue service.
-
-        Use the returned signature with the credential parameter of any Queue Service.
-
-        :param ~azure.storage.queue._shared.models.ResourceTypes resource_types: 
-            Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.queue._shared.models.AccountPermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-
-        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_account(
-            Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
+        super(QueueServiceClient, self).__init__(
+            account_url,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
     async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
@@ -443,4 +350,4 @@ class QueueServiceClient(StorageAccountHostsMixin):
             self.url, queue=queue, credential=self.credential, key_resolver_function=self.key_resolver_function,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             _pipeline=self._pipeline, _configuration=self._config, _location_mode=self._location_mode,
-            _hosts=self._hosts, **kwargs)
+            _hosts=self._hosts, loop=self._loop, **kwargs)

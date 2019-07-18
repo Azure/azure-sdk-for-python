@@ -5,12 +5,14 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+import asyncio
 
 from azure.storage.queue.aio import QueueServiceClient
 
 from queuetestcase import (
     QueueTestCase,
     record,
+    TestMode
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -19,7 +21,7 @@ SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageS
 
 
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTest(QueueTestCase):
+class QueueServiceStatsTestAsync(QueueTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
@@ -42,8 +44,7 @@ class QueueServiceStatsTest(QueueTestCase):
     # --Test cases per service ---------------------------------------
 
     @record
-    @pytest.mark.asyncio
-    async def test_queue_service_stats_f(self):
+    async def _test_queue_service_stats_f(self):
         # Arrange
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
@@ -54,10 +55,15 @@ class QueueServiceStatsTest(QueueTestCase):
 
         # Assert
         self._assert_stats_default(stats)
+    
+    def test_queue_service_stats_f(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_service_stats_f())
 
     @record
-    @pytest.mark.asyncio
-    async def test_queue_service_stats_when_unavailable(self):
+    async def _test_queue_service_stats_when_unavailable(self):
         # Arrange
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
@@ -70,7 +76,11 @@ class QueueServiceStatsTest(QueueTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
-
+    def test_queue_service_stats_when_unavailable(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_service_stats_when_unavailable())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

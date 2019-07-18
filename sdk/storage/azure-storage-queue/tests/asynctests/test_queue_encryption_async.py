@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+import asyncio
 import six
 from base64 import (
     b64decode,
@@ -64,9 +65,9 @@ def _decode_base64_to_bytes(data):
             data = data.encode('utf-8')
         return b64decode(data)
 
-class StorageQueueEncryptionTest(QueueTestCase):
+class StorageQueueEncryptionTestAsync(QueueTestCase):
     def setUp(self):
-        super(StorageQueueEncryptionTest, self).setUp()
+        super(StorageQueueEncryptionTestAsync, self).setUp()
 
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -80,7 +81,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
                     self.qsc.delete_queue(queue.queue_name)
                 except:
                     pass
-        return super(StorageQueueEncryptionTest, self).tearDown()
+        return super(StorageQueueEncryptionTestAsync, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
@@ -99,9 +100,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
 
     # --------------------------------------------------------------------------
 
-    @record
-    @pytest.mark.asyncio
-    async def test_get_messages_encrypted_kek(self):
+    async def _test_get_messages_encrypted_kek(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue()
@@ -113,9 +112,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_get_messages_encrypted_resolver(self):
+    def test_get_messages_encrypted_kek(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_messages_encrypted_kek())
+
+    async def _test_get_messages_encrypted_resolver(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue()
@@ -131,9 +134,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_peek_messages_encrypted_kek(self):
+    def test_get_messages_encrypted_resolver(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_messages_encrypted_resolver())
+
+    async def _test_peek_messages_encrypted_kek(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue()
@@ -145,9 +152,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_peek_messages_encrypted_resolver(self):
+    def test_peek_messages_encrypted_kek(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_peek_messages_encrypted_kek())
+
+    async def _test_peek_messages_encrypted_resolver(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue()
@@ -163,8 +174,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_4')
 
-    @pytest.mark.asyncio
-    async def test_peek_messages_encrypted_kek_RSA(self):
+    def test_peek_messages_encrypted_resolver(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_peek_messages_encrypted_resolver())
+
+    async def _test_peek_messages_encrypted_kek_RSA(self):
 
         # We can only generate random RSA keys, so this must be run live or 
         # the playback test will fail due to a change in kek values.
@@ -182,9 +198,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_update_encrypted_message(self):
+    def test_peek_messages_encrypted_kek_RSA(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_peek_messages_encrypted_kek_RSA())
+
+    async def _test_update_encrypted_message(self):
         # TODO: Recording doesn't work
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -204,9 +224,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(u'Updated', list_result2.content)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_update_encrypted_binary_message(self):
+    def test_update_encrypted_message(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_encrypted_message())
+
+    async def _test_update_encrypted_binary_message(self):
         # Arrange
         queue = self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
@@ -228,9 +252,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(binary_message, list_result2.content)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_update_encrypted_raw_text_message(self):
+    def test_update_encrypted_binary_message(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_encrypted_binary_message())
+
+    async def _test_update_encrypted_raw_text_message(self):
         # TODO: Recording doesn't work
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -255,9 +283,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(raw_text, list_result2.content)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_update_encrypted_json_message(self):
+    def test_update_encrypted_raw_text_message(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_encrypted_raw_text_message())
+
+    async def _test_update_encrypted_json_message(self):
         # TODO: Recording doesn't work
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -285,9 +317,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Assert
         self.assertEqual(message_dict, loads(list_result2.content))
 
-    @record
-    @pytest.mark.asyncio
-    async def test_invalid_value_kek_wrap(self):
+    def test_update_encrypted_json_message(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_encrypted_json_message())
+
+    async def _test_invalid_value_kek_wrap(self):
         # Arrange
         queue = self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
@@ -308,9 +344,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         with self.assertRaises(AttributeError):
             await queue.enqueue_message(u'message')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_missing_attribute_kek_wrap(self):
+    def test_invalid_value_kek_wrap(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_invalid_value_kek_wrap())
+
+    async def _test_missing_attribute_kek_wrap(self):
         # Arrange
         queue = self._create_queue()
 
@@ -341,9 +381,13 @@ class StorageQueueEncryptionTest(QueueTestCase):
         with self.assertRaises(AttributeError):
             await queue.enqueue_message(u'message')
 
-    @record
-    @pytest.mark.asyncio
-    async def test_invalid_value_kek_unwrap(self):
+    def test_missing_attribute_kek_wrap(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_missing_attribute_kek_wrap())
+
+    async def _test_invalid_value_kek_unwrap(self):
         # Arrange
         queue = self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
@@ -357,10 +401,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue.key_encryption_key.get_kid = None
         with self.assertRaises(HttpResponseError):
             await queue.peek_messages()
+    
+    def test_invalid_value_kek_unwrap(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_invalid_value_kek_unwrap())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_missing_attribute_kek_unrwap(self):
+    async def _test_missing_attribute_kek_unrwap(self):
         # Arrange
         queue = self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
@@ -383,10 +431,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue.key_encryption_key = invalid_key_2
         with self.assertRaises(HttpResponseError):
             await queue.peek_messages()
+    
+    def test_missing_attribute_kek_unrwap(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_missing_attribute_kek_unrwap())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_validate_encryption(self):
+    async def _test_validate_encryption(self):
         # Arrange
         queue = self._create_queue()
         kek = KeyWrapper('key1')
@@ -442,10 +494,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
 
         # Assert
         self.assertEqual(decrypted_data, u'message')
+    
+    def test_validate_encryption(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_validate_encryption())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_put_with_strict_mode(self):
+    async def _test_put_with_strict_mode(self):
         # Arrange
         queue = self._create_queue()
         kek = KeyWrapper('key1')
@@ -460,10 +516,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
             await queue.enqueue_message(u'message')
 
         self.assertEqual(str(e.exception), "Encryption required but no key was provided.")
+    
+    def test_put_with_strict_mode(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_put_with_strict_mode())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_get_with_strict_mode(self):
+    async def _test_get_with_strict_mode(self):
         # Arrange
         queue = self._create_queue()
         await queue.enqueue_message(u'message')
@@ -474,10 +534,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
             await next(queue.receive_messages())
 
         self.assertEqual(str(e.exception), 'Message was not encrypted.')
+    
+    def test_get_with_strict_mode(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_with_strict_mode())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_encryption_add_encrypted_64k_message(self):
+    async def _test_encryption_add_encrypted_64k_message(self):
         # Arrange
         queue = self._create_queue()
         message = u'a' * 1024 * 64
@@ -489,10 +553,14 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue.key_encryption_key = KeyWrapper('key1')
         with self.assertRaises(HttpResponseError):
             await queue.enqueue_message(message)
+        
+    def test_encryption_add_encrypted_64k_message(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_encryption_add_encrypted_64k_message())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_encryption_nonmatching_kid(self):
+    async def _test_encryption_nonmatching_kid(self):
         # Arrange
         queue = self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
@@ -506,6 +574,12 @@ class StorageQueueEncryptionTest(QueueTestCase):
             await next(queue.receive_messages())
 
         self.assertEqual(str(e.exception), "Decryption failed.")
+
+    def test_encryption_nonmatching_kid(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_encryption_nonmatching_kid())
 
 
 # ------------------------------------------------------------------------------

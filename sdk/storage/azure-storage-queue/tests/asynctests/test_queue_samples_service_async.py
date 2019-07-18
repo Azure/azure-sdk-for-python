@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import asyncio
 
 try:
     import settings_real as settings
@@ -15,17 +16,17 @@ except ImportError:
 
 from queuetestcase import (
     QueueTestCase,
-    record
+    record,
+    TestMode
 )
 
 
-class TestQueueServiceSamples(QueueTestCase):
+class TestQueueServiceSamplesAsync(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 
     @record
-    @pytest.mark.asyncio
-    async def test_queue_service_properties(self):
+    async def _test_queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
@@ -66,9 +67,14 @@ class TestQueueServiceSamples(QueueTestCase):
         properties = await queue_service.get_service_properties()
         # [END get_queue_service_properties]
 
+    def test_queue_service_properties(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_service_properties())
+
     @record
-    @pytest.mark.asyncio
-    async def test_queues_in_account(self):
+    async def _test_queues_in_account(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
@@ -90,10 +96,15 @@ class TestQueueServiceSamples(QueueTestCase):
             # [START qsc_delete_queue]
             queue_service.delete_queue("testqueue")
             # [END qsc_delete_queue]
+            
+    def test_queues_in_account(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queues_in_account())
 
     @record
-    @pytest.mark.asyncio
-    async def test_get_queue_client(self):
+    async def _test_get_queue_client(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
@@ -102,3 +113,9 @@ class TestQueueServiceSamples(QueueTestCase):
         # Get the queue client to interact with a specific queue
         queue = await queue_service.get_queue_client("myqueue")
         # [END get_queue_client]
+
+    def test_get_queue_client(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_queue_client())

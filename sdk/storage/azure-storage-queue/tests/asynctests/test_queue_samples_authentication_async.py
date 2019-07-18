@@ -8,6 +8,7 @@
 
 from datetime import datetime, timedelta
 import pytest
+import asyncio
 
 try:
     import settings_real as settings
@@ -21,7 +22,7 @@ from queuetestcase import (
 )
 
 
-class TestQueueAuthSamples(QueueTestCase):
+class TestQueueAuthSamplesAsync(QueueTestCase):
     url = "{}://{}.queue.core.windows.net".format(
         settings.PROTOCOL,
         settings.STORAGE_ACCOUNT_NAME
@@ -33,9 +34,7 @@ class TestQueueAuthSamples(QueueTestCase):
     active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
     active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
 
-    @record
-    @pytest.mark.asyncio
-    async def test_auth_connection_string(self):
+    async def _test_auth_connection_string(self):
         # Instantiate a QueueServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.storage.queue.aio import QueueServiceClient
@@ -46,10 +45,14 @@ class TestQueueAuthSamples(QueueTestCase):
         properties = await queue_service.get_service_properties()
 
         assert properties is not None
+    
+    def test_auth_connection_string(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_auth_connection_string())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_auth_shared_key(self):
+    async def _test_auth_shared_key(self):
 
         # Instantiate a QueueServiceClient using a shared access key
         # [START create_queue_service_client]
@@ -61,9 +64,13 @@ class TestQueueAuthSamples(QueueTestCase):
 
         assert properties is not None
 
-    @record
-    @pytest.mark.asyncio
-    async def test_auth_active_directory(self):
+    def test_auth_shared_key(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_auth_shared_key())
+
+    async def _test_auth_active_directory(self):
         pytest.skip('pending azure identity')
 
         # Get a token credential for authentication
@@ -83,8 +90,13 @@ class TestQueueAuthSamples(QueueTestCase):
 
         assert properties is not None
 
-    @pytest.mark.asyncio
-    async def test_auth_shared_access_signature(self):
+    def test_auth_active_directory(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_auth_active_directory())
+
+    async def _test_auth_shared_access_signature(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -101,3 +113,9 @@ class TestQueueAuthSamples(QueueTestCase):
         )
 
         assert sas_token is not None
+    
+    def test_auth_shared_access_signature(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_auth_shared_access_signature())

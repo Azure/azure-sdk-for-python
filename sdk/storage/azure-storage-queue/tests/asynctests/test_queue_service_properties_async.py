@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+import asyncio
 
 from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from azure.core.exceptions import HttpResponseError
@@ -27,15 +28,16 @@ from queuetestcase import (
     QueueTestCase,
     record,
     not_for_emulator,
+    TestMode
 )
 
 
 # ------------------------------------------------------------------------------
 
 
-class QueueServicePropertiesTest(QueueTestCase):
+class QueueServicePropertiesTestAsync(QueueTestCase):
     def setUp(self):
-        super(QueueServicePropertiesTest, self).setUp()
+        super(QueueServicePropertiesTestAsync, self).setUp()
 
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
@@ -118,9 +120,7 @@ class QueueServicePropertiesTest(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @record
-    @pytest.mark.asyncio
-    async def test_queue_service_properties(self):
+    async def _test_queue_service_properties(self):
         # Arrange
 
         # Act
@@ -134,12 +134,15 @@ class QueueServicePropertiesTest(QueueTestCase):
         self.assertIsNone(resp)
         self._assert_properties_default(self.qsc.get_service_properties())
 
+    def test_queue_service_properties(self):
+            if TestMode.need_recording_file(self.test_mode):
+                return
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self._test_queue_service_properties())
 
     # --Test cases per feature ---------------------------------------
 
-    @record
-    @pytest.mark.asyncio
-    async def test_set_logging(self):
+    async def _test_set_logging(self):
         # Arrange
         logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -150,9 +153,14 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_logging_equal(received_props.logging, logging)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_set_hour_metrics(self):
+    def test_set_logging(self):
+        print ("test")
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_logging())
+
+    async def _test_set_hour_metrics(self):
         # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -163,9 +171,13 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_set_minute_metrics(self):
+    def test_set_hour_metrics(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_hour_metrics())
+
+    async def _test_set_minute_metrics(self):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -177,9 +189,14 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_set_cors(self):
+    def test_set_minute_metrics(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_minute_metrics())
+
+
+    async def _test_set_cors(self):
         # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
@@ -204,18 +221,26 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
+    def test_set_cors(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_cors())
+
     # --Test cases for errors ---------------------------------------
-    @record
-    @pytest.mark.asyncio
-    def test_retention_no_days(self):
+    def _test_retention_no_days(self):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_too_many_cors_rules(self):
+    def test_retention_no_days(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_retention_no_days())
+
+    async def _test_too_many_cors_rules(self):
         # Arrange
         cors = []
         for _ in range(0, 6):
@@ -224,10 +249,14 @@ class QueueServicePropertiesTest(QueueTestCase):
         # Assert
         self.assertRaises(HttpResponseError,
                           await self.qsc.set_service_properties, None, None, None, cors)
+    
+    def test_too_many_cors_rules(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_too_many_cors_rules())
 
-    @record
-    @pytest.mark.asyncio
-    async def test_retention_too_long(self):
+    async def _test_retention_too_long(self):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
@@ -237,6 +266,11 @@ class QueueServicePropertiesTest(QueueTestCase):
                           await self.qsc.set_service_properties,
                           None, None, minute_metrics)
 
+    def test_retention_too_long(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_retention_too_long())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

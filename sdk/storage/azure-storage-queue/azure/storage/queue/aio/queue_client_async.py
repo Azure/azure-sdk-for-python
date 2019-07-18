@@ -16,8 +16,9 @@ except ImportError:
 
 import six
 
+from ..queue_client import QueueClient as QueueClientBase
 from azure.storage.queue._shared.shared_access_signature import QueueSharedAccessSignature
-from azure.storage.queue._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import (
     return_response_headers,
@@ -32,16 +33,16 @@ from azure.storage.queue._generated import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageErrorException, SignedIdentifier
 from azure.storage.queue._generated.models import QueueMessage as GenQueueMessage
 
-from azure.storage.queue.models import QueueMessage, AccessPolicy, MessagesPaged
+from azure.storage.queue.aio.models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue.models import QueuePermissions, QueueProperties
+    from azure.storage.queue.aio.models import QueuePermissions, QueueProperties
 
 
-class QueueClient(StorageAccountHostsMixin):
-    """A client to interact with a specific Queue.
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
+    """A async client to interact with a specific Queue.
 
     :ivar str url:
         The full endpoint URL to the Queue, including SAS token if used. This could be
@@ -83,154 +84,18 @@ class QueueClient(StorageAccountHostsMixin):
             self, queue_url,  # type: str
             queue=None,  # type: Optional[Union[QueueProperties, str]]
             credential=None,  # type: Optional[Any]
+            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not queue_url.lower().startswith('http'):
-                queue_url = "https://" + queue_url
-        except AttributeError:
-            raise ValueError("Queue URL must be a string.")
-        parsed_url = urlparse(queue_url.rstrip('/'))
-        if not parsed_url.path and not queue:
-            raise ValueError("Please specify a queue name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
-
-        path_queue = ""
-        if parsed_url.path:
-            path_queue = parsed_url.path.lstrip('/').partition('/')[0]
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
-        try:
-            self.queue_name = queue.name # type: ignore
-        except AttributeError:
-            self.queue_name = queue or unquote(path_queue)
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
-
-        self._config.message_encode_policy = kwargs.get('message_encode_policy') or TextXMLEncodePolicy()
-        self._config.message_decode_policy = kwargs.get('message_decode_policy') or TextXMLDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
-            queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            queue,  # type: Union[str, QueueProperties]
-            credential=None,  # type: Any
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
-        """Create QueueClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param queue: The queue. This can either be the name of the queue,
-            or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-
-        Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START create_queue_client_from_connection_string]
-                :end-before: [END create_queue_client_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Create the queue client from connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
-
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            protocol=None  # type: Optional[str]
-        ):
-        """Generates a shared access signature for the queue.
-
-        Use the returned signature with the credential parameter of any Queue Service.
-
-        :param ~azure.storage.queue.models.QueuePermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_queue_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-
-        Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START queue_client_sas_token]
-                :end-before: [END queue_client_sas_token]
-                :language: python
-                :dedent: 12
-                :caption: Generate a sas token.
-        """
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = QueueSharedAccessSignature(
-            self.credential.account_name, self.credential.account_key)
-        return sas.generate_queue(
-            self.queue_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-        )
+        super(QueueClient, self).__init__(
+            queue_url,
+            queue=queue,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
     async def create_queue(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
@@ -261,12 +126,12 @@ class QueueClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return (await self._client.queue.create( # type: ignore
+            return await self._client.queue.create( # type: ignore
                 metadata=metadata,
                 timeout=timeout,
                 headers=headers,
                 cls=deserialize_queue_creation,
-                **kwargs))
+                **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 

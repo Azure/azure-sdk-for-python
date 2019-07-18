@@ -15,6 +15,7 @@ from azure.storage.queue.aio import (
 from queuetestcase import (
     QueueTestCase,
     record,
+    TestMode
 )
 
 # ------------------------------------------------------------------------------
@@ -27,9 +28,9 @@ _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
 
-class StorageQueueClientTest(QueueTestCase):
+class StorageQueueClientTestAsync(QueueTestCase):
     def setUp(self):
-        super(StorageQueueClientTest, self).setUp()
+        super(StorageQueueClientTestAsync, self).setUp()
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
         self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
@@ -311,9 +312,7 @@ class StorageQueueClientTest(QueueTestCase):
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
-    @record
-    @pytest.mark.asyncio
-    async def test_request_callback_signed_header(self):
+    async def _test_request_callback_signed_header(self):
         # Arrange
         service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
         name = self.get_resource_name('cont')
@@ -329,9 +328,13 @@ class StorageQueueClientTest(QueueTestCase):
         finally:
             service.delete_queue(name)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_response_callback(self):
+    def test_request_callback_signed_header(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_request_callback_signed_header())
+
+    async def _test_response_callback(self):
         # Arrange
         service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
         name = self.get_resource_name('cont')
@@ -346,9 +349,13 @@ class StorageQueueClientTest(QueueTestCase):
         exists = await queue.get_queue_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_user_agent_default(self):
+    def test_response_callback(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_response_callback())
+
+    async def _test_user_agent_default(self):
         service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
 
         def callback(response):
@@ -361,9 +368,13 @@ class StorageQueueClientTest(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_user_agent_custom(self):
+    def test_user_agent_default(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_user_agent_default())
+
+    async def _test_user_agent_custom(self):
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
             self._get_queue_url(), credential=self.account_key, user_agent=custom_app)
@@ -388,9 +399,13 @@ class StorageQueueClientTest(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
-    @record
-    @pytest.mark.asyncio
-    async def test_user_agent_append(self):
+    def test_user_agent_custom(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_user_agent_custom())
+
+    async def _test_user_agent_append(self):
         service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
 
         def callback(response):
@@ -404,7 +419,11 @@ class StorageQueueClientTest(QueueTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
-
+    def test_user_agent_append(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_user_agent_append())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

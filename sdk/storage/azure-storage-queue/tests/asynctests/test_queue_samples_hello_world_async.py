@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import asyncio
 
 try:
     import settings_real as settings
@@ -15,17 +16,17 @@ except ImportError:
 
 from queuetestcase import (
     QueueTestCase,
-    record
+    record,
+    TestMode
 )
 
 
-class TestQueueHelloWorldSamples(QueueTestCase):
+class TestQueueHelloWorldSamplesAsync(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 
     @record
-    @pytest.mark.asyncio
-    async def test_create_client_with_connection_string(self):
+    async def _test_create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
@@ -35,9 +36,14 @@ class TestQueueHelloWorldSamples(QueueTestCase):
 
         assert properties is not None
 
+    def test_create_client_with_connection_string(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_client_with_connection_string())
+
     @record
-    @pytest.mark.asyncio
-    async def test_queue_and_messages_example(self):
+    async def _test_queue_and_messages_example(self):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue")
@@ -63,3 +69,9 @@ class TestQueueHelloWorldSamples(QueueTestCase):
             # [START delete_queue]
             await queue.delete_queue()
             # [END delete_queue]
+
+    def test_queue_and_messages_example(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_and_messages_example())

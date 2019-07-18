@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+import asyncio
 
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
 from azure.storage.queue import (
@@ -27,7 +28,8 @@ from azure.storage.queue.aio import (
 
 from queuetestcase import (
     QueueTestCase,
-    record
+    record,
+    TestMode
 )
 
 # ------------------------------------------------------------------------------
@@ -36,9 +38,9 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 
 # ------------------------------------------------------------------------------
 
-class StorageQueueEncodingTest(QueueTestCase):
+class StorageQueueEncodingTestAsync(QueueTestCase):
     def setUp(self):
-        super(StorageQueueEncodingTest, self).setUp()
+        super(StorageQueueEncodingTestAsync, self).setUp()
 
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -52,7 +54,7 @@ class StorageQueueEncodingTest(QueueTestCase):
                     self.qsc.delete_queue(queue.queue_name)
                 except:
                     pass
-        return super(StorageQueueEncodingTest, self).tearDown()
+        return super(StorageQueueEncodingTestAsync, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
@@ -85,9 +87,7 @@ class StorageQueueEncodingTest(QueueTestCase):
 
     # --------------------------------------------------------------------------
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_text_xml(self):
+    async def _test_message_text_xml(self):
         # Arrange.
         message = u'<message1>'
         queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
@@ -95,9 +95,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_text_xml_whitespace(self):
+    def test_message_text_xml(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_text_xml())
+
+    async def _test_message_text_xml_whitespace(self):
         # Arrange.
         message = u'  mess\t age1\n'
         queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
@@ -105,9 +109,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_text_xml_invalid_chars(self):
+    def test_message_text_xml_whitespace(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_text_xml_whitespace())
+
+    async def _test_message_text_xml_invalid_chars(self):
         # Action.
         queue = self._get_queue_reference()
         message = u'\u0001'
@@ -116,9 +124,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.enqueue_message(message)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_text_base64(self):
+    def test_message_text_xml_invalid_chars(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_text_xml_invalid_chars())
+
+    async def _test_message_text_base64(self):
         # Arrange.
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -134,9 +146,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_bytes_base64(self):
+    def test_message_text_base64(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_text_base64())
+
+    async def _test_message_bytes_base64(self):
         # Arrange.
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -152,9 +168,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_bytes_fails(self):
+    def test_message_bytes_base64(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_bytes_base64())
+
+    async def _test_message_bytes_fails(self):
         # Arrange
         queue = self._get_queue_reference()
 
@@ -166,9 +186,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_text_fails(self):
+    def test_message_bytes_fails(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_bytes_fails())
+
+    async def _test_message_text_fails(self):
         # Arrange
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -187,9 +211,13 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @record
-    @pytest.mark.asyncio
-    async def test_message_base64_decode_fails(self):
+    def test_message_text_fails(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_text_fails())
+
+    async def _test_message_base64_decode_fails(self):
         # Arrange
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
@@ -213,6 +241,11 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
 
+    def test_message_base64_decode_fails(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_message_base64_decode_fails())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
