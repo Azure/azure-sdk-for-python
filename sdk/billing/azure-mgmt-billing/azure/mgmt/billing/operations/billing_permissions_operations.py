@@ -158,7 +158,7 @@ class BillingPermissionsOperations(object):
 
     def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all billingPermissions for the caller has for a billing account.
+        """Lists all billing permissions for the caller has for a billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
