@@ -25,7 +25,7 @@
 /sdk/containerinstance/ @samkreter @xizhamsft
 /sdk/containerregistry/ @djyou
 /sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/ @dmakwana
+/sdk/cosmos/ @shurd
 /sdk/datafactory/ @hvermis
 /sdk/datalake/ @ro-joowan
 /sdk/datadatamigration/ @vchske
