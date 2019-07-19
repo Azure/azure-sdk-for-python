@@ -1417,17 +1417,26 @@ class OsProfile(Model):
 class QuotaCapability(Model):
     """The regional quota capability.
 
+    :param cores_used: The number of cores used in the subscription.
+    :type cores_used: long
+    :param max_cores_allowed: The number of cores that the subscription
+     allowed.
+    :type max_cores_allowed: long
     :param regional_quotas: The list of region quota capabilities.
     :type regional_quotas:
      list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
     """
 
     _attribute_map = {
+        'cores_used': {'key': 'cores_used', 'type': 'long'},
+        'max_cores_allowed': {'key': 'max_cores_allowed', 'type': 'long'},
         'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
     }
 
     def __init__(self, **kwargs):
         super(QuotaCapability, self).__init__(**kwargs)
+        self.cores_used = kwargs.get('cores_used', None)
+        self.max_cores_allowed = kwargs.get('max_cores_allowed', None)
         self.regional_quotas = kwargs.get('regional_quotas', None)
 
 
