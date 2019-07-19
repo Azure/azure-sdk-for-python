@@ -35,7 +35,6 @@ import pytest
 import requests
 import httpretty
 
-from azure.core import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpRequest,
@@ -107,12 +106,11 @@ def test_register_rp_policy():
                             body=json.dumps(register_get_result),
                             content_type="application/json")
 
-    conf = Configuration()
     request = HttpRequest("PUT", provider_url)
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(conf), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert json.loads(response.http_response.text())['success']
@@ -156,12 +154,11 @@ def test_register_failed_policy():
                             status=409,
                             content_type="application/json")
 
-    conf = Configuration()
     request = HttpRequest("PUT", provider_url)
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(conf), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert response.http_response.status_code == 409

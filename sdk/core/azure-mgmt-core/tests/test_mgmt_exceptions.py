@@ -28,7 +28,7 @@ import json
 
 from azure.core.pipeline.transport.base import _HttpResponseBase
 
-from azure.mgmt.core.exceptions import ARMError, TypedErrorInfo, ODataV4Error
+from azure.mgmt.core.exceptions import ARMError, TypedErrorInfo
 
 
 def _build_response(json_body):
@@ -47,42 +47,6 @@ def _build_response(json_body):
             return self._body
 
     return MockResponse()
-
-
-def test_odata_v4_exception():
-    message = {
-        "error": {
-            "code": "501",
-            "message": "Unsupported functionality",
-            "target": "query",
-            "details": [{
-                "code": "301",
-                "target": "$search",
-                "message": "$search query option not supported",
-            }],
-            "innererror": {
-                "trace": [],
-                "context": {}
-            }
-        }
-    }
-    exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
-
-    assert exp.code == "501"
-    assert exp.message == "Unsupported functionality"
-    assert exp.target == "query"
-    assert exp.details[0].code == "301"
-    assert exp.details[0].target == "$search"
-    assert "trace" in exp.innererror
-    assert "context" in exp.innererror
-
-    message = {}
-    exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
-    assert exp.message == "Operation returned an invalid status 'Bad Request'"
-
-    exp = ODataV4Error(_build_response(b""))
-    assert exp.message == "Operation returned an invalid status 'Bad Request'"
-    assert str(exp) == "Operation returned an invalid status 'Bad Request'"
 
 
 def test_arm_exception():
