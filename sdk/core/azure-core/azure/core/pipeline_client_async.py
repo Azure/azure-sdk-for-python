@@ -87,7 +87,7 @@ class AsyncPipelineClient(PipelineClientBase):
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
-        if policies is not None:  # [] is a valid policy list
+        if policies is None:  # [] is a valid policy list
             policies = [
                 config.headers_policy,
                 config.user_agent_policy,
