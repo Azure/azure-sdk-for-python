@@ -29,7 +29,7 @@ class AsyncAuthnClient(AuthnClientBase):
         config = config or self.create_config(**kwargs)
         policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
         if not transport:
-            transport = AsyncioRequestsTransport(configuration=config)
+            transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
         super(AsyncAuthnClient, self).__init__(auth_url, **kwargs)
 
