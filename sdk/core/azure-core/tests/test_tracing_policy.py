@@ -14,62 +14,18 @@ from opencensus.trace.samplers import AlwaysOnSampler
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from tracing_common import ContextHelper, MockExporter
 import time
+import pytest
 
-def test_distributed_tracing_policy_solo():
+
+@pytest.mark.parametrize("should_set_sdk_context", [True, False])
+def test_distributed_tracing_policy_solo(should_set_sdk_context):
     """Test policy with no other policy and happy path"""
     with ContextHelper():
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
-            policy = DistributedTracingPolicy()
-
-            request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
-
-            pipeline_request = PipelineRequest(request, PipelineContext(None))
-            policy.on_request(pipeline_request)
-
-            response = HttpResponse(request, None)
-            response.headers = request.headers
-            response.status_code = 202
-            response.headers["x-ms-request-id"] = "some request id"
-
-            ctx = trace.span_context
-            header = trace.propagator.to_headers(ctx)
-            assert request.headers.get("traceparent") == header.get("traceparent")
-
-            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
-            time.sleep(0.001)
-            policy.on_request(pipeline_request)
-            policy.on_exception(pipeline_request)
-
-        trace.finish()
-        exporter.build_tree()
-        parent = exporter.root
-        network_span = parent.children[0]
-        assert network_span.span_data.name == "/temp"
-        assert network_span.span_data.attributes.get("http.method") == "GET"
-        assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
-        assert network_span.span_data.attributes.get("http.user_agent") is None
-        assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
-        assert network_span.span_data.attributes.get("http.status_code") == 202
-
-        network_span = parent.children[1]
-        assert network_span.span_data.name == "/temp"
-        assert network_span.span_data.attributes.get("http.method") == "GET"
-        assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
-        assert network_span.span_data.attributes.get("http.user_agent") is None
-        assert network_span.span_data.attributes.get("x-ms-request-id") == None
-        assert network_span.span_data.attributes.get("http.status_code") == 504
-
-def test_distributed_tracing_policy_without_setting_sdk_context():
-    """Test policy with no other policy and happy path"""
-    with ContextHelper():
-        exporter = MockExporter()
-        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-        with trace.span("parent"):
+            if should_set_sdk_context:
+                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
