@@ -1,6 +1,7 @@
 import astroid
 import pylint.testutils
 
+from azure.core import PipelineClient, Configuration
 from plugins import pylint_guidelines_checker as checker
 
 
@@ -65,6 +66,14 @@ class TestClientHasConfigurationMethod(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
 
 
 class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
@@ -259,6 +268,14 @@ class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_classdef(class_node)
 
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
 
 class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientConstructorTakesCorrectParameters
@@ -299,7 +316,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_constructor_without_kwargs(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, credentials, transport): #@
+            def __init__(self, thing_url, credentials=None, transport=None): #@
                 pass
         """)
 
@@ -415,3 +432,291 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
         ):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientMethodsUseKwargsWithMultipleParameters
+
+    def test_ignores_method_abiding_to_guidelines(self):
+        class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
+            function_node_e, function_node_f, function_node_g, function_node_h, function_node_i, function_node_j, \
+            function_node_k, function_node_l, function_node_m = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(): #@
+                pass      
+            def do_thing_a(self): #@
+                pass            
+            def do_thing_b(self, one): #@
+                pass
+            def do_thing_c(self, one, two): #@
+                pass
+            def do_thing_d(self, one, two, three): #@
+                pass            
+            def do_thing_e(self, one, two, three, four): #@
+                pass
+            def do_thing_f(self, one, two, three, four, five): #@
+                pass
+            def do_thing_g(self, one, two, three, four, five, six=6): #@
+                pass
+            def do_thing_h(self, one, two, three, four, five, six=6, seven=7): #@
+                pass
+            def do_thing_i(self, one, two, three, four, five, *, six=6, seven=7): #@
+                pass
+            def do_thing_j(self, one, two, three, four, five, *, six=6, seven=7): #@
+                pass
+            def do_thing_k(self, one, two, three, four, five, **kwargs): #@
+                pass
+            def do_thing_l(self, one, two, three, four, five, *args, **kwargs): #@
+                pass
+            def do_thing_m(self, one, two, three, four, five, *args, six, seven=7, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_functiondef(function_node_c)
+            self.checker.visit_functiondef(function_node_d)
+            self.checker.visit_functiondef(function_node_e)
+            self.checker.visit_functiondef(function_node_f)
+            self.checker.visit_functiondef(function_node_g)
+            self.checker.visit_functiondef(function_node_h)
+            self.checker.visit_functiondef(function_node_i)
+            self.checker.visit_functiondef(function_node_j)
+            self.checker.visit_functiondef(function_node_k)
+            self.checker.visit_functiondef(function_node_l)
+            self.checker.visit_functiondef(function_node_m)
+
+    def test_finds_methods_with_too_many_positional_args(self):
+        class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
+            function_node_e, function_node_f = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self, one, two, three, four, five, six): #@
+                pass      
+            def do_thing_a(self, one, two, three, four, five, six, seven=7): #@
+                pass            
+            def do_thing_b(self, one, two, three, four, five, six, *, seven): #@
+                pass
+            def do_thing_c(self, one, two, three, four, five, six, *, seven, eight, nine): #@
+                pass
+            def do_thing_d(self, one, two, three, four, five, six, **kwargs): #@
+                pass            
+            def do_thing_e(self, one, two, three, four, five, six, *args, seven, eight, nine): #@
+                pass
+            def do_thing_f(self, one, two, three, four, five, six, *args, seven=7, eight=8, nine=9): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_c
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_d
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_e
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_f
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_functiondef(function_node_c)
+            self.checker.visit_functiondef(function_node_d)
+            self.checker.visit_functiondef(function_node_e)
+            self.checker.visit_functiondef(function_node_f)
+
+    def test_ignores_non_client_methods(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def do_thing(self, one, two, three, four, five, six): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientMethodsHaveTypeAnnotations
+
+    def test_ignores_correct_type_annotations(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self, one: str, two: int, three: bool, four: Union[str, thing], five: dict) -> int: #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_correct_type_comments(self):
+        class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing_a(self, one, two, three, four, five): #@
+                # type: (str, str, str, str, str) -> None
+                pass
+
+            def do_thing_b(self, one, two):  # type: (str, str) -> int #@
+                pass
+
+            def do_thing_c(self, #@
+                           one,  # type: str
+                           two,  # type: str
+                           three,  # type: str
+                           four,  # type: str
+                           five  # type: str
+                           ):
+                # type: (...) -> int
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_functiondef(function_node_c)
+
+    def test_ignores_no_parameter_method_with_annotations(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing_a(self): #@
+                # type: () -> None
+                pass
+
+            def do_thing_b(self) -> None: #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_no_parameter_method_without_annotations(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-missing-type-annotations", node=function_node
+                )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_finds_method_missing_annotations(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self, one, two, three): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_finds_missing_return_annotation_but_has_type_hints(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing_a(self, one: str, two: int, three: bool, four: Union[str, thing], five: dict): #@
+                pass
+
+            def do_thing_b(self, one, two, three, four, five): #@
+                # type: (str, str, str, str, str)
+                pass         
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_b
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_missing_annotations_but_has_return_hint(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing_a(self, one, two, three, four, five) -> None: #@
+                pass
+
+            def do_thing_b(self, one, two, three, four, five): #@
+                # type: -> None
+                pass         
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_b
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_ignores_non_client_methods(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def do_thing(self, one, two, three, four, five, six): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200

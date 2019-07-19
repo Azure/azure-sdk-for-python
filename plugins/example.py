@@ -1,14 +1,13 @@
-""" This is an example of a pylint-clean client
+""" This is an example to use for quick pylint tests
 """
 
-class MyExampleClient:
+
+class MyExampleClient(object):
     """ A simple, canonical client
     """
 
     def __init__(self, base_url):
         """ This constructor follows the canonical pattern.
-
-        - It has a configuration parameter.
         """
 
     def create_configuration(self):
@@ -27,17 +26,14 @@ class MyExampleClient:
         """ Getting a list of instances should not include any required parameters.
         """
 
-    def download_things(self, zero, one, two, three, four, five=9, six=4, **kwargs):
-        """
-        stuff
-        :return:
-        """
-
     def check_if_exists(self):
-        """
-        checking if it exists
-        :return:
+        """Checking if something exists
         """
 
     def _ignore_me(self):
-        """dfd"""
+        """Ignore this internal method
+        """
+
+    def put_thing(self):
+        """Not an approved name prefix.
+        """

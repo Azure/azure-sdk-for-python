@@ -1,5 +1,6 @@
-import astroid
-
+"""
+Pylint custom checkers for SDK guidelines: CXXXX - CXXXX
+"""
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 
@@ -72,15 +73,11 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             arguments_node = next(
                 (child for child in node.get_children() if child.is_argument)
             )
-            if "credentials" not in [
-                argument.name for argument in arguments_node.args
-            ]:
+            if "credentials" not in [argument.name for argument in arguments_node.args]:
                 self.add_message(
                     msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
                 )
-            if "transport" not in [
-                argument.name for argument in arguments_node.args
-            ]:
+            if "transport" not in [argument.name for argument in arguments_node.args]:
                 self.add_message(
                     msg_id="missing-client-constructor-parameter-transport", node=node, confidence=None
                 )
@@ -169,9 +166,9 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
     priority = -1
     msgs = {
         "C4715": (
-            "Client is using an unapproved method name prefix. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            "Client is not using an approved method name prefix. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
             "unapproved-client-method-name-prefix",
-            "All clients should prefer the usage of the preferred verbs for method names.",
+            "All clients should use the preferred verbs for method names.",
         )
     }
     options = (
@@ -223,7 +220,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     }
     options = (
         (
-            "client-method-has-more-than-5-positional-arguments",
+            "ignore-client-method-has-more-than-5-positional-arguments",
             {
                 "default": False,
                 "type": "yn",
@@ -244,17 +241,74 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        arguments_node = next(
-            (child for child in node.get_children() if child.is_argument)
-        )
+        if self.is_client and self.is_client[-1]:
+            arguments_node = next(
+                (child for child in node.get_children() if child.is_argument)
+            )
 
-        # Only bother checking method signatures with > 6 parameters (don't include self)
-        if len(arguments_node.args) > 6:
-            positional_args = len(arguments_node.args) - len(arguments_node.defaults)
-            if positional_args > 6:
-                self.add_message(
-                    msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
-                )
+            # Only bother checking method signatures with > 6 parameters (don't include self)
+            if len(arguments_node.args) > 6:
+                positional_args = len(arguments_node.args) - len(arguments_node.defaults)
+                if positional_args > 6:
+                    self.add_message(
+                        msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
+                    )
+
+
+class ClientMethodsHaveTypeAnnotations(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-method-type-annotations"
+    priority = -1
+    msgs = {
+        "C4721": (
+            "Client method is missing type annotations. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints",
+            "client-method-missing-type-annotations",
+            "Client method should use type annotations.",
+        )
+    }
+    options = (
+        (
+            "ignore-client-method-missing-type-annotations",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow client method without type annotations",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client"):
+            self.is_client.append(True)
+        else:
+            self.is_client.append(False)
+
+    def visit_functiondef(self, node):
+        if self.is_client and self.is_client[-1]:
+            arguments_node = next(
+                (child for child in node.get_children() if child.is_argument)
+            )
+
+            # Checks that method has python 2/3 type comments or annotations as shown here:
+            # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+
+            # check for type comments
+            if node.type_comment_args is None or node.type_comment_returns is None:
+
+                # type annotations default to None when not present, so need extra logic here
+                type_annotations = [type_hint for type_hint in arguments_node.annotations if type_hint is not None]
+
+                # check for type annotations
+                if (type_annotations == [] and len(arguments_node.args) > 1) or node.returns is None:
+                    self.add_message(
+                        msg_id="client-method-missing-type-annotations", node=node, confidence=None
+                    )
 
 
 def register(linter):
@@ -262,3 +316,4 @@ def register(linter):
     linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
+    linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
