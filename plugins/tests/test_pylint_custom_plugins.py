@@ -4,77 +4,77 @@ import pylint.testutils
 from azure.core import PipelineClient, Configuration
 from plugins import pylint_guidelines_checker as checker
 
-
-class TestClientHasConfigurationMethod(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.ClientHasCreateConfigurationMethod
-
-    def test_missing_create_config_method(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def __init__(self, **kwargs): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-configuration-factory-method", node=class_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-
-    def test_finds_config_method(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def create_configuration(self, **kwargs): #@
-                pass
-        """)
-
-        with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
-
-    def test_finds_config_method_without_kwargs(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def create_configuration(self): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-configuration-factory-method-kwargs", node=function_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-
-    def test_ignores_non_client_missing_config_method(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomethingElse(): #@
-            def __init__(self, some, **kwargs): #@
-                pass
-        """)
-
-        with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
-
-    def test_ignores_nested_function_missing_create_config(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def create_configuration(self, **kwargs): #@
-                def nested(hello, world):
-                    pass
-        """)
-
-        with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
-
-    def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
-        config = Configuration()
-        client = PipelineClient(url, config=config)
-        request = client.get(url)
-        response = client._pipeline.run(request)
-        assert response.http_response.status_code == 200
-
+#
+# class TestClientHasConfigurationMethod(pylint.testutils.CheckerTestCase):
+#     CHECKER_CLASS = checker.ClientHasCreateConfigurationMethod
+#
+#     def test_missing_create_config_method(self):
+#         class_node, function_node = astroid.extract_node("""
+#         class SomeClient(): #@
+#             def __init__(self, **kwargs): #@
+#                 pass
+#         """)
+#
+#         with self.assertAddsMessages(
+#             pylint.testutils.Message(
+#                 msg_id="missing-configuration-factory-method", node=class_node
+#             )
+#         ):
+#             self.checker.visit_classdef(class_node)
+#
+#     def test_finds_config_method(self):
+#         class_node, function_node = astroid.extract_node("""
+#         class SomeClient(): #@
+#             def create_configuration(self, **kwargs): #@
+#                 pass
+#         """)
+#
+#         with self.assertNoMessages():
+#             self.checker.visit_classdef(class_node)
+#
+#     def test_finds_config_method_without_kwargs(self):
+#         class_node, function_node = astroid.extract_node("""
+#         class SomeClient(): #@
+#             def create_configuration(self): #@
+#                 pass
+#         """)
+#
+#         with self.assertAddsMessages(
+#             pylint.testutils.Message(
+#                 msg_id="missing-configuration-factory-method-kwargs", node=function_node
+#             )
+#         ):
+#             self.checker.visit_classdef(class_node)
+#
+#     def test_ignores_non_client_missing_config_method(self):
+#         class_node, function_node = astroid.extract_node("""
+#         class SomethingElse(): #@
+#             def __init__(self, some, **kwargs): #@
+#                 pass
+#         """)
+#
+#         with self.assertNoMessages():
+#             self.checker.visit_classdef(class_node)
+#
+#     def test_ignores_nested_function_missing_create_config(self):
+#         class_node, function_node = astroid.extract_node("""
+#         class SomeClient(): #@
+#             def create_configuration(self, **kwargs): #@
+#                 def nested(hello, world):
+#                     pass
+#         """)
+#
+#         with self.assertNoMessages():
+#             self.checker.visit_classdef(class_node)
+#
+#     def test_guidelines_link_active(self):
+#         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+#         config = Configuration()
+#         client = PipelineClient(url, config=config)
+#         request = client.get(url)
+#         response = client._pipeline.run(request)
+#         assert response.http_response.status_code == 200
+#
 
 class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientHasApprovedMethodNamePrefix
@@ -283,7 +283,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_correct_params(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, credentials, transport, **kwargs): #@
+            def __init__(self, thing_url, credentials, **kwargs): #@
                 pass
         """)
 
@@ -316,7 +316,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_constructor_without_kwargs(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, credentials=None, transport=None): #@
+            def __init__(self, thing_url, credentials=None): #@
                 pass
         """)
 
@@ -331,28 +331,13 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_constructor_without_credentials(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, transport, **kwargs): #@
+            def __init__(self, thing_url, **kwargs): #@
                 pass
         """)
 
         with self.assertAddsMessages(
             pylint.testutils.Message(
                 msg_id="missing-client-constructor-parameter-credentials", node=function_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
-
-    def test_finds_constructor_without_transport(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def __init__(self, thing_url, credentials, **kwargs): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-transport", node=function_node
             )
         ):
             self.checker.visit_classdef(class_node)
@@ -370,64 +355,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
                 msg_id="missing-client-constructor-parameter-credentials", node=function_node
             ),
             pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-transport", node=function_node
-            ),
-            pylint.testutils.Message(
                 msg_id="missing-client-constructor-parameter-kwargs", node=function_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
-
-    def test_finds_constructor_missing_two_params_a(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def __init__(self, transport): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-credentials", node=function_node
-            ),
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-kwargs", node=function_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
-
-    def test_finds_constructor_missing_two_params_b(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def __init__(self, credentials): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-transport", node=function_node
-            ),
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-kwargs", node=function_node
-            )
-        ):
-            self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
-
-    def test_finds_constructor_missing_two_params_c(self):
-        class_node, function_node = astroid.extract_node("""
-        class SomeClient(): #@
-            def __init__(self, **kwargs): #@
-                pass
-        """)
-
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-credentials", node=function_node
-            ),
-            pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-transport", node=function_node
             )
         ):
             self.checker.visit_classdef(class_node)
@@ -656,6 +584,21 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
+    def test_finds_constructor_without_annotations(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, one, two, three, four, five): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-missing-type-annotations", node=function_node
+                )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
     def test_finds_missing_return_annotation_but_has_type_hints(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
         class SomeClient(): #@
@@ -713,8 +656,96 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
+    def test_ignores_private_methods(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def _do_thing(self, one, two, three, four, five, six): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
     def test_guidelines_link_active(self):
         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientHasKwargsInPoliciesForCreateConfigurationMethod(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientHasKwargsInPoliciesForCreateConfigurationMethod
+
+    def test_ignores_config_policies_with_kwargs(self):
+        function_node_a, function_node_b = astroid.extract_node("""
+        def create_configuration(self, **kwargs): #@
+            config = Configuration(**kwargs)
+            config.headers_policy = StorageHeadersPolicy(**kwargs)
+            config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
+            config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+            config.redirect_policy = RedirectPolicy(**kwargs)
+            config.logging_policy = StorageLoggingPolicy(**kwargs)
+            config.proxy_policy = ProxyPolicy(**kwargs)
+            return config
+        
+        @staticmethod
+        def create_config(credential, api_version=None, **kwargs): #@
+            # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
+            if api_version is None:
+                api_version = KeyVaultClient.DEFAULT_API_VERSION
+            config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
+            config.authentication_policy = ChallengeAuthPolicy(credential, **kwargs)
+            return config
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_config_policies_without_kwargs(self):
+        function_node_a, policy_a, policy_b, policy_c, function_node_b, policy_d = astroid.extract_node("""
+        def create_configuration(self, **kwargs): #@
+            config = Configuration(**kwargs)
+            config.headers_policy = StorageHeadersPolicy(**kwargs)
+            config.user_agent_policy = StorageUserAgentPolicy() #@
+            config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+            config.redirect_policy = RedirectPolicy(**kwargs)
+            config.logging_policy = StorageLoggingPolicy() #@
+            config.proxy_policy = ProxyPolicy() #@
+            return config
+
+        @staticmethod
+        def create_config(credential, api_version=None, **kwargs): #@
+            # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
+            if api_version is None:
+                api_version = KeyVaultClient.DEFAULT_API_VERSION
+            config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
+            config.authentication_policy = ChallengeAuthPolicy(credential) #@
+            return config
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="config-missing-kwargs-in-policy", node=policy_a
+            ),
+            pylint.testutils.Message(
+                msg_id="config-missing-kwargs-in-policy", node=policy_b
+            ),
+            pylint.testutils.Message(
+                msg_id="config-missing-kwargs-in-policy", node=policy_c
+            ),
+            pylint.testutils.Message(
+                msg_id="config-missing-kwargs-in-policy", node=policy_d
+            )
+        ):
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)

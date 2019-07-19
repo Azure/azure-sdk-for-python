@@ -12,17 +12,14 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     priority = -1
     msgs = {
         "C4717": (
-            "Client constructor is missing a credentials parameter. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            "Client constructor is missing a credentials parameter. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
             "missing-client-constructor-parameter-credentials",
             "All client types should accept a credentials parameter.",
         ),
-        "C4718": (
-            "Client constructor is missing a transport parameter. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
-            "missing-client-constructor-parameter-transport",
-            "All client types should accept a transport parameter.",
-        ),
         "C4719": (
-            "Client constructor is missing a **kwargs parameter. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            "Client constructor is missing a **kwargs parameter. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
             "missing-client-constructor-parameter-kwargs",
             "All client types should accept a **kwargs parameter.",
         )
@@ -35,15 +32,6 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
                 "type": "yn",
                 "metavar": "<y_or_n>",
                 "help": "Allow client constructors without a credentials parameter",
-            },
-        ),
-        (
-            "ignore-missing-client-constructor-parameter-transport",
-            {
-                "default": False,
-                "type": "yn",
-                "metavar": "<y_or_n>",
-                "help": "Allow client constructors without a transport parameter",
             },
         ),
         (
@@ -69,59 +57,41 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
 
     def visit_functiondef(self, node):
         if node.name == "__init__" and self.is_client and self.is_client[-1]:
-            # We are currently checking a client...
             arguments_node = next(
                 (child for child in node.get_children() if child.is_argument)
             )
-            if "credentials" not in [argument.name for argument in arguments_node.args]:
+            arg_names = [argument.name for argument in arguments_node.args]
+            if "credential" not in arg_names and "credentials" not in arg_names:
                 self.add_message(
                     msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
                 )
-            if "transport" not in [argument.name for argument in arguments_node.args]:
-                self.add_message(
-                    msg_id="missing-client-constructor-parameter-transport", node=node, confidence=None
-                )
-
             if not arguments_node.kwarg:
                 self.add_message(
                     msg_id="missing-client-constructor-parameter-kwargs", node=node, confidence=None
                 )
 
 
-class ClientHasCreateConfigurationMethod(BaseChecker):
+class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     __implements__ = IAstroidChecker
 
-    name = "client-configuration-factory"
+    name = "configuration-policies-kwargs"
     priority = -1
     msgs = {
-        "C4713": (
-            "Client is missing a create_configuration() method.",
-            "missing-configuration-factory-method",
-            "All client types should have a create_configuration method.",
-        ),
         "C4714": (
-            "Client's create_configuration() method is missing a **kwargs argument. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
-            "missing-configuration-factory-method-kwargs",
-            "All client types should have a create_configuration method that takes a **kwargs parameter.",
-        ),
+            "A policy in the create_configuration() function is missing a **kwargs argument. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            "config-missing-kwargs-in-policy",
+            "All policies should take a **kwargs parameter.",
+        )
     }
     options = (
         (
-            "ignore-missing-configuration-factory-method",
+            "ignore-config-missing-kwargs-in-policy",
             {
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow clients to not have a create_configuration method",
-            },
-        ),
-        (
-            "ignore-missing-configuration-factory-method-kwargs",
-            {
-                "default": False,
-                "type": "yn",
-                "metavar": "<y_or_n>",
-                "help": "Allow clients to not have a **kwargs parameter in the create_configuration() method.",
+                "help": "Allow clients instantiate a policy without a kwargs parameter.",
             },
         ),
     )
@@ -130,33 +100,18 @@ class ClientHasCreateConfigurationMethod(BaseChecker):
         super().__init__(linter)
         self.is_client = []
 
-    def visit_classdef(self, node):
-        if node.name.endswith("Client"):
-            try:
-                configuration_function_def_node = next(
-                    (
-                        child
-                        for child in node.get_children()
-                        if child.is_function and child.name == "create_configuration"
-                    )
-                )
-                arguments_node = next(
-                    (
-                        child
-                        for child in configuration_function_def_node.get_children()
-                        if child.is_argument
-                    )
-                )
-                if not arguments_node.kwarg:
-                    self.add_message(
-                        msg_id="missing-configuration-factory-method-kwargs",
-                        node=configuration_function_def_node,
-                        confidence=None
-                    )
-            except StopIteration:
-                self.add_message(
-                    msg_id="missing-configuration-factory-method", node=node, confidence=None
-                )
+    def visit_functiondef(self, node):
+        if node.name == "create_configuration" or node.name == "create_config":
+            node.decorators = None
+            for idx in range(len(node.body)):
+                line = list(node.get_children())[idx].as_string()
+                if line.find("Policy") != -1:
+                    if line.find("**kwargs") == -1:
+                        self.add_message(
+                            msg_id="config-missing-kwargs-in-policy",
+                            node=list(node.get_children())[idx],
+                            confidence=None
+                        )
 
 
 class ClientHasApprovedMethodNamePrefix(BaseChecker):
@@ -166,7 +121,8 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
     priority = -1
     msgs = {
         "C4715": (
-            "Client is not using an approved method name prefix. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            "Client is not using an approved method name prefix. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
             "unapproved-client-method-name-prefix",
             "All clients should use the preferred verbs for method names.",
         )
@@ -194,7 +150,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
             approved_prefixes = ["get", "list", "create", "upsert", "set", "update", "replace", "append", "add",
                                  "delete", "remove", "begin"]
             for idx, method in enumerate(client_methods):
-                if method.name == "__init__" or "_exists" in method.name or method.name.startswith("_") \
+                if method.name.startswith("__") or "_exists" in method.name or method.name.startswith("_") \
                         or method.name.startswith("from"):
                     continue
                 prefix = method.name.split("_")[0]
@@ -213,7 +169,8 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     priority = -1
     msgs = {
         "C4720": (
-            "Client has too many positional arguments. Use keyword-only arguments. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures",
+            "Client has too many positional arguments. Use keyword-only arguments."
+            " See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures",
             "client-method-has-more-than-5-positional-arguments",
             "Client method should use keyword-only arguments for some parameters.",
         )
@@ -242,11 +199,12 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
 
     def visit_functiondef(self, node):
         if self.is_client and self.is_client[-1]:
+            node.decorators = None
             arguments_node = next(
                 (child for child in node.get_children() if child.is_argument)
             )
 
-            # Only bother checking method signatures with > 6 parameters (don't include self)
+            # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
             if len(arguments_node.args) > 6:
                 positional_args = len(arguments_node.args) - len(arguments_node.defaults)
                 if positional_args > 6:
@@ -262,7 +220,8 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
     priority = -1
     msgs = {
         "C4721": (
-            "Client method is missing type annotations. See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints",
+            "Client method is missing type annotations and/or return type annotations. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints",
             "client-method-missing-type-annotations",
             "Client method should use type annotations.",
         )
@@ -291,29 +250,77 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
 
     def visit_functiondef(self, node):
         if self.is_client and self.is_client[-1]:
-            arguments_node = next(
-                (child for child in node.get_children() if child.is_argument)
-            )
+            if not node.name.startswith("_") or node.name == "__init__":
+                node.decorators = None
+                arguments_node = next(
+                    (child for child in node.get_children() if child.is_argument)
+                )
 
-            # Checks that method has python 2/3 type comments or annotations as shown here:
-            # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+                # Checks that method has python 2/3 type comments or annotations as shown here:
+                # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
 
-            # check for type comments
-            if node.type_comment_args is None or node.type_comment_returns is None:
+                # check for type comments
+                if node.type_comment_args is None or node.type_comment_returns is None:
 
-                # type annotations default to None when not present, so need extra logic here
-                type_annotations = [type_hint for type_hint in arguments_node.annotations if type_hint is not None]
+                    # type annotations default to None when not present, so need extra logic here
+                    type_annotations = [type_hint for type_hint in arguments_node.annotations if type_hint is not None]
 
-                # check for type annotations
-                if (type_annotations == [] and len(arguments_node.args) > 1) or node.returns is None:
+                    # check for type annotations
+                    if (type_annotations == [] and len(arguments_node.args) > 1) or node.returns is None:
+                        self.add_message(
+                            msg_id="client-method-missing-type-annotations", node=node, confidence=None
+                        )
+
+
+class ClientUsesCorrectNamingConventions(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-naming-conventions"
+    priority = -1
+    msgs = {
+        "C4722": (
+            "Client is using an incorrect naming convention. See details:"
+            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-naming-convention",
+            "client-incorrect-naming-convention",
+            "Client method should use correct naming conventions.",
+        )
+    }
+    options = (
+        (
+            "ignore-client-incorrect-naming-convention",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow client to use incorrect naming conventions.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+
+    def visit_classdef(self, node):
+        if "_" in node.name or node.name.endswith("client"):
+            if not node.name.startswith("_"):
+                self.add_message(
+                    msg_id="client-incorrect-naming-convention", node=node, confidence=None
+                )
+        if node.name.endswith("Client"):
+            client_methods = [child for child in node.get_children() if child.is_function]
+
+            for method in client_methods:
+                if method.name != method.name.lower():
                     self.add_message(
-                        msg_id="client-method-missing-type-annotations", node=node, confidence=None
+                        msg_id="client-incorrect-naming-convention", node=method, confidence=None
                     )
 
 
 def register(linter):
-    linter.register_checker(ClientHasCreateConfigurationMethod(linter))
+    linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
     linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
     linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
+    # linter.register_checker(ClientUsesCorrectNamingConventions(linter))
