@@ -170,11 +170,15 @@ class ODataV4Format(object):
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
-    :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str code: Its value is a service-defined error code.
+     This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
-    :ivar str target: The target of the particular error (for example, the name of the property in error). This field is optional and may be None.
-    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
-    :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+     This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
+     for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined.
+     Usually this object contains information that will help debug the service.
     """
 
     def __init__(self, json_object):
@@ -218,11 +222,15 @@ class ODataV4Error(HttpResponseError):
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
     :ivar dict odata_json: The parsed JSON body as attribute for convenience.
-    :ivar str code: Its value is a service-defined error code. This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str code: Its value is a service-defined error code.
+     This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
-    :ivar str target: The target of the particular error (for example, the name of the property in error). This field is optional and may be None.
-    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs for code and message, and MAY contain a name/value pair for target, as described above.
-    :ivar dict innererror: An object. The contents of this object are service-defined. Usually this object contains information that will help debug the service.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+     This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
+     for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined.
+     Usually this object contains information that will help debug the service.
     """
 
     _ERROR_FORMAT = ODataV4Format
@@ -235,7 +243,7 @@ class ODataV4Error(HttpResponseError):
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
-        except Exception:
+        except Exception:  #pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             odata_message = None
 
@@ -262,7 +270,7 @@ class ODataV4Error(HttpResponseError):
                         if v is not None
                     }
                 )
-            except Exception:
+            except Exception:  #pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
                 self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
 

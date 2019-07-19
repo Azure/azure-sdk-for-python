@@ -36,7 +36,6 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
-from azure.core.pipeline import Pipeline
 from . import HttpRequest # pylint: disable=unused-import
 
 from .base import (

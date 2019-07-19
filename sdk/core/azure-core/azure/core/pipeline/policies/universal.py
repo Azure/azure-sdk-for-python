@@ -402,7 +402,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a proxy policy.
     """
-    def __init__(self, proxies=None, **kwargs):
+    def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument
         self.proxies = proxies
 
     def on_request(self, request):
