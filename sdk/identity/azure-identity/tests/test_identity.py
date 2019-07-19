@@ -244,11 +244,10 @@ def test_default_credential():
 
 def test_username_password_credential():
     expected_token = "access-token"
-    tenant_id = "guid"
     transport = validating_transport(
         requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
         responses=[
-            # tenant discovery, then a token request
+            # expecting tenant discovery then a token request
             mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
             mock_response(
                 json_payload={
@@ -263,7 +262,6 @@ def test_username_password_credential():
 
     credential = UsernamePasswordCredential(
         client_id="some-guid",
-        tenant_id=tenant_id,
         username="user@azure",
         password="secret_password",
         transport=transport,
