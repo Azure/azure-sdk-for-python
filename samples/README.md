@@ -1,5 +1,5 @@
 # Azure Smoke Tests for Python
-This sample code is a smoke test to ensure that Azure Preview for JS work while loaded into the same process by performing 2 or more actions with them.
+This sample code is a smoke test to ensure that Azure Preview for Python work while loaded into the same process by performing 2 or more actions with them.
 
 Libraries tested:
 * keyvault-secrets
