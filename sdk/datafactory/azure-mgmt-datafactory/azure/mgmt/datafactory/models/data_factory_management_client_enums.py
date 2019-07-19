@@ -321,6 +321,18 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
+class DynamicsDeploymentType(str, Enum):
+
+    online = "Online"
+    on_premises_with_ifd = "OnPremisesWithIfd"
+
+
+class DynamicsAuthenticationType(str, Enum):
+
+    office365 = "Office365"
+    ifd = "Ifd"
+
+
 class AvroCompressionCodec(str, Enum):
 
     none = "none"
@@ -363,6 +375,13 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_serial = "LOCAL_SERIAL"
 
 
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -378,6 +397,12 @@ class SalesforceSourceReadBehavior(str, Enum):
 
     query = "Query"
     query_all = "QueryAll"
+
+
+class SsisPackageLocationType(str, Enum):
+
+    ssisdb = "SSISDB"
+    file = "File"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
