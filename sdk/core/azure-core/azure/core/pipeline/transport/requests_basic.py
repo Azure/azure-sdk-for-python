@@ -164,12 +164,10 @@ class RequestsTransport(HttpTransport):
     - You provide the configured session if you want to, or a basic session is created.
     - All kwargs received by "send" are sent to session.request directly
 
-    :param session: The session.
-    :type session: requests.Session
-    :param bool session_owner: Defaults to True.
-
     **Keyword argument:**
 
+    *session (requests.Session)* - Request session to use instead of the default one.
+    *session_owner (bool)* - Decide if the session provided by user is owned by this transport. Default to True.
     *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
@@ -183,11 +181,11 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ['http://', 'https://']
 
-    def __init__(self, session=None, session_owner=True, **kwargs):
-        # type: (Optional[Configuration], Optional[requests.Session], bool) -> None
-        self._session_owner = session_owner
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.session = kwargs.get('session', None)
+        self._session_owner = kwargs.get('session_owner', True)
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self.session = session
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     def __enter__(self):
