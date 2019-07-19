@@ -3,6 +3,21 @@
 Release History
 ===============
 
+0.5.0 (2019-07-03)
+++++++++++++++++++
+
+**Features**
+
+- Model Volume has a new parameter protocol_types
+- Model Volume has a new parameter mount_targets
+
+**Breaking changes**
+
+- Parameter subnet_id of model Volume is now required
+- Parameter usage_threshold of model Volume is now required
+- Parameter service_level of model CapacityPool is now required
+- Parameter size of model CapacityPool is now required
+
 0.4.0 (2019-04-29)
 ++++++++++++++++++
 

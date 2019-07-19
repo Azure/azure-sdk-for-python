@@ -22,7 +22,7 @@
 """AzureDocument classes and enums for the Azure Cosmos database service.
 """
 
-import azure.cosmos.retry_options as retry_options
+from . import retry_options
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
@@ -316,7 +316,7 @@ class ProxyConfiguration(object):
 
 
 class ConnectionPolicy(object):
-    """Represents the Connection policy assocated with a CosmosClient.
+    """Represents the Connection policy assocated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
@@ -371,10 +371,6 @@ class ConnectionPolicy(object):
         self.RetryOptions = retry_options.RetryOptions()
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
-
-class Undefined(object):
-    """Represents undefined value for partitionKey when it's mising.
-    """
 
 class _OperationType(object):
     """Represents the type of the operation
