@@ -53,7 +53,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     def __init__(self):
         # type: (str, str, str) -> None
         self.parent_span_dict = {}
-        self._request_id = "x-ms-request-id"
+        self._request_id = "x-ms-client-request-id"
+        self._response_id = "x-ms-request-id"
 
     def set_header(self, request, span):
         # type: (PipelineRequest[HttpRequest], Any) -> None
@@ -63,9 +64,15 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         headers = span.to_header()
         request.http_request.headers.update(headers)
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest[HttpRequest], Any) -> None
-        parent_span = tracing_context.current_span.get()  # type: AbstractSpan
+        parent_span = tracing_context.current_span.get()
+        wrapper_class = settings.tracing_implementation()
+        original_context = [parent_span, None]
+        if parent_span is None and wrapper_class is not None:
+            current_span_instance = wrapper_class.get_current_span()
+            original_context[1] = current_span_instance
+            parent_span = wrapper_class(current_span_instance)
 
         if parent_span is None:
             return
@@ -82,25 +89,28 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         child.start()
 
         set_span_contexts(child)
-        self.parent_span_dict[child] = parent_span
+        self.parent_span_dict[child] = original_context
         self.set_header(request, child)
 
     def end_span(self, request, response=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
-        span = tracing_context.current_span.get()   # type: AbstractSpan
+        span = tracing_context.current_span.get()  # type: AbstractSpan
         only_propagate = settings.tracing_should_only_propagate()
         if span and not only_propagate:
             span.set_http_attributes(request, response=response)
-            if response and self._request_id in response.headers:
-                span.add_attribute(self._request_id, response.headers[self._request_id])
+            request_id = request.headers.get(self._request_id)
+            if request_id is not None:
+                span.add_attribute(self._request_id, request_id)
+            if response and self._response_id in response.headers:
+                span.add_attribute(self._response_id, response.headers[self._response_id])
             span.finish()
-            set_span_contexts(self.parent_span_dict[span])
+            set_span_contexts(*self.parent_span_dict.pop(span, None))
 
-    def on_response(self, request, response, **kwargs):
+    def on_response(self, request, response):
         # type: (PipelineRequest[HttpRequest], PipelineResponse[HttpRequest, HttpResponse], Any) -> None
         self.end_span(request.http_request, response=response.http_response)
 
-    def on_exception(self, _request, **kwargs):  # pylint: disable=unused-argument
+    def on_exception(self, _request):  # pylint: disable=unused-argument
         # type: (PipelineRequest[HttpRequest], Any) -> bool
         self.end_span(_request.http_request)
