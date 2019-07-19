@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class AvailableResourceGroupPrivateEndpointTypesOperations(object):
-    """AvailableResourceGroupPrivateEndpointTypesOperations operations.
+class VpnLinkConnectionsOperations(object):
+    """VpnLinkConnectionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +24,7 @@ class AvailableResourceGroupPrivateEndpointTypesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-04-01".
+    :ivar api_version: Client API version. Constant value: "2019-06-01".
     """
 
     models = models
@@ -35,37 +34,41 @@ class AvailableResourceGroupPrivateEndpointTypesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-04-01"
+        self.api_version = "2019-06-01"
 
         self.config = config
 
-    def list(
-            self, location, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all of the resource types that can be linked to a Private
-        Endpoint in this subscription in this region.
+    def list_by_vpn_connection(
+            self, resource_group_name, gateway_name, connection_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves all vpn site link connections for a particular virtual wan
+        vpn gateway vpn connection.
 
-        :param location: The location of the domain name.
-        :type location: str
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The resource group name of the VpnGateway.
         :type resource_group_name: str
+        :param gateway_name: The name of the gateway.
+        :type gateway_name: str
+        :param connection_name: The name of the vpn connection.
+        :type connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AvailablePrivateEndpointType
+        :return: An iterator like instance of VpnSiteLinkConnection
         :rtype:
-         ~azure.mgmt.network.v2019_04_01.models.AvailablePrivateEndpointTypePaged[~azure.mgmt.network.v2019_04_01.models.AvailablePrivateEndpointType]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.network.v2019_06_01.models.VpnSiteLinkConnectionPaged[~azure.mgmt.network.v2019_06_01.models.VpnSiteLinkConnection]
+        :raises:
+         :class:`ErrorException<azure.mgmt.network.v2019_06_01.models.ErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_vpn_connection.metadata['url']
                 path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+                    'connectionName': self._serialize.url("connection_name", connection_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -97,9 +100,7 @@ class AvailableResourceGroupPrivateEndpointTypesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorException(self._deserialize, response)
 
             return response
 
@@ -107,7 +108,7 @@ class AvailableResourceGroupPrivateEndpointTypesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.AvailablePrivateEndpointTypePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.VpnSiteLinkConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/availablePrivateEndpointTypes'}
+    list_by_vpn_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}/vpnLinkConnections'}
