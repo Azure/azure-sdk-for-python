@@ -33,7 +33,7 @@ from . import _query_iterable as query_iterable
 from . import runtime_constants
 from . import request_object
 from . import _synchronized_request as synchronized_request
-from . import global_endpoint_manager
+from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider as routing_map_provider
 from . import session
 from . import _utils

@@ -28,7 +28,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import StatusCodes
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
+import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 from azure.cosmos import _retry_utility
 import test_config
 

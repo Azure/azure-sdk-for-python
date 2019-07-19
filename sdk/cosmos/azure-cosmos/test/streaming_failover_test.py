@@ -7,7 +7,7 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility
 from azure.cosmos import _endpoint_discovery_retry_policy
 from azure.cosmos.request_object import _RequestObject
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
+import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
 pytestmark = pytest.mark.cosmosEmulator
