@@ -24,8 +24,9 @@ class Policy(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param marketplace_purchases: The marketplace purchases allowed or not.
-     Possible values include: 'Allowed', 'NotAllowed'
+    :param marketplace_purchases: The marketplace purchases are free, allowed
+     or not allowed. Possible values include: 'AllAllowed', 'FreeAllowed',
+     'NotAllowed'
     :type marketplace_purchases: str or
      ~azure.mgmt.billing.models.MarketplacePurchasesPolicy
     :param reservation_purchases: The reservation purchases allowed or not.
@@ -35,10 +36,6 @@ class Policy(Resource):
     :param view_charges: Who can view charges. Possible values include:
      'None', 'SubscriptionOwner'
     :type view_charges: str or ~azure.mgmt.billing.models.ViewChargesPolicy
-    :param free_marketplace_purchases: The free marketplace purchases allowed
-     or not. Possible values include: 'Allowed', 'NotAllowed'
-    :type free_marketplace_purchases: str or
-     ~azure.mgmt.billing.models.FreeMarketplacePurchasesPolicy
     """
 
     _validation = {
@@ -54,7 +51,6 @@ class Policy(Resource):
         'marketplace_purchases': {'key': 'properties.marketplacePurchases', 'type': 'str'},
         'reservation_purchases': {'key': 'properties.reservationPurchases', 'type': 'str'},
         'view_charges': {'key': 'properties.viewCharges', 'type': 'str'},
-        'free_marketplace_purchases': {'key': 'properties.freeMarketplacePurchases', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -62,4 +58,3 @@ class Policy(Resource):
         self.marketplace_purchases = kwargs.get('marketplace_purchases', None)
         self.reservation_purchases = kwargs.get('reservation_purchases', None)
         self.view_charges = kwargs.get('view_charges', None)
-        self.free_marketplace_purchases = kwargs.get('free_marketplace_purchases', None)

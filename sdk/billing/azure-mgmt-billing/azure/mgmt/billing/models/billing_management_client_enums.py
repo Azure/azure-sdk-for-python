@@ -117,7 +117,8 @@ class ReservationType(str, Enum):
 
 class MarketplacePurchasesPolicy(str, Enum):
 
-    allowed = "Allowed"
+    all_allowed = "AllAllowed"
+    free_allowed = "FreeAllowed"
     not_allowed = "NotAllowed"
 
 
@@ -131,12 +132,6 @@ class ViewChargesPolicy(str, Enum):
 
     none = "None"
     subscription_owner = "SubscriptionOwner"
-
-
-class FreeMarketplacePurchasesPolicy(str, Enum):
-
-    allowed = "Allowed"
-    not_allowed = "NotAllowed"
 
 
 class PaymentMethodType(str, Enum):
