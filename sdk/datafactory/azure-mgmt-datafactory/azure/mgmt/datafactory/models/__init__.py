@@ -372,7 +372,6 @@ try:
     from .salesforce_source_py3 import SalesforceSource
     from .odata_source_py3 import ODataSource
     from .sybase_source_py3 import SybaseSource
-    from .sap_bw_source_py3 import SapBwSource
     from .postgre_sql_source_py3 import PostgreSqlSource
     from .my_sql_source_py3 import MySqlSource
     from .odbc_source_py3 import OdbcSource
@@ -870,7 +869,6 @@ except (SyntaxError, ImportError):
     from .salesforce_source import SalesforceSource
     from .odata_source import ODataSource
     from .sybase_source import SybaseSource
-    from .sap_bw_source import SapBwSource
     from .postgre_sql_source import PostgreSqlSource
     from .my_sql_source import MySqlSource
     from .odbc_source import OdbcSource
@@ -1448,7 +1446,6 @@ __all__ = [
     'SalesforceSource',
     'ODataSource',
     'SybaseSource',
-    'SapBwSource',
     'PostgreSqlSource',
     'MySqlSource',
     'OdbcSource',
