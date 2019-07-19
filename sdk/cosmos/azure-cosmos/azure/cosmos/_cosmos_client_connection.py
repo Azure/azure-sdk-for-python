@@ -30,7 +30,7 @@ from . import documents
 from . import _constants as constants
 from . import http_constants
 from . import _query_iterable as query_iterable
-from . import runtime_constants
+from . import _runtime_constants as runtime_constants
 from . import request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
