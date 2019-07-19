@@ -2,7 +2,7 @@ import time
 import os
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.keyvault.certificates._generated.v7_0.models import SecretProperties, IssuerParameters, \
-    X509CertificateProperties, SubjectAlternativeNames, Trigger, Action, ActionType
+    X509CertificateProperties, SubjectAlternativeNames, Trigger, Action, ActionType, CertificateAttributes
 from azure.keyvault.certificates._models import KeyProperties, LifetimeAction
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -31,7 +31,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a certificate (delete_certificate)
 #
-# 4. Restore a certificate (restore_certificate)
+# 4. Purge a deleted certificate (purge_deleted_certificate)
+#
+# 5. Restore a certificate (restore_certificate)
 # ----------------------------------------------------------------------------------------------------------
 
 def run_sample():
@@ -45,7 +47,7 @@ def run_sample():
     try:
 
         print("\n1. Create Certificate")
-        cert_name = 'yourCertificate'
+        cert_name = 'BackupRestoreCertificate'
         lifetime_actions = [LifetimeAction(
             lifetime_percentage=2,
             action_type=ActionType.email_contacts
@@ -64,7 +66,8 @@ def run_sample():
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24,
-                                        lifetime_actions=lifetime_actions
+                                        lifetime_actions=lifetime_actions,
+                                        attributes=CertificateAttributes(recovery_level="Purgeable")
                                         )
 
         # Let's create a certificate for your key vault.
@@ -80,12 +83,21 @@ def run_sample():
         print("Backup created for certificate with name '{0}'.".format(certificate_operation.name))
 
         # The storage account certificate is no longer in use, so you can delete it.
+        print("\nDeleting certificate...")
         client.delete_certificate(name=certificate_operation.name)
 
         # To ensure certificate is deleted on the server side.
-        print("\nDeleting certificate...")
         time.sleep(20)
         print("Deleted Certificate with name '{0}'".format(certificate_operation.name))
+
+        # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
+        # In order to be able to reuse the name during restoration, we must purge the certificate
+        # after the initial deletion.
+        print ("\nPurging certificate...")
+        client.purge_deleted_certificate(name=certificate_operation.name)
+        # To ensure certificate is purged on the server side.
+        time.sleep(20)
+        print("Purged Certificate with name '{0}'".format(certificate_operation.name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n3. Restore the certificate using the backed up certificate bytes")

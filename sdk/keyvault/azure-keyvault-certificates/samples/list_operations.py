@@ -60,8 +60,8 @@ def run_sample():
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24
                                         )
-        bank_cert_name = "BankCertificate"
-        storage_cert_name = "StorageCertificate"
+        bank_cert_name = "BankListCertificate"
+        storage_cert_name = "StorageListCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         bank_certificate_operation = client.create_certificate(name=bank_cert_name, policy=cert_policy, expires=expires)
         storage_certificate_operation = client.create_certificate(name=storage_cert_name, policy=cert_policy)
