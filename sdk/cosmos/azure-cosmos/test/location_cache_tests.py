@@ -6,7 +6,7 @@ from time import sleep
 from azure.cosmos.http_constants import ResourceType
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
-from azure.cosmos.request_object import _RequestObject
+from azure.cosmos._request_object import RequestObject
 from azure.cosmos._location_cache import LocationCache
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
@@ -376,11 +376,11 @@ class LocationCacheTest(unittest.TestCase):
     def resolve_endpoint_for_read_request(self, master_resource_type):
         operation_type = documents._OperationType.Read
         resource_type = ResourceType.Database if master_resource_type else ResourceType.Document
-        request = _RequestObject(resource_type, operation_type)
+        request = RequestObject(resource_type, operation_type)
         return self.location_cache.resolve_service_endpoint(request)
 
     def resolve_endpoint_for_write_request(self, resource_type, use_alternate_write_endpoint):
         operation_type = documents._OperationType.Create
-        request = _RequestObject(resource_type, operation_type)
+        request = RequestObject(resource_type, operation_type)
         request.route_to_location_with_preferred_location_flag(1 if use_alternate_write_endpoint else 0, ResourceType.IsCollectionChild(resource_type))
         return self.location_cache.resolve_service_endpoint(request)
