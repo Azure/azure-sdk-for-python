@@ -95,6 +95,6 @@ class PublicClientCredential(MsalCredential):
         # type: (Any) -> None
         super(PublicClientCredential, self).__init__(
             app_class=msal.PublicClientApplication,
-            authority="https://login.microsoftonline.com/organizations",
+            authority="https://login.microsoftonline.com/" + kwargs.pop("tenant", "organizations"),
             **kwargs
         )

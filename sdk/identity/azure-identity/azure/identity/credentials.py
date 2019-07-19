@@ -252,6 +252,10 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str client_id: the application's client ID
     :param str username: the user's username (usually an email address)
     :param str password: the user's password
+
+    **Keyword arguments:**
+
+    *tenant (str)* - ID or domain associated with an Azure Active Directory tenant
     """
 
     def __init__(self, client_id, username, password, **kwargs):
