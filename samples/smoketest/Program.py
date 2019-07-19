@@ -1,5 +1,3 @@
-# from azure.identity import DefaultAzureCredential
-# from azure.keyvault.secrets import SecretClient
 from KeyVaultSecrets import KeyVault
 from StorageBlobs import StorageBlob
 from EventHubs import EventHub
