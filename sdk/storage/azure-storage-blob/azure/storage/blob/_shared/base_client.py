@@ -10,9 +10,10 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 try:
-    from urllib.parse import parse_qs
+    from urllib.parse import parse_qs, quote
 except ImportError:
     from urlparse import parse_qs # type: ignore
+    from urllib2 import quote # type: ignore
 
 import six
 
@@ -141,7 +142,7 @@ class StorageAccountHostsMixin(object):
         elif is_credential_sastoken(credential):
             query_str += credential.lstrip('?')
             credential = None
-        return query_str.rstrip('?&'), credential
+        return quote(query_str.rstrip('?&')), credential
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]

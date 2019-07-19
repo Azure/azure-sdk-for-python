@@ -302,7 +302,7 @@ def encrypt_blob(blob, key_encryption_key):
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
-    is done as a part of the upload_blob_chunks method.
+    is done as a part of the upload_data_chunks method.
 
     :param bytes blob:
         The blob to be encrypted.

@@ -22,8 +22,8 @@ from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.encryption import generate_blob_encryption_data
-from ._shared.upload_chunking import IterStreamer
-from ._shared.download_chunking import StorageStreamDownloader
+from ._shared.uploads import IterStreamer
+from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
@@ -35,19 +35,16 @@ from ._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
     SourceModifiedAccessConditions,
+    ModifiedAccessConditions,
+    SequenceNumberAccessConditions,
     StorageErrorException)
-from ._blob_utils import (
-    deserialize_blob_properties,
-    deserialize_blob_stream,
-    get_access_conditions,
-    get_modification_conditions,
-    get_sequence_conditions,
+from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
+from ._upload_helpers import (
     upload_block_blob,
     upload_page_blob,
     upload_append_blob)
 from .models import BlobType, BlobBlock
-from .lease import LeaseClient
-from .polling import CopyStatusPoller
+from .lease import LeaseClient, get_access_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -336,10 +333,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             maxsize_condition=None,  # type: Optional[int]
@@ -458,8 +451,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         if content_settings:
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -531,10 +527,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             validate_content=False,  # type: bool
             lease=None,  # type: Union[LeaseClient, str]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -602,8 +594,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Offset value must not be None is length is set.")
 
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
 
         return StorageStreamDownloader(
             service=self._client.blob,
@@ -628,10 +623,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def delete_blob(
             self, delete_snapshots=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -691,8 +682,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Delete a blob.
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         if delete_snapshots:
@@ -734,10 +728,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def get_blob_properties(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -784,8 +774,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Getting the properties for a blob.
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             blob_props = self._client.blob.get_properties(
                 timeout=timeout,
@@ -803,10 +796,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def set_http_headers(
             self, content_settings=None,  # type: Optional[ContentSettings]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -848,8 +837,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: Dict[str, Any]
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -874,10 +866,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def set_blob_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -921,8 +909,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             return self._client.blob.set_metadata(  # type: ignore
                 timeout=timeout,
@@ -940,10 +931,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -1003,8 +990,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1040,10 +1030,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -1090,8 +1076,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1118,10 +1107,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -1181,8 +1166,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             return self._client.blob.create_snapshot( # type: ignore
                 timeout=timeout,
@@ -1194,24 +1182,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def copy_blob_from_url(  # pylint: disable=too-many-locals
+    def start_copy_from_url(
             self, source_url,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
-            source_if_modified_since=None,  # type: Optional[datetime]
-            source_if_unmodified_since=None,  # type: Optional[datetime]
-            source_if_match=None,  # type: Optional[str]
-            source_if_none_match=None,  # type: Optional[str]
-            destination_if_modified_since=None,  # type: Optional[datetime]
-            destination_if_unmodified_since=None,  # type: Optional[datetime]
-            destination_if_match=None,  # type: Optional[str]
-            destination_if_none_match=None,  # type: Optional[str]
-            destination_lease=None,  # type: Optional[Union[LeaseClient, str]]
-            source_lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
-            incremental_copy=False, # type bool,
-            premium_page_blob_tier=None,
-            requires_sync=False,  # type: Optional[bool]
-            polling=True,  # type: bool
             **kwargs
         ):
         # type: (...) -> Any
@@ -1345,68 +1319,82 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
-        if source_lease:
+        if 'source_lease' in kwargs:
+            source_lease = kwargs.pop('source_lease')
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: ignore
+                headers['x-ms-source-lease-id'] = source_lease.id # type: str
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
-        if premium_page_blob_tier:
+        if kwargs.get('premium_page_blob_tier'):
+            premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
             headers['x-ms-access-tier'] = premium_page_blob_tier.value
-        if requires_sync:
-            headers['x-ms-requires-sync'] = str(requires_sync)
+        if kwargs.get('requires_sync'):
+            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
 
-        dest_access_conditions = get_access_conditions(destination_lease)
-        dest_mod_conditions = get_modification_conditions(
-            destination_if_modified_since,
-            destination_if_unmodified_since,
-            destination_if_match,
-            destination_if_none_match)
+        dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
+        dest_mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('destination_if_modified_since', None),
+            if_unmodified_since=kwargs.pop('destination_if_unmodified_since', None),
+            if_match=kwargs.pop('destination_if_match', None),
+            if_none_match=kwargs.pop('destination_if_none_match', None))
         try:
-            if incremental_copy:
-                start_copy = self._client.page_blob.copy_incremental(
+            if kwargs.get('incremental_copy'):
+                return self._client.page_blob.copy_incremental(
                     source_url,
                     timeout=None,
                     modified_access_conditions=dest_mod_conditions,
                     headers=headers,
                     cls=return_response_headers,
                     **kwargs)
-            else:
-                source_mod_conditions = SourceModifiedAccessConditions(
-                    source_if_modified_since=source_if_modified_since,
-                    source_if_unmodified_since=source_if_unmodified_since,
-                    source_if_match=source_if_match,
-                    source_if_none_match=source_if_none_match)
-                start_copy = self._client.blob.start_copy_from_url(
-                    source_url,
-                    timeout=timeout,
-                    source_modified_access_conditions=source_mod_conditions,
-                    modified_access_conditions=dest_mod_conditions,
-                    lease_access_conditions=dest_access_conditions,
-                    headers=headers,
-                    cls=return_response_headers,
-                    **kwargs)
+            source_mod_conditions = SourceModifiedAccessConditions(
+                source_if_modified_since=kwargs.pop('source_if_modified_since', None),
+                source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
+                source_if_match=kwargs.pop('source_if_match', None),
+                source_if_none_match=kwargs.pop('source_if_none_match', None))
+            return self._client.blob.start_copy_from_url(
+                source_url,
+                timeout=timeout,
+                source_modified_access_conditions=source_mod_conditions,
+                modified_access_conditions=dest_mod_conditions,
+                lease_access_conditions=dest_access_conditions,
+                headers=headers,
+                cls=return_response_headers,
+                **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-        poller = CopyStatusPoller(
-            self, start_copy,
-            polling=polling,
-            configuration=self._config,
-            lease_access_conditions=destination_lease,
-            timeout=timeout)
-        return poller
+    def abort_copy(self, copy_id, lease=None, timeout=None, **kwargs):
+        # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
+        """Abort an ongoing copy operation.
 
-    def acquire_lease(
-            self, lease_duration=-1,  # type: int
-            lease_id=None,  # type: Optional[str]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> LeaseClient
+        This will leave a destination blob with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :param copy_id:
+            The copy operation to abort. This can be either an ID, or an
+            instance of FileProperties.
+        :type copy_id: str or ~azure.storage.file.models.FileProperties
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(lease)
+        try:
+            copy_id = copy_id.copy.id
+        except AttributeError:
+            try:
+                copy_id = copy_id['copy_id']
+            except TypeError:
+                pass
+        try:
+            self._client.blob.abort_copy_from_url(
+                copy_id=copy_id,
+                lease_access_conditions=access_conditions,
+                timeout=timeout,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def acquire_lease(self, lease_duration=-1, lease_id=None, timeout=None, **kwargs):
+        # type: (int, Optional[str], Optional[int], Any) -> LeaseClient
         """Requests a new lease.
 
         If the blob does not have an active lease, the Blob
@@ -1458,16 +1446,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
         lease.acquire(
             lease_duration=lease_duration,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
             **kwargs)
         return lease
 
-    def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
-        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
+    def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None, **kwargs):
+        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[LeaseClient, str]], Any) -> None
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1496,7 +1480,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self._client.blob.set_tier(
                 tier=standard_blob_tier,
                 timeout=timeout,
-                lease_access_conditions=access_conditions)
+                lease_access_conditions=access_conditions,
+                **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1665,10 +1650,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
             validate_content=False,  # type: Optional[bool]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -1737,8 +1718,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         if content_settings:
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -1797,10 +1781,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             end_range=None, # type: Optional[int]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs
         ):
@@ -1859,8 +1839,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         page_range = None # type: ignore
         if start_range is not None and end_range is None:
             page_range = str(start_range)
@@ -1907,10 +1890,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs
         ):
@@ -1955,8 +1934,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         if sequence_number_action is None:
             raise ValueError("A sequence number action must be specified")
         try:
@@ -1974,10 +1956,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def resize_blob( # type: ignore
             self, size,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs
         ):
@@ -2020,8 +1998,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         if size is None:
             raise ValueError("A content length must be specified for a Page Blob.")
         try:
@@ -2042,13 +2023,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             validate_content=False,  # type: Optional[bool]
-            if_sequence_number_lte=None, # type: Optional[int]
-            if_sequence_number_lt=None, # type: Optional[int]
-            if_sequence_number_eq=None, # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             encoding='UTF-8',  # type: str
             timeout=None, # type: Optional[int]
             **kwargs
@@ -2133,13 +2107,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("end_range must be an integer that aligns with 512 page size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range) # type: ignore
         access_conditions = get_access_conditions(lease)
-        seq_conditions = get_sequence_conditions(
-            if_sequence_number_lte=if_sequence_number_lte,
-            if_sequence_number_lt=if_sequence_number_lt,
-            if_sequence_number_eq=if_sequence_number_eq
+        seq_conditions = SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
+            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
+            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             return self._client.page_blob.upload_pages( # type: ignore
                 page[:length],
@@ -2160,13 +2137,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, start_range,  # type: int
             end_range,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_sequence_number_lte=None, # type: Optional[int]
-            if_sequence_number_lt=None, # type: Optional[int]
-            if_sequence_number_eq=None, # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -2225,13 +2195,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         access_conditions = get_access_conditions(lease)
-        seq_conditions = get_sequence_conditions(
-            if_sequence_number_lte=if_sequence_number_lte,
-            if_sequence_number_lt=if_sequence_number_lt,
-            if_sequence_number_eq=if_sequence_number_eq
+        seq_conditions = SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
+            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
+            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None)
+        )
         if start_range is None or start_range % 512 != 0:
             raise ValueError("start_range must be an integer that aligns with 512 page size")
         if end_range is None or end_range % 512 != 511:
@@ -2257,10 +2231,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             maxsize_condition=None,  # type: Optional[int]
             appendpos_condition=None,  # type: Optional[int]
             lease=None, # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[datetime]
             encoding='UTF-8',  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -2344,8 +2314,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 append_position=appendpos_condition
             )
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions( # type: ignore
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             return self._client.append_blob.append_block( # type: ignore
                 data,

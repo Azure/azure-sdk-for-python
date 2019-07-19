@@ -465,10 +465,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -522,10 +518,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         container = self.get_container_client(container) # type: ignore
         container.delete_container( # type: ignore
             lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
             **kwargs)
 
