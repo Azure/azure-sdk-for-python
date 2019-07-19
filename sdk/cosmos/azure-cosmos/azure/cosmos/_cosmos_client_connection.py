@@ -32,7 +32,7 @@ from . import http_constants
 from . import _query_iterable as query_iterable
 from . import runtime_constants
 from . import request_object
-from . import synchronized_request
+from . import _synchronized_request as synchronized_request
 from . import global_endpoint_manager
 from ._routing import routing_map_provider as routing_map_provider
 from . import session
