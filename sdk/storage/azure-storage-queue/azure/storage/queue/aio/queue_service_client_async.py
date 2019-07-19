@@ -14,13 +14,14 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
-from ..queue_service_client import QueueServiceClient as QueueServiceClientBase
+from .._shared.policies_async import ExponentialRetry
+from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature
 from azure.storage.queue._shared.models import LocationMode, Services
 from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import process_storage_error
-from azure.storage.queue._generated import AzureQueueStorage
+from azure.storage.queue._generated.aio import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageServiceProperties, StorageErrorException
 
 from azure.storage.queue.aio.models import QueuePropertiesPaged
@@ -90,12 +91,13 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(QueueServiceClient, self).__init__(
             account_url,
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
     async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
@@ -124,8 +126,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
         """
         try:
-            return (await self._client.service.get_statistics( # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs))
+            return await self._client.service.get_statistics( # type: ignore
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -147,7 +149,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :caption: Getting queue service properties.
         """
         try:
-            return (await self._client.service.get_properties(timeout=timeout, **kwargs)) # type: ignore
+            return await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 

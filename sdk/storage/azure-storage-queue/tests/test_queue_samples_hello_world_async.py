@@ -25,7 +25,6 @@ class TestQueueHelloWorldSamplesAsync(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 
-    @record
     async def _test_create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
@@ -42,7 +41,6 @@ class TestQueueHelloWorldSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_client_with_connection_string())
 
-    @record
     async def _test_queue_and_messages_example(self):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient

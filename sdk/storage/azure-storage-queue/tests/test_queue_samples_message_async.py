@@ -87,7 +87,6 @@ class TestMessageQueueSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_access_policy())
 
-    @record
     async def _test_queue_metadata(self):
 
         # Instantiate a queue client
@@ -118,7 +117,6 @@ class TestMessageQueueSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_metadata())
 
-    @record
     async def _test_enqueue_and_receive_messages(self):
 
         # Instantiate a queue client
@@ -165,7 +163,6 @@ class TestMessageQueueSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_enqueue_and_receive_messages())
 
-    @record
     async def _test_delete_and_clear_messages(self):
 
         # Instantiate a queue client
@@ -205,7 +202,6 @@ class TestMessageQueueSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_and_clear_messages())
 
-    @record
     async def _test_peek_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -244,7 +240,6 @@ class TestMessageQueueSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_peek_messages())
 
-    @record
     async def _test_update_message(self):
 
         # Instantiate a queue client

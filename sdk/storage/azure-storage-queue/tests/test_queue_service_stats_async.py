@@ -54,7 +54,7 @@ class QueueServiceStatsTestAsync(QueueTestCase):
 
         # Assert
         self._assert_stats_default(stats)
-    
+
     def test_queue_service_stats_f(self):
         if TestMode.need_recording_file(self.test_mode):
             return

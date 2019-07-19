@@ -25,7 +25,6 @@ class TestQueueServiceSamplesAsync(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 
-    @record
     async def _test_queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
@@ -73,7 +72,6 @@ class TestQueueServiceSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_service_properties())
 
-    @record
     async def _test_queues_in_account(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
@@ -103,7 +101,6 @@ class TestQueueServiceSamplesAsync(QueueTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queues_in_account())
 
-    @record
     async def _test_get_queue_client(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient

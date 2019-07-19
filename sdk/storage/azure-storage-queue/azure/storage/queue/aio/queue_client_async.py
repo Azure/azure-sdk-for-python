@@ -16,6 +16,7 @@ except ImportError:
 
 import six
 
+from .._shared.policies_async import ExponentialRetry
 from ..queue_client import QueueClient as QueueClientBase
 from azure.storage.queue._shared.shared_access_signature import QueueSharedAccessSignature
 from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
@@ -29,7 +30,7 @@ from azure.storage.queue._queue_utils import (
     TextXMLDecodePolicy,
     deserialize_queue_properties,
     deserialize_queue_creation)
-from azure.storage.queue._generated import AzureQueueStorage
+from azure.storage.queue._generated.aio import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageErrorException, SignedIdentifier
 from azure.storage.queue._generated.models import QueueMessage as GenQueueMessage
 
@@ -88,6 +89,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(QueueClient, self).__init__(
             queue_url,
             queue=queue,

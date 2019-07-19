@@ -49,9 +49,10 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
 
     def tearDown(self):
         if not self.is_playback():
+            loop = asyncio.get_event_loop()
             for queue in self.test_queues:
                 try:
-                    self.qsc.delete_queue(queue.queue_name)
+                    loop.run_until_complete(self.qsc.delete_queue(queue.queue_name))
                 except:
                     pass
         return super(StorageQueueEncodingTestAsync, self).tearDown()

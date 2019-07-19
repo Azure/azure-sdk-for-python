@@ -6,22 +6,17 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 import asyncio
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from azure.core.exceptions import HttpResponseError
-
-from azure.storage.queue import (
-    Logging,
-    Metrics,
-    CorsRule,
-    RetentionPolicy,
-)
 
 from azure.storage.queue.aio import (
     QueueServiceClient,
-    QueueClient
+    QueueClient,
+    Logging,
+    Metrics,
+    CorsRule,
+    RetentionPolicy
 )
 
 from queuetestcase import (
@@ -35,9 +30,9 @@ from queuetestcase import (
 # ------------------------------------------------------------------------------
 
 
-class QueueServicePropertiesTestAsync(QueueTestCase):
+class QueueServicePropertiesTest(QueueTestCase):
     def setUp(self):
-        super(QueueServicePropertiesTestAsync, self).setUp()
+        super(QueueServicePropertiesTest, self).setUp()
 
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
@@ -132,13 +127,14 @@ class QueueServicePropertiesTestAsync(QueueTestCase):
 
         # Assert
         self.assertIsNone(resp)
-        self._assert_properties_default(self.qsc.get_service_properties())
+        props = await self.qsc.get_service_properties()
+        self._assert_properties_default(props)
 
     def test_queue_service_properties(self):
-            if TestMode.need_recording_file(self.test_mode):
-                return
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(self._test_queue_service_properties())
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_service_properties())
 
     # --Test cases per feature ---------------------------------------
 
@@ -154,7 +150,6 @@ class QueueServicePropertiesTestAsync(QueueTestCase):
         self._assert_logging_equal(received_props.logging, logging)
 
     def test_set_logging(self):
-        print ("test")
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
@@ -228,7 +223,7 @@ class QueueServicePropertiesTestAsync(QueueTestCase):
         loop.run_until_complete(self._test_set_cors())
 
     # --Test cases for errors ---------------------------------------
-    def _test_retention_no_days(self):
+    async def _test_retention_no_days(self):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
@@ -247,8 +242,9 @@ class QueueServicePropertiesTestAsync(QueueTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
+        props = await self.qsc.set_service_properties()
         self.assertRaises(HttpResponseError,
-                          await self.qsc.set_service_properties, None, None, None, cors)
+                          props, None, None, None, cors)
     
     def test_too_many_cors_rules(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -262,8 +258,9 @@ class QueueServicePropertiesTestAsync(QueueTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
+        props = await self.qsc.set_service_properties()
         self.assertRaises(HttpResponseError,
-                          await self.qsc.set_service_properties,
+                          props,
                           None, None, minute_metrics)
 
     def test_retention_too_long(self):

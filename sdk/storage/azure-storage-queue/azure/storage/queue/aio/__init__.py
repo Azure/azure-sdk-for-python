@@ -7,10 +7,24 @@
 from azure.storage.queue.version import VERSION
 from .queue_client_async import QueueClient
 from .queue_service_client_async import QueueServiceClient
+from .models import (
+    Logging, Metrics, RetentionPolicy, CorsRule, AccessPolicy,
+    QueueMessage, MessagesPaged, QueuePermissions, QueueProperties,
+    QueuePropertiesPaged)
 
 __version__ = VERSION
 
 __all__ = [
     'QueueClient',
-    'QueueServiceClient'
+    'QueueServiceClient',
+    'Logging',
+    'Metrics',
+    'RetentionPolicy',
+    'CorsRule',
+    'AccessPolicy',
+    'QueueMessage',
+    'MessagesPaged',
+    'QueuePermissions',
+    'QueueProperties',
+    'QueuePropertiesPaged'
 ]
