@@ -272,6 +272,8 @@ class CloudError(Model):
 class Cluster(Model):
     """Cluster.
 
+    :param cluster_id:
+    :type cluster_id: int
     :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
      'Cancelled', 'Updating'
     :type provisioning_state: str or ~azure.mgmt.vmwarevirtustream.models.enum
@@ -282,6 +284,7 @@ class Cluster(Model):
     """
 
     _attribute_map = {
+        'cluster_id': {'key': 'clusterId', 'type': 'int'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'cluster_size': {'key': 'clusterSize', 'type': 'int'},
         'hosts': {'key': 'hosts', 'type': '[str]'},
@@ -289,6 +292,7 @@ class Cluster(Model):
 
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
+        self.cluster_id = kwargs.get('cluster_id', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.cluster_size = kwargs.get('cluster_size', None)
         self.hosts = kwargs.get('hosts', None)
@@ -381,6 +385,10 @@ class ExpressRouteAuthorization(Model):
 class GetAdminCredentialsResponse(Model):
     """GetAdminCredentialsResponse.
 
+    :param nsx_user:
+    :type nsx_user: str
+    :param nsx_password:
+    :type nsx_password: str
     :param user:
     :type user: str
     :param password:
@@ -388,12 +396,16 @@ class GetAdminCredentialsResponse(Model):
     """
 
     _attribute_map = {
+        'nsx_user': {'key': 'nsxUser', 'type': 'str'},
+        'nsx_password': {'key': 'nsxPassword', 'type': 'str'},
         'user': {'key': 'user', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(GetAdminCredentialsResponse, self).__init__(**kwargs)
+        self.nsx_user = kwargs.get('nsx_user', None)
+        self.nsx_password = kwargs.get('nsx_password', None)
         self.user = kwargs.get('user', None)
         self.password = kwargs.get('password', None)
 
@@ -516,7 +528,7 @@ class PrivateCloud(Model):
     """PrivateCloud.
 
     :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Cancelled'
+     'Cancelled', 'Pending', 'Building', 'Updating'
     :type provisioning_state: str or ~azure.mgmt.vmwarevirtustream.models.enum
     :param circuit:
     :type circuit: ~azure.mgmt.vmwarevirtustream.models.Circuit

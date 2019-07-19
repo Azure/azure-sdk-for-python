@@ -272,6 +272,8 @@ class CloudError(Model):
 class Cluster(Model):
     """Cluster.
 
+    :param cluster_id:
+    :type cluster_id: int
     :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
      'Cancelled', 'Updating'
     :type provisioning_state: str or ~azure.mgmt.vmwarevirtustream.models.enum
@@ -282,13 +284,15 @@ class Cluster(Model):
     """
 
     _attribute_map = {
+        'cluster_id': {'key': 'clusterId', 'type': 'int'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'cluster_size': {'key': 'clusterSize', 'type': 'int'},
         'hosts': {'key': 'hosts', 'type': '[str]'},
     }
 
-    def __init__(self, *, provisioning_state=None, cluster_size: int=None, hosts=None, **kwargs) -> None:
+    def __init__(self, *, cluster_id: int=None, provisioning_state=None, cluster_size: int=None, hosts=None, **kwargs) -> None:
         super(Cluster, self).__init__(**kwargs)
+        self.cluster_id = cluster_id
         self.provisioning_state = provisioning_state
         self.cluster_size = cluster_size
         self.hosts = hosts
@@ -381,6 +385,10 @@ class ExpressRouteAuthorization(Model):
 class GetAdminCredentialsResponse(Model):
     """GetAdminCredentialsResponse.
 
+    :param nsx_user:
+    :type nsx_user: str
+    :param nsx_password:
+    :type nsx_password: str
     :param user:
     :type user: str
     :param password:
@@ -388,12 +396,16 @@ class GetAdminCredentialsResponse(Model):
     """
 
     _attribute_map = {
+        'nsx_user': {'key': 'nsxUser', 'type': 'str'},
+        'nsx_password': {'key': 'nsxPassword', 'type': 'str'},
         'user': {'key': 'user', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, *, user: str=None, password: str=None, **kwargs) -> None:
+    def __init__(self, *, nsx_user: str=None, nsx_password: str=None, user: str=None, password: str=None, **kwargs) -> None:
         super(GetAdminCredentialsResponse, self).__init__(**kwargs)
+        self.nsx_user = nsx_user
+        self.nsx_password = nsx_password
         self.user = user
         self.password = password
 
@@ -516,7 +528,7 @@ class PrivateCloud(Model):
     """PrivateCloud.
 
     :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Cancelled'
+     'Cancelled', 'Pending', 'Building', 'Updating'
     :type provisioning_state: str or ~azure.mgmt.vmwarevirtustream.models.enum
     :param circuit:
     :type circuit: ~azure.mgmt.vmwarevirtustream.models.Circuit
