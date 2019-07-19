@@ -35,7 +35,7 @@ from . import request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider as routing_map_provider
-from . import session
+from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
 
@@ -127,7 +127,7 @@ class CosmosClientConnection(object):
             '''create a session - this is maintained only if the default consistency level
             on the client is set to session, or if the user explicitly sets it as a property
             via setter'''
-            self.session = session.Session(self.url_connection)
+            self.session = _session.Session(self.url_connection)
         else:
             self.session = None
 
