@@ -649,48 +649,46 @@ class CertificateClient(_KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
 
-    def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, **kwargs):
+    def get_pending_certificate_signing_request(self, name, custom_headers=None, **kwargs):
         """Gets the Base64 pending certificate signing request (PKCS-10).
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
-        :type vault_base_url: str
-        :param certificate_name: The name of the certificate
-        :type certificate_name: str
+        :param name: The name of the certificate
+        :type name: str
         :param custom_headers: headers that will be added to the request
         :type custom_headers: dict
         :return: Base64 encoded pending certificate signing request (PKCS-10).
         :rtype: str
         """
+        vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
+            'vaultBaseUrl': self._client._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'certificate-name': self._client._serialize.url("certificate_name", name, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self._client.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/pkcs10'
-        if self.config.generate_client_request_id:
+        if self._client._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language",
-                                                                          self.config.accept_language, 'str')
+        if self._client._config.accept_language is not None:
+            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
+                                                                          self._client._config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            raise self.models.KeyVaultErrorException(self._deserialize, response)
+            raise self._client.models.KeyVaultErrorException(self._client._deserialize, response)
 
         deserialized = None
 

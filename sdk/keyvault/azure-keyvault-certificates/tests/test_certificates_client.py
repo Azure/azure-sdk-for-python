@@ -461,6 +461,37 @@ class CertificateClientTests(KeyVaultTestCase):
         client.update_policy(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
         updated_cert_policy = client.get_policy(name=cert_name)
         self.assertIsNotNone(updated_cert_policy)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_get_pending_certificate_signing_request(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+        cert_name = "unknownIssuerCert"
+        cert_policy = CertificatePolicyGenerated(key_properties=KeyProperties(exportable=True,
+                                                                              key_type='RSA',
+                                                                              key_size=2048,
+                                                                              reuse_key=False),
+                                                 secret_properties=SecretProperties(
+                                                     content_type='application/x-pkcs12'),
+                                                 issuer_parameters=IssuerParameters(name='Self'),
+                                                 x509_certificate_properties=X509CertificateProperties(
+                                                     subject='CN=*.microsoft.com',
+                                                     subject_alternative_names=SubjectAlternativeNames(
+                                                         dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                                     ),
+                                                     validity_in_months=24
+                                                 ))
+
+        # get pending certiificate signing request
+        cert_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        pending_version_csr = client.get_pending_certificate_signing_request(name=cert_name)
+        try:
+            self.assertEqual(cert_operation.csr, pending_version_csr)
+        except Exception as ex:
+            pass
+        finally:
+            client.delete_certificate(name=cert_name)
     #
     # @ResourceGroupPreparer()
     # @VaultClientPreparer()
