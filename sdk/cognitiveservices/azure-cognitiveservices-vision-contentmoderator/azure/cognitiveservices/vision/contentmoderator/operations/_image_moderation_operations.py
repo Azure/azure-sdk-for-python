@@ -17,6 +17,8 @@ from .. import models
 class ImageModerationOperations(object):
     """ImageModerationOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -78,7 +80,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('FoundFaces', response)
 
@@ -144,7 +145,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OCR', response)
 
@@ -200,7 +200,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Evaluate', response)
 
@@ -267,7 +266,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('MatchResponse', response)
 
@@ -334,7 +332,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('FoundFaces', response)
 
@@ -370,7 +367,7 @@ class ImageModerationOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
-        image_url = models.BodyModel(data_representation=data_representation, value=value)
+        image_url = models.ImageUrl(data_representation=data_representation, value=value)
 
         # Construct URL
         url = self.find_faces_url_input.metadata['url']
@@ -393,7 +390,7 @@ class ImageModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(image_url, 'BodyModel')
+        body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -403,7 +400,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('FoundFaces', response)
 
@@ -446,7 +442,7 @@ class ImageModerationOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
-        image_url = models.BodyModel(data_representation=data_representation, value=value)
+        image_url = models.ImageUrl(data_representation=data_representation, value=value)
 
         # Construct URL
         url = self.ocr_url_input.metadata['url']
@@ -472,7 +468,7 @@ class ImageModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(image_url, 'BodyModel')
+        body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -482,7 +478,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OCR', response)
 
@@ -559,7 +554,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('OCR', response)
 
@@ -626,7 +620,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Evaluate', response)
 
@@ -662,7 +655,7 @@ class ImageModerationOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
-        image_url = models.BodyModel(data_representation=data_representation, value=value)
+        image_url = models.ImageUrl(data_representation=data_representation, value=value)
 
         # Construct URL
         url = self.evaluate_url_input.metadata['url']
@@ -685,7 +678,7 @@ class ImageModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(image_url, 'BodyModel')
+        body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -695,7 +688,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Evaluate', response)
 
@@ -740,7 +732,7 @@ class ImageModerationOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
-        image_url = models.BodyModel(data_representation=data_representation, value=value)
+        image_url = models.ImageUrl(data_representation=data_representation, value=value)
 
         # Construct URL
         url = self.match_url_input.metadata['url']
@@ -765,7 +757,7 @@ class ImageModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(image_url, 'BodyModel')
+        body_content = self._serialize.body(image_url, 'ImageUrl')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -775,7 +767,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('MatchResponse', response)
 
@@ -853,7 +844,6 @@ class ImageModerationOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('MatchResponse', response)
 

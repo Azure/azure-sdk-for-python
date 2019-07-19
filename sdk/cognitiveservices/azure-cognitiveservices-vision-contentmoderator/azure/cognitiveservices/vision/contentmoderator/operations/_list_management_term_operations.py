@@ -17,6 +17,8 @@ from .. import models
 class ListManagementTermOperations(object):
     """ListManagementTermOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -48,8 +50,8 @@ class ListManagementTermOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
@@ -68,7 +70,6 @@ class ListManagementTermOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -79,16 +80,9 @@ class ListManagementTermOperations(object):
         if response.status_code not in [201]:
             raise models.APIErrorException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('object', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     add_term.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'}
 
     def delete_term(
@@ -138,7 +132,6 @@ class ListManagementTermOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 204:
             deserialized = self._deserialize('str', response)
 
@@ -202,7 +195,6 @@ class ListManagementTermOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Terms', response)
 
@@ -258,7 +250,6 @@ class ListManagementTermOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 204:
             deserialized = self._deserialize('str', response)
 

@@ -14,8 +14,10 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ListManagementImageListsOperations(object):
-    """ListManagementImageListsOperations operations.
+class ListManagementImageOperations(object):
+    """ListManagementImageOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -33,27 +35,29 @@ class ListManagementImageListsOperations(object):
 
         self.config = config
 
-    def get_details(
-            self, list_id, custom_headers=None, raw=False, **operation_config):
-        """Returns the details of the image list with list Id equal to list Id
-        passed.
+    def add_image(
+            self, list_id, tag=None, label=None, custom_headers=None, raw=False, **operation_config):
+        """Add an image to the list with list Id equal to list Id passed.
 
         :param list_id: List Id of the image list.
         :type list_id: str
+        :param tag: Tag for the image.
+        :type tag: int
+        :param label: The image label.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImageList or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.contentmoderator.models.ImageList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: Image or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.contentmoderator.models.Image
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = self.get_details.metadata['url']
+        url = self.add_image.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
@@ -62,6 +66,10 @@ class ListManagementImageListsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if tag is not None:
+            query_parameters['tag'] = self._serialize.query("tag", tag, 'int')
+        if label is not None:
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -70,27 +78,26 @@ class ListManagementImageListsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageList', response)
+            deserialized = self._deserialize('Image', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_details.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}'}
+    add_image.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
-    def delete(
+    def delete_all_images(
             self, list_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes image list with the list Id equal to list Id passed.
+        """Deletes all images from the list with list Id equal to list Id passed.
 
         :param list_id: List Id of the image list.
         :type list_id: str
@@ -105,7 +112,7 @@ class ListManagementImageListsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete_all_images.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
@@ -129,7 +136,6 @@ class ListManagementImageListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('str', response)
 
@@ -138,153 +144,31 @@ class ListManagementImageListsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}'}
+    delete_all_images.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
-    def update(
-            self, list_id, content_type, body, custom_headers=None, raw=False, **operation_config):
-        """Updates an image list with list Id equal to list Id passed.
+    def get_all_image_ids(
+            self, list_id, custom_headers=None, raw=False, **operation_config):
+        """Gets all image Ids from the list with list Id equal to list Id passed.
 
         :param list_id: List Id of the image list.
         :type list_id: str
-        :param content_type: The content type.
-        :type content_type: str
-        :param body: Schema of the body.
-        :type body:
-         ~azure.cognitiveservices.vision.contentmoderator.models.Body
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ImageList or ClientRawResponse if raw=true
+        :return: ImageIds or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.vision.contentmoderator.models.ImageList or
+         ~azure.cognitiveservices.vision.contentmoderator.models.ImageIds or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.get_all_image_ids.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'Body')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImageList', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}'}
-
-    def create(
-            self, content_type, body, custom_headers=None, raw=False, **operation_config):
-        """Creates an image list.
-
-        :param content_type: The content type.
-        :type content_type: str
-        :param body: Schema of the body.
-        :type body:
-         ~azure.cognitiveservices.vision.contentmoderator.models.Body
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ImageList or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.contentmoderator.models.ImageList or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
-        """
-        # Construct URL
-        url = self.create.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'Body')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImageList', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists'}
-
-    def get_all_image_lists(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the Image Lists.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.contentmoderator.models.ImageList]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
-        """
-        # Construct URL
-        url = self.get_all_image_lists.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -305,40 +189,40 @@ class ListManagementImageListsOperations(object):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('[ImageList]', response)
+            deserialized = self._deserialize('ImageIds', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_all_image_lists.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists'}
+    get_all_image_ids.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
-    def refresh_index_method(
-            self, list_id, custom_headers=None, raw=False, **operation_config):
-        """Refreshes the index of the list with list Id equal to list Id passed.
+    def delete_image(
+            self, list_id, image_id, custom_headers=None, raw=False, **operation_config):
+        """Deletes an image from the list with list Id and image Id passed.
 
         :param list_id: List Id of the image list.
         :type list_id: str
+        :param image_id: Id of the image.
+        :type image_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RefreshIndex or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.contentmoderator.models.RefreshIndex
-         or ~msrest.pipeline.ClientRawResponse
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = self.refresh_index_method.metadata['url']
+        url = self.delete_image.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'listId': self._serialize.url("list_id", list_id, 'str')
+            'listId': self._serialize.url("list_id", list_id, 'str'),
+            'ImageId': self._serialize.url("image_id", image_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -352,20 +236,163 @@ class ListManagementImageListsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('RefreshIndex', response)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    refresh_index_method.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/RefreshIndex'}
+    delete_image.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images/{ImageId}'}
+
+    def add_image_url_input(
+            self, list_id, content_type, tag=None, label=None, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
+        """Add an image to the list with list Id equal to list Id passed.
+
+        :param list_id: List Id of the image list.
+        :type list_id: str
+        :param content_type: The content type.
+        :type content_type: str
+        :param tag: Tag for the image.
+        :type tag: int
+        :param label: The image label.
+        :type label: str
+        :param data_representation:
+        :type data_representation: str
+        :param value:
+        :type value: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Image or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.contentmoderator.models.Image
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
+        """
+        image_url = models.ImageUrl(data_representation=data_representation, value=value)
+
+        # Construct URL
+        url = self.add_image_url_input.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'listId': self._serialize.url("list_id", list_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if tag is not None:
+            query_parameters['tag'] = self._serialize.query("tag", tag, 'int')
+        if label is not None:
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Image', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    add_image_url_input.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
+
+    def add_image_file_input(
+            self, list_id, image_stream, tag=None, label=None, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Add an image to the list with list Id equal to list Id passed.
+
+        :param list_id: List Id of the image list.
+        :type list_id: str
+        :param image_stream: The image file.
+        :type image_stream: Generator
+        :param tag: Tag for the image.
+        :type tag: int
+        :param label: The image label.
+        :type label: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Image or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.contentmoderator.models.Image
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
+        """
+        # Construct URL
+        url = self.add_image_file_input.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'listId': self._serialize.url("list_id", list_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if tag is not None:
+            query_parameters['tag'] = self._serialize.query("tag", tag, 'int')
+        if label is not None:
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'image/gif'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._client.stream_upload(image_stream, callback)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Image', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    add_image_file_input.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}

@@ -10,46 +10,17 @@
 # --------------------------------------------------------------------------
 
 from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
-from .operations.image_moderation_operations import ImageModerationOperations
-from .operations.text_moderation_operations import TextModerationOperations
-from .operations.list_management_image_lists_operations import ListManagementImageListsOperations
-from .operations.list_management_term_lists_operations import ListManagementTermListsOperations
-from .operations.list_management_image_operations import ListManagementImageOperations
-from .operations.list_management_term_operations import ListManagementTermOperations
-from .operations.reviews_operations import ReviewsOperations
+from msrest import Serializer, Deserializer
+
+from ._configuration import ContentModeratorClientConfiguration
+from .operations import ImageModerationOperations
+from .operations import TextModerationOperations
+from .operations import ListManagementImageListsOperations
+from .operations import ListManagementTermListsOperations
+from .operations import ListManagementImageOperations
+from .operations import ListManagementTermOperations
+from .operations import ReviewsOperations
 from . import models
-
-
-class ContentModeratorClientConfiguration(Configuration):
-    """Configuration for ContentModeratorClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}'
-
-        super(ContentModeratorClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-vision-contentmoderator/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
 
 
 class ContentModeratorClient(SDKClient):
