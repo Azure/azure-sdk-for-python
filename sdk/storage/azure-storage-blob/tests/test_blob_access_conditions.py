@@ -41,10 +41,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         url = self._get_account_url()
         self.bsc = BlobServiceClient(
-            url, credential=self.settings.STORAGE_ACCOUNT_KEY)
-        self.config = self.bsc._config
-        self.config.connection.data_block_size = 4 * 1024
-
+            url,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            connection_data_block_size = 4 * 1024
+        )
         self.container_name = self.get_resource_name('utcontainer')
 
     def tearDown(self):
@@ -1095,7 +1095,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        
+
         resp = blob.delete_blob(if_match=etag)
 
         # Assert
