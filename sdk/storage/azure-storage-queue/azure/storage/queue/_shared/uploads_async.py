@@ -5,20 +5,19 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 import asyncio
 from asyncio import Lock
+from itertools import islice
 
 from math import ceil
 
 import six
 
-from .models import ModifiedAccessConditions
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 from .encryption import get_blob_encryptor_and_padder
-from .uploads import SubStream, IterStreamer
+from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -39,8 +38,9 @@ async def _parallel_uploads(uploader, pending, running):
             running.add(asyncio.ensure_future(uploader.process_chunk(next_chunk)))
 
     # Wait for the remaining uploads to finish
-    done, _running = await asyncio.wait(running)
-    range_ids.extend([chunk.result() for chunk in done])
+    if running:
+        done, _running = await asyncio.wait(running)
+        range_ids.extend([chunk.result() for chunk in done])
     return range_ids
 
 
@@ -83,7 +83,9 @@ async def upload_data_chunks(
         ]
         range_ids = await _parallel_uploads(uploader, upload_tasks, running_futures)
     else:
-        range_ids = [await uploader.process_chunk(c) for c in uploader.get_chunk_streams()]
+        range_ids = []
+        for chunk in uploader.get_chunk_streams():
+            range_ids.append(await uploader.process_chunk(chunk))
 
     if any(range_ids):
         return range_ids
@@ -108,7 +110,7 @@ async def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        **kwargs)    
+        **kwargs)
 
     if parallel:
         upload_tasks = uploader.get_substream_blocks()
@@ -117,13 +119,15 @@ async def upload_substream_blocks(
             for u in islice(upload_tasks, 0, max_connections)
         ]
         return await _parallel_uploads(uploader, upload_tasks, running_futures)
-    else:
-        return [await uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
+    blocks = []
+    for block in uploader.get_substream_blocks():
+        blocks.append(await uploader.process_substream_block(block))
+    return blocks
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor, padder, **kwargs):
+    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor=None, padder=None, **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
@@ -216,9 +220,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         last_block_size = self.chunk_size if blob_length % self.chunk_size == 0 else blob_length % self.chunk_size
 
         for i in range(blocks):
-            yield ('BlockId{}'.format("%05d" % i),
-                   SubStream(self.stream, i * self.chunk_size, last_block_size if i == blocks - 1 else self.chunk_size,
-                              lock))
+            index = i * self.chunk_size
+            length = last_block_size if i == blocks - 1 else self.chunk_size
+            yield ('BlockId{}'.format("%05d" % i), SubStream(self.stream, index, length, lock))
 
     async def process_substream_block(self, block_data):
         return await self._upload_substream_block_with_progress(block_data[0], block_data[1])
@@ -322,7 +326,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
                 **self.request_options)
 
 
-class FileChunkUploader(_ChunkUploader):
+class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1

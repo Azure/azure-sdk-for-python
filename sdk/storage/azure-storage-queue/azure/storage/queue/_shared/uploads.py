@@ -8,12 +8,11 @@
 from concurrent import futures
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from threading import Lock
-
+from itertools import islice
 from math import ceil
 
 import six
 
-from .models import ModifiedAccessConditions
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
@@ -110,7 +109,7 @@ def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        **kwargs)    
+        **kwargs)
 
     if parallel:
         executor = futures.ThreadPoolExecutor(max_connections)
@@ -120,8 +119,7 @@ def upload_substream_blocks(
             for u in islice(upload_tasks, 0, max_connections)
         ]
         return _parallel_uploads(executor, uploader, upload_tasks, running_futures)
-    else:
-        return [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
+    return [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -219,9 +217,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         last_block_size = self.chunk_size if blob_length % self.chunk_size == 0 else blob_length % self.chunk_size
 
         for i in range(blocks):
-            yield ('BlockId{}'.format("%05d" % i),
-                   SubStream(self.stream, i * self.chunk_size, last_block_size if i == blocks - 1 else self.chunk_size,
-                              lock))
+            index = i * self.chunk_size
+            length = last_block_size if i == blocks - 1 else self.chunk_size
+            yield ('BlockId{}'.format("%05d" % i), SubStream(self.stream, index, length, lock))
 
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
@@ -326,7 +324,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             )
 
 
-class FileChunkUploader(_ChunkUploader):
+class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1

@@ -61,6 +61,20 @@ def encode_base64(data):
     return encoded.decode('utf-8')
 
 
+def is_exhausted(settings):
+    """Are we out of retries?"""
+    retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
+    retry_counts = list(filter(None, retry_counts))
+    if not retry_counts:
+        return False
+    return min(retry_counts) < 0
+
+
+def retry_hook(settings, **kwargs):
+    if settings['hook']:
+        settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
+
+
 def is_retry(response, mode):
     """Is this method/status code retryable? (Based on whitelists and control
     variables such as the number of total retries to allow, whether to
@@ -428,22 +442,6 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def is_exhausted(self, settings):  # pylint: disable=no-self-use
-        """Are we out of retries?"""
-        retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
-        retry_counts = list(filter(None, retry_counts))
-        if not retry_counts:
-            return False
-
-        return min(retry_counts) < 0
-
-    def retry_hook(self, settings, **kwargs):
-        if retry_settings['hook']:
-            retry_settings['hook'](
-                retry_count=retry_settings['count'] - 1,
-                location_mode=retry_settings['mode'],
-                **kwargs)
-
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
 
@@ -474,7 +472,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))
 
-        if not self.is_exhausted(settings):
+        if not is_exhausted(settings):
             if request.method not in ['PUT'] and settings['retry_secondary']:
                 self._set_next_host_location(settings, request)
 
@@ -506,7 +504,7 @@ class StorageRetryPolicy(HTTPPolicy):
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
-                        self.retry_hook(
+                        retry_hook(
                             retry_settings,
                             request=request.http_request,
                             response=response.http_response,
@@ -518,7 +516,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    self.retry_hook(
+                    retry_hook(
                         retry_settings,
                         request=request.http_request,
                         response=None,
