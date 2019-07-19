@@ -29,6 +29,7 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+            request.headers["x-ms-client-request-id"] = "some client request id"
 
             pipeline_request = PipelineRequest(request, PipelineContext(None))
             policy.on_request(pipeline_request)
@@ -57,6 +58,7 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
         assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
+        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("http.status_code") == 202
 
         network_span = parent.children[1]
@@ -64,6 +66,7 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
         assert network_span.span_data.attributes.get("http.method") == "GET"
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") == None
         assert network_span.span_data.attributes.get("http.status_code") == 504
@@ -79,6 +82,7 @@ def test_distributed_tracing_policy_with_user_agent():
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1")
+            request.headers["x-ms-client-request-id"] = "some client request id"
 
             pipeline_request = PipelineRequest(request, PipelineContext(None))
 
@@ -114,6 +118,7 @@ def test_distributed_tracing_policy_with_user_agent():
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
         assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
+        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("http.status_code") == 202
 
         network_span = parent.children[1]
@@ -122,5 +127,6 @@ def test_distributed_tracing_policy_with_user_agent():
         assert network_span.span_data.attributes.get("component") == "http"
         assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
         assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
+        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504
