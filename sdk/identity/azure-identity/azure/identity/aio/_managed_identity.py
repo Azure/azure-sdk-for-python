@@ -12,7 +12,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AsyncAuthnClient
 from ..constants import Endpoints, EnvironmentVariables
-from .._internal import _ManagedIdentityBase
+from .._managed_identity import _ManagedIdentityBase
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase):

@@ -6,12 +6,11 @@ from typing import Any, Callable, Mapping, TYPE_CHECKING
 from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
-from azure.keyvault.keys._generated import KeyVaultClient
-from azure.keyvault.keys._internal import KEY_VAULT_SCOPE
+from ._generated import KeyVaultClient
+from . import AsyncChallengeAuthPolicy
 
 
 if TYPE_CHECKING:
@@ -41,7 +40,7 @@ class AsyncPagingAdapter:
         # TODO: expected type Model got Coroutine instead?
 
 
-class _AsyncKeyVaultClientBase:
+class AsyncKeyVaultClientBase:
     """
     :param credential:  A credential or credential provider which can be used to authenticate to the vault,
         a ValueError will be raised if the entity is not provided
@@ -58,7 +57,7 @@ class _AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
-        config.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, KEY_VAULT_SCOPE)
+        config.authentication_policy = AsyncChallengeAuthPolicy(credential)
         return config
 
     def __init__(
@@ -89,11 +88,11 @@ class _AsyncKeyVaultClientBase:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
         config = config or self.create_config(credential, api_version=api_version, **kwargs)
-        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport)
+        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: HttpTransport, **kwargs: Any) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -105,7 +104,7 @@ class _AsyncKeyVaultClientBase:
         ]
 
         if transport is None:
-            transport = AsyncioRequestsTransport(config)
+            transport = AsyncioRequestsTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)
 

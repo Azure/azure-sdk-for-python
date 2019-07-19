@@ -2,16 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
 from azure.identity import DefaultAzureCredential, CertificateCredential, ClientSecretCredential
-from azure.identity.constants import EnvironmentVariables
-import pytest
+from azure.identity._internal import ConfidentialClientCredential
 
 ARM_SCOPE = "https://management.azure.com/.default"
 
@@ -42,6 +34,18 @@ def test_client_secret_credential(live_identity_settings):
 
 def test_default_credential(live_identity_settings):
     credential = DefaultAzureCredential()
+    token = credential.get_token(ARM_SCOPE)
+    assert token
+    assert token.token
+    assert token.expires_on
+
+
+def test_confidential_client_credential(live_identity_settings):
+    credential = ConfidentialClientCredential(
+        client_id=live_identity_settings["client_id"],
+        client_credential=live_identity_settings["client_secret"],
+        authority="https://login.microsoftonline.com/" + live_identity_settings["tenant_id"],
+    )
     token = credential.get_token(ARM_SCOPE)
     assert token
     assert token.token

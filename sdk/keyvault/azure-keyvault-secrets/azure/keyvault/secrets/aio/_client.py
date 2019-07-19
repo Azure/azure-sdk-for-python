@@ -8,10 +8,10 @@ from typing import Any, AsyncIterable, Mapping, Optional, Dict
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 from azure.keyvault.secrets._models import Secret, DeletedSecret, SecretAttributes
-from ._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
+from .._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
 
 
-class SecretClient(_AsyncKeyVaultClientBase):
+class SecretClient(AsyncKeyVaultClientBase):
     """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
