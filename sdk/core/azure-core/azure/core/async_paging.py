@@ -23,12 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from collections.abc import AsyncIterator
+from typing import AsyncIterator, TypeVar
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-class AsyncPagedMixin(AsyncIterator):
+ReturnType = TypeVar("ReturnType")
+
+class AsyncPagedMixin(AsyncIterator[ReturnType]):
     """Bring async to Paging.
 
     **Keyword argument:**

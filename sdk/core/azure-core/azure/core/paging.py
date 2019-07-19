@@ -24,13 +24,8 @@
 #
 # --------------------------------------------------------------------------
 import sys
-try:
-    from collections.abc import Iterator
-    xrange = range
-except ImportError:
-    from collections import Iterator
 
-from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Iterable, Tuple, TYPE_CHECKING  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .pipeline.transport.base import HttpResponse
@@ -43,66 +38,74 @@ else:
     class AsyncPagedMixin(object):  # type: ignore
         pass
 
-class Paged(AsyncPagedMixin, Iterator):
-    """A container for paged REST responses.
+ReturnType = TypeVar("ReturnType")
 
-    :param response: server response object.
-    :type response: ~azure.core.pipeline.transport.HttpResponse
-    :param callable command: Function to retrieve the next page of items.
-    :param Deserializer deserializer: a Deserializer instance to use
-    """
-    _validation = {}  # type: Dict[str, Dict[str, Any]]
-    _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
 
-    def __init__(self, command, deserializer, **kwargs):
-        # type: (Callable[[str], HttpResponse], Deserializer, Any) -> None
-        super(Paged, self).__init__(**kwargs)  # type: ignore
-        # Sets next_link, current_page, and _current_page_iter_index.
-        self.next_link = ""
-        self.current_page = []  # type: List[Model]
-        self._current_page_iter_index = 0
-        self._deserializer = deserializer
-        self._get_next = command
-        self._response = None  # type: Optional[HttpResponse]
+class PageIterator(Iterator[Iterator[ReturnType]]):
+    def __init__(self, get_next, extract_data, continuation_token=None):
+        # type: (Callable[[str], ClientResponse], Callable[[ClientResponse], Tuple[str, List[ReturnType]], Optional[str]) -> None
+        """Return an iterator of pages.
+
+        :param get_next: Callable that take the continuation token and return a HTTP response
+        :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
+         list of ReturnType
+        :param str continuation_token: The continuation token needed by get_next
+        """
+        self._get_next = get_next
+        self._extract_data = extract_data
+        self.continuation_token = continuation_token
+        self._did_a_call_already = False
+        self._current_page = []  # type: List[Model]
 
     def __iter__(self):
         """Return 'self'."""
-        # Since iteration mutates this object, consider it an iterator in-and-of
-        # itself.
         return self
 
-    @classmethod
-    def _get_subtype_map(cls):
-        """Required for parity to Model object for deserialization."""
-        return {}
-
-    def _advance_page(self):
-        # type: () -> List[Model]
-        """Force moving the cursor to the next azure call.
-
-        This method is for advanced usage, iterator protocol is prefered.
-
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_link is None:
+    def __next__(self):
+        if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
-        self._response = self._get_next(self.next_link)
-        self._deserializer(self, self._response)
-        return self.current_page
+
+        self._response = self._get_next(self.continuation_token)
+        self._did_a_call_already = True
+
+        self.continuation_token, self._current_page = self._extract_data(self._response)
+        return self._current_page
+
+    next = __next__  # Python 2 compatibility.
+
+
+class ItemPaged(Iterable[ReturnType]):
+    def __init__(self, get_next, extract_data):
+        # type: (Callable[[str], ClientResponse], Callable[[ClientResponse], Tuple[str, List[ReturnType]]) -> None
+        self._get_next = get_next
+        self._extract_data = extract_data
+        self._page_iterator = None
+        self._page = None
+
+    def by_page(self, continuation_token=None):
+        # type: () -> PageIterator[ReturnType]
+        return PageIterator(
+            get_next=self._get_next,
+            extract_data=self._extract_data,
+            continuation_token=continuation_token
+        )
+
+    def __iter__(self):
+        """Return 'self'."""
+        return self
 
     def __next__(self):
-        """Iterate through responses."""
-        # Storing the list iterator might work out better, but there's no
-        # guarantee that some code won't replace the list entirely with a copy,
-        # invalidating an list iterator that might be saved between iterations.
-        if self.current_page and self._current_page_iter_index < len(self.current_page):
-            response = self.current_page[self._current_page_iter_index]
-            self._current_page_iter_index += 1
-            return response
-        self._advance_page()
-        return self.__next__()
+        if self._page_iterator is None:
+            self._page_iterator = self.by_page()
+            return next(self)
+        if self._page is None:
+            # Let it raise StopIteration
+            self._page = iter(next(self._page_iterator))
+            return next(self)
+        try:
+            return next(self._page)
+        except StopIteration:
+            self._page = None
+            return next(self)
 
     next = __next__  # Python 2 compatibility.
