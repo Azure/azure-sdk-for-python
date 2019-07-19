@@ -60,7 +60,7 @@ def run_sample():
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24
                                         )
-        cert_name="BankCertificate"
+        cert_name="HelloWorldCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         print("right before create")
         certificate_operation = client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)

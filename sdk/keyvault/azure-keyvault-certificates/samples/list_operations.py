@@ -1,6 +1,8 @@
+import datetime
 import time
 import os
-from azure.keyvault import SecretClient
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+from azure.keyvault.certificates._models import KeyProperties
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -11,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
 # 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-secrets/
+#    https://pypi.python.org/pypi/azure-keyvault-certificates/
 #
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
@@ -20,72 +22,97 @@ from azure.core.exceptions import HttpResponseError
 # How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault. The vault has to be soft-delete enabled
+# to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
 #
-# 1. Create secret (set_secret)
+# 1. Create certificate (create_certificate)
 #
-# 2. List secrets from the Key Vault (list_secrets)
+# 2. List certificates from the Key Vault (list_certificates)
 #
-# 3. List secret versions from the Key Vault (list_secret_versions)
+# 3. List certificate versions from the Key Vault (list_certificate_versions)
 #
-# 4. List deleted secrets from the Key Vault (list_deleted_secrets). The vault has to be soft-delete enabled to perform this operation.
+# 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled to perform this operation.
 #
 # ----------------------------------------------------------------------------------------------------------
+
 def run_sample():
-    # Instantiate a secret client that will be used to call the service. Notice that the client is using default Azure credentials.
+    # Instantiate a certificate client that will be used to call the service. Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
-        # Let's create secrets holding storage and bank accounts credentials. If the secret
-        # already exists in the Key Vault, then a new version of the secret is created.
-        print("\n1. Create Secret")
-        bank_secret = client.set_secret("bankSecretName", "secretValue1")
-        storage_secret = client.set_secret("storageSecretName", "secretValue2")
-        print("Secret with name '{0}' was created.".format(bank_secret.name))
-        print("Secret with name '{0}' was created.".format(storage_secret.name))
+        # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
+        # already exists in the Key Vault, then a new version of the certificate is created.
+        print("\n1. Create Certificate")
+        # Before creating your certificate, let's create the management policy for your certificate.
+        # Here you specify the properties of the key, secret, and issuer backing your certificate,
+        # the X509 component of your certificate, and any lifetime actions you would like to be taken
+        # on your certificate
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        content_type='application/x-pkcs12',
+                                        issuer_name='Self',
+                                        subject_name='CN=*.microsoft.com',
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
+                                        validity_in_months=24
+                                        )
+        bank_cert_name = "BankCertificate"
+        storage_cert_name = "StorageCertificate"
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        bank_certificate_operation = client.create_certificate(name=bank_cert_name, policy=cert_policy, expires=expires)
+        storage_certificate_operation = client.create_certificate(name=storage_cert_name, policy=cert_policy)
 
-        # You need to check if any of the secrets are sharing same values.
-        # Let's list the secrets and print their values.
-        # List operations don 't return the secrets with value information.
-        # So, for each returned secret we call get_secret to get the secret with its value information.
-        print("\n2. List secrets from the Key Vault")
-        secrets = client.list_secrets()
-        for secret in secrets:
-            retrieved_secret = client.get_secret(secret.name)
-            print(
-                "Secret with name '{0}' and value {1} was found.".format(retrieved_secret.name, retrieved_secret.name)
-            )
+        # iterate until both certificates are fully created
+        while True:
+            pending_bank_cert = client.get_certificate_operation(name=bank_cert_name)
+            pending_storage_cert = client.get_certificate_operation(name=storage_cert_name)
+            if pending_bank_cert.status.lower() == 'completed' and pending_storage_cert.status.lower() == 'completed':
+                break
+            time.sleep(5)
 
-        # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the new password.
-        # Calling set_secret on an existing secret creates a new version of the secret in the Key Vault with the new value.
-        updated_secret = client.set_secret(bank_secret.name, "newSecretValue")
+        print("Certificate with name '{0}' was created.".format(bank_certificate_operation.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate_operation.name))
+
+        # Let's list the certificates.
+        print("\n2. List certificates from the Key Vault")
+        certificates = client.list_certificates()
+        for certificate in certificates:
+            print("Certificate with name '{0}' was found.".format(certificate.name))
+
+        # You find the bank certificate needs to change the expiration date because the bank account credentials will be valid for an extra year.
+        # Calling create_certificate on an existing certificate creates a new version of the certificate in the Key Vault with the new value.
+
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+
+        updated_certificate_operation = client.create_certificate(name=bank_certificate_operation.name, policy=cert_policy, expires=expires)
         print(
-            "Secret with name '{0}' was updated with new value '{1}'".format(updated_secret.name, updated_secret.value)
+            "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_certificate_operation.name, expires)
         )
 
-        # You need to check all the different values your bank account password secret had previously. Lets print all the versions of this secret.
-        print("\n3. List versions of the secret using its name")
-        secret_versions = client.list_secret_versions(bank_secret.name)
-        for secret_version in secret_versions:
-            print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.version))
+        # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.
+        print("\n3. List versions of the certificate using its name")
+        certificate_versions = client.list_certificate_versions(bank_certificate_operation.name)
+        for certificate_version in certificate_versions:
+            print("Bank Certificate with name '{0}' with version '{1}' has expiration date: '{2}'.".format(certificate_version.name, certificate_version.version, certificate_version.expires))
 
-        # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts secrets.
-        client.delete_secret(bank_secret.name)
-        client.delete_secret(storage_secret.name)
+        # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts certificates.
+        client.delete_certificate(name=bank_certificate_operation.name)
+        client.delete_certificate(name=storage_certificate_operation.name)
 
         # To ensure secret is deleted on the server side.
-        print("Deleting secrets...")
+        print("Deleting certificates...")
         time.sleep(30)
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
-        print("\n3. List deleted secrets from the Key Vault")
-        deleted_secrets = client.list_deleted_secrets()
-        for deleted_secret in deleted_secrets:
+        print("\n3. List deleted certificates from the Key Vault")
+        deleted_certificates = client.list_deleted_certificates()
+        for deleted_certificate in deleted_certificates:
             print(
-                "Secret with name '{0}' has recovery id '{1}'".format(deleted_secret.name, deleted_secret.recovery_id)
+                "Certificate with name '{0}' has recovery id '{1}'".format(deleted_certificate.name, deleted_certificate.recovery_id)
             )
 
     except HttpResponseError as e:
