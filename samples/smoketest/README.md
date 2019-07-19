@@ -100,7 +100,7 @@ def SendAndReceiveEvents(self, partitionID, events):
 
 ## Troubleshooting
 
-### Authentification
+### Authentication
 Be sure to set the environment variables and credentials required before running the sample.
 
 ## Next steps
