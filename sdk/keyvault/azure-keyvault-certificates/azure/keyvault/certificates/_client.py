@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import uuid
 from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -33,6 +34,85 @@ class CertificateClient(_KeyVaultClientBase):
     """
     # pylint:disable=protected-access
 
+    def _to_certificate_policy_bundle(self, policy):
+        if policy.issuer_name or policy.certificate_type or policy.certificate_transparency:
+            issuer_parameters = self._client.models.IssuerParameters(
+                name=policy.issuer_name,
+                certificate_type=policy.certificate_type,
+                certificate_transparency=policy.certificate_transparency
+            )
+        else:
+            issuer_parameters = None
+
+        if policy.enabled is not None or policy.not_before is not None or policy.expires is not None or policy.created is not None or policy.updated is not None or policy.recovery_level:
+            attributes = self._client.models.CertificateAttributes(
+                enabled=policy.enabled,
+                not_before=policy.not_before,
+                expires=policy.expires,
+                created=policy.enabled,
+                updated=policy.updated,
+                recovery_level=policy.recovery_level
+            )
+        else:
+            attributes = None
+
+        if policy.lifetime_actions:
+            lifetime_actions = []
+            for lifetime_action in policy.lifetime_actions:
+                lifetime_actions.append(
+                    self._client.models.LifetimeAction(
+                        trigger=self._client.models.Trigger(
+                            lifetime_percentage=lifetime_action.lifetime_percentage,
+                            days_before_expiry=lifetime_action.days_before_expiry
+                        ),
+                        action=self._client.models.Action(action_type=lifetime_action.action_type)
+                    )
+                )
+        else:
+            lifetime_actions = None
+
+        if policy.subject_name or policy.key_properties.ekus or policy.key_properties.key_usage or policy.san_emails or policy.san_upns or policy.san_dns_names or policy.validity_in_months:
+            x509_certificate_properties=self._client.models.X509CertificateProperties(
+                subject=policy.subject_name,
+                ekus=policy.key_properties.ekus,
+                subject_alternative_names=self._client.models.SubjectAlternativeNames(
+                    emails=policy.san_emails,
+                    upns=policy.san_upns,
+                    dns_names=policy.san_dns_names
+                ),
+                key_usage=policy.key_properties.key_usage,
+                validity_in_months=policy.validity_in_months
+            )
+        else:
+            x509_certificate_properties = None
+
+        if policy.key_properties.exportable or policy.key_properties.key_type or policy.key_properties.key_size or policy.key_properties.reuse_key or policy.key_properties.curbe:
+            key_properties = self._client.models.KeyProperties(
+                exportable=policy.key_properties.exportable,
+                key_type=policy.key_properties.key_type,
+                key_size=policy.key_properties.key_size,
+                reuse_key=policy.key_properties.reuse_key,
+                curve=policy.key_properties.curve
+            )
+        else:
+            key_properties = None
+
+        if policy.content_type:
+            secret_properties = self._client.models.SecretProperties(content_type=policy.content_type)
+        else:
+            secret_properties = None
+
+        policy_bundle = self._client.models.CertificatePolicy(
+            id=policy.id,
+            key_properties=key_properties,
+            secret_properties=secret_properties,
+            x509_certificate_properties=x509_certificate_properties,
+            lifetime_actions=lifetime_actions,
+            issuer_parameters=issuer_parameters,
+            attributes=attributes
+        )
+        return policy_bundle
+
     def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
         """Creates a new certificate.
@@ -44,7 +124,7 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :param policy: The management policy for the certificate.
         :type policy:
-         ~azure.security.keyvault.v7_0.models.CertificatePolicy
+         ~azure.security.keyvault.certificates._models.CertificatePolicy
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param not_before: Not before date of the secret in UTC
@@ -67,7 +147,7 @@ class CertificateClient(_KeyVaultClientBase):
         bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=policy,
+            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -229,7 +309,7 @@ class CertificateClient(_KeyVaultClientBase):
             certificate_name=name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            certificate_policy=policy,
+            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -269,7 +349,7 @@ class CertificateClient(_KeyVaultClientBase):
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=policy,
+            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -567,20 +647,55 @@ class CertificateClient(_KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
 
-    def get_pending_certificate_signing_request(self, name, **kwargs):
-        # type: (str) -> CertificateOperation
-        """Gets the pending certificate signing request.
-
-        Gets the pending certificate signing request for the specified certificate.
-        This operation requires the certificates/get permission.
-
-        :param name: The name of the certificate
-        :type name: str
-        :return: Certificate operation detailing the certificate signing request.
-        :rtype: ~azure.security.keyvault.v7_0.models.CertificateOperation
+    def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, **kwargs):
+        """Gets the Base64 pending certificate signing request (PKCS-10).
+        :param vault_base_url: The vault name, e.g.
+         https://myvault.vault.azure.net
+        :type vault_base_url: str
+        :param certificate_name: The name of the certificate
+        :type certificate_name: str
+        :param custom_headers: headers that will be added to the request
+        :type custom_headers: dict
+        :return: Base64 encoded pending certificate signing request (PKCS-10).
+        :rtype: str
         """
-        bundle = self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
-        return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
+        # Construct URL
+        url = '/certificates/{certificate-name}/pending'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/pkcs10'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language",
+                                                                          self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            raise self.models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = response.body() if hasattr(response, 'body') else response.content
+
+        return deserialized
 
     def get_issuer(self, name, **kwargs):
         # type: (str) -> Issuer
@@ -604,7 +719,7 @@ class CertificateClient(_KeyVaultClientBase):
         account_id=None,
         password=None,
         organization_id=None,
-        admin_details=[None],
+        admin_details=None,
         enabled=None,
         **kwargs
     ):
@@ -674,7 +789,7 @@ class CertificateClient(_KeyVaultClientBase):
         account_id=None,
         password=None,
         organization_id=None,
-        admin_details=[None],
+        admin_details=None,
         enabled=True,
         **kwargs
     ):

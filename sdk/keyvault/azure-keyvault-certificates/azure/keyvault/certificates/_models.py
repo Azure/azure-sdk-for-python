@@ -329,19 +329,19 @@ class CertificatePolicy(object):
 
     def __init__(
         self,
-        attributes,
-        cert_policy_id,
-        key_properties,
-        content_type,
-        subject_name,
-        san_emails,
-        san_dns_names,
-        san_upns,
-        validity_in_months,
-        lifetime_actions,
-        issuer_name,
-        certificate_type,
-        certificate_transparency,
+        attributes=None,
+        cert_policy_id=None,
+        key_properties=None,
+        content_type=None,
+        subject_name=None,
+        san_emails=None,
+        san_dns_names=None,
+        san_upns=None,
+        validity_in_months=None,
+        lifetime_actions=None,
+        issuer_name=None,
+        certificate_type=None,
+        certificate_transparency=None,
     ):
         # type: (models.CertificatePolicy, str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifeTimeAction], str, str, bool, Mapping[str, Any]) -> None
         self._attributes = attributes
@@ -362,35 +362,44 @@ class CertificatePolicy(object):
     def _from_certificate_policy_bundle(cls, certificate_policy_bundle):
         # type: (models.CertificatePolicy) -> CertificatePolicy
         """Construct a CertificatePolicy from an autorest-generated CertificatePolicy"""
-        return cls(
-            attributes=certificate_policy_bundle.attributes,
-            cert_policy_id=certificate_policy_bundle.id,
-            issuer_name=certificate_policy_bundle.issuer_parameters.name,
-            certificate_type=certificate_policy_bundle.issuer_parameters.certificate_type,
-            certificate_transparency=certificate_policy_bundle.issuer_parameters.certificate_transparency,
-            lifetime_actions=[
+        if certificate_policy_bundle.lifetime_actions:
+            lifetime_actions = [
                 LifetimeAction(
                     action_type=item.action.action_type,
                     lifetime_percentage=item.trigger.lifetime_percentage or None,
                     days_before_expiry=item.trigger.days_before_expiry or None,
                 )
                 for item in certificate_policy_bundle.lifetime_actions
-            ],
-            subject_name=certificate_policy_bundle.x509_certificate_properties.subject,
-            san_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
-            san_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
-            san_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names if certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
-            validity_in_months=certificate_policy_bundle.x509_certificate_properties.validity_in_months,
-            key_properties=KeyProperties(
-                exportable=certificate_policy_bundle.key_properties.exportable,
-                key_type=certificate_policy_bundle.key_properties.key_type,
-                key_size=certificate_policy_bundle.key_properties.key_size,
-                reuse_key=certificate_policy_bundle.key_properties.reuse_key,
-                curve=certificate_policy_bundle.key_properties.curve,
-                ekus=certificate_policy_bundle.x509_certificate_properties.ekus,
-                key_usage=certificate_policy_bundle.x509_certificate_properties.key_usage,
-            ),
-            content_type=certificate_policy_bundle.secret_properties.content_type,
+            ]
+        else:
+            lifetime_actions = None
+        key_properties_bundle = certificate_policy_bundle.key_properties
+        if key_properties_bundle and (key_properties_bundle.exportable or key_properties_bundle.key_type or key_properties_bundle.key_size or key_properties_bundle.reuse_key or key_properties_bundle.curve or key_properties_bundle.ekus or key_properties_bundle.key_usage):
+            key_properties = KeyProperties(
+                exportable=certificate_policy_bundle.key_properties.exportable if certificate_policy_bundle.key_properties else None,
+                key_type=certificate_policy_bundle.key_properties.key_type if certificate_policy_bundle.key_properties else None,
+                key_size=certificate_policy_bundle.key_properties.key_size if certificate_policy_bundle.key_properties else None,
+                reuse_key=certificate_policy_bundle.key_properties.reuse_key if certificate_policy_bundle.key_properties else None,
+                curve=certificate_policy_bundle.key_properties.curve if certificate_policy_bundle.key_properties else None,
+                ekus=certificate_policy_bundle.x509_certificate_properties.ekus if certificate_policy_bundle.x509_certificate_properties else None,
+                key_usage=certificate_policy_bundle.x509_certificate_properties.key_usage if certificate_policy_bundle.x509_certificate_properties else None,
+            )
+        else:
+            key_properties = None
+        return cls(
+            attributes=certificate_policy_bundle.attributes,
+            cert_policy_id=certificate_policy_bundle.id,
+            issuer_name=certificate_policy_bundle.issuer_parameters.name if certificate_policy_bundle.issuer_parameters else None,
+            certificate_type=certificate_policy_bundle.issuer_parameters.certificate_type if certificate_policy_bundle.issuer_parameters else None,
+            certificate_transparency=certificate_policy_bundle.issuer_parameters.certificate_transparency if certificate_policy_bundle.issuer_parameters else None,
+            lifetime_actions=lifetime_actions,
+            subject_name=certificate_policy_bundle.x509_certificate_properties.subject if certificate_policy_bundle.x509_certificate_properties else None,
+            san_emails=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails if certificate_policy_bundle.x509_certificate_properties and certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            san_upns=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns if certificate_policy_bundle.x509_certificate_properties and certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            san_dns_names=certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names if certificate_policy_bundle.x509_certificate_properties and certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None,
+            validity_in_months=certificate_policy_bundle.x509_certificate_properties.validity_in_months if certificate_policy_bundle.x509_certificate_properties else None,
+            key_properties=key_properties,
+            content_type=certificate_policy_bundle.secret_properties.content_type if certificate_policy_bundle.secret_properties else None,
         )
 
     @property
@@ -454,18 +463,36 @@ class CertificatePolicy(object):
 
     @property
     def created(self):
-        # type: () -> bool
-        return self._attributes.created
+        # type: () -> datetime
+        return self._attributes.created if self._attributes else None
 
     @property
     def updated(self):
-        # type: () -> bool
-        return self._attributes.updated
+        # type: () -> datetime
+        return self._attributes.updated if self._attributes else None
 
     @property
     def enabled(self):
         # type: () -> bool
-        return self._attributes.enabled
+        return self._attributes.enabled if self._attributes else None
+
+    @property
+    def not_before(self):
+        # type () -> datetime
+        return self._attributes.not_before if self._attributes else None
+
+    @property
+    def expires(self):
+        # type () -> datetime
+        return self._attributes.expires if self._attributes else None
+
+    @property
+    def recovery_level(self):
+        # type: () -> models.DeletionRecoveryLevel
+        return self._attributes.recovery_level if self._attributes else None
+
+
+
 
 
 class Contact:
@@ -602,8 +629,8 @@ class Issuer(IssuerBase):
 
 
 class KeyProperties(object):
-    def __init__(self, exportable, key_type, key_size, reuse_key, curve, ekus, key_usage):
-        # type: (bool, str, int, bool, str, list[str], list[str]) -> None
+    def __init__(self, exportable=None, key_type=None, key_size=None, reuse_key=None, curve=None, ekus=None, key_usage=None):
+        # type: (Optional[bool[], Optional[str], Optional[int], Optional[bool], Optional[str], Optional[list[str]], Optional[list[str]]) -> None
         self._exportable = exportable
         self._key_type = key_type
         self._key_size = key_size
