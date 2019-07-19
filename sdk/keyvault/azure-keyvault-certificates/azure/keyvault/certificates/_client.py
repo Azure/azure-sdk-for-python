@@ -139,7 +139,9 @@ class CertificateClient(_KeyVaultClientBase):
 
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
-                enabled=enabled, not_before=not_before, expires=expires
+                enabled=enabled,
+                not_before=not_before,
+                expires=expires
             )
         else:
             attributes = None
