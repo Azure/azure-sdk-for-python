@@ -2,7 +2,7 @@ import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import pytest
-import azure.cosmos.constants as constants
+import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos import _retry_utility
 import test_config
