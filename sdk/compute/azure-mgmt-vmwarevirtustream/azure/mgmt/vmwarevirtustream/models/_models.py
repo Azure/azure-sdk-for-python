@@ -244,10 +244,6 @@ class Circuit(Model):
      (Microsoft Colo only)
     :type authorizations:
      list[~azure.mgmt.vmwarevirtustream.models.ExpressRouteAuthorization]
-    :param global_reach_connections: global reach connections with
-     privateCloud customer ER (Microsoft Colo only)
-    :type global_reach_connections:
-     list[~azure.mgmt.vmwarevirtustream.models.GlobalReachConnection]
     """
 
     _attribute_map = {
@@ -255,7 +251,6 @@ class Circuit(Model):
         'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
         'express_route_id': {'key': 'expressRouteID', 'type': 'str'},
         'authorizations': {'key': 'authorizations', 'type': '[ExpressRouteAuthorization]'},
-        'global_reach_connections': {'key': 'globalReachConnections', 'type': '[GlobalReachConnection]'},
     }
 
     def __init__(self, **kwargs):
@@ -264,7 +259,6 @@ class Circuit(Model):
         self.secondary_subnet = kwargs.get('secondary_subnet', None)
         self.express_route_id = kwargs.get('express_route_id', None)
         self.authorizations = kwargs.get('authorizations', None)
-        self.global_reach_connections = kwargs.get('global_reach_connections', None)
 
 
 class CloudError(Model):
@@ -314,22 +308,6 @@ class ClusterRequest(Model):
     def __init__(self, **kwargs):
         super(ClusterRequest, self).__init__(**kwargs)
         self.cluster_size = kwargs.get('cluster_size', None)
-
-
-class DeleteGlobalReachConnectionRequest(Model):
-    """DeleteGlobalReachConnectionRequest.
-
-    :param id:
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DeleteGlobalReachConnectionRequest, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
 
 
 class DeleteIdentitySourceRequest(Model):
@@ -420,54 +398,6 @@ class GetAdminCredentialsResponse(Model):
         self.password = kwargs.get('password', None)
 
 
-class GlobalReachConnection(Model):
-    """GlobalReachConnection.
-
-    :param id:
-    :type id: str
-    :param primary_subnet:
-    :type primary_subnet: str
-    :param secondary_subnet:
-    :type secondary_subnet: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'primary_subnet': {'key': 'primarySubnet', 'type': 'str'},
-        'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GlobalReachConnection, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.primary_subnet = kwargs.get('primary_subnet', None)
-        self.secondary_subnet = kwargs.get('secondary_subnet', None)
-
-
-class GlobalReachConnectionRequest(Model):
-    """GlobalReachConnectionRequest.
-
-    :param id:
-    :type id: str
-    :param key:
-    :type key: str
-    :param network:
-    :type network: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GlobalReachConnectionRequest, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.key = kwargs.get('key', None)
-        self.network = kwargs.get('network', None)
-
-
 class IdentitySource(Model):
     """IdentitySource.
 
@@ -510,26 +440,6 @@ class IdentitySource(Model):
         self.primary_server = kwargs.get('primary_server', None)
         self.secondary_server = kwargs.get('secondary_server', None)
         self.use_ssl = kwargs.get('use_ssl', None)
-
-
-class MoveResourceRequest(Model):
-    """MoveResourceRequest.
-
-    :param target_resource_group:
-    :type target_resource_group: str
-    :param resources:
-    :type resources: list[str]
-    """
-
-    _attribute_map = {
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MoveResourceRequest, self).__init__(**kwargs)
-        self.target_resource_group = kwargs.get('target_resource_group', None)
-        self.resources = kwargs.get('resources', None)
 
 
 class Operation(Model):
@@ -646,20 +556,3 @@ class PrivateCloud(Model):
         self.internet_enabled = kwargs.get('internet_enabled', None)
         self.identity_sources = kwargs.get('identity_sources', None)
         self.vpc = kwargs.get('vpc', None)
-
-
-class PrivateCloudList(Model):
-    """PrivateCloudList.
-
-    :param value:
-    :type value:
-     list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AzurePrivateCloudResponse]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PrivateCloudList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)

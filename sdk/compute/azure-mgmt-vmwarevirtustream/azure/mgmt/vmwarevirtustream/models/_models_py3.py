@@ -244,10 +244,6 @@ class Circuit(Model):
      (Microsoft Colo only)
     :type authorizations:
      list[~azure.mgmt.vmwarevirtustream.models.ExpressRouteAuthorization]
-    :param global_reach_connections: global reach connections with
-     privateCloud customer ER (Microsoft Colo only)
-    :type global_reach_connections:
-     list[~azure.mgmt.vmwarevirtustream.models.GlobalReachConnection]
     """
 
     _attribute_map = {
@@ -255,16 +251,14 @@ class Circuit(Model):
         'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
         'express_route_id': {'key': 'expressRouteID', 'type': 'str'},
         'authorizations': {'key': 'authorizations', 'type': '[ExpressRouteAuthorization]'},
-        'global_reach_connections': {'key': 'globalReachConnections', 'type': '[GlobalReachConnection]'},
     }
 
-    def __init__(self, *, primary_subnet: str=None, secondary_subnet: str=None, express_route_id: str=None, authorizations=None, global_reach_connections=None, **kwargs) -> None:
+    def __init__(self, *, primary_subnet: str=None, secondary_subnet: str=None, express_route_id: str=None, authorizations=None, **kwargs) -> None:
         super(Circuit, self).__init__(**kwargs)
         self.primary_subnet = primary_subnet
         self.secondary_subnet = secondary_subnet
         self.express_route_id = express_route_id
         self.authorizations = authorizations
-        self.global_reach_connections = global_reach_connections
 
 
 class CloudError(Model):
@@ -314,22 +308,6 @@ class ClusterRequest(Model):
     def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
         super(ClusterRequest, self).__init__(**kwargs)
         self.cluster_size = cluster_size
-
-
-class DeleteGlobalReachConnectionRequest(Model):
-    """DeleteGlobalReachConnectionRequest.
-
-    :param id:
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, **kwargs) -> None:
-        super(DeleteGlobalReachConnectionRequest, self).__init__(**kwargs)
-        self.id = id
 
 
 class DeleteIdentitySourceRequest(Model):
@@ -420,54 +398,6 @@ class GetAdminCredentialsResponse(Model):
         self.password = password
 
 
-class GlobalReachConnection(Model):
-    """GlobalReachConnection.
-
-    :param id:
-    :type id: str
-    :param primary_subnet:
-    :type primary_subnet: str
-    :param secondary_subnet:
-    :type secondary_subnet: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'primary_subnet': {'key': 'primarySubnet', 'type': 'str'},
-        'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, primary_subnet: str=None, secondary_subnet: str=None, **kwargs) -> None:
-        super(GlobalReachConnection, self).__init__(**kwargs)
-        self.id = id
-        self.primary_subnet = primary_subnet
-        self.secondary_subnet = secondary_subnet
-
-
-class GlobalReachConnectionRequest(Model):
-    """GlobalReachConnectionRequest.
-
-    :param id:
-    :type id: str
-    :param key:
-    :type key: str
-    :param network:
-    :type network: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, key: str=None, network: str=None, **kwargs) -> None:
-        super(GlobalReachConnectionRequest, self).__init__(**kwargs)
-        self.id = id
-        self.key = key
-        self.network = network
-
-
 class IdentitySource(Model):
     """IdentitySource.
 
@@ -510,26 +440,6 @@ class IdentitySource(Model):
         self.primary_server = primary_server
         self.secondary_server = secondary_server
         self.use_ssl = use_ssl
-
-
-class MoveResourceRequest(Model):
-    """MoveResourceRequest.
-
-    :param target_resource_group:
-    :type target_resource_group: str
-    :param resources:
-    :type resources: list[str]
-    """
-
-    _attribute_map = {
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': '[str]'},
-    }
-
-    def __init__(self, *, target_resource_group: str=None, resources=None, **kwargs) -> None:
-        super(MoveResourceRequest, self).__init__(**kwargs)
-        self.target_resource_group = target_resource_group
-        self.resources = resources
 
 
 class Operation(Model):
@@ -646,20 +556,3 @@ class PrivateCloud(Model):
         self.internet_enabled = internet_enabled
         self.identity_sources = identity_sources
         self.vpc = vpc
-
-
-class PrivateCloudList(Model):
-    """PrivateCloudList.
-
-    :param value:
-    :type value:
-     list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AzurePrivateCloudResponse]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(PrivateCloudList, self).__init__(**kwargs)
-        self.value = value

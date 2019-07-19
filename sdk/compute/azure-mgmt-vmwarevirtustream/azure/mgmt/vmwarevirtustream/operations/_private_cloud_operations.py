@@ -49,8 +49,9 @@ class PrivateCloudOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.vmwarevirtustream.models.PrivateCloudList] or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -85,7 +86,7 @@ class PrivateCloudOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[PrivateCloudList]', response)
+            deserialized = self._deserialize('[AzurePrivateCloudResponse]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -164,9 +165,10 @@ class PrivateCloudOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PrivateCloudList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -202,7 +204,7 @@ class PrivateCloudOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateCloudList', response)
+            deserialized = self._deserialize('[AzurePrivateCloudResponse]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -743,145 +745,6 @@ class PrivateCloudOperations(object):
         return deserialized
     delete_authorization.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/deleteAuthorization/{authorizationName}'}
 
-    def add_global_reach_connection(
-            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """adds a global reach connection for the privateCloud.
-
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
-        :type private_cloud_name: str
-        :param parameters:
-        :type parameters:
-         ~azure.mgmt.vmwarevirtustream.models.GlobalReachConnectionRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.add_global_reach_connection.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'GlobalReachConnectionRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    add_global_reach_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/addGlobalReachConnection'}
-
-    def delete_global_reach_connection(
-            self, resource_group_name, private_cloud_name, id=None, custom_headers=None, raw=False, **operation_config):
-        """deletes a global reach connection from the private cloud.
-
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
-        :type private_cloud_name: str
-        :param id:
-        :type id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.DeleteGlobalReachConnectionRequest(id=id)
-
-        # Construct URL
-        url = self.delete_global_reach_connection.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'DeleteGlobalReachConnectionRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    delete_global_reach_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/deleteGlobalReachConnection'}
-
     def add_identity_source(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         """adds an identity source for the privateCloud.
@@ -1082,64 +945,3 @@ class PrivateCloudOperations(object):
 
         return deserialized
     get_admin_credentials.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/getAdminCredentials'}
-
-    def move_resources(
-            self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
-        """move resources to another resource group.
-
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param target_resource_group:
-        :type target_resource_group: str
-        :param resources:
-        :type resources: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.MoveResourceRequest(target_resource_group=target_resource_group, resources=resources)
-
-        # Construct URL
-        url = self.move_resources.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'MoveResourceRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'}

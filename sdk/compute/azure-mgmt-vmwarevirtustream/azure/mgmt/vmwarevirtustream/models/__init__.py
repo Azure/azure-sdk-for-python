@@ -19,19 +19,14 @@ try:
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterRequest
-    from ._models_py3 import DeleteGlobalReachConnectionRequest
     from ._models_py3 import DeleteIdentitySourceRequest
     from ._models_py3 import Endpoints
     from ._models_py3 import ExpressRouteAuthorization
     from ._models_py3 import GetAdminCredentialsResponse
-    from ._models_py3 import GlobalReachConnection
-    from ._models_py3 import GlobalReachConnectionRequest
     from ._models_py3 import IdentitySource
-    from ._models_py3 import MoveResourceRequest
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateCloud
-    from ._models_py3 import PrivateCloudList
 except (SyntaxError, ImportError):
     from ._models import AddIdentitySourceRequest
     from ._models import AzureClusterRequest
@@ -42,19 +37,14 @@ except (SyntaxError, ImportError):
     from ._models import Circuit
     from ._models import Cluster
     from ._models import ClusterRequest
-    from ._models import DeleteGlobalReachConnectionRequest
     from ._models import DeleteIdentitySourceRequest
     from ._models import Endpoints
     from ._models import ExpressRouteAuthorization
     from ._models import GetAdminCredentialsResponse
-    from ._models import GlobalReachConnection
-    from ._models import GlobalReachConnectionRequest
     from ._models import IdentitySource
-    from ._models import MoveResourceRequest
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateCloud
-    from ._models import PrivateCloudList
 from ._paged_models import OperationPaged
 
 __all__ = [
@@ -67,18 +57,13 @@ __all__ = [
     'Circuit',
     'Cluster',
     'ClusterRequest',
-    'DeleteGlobalReachConnectionRequest',
     'DeleteIdentitySourceRequest',
     'Endpoints',
     'ExpressRouteAuthorization',
     'GetAdminCredentialsResponse',
-    'GlobalReachConnection',
-    'GlobalReachConnectionRequest',
     'IdentitySource',
-    'MoveResourceRequest',
     'Operation',
     'OperationDisplay',
     'PrivateCloud',
-    'PrivateCloudList',
     'OperationPaged',
 ]
