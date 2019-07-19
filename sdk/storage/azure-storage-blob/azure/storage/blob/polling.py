@@ -9,7 +9,7 @@ import time
 from typing import Callable, Any # pylint: disable=unused-import
 from azure.core.polling import PollingMethod, LROPoller
 
-from ._shared.utils import process_storage_error
+from ._shared.response_handlers import process_storage_error
 from ._generated.models import StorageErrorException
 from ._blob_utils import deserialize_blob_properties
 
@@ -22,7 +22,7 @@ class CopyStatusPoller(LROPoller):
 
     def __init__(self, client, copy_id, polling=True, configuration=None, **kwargs):
         if configuration:
-            polling_interval = configuration.blob_settings.copy_polling_interval
+            polling_interval = configuration.copy_polling_interval
         else:
             polling_interval = 2
         polling_method = CopyBlobPolling if polling else CopyBlob

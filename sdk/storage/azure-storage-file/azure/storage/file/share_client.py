@@ -16,25 +16,21 @@ except ImportError:
 import six
 
 from ._shared.shared_access_signature import FileSharedAccessSignature
-from .directory_client import DirectoryClient
-from .file_client import FileClient
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.response_handlers import (
+    return_response_headers,
+    process_storage_error,
+    return_headers_and_deserialized)
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier,
     DeleteSnapshotsOptionType)
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    serialize_iso,
-    return_headers_and_deserialized,
-    parse_query,
-    return_response_headers,
-    add_metadata_headers,
-    process_storage_error,
-    parse_connection_str)
-
-from ._share_utils import deserialize_share_properties
+from ._deserialize import deserialize_share_properties
+from .directory_client import DirectoryClient
+from .file_client import FileClient
 
 if TYPE_CHECKING:
     from .models import ShareProperties, AccessPolicy
@@ -312,8 +308,6 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Creates a file share.
         """
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 

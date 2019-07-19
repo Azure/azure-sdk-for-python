@@ -18,33 +18,30 @@ except ImportError:
 
 import six
 
+from ._shared import encode_base64
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.shared_access_signature import BlobSharedAccessSignature
-from ._shared.encryption import _generate_blob_encryption_data
+from ._shared.encryption import generate_blob_encryption_data
 from ._shared.upload_chunking import IterStreamer
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    return_response_headers,
-    add_metadata_headers,
-    encode_base64,
-    get_length,
-    read_length,
-    parse_connection_str,
-    parse_query,
-    process_storage_error,
+from ._shared.download_chunking import StorageStreamDownloader
+from ._shared.request_handlers import (
+    add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
+    SourceModifiedAccessConditions,
     StorageErrorException)
 from ._blob_utils import (
     deserialize_blob_properties,
+    deserialize_blob_stream,
     get_access_conditions,
     get_modification_conditions,
     get_sequence_conditions,
-    StorageStreamDownloader,
     upload_block_blob,
     upload_page_blob,
     upload_append_blob)
@@ -439,7 +436,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         cek, iv, encryption_data = None, None, None
         if self.key_encryption_key is not None:
-            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding) # type: ignore
@@ -486,7 +483,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 validate_content,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 self.require_encryption,
                 self.key_encryption_key,
                 **kwargs)
@@ -504,7 +501,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 premium_page_blob_tier,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 cek,
                 iv,
                 encryption_data,
@@ -525,7 +522,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 validate_content,
                 timeout,
                 max_connections,
-                self._config.blob_settings,
+                self._config,
                 **kwargs)
         raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
@@ -609,19 +606,23 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_modified_since, if_unmodified_since, if_match, if_none_match)
 
         return StorageStreamDownloader(
-            name=self.blob_name,
-            container=self.container_name,
             service=self._client.blob,
-            config=self._config.blob_settings,
+            config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,
-            access_conditions=access_conditions,
-            mod_conditions=mod_conditions,
+            encryption_options={
+                'required': self.require_encryption,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function},
+            extra_properties={
+                'name': self.blob_name,
+                'container': self.container_name
+            },
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=deserialize_blob_stream,
             timeout=timeout,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function,
             **kwargs)
 
     def delete_blob(
@@ -1370,11 +1371,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     cls=return_response_headers,
                     **kwargs)
             else:
-                source_mod_conditions = get_modification_conditions(
-                    source_if_modified_since,
-                    source_if_unmodified_since,
-                    source_if_match,
-                    source_if_none_match)
+                source_mod_conditions = SourceModifiedAccessConditions(
+                    source_if_modified_since=source_if_modified_since,
+                    source_if_unmodified_since=source_if_unmodified_since,
+                    source_if_match=source_if_match,
+                    source_if_none_match=source_if_none_match)
                 start_copy = self._client.blob.start_copy_from_url(
                     source_url,
                     timeout=timeout,

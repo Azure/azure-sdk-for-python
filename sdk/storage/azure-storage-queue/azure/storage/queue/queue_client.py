@@ -20,8 +20,8 @@ from ._shared.shared_access_signature import QueueSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
-    return_response_headers,
     process_storage_error,
+    return_response_headers,
     return_headers_and_deserialized)
 from ._queue_utils import (
     TextXMLEncodePolicy,

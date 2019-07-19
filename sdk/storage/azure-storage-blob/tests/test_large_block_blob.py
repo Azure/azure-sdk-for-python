@@ -241,7 +241,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     def test_create_large_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
@@ -312,8 +312,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assert_upload_progress(
-            len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     def test_create_large_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live

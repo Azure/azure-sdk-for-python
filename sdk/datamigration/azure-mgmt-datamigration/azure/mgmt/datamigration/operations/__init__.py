@@ -9,18 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_skus_operations import ResourceSkusOperations
-from .services_operations import ServicesOperations
-from .tasks_operations import TasksOperations
-from .projects_operations import ProjectsOperations
-from .usages_operations import UsagesOperations
-from .operations import Operations
-from .files_operations import FilesOperations
+from ._resource_skus_operations import ResourceSkusOperations
+from ._services_operations import ServicesOperations
+from ._tasks_operations import TasksOperations
+from ._service_tasks_operations import ServiceTasksOperations
+from ._projects_operations import ProjectsOperations
+from ._usages_operations import UsagesOperations
+from ._operations import Operations
+from ._files_operations import FilesOperations
 
 __all__ = [
     'ResourceSkusOperations',
     'ServicesOperations',
     'TasksOperations',
+    'ServiceTasksOperations',
     'ProjectsOperations',
     'UsagesOperations',
     'Operations',

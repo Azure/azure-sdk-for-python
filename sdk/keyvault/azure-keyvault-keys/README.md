@@ -106,7 +106,7 @@ key = key_client.create_key("key-name", "RSA-HSM")
 rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
 
 # Create an EC key with curve specification and using HSM
-ec_key = key_client.create_key("ec-key-name", hsm=True, curve="P-256")
+ec_key = key_client.create_ec_key("ec-key-name", hsm=True, curve="P-256")
 
 print(key.name)
 print(key.key_material.kty)

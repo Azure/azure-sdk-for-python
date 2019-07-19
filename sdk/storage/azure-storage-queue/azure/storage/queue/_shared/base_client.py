@@ -87,7 +87,8 @@ class StorageAccountHostsMixin(object):
         self.require_encryption = kwargs.get('require_encryption', False)
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
-        self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
+        self._config, self._pipeline = create_pipeline(
+            self.credential, storage_sdk=service, hosts=self._hosts, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -142,39 +143,6 @@ class StorageAccountHostsMixin(object):
             query_str += credential.lstrip('?')
             credential = None
         return query_str.rstrip('?&'), credential
-
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        credential_policy = None
-        if hasattr(credential, 'get_token'):
-            credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            credential_policy = credential
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
-
-        config = kwargs.get('_configuration') or create_configuration(**kwargs)
-        if kwargs.get('_pipeline'):
-            return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: HttpTransport
-        if not config.transport:
-            config.transport = RequestsTransport(config)
-        policies = [
-            QueueMessagePolicy(),
-            config.headers_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            credential_policy,
-            ContentDecodePolicy(),
-            RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
-            config.retry_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-        ]
-        return config, Pipeline(config.transport, policies=policies)
-
 
 def format_shared_key_credential(account, credential):
     if isinstance(credential, six.string_types):
@@ -249,6 +217,8 @@ def create_configuration(**kwargs):
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+    config.redirect_policy = RedirectPolicy(**kwargs)
+
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
@@ -272,6 +242,38 @@ def create_configuration(**kwargs):
     config.max_range_size = kwargs.get('max_range_size', 4 * 1024 * 1024)
     return config
 
+
+def create_pipeline(credential, **kwargs):
+    # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
+    credential_policy = None
+    if hasattr(credential, 'get_token'):
+        credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+    elif isinstance(credential, SharedKeyCredentialPolicy):
+        credential_policy = credential
+    elif credential is not None:
+        raise TypeError("Unsupported credential: {}".format(credential))
+
+    config = kwargs.get('_configuration') or create_configuration(**kwargs)
+    if kwargs.get('_pipeline'):
+        return config, kwargs['_pipeline']
+    transport = kwargs.get('transport')  # type: HttpTransport
+    if not transport:
+        transport = RequestsTransport(config)
+    policies = [
+        QueueMessagePolicy(),
+        config.headers_policy,
+        config.user_agent_policy,
+        StorageContentValidation(),
+        StorageRequestHook(**kwargs),
+        credential_policy,
+        ContentDecodePolicy(),
+        config.redirect_policy,
+        StorageHosts(**kwargs),
+        config.retry_policy,
+        config.logging_policy,
+        StorageResponseHook(**kwargs),
+    ]
+    return config, Pipeline(transport, policies=policies)
 
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()

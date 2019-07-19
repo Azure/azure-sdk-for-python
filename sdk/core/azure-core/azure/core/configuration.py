@@ -88,6 +88,9 @@ class Configuration(object):
         # HTTP Transport
         self.transport = transport
 
+        # Polling interval if no retry-after in polling calls results
+        self.polling_interval = 30
+
 
 class ConnectionConfiguration(object):
     """HTTP transport connection configuration settings.
