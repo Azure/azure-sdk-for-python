@@ -685,7 +685,7 @@ class StorageQueueTestAsync(QueueTestCase):
             queue_url=queue_client.url,
             credential=token,
         )
-        result = await nservice.peek_messages()
+        result = await service.peek_messages()
 
         # Assert
         self.assertIsNotNone(result)

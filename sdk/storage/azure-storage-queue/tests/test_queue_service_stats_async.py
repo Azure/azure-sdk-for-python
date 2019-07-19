@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 import asyncio
 
 from azure.storage.queue.aio import QueueServiceClient

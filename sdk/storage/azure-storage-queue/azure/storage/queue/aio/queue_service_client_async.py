@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import functools
-import asyncio
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING)
@@ -14,11 +13,11 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
-from .._shared.policies_async import ExponentialRetry
+from azure.storage.queue._shared.policies_async import ExponentialRetry
 from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature
 from azure.storage.queue._shared.models import LocationMode, Services
-from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import process_storage_error
 from azure.storage.queue._generated.aio import AzureQueueStorage
@@ -203,7 +202,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             cors=cors
         )
         try:
-            return (await self._client.service.set_properties(props, timeout=timeout, **kwargs)) # type: ignore
+            return await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -265,7 +264,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. 
+        """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
         Returns a client with which to interact with the newly created queue.

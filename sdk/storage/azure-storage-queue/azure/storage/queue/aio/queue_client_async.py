@@ -19,7 +19,7 @@ import six
 from .._shared.policies_async import ExponentialRetry
 from ..queue_client import QueueClient as QueueClientBase
 from azure.storage.queue._shared.shared_access_signature import QueueSharedAccessSignature
-from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import (
     return_response_headers,
@@ -34,12 +34,13 @@ from azure.storage.queue._generated.aio import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageErrorException, SignedIdentifier
 from azure.storage.queue._generated.models import QueueMessage as GenQueueMessage
 
-from azure.storage.queue.aio.models import QueueMessage, AccessPolicy, MessagesPaged
+from azure.storage.queue.models import QueueMessage, AccessPolicy
+from azure.storage.queue.aio.models import MessagesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue.aio.models import QueuePermissions, QueueProperties
+    from azure.storage.queue.models import QueuePermissions, QueueProperties
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
