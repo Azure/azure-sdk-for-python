@@ -55,11 +55,10 @@ class FooServiceClient():
         config.redirect_policy = RedirectPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
-        config.transport = kwargs.get('transport', RequestsTransport)
 
     def __init__(self, configuration=None, **kwargs):
         config = configuration or FooServiceClient.create_config(**kwargs)
-        transport = config.get_transport(**kwargs)
+        transport = kwargs.get('transport', RequestsTransport(**kwargs))
         policies = [
             config.user_agent_policy,
             config.headers_policy,

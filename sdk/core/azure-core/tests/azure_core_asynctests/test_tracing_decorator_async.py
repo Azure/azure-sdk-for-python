@@ -110,6 +110,7 @@ async def test_span_with_opencensus_complicated(value):
             client = MockClient()
             await client.make_request(2)
             with trace.span("child") as child:
+                time.sleep(0.001)
                 await client.make_request(2, parent_span=parent)
                 assert OpenCensusSpan.get_current_span() == child
                 await client.make_request(2)

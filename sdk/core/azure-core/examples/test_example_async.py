@@ -38,7 +38,6 @@ import trio
 async def test_example_trio():
 
     async def req():
-        config = Configuration()
         request = HttpRequest("GET", "https://bing.com/")
         policies = [
             UserAgentPolicy("myuseragent"),
@@ -47,7 +46,7 @@ async def test_example_trio():
         # [START trio]
         from azure.core.pipeline.transport import TrioRequestsTransport
 
-        async with AsyncPipeline(TrioRequestsTransport(config), policies=policies) as pipeline:
+        async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
             return await pipeline.run(request)
         # [END trio]
     response = trio.run(req)
@@ -57,7 +56,6 @@ async def test_example_trio():
 @pytest.mark.asyncio
 async def test_example_asyncio():
 
-    config = Configuration()
     request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -66,7 +64,7 @@ async def test_example_asyncio():
     # [START asyncio]
     from azure.core.pipeline.transport import AsyncioRequestsTransport
 
-    async with AsyncPipeline(AsyncioRequestsTransport(config), policies=policies) as pipeline:
+    async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END asyncio]
     assert pipeline._transport.session is None
@@ -76,7 +74,6 @@ async def test_example_asyncio():
 @pytest.mark.asyncio
 async def test_example_aiohttp():
 
-    config = Configuration()
     request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -85,7 +82,7 @@ async def test_example_aiohttp():
     # [START aiohttp]
     from azure.core.pipeline.transport import AioHttpTransport
 
-    async with AsyncPipeline(AioHttpTransport(config), policies=policies) as pipeline:
+    async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END aiohttp]
     assert pipeline._transport.session is None
