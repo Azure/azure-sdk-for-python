@@ -24,7 +24,7 @@ from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.upload_chunking import IterStreamer
-from ._shared.shared_access_signature import FileSharedAccessSignature
+from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.utils import (
     StorageAccountHostsMixin,
     parse_query,
@@ -257,7 +257,7 @@ class FileClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         if len(self.file_path) > 1:
             file_path = '/'.join(self.file_path[:-1])
         else:

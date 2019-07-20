@@ -18,7 +18,7 @@ except ImportError:
 
 import six
 
-from ._shared.shared_access_signature import BlobSharedAccessSignature
+from ._shared.shared_access_signature import ResourceSharedAccessSignature
 from ._shared.encryption import _generate_blob_encryption_data
 from ._shared.upload_chunking import IterStreamer
 from ._shared.utils import (
@@ -298,12 +298,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = ResourceSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
             self.container_name,
             self.blob_name,
-            permission,
-            expiry,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    Optional, Any, Tuple,
     TYPE_CHECKING
 )
 import base64
@@ -58,11 +58,7 @@ from .policies import (
 
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
-    from azure.core.exceptions import AzureError
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -88,6 +84,13 @@ class _QueryStringConstants(object):
     END_RK = 'erk'
     SIGNED_RESOURCE_TYPES = 'srt'
     SIGNED_SERVICES = 'ss'
+    SIGNED_TIMESTAMP = 'snapshot'
+    SIGNED_OID = 'skoid'
+    SIGNED_TID = 'sktid'
+    SIGNED_KEY_START = 'skt'
+    SIGNED_KEY_EXPIRY = 'ske'
+    SIGNED_KEY_SERVICE = 'sks'
+    SIGNED_KEY_VERSION = 'skv'
 
     @staticmethod
     def to_list():

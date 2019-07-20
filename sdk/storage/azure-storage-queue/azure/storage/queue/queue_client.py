@@ -16,7 +16,7 @@ except ImportError:
 
 import six
 
-from ._shared.shared_access_signature import QueueSharedAccessSignature
+from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.utils import (
     StorageAccountHostsMixin,
     add_metadata_headers,
@@ -224,7 +224,7 @@ class QueueClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = QueueSharedAccessSignature(
+        sas = SharedAccessSignature(
             self.credential.account_name, self.credential.account_key)
         return sas.generate_queue(
             self.queue_name,

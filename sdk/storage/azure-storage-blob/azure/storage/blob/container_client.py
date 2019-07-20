@@ -18,7 +18,7 @@ except ImportError:
 
 import six
 
-from ._shared.shared_access_signature import BlobSharedAccessSignature
+from ._shared.shared_access_signature import ResourceSharedAccessSignature
 from ._shared.utils import (
     StorageAccountHostsMixin,
     process_storage_error,
@@ -263,7 +263,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = ResourceSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_container(
             self.container_name,
             permission=permission,

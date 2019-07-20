@@ -15,7 +15,7 @@ except ImportError:
 
 import six
 
-from ._shared.shared_access_signature import FileSharedAccessSignature
+from ._shared.shared_access_signature import SharedAccessSignature
 from .directory_client import DirectoryClient
 from .file_client import FileClient
 from ._generated import AzureFileStorage
@@ -241,7 +241,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_share(
             self.share_name,
             permission,
