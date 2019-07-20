@@ -3,8 +3,22 @@
 Release History
 ===============
 
-6.0.0 (2019-XX-XX)
+6.0.0 (2019-07-20)
 ++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachine has a new parameter host
+- Model VirtualMachineUpdate has a new parameter host
+- Model VirtualMachineInstanceView has a new parameter hyper_vgeneration
+- Added operation group GalleryApplicationVersionsOperations
+- Added operation group GalleryApplicationsOperations
+- Added operation group DedicatedHostsOperations
+- Added operation group DedicatedHostGroupsOperations
+
+**Breaking changes**
+
+- Model GalleryArtifactPublishingProfileBase has a new signature
 
 **General Breaking changes**
 
