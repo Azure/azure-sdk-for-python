@@ -106,7 +106,7 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
         # Create a SAS token to use for authentication of a client
-        sas_token = await queue_service.generate_shared_access_signature(
+        sas_token = queue_service.generate_shared_access_signature(
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)

@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 import asyncio
 
 from azure.core.exceptions import HttpResponseError
@@ -246,6 +247,7 @@ class QueueServicePropertiesTest(QueueTestCase):
         self.assertRaises(HttpResponseError,
                           props, None, None, None, cors)
     
+    @pytest.mark.skip
     def test_too_many_cors_rules(self):
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -263,6 +265,7 @@ class QueueServicePropertiesTest(QueueTestCase):
                           props,
                           None, None, minute_metrics)
 
+    @pytest.mark.skip
     def test_retention_too_long(self):
         if TestMode.need_recording_file(self.test_mode):
             return

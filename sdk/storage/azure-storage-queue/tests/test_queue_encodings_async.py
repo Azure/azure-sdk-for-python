@@ -83,7 +83,9 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         await queue.enqueue_message(message)
 
         # Asserts
-        dequeued = await next(queue.receive_messages())
+        dequeued = None
+        async for m in queue.receive_messages():
+            dequeued = m
         self.assertEqual(message, dequeued.content)
 
     # --------------------------------------------------------------------------

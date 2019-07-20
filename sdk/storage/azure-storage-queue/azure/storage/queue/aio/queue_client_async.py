@@ -375,7 +375,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
+    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Removes one or more messages from the front of the queue.
 
@@ -420,7 +420,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             self.key_resolver_function)
         try:
             command = functools.partial(
-                await self._client.messages.dequeue,
+                self._client.messages.dequeue,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 cls=self._config.message_decode_policy,

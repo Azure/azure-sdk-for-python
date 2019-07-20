@@ -97,17 +97,18 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         except ResourceExistsError:
             pass
         return queue
-
     # --------------------------------------------------------------------------
 
     async def _test_get_messages_encrypted_kek(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'encrypted_message_2')
 
         # Act
-        li = await next(queue.receive_messages())
+        li = None
+        async for m in queue.receive_messages():
+            li = m
 
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
@@ -121,7 +122,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
     async def _test_get_messages_encrypted_resolver(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'encrypted_message_2')
         key_resolver = KeyResolver()
         key_resolver.put_key(self.qsc.key_encryption_key)
@@ -129,7 +130,9 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         queue.key_encryption_key = None  # Ensure that the resolver is used
 
         # Act
-        li = await next(queue.receive_messages())
+        li = None
+        async for m in queue.receive_messages():
+            li = m
 
         # Assert
         self.assertEqual(li.content, u'encrypted_message_2')
@@ -143,7 +146,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
     async def _test_peek_messages_encrypted_kek(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'encrypted_message_3')
 
         # Act
@@ -161,7 +164,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
     async def _test_peek_messages_encrypted_resolver(self):
         # Arrange
         self.qsc.key_encryption_key = KeyWrapper('key1')
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'encrypted_message_4')
         key_resolver = KeyResolver()
         key_resolver.put_key(self.qsc.key_encryption_key)
@@ -189,7 +192,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
             # Arrange
         self.qsc.key_encryption_key = RSAKeyWrapper('key2')
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'encrypted_message_3')
 
         # Act
@@ -209,17 +212,21 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         await queue.enqueue_message(u'Update Me')
 
-        messages = await queue.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
         list_result1.content = u'Updated'
 
         # Act
         message = await queue.update_message(list_result1)
-        list_result2 = next(messages)
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Assert
         self.assertEqual(u'Updated', list_result2.content)
@@ -232,22 +239,26 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_update_encrypted_binary_message(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         queue._config.message_encode_policy = BinaryBase64EncodePolicy()
         queue._config.message_decode_policy = BinaryBase64DecodePolicy()
 
         binary_message = self.get_random_bytes(100)
         await queue.enqueue_message(binary_message)
-        messages = await queue.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
 
         # Act
         binary_message = self.get_random_bytes(100)
         list_result1.content = binary_message
         await queue.update_message(list_result1)
 
-        list_result2 = next(messages)
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Assert
         self.assertEqual(binary_message, list_result2.content)
@@ -263,22 +274,24 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         queue._config.message_encode_policy = NoEncodePolicy()
         queue._config.message_decode_policy = NoDecodePolicy()
 
         raw_text = u'Update Me'
         await queue.enqueue_message(raw_text)
-        messages = await queue.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
 
         # Act
         raw_text = u'Updated'
         list_result1.content = raw_text
-        await queue.update_message(list_result1)
-
-        list_result2 = next(messages)
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Assert
         self.assertEqual(raw_text, list_result2.content)
@@ -294,7 +307,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         queue._config.message_encode_policy = NoEncodePolicy()
         queue._config.message_decode_policy = NoDecodePolicy()
@@ -302,8 +315,10 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         message_dict = {'val1': 1, 'val2': '2'}
         json_text = dumps(message_dict)
         await queue.enqueue_message(json_text)
-        messages = await queue.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
 
         # Act
         message_dict['val1'] = 0
@@ -312,7 +327,9 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
         list_result1.content = json_text
         await queue.update_message(list_result1)
 
-        list_result2 = next(messages)
+        async for m in queue.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Assert
         self.assertEqual(message_dict, loads(list_result2.content))
@@ -325,7 +342,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_invalid_value_kek_wrap(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.get_kid = None
 
@@ -352,7 +369,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_missing_attribute_kek_wrap(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
 
         valid_key = KeyWrapper('key1')
 
@@ -389,7 +406,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_invalid_value_kek_unwrap(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         await queue.enqueue_message(u'message')
 
@@ -410,7 +427,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_missing_attribute_kek_unrwap(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         await queue.enqueue_message(u'message')
 
@@ -440,7 +457,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_validate_encryption(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
         await queue.enqueue_message(u'message')
@@ -503,7 +520,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_put_with_strict_mode(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
         queue.require_encryption = True
@@ -525,14 +542,16 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_get_with_strict_mode(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.enqueue_message(u'message')
 
         queue.require_encryption = True
         queue.key_encryption_key = KeyWrapper('key1')
         with self.assertRaises(ValueError) as e:
-            await next(queue.receive_messages())
-
+            messages = []
+            async for m in queue.receive_messages():
+                messages.append(m)
+            _ = messages[0]
         self.assertEqual(str(e.exception), 'Message was not encrypted.')
     
     def test_get_with_strict_mode(self):
@@ -543,7 +562,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_encryption_add_encrypted_64k_message(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         message = u'a' * 1024 * 64
 
         # Act
@@ -562,7 +581,7 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
     async def _test_encryption_nonmatching_kid(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
         queue.key_encryption_key = KeyWrapper('key1')
         await queue.enqueue_message(u'message')
 
@@ -571,7 +590,9 @@ class StorageQueueEncryptionTestAsync(QueueTestCase):
 
         # Assert
         with self.assertRaises(HttpResponseError) as e:
-            await next(queue.receive_messages())
+            messages = []
+            async for m in queue.receive_messages():
+                messages.append(m)
 
         self.assertEqual(str(e.exception), "Decryption failed.")
 

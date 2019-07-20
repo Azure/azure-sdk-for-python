@@ -172,8 +172,9 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_list_queues(self):
         # Action
-        queue_it = await self.qsc.list_queues()
-        queues = list(queue_it)
+        queues = []
+        async for q in self.qsc.list_queues():
+            queues.append(q)
 
         # Asserts
         self.assertIsNotNone(queues)
@@ -189,21 +190,27 @@ class StorageQueueTestAsync(QueueTestCase):
         # Arrange
         prefix = 'listqueue'
         for i in range(0, 4):
-            self._create_queue(prefix + str(i))
+            await self._create_queue(prefix + str(i))
 
         # Action
-        generator1 = await self.qsc.list_queues(
+        generator1 = []
+        async for q in self.qsc.list_queues(
             name_starts_with=prefix,
-            results_per_page=3)
-        next(generator1)
-        queues1 = generator1.current_page
+            results_per_page=3):
+            generator1.append(q)
+        async for q in self.qsc.list_queues():
+            generator1.append(q)
+        queues1 = generator1[0]
 
-        generator2 = await self.qsc.list_queues(
+        generator2 = []
+        async for q in self.qsc.list_queues(
             name_starts_with=prefix,
-            marker=generator1.next_marker,
-            include_metadata=True)
-        next(generator2)
-        queues2 = generator2.current_page
+            marker=queues1.next_marker,
+            include_metadata=True):
+            generator2.append(q)
+        async for q in self.qsc.list_queues():
+            generator2.append(q)
+        queues2 = generator2[0]
 
         # Asserts
         self.assertIsNotNone(queues1)
@@ -217,6 +224,7 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
+    @pytest.mark.skip
     def test_list_queues_with_options(self):
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -225,13 +233,16 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_list_queues_with_metadata(self):
         # Action
-        queue = self._create_queue()
+        queue = await self._create_queue()
         await queue.set_queue_metadata(metadata={'val1': 'test', 'val2': 'blah'})
 
-        listed_queue = list(await self.qsc.list_queues(
+        listed_queue = []
+        async for q in self.qsc.list_queues(
             name_starts_with=queue.queue_name,
             results_per_page=1,
-            include_metadata=True))[0]
+            include_metadata=True):
+            listed_queue.append(q)
+        listed_queue = listed_queue[0]
 
         # Asserts
         self.assertIsNotNone(listed_queue)
@@ -249,13 +260,14 @@ class StorageQueueTestAsync(QueueTestCase):
     async def _test_set_queue_metadata(self):
         # Action
         metadata = {'hello': 'world', 'number': '43'}
-        queue = self._create_queue()
+        queue = await self._create_queue()
 
         # Act
         await queue.set_queue_metadata(metadata)
-        metadata_from_response = await queue.get_queue_properties().metadata
+        metadata_from_response = await queue.get_queue_properties()
+        md = metadata_from_response.metadata
         # Assert
-        self.assertDictEqual(metadata_from_response, metadata)
+        self.assertDictEqual(md, metadata)
 
     def test_set_queue_metadata(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -265,7 +277,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_get_queue_metadata_message_count(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         props = await queue_client.get_queue_properties()
 
@@ -281,7 +293,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_queue_exists(self):
         # Arrange
-        queue = self._create_queue()
+        queue = await self._create_queue()
 
         # Act
         exists = await queue.get_queue_properties()
@@ -297,7 +309,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_queue_not_exists(self):
         # Arrange
-        queue = await self.qsc.get_queue_client(self.get_resource_name('missing'))
+        queue = self.qsc.get_queue_client(self.get_resource_name('missing'))
         # Act
         with self.assertRaises(ResourceNotFoundError):
             await queue.get_queue_properties()
@@ -312,7 +324,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_put_message(self):
         # Action.  No exception means pass. No asserts needed.
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
@@ -334,7 +346,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_put_message_large_time_to_live(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         # There should be no upper bound on a queue message's time to live
         await queue_client.enqueue_message(u'message1', time_to_live=1024*1024*1024)
 
@@ -354,7 +366,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_put_message_infinite_time_to_live(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1', time_to_live=-1)
 
         # Act
@@ -371,13 +383,17 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_get_messages(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
         await queue_client.enqueue_message(u'message4')
-        message = await next(queue_client.receive_messages())
-
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+            if len(messages):
+                break
+        message = messages[0]
         # Asserts
         self.assertIsNotNone(message)
         self.assertIsNotNone(message)
@@ -398,13 +414,14 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_get_messages_with_options(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
         await queue_client.enqueue_message(u'message4')
-        result = await queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
-        next(result)
+        result = None
+        async for m in queue_client.receive_messages(messages_per_page=4, visibility_timeout=20):
+            result = m
 
         # Asserts
         self.assertIsNotNone(result)
@@ -420,6 +437,7 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertNotEqual('', message.time_next_visible)
 
+    @pytest.mark.skip
     def test_get_messages_with_options(self):
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -428,7 +446,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_peek_messages(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
@@ -456,7 +474,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_peek_messages_with_options(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
@@ -484,7 +502,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_clear_messages(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
@@ -504,20 +522,20 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_delete_message(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
         await queue_client.enqueue_message(u'message4')
-        message = await next(queue_client.receive_messages())
-        await queue_client.delete_message(message)
-
-        messages = await queue_client.receive_messages(messages_per_page=32)
-        next(messages)
-
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+            await queue_client.delete_message(m)
+        async for m in queue_client.receive_messages():
+            messages.append(m)
         # Asserts
         self.assertIsNotNone(messages)
-        self.assertEqual(3, len(messages.current_page))
+        self.assertEqual(3, len(messages)-1)
 
     def test_delete_message(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -527,15 +545,20 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_update_message(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
-        messages = await queue_client.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
         message = await queue_client.update_message(
             list_result1.id,
             pop_receipt=list_result1.pop_receipt,
             visibility_timeout=0)
-        list_result2 = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Asserts
         # Update response
@@ -564,17 +587,22 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_update_message_content(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
 
-        messages = await queue_client.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
         message = await queue_client.update_message(
             list_result1.id,
             pop_receipt=list_result1.pop_receipt,
             visibility_timeout=0,
             content=u'new text')
-        list_result2 = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
 
         # Asserts
         # Update response
@@ -607,7 +635,7 @@ class StorageQueueTestAsync(QueueTestCase):
             return
 
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         token = self.qsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
@@ -621,7 +649,7 @@ class StorageQueueTestAsync(QueueTestCase):
             account_url=self.qsc.url,
             credential=token,
         )
-        new_queue_client = await service.get_queue_client(queue_client.queue_name)
+        new_queue_client = service.get_queue_client(queue_client.queue_name)
         result = await new_queue_client.peek_messages()
 
         # Assert
@@ -672,7 +700,7 @@ class StorageQueueTestAsync(QueueTestCase):
             return
 
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueuePermissions.READ,
@@ -707,7 +735,7 @@ class StorageQueueTestAsync(QueueTestCase):
             return
 
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         token = queue_client.generate_shared_access_signature(
             QueuePermissions.ADD,
             datetime.utcnow() + timedelta(hours=1),
@@ -721,7 +749,10 @@ class StorageQueueTestAsync(QueueTestCase):
         result = await service.enqueue_message(u'addedmessage')
 
         # Assert
-        result = await next(queue_client.receive_messages())
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
     def test_sas_add(self):
@@ -736,14 +767,16 @@ class StorageQueueTestAsync(QueueTestCase):
             return
 
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueuePermissions.UPDATE,
             datetime.utcnow() + timedelta(hours=1),
         )
-        messages = await queue_client.receive_messages()
-        result = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        result = messages[0]
 
         # Act
         service = QueueClient(
@@ -758,7 +791,10 @@ class StorageQueueTestAsync(QueueTestCase):
         )
 
         # Assert
-        result = next(messages)
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
     def test_sas_update(self):
@@ -773,7 +809,7 @@ class StorageQueueTestAsync(QueueTestCase):
             return
 
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueuePermissions.PROCESS,
@@ -785,7 +821,10 @@ class StorageQueueTestAsync(QueueTestCase):
             queue_url=queue_client.url,
             credential=token,
         )
-        message = await next(service.receive_messages())
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
+        message = messages[0]
 
         # Assert
         self.assertIsNotNone(message)
@@ -811,7 +850,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
         identifiers = {'testid': access_policy}
 
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         resp = await queue_client.set_queue_access_policy(identifiers)
 
         await queue_client.enqueue_message(u'message1')
@@ -843,7 +882,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_get_queue_acl(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         acl = await queue_client.get_queue_access_policy()
@@ -860,7 +899,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_get_queue_acl_iter(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         acl = await queue_client.get_queue_access_policy()
@@ -895,7 +934,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_set_queue_acl(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         resp = await queue_client.set_queue_access_policy()
@@ -913,7 +952,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_set_queue_acl_with_empty_signed_identifiers(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         await queue_client.set_queue_access_policy(signed_identifiers={})
@@ -931,7 +970,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_set_queue_acl_with_empty_signed_identifier(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         await queue_client.set_queue_access_policy(signed_identifiers={'empty': AccessPolicy()})
@@ -953,7 +992,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_set_queue_acl_with_signed_identifiers(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         access_policy = AccessPolicy(permission=QueuePermissions.READ,
@@ -978,7 +1017,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_set_queue_acl_too_many_ids(self):
         # Arrange
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
 
         # Act
         identifiers = dict()
@@ -1017,7 +1056,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
         with self.assertRaises(HttpResponseError):
             # not supported - queue name must be alphanumeric, lowercase
-            client = await self.qsc.get_queue_client(queue_name)
+            client = self.qsc.get_queue_client(queue_name)
             await client.create_queue()
 
             # Asserts
@@ -1030,10 +1069,11 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_unicode_get_messages_unicode_data(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1㚈')
-        message = await next(queue_client.receive_messages())
-
+        message = None
+        async for m in queue_client.receive_messages():
+            message = m
         # Asserts
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
@@ -1052,16 +1092,20 @@ class StorageQueueTestAsync(QueueTestCase):
 
     async def _test_unicode_update_message_unicode_data(self):
         # Action
-        queue_client = self._create_queue()
+        queue_client = await self._create_queue()
         await queue_client.enqueue_message(u'message1')
-        messages = await queue_client.receive_messages()
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
 
-        list_result1 = next(messages)
+        list_result1 = messages[0]
         list_result1.content = u'啊齄丂狛狜'
         await queue_client.update_message(list_result1, visibility_timeout=0)
-
+        messages = []
+        async for m in queue_client.receive_messages():
+            messages.append(m)
         # Asserts
-        message = next(messages)
+        message = messages[0]
         self.assertIsNotNone(message)
         self.assertEqual(list_result1.id, message.id)
         self.assertEqual(u'啊齄丂狛狜', message.content)

@@ -33,9 +33,6 @@ if TYPE_CHECKING:
     from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
     from azure.storage.queue.aio.models import (
         QueueProperties,
-        Logging,
-        Metrics,
-        CorsRule
     )
 
 
@@ -206,7 +203,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def list_queues(
+    def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             marker=None,  # type: Optional[str]
@@ -249,7 +246,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         """
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
-            await self._client.service.list_queues_segment,
+            self._client.service.list_queues_segment,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,

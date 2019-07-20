@@ -34,7 +34,7 @@ class MessagesPaged(Paged):
         call.
     """
     def __init__(self, command, results_per_page=None):
-        super(MessagesPaged, self).__init__(None, async_command=command)
+        super(MessagesPaged, self).__init__(None, None, async_command=command)
         self.results_per_page = results_per_page
 
     async def _async_advance_page(self):
@@ -50,7 +50,7 @@ class MessagesPaged(Paged):
         try:
             messages = await self._async_get_next(number_of_messages=self.results_per_page)
             if not messages:
-                raise StopIteration()
+                raise StopAsyncIteration()
         except StorageErrorException as error:
             process_storage_error(error)
         self.current_page = [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
@@ -78,7 +78,7 @@ class QueuePropertiesPaged(Paged):
     :param str marker: An opaque continuation token.
     """
     def __init__(self, command, prefix=None, results_per_page=None, marker=None):
-        super(QueuePropertiesPaged, self).__init__(None, async_command=command)
+        super(QueuePropertiesPaged, self).__init__(None, None, async_command=command)
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
@@ -96,7 +96,7 @@ class QueuePropertiesPaged(Paged):
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         try:
             self.location_mode, self._response = await self._async_get_next(

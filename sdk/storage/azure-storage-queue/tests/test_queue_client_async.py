@@ -323,7 +323,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
             queue = await service.create_queue(name, headers=headers)
 
             # Assert
-            metadata = await queue.get_queue_properties().metadata
+            metadata_cr = await queue.get_queue_properties()
+            metadata = metadata_cr.metadata
             self.assertEqual(metadata, {'hello': 'world'})
         finally:
             service.delete_queue(name)
@@ -338,12 +339,11 @@ class StorageQueueClientTestAsync(QueueTestCase):
         # Arrange
         service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
         name = self.get_resource_name('cont')
-        queue = await service.get_queue_client(name)
+        queue = service.get_queue_client(name)
 
         # Act
         def callback(response):
             response.http_response.status_code = 200
-            response.http_response.headers.clear()
 
         # Assert
         exists = await queue.get_queue_properties(raw_response_hook=callback)
