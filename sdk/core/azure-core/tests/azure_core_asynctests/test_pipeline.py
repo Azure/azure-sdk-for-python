@@ -48,6 +48,7 @@ async def test_sans_io_exception():
             raise ValueError("Broken")
 
         async def open(self):
+            # NameError will be raised because requests is not imported
             self.session = requests.Session()
 
         async def close(self):
