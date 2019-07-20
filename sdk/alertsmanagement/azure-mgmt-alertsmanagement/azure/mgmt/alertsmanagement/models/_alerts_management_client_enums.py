@@ -57,7 +57,6 @@ class MonitorService(str, Enum):
     smart_detector = "SmartDetector"
     vm_insights = "VM Insights"
     zabbix = "Zabbix"
-    resource_health = "Resource Health"
 
 
 class AlertModificationEvent(str, Enum):
@@ -80,6 +79,35 @@ class State(str, Enum):
     new = "New"
     acknowledged = "Acknowledged"
     closed = "Closed"
+
+
+class ScopeType(str, Enum):
+
+    resource_group = "ResourceGroup"
+    resource = "Resource"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+    contains = "Contains"
+    does_not_contain = "DoesNotContain"
+
+
+class SuppressionType(str, Enum):
+
+    always = "Always"
+    once = "Once"
+    daily = "Daily"
+    weekly = "Weekly"
+    monthly = "Monthly"
+
+
+class ActionRuleStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class AlertRuleState(str, Enum):

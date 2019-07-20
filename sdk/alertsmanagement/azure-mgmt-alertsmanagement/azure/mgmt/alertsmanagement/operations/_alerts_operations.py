@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -18,11 +19,13 @@ from .. import models
 class AlertsOperations(object):
     """AlertsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2019-03-01".
+    :ivar api_version: client API version. Constant value: "2019-05-05-preview".
     """
 
     models = models
@@ -32,9 +35,62 @@ class AlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-05-05-preview"
 
         self.config = config
+
+    def meta_data(
+            self, custom_headers=None, raw=False, **operation_config):
+        """List alerts meta data information based on value of identifier
+        parameter.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AlertsMetaData or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.alertsmanagement.models.AlertsMetaData or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.meta_data.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['identifier'] = self._serialize.query("self.config.identifier", self.config.identifier, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AlertsMetaData', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    meta_data.metadata = {'url': '/providers/Microsoft.AlertsManagement/alertsMetaData'}
 
     def get_all(
             self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, select=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
@@ -57,8 +113,7 @@ class AlertsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
-         'Resource Health'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either
@@ -129,13 +184,12 @@ class AlertsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.get_all.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True)
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -193,6 +247,11 @@ class AlertsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -201,28 +260,19 @@ class AlertsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AlertPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AlertPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AlertPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    get_all.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts'}
+    get_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts'}
 
     def get_by_id(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
         """Get a specific alert.
 
-        Get information related to a specific alert. If scope is a deleted
-        resource then please use scope as parent resource of the delete
-        resource. For example if my alert id is
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
-        and 'vm1' is deleted then if you want to get alert by id then use
-        parent resource of scope. So in this example get alert by id call will
-        look like this:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
+        Get information related to a specific alert.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -240,7 +290,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -267,7 +317,6 @@ class AlertsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Alert', response)
 
@@ -276,18 +325,11 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_id.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}'}
+    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}'}
 
     def change_state(
             self, alert_id, new_state, custom_headers=None, raw=False, **operation_config):
-        """Change the state of an alert. If scope is a deleted resource then
-        please use scope as parent resource of the delete resource. For example
-        if my alert id is
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
-        and 'vm1' is deleted then if you want to change state of this
-        particular alert then use parent resource of scope. So in this example
-        change state call will look like this:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
+        """Change the state of an alert.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -308,7 +350,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.change_state.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -336,7 +378,6 @@ class AlertsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Alert', response)
 
@@ -345,20 +386,13 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    change_state.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}/changestate'}
+    change_state.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}/changestate'}
 
     def get_history(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
         """Get the history of an alert, which captures any monitor condition
-        changes (Fired/Resolved), alert state changes (New/Acknowledged/Closed)
-        and applied action rules for that particular alert. If scope is a
-        deleted resource then please use scope as parent resource of the delete
-        resource. For example if my alert id is
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
-        and 'vm1' is deleted then if you want to get history of this particular
-        alert then use parent resource of scope. So in this example get history
-        call will look like this:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'.
+        changes (Fired/Resolved) and alert state changes
+        (New/Acknowledged/Closed).
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -376,7 +410,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_history.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -403,7 +437,6 @@ class AlertsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AlertModification', response)
 
@@ -412,7 +445,7 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_history.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'}
+    get_history.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'}
 
     def get_summary(
             self, groupby, include_smart_groups_count=None, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
@@ -421,7 +454,8 @@ class AlertsOperations(object):
         severity).
 
         :param groupby: This parameter allows the result set to be grouped by
-         input fields. For example, groupby=severity,alertstate. Possible
+         input fields (Maximum 2 comma separated fields supported). For
+         example, groupby=severity or groupby=severity,alertstate. Possible
          values include: 'severity', 'alertState', 'monitorCondition',
          'monitorService', 'signalType', 'alertRule'
         :type groupby: str or
@@ -443,8 +477,7 @@ class AlertsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
-         'Resource Health'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either
@@ -487,7 +520,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_summary.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True)
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -536,7 +569,6 @@ class AlertsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AlertsSummary', response)
 
@@ -545,4 +577,4 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_summary.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alertsSummary'}
+    get_summary.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alertsSummary'}

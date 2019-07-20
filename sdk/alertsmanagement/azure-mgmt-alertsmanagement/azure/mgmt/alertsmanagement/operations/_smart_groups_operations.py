@@ -18,11 +18,13 @@ from .. import models
 class SmartGroupsOperations(object):
     """SmartGroupsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2019-03-01".
+    :ivar api_version: client API version. Constant value: "2019-05-05-preview".
     """
 
     models = models
@@ -32,7 +34,7 @@ class SmartGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-05-05-preview"
 
         self.config = config
 
@@ -56,8 +58,7 @@ class SmartGroupsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
-         'Resource Health'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either
@@ -97,70 +98,80 @@ class SmartGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SmartGroupsList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.alertsmanagement.models.SmartGroupsList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of SmartGroup
+        :rtype:
+         ~azure.mgmt.alertsmanagement.models.SmartGroupPaged[~azure.mgmt.alertsmanagement.models.SmartGroup]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.get_all.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.get_all.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        if target_resource is not None:
-            query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
-        if target_resource_group is not None:
-            query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
-        if target_resource_type is not None:
-            query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
-        if monitor_service is not None:
-            query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
-        if monitor_condition is not None:
-            query_parameters['monitorCondition'] = self._serialize.query("monitor_condition", monitor_condition, 'str')
-        if severity is not None:
-            query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
-        if smart_group_state is not None:
-            query_parameters['smartGroupState'] = self._serialize.query("smart_group_state", smart_group_state, 'str')
-        if time_range is not None:
-            query_parameters['timeRange'] = self._serialize.query("time_range", time_range, 'str')
-        if page_count is not None:
-            query_parameters['pageCount'] = self._serialize.query("page_count", page_count, 'int')
-        if sort_by is not None:
-            query_parameters['sortBy'] = self._serialize.query("sort_by", sort_by, 'str')
-        if sort_order is not None:
-            query_parameters['sortOrder'] = self._serialize.query("sort_order", sort_order, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if target_resource is not None:
+                    query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
+                if target_resource_group is not None:
+                    query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
+                if target_resource_type is not None:
+                    query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
+                if monitor_service is not None:
+                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
+                if monitor_condition is not None:
+                    query_parameters['monitorCondition'] = self._serialize.query("monitor_condition", monitor_condition, 'str')
+                if severity is not None:
+                    query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
+                if smart_group_state is not None:
+                    query_parameters['smartGroupState'] = self._serialize.query("smart_group_state", smart_group_state, 'str')
+                if time_range is not None:
+                    query_parameters['timeRange'] = self._serialize.query("time_range", time_range, 'str')
+                if page_count is not None:
+                    query_parameters['pageCount'] = self._serialize.query("page_count", page_count, 'int')
+                if sort_by is not None:
+                    query_parameters['sortBy'] = self._serialize.query("sort_by", sort_by, 'str')
+                if sort_order is not None:
+                    query_parameters['sortOrder'] = self._serialize.query("sort_order", sort_order, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SmartGroupsList', response)
+            response = self._client.send(request, stream=False, **operation_config)
 
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.SmartGroupPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     get_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/smartGroups'}
@@ -213,9 +224,8 @@ class SmartGroupsOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
         header_dict = {}
-
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SmartGroup', response)
             header_dict = {
@@ -280,9 +290,8 @@ class SmartGroupsOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
         header_dict = {}
-
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SmartGroup', response)
             header_dict = {
@@ -345,7 +354,6 @@ class SmartGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SmartGroupModification', response)
 
