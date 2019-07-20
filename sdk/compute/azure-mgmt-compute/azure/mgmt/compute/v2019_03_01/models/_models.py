@@ -3633,6 +3633,24 @@ class RunCommandResult(Model):
         self.value = kwargs.get('value', None)
 
 
+class ScheduledEventsProfile(Model):
+    """ScheduledEventsProfile.
+
+    :param terminate_notification_profile: Specifies Terminate Scheduled Event
+     related configurations.
+    :type terminate_notification_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.TerminateNotificationProfile
+    """
+
+    _attribute_map = {
+        'terminate_notification_profile': {'key': 'terminateNotificationProfile', 'type': 'TerminateNotificationProfile'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ScheduledEventsProfile, self).__init__(**kwargs)
+        self.terminate_notification_profile = kwargs.get('terminate_notification_profile', None)
+
+
 class Sku(Model):
     """Describes a virtual machine scale set sku.
 
@@ -3794,6 +3812,31 @@ class TargetRegion(Model):
         self.name = kwargs.get('name', None)
         self.regional_replica_count = kwargs.get('regional_replica_count', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
+
+
+class TerminateNotificationProfile(Model):
+    """TerminateNotificationProfile.
+
+    :param not_before_timeout: Configurable length of time a Virtual Machine
+     being deleted will have to potentially approve the Terminate Scheduled
+     Event before the event is auto approved (timed out). The configuration
+     must be specified in ISO 8601 format, the default value is 5 minutes
+     (PT5M)
+    :type not_before_timeout: str
+    :param enable: Specifies whether the Terminate Scheduled event is enabled
+     or disabled.
+    :type enable: bool
+    """
+
+    _attribute_map = {
+        'not_before_timeout': {'key': 'notBeforeTimeout', 'type': 'str'},
+        'enable': {'key': 'enable', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TerminateNotificationProfile, self).__init__(**kwargs)
+        self.not_before_timeout = kwargs.get('not_before_timeout', None)
+        self.enable = kwargs.get('enable', None)
 
 
 class ThrottledRequestsInput(LogAnalyticsInputBase):
@@ -6736,6 +6779,10 @@ class VirtualMachineScaleSetVMProfile(Model):
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param scheduled_events_profile: Specifies Scheduled Event related
+     configurations.
+    :type scheduled_events_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -6747,6 +6794,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
         'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
+        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -6759,6 +6807,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.license_type = kwargs.get('license_type', None)
         self.priority = kwargs.get('priority', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
+        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(Model):
