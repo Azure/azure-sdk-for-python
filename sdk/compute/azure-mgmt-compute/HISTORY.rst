@@ -3,6 +3,35 @@
 Release History
 ===============
 
+6.0.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachine has a new parameter host
+- Model VirtualMachineUpdate has a new parameter host
+- Model VirtualMachineInstanceView has a new parameter hyper_vgeneration
+- Added operation group GalleryApplicationVersionsOperations
+- Added operation group GalleryApplicationsOperations
+- Added operation group DedicatedHostsOperations
+- Added operation group DedicatedHostGroupsOperations
+
+**Breaking changes**
+
+- Model GalleryArtifactPublishingProfileBase has a new signature
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ComputeManagementClient cannot be imported from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` anymore (import from `azure.mgmt.compute.v20xx_yy_zz` works like before)
+- ComputeManagementClientConfiguration import has been moved from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` to `azure.mgmt.compute.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.compute.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.compute.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 5.0.0 (2019-04-26)
 ++++++++++++++++++
 
