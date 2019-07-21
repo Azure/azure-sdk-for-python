@@ -10,15 +10,8 @@ from typing import List # pylint: disable=unused-import
 from azure.core.paging import Paged
 from .._shared.response_handlers import (
     process_storage_error,
-    return_context_and_deserialized,
-    return_headers_and_deserialized)
-from .._shared.models import DictMixin
+    return_context_and_deserialized)
 from .._generated.models import StorageErrorException
-from .._generated.models import AccessPolicy as GenAccessPolicy
-from .._generated.models import Logging as GeneratedLogging
-from .._generated.models import Metrics as GeneratedMetrics
-from .._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from .._generated.models import CorsRule as GeneratedCorsRule
 from ..models import QueueMessage, QueueProperties
 
 

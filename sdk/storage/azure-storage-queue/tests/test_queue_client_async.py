@@ -344,6 +344,7 @@ class StorageQueueClientTestAsync(QueueTestCase):
         # Act
         def callback(response):
             response.http_response.status_code = 200
+            
 
         # Assert
         exists = await queue.get_queue_properties(raw_response_hook=callback)

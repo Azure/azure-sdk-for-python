@@ -9,16 +9,11 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING)
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote, unquote # pylint: disable=unused-import
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
-import six
-
-from .._shared.policies_async import ExponentialRetry
-from ..queue_client import QueueClient as QueueClientBase
-from azure.storage.queue._shared.shared_access_signature import QueueSharedAccessSignature
 from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import (
@@ -26,8 +21,6 @@ from azure.storage.queue._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized)
 from azure.storage.queue._queue_utils import (
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
     deserialize_queue_properties,
     deserialize_queue_creation)
 from azure.storage.queue._generated.aio import AzureQueueStorage
@@ -36,6 +29,9 @@ from azure.storage.queue._generated.models import QueueMessage as GenQueueMessag
 
 from azure.storage.queue.models import QueueMessage, AccessPolicy
 from azure.storage.queue.aio.models import MessagesPaged
+from .._shared.policies_async import ExponentialRetry
+from ..queue_client import QueueClient as QueueClientBase
+
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -97,10 +93,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._loop = loop
 
-    async def create_queue(self, metadata=None, timeout=None, **kwargs):
+    async def create_queue(self, metadata=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
@@ -138,7 +134,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def delete_queue(self, timeout=None, **kwargs):
+    async def delete_queue(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes the specified queue and any messages it contains.
 
@@ -167,7 +163,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def get_queue_properties(self, timeout=None, **kwargs):
+    async def get_queue_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> QueueProperties
         """Returns all user-defined metadata for the specified queue.
 
@@ -196,7 +192,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         response.name = self.queue_name
         return response # type: ignore
 
-    async def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
+    async def set_queue_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Sets user-defined metadata on the specified queue.
 
@@ -228,7 +224,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def get_queue_access_policy(self, timeout=None, **kwargs):
+    async def get_queue_access_policy(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
@@ -247,7 +243,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
-    async def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
+    async def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
@@ -431,7 +427,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     async def update_message(self, message, visibility_timeout=None, pop_receipt=None, # type: ignore
-                       content=None, timeout=None, **kwargs):
+                             content=None, timeout=None, **kwargs):
         # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -578,7 +574,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def clear_messages(self, timeout=None, **kwargs):
+    async def clear_messages(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes all messages from the specified queue.
 
@@ -598,7 +594,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs):
+    async def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs): # type: ignore
         # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
         """Deletes the specified message.
 

@@ -9,16 +9,14 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING)
 try:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse # pylint: disable=unused-import
 except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.storage.queue._shared.policies_async import ExponentialRetry
 from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
-from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature
-from azure.storage.queue._shared.models import LocationMode, Services
+from azure.storage.queue._shared.models import LocationMode
 from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import process_storage_error
 from azure.storage.queue._generated.aio import AzureQueueStorage
 from azure.storage.queue._generated.models import StorageServiceProperties, StorageErrorException
@@ -32,8 +30,9 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
     from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
     from azure.storage.queue.aio.models import (
-        QueueProperties,
+        QueueProperties
     )
+    from azure.storage.queue.models import Logging, Metrics, CorsRule
 
 
 class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
@@ -88,7 +87,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(QueueServiceClient, self).__init__(
+        super(QueueServiceClient, self).__init__( # type: ignore
             account_url,
             credential=credential,
             loop=loop,
@@ -254,7 +253,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         return QueuePropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    async def create_queue(
+    async def create_queue( # type: ignore
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
@@ -288,7 +287,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
-    async def delete_queue(
+    async def delete_queue( # type: ignore
             self, queue,  # type: Union[QueueProperties, str]
             timeout=None,  # type: Optional[int]
             **kwargs
