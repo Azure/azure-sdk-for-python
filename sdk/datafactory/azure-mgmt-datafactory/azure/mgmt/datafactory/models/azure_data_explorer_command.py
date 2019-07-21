@@ -35,8 +35,9 @@ class AzureDataExplorerCommand(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param command: Required. A control command, according to the ADX command
-     syntax. Type: string (or Expression with resultType string).
+    :param command: Required. A control command, according to the Azure Data
+     Explorer command syntax. Type: string (or Expression with resultType
+     string).
     :type command: object
     """
 
