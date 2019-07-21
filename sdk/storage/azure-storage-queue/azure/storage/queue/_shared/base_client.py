@@ -156,7 +156,7 @@ class StorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: HttpTransport
+        config.transport = kwargs.get('transport')  # type: ignore
         if not config.transport:
             config.transport = RequestsTransport(config)
         policies = [

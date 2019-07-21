@@ -92,7 +92,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
         self._loop = loop
 
     async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
