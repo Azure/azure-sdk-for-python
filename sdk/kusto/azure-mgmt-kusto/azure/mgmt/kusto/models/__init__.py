@@ -30,6 +30,7 @@ try:
     from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
     from .database_check_name_request_py3 import DatabaseCheckNameRequest
+    from .data_connection_check_name_request_py3 import DataConnectionCheckNameRequest
     from .check_name_result_py3 import CheckNameResult
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -58,6 +59,7 @@ except (SyntaxError, ImportError):
     from .data_connection_validation_list_result import DataConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
     from .database_check_name_request import DatabaseCheckNameRequest
+    from .data_connection_check_name_request import DataConnectionCheckNameRequest
     from .check_name_result import CheckNameResult
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -80,6 +82,7 @@ from .kusto_management_client_enums import (
     DataFormat,
     DatabasePrincipalRole,
     DatabasePrincipalType,
+    Reason,
 )
 
 __all__ = [
@@ -103,6 +106,7 @@ __all__ = [
     'DataConnectionValidationListResult',
     'ClusterCheckNameRequest',
     'DatabaseCheckNameRequest',
+    'DataConnectionCheckNameRequest',
     'CheckNameResult',
     'OperationDisplay',
     'Operation',
@@ -124,4 +128,5 @@ __all__ = [
     'DataFormat',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
+    'Reason',
 ]

@@ -23,16 +23,21 @@ class CheckNameResult(Model):
     :param message: Message indicating an unavailable name due to a conflict,
      or a description of the naming rules that are violated.
     :type message: str
+    :param reason: Message providing the reason why the given name is invalid.
+     Possible values include: 'Invalid', 'AlreadyExists'
+    :type reason: str or ~azure.mgmt.kusto.models.Reason
     """
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, *, name_available: bool=None, name: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, *, name_available: bool=None, name: str=None, message: str=None, reason=None, **kwargs) -> None:
         super(CheckNameResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.name = name
         self.message = message
+        self.reason = reason
