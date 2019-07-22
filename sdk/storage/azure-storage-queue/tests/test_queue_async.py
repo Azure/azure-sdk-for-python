@@ -193,24 +193,16 @@ class StorageQueueTestAsync(QueueTestCase):
             await self._create_queue(prefix + str(i))
 
         # Action
-        generator1 = []
-        async for q in self.qsc.list_queues(
-            name_starts_with=prefix,
-            results_per_page=3):
-            generator1.append(q)
-        async for q in self.qsc.list_queues():
-            generator1.append(q)
-        queues1 = generator1[0]
+        generator1 =  self.qsc.list_queues(name_starts_with=prefix, results_per_page=3)
+        await generator1.__anext__()
+        queues1 = generator1.current_page
 
-        generator2 = []
-        async for q in self.qsc.list_queues(
+        generator2 = self.qsc.list_queues(
             name_starts_with=prefix,
-            marker=queues1.next_marker,
-            include_metadata=True):
-            generator2.append(q)
-        async for q in self.qsc.list_queues():
-            generator2.append(q)
-        queues2 = generator2[0]
+            marker=generator1.next_marker,
+            include_metadata=True)
+        await generator2.__anext__()
+        queues2 = generator2.current_page
 
         # Asserts
         self.assertIsNotNone(queues1)
@@ -224,8 +216,7 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
-    @pytest.mark.skip
-    def test_list_queues_with_options(self):
+    def test_list_queues_with_options_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
@@ -419,9 +410,8 @@ class StorageQueueTestAsync(QueueTestCase):
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
         await queue_client.enqueue_message(u'message4')
-        result = None
-        async for m in queue_client.receive_messages(messages_per_page=4, visibility_timeout=20):
-            result = m
+        result = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
+        await result.__anext__()
 
         # Asserts
         self.assertIsNotNone(result)
@@ -437,7 +427,6 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertNotEqual('', message.time_next_visible)
 
-    @pytest.mark.skip
     def test_get_messages_with_options(self):
         if TestMode.need_recording_file(self.test_mode):
             return

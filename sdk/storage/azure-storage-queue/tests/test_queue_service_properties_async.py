@@ -243,11 +243,9 @@ class QueueServicePropertiesTest(QueueTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        props = await self.qsc.set_service_properties()
-        self.assertRaises(HttpResponseError,
-                          props, None, None, None, cors)
+        with self.assertRaises(HttpResponseError):
+            await self.qsc.set_service_properties()
     
-    @pytest.mark.skip
     def test_too_many_cors_rules(self):
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -260,12 +258,9 @@ class QueueServicePropertiesTest(QueueTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
-        props = await self.qsc.set_service_properties()
-        self.assertRaises(HttpResponseError,
-                          props,
-                          None, None, minute_metrics)
+        with self.assertRaises(HttpResponseError):
+            await self.qsc.set_service_properties()
 
-    @pytest.mark.skip
     def test_retention_too_long(self):
         if TestMode.need_recording_file(self.test_mode):
             return
