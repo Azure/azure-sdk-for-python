@@ -13,6 +13,8 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.paging import ItemPaged
+
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
 from ._shared.utils import (
@@ -347,8 +349,10 @@ class QueueServiceClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return QueuePropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker,
+            page_iterator_class=QueuePropertiesPaged
+        )
 
     def create_queue(
             self, name,  # type: str
@@ -357,7 +361,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. 
+        """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
         Returns a client with which to interact with the newly created queue.

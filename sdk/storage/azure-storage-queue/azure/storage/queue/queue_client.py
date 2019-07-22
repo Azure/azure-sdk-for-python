@@ -16,6 +16,8 @@ except ImportError:
 
 import six
 
+from azure.core.paging import ItemPaged
+
 from ._shared.shared_access_signature import QueueSharedAccessSignature
 from ._shared.utils import (
     StorageAccountHostsMixin,
@@ -562,7 +564,7 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return MessagesPaged(command, results_per_page=messages_per_page)
+            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
         except StorageErrorException as error:
             process_storage_error(error)
 
