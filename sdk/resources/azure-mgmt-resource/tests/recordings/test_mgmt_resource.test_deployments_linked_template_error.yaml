@@ -4,33 +4,54 @@ interactions:
       "parametersLink": {"uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json"},
       "mode": "Incremental"}}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['330']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
-          resourcemanagementclient/2.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '330'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/3.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-05-10
   response:
-    body: {string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
-        deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''234909be-eb52-4824-be8d-2daa0135bedd''. See
-        inner errors for details. Please see https://aka.ms/arm-deploy for usage details.","details":[{"code":"InvalidDomainNameLabel","message":"The
-        domain name label GEN-UNIQUE is invalid. It must conform to the following
-        regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'}
+    body:
+      string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
+        deployment failed with error: ''The resource with id: ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Compute/virtualMachines/MyUbuntuVM''
+        failed validation with message: ''The requested size for resource ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Compute/virtualMachines/MyUbuntuVM''
+        is currently not available in location ''westus'' zones '''' for subscription
+        ''00000000-0000-0000-0000-000000000000''. Please try another size or deploy
+        to a different location or zones. See https://aka.ms/azureskunotavailable
+        for details.''.''."}}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['503']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 31 May 2019 16:14:28 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-failure-cause: [gateway]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 400, message: Bad Request}
+      cache-control:
+      - no-cache
+      content-length:
+      - '808'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 20 Jul 2019 13:01:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 400
+      message: Bad Request
 version: 1

@@ -121,7 +121,7 @@ class AuthnClient(AuthnClientBase):
         config = config or self.create_config(**kwargs)
         policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
         if not transport:
-            transport = RequestsTransport(configuration=config)
+            transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 

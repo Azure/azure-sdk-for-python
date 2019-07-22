@@ -76,7 +76,7 @@ class _TransportRunner(HTTPPolicy):
 
     Uses specified HTTP transport type to send request and returns response.
 
-    :param sender: The Http Transport type.
+    :param sender: The Http Transport instance.
     """
     def __init__(self, sender):
         # type: (HttpTransportType) -> None
@@ -104,7 +104,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     This is implemented as a context manager, that will activate the context
     of the HTTP sender. The transport is the last node in the pipeline.
 
-    :param transport: The Http Transport type
+    :param transport: The Http Transport instance
     :param list policies: List of configured policies.
 
     Example:

@@ -9,22 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .availability_sets_operations import AvailabilitySetsOperations
-from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
-from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
-from .virtual_machines_operations import VirtualMachinesOperations
-from .virtual_machine_images_operations import VirtualMachineImagesOperations
-from .usage_operations import UsageOperations
-from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
-from .images_operations import ImagesOperations
-from .resource_skus_operations import ResourceSkusOperations
-from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
-from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
-from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
-from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from .disks_operations import DisksOperations
-from .snapshots_operations import SnapshotsOperations
-from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
+from ._availability_sets_operations import AvailabilitySetsOperations
+from ._virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
+from ._virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
+from ._virtual_machine_images_operations import VirtualMachineImagesOperations
+from ._usage_operations import UsageOperations
+from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from ._images_operations import ImagesOperations
+from ._resource_skus_operations import ResourceSkusOperations
+from ._virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
+from ._virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
+from ._virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
+from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
+from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 
 __all__ = [
     'AvailabilitySetsOperations',

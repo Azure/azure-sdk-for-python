@@ -92,28 +92,21 @@ The following section provides several code snippets using the above created `ke
 * [Update an existing Key](#update-an-existing-key)
 * [Delete a Key](#delete-a-key)
 * [List Keys](#list-keys)
-* [Async create a Key](#async-create-a-key)
-* [Async list Keys](#async-list-keys)
+* [Asynchronously create a Key](#asynchronously-create-a-key)
+* [Asynchronously list Keys](#asynchronously-list-keys)
 
 ### Create a Key
-`create_key` creates a Key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
+`create_rsa_key` and `create_ec_key` create RSA and elliptic curve keys in the vault, respectively.
+If a key with the same name already exists, a new version of the key is created.
+
 ```python
-
-# Create a key
-key = key_client.create_key("key-name", "RSA-HSM")
-
-# Create an RSA key with size specification (optional)
+# Create an RSA key
 rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
-
-# Create an EC key with curve specification and using HSM
-ec_key = key_client.create_key("ec-key-name", hsm=True, curve="P-256")
-
-print(key.name)
-print(key.key_material.kty)
-
 print(rsa_key.name)
 print(rsa_key.key_material.kty)
 
+# Create an elliptic curve key
+ec_key = key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
 print(ec_key.name)
 print(ec_key.key_material.kty)
 ```
@@ -139,7 +132,6 @@ print(updated_key.name)
 print(updated_key.version)
 print(updated_key.updated)
 print(updated_key.tags)
-
 ```
 
 ### Delete a Key
@@ -166,30 +158,35 @@ The package supports async API on Python 3.5+ and is identical to synchronous AP
 
 The following examples provide code snippets for performing async operations in the Key Client library:
 
-### Async create a Key
-This example creates a key in the Key Vault with the specified optional arguments.
+### Asynchronously create a Key
+`create_rsa_key` and `create_ec_key` create RSA and elliptic curve keys in the vault, respectively.
+If a key with the same name already exists, a new version of the key is created.
+
 ```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
-# for async operations use DefaultAzureCredential
 credential = DefaultAzureCredential()
-# Create a new Key client using the default credential
 key_client = KeyClient(vault_url=vault_url, credential=credential)
 
-key = await key_client.set_key("key-name", "key-value", enabled=True)
+# Create an RSA key
+rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+print(rsa_key.name)
+print(rsa_key.key_material.kty)
 
-print(key.name)
-print(key.version)
-print(key.enabled)
+# Create an elliptic curve key
+ec_key = await key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+print(ec_key.name)
+print(ec_key.key_material.kty)
 ```
-### Async list keys
+
+### Asynchronously list keys
 This example lists all the keys in the specified Key Vault.
+
 ```python
 keys = key_client.list_keys()
 
 async for key in keys:
-    # the list doesn't include versions of the keys
     print(key.name)
 ```
 
