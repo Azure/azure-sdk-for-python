@@ -20,8 +20,8 @@ import six
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.encryption import generate_blob_encryption_data
+from ._shared.shared_access_signature import ResourceSharedAccessSignature
 from ._shared.upload_chunking import IterStreamer
 from ._shared.download_chunking import StorageStreamDownloader
 from ._shared.request_handlers import (
@@ -51,7 +51,6 @@ from .polling import CopyStatusPoller
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
@@ -295,12 +294,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = ResourceSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
             self.container_name,
             self.blob_name,
-            permission,
-            expiry,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
