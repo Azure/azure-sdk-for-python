@@ -338,57 +338,6 @@ class ApplicationGatewayAutoscaleConfiguration(Model):
         self.max_capacity = max_capacity
 
 
-class ApplicationGatewayAvailableRequestHeadersResult(Model):
-    """Response for ApplicationGatewayAvailableRequestHeaders API service call.
-
-    :param value: The list of supported request headers in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableRequestHeadersResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class ApplicationGatewayAvailableResponseHeadersResult(Model):
-    """Response for ApplicationGatewayAvailableResponeHeaders API service call.
-
-    :param value: The list of supported response header in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableResponseHeadersResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class ApplicationGatewayAvailableServerVariablesResult(Model):
-    """Response for ApplicationGatewayAvailableServerVariables API service call.
-
-    :param value: The list of supported server variables in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableServerVariablesResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class ApplicationGatewayAvailableSslOptions(Resource):
     """Response for ApplicationGatewayAvailableSslOptions API service call.
 

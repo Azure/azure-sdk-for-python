@@ -51,8 +51,8 @@ class PipelineClient(PipelineClientBase):
     **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
-
-    *transport* - The HTTP Transport type. If omitted, RequestsTransport is used for synchronous transport.
+    *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
+    *transport* - The HTTP Transport instance. If omitted, RequestsTransport is used for synchronous transport.
 
     Example:
         .. literalinclude:: ../examples/test_example_sync.py
@@ -71,10 +71,7 @@ class PipelineClient(PipelineClientBase):
         if kwargs.get('pipeline'):
             self._pipeline = kwargs['pipeline']
         else:
-            transport = kwargs.get('transport')
-            if not transport:
-                transport = RequestsTransport(config)
-            self._pipeline = self._build_pipeline(config, transport)
+            self._pipeline = self._build_pipeline(config, **kwargs)
 
     def __enter__(self):
         self._pipeline.__enter__()
@@ -86,17 +83,24 @@ class PipelineClient(PipelineClientBase):
     def close(self):
         self.__exit__()
 
-    def _build_pipeline(self, config, transport): # pylint: disable=no-self-use
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.authentication_policy,
-            ContentDecodePolicy(),
-            config.redirect_policy,
-            config.retry_policy,
-            config.custom_hook_policy,
-            config.logging_policy,
-        ]
+    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
+        transport = kwargs.get('transport')
+        policies = kwargs.get('policies')
+
+        if policies is None:  # [] is a valid policy list
+            policies = [
+                config.headers_policy,
+                config.user_agent_policy,
+                config.authentication_policy,
+                ContentDecodePolicy(),
+                config.redirect_policy,
+                config.retry_policy,
+                config.custom_hook_policy,
+                config.logging_policy,
+            ]
+
+        if not transport:
+            transport = RequestsTransport(**kwargs)
 
         return Pipeline(
             transport,

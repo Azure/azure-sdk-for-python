@@ -22,7 +22,7 @@ from azure.identity import (
     ManagedIdentityCredential,
     ChainedTokenCredential,
 )
-from azure.identity._internal import ImdsCredential
+from azure.identity._managed_identity import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
 
 from helpers import mock_response, Request, validating_transport

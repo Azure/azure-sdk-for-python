@@ -34,8 +34,6 @@ class Configuration(object):
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
 
-    :param connection: Provides the configuration parameters for the transport.
-    :type connection: ~azure.core.ConnectionConfiguration
     :param headers_policy: Provides parameters for custom or additional headers to be sent with the request.
     :param proxy_policy: Provides configuration parameters for proxy.
     :param redirect_policy: Provides configuration parameters for redirects.
@@ -46,8 +44,7 @@ class Configuration(object):
      User-Agent header.
     :param authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
-    :param transport: The Http Transport type. E.g. RequestsTransport, AsyncioRequestsTransport,
-     TrioRequestsTransport, AioHttpTransport.
+    :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     Example:
         .. literalinclude:: ../examples/test_example_config.py
@@ -57,10 +54,7 @@ class Configuration(object):
             :caption: Creates the service configuration and adds policies.
     """
 
-    def __init__(self, transport=None, **kwargs):
-        # Communication configuration - applied per transport.
-        self.connection = ConnectionConfiguration(**kwargs)
-
+    def __init__(self, **kwargs):
         # Headers (sent with every request)
         self.headers_policy = None
 
@@ -85,8 +79,8 @@ class Configuration(object):
         # Authentication configuration
         self.authentication_policy = None
 
-        # HTTP Transport
-        self.transport = transport
+        # Polling interval if no retry-after in polling calls results
+        self.polling_interval = kwargs.get("polling_interval", 30)
 
 
 class ConnectionConfiguration(object):
