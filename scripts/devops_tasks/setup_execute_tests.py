@@ -50,19 +50,20 @@ def collect_coverage_files(targeted_packages):
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
 
-    cov_cmd_array = ['coverage', 'combine']
-    cov_cmd_array.extend(coverage_files)
+    if coverage_files:
+        cov_cmd_array = ['coverage', 'combine']
+        cov_cmd_array.extend(coverage_files)
 
-    # merge them with coverage combine and copy to root
-    run_check_call(cov_cmd_array, os.path.join(root_dir, '_coverage/'))
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, os.path.join(root_dir, '_coverage/'))
 
-    source = os.path.join(root_coverage_dir, './.coverage')
-    dest = os.path.join(root_dir)
+        source = os.path.join(root_coverage_dir, './.coverage')
+        dest = os.path.join(root_dir)
 
-    print(source)
-    print(dest)
+        print(source)
+        print(dest)
 
-    shutil.move(source, root_dir)
+        shutil.move(source, root_dir)
 
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
