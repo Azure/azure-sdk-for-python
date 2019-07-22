@@ -24,13 +24,12 @@
 #
 #--------------------------------------------------------------------------
 
-import unittest
-import pytest
-
 from azure.core.paging import ItemPaged
 
+import pytest
 
-class TestPaging(unittest.TestCase):
+
+class TestPaging(object):
 
     def test_basic_paging(self):
 
@@ -49,14 +48,12 @@ class TestPaging(unittest.TestCase):
                 }
 
         def extract_data(response):
-            return response['nextLink'], response['value']
+            return response['nextLink'], iter(response['value'])
 
         pager = ItemPaged(get_next, extract_data)
         result_iterated = list(pager)
-        self.assertListEqual(
-            ['value1.0', 'value1.1', 'value2.0', 'value2.1'],
-            result_iterated
-        )
+
+        assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == result_iterated
 
     def test_by_page_paging(self):
 
@@ -75,7 +72,7 @@ class TestPaging(unittest.TestCase):
                 }
 
         def extract_data(response):
-            return response['nextLink'], response['value']
+            return response['nextLink'], iter(response['value'])
 
         pager = ItemPaged(get_next, extract_data).by_page()
         page1 = next(pager)
@@ -104,7 +101,7 @@ class TestPaging(unittest.TestCase):
                 }
 
         def extract_data(response):
-            return response['nextLink'], response['value']
+            return response['nextLink'], iter(response['value'])
 
         pager = ItemPaged(get_next, extract_data)
         page1 = next(pager)
@@ -117,18 +114,18 @@ class TestPaging(unittest.TestCase):
         page2 = next(pager)
         assert page2 == 'value2.1'
 
-        with self.assertRaises(StopIteration):
+        with pytest.raises(StopIteration):
             next(pager)
 
     def test_none_value(self):
-        def get_next(next_link=None):
+        def get_next(continuation_token=None):
             return {
                 'nextLink': None,
                 'value': None
             }
         def extract_data(response):
-            return response['nextLink'], response['value'] or []
+            return response['nextLink'], iter(response['value'] or [])
 
         pager = ItemPaged(get_next, extract_data)
         result_iterated = list(pager)
-        self.assertEqual(len(result_iterated), 0)
+        assert len(result_iterated) == 0

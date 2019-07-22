@@ -23,27 +23,22 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
+from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Tuple, TYPE_CHECKING  # pylint: disable=unused-import
+import logging
 
-from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Iterable, Tuple, TYPE_CHECKING  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .pipeline.transport.base import HttpResponse
-    from msrest.serialization import Deserializer, Model  # type: ignore # pylint: disable=unused-import
 
-if sys.version_info >= (3, 5, 2):
-    # Not executed on old Python, no syntax error
-    from .async_paging import AsyncPagedMixin  # type: ignore
-else:
-    class AsyncPagedMixin(object):  # type: ignore
-        pass
+
+_LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")
 
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(self, get_next, extract_data, continuation_token=None):
-        # type: (Callable[[str], ClientResponse], Callable[[ClientResponse], Tuple[str, List[ReturnType]], Optional[str]) -> None
+        # type: (Callable[[str], ClientResponse], Callable[[ClientResponse], Tuple[str, Iterator[ReturnType]], Optional[str]) -> None
         """Return an iterator of pages.
 
         :param get_next: Callable that take the continuation token and return a HTTP response
@@ -55,7 +50,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._current_page = []  # type: List[Model]
+        self._response = None
+        self._current_page = None
 
     def __iter__(self):
         """Return 'self'."""
@@ -74,7 +70,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
     next = __next__  # Python 2 compatibility.
 
 
-class ItemPaged(Iterable[ReturnType]):
+class ItemPaged(Iterator[ReturnType]):
     def __init__(self, get_next, extract_data):
         # type: (Callable[[str], ClientResponse], Callable[[ClientResponse], Tuple[str, List[ReturnType]]) -> None
         self._get_next = get_next
@@ -100,7 +96,7 @@ class ItemPaged(Iterable[ReturnType]):
             return next(self)
         if self._page is None:
             # Let it raise StopIteration
-            self._page = iter(next(self._page_iterator))
+            self._page = next(self._page_iterator)
             return next(self)
         try:
             return next(self._page)
