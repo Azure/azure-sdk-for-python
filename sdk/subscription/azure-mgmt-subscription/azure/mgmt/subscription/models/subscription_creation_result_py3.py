@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class SubscriptionName(Model):
-    """New name of the subscription.
+class SubscriptionCreationResult(Model):
+    """The created subscription object.
 
-    :param subscription_name: New subscription name
-    :type subscription_name: str
+    :param subscription_link: The link to the new subscription.
+    :type subscription_link: str
     """
 
     _attribute_map = {
-        'subscription_name': {'key': 'subscriptionName', 'type': 'str'},
+        'subscription_link': {'key': 'subscriptionLink', 'type': 'str'},
     }
 
-    def __init__(self, *, subscription_name: str=None, **kwargs) -> None:
-        super(SubscriptionName, self).__init__(**kwargs)
-        self.subscription_name = subscription_name
+    def __init__(self, *, subscription_link: str=None, **kwargs) -> None:
+        super(SubscriptionCreationResult, self).__init__(**kwargs)
+        self.subscription_link = subscription_link

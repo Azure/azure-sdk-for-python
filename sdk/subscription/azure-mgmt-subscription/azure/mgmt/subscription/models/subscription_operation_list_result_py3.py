@@ -12,24 +12,17 @@
 from msrest.serialization import Model
 
 
-class CanceledSubscriptionId(Model):
-    """Canceled Subscription Id.
+class SubscriptionOperationListResult(Model):
+    """A list of pending subscription operations.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: Canceled Subscription Id
-    :vartype value: str
+    :param value: A list of pending SubscriptionOperations
+    :type value: list[~azure.mgmt.subscription.models.SubscriptionOperation]
     """
 
-    _validation = {
-        'value': {'readonly': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[SubscriptionOperation]'},
     }
 
-    def __init__(self, **kwargs):
-        super(CanceledSubscriptionId, self).__init__(**kwargs)
-        self.value = None
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(SubscriptionOperationListResult, self).__init__(**kwargs)
+        self.value = value

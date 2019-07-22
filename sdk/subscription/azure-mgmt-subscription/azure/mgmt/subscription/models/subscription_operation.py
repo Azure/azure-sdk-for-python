@@ -12,24 +12,32 @@
 from msrest.serialization import Model
 
 
-class RenamedSubscriptionId(Model):
-    """Renamed Subscription Id.
+class SubscriptionOperation(Model):
+    """status of the subscription POST operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Renamed Subscription Id
-    :vartype value: str
+    :ivar id: The operation Id.
+    :vartype id: str
+    :param status: Status of the pending subscription
+    :type status: str
+    :param status_detail: Status Detail of the pending subscription
+    :type status_detail: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'id': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'status_detail': {'key': 'statusDetail', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(RenamedSubscriptionId, self).__init__(**kwargs)
-        self.value = None
+        super(SubscriptionOperation, self).__init__(**kwargs)
+        self.id = None
+        self.status = kwargs.get('status', None)
+        self.status_detail = kwargs.get('status_detail', None)
