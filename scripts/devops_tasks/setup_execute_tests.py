@@ -50,7 +50,9 @@ def collect_coverage_files(targeted_packages):
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
 
-    if coverage_files:
+    print('Visible uncombined .coverage files: {}'.format(coverage_files))
+
+    if len(coverage_files):
         cov_cmd_array = ['coverage', 'combine']
         cov_cmd_array.extend(coverage_files)
 
