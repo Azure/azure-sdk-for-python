@@ -10,18 +10,16 @@ import time
 from typing import List
 
 from uamqp import types, errors
-from uamqp import compat
 from uamqp import ReceiveClient, Source
 
 from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, \
-    _error_handler, _handle_exception
-
+from azure.eventhub.error import _error_handler, EventHubError
+from ._consumer_producer_mixin import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumer(object):
+class EventHubConsumer(ConsumerProducerMixin):
     """
     A consumer responsible for reading EventData from a specific Event Hub
      partition and as a member of a specific consumer group.
@@ -55,6 +53,7 @@ class EventHubConsumer(object):
          consumer if owner_level is set.
         :type owner_level: int
         """
+        super(EventHubConsumer, self).__init__()
         self.running = False
         self.client = client
         self.source = source
@@ -70,16 +69,10 @@ class EventHubConsumer(object):
         self.redirected = None
         self.error = None
         partition = self.source.split('/')[-1]
-        self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
+        self.name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
             self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(owner_level))}
         self._handler = None
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close(exc_val)
 
     def __iter__(self):
         return self
@@ -99,10 +92,6 @@ class EventHubConsumer(object):
             except Exception as exception:
                 self._handle_exception(exception, retry_count, max_retries)
                 retry_count += 1
-
-    def _check_closed(self):
-        if self.error:
-            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.")
 
     def _create_handler(self):
         alt_creds = {
@@ -126,12 +115,10 @@ class EventHubConsumer(object):
         self.messages_iter = None
 
     def _redirect(self, redirect):
-        self.redirected = redirect
-        self.running = False
         self.messages_iter = None
-        self._close_connection()
+        super(EventHubConsumer, self)._redirect(redirect)
 
-    def _open(self):
+    def _open(self, timeout_time=None):
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -139,34 +126,10 @@ class EventHubConsumer(object):
 
         """
         # pylint: disable=protected-access
-        if not self.running:
-            if self.redirected:
-                self.client._process_redirect_uri(self.redirected)
-                self.source = self.redirected.address
-                alt_creds = {
-                    "username": self.client._auth_config.get("iot_username"),
-                    "password": self.client._auth_config.get("iot_password")}
-            else:
-                alt_creds = {}
-            self._create_handler()
-            self._handler.open(connection=self.client._conn_manager.get_connection(
-                self.client.address.hostname,
-                self.client.get_auth(**alt_creds)
-            ))
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-            self.running = True
-
-    def _close_handler(self):
-        self._handler.close()  # close the link (sharing connection) or connection (not sharing)
-        self.running = False
-
-    def _close_connection(self):
-        self._close_handler()
-        self.client._conn_manager.reset_connection_if_broken()
-
-    def _handle_exception(self, exception, retry_count, max_retries):
-        _handle_exception(exception, retry_count, max_retries, self, log)
+        if not self.running and self.redirected:
+            self.client._process_redirect_uri(self.redirected)
+            self.source = self.redirected.address
+        super(EventHubConsumer, self)._open(timeout_time)
 
     @property
     def queue_size(self):
@@ -211,24 +174,37 @@ class EventHubConsumer(object):
 
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
+        if not timeout:
+            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
         data_batch = []  # type: List[EventData]
+        start_time = time.time()
+        timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
+        last_exception = None
         while True:
             try:
-                self._open()
-                timeout_ms = 1000 * timeout if timeout else 0
+                self._open(timeout_time)
+                remaining_time = timeout_time - time.time()
+                if remaining_time <= 0.0:
+                    if last_exception:
+                        log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                        raise last_exception
+                    return data_batch
+                remaining_time_ms = 1000 * remaining_time
                 message_batch = self._handler.receive_message_batch(
                     max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
-                    timeout=timeout_ms)
+                    timeout=remaining_time_ms)
                 for message in message_batch:
                     event_data = EventData(message=message)
                     self.offset = EventPosition(event_data.offset)
                     data_batch.append(event_data)
                 return data_batch
+            except EventHubError:
+                raise
             except Exception as exception:
-                self._handle_exception(exception, retry_count, max_retries)
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
 
     def close(self, exception=None):
@@ -254,17 +230,6 @@ class EventHubConsumer(object):
         if self.messages_iter:
             self.messages_iter.close()
             self.messages_iter = None
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This receive handler is now closed.")
-        self._handler.close()  # this will close link if sharing connection. Otherwise close connection
+        super(EventHubConsumer, self).close(exception)
 
     next = __next__  # for python2.7

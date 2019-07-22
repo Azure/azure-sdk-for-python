@@ -49,8 +49,8 @@ class _SharedConnectionManager(object):
                 await self._conn.destroy_async()
             self._conn = None
 
-    def reset_connection_if_broken(self):
-        with self._lock:
+    async def reset_connection_if_broken(self):
+        async with self._lock:
             if self._conn and self._conn._state in (
                 c_uamqp.ConnectionState.CLOSE_RCVD,
                 c_uamqp.ConnectionState.CLOSE_SENT,
@@ -58,6 +58,7 @@ class _SharedConnectionManager(object):
                 c_uamqp.ConnectionState.END,
             ):
                 self._conn = None
+
 
 class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):

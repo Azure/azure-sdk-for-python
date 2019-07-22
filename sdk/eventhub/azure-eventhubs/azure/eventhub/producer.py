@@ -14,13 +14,13 @@ from uamqp import compat
 from uamqp import SendClient
 
 from azure.eventhub.common import EventData, _BatchSendEventData
-from azure.eventhub.error import EventHubError, ConnectError, \
-    AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler, _handle_exception
+from azure.eventhub.error import OperationTimeoutError, _error_handler
+from ._consumer_producer_mixin import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
 
 
-class EventHubProducer(object):
+class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
      grouped together in batches. Depending on the options specified at creation, the producer may
@@ -51,6 +51,7 @@ class EventHubProducer(object):
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        super(EventHubProducer, self).__init__()
         self.running = False
         self.client = client
         self.target = target
@@ -71,12 +72,6 @@ class EventHubProducer(object):
         self._outcome = None
         self._condition = None
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close(exc_val)
-
     def _create_handler(self):
         self._handler = SendClient(
             self.target,
@@ -88,12 +83,7 @@ class EventHubProducer(object):
             client_name=self.name,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
-    def _redirect(self, redirect):
-        self.redirected = redirect
-        self.running = False
-        self._close_connection()
-
-    def _open(self):
+    def _open(self, timeout_time=None):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -101,49 +91,41 @@ class EventHubProducer(object):
 
         """
         # pylint: disable=protected-access
-        if not self.running:
-            if self.redirected:
-                self.target = self.redirected.address
-            self._create_handler()
-            self._handler.open(connection=self.client._conn_manager.get_connection(
-                self.client.address.hostname,
-                self.client.get_auth()
-            ))
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-            self.running = True
+        if not self.running and self.redirected:
+            self.client._process_redirect_uri(self.redirected)
+            self.target = self.redirected.address
+        super(EventHubProducer, self)._open()
 
-    def _close_handler(self):
-        self._handler.close()  # close the link (sharing connection) or connection (not sharing)
-        self.running = False
-
-    def _close_connection(self):
-        self._close_handler()
-        self.client._conn_manager.reset_connection_if_broken()
-
-    def _handle_exception(self, exception, retry_count, max_retries):
-        _handle_exception(exception, retry_count, max_retries, self, log)
-
-    def _send_event_data(self):
+    def _send_event_data(self, timeout=None):
+        timeout = self.client.config.send_timeout if timeout is None else timeout
+        if not timeout:
+            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+        start_time = time.time()
+        timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
+        last_exception = None
         while True:
             try:
                 if self.unsent_events:
-                    self._open()
+                    self._open(timeout_time)
+                    remaining_time = timeout_time - time.time()
+                    if remaining_time <= 0.0:
+                        if last_exception:
+                            error = last_exception
+                        else:
+                            error = OperationTimeoutError("send operation timed out")
+                        log.info("%r send operation timed out. (%r)", self.name, error)
+                        raise error
                     self._handler.queue_message(*self.unsent_events)
                     self._handler.wait()
                     self.unsent_events = self._handler.pending_messages
-                if self._outcome != constants.MessageSendResult.Ok:
-                    _error(self._outcome, self._condition)
+                    if self._outcome != constants.MessageSendResult.Ok:
+                        _error(self._outcome, self._condition)
                 return
             except Exception as exception:
-                self._handle_exception(exception, retry_count, max_retries)
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
-
-    def _check_closed(self):
-        if self.error:
-            raise EventHubError("This producer has been closed. Please create a new producer to send event data.")
 
     def _on_outcome(self, outcome, condition):
         """
@@ -157,8 +139,8 @@ class EventHubProducer(object):
         self._outcome = outcome
         self._condition = condition
 
-    def send(self, event_data, partition_key=None):
-        # type:(Union[EventData, Iterable[EventData]], Union[str, bytes]) -> None
+    def send(self, event_data, partition_key=None, timeout=None):
+        # type:(Union[EventData, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -195,7 +177,7 @@ class EventHubProducer(object):
                 partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        self._send_event_data()
+        self._send_event_data(timeout=timeout)
 
     def close(self, exception=None):
         # type:(Exception) -> None
@@ -217,18 +199,7 @@ class EventHubProducer(object):
                 :caption: Close down the handler.
 
         """
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This send handler is now closed.")
-        self._handler.close()
+        super(EventHubProducer, self).close(exception)
 
 
 def _error(outcome, condition):

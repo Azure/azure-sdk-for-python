@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import six
+import time
+import logging
 
 from uamqp import constants, errors, compat
 
@@ -15,6 +17,7 @@ _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-error"
 )
 
+log = logging.getLogger(__name__)
 
 def _error_handler(error):
     """
@@ -130,10 +133,45 @@ class EventDataSendError(EventHubError):
     pass
 
 
-def _handle_exception(exception, retry_count, max_retries, closable, log):
-    type_name = type(closable).__name__
+class OperationTimeoutError(EventHubError):
+    """Operation times out
+
+    """
+    pass
+
+
+def _create_eventhub_exception(exception):
+    if isinstance(exception, errors.AuthenticationException):
+        error = AuthenticationError(str(exception), exception)
+    elif isinstance(exception, errors.VendorLinkDetach):
+        error = ConnectError(str(exception), exception)
+    elif isinstance(exception, errors.LinkDetach):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.ConnectionClose):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.MessageHandlerError):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.AMQPConnectionError):
+        error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
+            else ConnectError
+        error = error_type(str(exception), exception)
+    elif isinstance(exception, compat.TimeoutException):
+        error = ConnectionLostError(str(exception), exception)
+    else:
+        error = EventHubError(str(exception), exception)
+    return error
+
+
+def _handle_exception(exception, retry_count, max_retries, closable, timeout_time):
+    try:
+        name = closable.name
+    except AttributeError:
+        name = closable.container_id
     if isinstance(exception, KeyboardInterrupt):
-        log.info("{} stops due to keyboard interrupt".format(type_name))
+        log.info("%r stops due to keyboard interrupt", name)
+        closable.close()
+        raise
+    elif isinstance(exception, EventHubError):
         closable.close()
         raise
     elif isinstance(exception, (
@@ -144,51 +182,23 @@ def _handle_exception(exception, retry_count, max_retries, closable, log):
             errors.MessageReleased,
             errors.MessageContentTooLarge)
             ):
-        log.error("Event data error (%r)", exception)
+        log.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
-        closable.close(exception)
         raise error
     elif isinstance(exception, errors.MessageException):
-        log.error("Event data send error (%r)", exception)
+        log.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
-        closable.close(exception)
         raise error
     elif retry_count >= max_retries:
-        log.info("{} has an error and has exhausted retrying. (%r)".format(type_name), exception)
-        if isinstance(exception, errors.AuthenticationException):
-            log.info("{} authentication failed. Shutting down.".format(type_name))
-            error = AuthenticationError(str(exception), exception)
-        elif isinstance(exception, errors.VendorLinkDetach):
-            log.info("{} link detached. Shutting down.".format(type_name))
-            error = ConnectError(str(exception), exception)
-        elif isinstance(exception, errors.LinkDetach):
-            log.info("{} link detached. Shutting down.".format(type_name))
-            error = ConnectionLostError(str(exception), exception)
-        elif isinstance(exception, errors.ConnectionClose):
-            log.info("{} connection closed. Shutting down.".format(type_name))
-            error = ConnectionLostError(str(exception), exception)
-        elif isinstance(exception, errors.MessageHandlerError):
-            log.info("{} detached. Shutting down.".format(type_name))
-            error = ConnectionLostError(str(exception), exception)
-        elif isinstance(exception, errors.AMQPConnectionError):
-            log.info("{} connection lost. Shutting down.".format(type_name))
-            error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
-                else ConnectError
-            error = error_type(str(exception), exception)
-        elif isinstance(exception, compat.TimeoutException):
-            log.info("{} timed out. Shutting down.".format(type_name))
-            error = ConnectionLostError(str(exception), exception)
-        else:
-            log.error("Unexpected error occurred (%r). Shutting down.", exception)
-            error = EventHubError("Receive failed: {}".format(exception), exception)
-        closable.close()
+        error = _create_eventhub_exception(exception)
+        log.info("%r has exhausted retry. Exception still occurs (%r)", name, exception)
         raise error
     else:
-        log.info("{} has an exception (%r). Retrying...".format(type_name), exception)
         if isinstance(exception, errors.AuthenticationException):
-            closable._close_connection()
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()
         elif isinstance(exception, errors.LinkRedirect):
-            log.info("{} link redirected. Redirecting...".format(type_name))
+            log.info("%r link redirect received. Redirecting...", name)
             redirect = exception
             if hasattr(closable, "_redirect"):
                 closable._redirect(redirect)
@@ -209,3 +219,20 @@ def _handle_exception(exception, retry_count, max_retries, closable, log):
         else:
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()
+        # start processing retry delay
+        try:
+            backoff_factor = closable.client.config.backoff_factor
+            backoff_max = closable.client.config.backoff_max
+        except AttributeError:
+            backoff_factor = closable.config.backoff_factor
+            backoff_max = closable.config.backoff_max
+        backoff = backoff_factor * 2 ** retry_count
+        if backoff <= backoff_max and time.time() + backoff <= timeout_time:
+            time.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(name), exception)
+            return _create_eventhub_exception(exception)
+        else:
+            error = _create_eventhub_exception(exception)
+            log.info("%r operation has timed out. Last exception before timeout is (%r)", name, error)
+            raise error
+        # end of processing retry delay

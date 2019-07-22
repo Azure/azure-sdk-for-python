@@ -52,9 +52,6 @@ class EventHubClient(EventHubClientAbstract):
         super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
         self._conn_manager = get_connection_manager(**kwargs)
 
-    def __del__(self):
-        self._conn_manager.close_connection()
-
     def __enter__(self):
         return self
 

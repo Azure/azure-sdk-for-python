@@ -8,6 +8,7 @@ import datetime
 import calendar
 import json
 import six
+from enum import Enum
 
 from uamqp import BatchMessage, Message, types
 from uamqp.message import MessageHeader, MessageProperties

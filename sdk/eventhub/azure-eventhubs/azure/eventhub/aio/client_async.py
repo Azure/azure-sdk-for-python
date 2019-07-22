@@ -101,7 +101,7 @@ class EventHubClient(EventHubClientAbstract):
         await _handle_exception(exception, retry_count, max_retries, self, log)
 
     async def _close_connection(self):
-        self._conn_manager.reset_connection_if_broken()
+        await self._conn_manager.reset_connection_if_broken()
 
     async def _management_request(self, mgmt_msg, op_type):
         max_retries = self.config.max_retries

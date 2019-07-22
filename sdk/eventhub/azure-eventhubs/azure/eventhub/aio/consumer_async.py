@@ -6,6 +6,7 @@ import asyncio
 import uuid
 import logging
 from typing import List
+import time
 
 from uamqp import errors, types, compat
 from uamqp import ReceiveClientAsync, Source
@@ -13,11 +14,12 @@ from uamqp import ReceiveClientAsync, Source
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
 from ..aio.error_async import _handle_exception
+from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumer(object):
+class EventHubConsumer(ConsumerProducerMixin):
     """
     A consumer responsible for reading EventData from a specific Event Hub
      partition and as a member of a specific consumer group.
@@ -55,6 +57,7 @@ class EventHubConsumer(object):
         :type owner_level: int
         :param loop: An event loop.
         """
+        super(EventHubConsumer, self).__init__()
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
         self.client = client
@@ -76,12 +79,6 @@ class EventHubConsumer(object):
             self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(owner_level))}
         self._handler = None
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close(exc_val)
-
     def __aiter__(self):
         return self
 
@@ -100,10 +97,6 @@ class EventHubConsumer(object):
             except Exception as exception:
                 await self._handle_exception(exception, retry_count, max_retries)
                 retry_count += 1
-
-    def _check_closed(self):
-        if self.error:
-            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.")
 
     def _create_handler(self):
         alt_creds = {
@@ -128,12 +121,10 @@ class EventHubConsumer(object):
         self.messages_iter = None
 
     async def _redirect(self, redirect):
-        self.redirected = redirect
-        self.running = False
         self.messages_iter = None
-        await self._close_connection()
+        await super(EventHubConsumer, self)._redirect(redirect)
 
-    async def _open(self):
+    async def _open(self, timeout_time=None):
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -141,34 +132,10 @@ class EventHubConsumer(object):
 
         """
         # pylint: disable=protected-access
-        if not self.running:
-            if self.redirected:
-                self.client._process_redirect_uri(self.redirected)
-                self.source = self.redirected.address
-                alt_creds = {
-                    "username": self.client._auth_config.get("iot_username"),
-                    "password": self.client._auth_config.get("iot_password")}
-            else:
-                alt_creds = {}
-            self._create_handler()
-            await self._handler.open_async(connection=await self.client._conn_manager.get_connection(
-                self.client.address.hostname,
-                self.client.get_auth(**alt_creds)
-            ))
-            while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05)
-            self.running = True
-
-    async def _close_handler(self):
-        await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
-        self.running = False
-
-    async def _close_connection(self):
-        await self._close_handler()
-        self.client._conn_manager.reset_connection_if_broken()
-
-    async def _handle_exception(self, exception, retry_count, max_retries):
-        await _handle_exception(exception, retry_count, max_retries, self, log)
+        if not self.running and self.redirected:
+            self.client._process_redirect_uri(self.redirected)
+            self.source = self.redirected.address
+        await super(EventHubConsumer, self)._open(timeout_time)
 
     @property
     def queue_size(self):
@@ -213,24 +180,38 @@ class EventHubConsumer(object):
         self._check_closed()
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
+        if not timeout:
+            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
         data_batch = []
+        start_time = time.time()
+        timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
+        last_exception = None
         while True:
             try:
-                await self._open()
-                timeout_ms = 1000 * timeout if timeout else 0
+                await self._open(timeout_time)
+                remaining_time = timeout_time - time.time()
+                if remaining_time <= 0.0:
+                    if last_exception:
+                        log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                        raise last_exception
+                    return data_batch
+
+                remaining_time_ms = 1000 * remaining_time
                 message_batch = await self._handler.receive_message_batch_async(
                     max_batch_size=max_batch_size,
-                    timeout=timeout_ms)
+                    timeout=remaining_time_ms)
                 for message in message_batch:
                     event_data = EventData(message=message)
                     self.offset = EventPosition(event_data.offset)
                     data_batch.append(event_data)
                 return data_batch
+            except EventHubError:
+                raise
             except Exception as exception:
-                await self._handle_exception(exception, retry_count, max_retries)
+                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
 
     async def close(self, exception=None):

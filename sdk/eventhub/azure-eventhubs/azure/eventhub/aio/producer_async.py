@@ -5,21 +5,22 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterator, Generator, List, Union
+from typing import Iterable, Union
+import time
 
-from uamqp import constants, errors, compat
+from uamqp import constants, errors
 from uamqp import SendClientAsync
 
 from azure.eventhub.common import EventData, _BatchSendEventData
-from azure.eventhub.error import EventHubError, ConnectError, \
-    AuthenticationError, EventDataError, EventDataSendError, ConnectionLostError, _error_handler
-from .error_async import _handle_exception
+from azure.eventhub.error import _error_handler, OperationTimeoutError
 from ..producer import _error, _set_partition_key
+from ._consumer_producer_mixin_async import ConsumerProducerMixin
+
 
 log = logging.getLogger(__name__)
 
 
-class EventHubProducer(object):
+class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
      grouped together in batches. Depending on the options specified at creation, the producer may
@@ -53,6 +54,7 @@ class EventHubProducer(object):
         :type auto_reconnect: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         """
+        super(EventHubProducer, self).__init__()
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
         self.client = client
@@ -74,12 +76,6 @@ class EventHubProducer(object):
         self._outcome = None
         self._condition = None
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close(exc_val)
-
     def _create_handler(self):
         self._handler = SendClientAsync(
             self.target,
@@ -93,48 +89,39 @@ class EventHubProducer(object):
                 self.client.config.user_agent),  # pylint: disable=protected-access
             loop=self.loop)
 
-    async def _redirect(self, redirect):
-        self.redirected = redirect
-        self.running = False
-        await self._close_connection()
-
-    async def _open(self):
+    async def _open(self, timeout_time=None):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
         """
-        if not self.running:
-            if self.redirected:
-                self.target = self.redirected.address
-            self._create_handler()
-            await self._handler.open_async(connection=await self.client._conn_manager.get_connection(
-                self.client.address.hostname,
-                self.client.get_auth()
-            ))
-            while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05)
-            self.running = True
+        if not self.running and self.redirected:
+            self.client._process_redirect_uri(self.redirected)
+            self.target = self.redirected.address
+        await super(EventHubProducer, self)._open(timeout_time)
 
-    async def _close_handler(self):
-        await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
-        self.running = False
-
-    async def _close_connection(self):
-        await self._close_handler()
-        await self.client._conn_manager.close_connection()  # close the shared connection.
-
-    async def _handle_exception(self, exception, retry_count, max_retries):
-        await _handle_exception(exception, retry_count, max_retries, self, log)
-
-    async def _send_event_data(self):
+    async def _send_event_data(self, timeout=None):
+        timeout = self.client.config.send_timeout if timeout is None else timeout
+        if not timeout:
+            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+        start_time = time.time()
+        timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
+        last_exception = None
         while True:
             try:
                 if self.unsent_events:
-                    await self._open()
+                    await self._open(timeout_time)
+                    remaining_time = timeout_time - time.time()
+                    if remaining_time < 0.0:
+                        if last_exception:
+                            error = last_exception
+                        else:
+                            error = OperationTimeoutError("send operation timed out")
+                        log.info("%r send operation timed out. (%r)", self.name, error)
+                        raise error
                     self._handler.queue_message(*self.unsent_events)
                     await self._handler.wait_async()
                     self.unsent_events = self._handler.pending_messages
@@ -142,12 +129,8 @@ class EventHubProducer(object):
                     _error(self._outcome, self._condition)
                 return
             except Exception as exception:
-                await self._handle_exception(exception, retry_count, max_retries)
+                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
-
-    def _check_closed(self):
-        if self.error:
-            raise EventHubError("This producer has been closed. Please create a new producer to send event data.")
 
     def _on_outcome(self, outcome, condition):
         """
@@ -161,7 +144,7 @@ class EventHubProducer(object):
         self._outcome = outcome
         self._condition = condition
 
-    async def send(self, event_data, partition_key=None):
+    async def send(self, event_data, partition_key=None, timeout=None):
         # type:(Union[EventData, Iterable[EventData]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
@@ -198,7 +181,7 @@ class EventHubProducer(object):
                 partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await self._send_event_data()
+        await self._send_event_data(timeout)
 
     async def close(self, exception=None):
         # type: (Exception) -> None
@@ -220,17 +203,4 @@ class EventHubProducer(object):
                 :caption: Close down the handler.
 
         """
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = ConnectError(str(exception), exception)
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This send handler is now closed.")
-        await self._handler.close_async()
+        await super(EventHubProducer, self).close(exception)
