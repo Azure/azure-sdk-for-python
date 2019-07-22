@@ -20,6 +20,18 @@ from ._consumer_producer_mixin import ConsumerProducerMixin
 log = logging.getLogger(__name__)
 
 
+def _error(outcome, condition):
+    if outcome != constants.MessageSendResult.Ok:
+        raise condition
+
+
+def _set_partition_key(event_datas, partition_key):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._set_partition_key(partition_key)
+        yield ed
+
+
 class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
@@ -200,15 +212,3 @@ class EventHubProducer(ConsumerProducerMixin):
 
         """
         super(EventHubProducer, self).close(exception)
-
-
-def _error(outcome, condition):
-    if outcome != constants.MessageSendResult.Ok:
-        raise condition
-
-
-def _set_partition_key(event_datas, partition_key):
-    ed_iter = iter(event_datas)
-    for ed in ed_iter:
-        ed._set_partition_key(partition_key)
-        yield ed
