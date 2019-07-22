@@ -23,12 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Tuple, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Tuple  # pylint: disable=unused-import
 import logging
-
-
-if TYPE_CHECKING:
-    from .pipeline.transport.base import HttpResponse
 
 
 _LOGGER = logging.getLogger(__name__)

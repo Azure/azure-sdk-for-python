@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional, Awaitable
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, Optional, Awaitable
 
 
 _LOGGER = logging.getLogger(__name__)
