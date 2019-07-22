@@ -86,13 +86,17 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        **Keyword arguments:**
+
+        *session* - will override the driver session and use yours. Should NOT be done unless really required.
+        Anything else is sent straight to requests.
+        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if self.config.proxy_policy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await loop.run_in_executor(
                 None,
@@ -103,9 +107,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                     headers=request.headers,
                     data=request.data,
                     files=request.files,
-                    verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                    timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                    cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
                     **kwargs))
 
@@ -124,7 +128,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):

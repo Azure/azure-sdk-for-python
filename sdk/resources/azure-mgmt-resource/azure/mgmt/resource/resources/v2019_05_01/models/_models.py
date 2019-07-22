@@ -521,13 +521,13 @@ class DeploymentValidateResult(Model):
 class ExportTemplateRequest(Model):
     """Export resource group template request parameters.
 
-    :param resources: The IDs of the resources. The only supported string
-     currently is '*' (all resources). Future updates will support exporting
-     specific resources.
+    :param resources: The IDs of the resources to filter the export by. To
+     export all resources, supply an array with single entry '*'.
     :type resources: list[str]
-    :param options: The export template options. Supported values include
-     'IncludeParameterDefaultValue', 'IncludeComments' or
-     'IncludeParameterDefaultValue, IncludeComments
+    :param options: The export template options. A CSV-formatted list
+     containing zero or more of the following: 'IncludeParameterDefaultValue',
+     'IncludeComments', 'SkipResourceNameParameterization',
+     'SkipAllParameterization'
     :type options: str
     """
 

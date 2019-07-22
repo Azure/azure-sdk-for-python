@@ -36,7 +36,7 @@ class OpenCensusSpan(object):
         """
         if not span:
             tracer = self.get_current_tracer()
-            span = tracer.span(name=name)  # type: Span
+            span = tracer.start_span(name=name) # type: Span
         self._span_instance = span
         self._span_component = "component"
         self._http_user_agent = "http.user_agent"
@@ -70,7 +70,8 @@ class OpenCensusSpan(object):
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        self.span_instance.finish()
+        tracer = self.get_current_tracer()
+        tracer.end_span()
 
     def to_header(self):
         # type: () -> Dict[str, str]

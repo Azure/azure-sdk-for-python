@@ -54,7 +54,7 @@ def distributed_trace_async(func):
             ans = await func(self, *args, **kwargs)
             child.finish()
             common.set_span_contexts(parent_span)
-            if orig_wrapped_span is None and passed_in_parent is None:
+            if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
                 parent_span.finish()
             common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
         else:
