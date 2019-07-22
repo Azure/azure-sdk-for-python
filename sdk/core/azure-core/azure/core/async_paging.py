@@ -98,35 +98,27 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
 
 class AsyncItemPaged(AsyncIterator[ReturnType]):
-    def __init__(
-        self,
-        get_next: Callable[[str], Awaitable[ResponseType]],
-        extract_data: Callable[
-            [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
-        ],
-        page_iterator_class=AsyncPageIterator,
-    ) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """Return an async iterator of items.
 
-        :param get_next: Callable that take the continuation token and return a HTTP response
-        :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
-         list of ReturnType
+        args and kwargs will be passed to the AsyncPageIterator constructor directly,
+        except page_iterator_class
         """
-        self._get_next = get_next
-        self._extract_data = extract_data
+        self._args = args
+        self._kwargs = kwargs
         self._page_iterator = (
             None
         )  # type: Optional[AsyncIterator[AsyncIterator[ReturnType]]]
         self._page = None  # type: Optional[AsyncIterator[ReturnType]]
-        self._page_iterator_class = page_iterator_class
+        self._page_iterator_class = self._kwargs.pop(
+            "page_iterator_class", AsyncPageIterator
+        )
 
     def by_page(
         self, continuation_token: Optional[str] = None
     ) -> AsyncIterator[AsyncIterator[ReturnType]]:
         return self._page_iterator_class(
-            get_next=self._get_next,
-            extract_data=self._extract_data,
-            continuation_token=continuation_token,
+            *self._args, **self._kwargs, continuation_token=continuation_token
         )
 
     async def __anext__(self) -> ReturnType:
