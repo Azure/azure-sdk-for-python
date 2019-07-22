@@ -10,41 +10,9 @@ from xml.sax.saxutils import escape as xml_escape
 from xml.sax.saxutils import unescape as xml_unescape
 
 import six
-from azure.core.exceptions import ResourceExistsError, DecodeError
+from azure.core.exceptions import DecodeError
 
-from ._shared.models import StorageErrorCode
 from ._shared.encryption import decrypt_queue_message, encrypt_queue_message
-from .models import QueueProperties
-
-
-def deserialize_metadata(response, obj, headers):
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
-
-
-def deserialize_queue_properties(response, obj, headers):
-    metadata = deserialize_metadata(response, obj, headers)
-    queue_properties = QueueProperties(
-        metadata=metadata,
-        **headers
-    )
-    return queue_properties
-
-
-def deserialize_queue_creation(response, obj, headers):
-    if response.status_code == 204:
-        error_code = StorageErrorCode.queue_already_exists
-        error = ResourceExistsError(
-            message="Queue already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
-                headers['x-ms-request-id'],
-                headers['Date'],
-                error_code
-            ),
-            response=response)
-        error.error_code = error_code
-        error.additional_info = {}
-        raise error
-    return headers
 
 
 class MessageEncodePolicy(object):
@@ -104,7 +72,7 @@ class MessageDecodePolicy(object):
 
 class TextBase64EncodePolicy(MessageEncodePolicy):
     """Base 64 message encoding policy for text messages.
-    
+
     Encodes text (unicode) messages to base 64. If the input content
     is not text, a TypeError will be raised. Input text must support UTF-8.
     """
@@ -117,7 +85,7 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
 
 class TextBase64DecodePolicy(MessageDecodePolicy):
     """Message decoding policy for base 64-encoded messages into text.
-    
+
     Decodes base64-encoded messages to text (unicode). If the input content
     is not valid base 64, a DecodeError will be raised. Message data must
     support UTF-8.
@@ -136,7 +104,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
 
 class BinaryBase64EncodePolicy(MessageEncodePolicy):
     """Base 64 message encoding policy for binary messages.
-    
+
     Encodes binary messages to base 64. If the input content
     is not bytes, a TypeError will be raised.
     """
@@ -149,7 +117,7 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
 
 class BinaryBase64DecodePolicy(MessageDecodePolicy):
     """Message decoding policy for base 64-encoded messages into bytes.
-    
+
     Decodes base64-encoded messages to bytes. If the input content
     is not valid base 64, a DecodeError will be raised.
     """
@@ -167,7 +135,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
 
 class TextXMLEncodePolicy(MessageEncodePolicy):
     """XML message encoding policy for text messages.
-    
+
     Encodes text (unicode) messages to XML. If the input content
     is not text, a TypeError will be raised.
     """
@@ -180,7 +148,7 @@ class TextXMLEncodePolicy(MessageEncodePolicy):
 
 class TextXMLDecodePolicy(MessageDecodePolicy):
     """Message decoding policy for XML-encoded messages into text.
-    
+
     Decodes XML-encoded messages to text (unicode).
     """
 

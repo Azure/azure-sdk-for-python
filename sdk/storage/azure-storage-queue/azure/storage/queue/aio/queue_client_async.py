@@ -9,36 +9,38 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING)
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote, unquote # pylint: disable=unused-import
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
-import six
-
-from ._shared.shared_access_signature import QueueSharedAccessSignature
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.response_handlers import (
-    process_storage_error,
+from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
+from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
+from azure.storage.queue._shared.response_handlers import (
     return_response_headers,
+    process_storage_error,
     return_headers_and_deserialized)
-from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
-from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._generated import AzureQueueStorage
-from ._generated.models import StorageErrorException, SignedIdentifier
-from ._generated.models import QueueMessage as GenQueueMessage
+from azure.storage.queue._deserialize import (
+    deserialize_queue_properties,
+    deserialize_queue_creation)
+from azure.storage.queue._generated.aio import AzureQueueStorage
+from azure.storage.queue._generated.models import StorageErrorException, SignedIdentifier
+from azure.storage.queue._generated.models import QueueMessage as GenQueueMessage
 
-from .models import QueueMessage, AccessPolicy, MessagesPaged
+from azure.storage.queue.models import QueueMessage, AccessPolicy
+from azure.storage.queue.aio.models import MessagesPaged
+from .._shared.policies_async import ExponentialRetry
+from ..queue_client import QueueClient as QueueClientBase
+
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from .models import QueuePermissions, QueueProperties
+    from azure.storage.queue.models import QueuePermissions, QueueProperties
 
 
-class QueueClient(StorageAccountHostsMixin):
-    """A client to interact with a specific Queue.
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
+    """A async client to interact with a specific Queue.
 
     :ivar str url:
         The full endpoint URL to the Queue, including SAS token if used. This could be
@@ -80,156 +82,21 @@ class QueueClient(StorageAccountHostsMixin):
             self, queue_url,  # type: str
             queue=None,  # type: Optional[Union[QueueProperties, str]]
             credential=None,  # type: Optional[Any]
+            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not queue_url.lower().startswith('http'):
-                queue_url = "https://" + queue_url
-        except AttributeError:
-            raise ValueError("Queue URL must be a string.")
-        parsed_url = urlparse(queue_url.rstrip('/'))
-        if not parsed_url.path and not queue:
-            raise ValueError("Please specify a queue name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(QueueClient, self).__init__(
+            queue_url,
+            queue=queue,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._loop = loop
 
-        path_queue = ""
-        if parsed_url.path:
-            path_queue = parsed_url.path.lstrip('/').partition('/')[0]
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
-        try:
-            self.queue_name = queue.name # type: ignore
-        except AttributeError:
-            self.queue_name = queue or unquote(path_queue)
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
-
-        self._config.message_encode_policy = kwargs.get('message_encode_policy') or TextXMLEncodePolicy()
-        self._config.message_decode_policy = kwargs.get('message_decode_policy') or TextXMLDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
-            queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            queue,  # type: Union[str, QueueProperties]
-            credential=None,  # type: Any
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
-        """Create QueueClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param queue: The queue. This can either be the name of the queue,
-            or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-
-        Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START create_queue_client_from_connection_string]
-                :end-before: [END create_queue_client_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Create the queue client from connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
-
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            protocol=None  # type: Optional[str]
-        ):
-        """Generates a shared access signature for the queue.
-
-        Use the returned signature with the credential parameter of any Queue Service.
-
-        :param ~azure.storage.queue.models.QueuePermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_queue_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-
-        Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START queue_client_sas_token]
-                :end-before: [END queue_client_sas_token]
-                :language: python
-                :dedent: 12
-                :caption: Generate a sas token.
-        """
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = QueueSharedAccessSignature(
-            self.credential.account_name, self.credential.account_key)
-        return sas.generate_queue(
-            self.queue_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-        )
-
-    def create_queue(self, metadata=None, timeout=None, **kwargs):
+    async def create_queue(self, metadata=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
@@ -258,7 +125,7 @@ class QueueClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.queue.create( # type: ignore
+            return await self._client.queue.create( # type: ignore
                 metadata=metadata,
                 timeout=timeout,
                 headers=headers,
@@ -267,7 +134,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def delete_queue(self, timeout=None, **kwargs):
+    async def delete_queue(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes the specified queue and any messages it contains.
 
@@ -292,11 +159,11 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Delete a queue.
         """
         try:
-            self._client.queue.delete(timeout=timeout, **kwargs)
+            await self._client.queue.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_queue_properties(self, timeout=None, **kwargs):
+    async def get_queue_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> QueueProperties
         """Returns all user-defined metadata for the specified queue.
 
@@ -316,7 +183,7 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Get the properties on the queue.
         """
         try:
-            response = self._client.queue.get_properties(
+            response = await self._client.queue.get_properties(
                 timeout=timeout,
                 cls=deserialize_queue_properties,
                 **kwargs)
@@ -325,7 +192,7 @@ class QueueClient(StorageAccountHostsMixin):
         response.name = self.queue_name
         return response # type: ignore
 
-    def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
+    async def set_queue_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Sets user-defined metadata on the specified queue.
 
@@ -349,15 +216,15 @@ class QueueClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.queue.set_metadata( # type: ignore
+            return (await self._client.queue.set_metadata( # type: ignore
                 timeout=timeout,
                 headers=headers,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_queue_access_policy(self, timeout=None, **kwargs):
+    async def get_queue_access_policy(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
@@ -368,7 +235,7 @@ class QueueClient(StorageAccountHostsMixin):
         :rtype: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
         """
         try:
-            _, identifiers = self._client.queue.get_access_policy(
+            _, identifiers = await self._client.queue.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
                 **kwargs)
@@ -376,7 +243,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
-    def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
+    async def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
@@ -421,14 +288,14 @@ class QueueClient(StorageAccountHostsMixin):
                 identifiers.append(SignedIdentifier(id=key, access_policy=value))
             signed_identifiers = identifiers # type: ignore
         try:
-            self._client.queue.set_access_policy(
+            await self._client.queue.set_access_policy(
                 queue_acl=signed_identifiers or None,
                 timeout=timeout,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def enqueue_message( # type: ignore
+    async def enqueue_message( # type: ignore
             self, content, # type: Any
             visibility_timeout=None, # type: Optional[int]
             time_to_live=None, # type: Optional[int]
@@ -488,7 +355,7 @@ class QueueClient(StorageAccountHostsMixin):
         new_message = GenQueueMessage(message_text=content)
 
         try:
-            enqueued = self._client.messages.enqueue(
+            enqueued = await self._client.messages.enqueue(
                 queue_message=new_message,
                 visibilitytimeout=visibility_timeout,
                 message_time_to_live=time_to_live,
@@ -559,8 +426,8 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def update_message(self, message, visibility_timeout=None, pop_receipt=None, # type: ignore
-                       content=None, timeout=None, **kwargs):
+    async def update_message(self, message, visibility_timeout=None, pop_receipt=None, # type: ignore
+                             content=None, timeout=None, **kwargs):
         # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -633,7 +500,7 @@ class QueueClient(StorageAccountHostsMixin):
         else:
             updated = None # type: ignore
         try:
-            response = self._client.message_id.update(
+            response = await self._client.message_id.update(
                 queue_message=updated,
                 visibilitytimeout=visibility_timeout or 0,
                 timeout=timeout,
@@ -652,7 +519,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def peek_messages(self, max_messages=None, timeout=None, **kwargs): # type: ignore
+    async def peek_messages(self, max_messages=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
@@ -695,7 +562,7 @@ class QueueClient(StorageAccountHostsMixin):
             self.key_encryption_key,
             self.key_resolver_function)
         try:
-            messages = self._client.messages.peek(
+            messages = await self._client.messages.peek(
                 number_of_messages=max_messages,
                 timeout=timeout,
                 cls=self._config.message_decode_policy,
@@ -707,7 +574,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def clear_messages(self, timeout=None, **kwargs):
+    async def clear_messages(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes all messages from the specified queue.
 
@@ -723,11 +590,11 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Clears all messages.
         """
         try:
-            self._client.messages.clear(timeout=timeout, **kwargs)
+            await self._client.messages.clear(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs):
+    async def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs): # type: ignore
         # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
         """Deletes the specified message.
 
@@ -767,7 +634,7 @@ class QueueClient(StorageAccountHostsMixin):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         try:
-            self._client.message_id.delete(
+            await self._client.message_id.delete(
                 pop_receipt=receipt,
                 timeout=timeout,
                 queue_message_id=message_id,

@@ -10,7 +10,6 @@ from io import BytesIO
 
 from azure.core.exceptions import HttpResponseError
 
-from .models import ModifiedAccessConditions
 from .request_handlers import validate_and_format_range_headers
 from .response_handlers import process_storage_error, parse_length_from_content_range
 from .encryption import decrypt_blob
@@ -40,22 +39,25 @@ def process_range_and_offset(start_range, end_range, length, encryption):
 
 
 def process_content(data, start_offset, end_offset, encryption):
-    if encryption.get('key') is not None or encryption.get('resolver') is not None:
+    if data is None:
+        raise ValueError("Response cannot be None.")
+    content = b"".join(list(data))
+    if content and encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
                 encryption.get('required'),
                 encryption.get('key'),
                 encryption.get('resolver'),
-                data,
+                content,
                 start_offset,
-                end_offset)
+                end_offset,
+                data.response.headers)
         except Exception as error:
             raise HttpResponseError(
                 message="Decryption failed.",
                 response=data.response,
                 error=error)
-    else:
-        return b"".join(list(data))
+    return content
 
 
 class _ChunkDownloader(object):
@@ -209,7 +211,7 @@ class SequentialChunkDownloader(_ChunkDownloader):
         self.stream.write(chunk_data)
 
 
-class StorageStreamDownloader(object):
+class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     The stream downloader can iterated, or download to open file or stream
@@ -291,14 +293,14 @@ class StorageStreamDownloader(object):
             # Use the length unless it is over the end of the file
             data_end = min(self.file_size, self.length + 1)
 
-        downloader = SequentialBlobChunkDownloader(
+        downloader = SequentialChunkDownloader(
             service=self.service,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,
             start_range=self.initial_range[1] + 1,  # start where the first download ended
             end_range=data_end,
-            stream=stream,
+            stream=None,
             validate_content=self.validate_content,
             encryption_options=self.encryption_options,
             use_location=self.location_mode,

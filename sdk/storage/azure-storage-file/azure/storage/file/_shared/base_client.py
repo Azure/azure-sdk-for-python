@@ -10,9 +10,10 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 try:
-    from urllib.parse import parse_qs
+    from urllib.parse import parse_qs, quote
 except ImportError:
     from urlparse import parse_qs # type: ignore
+    from urllib2 import quote # type: ignore
 
 import six
 
@@ -156,7 +157,7 @@ class StorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: HttpTransport
+        config.transport = kwargs.get('transport')  # type: ignore
         if not config.transport:
             config.transport = RequestsTransport(config)
         policies = [
@@ -276,7 +277,7 @@ def create_configuration(**kwargs):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, v) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = '&'.join(sas_params)
