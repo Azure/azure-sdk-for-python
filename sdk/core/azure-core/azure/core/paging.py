@@ -23,7 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Dict, Any, List, Callable, Optional, TypeVar, Iterator, Tuple  # pylint: disable=unused-import
+from typing import (
+    Dict,
+    Any,
+    List,
+    Callable,
+    Optional,
+    TypeVar,
+    Iterator,
+    Tuple,
+)  # pylint: disable=unused-import
 import logging
 
 
@@ -86,7 +95,7 @@ class ItemPaged(Iterator[ReturnType]):
         return PageIterator(
             get_next=self._get_next,
             extract_data=self._extract_data,
-            continuation_token=continuation_token
+            continuation_token=continuation_token,
         )
 
     def __iter__(self):

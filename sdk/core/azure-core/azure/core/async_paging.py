@@ -24,7 +24,15 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, Optional, Awaitable
+from typing import (
+    Iterator,
+    AsyncIterator,
+    TypeVar,
+    Callable,
+    Tuple,
+    Optional,
+    Awaitable,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,10 +42,7 @@ ResponseType = TypeVar("ResponseType")
 
 
 class AsyncList(AsyncIterator[ReturnType]):
-    def __init__(
-        self,
-        iterator: Iterator[ReturnType]
-    ) -> None:
+    def __init__(self, iterator: Iterator[ReturnType]) -> None:
         """Change an iterator into a fake async iterator.
 
         Coul be useful to fill the async iterator contract when you get a list.
@@ -54,12 +59,15 @@ class AsyncList(AsyncIterator[ReturnType]):
         except StopIteration as err:
             raise StopAsyncIteration() from err
 
+
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
         get_next: Callable[[str], Awaitable[ResponseType]],
-        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
-        continuation_token: Optional[str] = None
+        extract_data: Callable[
+            [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
+        ],
+        continuation_token: Optional[str] = None,
     ) -> None:
         """Return an async iterator of pages.
 
@@ -82,7 +90,9 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self._response = await self._get_next(self.continuation_token)
         self._did_a_call_already = True
 
-        self.continuation_token, self._current_page = await self._extract_data(self._response)
+        self.continuation_token, self._current_page = await self._extract_data(
+            self._response
+        )
         return self._current_page
 
 
@@ -90,7 +100,9 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
     def __init__(
         self,
         get_next: Callable[[str], Awaitable[ResponseType]],
-        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
+        extract_data: Callable[
+            [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
+        ],
     ) -> None:
         """Return an async iterator of items.
 
@@ -103,11 +115,13 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         self._page_iterator = None  # type: Optional[AsyncPageIterator[ReturnType]]
         self._page = None
 
-    def by_page(self, continuation_token: Optional[str]=None) -> AsyncPageIterator[ReturnType]:
+    def by_page(
+        self, continuation_token: Optional[str] = None
+    ) -> AsyncPageIterator[ReturnType]:
         return AsyncPageIterator(
             get_next=self._get_next,
             extract_data=self._extract_data,
-            continuation_token=continuation_token
+            continuation_token=continuation_token,
         )
 
     async def __anext__(self) -> ReturnType:
