@@ -6,8 +6,8 @@
 
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
-from ._internal import _parse_vault_id
-from ._generated.v7_0 import models
+from ._shared import parse_vault_id
+from ._shared._generated.v7_0 import models
 
 
 class AdministratorDetails(object):
@@ -104,7 +104,7 @@ class CertificateBase(object):
         # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = cert_id
-        self._vault_id = _parse_vault_id(cert_id)
+        self._vault_id = parse_vault_id(cert_id)
         self._thumbprint = thumbprint
         self._tags = kwargs.get("tags", None)
 
@@ -294,7 +294,7 @@ class CertificateOperation(object):
     ):
         # type: (Optional[str], Optional[str], Optional[str], Optional[bool], Optional[bytes], Optional[bool], Optional[str], Optional[str], Optional[models.Error], Optional[str], Optional[str], Mapping[str, Any]) -> None
         self._id = cert_operation_id
-        self._vault_id = _parse_vault_id(cert_operation_id)
+        self._vault_id = parse_vault_id(cert_operation_id)
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
@@ -693,7 +693,7 @@ class IssuerBase(object):
     def __init__(self, issuer_id=None, provider=None):
         # type: (Optional[str], Optional[str]) -> None
         self._id = issuer_id
-        self._vault_id = _parse_vault_id(issuer_id)
+        self._vault_id = parse_vault_id(issuer_id)
         self._provider = provider
 
     @classmethod

@@ -9,7 +9,7 @@ from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
-from ._internal import _KeyVaultClientBase
+from ._shared import KeyVaultClientBase
 from ._models import (
     Certificate,
     CertificateBase,
@@ -22,7 +22,7 @@ from ._models import (
 )
 
 
-class CertificateClient(_KeyVaultClientBase):
+class CertificateClient(KeyVaultClientBase):
     """CertificateClient defines a high level interface for
     managing certificates in the specified vault.
     Example:

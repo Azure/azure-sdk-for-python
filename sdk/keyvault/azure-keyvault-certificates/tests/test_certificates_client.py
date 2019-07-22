@@ -7,9 +7,9 @@ from azure.keyvault.certificates._key_vault_id import KeyVaultId
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
-from azure.keyvault.certificates._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
+from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
 from azure.keyvault.certificates._models import CertificatePolicy as CertificatePolicy
-from azure.keyvault.certificates._generated.v7_0.models import (
+from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
     SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates._models import (
@@ -187,10 +187,6 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name=cert_name,
             cert_policy=cert_policy
         )
-
-        # get certificate as secret
-        secret_id = KeyVaultId.parse_secret_id(id=cert.secret_id)
-        secret_bundle = vault_client.secrets.get_secret(secret_id.name)
 
         # update certificate
         tags = {'tag1': 'updated_value1'}
