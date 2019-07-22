@@ -72,26 +72,20 @@ def _create_append_blob(
 
 
 def upload_block_blob(  # pylint: disable=too-many-locals
-        client,
-        data,
-        stream,
-        length,
-        overwrite,
-        headers,
-        blob_headers,
-        access_conditions,
-        mod_conditions,
-        validate_content,
-        timeout,
-        max_connections,
-        blob_settings,
-        require_encryption,
-        key_encryption_key,
+        client=None,
+        data=None,
+        stream=None,
+        length=None,
+        overwrite=None,
+        headers=None,
+        validate_content=None,
+        max_connections=None,
+        blob_settings=None,
+        encryption_options=None,
         **kwargs):
     try:
-        overwrite_mod_conditions = None
-        if not overwrite:
-            overwrite_mod_conditions = ModifiedAccessConditions(if_none_match='*')
+        if not overwrite and not kwargs.get('modified_access_conditions'):
+            kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
         adjusted_count = length
         if (key_encryption_key is not None) and (adjusted_count is not None):
             adjusted_count += (16 - (length % 16))
@@ -104,16 +98,13 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
-            if key_encryption_key:
-                encryption_data, data = encrypt_blob(data, key_encryption_key)
+            if encryption_options.get('key'):
+                encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             return client.upload(
                 data,
                 content_length=adjusted_count,
-                timeout=timeout,
-                blob_http_headers=blob_headers,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions or overwrite_mod_conditions,
+                blob_http_headers=kwargs.pop('blob_headers', None),
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -182,73 +173,60 @@ def upload_block_blob(  # pylint: disable=too-many-locals
 
 
 def upload_page_blob(
-        client,
-        stream,
-        length,
-        overwrite,
-        headers,
-        blob_headers,
-        access_conditions,
-        mod_conditions,
-        validate_content,
-        premium_page_blob_tier,
-        timeout,
-        max_connections,
-        blob_settings,
-        cek,
-        iv,
-        encryption_data,
+        client=None,
+        stream=None,
+        length=None,
+        overwrite=None,
+        headers=None,
+        validate_content=None,
+        max_connections=None,
+        blob_settings=None,
+        encryption_options=None,
         **kwargs):
     try:
-        overwrite_mod_conditions = None
         if not overwrite:
-            overwrite_mod_conditions = ModifiedAccessConditions(if_none_match='*')
+            kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
             raise ValueError("Invalid page blob size: {0}. "
                              "The size must be aligned to a 512-byte boundary.".format(length))
-        if premium_page_blob_tier:
+        if kwargs.get('premium_page_blob_tier'):
+            premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
             try:
                 headers['x-ms-access-tier'] = premium_page_blob_tier.value
             except AttributeError:
                 headers['x-ms-access-tier'] = premium_page_blob_tier
-        if encryption_data is not None:
-            headers['x-ms-meta-encryptiondata'] = encryption_data
+        if encryption_options and encryption_options.get('data'):
+            headers['x-ms-meta-encryptiondata'] = encryption_options['data']
         response = client.create(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,
-            blob_http_headers=blob_headers,
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions or overwrite_mod_conditions,
+            blob_http_headers=kwargs.pop('blob_headers', None),
             cls=return_response_headers,
             headers=headers,
             **kwargs)
         if length == 0:
             return response
 
-        mod_conditions = ModifiedAccessConditions(if_match=response['etag'])
+        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
         return upload_data_chunks(
-            blob_service=client,
-            blob_size=length,
-            block_size=blob_settings.max_page_size,
+            service=client,
+            uploader_class=PageBlobChunkUploader,
+            total_size=length,
+            chunk_size=blob_settings.max_page_size,
             stream=stream,
             max_connections=max_connections,
             validate_content=validate_content,
-            access_conditions=access_conditions,
-            uploader_class=PageBlobChunkUploader,
-            modified_access_conditions=mod_conditions,
-            timeout=timeout,
-            content_encryption_key=cek,
-            initialization_vector=iv,
+            encryption_options=encryption_options,
             **kwargs)
+
     except StorageErrorException as error:
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
-            if overwrite_mod_conditions:
+            if not overwrite:
                 _convert_mod_error(mod_error)
             raise
 

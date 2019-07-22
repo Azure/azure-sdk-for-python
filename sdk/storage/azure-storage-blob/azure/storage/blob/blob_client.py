@@ -41,8 +41,8 @@ from ._generated.models import (
 from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
-    upload_page_blob,
-    upload_append_blob)
+    # upload_append_blob,
+    upload_page_blob)
 from .models import BlobType, BlobBlock
 from .lease import LeaseClient, get_access_conditions
 
@@ -334,8 +334,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
@@ -426,10 +424,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-
-        cek, iv, encryption_data = None, None, None
+        encryption_options = {
+            'required': self.require_encryption,
+            'key': self.key_encryption_key,
+            'resolver': self.key_resolver_function,
+        }
         if self.key_encryption_key is not None:
             cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
+            encryption_options['key'] = cek
+            encryption_options['vector'] = iv
+            encryption_options['data'] = encryption_data
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding) # type: ignore
@@ -449,15 +453,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
-        blob_headers = None
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = ModifiedAccessConditions(
+        kwargs['lease_access_conditions'] = get_access_conditions(lease)
+        kwargs['modified_access_conditions'] = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
         if content_settings:
-            blob_headers = BlobHTTPHeaders(
+            kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
                 blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
@@ -467,59 +470,49 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             )
         if blob_type == BlobType.BlockBlob:
             return upload_block_blob(
-                self._client.block_blob,
-                data,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                validate_content,
-                timeout,
-                max_connections,
-                self._config,
-                self.require_encryption,
-                self.key_encryption_key,
+                client=self._client.block_blob,
+                data=data,
+                stream=stream,
+                length=length,
+                overwrite=overwrite,
+                headers=headers,
+                validate_content=validate_content,
+                timeout=timeout,
+                max_connections=max_connections,
+                blob_settings=self._config,
+                encryption_options=encryption_options,
                 **kwargs)
         if blob_type == BlobType.PageBlob:
             return upload_page_blob(
-                self._client.page_blob,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                validate_content,
-                premium_page_blob_tier,
-                timeout,
-                max_connections,
-                self._config,
-                cek,
-                iv,
-                encryption_data,
+                client=self._client.page_blob,
+                stream=stream,
+                length=length,
+                overwrite=overwrite,
+                headers=headers,
+                validate_content=validate_content,
+                timeout=timeout,
+                max_connections=max_connections,
+                blob_settings=self._config,
+                encryption_options=encryption_options,
                 **kwargs)
-        if blob_type == BlobType.AppendBlob:
-            if self.require_encryption or (self.key_encryption_key is not None):
-                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-            return upload_append_blob(
-                self._client.append_blob,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                maxsize_condition,
-                validate_content,
-                timeout,
-                max_connections,
-                self._config,
-                **kwargs)
+        # if blob_type == BlobType.AppendBlob:
+        #     if self.require_encryption or (self.key_encryption_key is not None):
+        #         raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        #     return upload_append_blob(
+        #         self._client.append_blob,
+        #         stream,
+        #         length,
+        #         overwrite,
+        #         headers,
+        #         blob_headers,
+        #         access_conditions,
+        #         mod_conditions,
+        #         maxsize_condition,
+        #         validate_content,
+        #         timeout,
+        #         max_connections,
+        #         self._config,
+        #         **kwargs)
         raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
     def download_blob(
