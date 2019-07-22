@@ -20,7 +20,7 @@ from azure.storage.queue._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from azure.storage.queue._queue_utils import (
+from azure.storage.queue._deserialize import (
     deserialize_queue_properties,
     deserialize_queue_creation)
 from azure.storage.queue._generated.aio import AzureQueueStorage

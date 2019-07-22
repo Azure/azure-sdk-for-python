@@ -23,11 +23,8 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._queue_utils import (
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    deserialize_queue_properties,
-    deserialize_queue_creation)
+from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
+from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
