@@ -51,8 +51,8 @@ class AsyncPipelineClient(PipelineClientBase):
     **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
-
-    *transport* - The HTTP Transport type. If omitted, AioHttpTransport is use for asynchronous transport.
+    *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
+    *transport* - The HTTP Transport instance. If omitted, AioHttpTransport is use for asynchronous transport.
 
     Example:
         .. literalinclude:: ../examples/test_example_async.py
@@ -71,10 +71,7 @@ class AsyncPipelineClient(PipelineClientBase):
         if kwargs.get('pipeline'):
             self._pipeline = kwargs['pipeline']
         else:
-            transport = kwargs.get('transport')
-            if not transport:
-                transport = AioHttpTransport(config, **kwargs)
-            self._pipeline = self._build_pipeline(config, transport)
+            self._pipeline = self._build_pipeline(config, **kwargs)
 
     async def __aenter__(self):
         await self._pipeline.__aenter__()
@@ -86,15 +83,23 @@ class AsyncPipelineClient(PipelineClientBase):
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, transport): # pylint: disable=no-self-use
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.authentication_policy,
-            ContentDecodePolicy(),
-            config.redirect_policy,
-            config.retry_policy,
-            config.custom_hook_policy,
-            config.logging_policy,
-        ]
+    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
+        transport = kwargs.get('transport')
+        policies = kwargs.get('policies')
+
+        if policies is None:  # [] is a valid policy list
+            policies = [
+                config.headers_policy,
+                config.user_agent_policy,
+                config.authentication_policy,
+                ContentDecodePolicy(),
+                config.redirect_policy,
+                config.retry_policy,
+                config.custom_hook_policy,
+                config.logging_policy,
+            ]
+
+        if not transport:
+            transport = AioHttpTransport(**kwargs)
+
         return AsyncPipeline(transport, policies)
