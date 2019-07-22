@@ -34,7 +34,7 @@ class Case(Resource):
     :type created_time_utc: datetime
     :param end_time_utc: The end time of the case
     :type end_time_utc: datetime
-    :param start_time_utc: Required. The start time of the case
+    :param start_time_utc: The start time of the case
     :type start_time_utc: datetime
     :param labels: List of labels relevant to this case
     :type labels: list[str]
@@ -55,19 +55,12 @@ class Case(Resource):
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
     :param closed_reason_text: the case close reason details
     :type closed_reason_text: str
-    :param related_alert_ids: List of related alert identifiers
-    :type related_alert_ids: list[str]
-    :param case_number: a sequential number
-    :type case_number: int
-    :param last_comment: the last comment in the case
-    :type last_comment: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'start_time_utc': {'required': True},
         'title': {'required': True},
         'severity': {'required': True},
         'status': {'required': True},
@@ -90,9 +83,6 @@ class Case(Resource):
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
         'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
-        'related_alert_ids': {'key': 'properties.relatedAlertIds', 'type': '[str]'},
-        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
-        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -110,6 +100,3 @@ class Case(Resource):
         self.status = kwargs.get('status', None)
         self.close_reason = kwargs.get('close_reason', None)
         self.closed_reason_text = kwargs.get('closed_reason_text', None)
-        self.related_alert_ids = kwargs.get('related_alert_ids', None)
-        self.case_number = kwargs.get('case_number', None)
-        self.last_comment = kwargs.get('last_comment', None)

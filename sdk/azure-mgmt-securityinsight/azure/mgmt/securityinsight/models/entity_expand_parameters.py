@@ -25,10 +25,6 @@ class EntityExpandParameters(Model):
     :type end_time: datetime
     """
 
-    _validation = {
-        'expansion_id': {'pattern': r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'},
-    }
-
     _attribute_map = {
         'expansion_id': {'key': 'expansionId', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},

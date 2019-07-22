@@ -12,7 +12,7 @@
 from .entity_py3 import Entity
 
 
-class FileHash(Entity):
+class FileHashEntity(Entity):
     """Represents a file hash entity.
 
     Variables are only populated by the server, and will be ignored when
@@ -66,7 +66,7 @@ class FileHash(Entity):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(FileHash, self).__init__(**kwargs)
+        super(FileHashEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
         self.hash_value = None

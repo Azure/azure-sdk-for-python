@@ -17,7 +17,7 @@ class Entity(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AccountEntity, HostEntity, FileEntity, SecurityAlert,
-    FileHash, MalwareEntity, SecurityGroupEntity, AzureResourceEntity,
+    FileHashEntity, MalwareEntity, SecurityGroupEntity, AzureResourceEntity,
     CloudApplicationEntity, ProcessEntity, DnsEntity, IpEntity,
     RegistryKeyEntity, RegistryValueEntity, UrlEntity, BookmarkEntity
 
@@ -51,7 +51,7 @@ class Entity(Model):
     }
 
     _subtype_map = {
-        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHash', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity', 'Bookmark': 'BookmarkEntity'}
+        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHashEntity', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity', 'Bookmark': 'BookmarkEntity'}
     }
 
     def __init__(self, **kwargs):

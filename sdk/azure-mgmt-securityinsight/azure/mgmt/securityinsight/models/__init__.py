@@ -51,7 +51,7 @@ try:
     from .file_entity_py3 import FileEntity
     from .security_alert_properties_confidence_reasons_item_py3 import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert_py3 import SecurityAlert
-    from .file_hash_py3 import FileHash
+    from .file_hash_entity_py3 import FileHashEntity
     from .malware_entity_py3 import MalwareEntity
     from .security_group_entity_py3 import SecurityGroupEntity
     from .azure_resource_entity_py3 import AzureResourceEntity
@@ -124,7 +124,7 @@ except (SyntaxError, ImportError):
     from .file_entity import FileEntity
     from .security_alert_properties_confidence_reasons_item import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert import SecurityAlert
-    from .file_hash import FileHash
+    from .file_hash_entity import FileHashEntity
     from .malware_entity import MalwareEntity
     from .security_group_entity import SecurityGroupEntity
     from .azure_resource_entity import AzureResourceEntity
@@ -232,7 +232,7 @@ __all__ = [
     'FileEntity',
     'SecurityAlertPropertiesConfidenceReasonsItem',
     'SecurityAlert',
-    'FileHash',
+    'FileHashEntity',
     'MalwareEntity',
     'SecurityGroupEntity',
     'AzureResourceEntity',
