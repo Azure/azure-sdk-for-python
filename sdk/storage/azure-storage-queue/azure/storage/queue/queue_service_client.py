@@ -354,7 +354,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. 
+        """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
         Returns a client with which to interact with the newly created queue.

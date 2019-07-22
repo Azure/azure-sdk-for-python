@@ -210,30 +210,6 @@ class DictMixin(object):
         return default
 
 
-class ModifiedAccessConditions(object):
-    """Additional parameters for a set of operations.
-
-    :param if_modified_since: Specify this header value to operate only on a
-     blob if it has been modified since the specified date/time.
-    :type if_modified_since: datetime
-    :param if_unmodified_since: Specify this header value to operate only on a
-     blob if it has not been modified since the specified date/time.
-    :type if_unmodified_since: datetime
-    :param if_match: Specify an ETag value to operate only on blobs with a
-     matching value.
-    :type if_match: str
-    :param if_none_match: Specify an ETag value to operate only on blobs
-     without a matching value.
-    :type if_none_match: str
-    """
-
-    def __init__(self, **kwargs):
-        self.if_modified_since = kwargs.get('if_modified_since', None)
-        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
-        self.if_match = kwargs.get('if_match', None)
-        self.if_none_match = kwargs.get('if_none_match', None)
-
-
 class LocationMode(object):
     """
     Specifies the location the request should be sent to. This mode only applies

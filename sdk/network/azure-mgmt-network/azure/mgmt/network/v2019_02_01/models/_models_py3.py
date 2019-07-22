@@ -11798,8 +11798,8 @@ class VirtualNetworkGateway(Resource):
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_02_01.models.BgpSettings
     :param custom_routes: The reference of the address space resource which
-     represents the custom routes address space specified by the the customer
-     for virtual network gateway and VpnClient.
+     represents the custom routes address space specified by the customer for
+     virtual network gateway and VpnClient.
     :type custom_routes: ~azure.mgmt.network.v2019_02_01.models.AddressSpace
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.

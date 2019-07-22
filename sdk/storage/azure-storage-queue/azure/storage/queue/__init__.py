@@ -14,7 +14,7 @@ from ._shared.models import(
     AccountPermissions,
     StorageErrorCode
 )
-from ._queue_utils import (
+from ._message_encoding import (
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,

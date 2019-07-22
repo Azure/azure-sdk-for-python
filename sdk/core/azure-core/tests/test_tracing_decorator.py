@@ -162,6 +162,7 @@ class TestDecorator(object):
                 client = MockClient()
                 client.make_request(2)
                 with trace.span("child") as child:
+                    time.sleep(0.001)
                     client.make_request(2, parent_span=parent)
                     assert OpenCensusSpan.get_current_span() == child
                     client.make_request(2)
