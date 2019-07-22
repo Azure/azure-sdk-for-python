@@ -30,7 +30,9 @@ from .policies import (
     QueueMessagePolicy)
 from .policies_async import AsyncStorageResponseHook
 
-
+if TYPE_CHECKING:
+    from azure.core.pipeline import Pipeline
+    from azure.core import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -60,11 +62,11 @@ class AsyncStorageAccountHostsMixin(object):
             raise TypeError("Unsupported credential: {}".format(credential))
 
         if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0]
+            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: HttpTransport
+        config.transport = kwargs.get('transport')  # type: ignore
         if not config.transport:
             config.transport = AsyncTransport(config)
         policies = [
@@ -76,7 +78,7 @@ class AsyncStorageAccountHostsMixin(object):
             credential_policy,
             ContentDecodePolicy(),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
+            StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
