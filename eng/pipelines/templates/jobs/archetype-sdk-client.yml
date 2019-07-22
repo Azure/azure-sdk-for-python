@@ -94,34 +94,18 @@ jobs:
 
     strategy:
       matrix:
-        Linux_Python27:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '2.7'
-        Linux_Python34:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.4'
-        Linux_Python35:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.5'
-        Linux_Python36:
+        Linux:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
-        Linux_Python37:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.7'
-        Windows_Python35:
+        Windows:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
-          PythonVersion: '3.5'
-        MacOS_Python27:
+          PythonVersion: '3.6'
+        MacOS:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
-          PythonVersion: '2.7'
+          PythonVersion: '3.6'
 
     pool:
       vmImage: '$(OSVmImage)'
@@ -138,30 +122,30 @@ jobs:
       - template: ../steps/publish-coverage.yml
 
 
-# Run PyPy tests without coverage
-  - job: 'Test_PyPy'
+# # Run PyPy tests without coverage
+#   - job: 'Test_PyPy'
 
-    variables:
-      - template: ../variables/globals.yml
-      - name: OSName
-        value: 'Linux'
-      - name: PythonVersion
-        value: 'pypy3'
-      - name: OSVmImage
-        value: ubuntu-16.04
+#     variables:
+#       - template: ../variables/globals.yml
+#       - name: OSName
+#         value: 'Linux'
+#       - name: PythonVersion
+#         value: 'pypy3'
+#       - name: OSVmImage
+#         value: ubuntu-16.04
 
-    dependsOn:
-      - 'Build'
+#     dependsOn:
+#       - 'Build'
 
-    pool:
-      vmImage: $(OSVmImage)
+#     pool:
+#       vmImage: $(OSVmImage)
 
-    steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          AdditionalTestArgs: '--disablecov'
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+#     steps:
+#       - template: ../steps/build-test.yml
+#         parameters:
+#           AdditionalTestArgs: '--disablecov'
+#           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#           TestMarkArgument: ${{ parameters.TestMarkArgument }}
+#           OSName: $(OSName)
+#           PythonVersion: $(PythonVersion)
+#           BuildTargetingString: ${{ parameters.BuildTargetingString }}

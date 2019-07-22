@@ -1,5 +1,6 @@
 steps:
   - script: |
+      coverage combine
       coverage xml
     displayName: 'Generate Coverage XML'
     continueOnError: true

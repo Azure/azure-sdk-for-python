@@ -137,5 +137,5 @@ if __name__ == '__main__':
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
     #prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
-    #prep_and_run_tox(targeted_packages)
+    prep_and_run_tox(targeted_packages)
     collect_coverage_files(targeted_packages)
