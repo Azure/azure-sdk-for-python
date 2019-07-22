@@ -15,13 +15,13 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
+from ._shared.shared_access_signature import SharedAccessSignature
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import (
@@ -237,7 +237,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_share(
             self.share_name,
             permission,
