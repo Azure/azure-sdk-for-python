@@ -1,4 +1,4 @@
-# Azure Smoke Tests for Python
+# Azure Smoke Test for Python
 This sample code is a smoke test to ensure that Azure Preview for Python work while loaded into the same process by performing 2 or more actions with them.
 
 Libraries tested:
