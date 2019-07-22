@@ -162,7 +162,7 @@ def _create_eventhub_exception(exception):
     return error
 
 
-def _handle_exception(exception, retry_count, max_retries, closable, timeout_time):
+def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):
     try:
         name = closable.name
     except AttributeError:
@@ -227,7 +227,7 @@ def _handle_exception(exception, retry_count, max_retries, closable, timeout_tim
             backoff_factor = closable.config.backoff_factor
             backoff_max = closable.config.backoff_max
         backoff = backoff_factor * 2 ** retry_count
-        if backoff <= backoff_max and time.time() + backoff <= timeout_time:
+        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):
             time.sleep(backoff)
             log.info("%r has an exception (%r). Retrying...", format(name), exception)
             return _create_eventhub_exception(exception)

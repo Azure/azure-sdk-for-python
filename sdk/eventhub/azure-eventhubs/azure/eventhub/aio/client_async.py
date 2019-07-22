@@ -98,7 +98,7 @@ class EventHubClient(EventHubClientAbstract):
                                                 transport_type=transport_type)
 
     async def _handle_exception(self, exception, retry_count, max_retries):
-        await _handle_exception(exception, retry_count, max_retries, self, log)
+        await _handle_exception(exception, retry_count, max_retries, self)
 
     async def _close_connection(self):
         await self._conn_manager.reset_connection_if_broken()

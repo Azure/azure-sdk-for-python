@@ -106,7 +106,7 @@ class EventHubProducer(ConsumerProducerMixin):
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)
             self.target = self.redirected.address
-        super(EventHubProducer, self)._open()
+        super(EventHubProducer, self)._open(timeout_time)
 
     def _send_event_data(self, timeout=None):
         timeout = self.client.config.send_timeout if timeout is None else timeout

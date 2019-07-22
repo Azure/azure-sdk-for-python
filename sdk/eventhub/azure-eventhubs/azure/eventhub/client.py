@@ -104,7 +104,7 @@ class EventHubClient(EventHubClientAbstract):
                                                transport_type=transport_type)
 
     def _handle_exception(self, exception, retry_count, max_retries):
-        _handle_exception(exception, retry_count, max_retries, self, log)
+        _handle_exception(exception, retry_count, max_retries, self)
 
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
