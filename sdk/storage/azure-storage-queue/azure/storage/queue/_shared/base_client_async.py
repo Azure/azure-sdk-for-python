@@ -59,16 +59,15 @@ class AsyncStorageAccountHostsMixin(object):
         elif isinstance(credential, SharedKeyCredentialPolicy):
             credential_policy = credential
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
-
-        if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
+            raise TypeError("Unsupported credential: {}".format(credential))        
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
+        if 'connection_timeout' not in kwargs:
+            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
         if not config.transport:
-            config.transport = AsyncTransport(config)
+            config.transport = AsyncTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,

@@ -158,8 +158,10 @@ class StorageAccountHostsMixin(object):
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
+        if 'connection_timeout' not in kwargs:
+            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
         if not config.transport:
-            config.transport = RequestsTransport(config)
+            config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -244,8 +246,6 @@ def parse_connection_str(conn_str, credential, service):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    if 'connection_timeout' not in kwargs:
-        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
