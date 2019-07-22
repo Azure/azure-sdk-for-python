@@ -53,8 +53,6 @@ class Case(Resource):
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
-    :param closed_reason_text: the case close reason details
-    :type closed_reason_text: str
     """
 
     _validation = {
@@ -82,10 +80,9 @@ class Case(Resource):
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
-        'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
     }
 
-    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, closed_reason_text: str=None, **kwargs) -> None:
+    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
         self.last_updated_time_utc = last_updated_time_utc
@@ -99,4 +96,3 @@ class Case(Resource):
         self.severity = severity
         self.status = status
         self.close_reason = close_reason
-        self.closed_reason_text = closed_reason_text

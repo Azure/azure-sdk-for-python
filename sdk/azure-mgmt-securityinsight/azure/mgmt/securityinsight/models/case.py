@@ -53,8 +53,6 @@ class Case(Resource):
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
-    :param closed_reason_text: the case close reason details
-    :type closed_reason_text: str
     """
 
     _validation = {
@@ -82,7 +80,6 @@ class Case(Resource):
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
-        'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -99,4 +96,3 @@ class Case(Resource):
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
         self.close_reason = kwargs.get('close_reason', None)
-        self.closed_reason_text = kwargs.get('closed_reason_text', None)
