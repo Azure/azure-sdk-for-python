@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 import os
 
-from common_tasks import process_glob_string, run_check_call
+from common_tasks import process_glob_string, run_check_call, cleanup_folder
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
@@ -23,6 +23,44 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 ALLOWED_RETURN_CODES = []
 
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
+
+def prep_and_run_tox(targeted_packages):
+    print(targeted_packages)
+    for package_dir in [package for package in targeted_packages]:
+        print('running test setup for {}'.format(os.path.basename(package_dir)))
+        run_check_call(['tox', '-p', 'all'], package_dir)
+
+def collect_coverage_files(targeted_packages):
+    root_coverage_dir = os.path.join(root_dir, '_coverage/')
+
+    try:
+        os.mkdir(root_coverage_dir)
+    except FileExistsError:
+        print('Coverage dir already exists. Cleaning.')
+        cleanup_folder(root_coverage_dir)
+
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(package_dir, '.coverage')
+        if os.path.isfile(coverage_file):
+            destination_file = os.path.join(root_coverage_dir, '.coverage_{}'.format(os.path.basename(package_dir)))
+            shutil.copyfile(coverage_file, destination_file)
+            coverage_files.append(destination_file)
+
+    cov_cmd_array = ['coverage', 'combine']
+    cov_cmd_array.extend(coverage_files)
+
+    # merge them with coverage combine and copy to root
+    run_check_call(cov_cmd_array, os.path.join(root_dir, '_coverage/'))
+
+    source = os.path.join(root_coverage_dir, './.coverage')
+    dest = os.path.join(root_dir)
+
+    print(source)
+    print(dest)
+
+    shutil.move(source, root_dir)
 
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
@@ -98,4 +136,6 @@ if __name__ == '__main__':
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
-    prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+    #prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+    prep_and_run_tox(targeted_packages)
+    collect_coverage_files(targeted_packages)
