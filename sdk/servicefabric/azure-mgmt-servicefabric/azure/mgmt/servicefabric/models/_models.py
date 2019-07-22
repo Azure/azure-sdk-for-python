@@ -137,6 +137,10 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     """
@@ -152,6 +156,8 @@ class ProxyResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -160,6 +166,8 @@ class ProxyResource(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
         self.etag = None
 
 
@@ -175,6 +183,10 @@ class ApplicationResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param type_version: The version of the application type as defined in the
@@ -228,6 +240,8 @@ class ApplicationResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
@@ -293,6 +307,10 @@ class ApplicationResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param type_version: The version of the application type as defined in the
@@ -339,6 +357,8 @@ class ApplicationResourceUpdate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
@@ -372,6 +392,10 @@ class ApplicationTypeResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
@@ -391,6 +415,8 @@ class ApplicationTypeResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -444,6 +470,10 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
@@ -470,6 +500,8 @@ class ApplicationTypeVersionResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
@@ -2012,6 +2044,10 @@ class ServiceResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param placement_constraints: The placement constraints as a string.
@@ -2061,6 +2097,8 @@ class ServiceResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
@@ -2249,6 +2287,10 @@ class ServiceResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :param location: Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param placement_constraints: The placement constraints as a string.
@@ -2285,6 +2327,8 @@ class ServiceResourceUpdate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
