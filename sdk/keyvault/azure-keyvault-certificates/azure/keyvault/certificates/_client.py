@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import base64
 import uuid
 from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
@@ -135,6 +136,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
 
         if enabled is not None or not_before is not None or expires is not None:
@@ -171,6 +174,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type version: str
         :returns: An instance of Certificate
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         if version is None:
             version = ""
@@ -196,6 +201,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :returns: The deleted certificate
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -213,6 +220,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: The deleted certificate
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
@@ -235,6 +244,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: None
         :rtype: None
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
 
@@ -252,6 +263,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: The recovered certificate
         :rtype ~azure.security.keyvault.certificates._models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -259,17 +272,17 @@ class CertificateClient(_KeyVaultClientBase):
     def import_certificate(
         self,
         name,
-        base64_encoded_certificate,
-        policy,
+        certificate_bytes,
         password=None,
+        policy=None,
         enabled=None,
         not_before=None,
         expires=None,
         tags=None,
         **kwargs
-    ):
-        # type: (str, str, CertificatePolicy, Optional[str], Optional[bool],Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
-        """Imports a certificate into the key vault.
+        ):
+        # type: (str, bytes, Optional[str], Optional[CertificatePolicy], Optional[bool],Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
+        """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
         Azure Key Vault. The certificate to be imported can be in either PFX or
@@ -279,15 +292,15 @@ class CertificateClient(_KeyVaultClientBase):
 
         :param name: The name of the certificate.
         :type name: str
-        :param base64_encoded_certificate: Base64 encoded representation of
-         the certificate object to import. This certificate needs to contain
-         the private key.
-        :type base64_encoded_certificate: str
+        :param certificate_bytes: Bytes of the ertificate object to import.
+        This certificate needs to contain the private key.
+        :type certificate_bytes: str
+        :param password: If the private key in base64EncodedCertificate is
+         encrypted, the password used for encryption.
+        :type password: str
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.security.keyvault.v7_0.models.CertificatePolicy
-        :param password: Password that protecting the certificate to import.
-        :type password: str
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param not_before: Not before date of the secret in UTC
@@ -306,12 +319,13 @@ class CertificateClient(_KeyVaultClientBase):
             )
         else:
             attributes = None
+        base64_encoded_certificate = base64.b64encode(certificate_bytes).decode("utf-8")
         bundle = self._client.import_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=self._to_certificate_policy_bundle(policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -329,6 +343,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: The certificate policy
         :rtype ~azure.security.keyvault.certificates._models.CertificatePolicy
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.get_certificate_policy(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -347,6 +363,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type policy: ~azure.security.keyvault.certificates._models.CertificatePolicy
         :return: The certificate policy
         :rtype: ~azure.security.keyvault.certificates._models.CertificatePolicy
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
@@ -380,6 +398,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The updated Certificate
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -410,6 +430,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         backup_result = self._client.backup_certificate(
             vault_base_url=self.vault_url,
@@ -431,6 +453,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type backup bytes
         :return: The restored Certificate
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.restore_certificate(
             vault_base_url=self.vault_url,
@@ -456,6 +480,8 @@ class CertificateClient(_KeyVaultClientBase):
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.get("max_page_size", None)
         pages = self._client.get_deleted_certificates(
@@ -480,6 +506,8 @@ class CertificateClient(_KeyVaultClientBase):
         :returns: An iterator like instance of CertificateBase
         :rtype:
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.get("max_page_size", None)
         pages = self._client.get_certificates(
@@ -503,6 +531,8 @@ class CertificateClient(_KeyVaultClientBase):
         :returns: An iterator like instance of CertificateBase
         :rtype:
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.get("max_page_size", None)
         pages = self._client.get_certificate_versions(
@@ -522,21 +552,23 @@ class CertificateClient(_KeyVaultClientBase):
         :param contacts: The contact list for the vault certificates.
         :type contacts: list[~azure.keyvault.v7_0.models.Contact]
         :returns: The created list of contacts
-        :rtype: list[~azure.security.keyvault.certificates._models.Contacts]
+        :rtype: Iterator[~azure.security.keyvault.certificates._models.Contact]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
 
-    def list_contacts(self, **kwargs):
+    def get_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
-        """Lists the certificate contacts for the key vault.
+        """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
         key vault. This operation requires the certificates/managecontacts
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: ~azure.security.keyvault.certificates._models.Contacts
+        :rtype: Iterator[azure.security.keyvault.certificates._models.Contact]
         """
         pages = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in pages.contact_list)
@@ -549,7 +581,9 @@ class CertificateClient(_KeyVaultClientBase):
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: ~azure.security.certificates._models.Contacts
+        :rtype: Iterator[~azure.security.certificates._models.Contact]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
@@ -565,6 +599,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :returns: The created CertificateOperation
         :rtype: ~azure.security.keyvault.v7_0.models.CertificateOperation
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
 
         bundle = self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
@@ -582,6 +618,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: The deleted CertificateOperation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -600,6 +638,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type cancellation_requested: bool
         :returns: The updated certificate operation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
@@ -631,6 +671,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type tags: dict[str, str]
         :return: The merged certificate operation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -657,6 +699,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type custom_headers: dict
         :return: Base64 encoded pending certificate signing request (PKCS-10).
         :rtype: str
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         vault_base_url = self.vault_url
         # Construct URL
@@ -708,6 +752,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: The specified certificate issuer.
         :rtype: ~azure.security.keyvault.certificates._models.Issuer
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         issuer_bundle = self._client.get_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -745,6 +791,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type enabled: bool
         :returns: The created Issuer
         :rtype: ~azure.security.keyvault.certificates._models.Issuer
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -821,6 +869,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type enabled: bool
         :return: The updated issuer
         :rtype: ~azure.security.keyvault.certificates._models.Issuer
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -869,6 +919,8 @@ class CertificateClient(_KeyVaultClientBase):
         :type name: str
         :return: Issuer
         :rtype: ~azure.security.keyvault.certificates._models.Issuer
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         issuer_bundle = self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -883,6 +935,8 @@ class CertificateClient(_KeyVaultClientBase):
 
         :return: An iterator like instance of Issuers
         :rtype: Iterable[~azure.security.keyvault.certificates._models.Issuer]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.get("max_page_size", None)
         paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
