@@ -26,7 +26,7 @@
 
 from typing import AsyncIterator, TypeVar, List
 
-from azure.core.async_paging import AsyncItemPaged, _AsyncList
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 import pytest
 
@@ -66,7 +66,7 @@ class TestPaging:
                 }
 
         async def extract_data(response):
-            return response['nextLink'], _AsyncList(response['value'])
+            return response['nextLink'], AsyncList(response['value'])
 
         pager = AsyncItemPaged(get_next, extract_data)
         result_iterated = await _as_list(pager)
@@ -91,7 +91,7 @@ class TestPaging:
                 }
 
         async def extract_data(response):
-            return response['nextLink'], _AsyncList(response['value'])
+            return response['nextLink'], AsyncList(response['value'])
 
         pager = AsyncItemPaged(get_next, extract_data).by_page()
 
@@ -114,7 +114,7 @@ class TestPaging:
             }
 
         async def extract_data(response):
-            return response['nextLink'], _AsyncList(response['value'] or [])
+            return response['nextLink'], AsyncList(response['value'] or [])
 
         pager = AsyncItemPaged(get_next, extract_data)
         result_iterated = await _as_list(pager)

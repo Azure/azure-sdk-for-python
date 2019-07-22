@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional, Coroutine
 
 from .pipeline.transport import HttpResponse
 
@@ -33,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 
 
-class _AsyncList(AsyncIterator[ReturnType]):
+class AsyncList(AsyncIterator[ReturnType]):
     def __init__(
         self,
         iterator: Iterator[ReturnType]
@@ -90,7 +90,7 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
     def __init__(
         self,
         get_next: Callable[[str], HttpResponse],
-        extract_data: Callable[[HttpResponse], Tuple[str, List[ReturnType]]],
+        extract_data: Callable[[HttpResponse], Tuple[str, AsyncIterator[ReturnType]]],
     ) -> None:
         self._get_next = get_next
         self._extract_data = extract_data
