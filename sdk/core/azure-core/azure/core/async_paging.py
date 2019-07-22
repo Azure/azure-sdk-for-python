@@ -32,6 +32,7 @@ from typing import (
     Tuple,
     Optional,
     Awaitable,
+    Type,
 )
 
 
@@ -103,6 +104,7 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         extract_data: Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
         ],
+        page_iterator_class=AsyncPageIterator,
     ) -> None:
         """Return an async iterator of items.
 
@@ -112,13 +114,16 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         """
         self._get_next = get_next
         self._extract_data = extract_data
-        self._page_iterator = None  # type: Optional[AsyncPageIterator[ReturnType]]
-        self._page = None
+        self._page_iterator = (
+            None
+        )  # type: Optional[AsyncIterator[AsyncIterator[ReturnType]]]
+        self._page = None  # type: Optional[AsyncIterator[ReturnType]]
+        self._page_iterator_class = page_iterator_class
 
     def by_page(
         self, continuation_token: Optional[str] = None
-    ) -> AsyncPageIterator[ReturnType]:
-        return AsyncPageIterator(
+    ) -> AsyncIterator[AsyncIterator[ReturnType]]:
+        return self._page_iterator_class(
             get_next=self._get_next,
             extract_data=self._extract_data,
             continuation_token=continuation_token,

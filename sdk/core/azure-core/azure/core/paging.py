@@ -32,6 +32,7 @@ from typing import (
     TypeVar,
     Iterator,
     Tuple,
+    Type,
 )  # pylint: disable=unused-import
 import logging
 
@@ -77,22 +78,24 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
 
 class ItemPaged(Iterator[ReturnType]):
-    def __init__(self, get_next, extract_data):
-        # type: (Callable[[str], ResponseType], Callable[[ResponseType], Tuple[str, Iterator[ReturnType]]]) -> None
+    def __init__(self, get_next, extract_data, page_iterator_class=PageIterator):
+        # type: (Callable[[str], ResponseType], Callable[[ResponseType], Tuple[str, Iterator[ReturnType]]], Type) -> None
         """Return an iterator of items.
 
         :param get_next: Callable that take the continuation token and return a HTTP response
         :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
          list of ReturnType
+        :param page_iterator_class: The type to use for page iterator
         """
         self._get_next = get_next
         self._extract_data = extract_data
         self._page_iterator = None
         self._page = None
+        self._page_iterator_class = page_iterator_class
 
     def by_page(self, continuation_token=None):
-        # type: (Optional[str]) -> PageIterator[ReturnType]
-        return PageIterator(
+        # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
+        return self._page_iterator_class(
             get_next=self._get_next,
             extract_data=self._extract_data,
             continuation_token=continuation_token,
