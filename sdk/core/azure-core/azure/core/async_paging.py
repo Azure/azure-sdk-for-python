@@ -23,46 +23,97 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import AsyncIterator, TypeVar
 import logging
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional
+
+from .pipeline.transport import HttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")
 
-class AsyncPagedMixin(AsyncIterator[ReturnType]):
-    """Bring async to Paging.
 
-    **Keyword argument:**
+class _AsyncList(AsyncIterator[ReturnType]):
+    def __init__(
+        self,
+        iterator: Iterator[ReturnType]
+    ) -> None:
+        """Change an iterator into a fake async iterator.
 
-    *async_command* - Mandatory keyword argument for this mixin to work.
-    """
-    def __init__(self, *args, **kwargs): # pylint: disable=unused-argument
-        self._async_get_next = kwargs.get("async_command")
-        if not self._async_get_next:
-            _LOGGER.debug("Paging async iterator protocol is not available for %s",
-                          self.__class__.__name__)
+        Coul be useful to fill the async iterator contract when you get a list.
 
-    async def _async_advance_page(self):
-        if not self._async_get_next:
-            raise NotImplementedError(
-                "The class {} does not support async paging.".format(self.__class__.__name__)
-            )
-        if self.next_link is None:
-            raise StopAsyncIteration("End of paging")
-        self._current_page_iter_index = 0
-        self._response = await self._async_get_next(self.next_link)
-        self._deserializer(self, self._response)
-        return self.current_page
+        :param iterator: A sync iterator of T
+        """
+        # Technically, if it's a real iterator, I don't need "iter"
+        # but that will cover iterable and list as well with no troubles created.
+        self._iterator = iter(iterator)
+
+    async def __anext__(self) -> ReturnType:
+        try:
+            return next(self._iterator)
+        except StopIteration as err:
+            raise StopAsyncIteration() from err
+
+class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
+    def __init__(
+        self,
+        get_next: Callable[[str], HttpResponse],
+        extract_data: Callable[[HttpResponse], Tuple[str, AsyncIterator[ReturnType]]],
+        continuation_token: Optional[str] = None
+    ) -> None:
+        """Return an async iterator of pages.
+
+        :param get_next: Callable that take the continuation token and return a HTTP response
+        :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
+         list of ReturnType
+        :param str continuation_token: The continuation token needed by get_next
+        """
+        self._get_next = get_next
+        self._extract_data = extract_data
+        self.continuation_token = continuation_token
+        self._did_a_call_already = False
+        self._response = None
+        self._current_page = None
 
     async def __anext__(self):
-        """Iterate through responses."""
-        # Storing the list iterator might work out better, but there's no
-        # guarantee that some code won't replace the list entirely with a copy,
-        # invalidating an list iterator that might be saved between iterations.
-        if self.current_page and self._current_page_iter_index < len(self.current_page):
-            response = self.current_page[self._current_page_iter_index]
-            self._current_page_iter_index += 1
-            return response
-        await self._async_advance_page()
-        return await self.__anext__()
+        if self.continuation_token is None and self._did_a_call_already:
+            raise StopAsyncIteration("End of paging")
+
+        self._response = await self._get_next(self.continuation_token)
+        self._did_a_call_already = True
+
+        self.continuation_token, self._current_page = await self._extract_data(self._response)
+        return self._current_page
+
+
+class AsyncItemPaged(AsyncIterator[ReturnType]):
+    def __init__(
+        self,
+        get_next: Callable[[str], HttpResponse],
+        extract_data: Callable[[HttpResponse], Tuple[str, List[ReturnType]]],
+    ) -> None:
+        self._get_next = get_next
+        self._extract_data = extract_data
+        self._page_iterator = None
+        self._page = None
+
+    def by_page(self, continuation_token=None) -> AsyncPageIterator[ReturnType]:
+        return AsyncPageIterator(
+            get_next=self._get_next,
+            extract_data=self._extract_data,
+            continuation_token=continuation_token
+        )
+
+    async def __anext__(self) -> ReturnType:
+        if self._page_iterator is None:
+            self._page_iterator = self.by_page()
+            return await self.__anext__()
+        if self._page is None:
+            # Let it raise StopAsyncIteration
+            self._page = await self._page_iterator.__anext__()
+            return await self.__anext__()
+        try:
+            return await self._page.__anext__()
+        except StopAsyncIteration:
+            self._page = None
+            return await self.__anext__()
