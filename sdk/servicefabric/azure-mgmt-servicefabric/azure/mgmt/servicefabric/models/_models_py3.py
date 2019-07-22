@@ -137,10 +137,6 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     """
@@ -156,18 +152,14 @@ class ProxyResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
         self.etag = None
 
 
@@ -183,10 +175,6 @@ class ApplicationResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param type_version: The version of the application type as defined in the
@@ -240,8 +228,6 @@ class ApplicationResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
@@ -254,8 +240,8 @@ class ApplicationResource(ProxyResource):
         'type_name': {'key': 'properties.typeName', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, type_name: str=None, **kwargs) -> None:
-        super(ApplicationResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, type_name: str=None, **kwargs) -> None:
+        super(ApplicationResource, self).__init__(**kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
@@ -307,10 +293,6 @@ class ApplicationResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param type_version: The version of the application type as defined in the
@@ -357,8 +339,6 @@ class ApplicationResourceUpdate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
@@ -369,8 +349,8 @@ class ApplicationResourceUpdate(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
-        super(ApplicationResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
+        super(ApplicationResourceUpdate, self).__init__(**kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
@@ -392,10 +372,6 @@ class ApplicationTypeResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
@@ -415,14 +391,12 @@ class ApplicationTypeResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(ApplicationTypeResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ApplicationTypeResource, self).__init__(**kwargs)
         self.provisioning_state = None
 
 
@@ -470,10 +444,6 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
@@ -500,16 +470,14 @@ class ApplicationTypeVersionResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
         'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '{str}'},
     }
 
-    def __init__(self, *, app_package_url: str, location: str=None, tags=None, **kwargs) -> None:
-        super(ApplicationTypeVersionResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, app_package_url: str, **kwargs) -> None:
+        super(ApplicationTypeVersionResource, self).__init__(**kwargs)
         self.provisioning_state = None
         self.app_package_url = app_package_url
         self.default_parameter_list = None
@@ -2044,10 +2012,6 @@ class ServiceResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param placement_constraints: The placement constraints as a string.
@@ -2097,8 +2061,6 @@ class ServiceResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
@@ -2111,8 +2073,8 @@ class ServiceResource(ProxyResource):
         'service_package_activation_mode': {'key': 'properties.servicePackageActivationMode', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name: str=None, partition_description=None, service_package_activation_mode=None, **kwargs) -> None:
-        super(ServiceResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name: str=None, partition_description=None, service_package_activation_mode=None, **kwargs) -> None:
+        super(ServiceResource, self).__init__(**kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics
@@ -2287,10 +2249,6 @@ class ServiceResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
-    :type location: str
-    :param tags: Azure resource tags.
-    :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :param placement_constraints: The placement constraints as a string.
@@ -2327,8 +2285,6 @@ class ServiceResourceUpdate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
@@ -2337,8 +2293,8 @@ class ServiceResourceUpdate(ProxyResource):
         'default_move_cost': {'key': 'properties.defaultMoveCost', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, **kwargs) -> None:
-        super(ServiceResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, **kwargs) -> None:
+        super(ServiceResourceUpdate, self).__init__(**kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics

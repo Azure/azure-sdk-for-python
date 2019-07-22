@@ -108,7 +108,7 @@ class ApplicationTypesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
     def create(
-            self, resource_group_name, cluster_name, application_type_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a Service Fabric application type name resource.
 
         Create or update a Service Fabric application type name resource with
@@ -121,10 +121,6 @@ class ApplicationTypesOperations(object):
         :param application_type_name: The name of the application type name
          resource.
         :type application_type_name: str
-        :param location: Azure resource location.
-        :type location: str
-        :param tags: Azure resource tags.
-        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -136,7 +132,7 @@ class ApplicationTypesOperations(object):
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        parameters = models.ApplicationTypeResource(location=location, tags=tags)
+        parameters = None
 
         # Construct URL
         url = self.create.metadata['url']
