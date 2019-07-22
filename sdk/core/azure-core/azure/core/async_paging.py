@@ -24,13 +24,13 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional, Coroutine
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Tuple, List, Optional, Awaitable
 
-from .pipeline.transport import HttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")
+ResponseType = TypeVar("ResponseType")
 
 
 class AsyncList(AsyncIterator[ReturnType]):
@@ -57,8 +57,8 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        get_next: Callable[[str], HttpResponse],
-        extract_data: Callable[[HttpResponse], Tuple[str, AsyncIterator[ReturnType]]],
+        get_next: Callable[[str], Awaitable[ResponseType]],
+        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
         continuation_token: Optional[str] = None
     ) -> None:
         """Return an async iterator of pages.
@@ -89,15 +89,21 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 class AsyncItemPaged(AsyncIterator[ReturnType]):
     def __init__(
         self,
-        get_next: Callable[[str], HttpResponse],
-        extract_data: Callable[[HttpResponse], Tuple[str, AsyncIterator[ReturnType]]],
+        get_next: Callable[[str], Awaitable[ResponseType]],
+        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
     ) -> None:
+        """Return an async iterator of items.
+
+        :param get_next: Callable that take the continuation token and return a HTTP response
+        :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
+         list of ReturnType
+        """
         self._get_next = get_next
         self._extract_data = extract_data
-        self._page_iterator = None
+        self._page_iterator = None  # type: Optional[AsyncPageIterator[ReturnType]]
         self._page = None
 
-    def by_page(self, continuation_token=None) -> AsyncPageIterator[ReturnType]:
+    def by_page(self, continuation_token: Optional[str]=None) -> AsyncPageIterator[ReturnType]:
         return AsyncPageIterator(
             get_next=self._get_next,
             extract_data=self._extract_data,
