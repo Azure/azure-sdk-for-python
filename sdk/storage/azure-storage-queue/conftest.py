@@ -10,4 +10,4 @@ import sys
 # Ignore async tests for Python < 3.5
 collect_ignore = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("tests/asynctests")
+    collect_ignore.append("tests/*_async.py")
