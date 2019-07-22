@@ -89,8 +89,8 @@ jobs:
     variables:
     - template: ../variables/globals.yml
 
-    dependsOn:
-      - 'Build'
+    # dependsOn:
+    #   - 'Build'
 
     strategy:
       matrix:
