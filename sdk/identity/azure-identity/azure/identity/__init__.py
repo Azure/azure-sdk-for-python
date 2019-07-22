@@ -10,6 +10,7 @@ from .credentials import (
     ManagedIdentityCredential,
     UsernamePasswordCredential,
 )
+from .interactive_auth import InteractiveCredential
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -35,6 +36,7 @@ __all__ = [
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "EnvironmentCredential",
+    "InteractiveCredential",
     "ManagedIdentityCredential",
     "UsernamePasswordCredential",
 ]
