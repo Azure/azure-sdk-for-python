@@ -142,7 +142,7 @@ class StorageAccountHostsMixin(object):
         elif is_credential_sastoken(credential):
             query_str += credential.lstrip('?')
             credential = None
-        return quote(query_str.rstrip('?&')), credential
+        return query_str.rstrip('?&'), credential
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
@@ -157,9 +157,11 @@ class StorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: HttpTransport
+        config.transport = kwargs.get('transport')  # type: ignore
+        if 'connection_timeout' not in kwargs:
+            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
         if not config.transport:
-            config.transport = RequestsTransport(config)
+            config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -244,8 +246,6 @@ def parse_connection_str(conn_str, credential, service):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    if 'connection_timeout' not in kwargs:
-        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
@@ -277,7 +277,7 @@ def create_configuration(**kwargs):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, v) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = '&'.join(sas_params)
