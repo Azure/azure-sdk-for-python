@@ -87,8 +87,9 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         if not overwrite and not kwargs.get('modified_access_conditions'):
             kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
         adjusted_count = length
-        if (key_encryption_key is not None) and (adjusted_count is not None):
+        if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count += (16 - (length % 16))
+        blob_headers = kwargs.pop('blob_headers', None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count < blob_settings.max_single_put_size):
@@ -104,7 +105,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             return client.upload(
                 data,
                 content_length=adjusted_count,
-                blob_http_headers=kwargs.pop('blob_headers', None),
+                blob_http_headers=blob_headers,
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -112,42 +113,39 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 upload_stream_current=0,
                 **kwargs)
 
-        cek, iv, encryption_data = None, None, None
         use_original_upload_path = blob_settings.use_byte_buffer or \
-            validate_content or require_encryption or \
+            validate_content or encryption_options.get('required') or \
             blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
         if use_original_upload_path:
-            if key_encryption_key:
-                cek, iv, encryption_data = generate_blob_encryption_data(key_encryption_key)
+            if encryption_options.get('key'):
+                cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+                encryption_options['key'] = cek
+                encryption_options['vector'] = iv
             block_ids = upload_data_chunks(
-                blob_service=client,
-                blob_size=length,
-                block_size=blob_settings.max_block_size,
-                stream=stream,
-                max_connections=max_connections,
-                validate_content=validate_content,
-                access_conditions=access_conditions,
+                service=client,
                 uploader_class=BlockBlobChunkUploader,
-                timeout=timeout,
-                content_encryption_key=cek,
-                initialization_vector=iv,
+                total_size=length,
+                chunk_size=blob_settings.max_block_size,
+                max_connections=max_connections,
+                stream=stream,
+                validate_content=validate_content,
+                encryption_options=encryption_options,
                 **kwargs
             )
         else:
             block_ids = upload_substream_blocks(
-                blob_service=client,
-                blob_size=length,
-                block_size=blob_settings.max_block_size,
-                stream=stream,
-                max_connections=max_connections,
-                validate_content=validate_content,
-                access_conditions=access_conditions,
+                service=client,
                 uploader_class=BlockBlobChunkUploader,
-                timeout=timeout,
+                total_size=length,
+                chunk_size=blob_settings.max_block_size,
+                max_connections=max_connections,
+                stream=stream,
+                validate_content=validate_content,
+                encryption_options=encryption_options,
                 **kwargs
             )
 
@@ -156,9 +154,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         return client.commit_block_list(
             block_lookup,
             blob_http_headers=blob_headers,
-            lease_access_conditions=access_conditions,
-            timeout=timeout,
-            modified_access_conditions=mod_conditions or overwrite_mod_conditions,
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
@@ -167,7 +162,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
-            if overwrite_mod_conditions:
+            if not overwrite:
                 _convert_mod_error(mod_error)
             raise
 
@@ -184,7 +179,7 @@ def upload_page_blob(
         encryption_options=None,
         **kwargs):
     try:
-        if not overwrite:
+        if not overwrite and not kwargs.get('modified_access_conditions'):
             kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")

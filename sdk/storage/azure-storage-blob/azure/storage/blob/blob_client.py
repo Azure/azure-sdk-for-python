@@ -431,7 +431,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         }
         if self.key_encryption_key is not None:
             cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
-            encryption_options['key'] = cek
+            encryption_options['cek'] = cek
             encryption_options['vector'] = iv
             encryption_options['data'] = encryption_data
 
@@ -1331,7 +1331,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('destination_if_match', None),
             if_none_match=kwargs.pop('destination_if_none_match', None))
         try:
-            if kwargs.get('incremental_copy'):
+            if kwargs.pop('incremental_copy', None):
                 return self._client.page_blob.copy_incremental(
                     source_url,
                     timeout=None,

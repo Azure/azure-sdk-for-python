@@ -742,8 +742,6 @@ class ContainerClient(StorageAccountHostsMixin):
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
@@ -845,8 +843,6 @@ class ContainerClient(StorageAccountHostsMixin):
             validate_content=validate_content,
             lease=lease,
             timeout=timeout,
-            premium_page_blob_tier=premium_page_blob_tier,
-            maxsize_condition=maxsize_condition,
             max_connections=max_connections,
             encoding=encoding,
             **kwargs
