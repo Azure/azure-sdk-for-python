@@ -26,15 +26,14 @@ ALLOWED_RETURN_CODES = []
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
-def prep_and_run_tox(targeted_packages):
+def prep_and_run_tox(targeted_packages, optional_argument_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
-
-        print('running test setup for {}'.format(os.path.basename(package_dir)))
+        print('Running test setup for {}'.format(os.path.basename(package_dir)))
 
         # if not present, copy it
         if not os.path.exists(destination_tox_ini):
-
+            print('Tox.ini not available in package folder, copying base tox.ini to package folder.')
             shutil.copyfile(DEFAULT_TOX_INI_LOCATION, destination_tox_ini)
 
         run_check_call(['tox', '-q', '-p', 'all'], package_dir)
@@ -129,5 +128,5 @@ if __name__ == '__main__':
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
-    prep_and_run_tox(targeted_packages)
+    prep_and_run_tox(targeted_packages, test_results_arg)
     collect_coverage_files(targeted_packages)
