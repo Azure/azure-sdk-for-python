@@ -42,7 +42,7 @@ class CosmosDbMongoDbApiSource(CopySource):
      ~azure.mgmt.datafactory.models.MongoDbCursorMethodsProperties
     :param batch_size: Specifies the number of documents to return in each
      batch of the response from MongoDB instance. In most cases, modifying the
-     batch size will not affect the user or the application. This property�s
+     batch size will not affect the user or the application. This property's
      main purpose is to avoid hit the limitation of response size. Type:
      integer (or Expression with resultType integer).
     :type batch_size: object
