@@ -7,6 +7,7 @@ import logging
 import time
 from typing import Any, Callable
 from azure.core.polling import PollingMethod, LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.utils import process_storage_error
 from ._generated.models import StorageErrorException
@@ -114,6 +115,7 @@ class CopyFile(PollingMethod):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def status(self):
         self._update_status()
         return self._status
@@ -125,6 +127,7 @@ class CopyFile(PollingMethod):
         """
         return str(self.status()).lower() in ['success', 'aborted', 'failed']
 
+    @distributed_trace
     def resource(self):
         # type: () -> Any
         self._update_status()
@@ -133,6 +136,7 @@ class CopyFile(PollingMethod):
 
 class CopyFilePolling(CopyFile):
 
+    @distributed_trace
     def run(self):
         # type: () -> None
         try:
@@ -157,6 +161,7 @@ class CopyFilePolling(CopyFile):
         except AttributeError:
             return self._status # type: ignore
 
+    @distributed_trace
     def resource(self):
         # type: () -> Any
         if not self.file:
@@ -187,6 +192,7 @@ class CloseHandles(PollingMethod):
         self._status = initial_status['marker']
         self.handles_closed = initial_status['number_of_handles_closed']
 
+    @distributed_trace
     def run(self):
         # type: () -> None
         try:
@@ -197,6 +203,7 @@ class CloseHandles(PollingMethod):
             logger.warning(str(e))
             raise
 
+    @distributed_trace
     def status(self):
         self._update_status()
         return self.handles_closed
@@ -208,6 +215,7 @@ class CloseHandles(PollingMethod):
         """
         return self._status is None
 
+    @distributed_trace
     def resource(self):
         # type: () -> Any
         if not self.finished:
