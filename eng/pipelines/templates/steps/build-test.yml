@@ -46,6 +46,7 @@ steps:
     inputs:
       testResultsFiles: '**/test-junit-py27*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 2.7'
+      mergeTestResults: true
 
   - task: PublishTestResults@2
     displayName: 'ublish Python 3.4 Test Results'
@@ -53,6 +54,7 @@ steps:
     inputs:
       testResultsFiles: '**/test-junit-py34-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.4'
+      mergeTestResults: true
 
   - task: PublishTestResults@2
     displayName: 'Publish Python 3.5 Test Results'
@@ -60,6 +62,7 @@ steps:
     inputs:
       testResultsFiles: '**/test-junit-py35-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.5'
+      mergeTestResults: true
 
   - task: PublishTestResults@2
     displayName: 'Publish Python 3.6 Test Results'
@@ -67,6 +70,7 @@ steps:
     inputs:
       testResultsFiles: '**/test-junit-py36-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.6'
+      mergeTestResults: true
 
   - task: PublishTestResults@2
     displayName: 'Publish Python3.7 Test Results'
@@ -74,3 +78,4 @@ steps:
     inputs:
       testResultsFiles: '**/test-junit-py37-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
+      mergeTestResults: true
