@@ -33,7 +33,7 @@ from azure.core.tracing.context import tracing_context
 
 
 def distributed_trace_async(func=None, name_of_span=None):
-    # type: (Callable[[Any], Any]) -> Callable[[Any], Any]
+    # type: (Callable[[Any], Any], str) -> Callable[[Any], Any]
     if func is None:
         return functools.partial(distributed_trace_async, name_of_span=name_of_span)
 
