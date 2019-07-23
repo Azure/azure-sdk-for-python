@@ -9,7 +9,6 @@ from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
@@ -131,7 +130,6 @@ class AuthnClient(AuthnClientBase):
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
-    @distributed_trace
     def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None, **kwargs):
         # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]], Any) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)

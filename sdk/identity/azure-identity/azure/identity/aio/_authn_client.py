@@ -8,7 +8,6 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
@@ -21,29 +20,33 @@ class AsyncAuthnClient(AuthnClientBase):
     """Async authentication client"""
 
     def __init__(
-        self,
-        auth_url: str,
-        config: Optional[Configuration] = None,
-        policies: Optional[Iterable[HTTPPolicy]] = None,
-        transport: Optional[AsyncHttpTransport] = None,
-        **kwargs: Mapping[str, Any]
+            self,
+            auth_url: str,
+            config: Optional[Configuration] = None,
+            policies: Optional[Iterable[HTTPPolicy]] = None,
+            transport: Optional[AsyncHttpTransport] = None,
+            **kwargs: Mapping[str, Any]
     ) -> None:
         config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy, DistributedTracingPolicy()]
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.logging_policy,
+            config.retry_policy,
+            DistributedTracingPolicy(),
+        ]
         if not transport:
             transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
         super(AsyncAuthnClient, self).__init__(auth_url, **kwargs)
 
-    @distributed_trace_async
     async def request_token(
-        self,
-        scopes: Iterable[str],
-        method: Optional[str] = "POST",
-        headers: Optional[Mapping[str, str]] = None,
-        form_data: Optional[Mapping[str, str]] = None,
-        params: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+            self,
+            scopes: Iterable[str],
+            method: Optional[str] = "POST",
+            headers: Optional[Mapping[str, str]] = None,
+            form_data: Optional[Mapping[str, str]] = None,
+            params: Optional[Dict[str, str]] = None,
+            **kwargs: Any
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
