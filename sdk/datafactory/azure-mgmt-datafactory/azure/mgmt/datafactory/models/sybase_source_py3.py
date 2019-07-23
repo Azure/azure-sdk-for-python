@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_source import CopySource
+from .copy_source_py3 import CopySource
 
 
-class NetezzaSource(CopySource):
-    """A copy activity Netezza source.
+class SybaseSource(CopySource):
+    """A copy activity source for Sybase databases.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,18 +33,9 @@ class NetezzaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
-    :param query: A query to retrieve data from source. Type: string (or
-     Expression with resultType string).
+    :param query: Database query. Type: string (or Expression with resultType
+     string).
     :type query: object
-    :param partition_option: The partition mechanism that will be used for
-     Netezza read in parallel. Possible values include: 'None', 'DataSlice',
-     'DynamicRange'
-    :type partition_option: str or
-     ~azure.mgmt.datafactory.models.NetezzaPartitionOption
-    :param partition_settings: The settings that will be leveraged for Netezza
-     source partitioning.
-    :type partition_settings:
-     ~azure.mgmt.datafactory.models.NetezzaPartitionSettings
     """
 
     _validation = {
@@ -58,13 +49,9 @@ class NetezzaSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'str'},
-        'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
     }
 
-    def __init__(self, **kwargs):
-        super(NetezzaSource, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-        self.partition_option = kwargs.get('partition_option', None)
-        self.partition_settings = kwargs.get('partition_settings', None)
-        self.type = 'NetezzaSource'
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
+        super(SybaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.query = query
+        self.type = 'SybaseSource'

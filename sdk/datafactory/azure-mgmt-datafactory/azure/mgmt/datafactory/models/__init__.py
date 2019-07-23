@@ -247,6 +247,9 @@ try:
     from .salesforce_service_cloud_object_dataset_py3 import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
     from .microsoft_access_table_dataset_py3 import MicrosoftAccessTableDataset
+    from .postgre_sql_table_dataset_py3 import PostgreSqlTableDataset
+    from .my_sql_table_dataset_py3 import MySqlTableDataset
+    from .odbc_table_dataset_py3 import OdbcTableDataset
     from .informix_table_dataset_py3 import InformixTableDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
@@ -281,6 +284,7 @@ try:
     from .azure_blob_fs_location_py3 import AzureBlobFSLocation
     from .azure_blob_storage_location_py3 import AzureBlobStorageLocation
     from .dataset_location_py3 import DatasetLocation
+    from .binary_dataset_py3 import BinaryDataset
     from .delimited_text_dataset_py3 import DelimitedTextDataset
     from .parquet_dataset_py3 import ParquetDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
@@ -304,6 +308,7 @@ try:
     from .responsys_source_py3 import ResponsysSource
     from .salesforce_marketing_cloud_source_py3 import SalesforceMarketingCloudSource
     from .vertica_source_py3 import VerticaSource
+    from .netezza_partition_settings_py3 import NetezzaPartitionSettings
     from .netezza_source_py3 import NetezzaSource
     from .zoho_source_py3 import ZohoSource
     from .xero_source_py3 import XeroSource
@@ -343,6 +348,7 @@ try:
     from .web_source_py3 import WebSource
     from .teradata_partition_settings_py3 import TeradataPartitionSettings
     from .teradata_source_py3 import TeradataSource
+    from .oracle_partition_settings_py3 import OraclePartitionSettings
     from .oracle_source_py3 import OracleSource
     from .azure_data_explorer_source_py3 import AzureDataExplorerSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
@@ -356,6 +362,7 @@ try:
     from .sql_server_source_py3 import SqlServerSource
     from .sql_source_py3 import SqlSource
     from .rest_source_py3 import RestSource
+    from .sap_table_partition_settings_py3 import SapTablePartitionSettings
     from .sap_table_source_py3 import SapTableSource
     from .sap_open_hub_source_py3 import SapOpenHubSource
     from .sap_hana_source_py3 import SapHanaSource
@@ -363,6 +370,12 @@ try:
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_service_cloud_source_py3 import SalesforceServiceCloudSource
     from .salesforce_source_py3 import SalesforceSource
+    from .odata_source_py3 import ODataSource
+    from .sybase_source_py3 import SybaseSource
+    from .postgre_sql_source_py3 import PostgreSqlSource
+    from .my_sql_source_py3 import MySqlSource
+    from .odbc_source_py3 import OdbcSource
+    from .db2_source_py3 import Db2Source
     from .microsoft_access_source_py3 import MicrosoftAccessSource
     from .informix_source_py3 import InformixSource
     from .relational_source_py3 import RelationalSource
@@ -372,8 +385,6 @@ try:
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
     from .azure_table_source_py3 import AzureTableSource
-    from .format_read_settings_py3 import FormatReadSettings
-    from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .hdfs_read_settings_py3 import HdfsReadSettings
     from .http_read_settings_py3 import HttpReadSettings
     from .sftp_read_settings_py3 import SftpReadSettings
@@ -384,10 +395,14 @@ try:
     from .azure_blob_fs_read_settings_py3 import AzureBlobFSReadSettings
     from .azure_blob_storage_read_settings_py3 import AzureBlobStorageReadSettings
     from .store_read_settings_py3 import StoreReadSettings
+    from .binary_source_py3 import BinarySource
+    from .format_read_settings_py3 import FormatReadSettings
+    from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
     from .parquet_source_py3 import ParquetSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
+    from .azure_data_explorer_command_py3 import AzureDataExplorerCommand
     from .log_storage_settings_py3 import LogStorageSettings
     from .delete_activity_py3 import DeleteActivity
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
@@ -430,6 +445,7 @@ try:
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
+    from .binary_sink_py3 import BinarySink
     from .file_server_write_settings_py3 import FileServerWriteSettings
     from .azure_data_lake_store_write_settings_py3 import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings_py3 import AzureBlobFSWriteSettings
@@ -439,6 +455,7 @@ try:
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
+    from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
     from .format_write_settings_py3 import FormatWriteSettings
     from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
     from .delimited_text_sink_py3 import DelimitedTextSink
@@ -728,6 +745,9 @@ except (SyntaxError, ImportError):
     from .salesforce_service_cloud_object_dataset import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
     from .microsoft_access_table_dataset import MicrosoftAccessTableDataset
+    from .postgre_sql_table_dataset import PostgreSqlTableDataset
+    from .my_sql_table_dataset import MySqlTableDataset
+    from .odbc_table_dataset import OdbcTableDataset
     from .informix_table_dataset import InformixTableDataset
     from .relational_table_dataset import RelationalTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
@@ -762,6 +782,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_fs_location import AzureBlobFSLocation
     from .azure_blob_storage_location import AzureBlobStorageLocation
     from .dataset_location import DatasetLocation
+    from .binary_dataset import BinaryDataset
     from .delimited_text_dataset import DelimitedTextDataset
     from .parquet_dataset import ParquetDataset
     from .amazon_s3_dataset import AmazonS3Dataset
@@ -785,6 +806,7 @@ except (SyntaxError, ImportError):
     from .responsys_source import ResponsysSource
     from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
     from .vertica_source import VerticaSource
+    from .netezza_partition_settings import NetezzaPartitionSettings
     from .netezza_source import NetezzaSource
     from .zoho_source import ZohoSource
     from .xero_source import XeroSource
@@ -824,6 +846,7 @@ except (SyntaxError, ImportError):
     from .web_source import WebSource
     from .teradata_partition_settings import TeradataPartitionSettings
     from .teradata_source import TeradataSource
+    from .oracle_partition_settings import OraclePartitionSettings
     from .oracle_source import OracleSource
     from .azure_data_explorer_source import AzureDataExplorerSource
     from .azure_my_sql_source import AzureMySqlSource
@@ -837,6 +860,7 @@ except (SyntaxError, ImportError):
     from .sql_server_source import SqlServerSource
     from .sql_source import SqlSource
     from .rest_source import RestSource
+    from .sap_table_partition_settings import SapTablePartitionSettings
     from .sap_table_source import SapTableSource
     from .sap_open_hub_source import SapOpenHubSource
     from .sap_hana_source import SapHanaSource
@@ -844,6 +868,12 @@ except (SyntaxError, ImportError):
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_service_cloud_source import SalesforceServiceCloudSource
     from .salesforce_source import SalesforceSource
+    from .odata_source import ODataSource
+    from .sybase_source import SybaseSource
+    from .postgre_sql_source import PostgreSqlSource
+    from .my_sql_source import MySqlSource
+    from .odbc_source import OdbcSource
+    from .db2_source import Db2Source
     from .microsoft_access_source import MicrosoftAccessSource
     from .informix_source import InformixSource
     from .relational_source import RelationalSource
@@ -853,8 +883,6 @@ except (SyntaxError, ImportError):
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
     from .azure_table_source import AzureTableSource
-    from .format_read_settings import FormatReadSettings
-    from .delimited_text_read_settings import DelimitedTextReadSettings
     from .hdfs_read_settings import HdfsReadSettings
     from .http_read_settings import HttpReadSettings
     from .sftp_read_settings import SftpReadSettings
@@ -865,10 +893,14 @@ except (SyntaxError, ImportError):
     from .azure_blob_fs_read_settings import AzureBlobFSReadSettings
     from .azure_blob_storage_read_settings import AzureBlobStorageReadSettings
     from .store_read_settings import StoreReadSettings
+    from .binary_source import BinarySource
+    from .format_read_settings import FormatReadSettings
+    from .delimited_text_read_settings import DelimitedTextReadSettings
     from .delimited_text_source import DelimitedTextSource
     from .parquet_source import ParquetSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
+    from .azure_data_explorer_command import AzureDataExplorerCommand
     from .log_storage_settings import LogStorageSettings
     from .delete_activity import DeleteActivity
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
@@ -911,6 +943,7 @@ except (SyntaxError, ImportError):
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
+    from .binary_sink import BinarySink
     from .file_server_write_settings import FileServerWriteSettings
     from .azure_data_lake_store_write_settings import AzureDataLakeStoreWriteSettings
     from .azure_blob_fs_write_settings import AzureBlobFSWriteSettings
@@ -920,6 +953,7 @@ except (SyntaxError, ImportError):
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
+    from .azure_postgre_sql_sink import AzurePostgreSqlSink
     from .format_write_settings import FormatWriteSettings
     from .delimited_text_write_settings import DelimitedTextWriteSettings
     from .delimited_text_sink import DelimitedTextSink
@@ -1024,9 +1058,12 @@ from .data_factory_management_client_enums import (
     DynamicsAuthenticationType,
     AzureFunctionActivityMethod,
     WebActivityMethod,
+    NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
     TeradataPartitionOption,
+    OraclePartitionOption,
     StoredProcedureParameterType,
+    SapTablePartitionOption,
     SalesforceSourceReadBehavior,
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
@@ -1286,6 +1323,9 @@ __all__ = [
     'SalesforceServiceCloudObjectDataset',
     'SalesforceObjectDataset',
     'MicrosoftAccessTableDataset',
+    'PostgreSqlTableDataset',
+    'MySqlTableDataset',
+    'OdbcTableDataset',
     'InformixTableDataset',
     'RelationalTableDataset',
     'AzureMySqlTableDataset',
@@ -1320,6 +1360,7 @@ __all__ = [
     'AzureBlobFSLocation',
     'AzureBlobStorageLocation',
     'DatasetLocation',
+    'BinaryDataset',
     'DelimitedTextDataset',
     'ParquetDataset',
     'AmazonS3Dataset',
@@ -1343,6 +1384,7 @@ __all__ = [
     'ResponsysSource',
     'SalesforceMarketingCloudSource',
     'VerticaSource',
+    'NetezzaPartitionSettings',
     'NetezzaSource',
     'ZohoSource',
     'XeroSource',
@@ -1382,6 +1424,7 @@ __all__ = [
     'WebSource',
     'TeradataPartitionSettings',
     'TeradataSource',
+    'OraclePartitionSettings',
     'OracleSource',
     'AzureDataExplorerSource',
     'AzureMySqlSource',
@@ -1395,6 +1438,7 @@ __all__ = [
     'SqlServerSource',
     'SqlSource',
     'RestSource',
+    'SapTablePartitionSettings',
     'SapTableSource',
     'SapOpenHubSource',
     'SapHanaSource',
@@ -1402,6 +1446,12 @@ __all__ = [
     'SapCloudForCustomerSource',
     'SalesforceServiceCloudSource',
     'SalesforceSource',
+    'ODataSource',
+    'SybaseSource',
+    'PostgreSqlSource',
+    'MySqlSource',
+    'OdbcSource',
+    'Db2Source',
     'MicrosoftAccessSource',
     'InformixSource',
     'RelationalSource',
@@ -1411,8 +1461,6 @@ __all__ = [
     'DocumentDbCollectionSource',
     'BlobSource',
     'AzureTableSource',
-    'FormatReadSettings',
-    'DelimitedTextReadSettings',
     'HdfsReadSettings',
     'HttpReadSettings',
     'SftpReadSettings',
@@ -1423,10 +1471,14 @@ __all__ = [
     'AzureBlobFSReadSettings',
     'AzureBlobStorageReadSettings',
     'StoreReadSettings',
+    'BinarySource',
+    'FormatReadSettings',
+    'DelimitedTextReadSettings',
     'DelimitedTextSource',
     'ParquetSource',
     'CopySource',
     'LookupActivity',
+    'AzureDataExplorerCommand',
     'LogStorageSettings',
     'DeleteActivity',
     'SqlServerStoredProcedureActivity',
@@ -1469,6 +1521,7 @@ __all__ = [
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
+    'BinarySink',
     'FileServerWriteSettings',
     'AzureDataLakeStoreWriteSettings',
     'AzureBlobFSWriteSettings',
@@ -1478,6 +1531,7 @@ __all__ = [
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
+    'AzurePostgreSqlSink',
     'FormatWriteSettings',
     'DelimitedTextWriteSettings',
     'DelimitedTextSink',
@@ -1581,9 +1635,12 @@ __all__ = [
     'DynamicsAuthenticationType',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
+    'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
     'TeradataPartitionOption',
+    'OraclePartitionOption',
     'StoredProcedureParameterType',
+    'SapTablePartitionOption',
     'SalesforceSourceReadBehavior',
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',

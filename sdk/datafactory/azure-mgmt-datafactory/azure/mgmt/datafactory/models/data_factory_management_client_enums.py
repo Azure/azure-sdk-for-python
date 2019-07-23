@@ -352,6 +352,13 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
+class NetezzaPartitionOption(str, Enum):
+
+    none = "None"
+    data_slice = "DataSlice"
+    dynamic_range = "DynamicRange"
+
+
 class CassandraSourceReadConsistencyLevels(str, Enum):
 
     all = "ALL"
@@ -373,6 +380,13 @@ class TeradataPartitionOption(str, Enum):
     dynamic_range = "DynamicRange"
 
 
+class OraclePartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -382,6 +396,16 @@ class StoredProcedureParameterType(str, Enum):
     guid = "Guid"
     boolean = "Boolean"
     date_enum = "Date"
+
+
+class SapTablePartitionOption(str, Enum):
+
+    none = "None"
+    partition_on_int = "PartitionOnInt"
+    partition_on_calendar_year = "PartitionOnCalendarYear"
+    partition_on_calendar_month = "PartitionOnCalendarMonth"
+    partition_on_calendar_date = "PartitionOnCalendarDate"
+    partition_on_time = "PartitionOnTime"
 
 
 class SalesforceSourceReadBehavior(str, Enum):

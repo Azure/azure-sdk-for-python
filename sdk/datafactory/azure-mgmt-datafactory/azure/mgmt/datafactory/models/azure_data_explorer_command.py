@@ -9,22 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .execution_activity import ExecutionActivity
 
 
-class ExecutionActivity(Activity):
-    """Base class for all execution activities.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
-    DatabricksSparkJarActivity, DatabricksNotebookActivity,
-    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
-    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
-    LookupActivity, AzureDataExplorerCommand, DeleteActivity,
-    SqlServerStoredProcedureActivity, CustomActivity,
-    ExecuteSSISPackageActivity, HDInsightSparkActivity,
-    HDInsightStreamingActivity, HDInsightMapReduceActivity,
-    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+class AzureDataExplorerCommand(ExecutionActivity):
+    """Azure Data Explorer command activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -46,11 +35,16 @@ class ExecutionActivity(Activity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param command: Required. A control command, according to the Azure Data
+     Explorer command syntax. Type: string (or Expression with resultType
+     string).
+    :type command: object
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'command': {'required': True},
     }
 
     _attribute_map = {
@@ -62,14 +56,10 @@ class ExecutionActivity(Activity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
-    }
-
-    _subtype_map = {
-        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommand', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'command': {'key': 'typeProperties.command', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(ExecutionActivity, self).__init__(**kwargs)
-        self.linked_service_name = kwargs.get('linked_service_name', None)
-        self.policy = kwargs.get('policy', None)
-        self.type = 'Execution'
+        super(AzureDataExplorerCommand, self).__init__(**kwargs)
+        self.command = kwargs.get('command', None)
+        self.type = 'AzureDataExplorerCommand'
