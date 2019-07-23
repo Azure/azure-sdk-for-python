@@ -40,6 +40,11 @@ steps:
       arguments: '"${{ parameters.BuildTargetingString }}" --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
 
+  - task: UsePythonVersion@0
+    displayName: 'Reset Python version to ${{ parameters.PythonVersion }}'
+    inputs:
+      versionSpec: '${{ parameters.PythonVersion }}'
+
   - task: PublishTestResults@2
     displayName: 'Publish Python2.7 Test Results'
     condition: succeededOrFailed()
