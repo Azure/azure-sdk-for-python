@@ -11,6 +11,7 @@ from typing import Any, Dict, Mapping, Optional, Union
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -44,6 +45,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
@@ -81,6 +83,7 @@ class CertificateCredential(CertificateCredentialBase):
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
@@ -130,6 +133,7 @@ class EnvironmentCredential:
                 **kwargs
             )
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
@@ -174,6 +178,7 @@ class ManagedIdentityCredential(object):
         """
         return Configuration(**kwargs)
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
@@ -194,6 +199,7 @@ class ChainedTokenCredential(ChainedTokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:  # type: ignore
         """
         Asynchronously request a token from each credential, in order, returning the first token

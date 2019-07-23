@@ -10,6 +10,7 @@ import os
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
@@ -46,6 +47,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
@@ -78,6 +80,7 @@ class CertificateCredential(CertificateCredentialBase):
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
@@ -129,6 +132,7 @@ class EnvironmentCredential:
                 **kwargs
             )
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
@@ -176,6 +180,7 @@ class ManagedIdentityCredential(object):
         """
         return Configuration(**kwargs)
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
@@ -203,6 +208,7 @@ class ChainedTokenCredential(object):
             raise ValueError("at least one credential is required")
         self._credentials = credentials
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """

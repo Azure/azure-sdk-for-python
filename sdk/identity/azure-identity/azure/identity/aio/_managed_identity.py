@@ -8,6 +8,7 @@ from typing import Any, Optional
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -41,6 +42,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         super().__init__(endpoint=Endpoints.IMDS, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
@@ -96,6 +98,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
         if self._endpoint_available:
             super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
+    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 from azure.core import Configuration
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
@@ -79,6 +80,7 @@ class ImdsCredential(_ManagedIdentityBase):
         super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type: (*str) -> AccessToken
         """
@@ -137,6 +139,7 @@ class MsiCredential(_ManagedIdentityBase):
                 endpoint=endpoint, client_cls=AuthnClient, config=config, **kwargs
             )
 
+    @distributed_trace
     def get_token(self, *scopes):
         # type: (*str) -> AccessToken
         """
