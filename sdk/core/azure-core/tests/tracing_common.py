@@ -19,6 +19,7 @@ from opencensus.trace.span_data import SpanData
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
 from collections import defaultdict
+from opencensus.trace import execution_context
 
 try:
     from unittest import mock
@@ -39,6 +40,8 @@ class ContextHelper(object):
         self.orig_tracer = OpenCensusSpan.get_current_tracer()
         self.orig_current_span = OpenCensusSpan.get_current_span()
         self.orig_sdk_context_span = tracing_context.current_span.get()
+        execution_context.clear()
+        tracing_context.current_span.clear()
         if self.tracer_to_use is not None:
             settings.tracing_implementation.set_value(self.tracer_to_use)
         if self.should_only_propagate is not None:
@@ -81,7 +84,4 @@ class MockExporter(Exporter):
     def build_tree(self):
         for node in self._all_nodes:
             if node.span_data.span_id in self.parent_dict:
-                node.children = sorted(
-                    self.parent_dict[node.span_data.span_id],
-                    key=lambda x: x.span_data.start_time,
-                )
+                node.children = sorted(self.parent_dict[node.span_data.span_id], key=lambda x: x.span_data.start_time)
