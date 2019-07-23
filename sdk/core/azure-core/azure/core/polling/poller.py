@@ -33,6 +33,7 @@ except ImportError:
 from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
 from azure.core.tracing.context import tracing_context
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     import requests
@@ -185,6 +186,7 @@ class LROPoller(object):
         self.wait(timeout)
         return self._polling_method.resource()
 
+    @distributed_trace
     def wait(self, timeout=None):
         # type: (Optional[int]) -> None
         """Wait on the long running operation for a specified length
