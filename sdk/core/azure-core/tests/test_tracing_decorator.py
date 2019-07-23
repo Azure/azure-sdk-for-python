@@ -104,11 +104,11 @@ class TestCommon(object):
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):
             parent_span = OpenCensusSpan()
-            assert common.should_use_trace(parent_span) is False
-            assert common.should_use_trace(None) is False
+            assert not common.should_use_trace(parent_span)
+            assert not common.should_use_trace(None)
         parent_span = OpenCensusSpan()
         assert common.should_use_trace(parent_span)
-        assert common.should_use_trace(None) is False
+        assert not common.should_use_trace(None)
 
 
 class TestDecorator(object):
