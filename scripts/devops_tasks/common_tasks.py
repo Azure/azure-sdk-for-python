@@ -14,7 +14,7 @@ from subprocess import check_call, CalledProcessError
 import os
 import sys
 
-DEFAULT_BUILD_PACKAGES = ['azure-eventhubs']
+DEFAULT_BUILD_PACKAGES = ['azure-eventhubs', 'azure-storage-blob']
 
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
