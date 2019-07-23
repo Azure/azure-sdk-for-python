@@ -4,37 +4,27 @@
 # ------------------------------------
 """The tests for decorators.py and common.py"""
 
-import unittest
-
 try:
     from unittest import mock
 except ImportError:
     import mock
 
 import sys
-import os
+import time
+
+import pytest
 from azure.core import HttpRequest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
+from azure.core.settings import settings
 from azure.core.tracing import common
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.settings import settings
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler
 from tracing_common import ContextHelper, MockExporter
-import time
-import pytest
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import List
 
 
 class MockClient:
@@ -72,6 +62,7 @@ class MockClient:
     def get_foo(self):
         time.sleep(0.001)
         return 5
+
 
 class TestCommon(object):
     def test_set_span_context(self):
@@ -113,11 +104,11 @@ class TestCommon(object):
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):
             parent_span = OpenCensusSpan()
-            assert common.should_use_trace(parent_span) == False
-            assert common.should_use_trace(None) == False
+            assert not common.should_use_trace(parent_span)
+            assert not common.should_use_trace(None)
         parent_span = OpenCensusSpan()
         assert common.should_use_trace(parent_span)
-        assert common.should_use_trace(None) == False
+        assert not common.should_use_trace(None)
 
 
 class TestDecorator(object):
