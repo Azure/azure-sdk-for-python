@@ -63,6 +63,10 @@ class MockClient:
         time.sleep(0.001)
         return 5
 
+    @distributed_trace(name_of_span="different name")
+    def check_name_is_different(self):
+        time.sleep(0.001)
+
 
 class TestCommon(object):
     def test_set_span_context(self):
@@ -104,14 +108,28 @@ class TestCommon(object):
     def test_should_use_trace(self):
         with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):
             parent_span = OpenCensusSpan()
-            assert common.should_use_trace(parent_span) is False
-            assert common.should_use_trace(None) is False
+            assert not common.should_use_trace(parent_span)
+            assert not common.should_use_trace(None)
         parent_span = OpenCensusSpan()
         assert common.should_use_trace(parent_span)
-        assert common.should_use_trace(None) is False
+        assert not common.should_use_trace(None)
 
 
 class TestDecorator(object):
+    def test_decorator_has_different_name(self):
+        with ContextHelper():
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+            with trace.span("overall"):
+                client = MockClient()
+                client.check_name_is_different()
+            trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 2
+            assert parent.children[0].span_data.name == "MockClient.__init__"
+            assert parent.children[1].span_data.name == "different name"
+
     def test_with_nothing_imported(self):
         with ContextHelper():
             opencensus = sys.modules["opencensus"]

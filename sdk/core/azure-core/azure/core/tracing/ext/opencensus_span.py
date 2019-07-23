@@ -15,7 +15,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, TypeVar
+    from typing import Dict, Optional, Union
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -83,7 +83,10 @@ class OpenCensusSpan(object):
         temp_headers = {}
         if tracer_from_context is not None:
             ctx = tracer_from_context.span_context
-            temp_headers = tracer_from_context.propagator.to_headers(ctx)
+            try:
+                temp_headers = tracer_from_context.propagator.to_headers(ctx)
+            except AttributeError:
+                pass
         return temp_headers
 
     def add_attribute(self, key, value):
