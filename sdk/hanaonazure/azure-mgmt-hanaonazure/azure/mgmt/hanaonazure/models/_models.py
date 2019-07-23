@@ -522,8 +522,8 @@ class SapMonitor(Resource):
         'hana_db_sql_port': {'key': 'properties.hanaDbSqlPort', 'type': 'int'},
         'hana_db_username': {'key': 'properties.hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
-        'hana_db_password_key_vault_url': {'key': 'properties.HanaDbPasswordKeyVaultUrl', 'type': 'str'},
-        'hana_db_credentials_msi_id': {'key': 'properties.HanaDbCredentialsMsiId', 'type': 'str'},
+        'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
+        'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
