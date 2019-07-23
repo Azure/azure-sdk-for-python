@@ -205,7 +205,8 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
-        return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        asdf = DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        return asdf
 
     def get_deleted_certificate(self, name, **kwargs):
         # type: (str) -> DeletedCertificate
