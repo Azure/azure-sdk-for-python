@@ -31,7 +31,7 @@ class KeyVaultClientBase(object):
     """
 
     @staticmethod
-    def create_config(credential, api_version=None, **kwargs):
+    def _create_config(credential, api_version=None, **kwargs):
         # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
@@ -59,7 +59,7 @@ class KeyVaultClientBase(object):
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
-        config = self.create_config(credential, api_version=api_version, **kwargs)
+        config = self._create_config(credential, api_version=api_version, **kwargs)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=False, **kwargs)
 
