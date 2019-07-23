@@ -35,6 +35,7 @@ from ._queue_utils import (
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
+from azure.core.tracing.decorator import distributed_trace
 
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
@@ -166,6 +167,7 @@ class QueueClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
 
+    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
@@ -236,6 +238,7 @@ class QueueClient(StorageAccountHostsMixin):
             protocol=protocol,
         )
 
+    @distributed_trace
     def create_queue(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Creates a new queue in the storage account.
@@ -274,6 +277,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_queue(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes the specified queue and any messages it contains.
@@ -303,6 +307,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_queue_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> QueueProperties
         """Returns all user-defined metadata for the specified queue.
@@ -332,6 +337,7 @@ class QueueClient(StorageAccountHostsMixin):
         response.name = self.queue_name
         return response # type: ignore
 
+    @distributed_trace
     def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> None
         """Sets user-defined metadata on the specified queue.
@@ -364,6 +370,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_queue_access_policy(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Returns details about any stored access policies specified on the
@@ -383,6 +390,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
+    @distributed_trace
     def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
@@ -435,6 +443,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def enqueue_message( # type: ignore
             self, content, # type: Any
             visibility_timeout=None, # type: Optional[int]
@@ -511,6 +520,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
         """Removes one or more messages from the front of the queue.
@@ -566,6 +576,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def update_message(self, message, visibility_timeout=None, pop_receipt=None, # type: ignore
                        content=None, timeout=None, **kwargs):
         # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
@@ -659,6 +670,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def peek_messages(self, max_messages=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
@@ -714,6 +726,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def clear_messages(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
         """Deletes all messages from the specified queue.
@@ -734,6 +747,7 @@ class QueueClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_message(self, message, pop_receipt=None, timeout=None, **kwargs):
         # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
         """Deletes the specified message.

@@ -5,15 +5,22 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
+    Union,
+    Optional,
+    Any,
+    Iterable,
+    Dict,
+    List,
+    Type,
+    Tuple,
+    TYPE_CHECKING,
 )
 import base64
 import hashlib
 import hmac
 import logging
 from os import fstat
-from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
+from io import SEEK_END, SEEK_SET, UnsupportedOperation
 
 try:
     from urllib.parse import quote, unquote, parse_qs
@@ -28,18 +35,16 @@ from azure.core import Configuration
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies import (
-    RedirectPolicy,
-    ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy)
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceModifiedError,
     ResourceExistsError,
     ClientAuthenticationError,
-    DecodeError)
+    DecodeError,
+)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .models import LocationMode, StorageErrorCode
@@ -54,7 +59,8 @@ from .policies import (
     StorageLoggingPolicy,
     StorageHosts,
     QueueMessagePolicy,
-    ExponentialRetry)
+    ExponentialRetry,
+)
 
 
 if TYPE_CHECKING:
@@ -68,26 +74,26 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class _QueryStringConstants(object):
-    SIGNED_SIGNATURE = 'sig'
-    SIGNED_PERMISSION = 'sp'
-    SIGNED_START = 'st'
-    SIGNED_EXPIRY = 'se'
-    SIGNED_RESOURCE = 'sr'
-    SIGNED_IDENTIFIER = 'si'
-    SIGNED_IP = 'sip'
-    SIGNED_PROTOCOL = 'spr'
-    SIGNED_VERSION = 'sv'
-    SIGNED_CACHE_CONTROL = 'rscc'
-    SIGNED_CONTENT_DISPOSITION = 'rscd'
-    SIGNED_CONTENT_ENCODING = 'rsce'
-    SIGNED_CONTENT_LANGUAGE = 'rscl'
-    SIGNED_CONTENT_TYPE = 'rsct'
-    START_PK = 'spk'
-    START_RK = 'srk'
-    END_PK = 'epk'
-    END_RK = 'erk'
-    SIGNED_RESOURCE_TYPES = 'srt'
-    SIGNED_SERVICES = 'ss'
+    SIGNED_SIGNATURE = "sig"
+    SIGNED_PERMISSION = "sp"
+    SIGNED_START = "st"
+    SIGNED_EXPIRY = "se"
+    SIGNED_RESOURCE = "sr"
+    SIGNED_IDENTIFIER = "si"
+    SIGNED_IP = "sip"
+    SIGNED_PROTOCOL = "spr"
+    SIGNED_VERSION = "sv"
+    SIGNED_CACHE_CONTROL = "rscc"
+    SIGNED_CONTENT_DISPOSITION = "rscd"
+    SIGNED_CONTENT_ENCODING = "rsce"
+    SIGNED_CONTENT_LANGUAGE = "rscl"
+    SIGNED_CONTENT_TYPE = "rsct"
+    START_PK = "spk"
+    START_RK = "srk"
+    END_PK = "epk"
+    END_RK = "erk"
+    SIGNED_RESOURCE_TYPES = "srt"
+    SIGNED_SERVICES = "ss"
 
     @staticmethod
     def to_list():
@@ -116,43 +122,38 @@ class _QueryStringConstants(object):
 
 
 class StorageAccountHostsMixin(object):
-
     def __init__(
-            self, parsed_url,  # type: Any
-            service, # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
+        self,
+        parsed_url,  # type: Any
+        service,  # type: str
+        credential=None,  # type: Optional[Any]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> None
-        self._location_mode = kwargs.get('_location_mode', LocationMode.PRIMARY)
-        self._hosts = kwargs.get('_hosts')
+        self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
+        self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ['blob', 'queue', 'file']:
+        if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
         secondary_hostname = None
         self.credential = format_shared_key_credential(account, credential)
-        if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
+        if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, 'account_name'):
-            secondary_hostname = "{}-secondary.{}.{}".format(
-                self.credential.account_name, service, SERVICE_HOST_BASE)
+        if hasattr(self.credential, "account_name"):
+            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(
-                    account[0],
-                    account[0] + '-secondary')
-            if kwargs.get('secondary_hostname'):
-                secondary_hostname = kwargs['secondary_hostname']
-            self._hosts = {
-                LocationMode.PRIMARY: parsed_url.netloc,
-                LocationMode.SECONDARY: secondary_hostname}
+                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
+            if kwargs.get("secondary_hostname"):
+                secondary_hostname = kwargs["secondary_hostname"]
+            self._hosts = {LocationMode.PRIMARY: parsed_url.netloc, LocationMode.SECONDARY: secondary_hostname}
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
+        self.require_encryption = kwargs.get("require_encryption", False)
+        self.key_encryption_key = kwargs.get("key_encryption_key")
+        self.key_resolver_function = kwargs.get("key_resolver_function")
 
         self._config, self._pipeline = create_pipeline(self.credential, hosts=self._hosts, **kwargs)
 
@@ -200,71 +201,65 @@ class StorageAccountHostsMixin(object):
     def _format_query_string(self, sas_token, credential, snapshot=None):
         query_str = "?"
         if snapshot:
-            query_str += 'snapshot={}&'.format(self.snapshot)
+            query_str += "snapshot={}&".format(self.snapshot)
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
-            query_str += credential.lstrip('?')
+            query_str += credential.lstrip("?")
             credential = None
-        return query_str.rstrip('?&'), credential
+        return query_str.rstrip("?&"), credential
 
 
 def format_shared_key_credential(account, credential):
     if isinstance(credential, six.string_types):
         if len(account) < 2:
             raise ValueError("Unable to determine account name for shared key credential.")
-        credential = {
-            'account_name': account[0],
-            'account_key': credential
-        }
+        credential = {"account_name": account[0], "account_key": credential}
     if isinstance(credential, dict):
-        if 'account_name' not in credential:
+        if "account_name" not in credential:
             raise ValueError("Shared key credential missing 'account_name")
-        if 'account_key' not in credential:
+        if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
     return credential
 
 
 service_connection_params = {
-    'blob': {'primary': 'BlobEndpoint', 'secondary': 'BlobSecondaryEndpoint'},
-    'queue': {'primary': 'QueueEndpoint', 'secondary': 'QueueSecondaryEndpoint'},
-    'file': {'primary': 'FileEndpoint', 'secondary': 'FileSecondaryEndpoint'},
+    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
+    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
+    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
 }
 
 
 def parse_connection_str(conn_str, credential, service):
-    conn_str = conn_str.rstrip(';')
-    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension
+    conn_str = conn_str.rstrip(";")
+    conn_settings = dict(
+        [s.split("=", 1) for s in conn_str.split(";")]
+    )  # pylint: disable=consider-using-dict-comprehension
     endpoints = service_connection_params[service]
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {
-                'account_name': conn_settings['AccountName'],
-                'account_key': conn_settings['AccountKey']
-            }
+            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
         except KeyError:
-            credential = conn_settings.get('SharedAccessSignature')
-    if endpoints['primary'] in conn_settings:
-        primary = conn_settings[endpoints['primary']]
-        if endpoints['secondary'] in conn_settings:
-            secondary = conn_settings[endpoints['secondary']]
+            credential = conn_settings.get("SharedAccessSignature")
+    if endpoints["primary"] in conn_settings:
+        primary = conn_settings[endpoints["primary"]]
+        if endpoints["secondary"] in conn_settings:
+            secondary = conn_settings[endpoints["secondary"]]
     else:
-        if endpoints['secondary'] in conn_settings:
+        if endpoints["secondary"] in conn_settings:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
             primary = "{}://{}.{}.{}".format(
-                conn_settings['DefaultEndpointsProtocol'],
-                conn_settings['AccountName'],
+                conn_settings["DefaultEndpointsProtocol"],
+                conn_settings["AccountName"],
                 service,
-                conn_settings['EndpointSuffix']
+                conn_settings["EndpointSuffix"],
             )
             secondary = "{}-secondary.{}.{}".format(
-                conn_settings['AccountName'],
-                service,
-                conn_settings['EndpointSuffix']
+                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
             )
         except KeyError:
             pass
@@ -272,9 +267,7 @@ def parse_connection_str(conn_str, credential, service):
     if not primary:
         try:
             primary = "https://{}.{}.{}".format(
-                conn_settings['AccountName'],
-                service,
-                conn_settings.get('EndpointSuffix', SERVICE_HOST_BASE)
+                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
@@ -291,21 +284,21 @@ def url_unquote(url):
 
 def encode_base64(data):
     if isinstance(data, six.text_type):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     encoded = base64.b64encode(data)
-    return encoded.decode('utf-8')
+    return encoded.decode("utf-8")
 
 
 def decode_base64(data):
     if isinstance(data, six.text_type):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     decoded = base64.b64decode(data)
-    return decoded.decode('utf-8')
+    return decoded.decode("utf-8")
 
 
 def _decode_base64_to_bytes(data):
     if isinstance(data, six.text_type):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     return base64.b64decode(data)
 
 
@@ -314,9 +307,9 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
         key = _decode_base64_to_bytes(key)
     else:
         if isinstance(key, six.text_type):
-            key = key.encode('utf-8')
+            key = key.encode("utf-8")
     if isinstance(string_to_sign, six.text_type):
-        string_to_sign = string_to_sign.encode('utf-8')
+        string_to_sign = string_to_sign.encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
     encoded_digest = encode_base64(digest)
@@ -340,9 +333,9 @@ def serialize_iso(attr):
             raise OverflowError("Hit max or min date")
 
         date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-            utc.tm_year, utc.tm_mon, utc.tm_mday,
-            utc.tm_hour, utc.tm_min, utc.tm_sec)
-        return date + 'Z'
+            utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
+        )
+        return date + "Z"
     except (ValueError, OverflowError) as err:
         msg = "Unable to serialize datetime object."
         raise_with_traceback(ValueError, msg, err)
@@ -383,13 +376,13 @@ def get_length(data):
 
 def read_length(data):
     try:
-        if hasattr(data, 'read'):
-            read_data = b''
+        if hasattr(data, "read"):
+            read_data = b""
             for chunk in iter(lambda: data.read(4096), b""):
                 read_data += chunk
             return len(read_data), read_data
-        if hasattr(data, '__iter__'):
-            read_data = b''
+        if hasattr(data, "__iter__"):
+            read_data = b""
             for chunk in data:
                 read_data += chunk
             return len(read_data), read_data
@@ -399,21 +392,26 @@ def read_length(data):
 
 
 def parse_length_from_content_range(content_range):
-    '''
+    """
     Parses the blob length from the content range header: bytes 1-3/65537
-    '''
+    """
     if content_range is None:
         return None
 
     # First, split in space and take the second half: '1-3/65537'
     # Next, split on slash and take the second half: '65537'
     # Finally, convert to an int: 65537
-    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
+    return int(content_range.split(" ", 1)[1].split("/", 1)[1])
 
 
 def validate_and_format_range_headers(
-        start_range, end_range, start_range_required=True,
-        end_range_required=True, check_content_md5=False, align_to_page=False):
+    start_range,
+    end_range,
+    start_range_required=True,
+    end_range_required=True,
+    check_content_md5=False,
+    align_to_page=False,
+):
     # If end range is provided, start range must be provided
     if (start_range_required or end_range is not None) and start_range is None:
         raise ValueError("start_range value cannot be None.")
@@ -423,16 +421,20 @@ def validate_and_format_range_headers(
     # Page ranges must be 512 aligned
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
-            raise ValueError("Invalid page blob start_range: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(start_range))
+            raise ValueError(
+                "Invalid page blob start_range: {0}. "
+                "The size must be aligned to a 512-byte boundary.".format(start_range)
+            )
         if end_range is not None and end_range % 512 != 511:
-            raise ValueError("Invalid page blob end_range: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(end_range))
+            raise ValueError(
+                "Invalid page blob end_range: {0}. "
+                "The size must be aligned to a 512-byte boundary.".format(end_range)
+            )
 
     # Format based on whether end_range is present
     range_header = None
     if end_range is not None:
-        range_header = 'bytes={0}-{1}'.format(start_range, end_range)
+        range_header = "bytes={0}-{1}".format(start_range, end_range)
     elif start_range is not None:
         range_header = "bytes={0}-".format(start_range)
 
@@ -443,7 +445,7 @@ def validate_and_format_range_headers(
             raise ValueError("Both start and end range requied for MD5 content validation.")
         if end_range - start_range > 4 * 1024 * 1024:
             raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
-        range_validation = 'true'
+        range_validation = "true"
 
     return range_header, range_validation
 
@@ -451,9 +453,9 @@ def validate_and_format_range_headers(
 def normalize_headers(headers):
     normalized = {}
     for key, value in headers.items():
-        if key.startswith('x-ms-'):
+        if key.startswith("x-ms-"):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = value
+        normalized[key.lower().replace("-", "_")] = value
     return normalized
 
 
@@ -474,7 +476,7 @@ def create_configuration(**kwargs):
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
-    config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
@@ -485,19 +487,19 @@ def create_configuration(**kwargs):
 def create_pipeline(credential, **kwargs):
     # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
     credential_policy = None
-    if hasattr(credential, 'get_token'):
+    if hasattr(credential, "get_token"):
         credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
     elif isinstance(credential, SharedKeyCredentialPolicy):
         credential_policy = credential
     elif credential is not None:
         raise TypeError("Unsupported credential: {}".format(credential))
 
-    config = kwargs.get('_configuration') or create_configuration(**kwargs)
-    if kwargs.get('_pipeline'):
-        return config, kwargs['_pipeline']
-    transport = kwargs.get('transport')  # type: HttpTransport
-    if 'connection_timeout' not in kwargs:
-        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
+    config = kwargs.get("_configuration") or create_configuration(**kwargs)
+    if kwargs.get("_pipeline"):
+        return config, kwargs["_pipeline"]
+    transport = kwargs.get("transport")  # type: HttpTransport
+    if "connection_timeout" not in kwargs:
+        kwargs["connection_timeout"] = DEFAULT_SOCKET_TIMEOUT
     if not transport:
         transport = RequestsTransport(**kwargs)
     policies = [
@@ -513,6 +515,7 @@ def create_pipeline(credential, **kwargs):
         config.retry_policy,
         config.logging_policy,
         StorageResponseHook(**kwargs),
+        DistributedTracingPolicy(),
     ]
     return config, Pipeline(transport, policies=policies)
 
@@ -523,9 +526,9 @@ def parse_query(query_str):
     sas_params = ["{}={}".format(k, v) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
-        sas_token = '&'.join(sas_params)
+        sas_token = "&".join(sas_params)
 
-    return parsed_query.get('snapshot'), sas_token
+    return parsed_query.get("snapshot"), sas_token
 
 
 def is_credential_sastoken(credential):
@@ -533,7 +536,7 @@ def is_credential_sastoken(credential):
         return False
 
     sas_values = _QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip('?'))
+    parsed_query = parse_qs(credential.lstrip("?"))
     if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
         return True
     return False
@@ -543,22 +546,22 @@ def add_metadata_headers(metadata):
     headers = {}
     if metadata:
         for key, value in metadata.items():
-            headers['x-ms-meta-{}'.format(key)] = value
+            headers["x-ms-meta-{}".format(key)] = value
     return headers
 
 
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
-    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message
     additional_data = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         if error_body:
             for info in error_body.iter():
-                if info.tag.lower() == 'code':
+                if info.tag.lower() == "code":
                     error_code = info.text
-                elif info.tag.lower() == 'message':
+                elif info.tag.lower() == "message":
                     error_message = info.text
                 else:
                     additional_data[info.tag] = info.text
@@ -568,26 +571,28 @@ def process_storage_error(storage_error):
     try:
         if error_code:
             error_code = StorageErrorCode(error_code)
-            if error_code in [StorageErrorCode.condition_not_met,
-                              StorageErrorCode.blob_overwritten]:
+            if error_code in [StorageErrorCode.condition_not_met, StorageErrorCode.blob_overwritten]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info,
-                              StorageErrorCode.authentication_failed]:
+            if error_code in [StorageErrorCode.invalid_authentication_info, StorageErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
-            if error_code in [StorageErrorCode.resource_not_found,
-                              StorageErrorCode.blob_not_found,
-                              StorageErrorCode.queue_not_found,
-                              StorageErrorCode.container_not_found]:
+            if error_code in [
+                StorageErrorCode.resource_not_found,
+                StorageErrorCode.blob_not_found,
+                StorageErrorCode.queue_not_found,
+                StorageErrorCode.container_not_found,
+            ]:
                 raise_error = ResourceNotFoundError
-            if error_code in [StorageErrorCode.account_already_exists,
-                              StorageErrorCode.account_being_created,
-                              StorageErrorCode.resource_already_exists,
-                              StorageErrorCode.resource_type_mismatch,
-                              StorageErrorCode.blob_already_exists,
-                              StorageErrorCode.queue_already_exists,
-                              StorageErrorCode.container_already_exists,
-                              StorageErrorCode.container_being_deleted,
-                              StorageErrorCode.queue_being_deleted]:
+            if error_code in [
+                StorageErrorCode.account_already_exists,
+                StorageErrorCode.account_being_created,
+                StorageErrorCode.resource_already_exists,
+                StorageErrorCode.resource_type_mismatch,
+                StorageErrorCode.blob_already_exists,
+                StorageErrorCode.queue_already_exists,
+                StorageErrorCode.container_already_exists,
+                StorageErrorCode.container_being_deleted,
+                StorageErrorCode.queue_being_deleted,
+            ]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code
