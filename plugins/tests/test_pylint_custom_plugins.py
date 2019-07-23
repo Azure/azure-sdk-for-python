@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 import astroid
 import pylint.testutils
 
@@ -75,6 +80,416 @@ from plugins import pylint_guidelines_checker as checker
 #         response = client._pipeline.run(request)
 #         assert response.http_response.status_code == 200
 #
+
+
+class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientMethodsHaveTracingDecorators
+
+    def test_ignores_constructor(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_private_method(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_private_method_async(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            async def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node)
+
+    def test_ignores_methods_with_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace
+            def create_configuration(self): #@
+                pass
+            @distributed_trace
+            def get_thing(self): #@
+                pass
+            @distributed_trace
+            def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_async_methods_with_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace_async
+            async def create_configuration(self): #@
+                pass
+            @distributed_trace_async
+            async def get_thing(self): #@
+                pass
+            @distributed_trace_async
+            async def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_sync_decorator_on_async_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace
+            async def create_configuration(self): #@
+                pass
+            @distributed_trace
+            async def get_thing(self): #@
+                pass
+            @distributed_trace
+            async def list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator-async", node=func_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator-async", node=func_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator-async", node=func_node_c
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_async_decorator_on_sync_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace_async
+            def create_configuration(self): #@
+                pass
+            @distributed_trace_async
+            def get_thing(self): #@
+                pass
+            @distributed_trace_async
+            def list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator", node=func_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator", node=func_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-tracing-decorator", node=func_node_c
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_other_decorators(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomeClient(): #@
+            @classmethod
+            @distributed_trace
+            def download_thing(self, some, **kwargs): #@
+                pass
+
+            @distributed_trace
+            @decorator
+            def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+
+    def test_ignores_other_decorators_async(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomeClient(): #@
+            @classmethod
+            @distributed_trace_async
+            async def download_thing(self, some, **kwargs): #@
+                pass
+
+            @distributed_trace_async
+            @decorator
+            async def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+
+    def test_ignores_non_client_method(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomethingElse(): #@
+            def download_thing(self, some, **kwargs): #@
+                pass
+            
+            @classmethod
+            async def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-distributed-tracing"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientsDoNotUseStaticMethods
+
+    def test_ignores_constructor(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_private_method(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_private_method_async(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            async def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node)
+
+    def test_ignores_methods_with_other_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace
+            def create_configuration(self): #@
+                pass
+            @distributed_trace
+            def get_thing(self): #@
+                pass
+            @distributed_trace
+            def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_async_methods_with_other_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace_async
+            async def create_configuration(self): #@
+                pass
+            @distributed_trace_async
+            async def get_thing(self): #@
+                pass
+            @distributed_trace_async
+            async def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_staticmethod_on_async_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            async def create_configuration(self): #@
+                pass
+            @staticmethod
+            async def get_thing(self): #@
+                pass
+            @staticmethod
+            async def list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_a
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_b
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_c
+                ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_staticmethod_on_sync_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            def create_configuration(self): #@
+                pass
+            @staticmethod
+            def get_thing(self): #@
+                pass
+            @staticmethod
+            def list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_a
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_b
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-should-not-use-static-method", node=func_node_c
+                ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_other_multiple_decorators(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomeClient(): #@
+            @classmethod
+            @distributed_trace
+            def download_thing(self, some, **kwargs): #@
+                pass
+
+            @distributed_trace
+            @decorator
+            def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+
+    def test_ignores_other_multiple_decorators_async(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomeClient(): #@
+            @classmethod
+            @distributed_trace_async
+            async def download_thing(self, some, **kwargs): #@
+                pass
+
+            @distributed_trace_async
+            @decorator
+            async def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+
+    def test_ignores_non_client_method(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomethingElse(): #@
+            @staticmethod
+            def download_thing(self, some, **kwargs): #@
+                pass
+
+            @staticmethod
+            async def do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
 
 class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientHasApprovedMethodNamePrefix
@@ -379,15 +794,15 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             function_node_k, function_node_l, function_node_m = astroid.extract_node("""
         class SomeClient(): #@
             def do_thing(): #@
-                pass      
+                pass
             def do_thing_a(self): #@
-                pass            
+                pass
             def do_thing_b(self, one): #@
                 pass
             def do_thing_c(self, one, two): #@
                 pass
             def do_thing_d(self, one, two, three): #@
-                pass            
+                pass
             def do_thing_e(self, one, two, three, four): #@
                 pass
             def do_thing_f(self, one, two, three, four, five): #@
@@ -425,20 +840,72 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             self.checker.visit_functiondef(function_node_l)
             self.checker.visit_functiondef(function_node_m)
 
+    def test_ignores_method_abiding_to_guidelines_async(self):
+        class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
+            function_node_e, function_node_f, function_node_g, function_node_h, function_node_i, function_node_j, \
+            function_node_k, function_node_l, function_node_m = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing(): #@
+                pass
+            async def do_thing_a(self): #@
+                pass
+            async def do_thing_b(self, one): #@
+                pass
+            async def do_thing_c(self, one, two): #@
+                pass
+            async def do_thing_d(self, one, two, three): #@
+                pass
+            async def do_thing_e(self, one, two, three, four): #@
+                pass
+            async def do_thing_f(self, one, two, three, four, five): #@
+                pass
+            async def do_thing_g(self, one, two, three, four, five, six=6): #@
+                pass
+            async def do_thing_h(self, one, two, three, four, five, six=6, seven=7): #@
+                pass
+            async def do_thing_i(self, one, two, three, four, five, *, six=6, seven=7): #@
+                pass
+            async def do_thing_j(self, one, two, three, four, five, *, six=6, seven=7): #@
+                pass
+            async def do_thing_k(self, one, two, three, four, five, **kwargs): #@
+                pass
+            async def do_thing_l(self, one, two, three, four, five, *args, **kwargs): #@
+                pass
+            async def do_thing_m(self, one, two, three, four, five, *args, six, seven=7, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+            self.checker.visit_asyncfunctiondef(function_node_c)
+            self.checker.visit_asyncfunctiondef(function_node_d)
+            self.checker.visit_asyncfunctiondef(function_node_e)
+            self.checker.visit_asyncfunctiondef(function_node_f)
+            self.checker.visit_asyncfunctiondef(function_node_g)
+            self.checker.visit_asyncfunctiondef(function_node_h)
+            self.checker.visit_asyncfunctiondef(function_node_i)
+            self.checker.visit_asyncfunctiondef(function_node_j)
+            self.checker.visit_asyncfunctiondef(function_node_k)
+            self.checker.visit_asyncfunctiondef(function_node_l)
+            self.checker.visit_asyncfunctiondef(function_node_m)
+
     def test_finds_methods_with_too_many_positional_args(self):
         class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
             function_node_e, function_node_f = astroid.extract_node("""
         class SomeClient(): #@
             def do_thing(self, one, two, three, four, five, six): #@
-                pass      
+                pass
             def do_thing_a(self, one, two, three, four, five, six, seven=7): #@
-                pass            
+                pass
             def do_thing_b(self, one, two, three, four, five, six, *, seven): #@
                 pass
             def do_thing_c(self, one, two, three, four, five, six, *, seven, eight, nine): #@
                 pass
             def do_thing_d(self, one, two, three, four, five, six, **kwargs): #@
-                pass            
+                pass
             def do_thing_e(self, one, two, three, four, five, six, *args, seven, eight, nine): #@
                 pass
             def do_thing_f(self, one, two, three, four, five, six, *args, seven=7, eight=8, nine=9): #@
@@ -477,16 +944,73 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             self.checker.visit_functiondef(function_node_e)
             self.checker.visit_functiondef(function_node_f)
 
+    def test_finds_methods_with_too_many_positional_args_async(self):
+        class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
+            function_node_e, function_node_f = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing(self, one, two, three, four, five, six): #@
+                pass
+            async def do_thing_a(self, one, two, three, four, five, six, seven=7): #@
+                pass
+            async def do_thing_b(self, one, two, three, four, five, six, *, seven): #@
+                pass
+            async def do_thing_c(self, one, two, three, four, five, six, *, seven, eight, nine): #@
+                pass
+            async def do_thing_d(self, one, two, three, four, five, six, **kwargs): #@
+                pass
+            async def do_thing_e(self, one, two, three, four, five, six, *args, seven, eight, nine): #@
+                pass
+            async def do_thing_f(self, one, two, three, four, five, six, *args, seven=7, eight=8, nine=9): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_c
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_d
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_e
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_f
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+            self.checker.visit_asyncfunctiondef(function_node_c)
+            self.checker.visit_asyncfunctiondef(function_node_d)
+            self.checker.visit_asyncfunctiondef(function_node_e)
+            self.checker.visit_asyncfunctiondef(function_node_f)
+
     def test_ignores_non_client_methods(self):
-        class_node, function_node = astroid.extract_node("""
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
         class SomethingElse(): #@
             def do_thing(self, one, two, three, four, five, six): #@
+                pass
+            
+            @distributed_trace_async
+            async def do_thing(self, one, two, three, four, five, six): #@
                 pass
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_guidelines_link_active(self):
         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures"
@@ -501,15 +1025,18 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodsHaveTypeAnnotations
 
     def test_ignores_correct_type_annotations(self):
-        class_node, function_node = astroid.extract_node("""
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
         class SomeClient(): #@
             def do_thing(self, one: str, two: int, three: bool, four: Union[str, thing], five: dict) -> int: #@
+                pass
+            async def do_thing(self, one: str, two: int, three: bool, four: Union[str, thing], five: dict) -> int: #@
                 pass
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_ignores_correct_type_comments(self):
         class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
@@ -538,6 +1065,33 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_functiondef(function_node_b)
             self.checker.visit_functiondef(function_node_c)
 
+    def test_ignores_correct_type_comments_async(self):
+        class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing_a(self, one, two, three, four, five): #@
+                # type: (str, str, str, str, str) -> None
+                pass
+
+            async def do_thing_b(self, one, two):  # type: (str, str) -> int #@
+                pass
+
+            async def do_thing_c(self, #@
+                           one,  # type: str
+                           two,  # type: str
+                           three,  # type: str
+                           four,  # type: str
+                           five  # type: str
+                           ):
+                # type: (...) -> int
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+            self.checker.visit_asyncfunctiondef(function_node_c)
+
     def test_ignores_no_parameter_method_with_annotations(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
         class SomeClient(): #@
@@ -554,20 +1108,42 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
+    def test_ignores_no_parameter_method_with_annotations_async(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing_a(self): #@
+                # type: () -> None
+                pass
+
+            async def do_thing_b(self) -> None: #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+
     def test_finds_no_parameter_method_without_annotations(self):
-        class_node, function_node = astroid.extract_node("""
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
         class SomeClient(): #@
             def do_thing(self): #@
+                pass
+            async def do_thing(self): #@
                 pass
         """)
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="client-method-missing-type-annotations", node=function_node
-                )
+                    msg_id="client-method-missing-type-annotations", node=function_node_a
+                ),
+                pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_b
+                ),
         ):
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
 
     def test_finds_method_missing_annotations(self):
         class_node, function_node = astroid.extract_node("""
@@ -583,6 +1159,21 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
+
+    def test_finds_method_missing_annotations_async(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing(self, one, two, three): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node)
 
     def test_finds_constructor_without_annotations(self):
         class_node, function_node = astroid.extract_node("""
@@ -607,7 +1198,7 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
 
             def do_thing_b(self, one, two, three, four, five): #@
                 # type: (str, str, str, str, str)
-                pass         
+                pass
         """)
 
         with self.assertAddsMessages(
@@ -616,11 +1207,34 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             ),
             pylint.testutils.Message(
                 msg_id="client-method-missing-type-annotations", node=function_node_b
-            )
+            ),
         ):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_missing_return_annotation_but_has_type_hints_async(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing_a(self, one: str, two: int, three: bool, four: Union[str, thing], five: dict): #@
+                pass
+
+            async def do_thing_b(self, one, two, three, four, five): #@
+                # type: (str, str, str, str, str)
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_b
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_finds_missing_annotations_but_has_return_hint(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
@@ -630,7 +1244,7 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
 
             def do_thing_b(self, one, two, three, four, five): #@
                 # type: -> None
-                pass         
+                pass
         """)
 
         with self.assertAddsMessages(
@@ -644,6 +1258,29 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_missing_annotations_but_has_return_hint_async(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            async def do_thing_a(self, one, two, three, four, five) -> None: #@
+                pass
+
+            async def do_thing_b(self, one, two, three, four, five): #@
+                # type: -> None
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-type-annotations", node=function_node_b
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_ignores_non_client_methods(self):
         class_node, function_node = astroid.extract_node("""
@@ -690,7 +1327,7 @@ class TestClientHasKwargsInPoliciesForCreateConfigurationMethod(pylint.testutils
             config.logging_policy = StorageLoggingPolicy(**kwargs)
             config.proxy_policy = ProxyPolicy(**kwargs)
             return config
-        
+
         @staticmethod
         def create_config(credential, api_version=None, **kwargs): #@
             # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
@@ -743,6 +1380,382 @@ class TestClientHasKwargsInPoliciesForCreateConfigurationMethod(pylint.testutils
         ):
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
+
+    def test_ignores_policies_outside_create_config(self):
+        function_node_a, function_node_b = astroid.extract_node("""
+        def _configuration(self, **kwargs): #@
+            config = Configuration(**kwargs)
+            config.headers_policy = StorageHeadersPolicy(**kwargs)
+            config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
+            config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry()
+            config.redirect_policy = RedirectPolicy()
+            config.logging_policy = StorageLoggingPolicy()
+            config.proxy_policy = ProxyPolicy()
+            return config
+
+        @staticmethod
+        def some_other_method(credential, api_version=None, **kwargs): #@
+            # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
+            if api_version is None:
+                api_version = KeyVaultClient.DEFAULT_API_VERSION
+            config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential)
+            config.authentication_policy = ChallengeAuthPolicy(credential)
+            return config
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientUsesCorrectNamingConventions
+
+    def test_ignores_constructor(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_internal_client(self):
+        class_node, function_node = astroid.extract_node("""
+        class _BaseSomeClient(): #@
+            def __init__(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_ignores_private_method(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def _private_method(self, **kwargs): #@
+                pass
+            async def _another_private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+
+    def test_ignores_correct_client(self):
+        class_node = astroid.extract_node("""
+        class SomeClient(): #@
+            pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_ignores_non_client(self):
+        class_node, function_node = astroid.extract_node(
+            """
+        class SomethingElse(): #@
+            def download_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_ignores_correct_method_names(self):
+        class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            def from_connection_string(self, **kwargs): #@
+                pass
+            def get_thing(self, **kwargs): #@
+                pass
+            def delete_thing(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_functiondef(function_node_c)
+
+    def test_ignores_correct_method_names_async(self):
+        class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            def from_connection_string(self, **kwargs): #@
+                pass
+            def get_thing(self, **kwargs): #@
+                pass
+            def delete_thing(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+            self.checker.visit_asyncfunctiondef(function_node_c)
+
+    def test_ignores_correct_class_constant(self):
+        class_node = astroid.extract_node("""
+        class SomeClient(): #@
+            MAX_SIZE = 14
+            MIN_SIZE = 2
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_finds_incorrectly_named_client(self):
+        class_node_a, class_node_b, class_node_c = astroid.extract_node("""
+        class some_client(): #@
+            pass
+        class Some_Client(): #@
+            pass
+        class someClient(): #@
+            pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=class_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=class_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=class_node_c
+            ),
+        ):
+            self.checker.visit_classdef(class_node_a)
+            self.checker.visit_classdef(class_node_b)
+            self.checker.visit_classdef(class_node_c)
+
+    def test_finds_incorrectly_named_methods(self):
+        class_node, func_node_a, func_node_b, func_node_c, func_node_d, func_node_e, func_node_f \
+            = astroid.extract_node("""
+        class SomeClient(): #@
+            def Create_Config(self): #@
+                pass
+            def getThing(self): #@
+                pass
+            def List_thing(self): #@
+                pass
+            def UpsertThing(self): #@
+                pass
+            def set_Thing(self): #@
+                pass
+            def Updatething(self): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_c
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_d
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_e
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_f
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+            self.checker.visit_functiondef(func_node_d)
+            self.checker.visit_functiondef(func_node_e)
+            self.checker.visit_functiondef(func_node_f)
+
+    def test_finds_incorrectly_named_methods_async(self):
+        class_node, func_node_a, func_node_b, func_node_c, func_node_d, func_node_e, func_node_f \
+            = astroid.extract_node("""
+        class SomeClient(): #@
+            async def Create_Config(self): #@
+                pass
+            async def getThing(self): #@
+                pass
+            async def List_thing(self): #@
+                pass
+            async def UpsertThing(self): #@
+                pass
+            async def set_Thing(self): #@
+                pass
+            async def Updatething(self): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_b
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_c
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_d
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_e
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=func_node_f
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+            self.checker.visit_asyncfunctiondef(func_node_d)
+            self.checker.visit_asyncfunctiondef(func_node_e)
+            self.checker.visit_asyncfunctiondef(func_node_f)
+
+    def test_finds_incorrectly_named_class_constant(self):
+        class_node, const_a, const_b = astroid.extract_node("""
+        class SomeClient(): #@
+            max_size = 14 #@
+            min_size = 2 #@
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=const_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-incorrect-naming-convention", node=const_b
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-naming-convention"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientMethodsHaveKwargsParameter
+
+    def test_ignores_private_methods(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def _create_configuration(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_non_client_methods(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def create_configuration(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_methods_with_kwargs(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def get_thing(self, **kwargs): #@
+                pass
+            def remove_thing(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_finds_missing_kwargs(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            def get_thing(self): #@
+                pass
+            def remove_thing(self): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-kwargs", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-kwargs", node=function_node_b
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+
+    def test_ignores_methods_with_kwargs_async(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            async def get_thing(self, **kwargs): #@
+                pass
+            async def remove_thing(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
+
+    def test_finds_missing_kwargs_async(self):
+        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class SomeClient(): #@
+            async def get_thing(self): #@
+                pass
+            async def remove_thing(self): #@
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-method-missing-kwargs", node=function_node_a
+            ),
+            pylint.testutils.Message(
+                msg_id="client-method-missing-kwargs", node=function_node_b
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_asyncfunctiondef(function_node_a)
+            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_guidelines_link_active(self):
         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
