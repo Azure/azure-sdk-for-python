@@ -304,7 +304,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            marker=None,  # type: Optional[str]
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -320,10 +319,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
             begin with the specified prefix.
         :param bool include_metadata:
             Specifies that queue metadata be returned in the response.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int results_per_page:
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -350,7 +345,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker,
+            command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=QueuePropertiesPaged
         )
 
