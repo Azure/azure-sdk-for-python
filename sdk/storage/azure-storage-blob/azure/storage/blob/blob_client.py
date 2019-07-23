@@ -41,7 +41,7 @@ from ._generated.models import (
 from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
-    # upload_append_blob,
+    upload_append_blob,
     upload_page_blob)
 from .models import BlobType, BlobBlock
 from .lease import LeaseClient, get_access_conditions
@@ -495,24 +495,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_settings=self._config,
                 encryption_options=encryption_options,
                 **kwargs)
-        # if blob_type == BlobType.AppendBlob:
-        #     if self.require_encryption or (self.key_encryption_key is not None):
-        #         raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        #     return upload_append_blob(
-        #         self._client.append_blob,
-        #         stream,
-        #         length,
-        #         overwrite,
-        #         headers,
-        #         blob_headers,
-        #         access_conditions,
-        #         mod_conditions,
-        #         maxsize_condition,
-        #         validate_content,
-        #         timeout,
-        #         max_connections,
-        #         self._config,
-        #         **kwargs)
+        if blob_type == BlobType.AppendBlob:
+            if self.require_encryption or (self.key_encryption_key is not None):
+                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+            return upload_append_blob(
+                client=self._client.append_blob,
+                stream=stream,
+                length=length,
+                overwrite=overwrite,
+                headers=headers,
+                validate_content=validate_content,
+                timeout=timeout,
+                max_connections=max_connections,
+                blob_settings=self._config,
+                **kwargs)
         raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
     def download_blob(

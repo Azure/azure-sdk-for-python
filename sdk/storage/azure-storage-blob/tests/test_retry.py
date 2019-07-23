@@ -122,7 +122,7 @@ class StorageRetryTest(StorageTestCase):
         service = self._create_storage_service(
             BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout)
 
-        self.assertEqual(service._config.connection.timeout, socket_timeout)
+        assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
         # Act
         try:

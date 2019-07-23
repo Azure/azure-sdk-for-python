@@ -51,24 +51,13 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _create_append_blob(
-        client,
-        blob_headers,
-        timeout,
-        access_conditions,
-        mod_conditions,
-        headers,
-        **kwargs):
-    created = client.create(
-        content_length=0,
-        blob_http_headers=blob_headers,
-        timeout=timeout,
-        lease_access_conditions=access_conditions,
-        modified_access_conditions=mod_conditions,
-        cls=return_response_headers,
-        headers=headers,
-        **kwargs)
-    ModifiedAccessConditions(if_match=created['etag'])  # TODO: Not working...
+def _any_conditions(modified_access_conditions=None, **kwargs):
+    return any([
+        modified_access_conditions.if_modified_since,
+        modified_access_conditions.if_unmodified_since,
+        modified_access_conditions.if_none_match,
+        modified_access_conditions.if_match
+    ])
 
 
 def upload_block_blob(  # pylint: disable=too-many-locals
@@ -84,8 +73,8 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         encryption_options=None,
         **kwargs):
     try:
-        if not overwrite and not kwargs.get('modified_access_conditions'):
-            kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
+        if not overwrite and not _any_conditions(**kwargs):
+            kwargs['modified_access_conditions'].if_none_match = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count += (16 - (length % 16))
@@ -123,7 +112,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             if encryption_options.get('key'):
                 cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
-                encryption_options['key'] = cek
+                encryption_options['cek'] = cek
                 encryption_options['vector'] = iv
             block_ids = upload_data_chunks(
                 service=client,
@@ -145,7 +134,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 max_connections=max_connections,
                 stream=stream,
                 validate_content=validate_content,
-                encryption_options=encryption_options,
                 **kwargs
             )
 
@@ -179,8 +167,8 @@ def upload_page_blob(
         encryption_options=None,
         **kwargs):
     try:
-        if not overwrite and not kwargs.get('modified_access_conditions'):
-            kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_none_match='*')
+        if not overwrite and not _any_conditions(**kwargs):
+            kwargs['modified_access_conditions'].if_none_match = '*'
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
@@ -227,49 +215,39 @@ def upload_page_blob(
 
 
 def upload_append_blob(
-        client,
-        stream,
-        length,
-        overwrite,
-        headers,
-        blob_headers,
-        access_conditions,
-        mod_conditions,
-        maxsize_condition,
-        validate_content,
-        timeout,
-        max_connections,
-        blob_settings,
-        **kwargs
-    ):
+        client=None,
+        stream=None,
+        length=None,
+        overwrite=None,
+        headers=None,
+        validate_content=None,
+        max_connections=None,
+        blob_settings=None,
+        encryption_options=None,
+        **kwargs):
     try:
         if length == 0:
             return {}
+        blob_headers = kwargs.pop('blob_headers', None)
         append_conditions = AppendPositionAccessConditions(
-            max_size=maxsize_condition,
+            max_size=kwargs.pop('maxsize_condition', None),
             append_position=None)
         try:
             if overwrite:
-                _create_append_blob(
-                    client,
-                    blob_headers,
-                    timeout,
-                    access_conditions,
-                    mod_conditions,
-                    headers,
+                client.create(
+                    content_length=0,
+                    blob_http_headers=blob_headers,
+                    headers=headers,
                     **kwargs)
             return upload_data_chunks(
-                blob_service=client,
-                blob_size=length,
-                block_size=blob_settings.max_block_size,
+                service=client,
+                uploader_class=AppendBlobChunkUploader,
+                total_size=length,
+                chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                append_conditions=append_conditions,
                 max_connections=max_connections,
                 validate_content=validate_content,
-                access_conditions=access_conditions,
-                uploader_class=AppendBlobChunkUploader,
-                modified_access_conditions=mod_conditions,
-                timeout=timeout,
+                append_position_access_conditions=append_conditions,
                 **kwargs)
         except StorageErrorException as error:
             if error.response.status_code != 404:
@@ -282,26 +260,20 @@ def upload_append_blob(
                 except UnsupportedOperation:
                     # if body is not seekable, then retry would not work
                     raise error
-            _create_append_blob(
-                client,
-                blob_headers,
-                timeout,
-                access_conditions,
-                mod_conditions,
-                headers,
+            client.create(
+                content_length=0,
+                blob_http_headers=blob_headers,
+                headers=headers,
                 **kwargs)
             return upload_data_chunks(
-                blob_service=client,
-                blob_size=length,
-                block_size=blob_settings.max_block_size,
+                service=client,
+                uploader_class=AppendBlobChunkUploader,
+                total_size=length,
+                chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                append_conditions=append_conditions,
                 max_connections=max_connections,
                 validate_content=validate_content,
-                access_conditions=access_conditions,
-                uploader_class=AppendBlobChunkUploader,
-                modified_access_conditions=mod_conditions,
-                timeout=timeout,
+                append_position_access_conditions=append_conditions,
                 **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)

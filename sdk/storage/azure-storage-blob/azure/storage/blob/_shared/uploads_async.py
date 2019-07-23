@@ -56,7 +56,7 @@ async def upload_data_chunks(
 
     if encryption_options:
         encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('key'),
+            encryption_options.get('cek'),
             encryption_options.get('vector'),
             uploader_class is not PageBlobChunkUploader)
         kwargs['encryptor'] = encryptor

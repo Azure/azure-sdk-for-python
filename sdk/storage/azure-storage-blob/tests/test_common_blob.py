@@ -1474,7 +1474,7 @@ class StorageCommonBlobTest(StorageTestCase):
         download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_connections=2,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1495,7 +1495,7 @@ class StorageCommonBlobTest(StorageTestCase):
             download_blob_from_url(
                 source_blob.url, stream,
                 max_connections=2,
-                credential=self.settings.STORAGE_ACCOUNT_KEY)
+                credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1514,7 +1514,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         with self.assertRaises(ValueError):
             download_blob_from_url(source_blob.url, FILE_PATH)
@@ -1536,13 +1536,13 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = self._create_remote_block_blob(blob_data=data2)
         download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
