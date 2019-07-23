@@ -255,7 +255,8 @@ class UsernamePasswordCredential(PublicClientCredential):
 
     **Keyword arguments:**
 
-    *tenant (str)* - ID or domain associated with an Azure Active Directory tenant
+    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
+        'organizations' tenant.
     """
 
     def __init__(self, client_id, username, password, **kwargs):
