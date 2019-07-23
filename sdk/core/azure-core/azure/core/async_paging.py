@@ -23,16 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import collections.abc
 import logging
 from typing import (
-    Iterator,
+    Iterable,
     AsyncIterator,
     TypeVar,
     Callable,
     Tuple,
     Optional,
     Awaitable,
-    Type,
 )
 
 
@@ -43,16 +43,16 @@ ResponseType = TypeVar("ResponseType")
 
 
 class AsyncList(AsyncIterator[ReturnType]):
-    def __init__(self, iterator: Iterator[ReturnType]) -> None:
-        """Change an iterator into a fake async iterator.
+    def __init__(self, iterable: Iterable[ReturnType]) -> None:
+        """Change an iterable into a fake async iterator.
 
         Coul be useful to fill the async iterator contract when you get a list.
 
-        :param iterator: A sync iterator of T
+        :param iterable: A sync iterable of T
         """
         # Technically, if it's a real iterator, I don't need "iter"
         # but that will cover iterable and list as well with no troubles created.
-        self._iterator = iter(iterator)
+        self._iterator = iter(iterable)
 
     async def __anext__(self) -> ReturnType:
         try:
@@ -94,6 +94,13 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self.continuation_token, self._current_page = await self._extract_data(
             self._response
         )
+        if not self._current_page:
+            raise StopAsyncIteration("End of paging")
+
+        # If current_page was a sync list, wrap it async-like
+        if isinstance(self._current_page, collections.abc.Iterable):
+            self._current_page = AsyncList(self._current_page)
+
         return self._current_page
 
 

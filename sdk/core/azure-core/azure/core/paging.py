@@ -32,6 +32,7 @@ from typing import (
     Optional,
     TypeVar,
     Iterator,
+    Iterable,
     Tuple,
     Type,
 )  # pylint: disable=unused-import
@@ -46,7 +47,7 @@ ResponseType = TypeVar("ResponseType")
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(self, get_next, extract_data, continuation_token=None):
-        # type: (Callable[[str], ResponseType], Callable[[ResponseType], Tuple[str, Iterator[ReturnType]]], Optional[str]) -> None
+        # type: (Callable[[str], ResponseType], Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]], Optional[str]) -> None
         """Return an iterator of pages.
 
         :param get_next: Callable that take the continuation token and return a HTTP response
@@ -66,6 +67,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         return self
 
     def __next__(self):
+        # type: () -> Iterator[ReturnType]
         if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
 
@@ -73,7 +75,10 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._did_a_call_already = True
 
         self.continuation_token, self._current_page = self._extract_data(self._response)
-        return self._current_page
+        if not self._current_page:
+            raise StopIteration("End of paging")
+
+        return iter(self._current_page)
 
     next = __next__  # Python 2 compatibility.
 
@@ -88,7 +93,6 @@ class ItemPaged(Iterator[ReturnType]):
         self._args = args
         self._kwargs = kwargs
         self._page_iterator = None
-        self._page = None
         self._page_iterator_class = self._kwargs.pop(
             "page_iterator_class", PageIterator
         )
