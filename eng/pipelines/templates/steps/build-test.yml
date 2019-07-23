@@ -43,5 +43,5 @@ steps:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: 'junit/test-results.xml'
+      testResultsFiles: '**/test-results-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'

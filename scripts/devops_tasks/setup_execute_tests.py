@@ -23,18 +23,21 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # a return code of 5 from pytest == no tests run
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = []
-DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
+DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/base_tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
 def prep_and_run_tox(targeted_packages):
     for package_dir in [package for package in targeted_packages]:
+        destination_tox_ini = os.path.join(package_dir, 'tox.ini')
+
         print('running test setup for {}'.format(os.path.basename(package_dir)))
-        tox_invocation_array = ['tox', '-p', 'all']
 
-        if os.path.exists(os.path.join(os.path.basename(package_dir), 'tox.ini')):
-            tox_invocation_array.extend(['-c', DEFAULT_TOX_INI_LOCATION])
+        # if not present, copy it
+        if not os.path.exists(destination_tox_ini):
 
-        run_check_call(tox_invocation_array, package_dir)
+            shutil.copyfile(DEFAULT_TOX_INI_LOCATION, destination_tox_ini)
+
+        run_check_call(['tox', '-p', 'all'], package_dir)
 
 def collect_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, '_coverage/')
@@ -67,22 +70,6 @@ def collect_coverage_files(targeted_packages):
         dest = os.path.join(root_dir)
 
         shutil.move(source, os.path.join(root_dir, '.coverage'))
-
-def prep_and_run_tests(targeted_packages, python_version, test_res):
-    print('running test setup for {}'.format(targeted_packages))
-    run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(p) for p in targeted_packages])], root_dir)
-
-    # if we are targeting only packages that are management plane, it is a possibility 
-    # that no tests running is an acceptable situation
-    # we explicitly handle this here.
-    if all(map(lambda x : any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]), targeted_packages)):
-        ALLOWED_RETURN_CODES.append(5)
-
-    print('Setup complete. Running pytest for {}'.format(targeted_packages))
-    command_array = [python_version, '-m', 'pytest']
-    command_array.extend(test_res)
-    command_array.extend(targeted_packages)
-    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES, True)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
@@ -142,6 +129,5 @@ if __name__ == '__main__':
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
-    #prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
     prep_and_run_tox(targeted_packages)
     collect_coverage_files(targeted_packages)
