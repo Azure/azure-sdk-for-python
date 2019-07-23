@@ -23,14 +23,18 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # a return code of 5 from pytest == no tests run
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = []
-
+DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
 def prep_and_run_tox(targeted_packages):
-    print(targeted_packages)
     for package_dir in [package for package in targeted_packages]:
         print('running test setup for {}'.format(os.path.basename(package_dir)))
-        run_check_call(['tox', '-p', 'all'], package_dir)
+        tox_invocation_array = ['tox', '-p', 'all']
+
+        if os.path.exists(os.path.join(os.path.basename(package_dir), 'tox.ini')):
+            tox_invocation_array.extend(['-c', DEFAULT_TOX_INI_LOCATION])
+
+        run_check_call(tox_invocation_array, package_dir)
 
 def collect_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, '_coverage/')
@@ -61,9 +65,6 @@ def collect_coverage_files(targeted_packages):
 
         source = os.path.join(root_coverage_dir, './.coverage')
         dest = os.path.join(root_dir)
-
-        print(source)
-        print(dest)
 
         shutil.move(source, os.path.join(root_dir, '.coverage'))
 
