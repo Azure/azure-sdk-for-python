@@ -17,24 +17,25 @@ class EventHub:
         return partition_ids      
 
     def SendAndReceiveEvents(self, partitionID):
-        consumer = self.client.create_consumer(consumer_group="$default", partition_id=partitionID, event_position=EventPosition(datetime.utcnow()))
+        with self.client.create_consumer(consumer_group="$default", partition_id=partitionID, event_position=EventPosition(datetime.utcnow())) as consumer:
 
-        print("Sending events...")
-        producer = self.client.create_producer(partition_id=partitionID)
-        event_list = [EventData(b"Test Event 1 in Python"),EventData(b"Test Event 2 in Python"),EventData(b"Test Event 3 in Python")]
-        producer.send(event_list)
-        producer.close()
-        print("\tdone")
-        
-        print("Receiving events...")
-        received = consumer.receive(max_batch_size=len(event_list), timeout=2)
-        for event_data in received:
-            print("\tEvent Received: " + event_data.body_as_str())
-        consumer.close()
-        print("\tdone")
+            print("Sending events...")
+            with self.client.create_producer(partition_id=partitionID) as producer:
+                event_list = [
+                    EventData(b"Test Event 1 in Python"),
+                    EventData(b"Test Event 2 in Python"),EventData(b"Test Event 3 in Python")]
+                producer.send(event_list)
+            print("\tdone")
+            
+            print("Receiving events...")
+            received = consumer.receive(max_batch_size=len(event_list), timeout=2)
+            for event_data in received:
+                print("\tEvent Received: " + event_data.body_as_str())
 
-        if(len(received) != len(event_list)):
-            raise Exception("Error, expecting {0} events, but {1} were received.".format(str(len(event_list)),str(len(received))))
+            print("\tdone")
+
+            if(len(received) != len(event_list)):
+                raise Exception("Error, expecting {0} events, but {1} were received.".format(str(len(event_list)),str(len(received))))
 
     def Run(self):
         print()
