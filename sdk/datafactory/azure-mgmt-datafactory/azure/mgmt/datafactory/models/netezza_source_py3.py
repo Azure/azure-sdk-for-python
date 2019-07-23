@@ -36,6 +36,15 @@ class NetezzaSource(CopySource):
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
+    :param partition_option: The partition mechanism that will be used for
+     Netezza read in parallel. Possible values include: 'None', 'DataSlice',
+     'DynamicRange'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.NetezzaPartitionOption
+    :param partition_settings: The settings that will be leveraged for Netezza
+     source partitioning.
+    :type partition_settings:
+     ~azure.mgmt.datafactory.models.NetezzaPartitionSettings
     """
 
     _validation = {
@@ -49,9 +58,13 @@ class NetezzaSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, partition_option=None, partition_settings=None, **kwargs) -> None:
         super(NetezzaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
+        self.partition_option = partition_option
+        self.partition_settings = partition_settings
         self.type = 'NetezzaSource'
