@@ -151,7 +151,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -211,7 +211,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -286,7 +286,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -373,7 +373,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -438,7 +438,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -504,7 +504,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
