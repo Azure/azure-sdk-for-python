@@ -38,7 +38,7 @@ class InvoiceSectionsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists all invoice sections for a user which he has access to.
 
@@ -58,7 +58,7 @@ class InvoiceSectionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
+        url = self.list_by_billing_profile_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -96,7 +96,7 @@ class InvoiceSectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections'}
+    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections'}
 
     def list_by_create_subscription_permission(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
