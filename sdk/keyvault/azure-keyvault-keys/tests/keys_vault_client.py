@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 class VaultClient(KeyVaultClientBase):
     def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
-        # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+        # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
         super(VaultClient, self).__init__(
             vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
