@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import itertools
 from typing import (
     Dict,
     Any,
@@ -104,16 +105,7 @@ class ItemPaged(Iterator[ReturnType]):
 
     def __next__(self):
         if self._page_iterator is None:
-            self._page_iterator = self.by_page()
-            return next(self)
-        if self._page is None:
-            # Let it raise StopIteration
-            self._page = next(self._page_iterator)
-            return next(self)
-        try:
-            return next(self._page)
-        except StopIteration:
-            self._page = None
-            return next(self)
+            self._page_iterator = itertools.chain.from_iterable(self.by_page())
+        return next(self._page_iterator)
 
     next = __next__  # Python 2 compatibility.
