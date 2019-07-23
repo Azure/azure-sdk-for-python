@@ -13,22 +13,24 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import VirtustreamPrivateCloudResourceProviderAPIConfiguration
-from .operations import VirtustreamPrivateCloudResourceProviderAPIOperationsMixin
-from .operations import PrivateCloudOperations
-from .operations import ClusterOperations
+from .operations import Operations
+from .operations import PrivateCloudsOperations
+from .operations import ClustersOperations
 from . import models
 
 
-class VirtustreamPrivateCloudResourceProviderAPI(VirtustreamPrivateCloudResourceProviderAPIOperationsMixin, SDKClient):
+class VirtustreamPrivateCloudResourceProviderAPI(SDKClient):
     """API for managing Virtustream Private Clouds through Azure.
 
     :ivar config: Configuration for client.
     :vartype config: VirtustreamPrivateCloudResourceProviderAPIConfiguration
 
-    :ivar private_cloud: PrivateCloud operations
-    :vartype private_cloud: azure.mgmt.vmwarevirtustream.operations.PrivateCloudOperations
-    :ivar cluster: Cluster operations
-    :vartype cluster: azure.mgmt.vmwarevirtustream.operations.ClusterOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.vmwarevirtustream.operations.Operations
+    :ivar private_clouds: PrivateClouds operations
+    :vartype private_clouds: azure.mgmt.vmwarevirtustream.operations.PrivateCloudsOperations
+    :ivar clusters: Clusters operations
+    :vartype clusters: azure.mgmt.vmwarevirtustream.operations.ClustersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -50,7 +52,9 @@ class VirtustreamPrivateCloudResourceProviderAPI(VirtustreamPrivateCloudResource
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.private_cloud = PrivateCloudOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.cluster = ClusterOperations(
+        self.private_clouds = PrivateCloudsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

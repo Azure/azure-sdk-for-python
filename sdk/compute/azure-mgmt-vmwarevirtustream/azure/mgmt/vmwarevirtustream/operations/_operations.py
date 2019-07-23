@@ -9,15 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+
 from .. import models
-import uuid
 
 
-class VirtustreamPrivateCloudResourceProviderAPIOperationsMixin(object):
+class Operations(object):
+    """Operations operations.
 
-    def list_operations(
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2016-09-01-preview".
+    """
+
+    models = models
+
+    def __init__(self, client, config, serializer, deserializer):
+
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+        self.api_version = "2016-09-01-preview"
+
+        self.config = config
+
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all of the available RP operations.
 
@@ -34,7 +56,7 @@ class VirtustreamPrivateCloudResourceProviderAPIOperationsMixin(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_operations.metadata['url']
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -77,4 +99,4 @@ class VirtustreamPrivateCloudResourceProviderAPIOperationsMixin(object):
         deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_operations.metadata = {'url': '/providers/Microsoft.VMwareVirtustream/operations'}
+    list.metadata = {'url': '/providers/Microsoft.VMwareVirtustream/operations'}

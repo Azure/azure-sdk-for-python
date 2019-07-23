@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PrivateCloudOperations(object):
-    """PrivateCloudOperations operations.
+class PrivateCloudsOperations(object):
+    """PrivateCloudsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -275,7 +275,7 @@ class PrivateCloudOperations(object):
         return deserialized
     get_by_id_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def create(
+    def create_or_update(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         """create a private cloud.
 
@@ -298,7 +298,7 @@ class PrivateCloudOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -349,9 +349,9 @@ class PrivateCloudOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def modify(
+    def update(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         """modify a private cloud.
 
@@ -374,7 +374,7 @@ class PrivateCloudOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.modify.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -418,7 +418,7 @@ class PrivateCloudOperations(object):
             return client_raw_response
 
         return deserialized
-    modify.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
     def delete(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):

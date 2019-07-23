@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._private_cloud_operations import PrivateCloudOperations
-from ._cluster_operations import ClusterOperations
-from ._virtustream_private_cloud_resource_provider_api_operations import VirtustreamPrivateCloudResourceProviderAPIOperationsMixin
+from ._operations import Operations
+from ._private_clouds_operations import PrivateCloudsOperations
+from ._clusters_operations import ClustersOperations
 
 __all__ = [
-    'PrivateCloudOperations',
-    'ClusterOperations',
-    'VirtustreamPrivateCloudResourceProviderAPIOperationsMixin',
+    'Operations',
+    'PrivateCloudsOperations',
+    'ClustersOperations',
 ]

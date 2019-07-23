@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ClusterOperations(object):
-    """ClusterOperations operations.
+class ClustersOperations(object):
+    """ClustersOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -167,7 +167,7 @@ class ClusterOperations(object):
         return deserialized
     get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
-    def create(
+    def create_or_update(
             self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """create cluster.
 
@@ -195,7 +195,7 @@ class ClusterOperations(object):
         parameters = models.AzureClusterRequest(location=location, properties=properties)
 
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -247,9 +247,9 @@ class ClusterOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
-    def modify(
+    def update(
             self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """modify cluster.
 
@@ -276,7 +276,7 @@ class ClusterOperations(object):
         parameters = models.AzureClusterRequest(location=location, properties=properties)
 
         # Construct URL
-        url = self.modify.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -314,7 +314,7 @@ class ClusterOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    modify.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
     def delete(
             self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
