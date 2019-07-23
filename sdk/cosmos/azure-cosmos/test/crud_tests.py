@@ -47,7 +47,7 @@ import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
-import azure.cosmos.base as base
+import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey

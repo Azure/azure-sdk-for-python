@@ -23,7 +23,6 @@
 """
 
 from . import errors
-from . import base
 from .http_constants import StatusCodes
 
 class VectorSessionToken(object):

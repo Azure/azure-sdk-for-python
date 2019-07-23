@@ -22,7 +22,7 @@
 """Internal class for partition key range cache implementation in the Azure Cosmos database service.
 """
 
-from .. import base
+from .. import _base
 from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
 from .routing_range import PartitionKeyRange
@@ -59,7 +59,7 @@ class PartitionKeyRangeCache(object):
         '''
         cl = self._documentClient
         
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
