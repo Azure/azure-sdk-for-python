@@ -350,7 +350,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # validate all our deleted certificates are returned by list_deleted_certificates
         deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
-        # self.assertTrue(all(s in deleted for s in certs.keys()))
+        self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith('certrec')]:

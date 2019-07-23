@@ -95,6 +95,14 @@ class TestSamplesKeyVault(KeyVaultTestCase):
                     cert_policy.san_dns_names, cert.policy.san_dns_names):
                 self.assertEqual(san_dns_name, policy_dns_name)
 
+    def _validate_certificate_list(self, certificates, expected):
+        for cert in certificates:
+            if cert.id in expected.keys():
+                del expected[cert.id]
+            else:
+                self.assertTrue(False)
+        self.assertEqual(len(expected), 0)
+
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_backup_restore_operations_sample(self, vault_client, **kwargs):
@@ -235,3 +243,84 @@ class TestSamplesKeyVault(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_list_operations_sample(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.certificates
+
+        # create certificate
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        content_type='application/x-pkcs12',
+                                        issuer_name='Self',
+                                        subject_name='CN=*.microsoft.com',
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
+                                        validity_in_months=24
+                                        )
+        bank_cert_name = "BankListCertificate"
+        storage_cert_name = "StorageListCertificate"
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        bank_certificate_operation = client.create_certificate(name=bank_cert_name, policy=cert_policy, expires=expires)
+        storage_certificate_operation = client.create_certificate(name=storage_cert_name, policy=cert_policy)
+
+        create_interval_time = 5 if not self.is_playback() else 0
+        while True:
+            pending_bank_cert = client.get_certificate_operation(name=bank_certificate_operation.name)
+            pending_storage_cert = client.get_certificate_operation(name=storage_certificate_operation.name)
+            self._validate_certificate_operation(pending_bank_cert, client.vault_url, bank_cert_name, cert_policy)
+            self._validate_certificate_operation(pending_storage_cert, client.vault_url, storage_cert_name, cert_policy)
+            if pending_bank_cert.status.lower() == 'completed' and pending_storage_cert.status.lower() == 'completed':
+                break
+            elif pending_bank_cert.status.lower() != 'inprogress':
+                raise Exception('Unknown status code for pending certificate: {}'.format(pending_bank_cert))
+            elif pending_storage_cert.status.lower() != 'inprogress':
+                raise Exception('Unknown status code for pending certificate: {}'.format(pending_storage_cert))
+            time.sleep(create_interval_time)
+
+        # list certificates
+        certificates = client.list_certificates()
+        expected = {}
+
+        bank_certificate_expected = client.get_certificate(name=bank_cert_name)
+        storage_certificate_expected = client.get_certificate(name=storage_cert_name)
+
+        expected[KeyVaultId.parse_certificate_id(bank_certificate_expected.id).base_id.strip('/')] = bank_certificate_expected
+        expected[KeyVaultId.parse_certificate_id(storage_certificate_expected.id).base_id.strip('/')] = storage_certificate_expected
+        self._validate_certificate_list(certificates=certificates, expected=expected)
+
+        # update bank certificate
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+
+        updated_bank_certificate_operation = client.create_certificate(name=bank_certificate_operation.name,
+                                                                       policy=cert_policy,
+                                                                       expires=expires)
+
+        # list versions
+        certificate_versions = client.list_certificate_versions(bank_certificate_operation.name)
+        expected = {}
+
+        bank_certificate_1 = client.get_certificate(name=bank_cert_name, version=bank_certificate_expected.version)
+        bank_certificate_2 = client.get_certificate(name=bank_cert_name, version=updated_bank_certificate_operation.version)
+
+        expected[KeyVaultId.parse_certificate_id(bank_certificate_1.id).base_id.strip('/')] = bank_certificate_1
+        expected[KeyVaultId.parse_certificate_id(bank_certificate_2.id).base_id.strip('/')] = bank_certificate_2
+        self._validate_certificate_list(certificates=certificate_versions, expected=expected)
+
+
+        # delete certificates
+        client.delete_certificate(name=bank_certificate_operation.name)
+        client.delete_certificate(name=storage_certificate_operation.name)
+        deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
+        self.assertTrue(all(c in deleted for c in [bank_certificate_operation.name, storage_certificate_operation.name]))
+
+        # to ensure certificate is deleted on the server side.
+        delete_interval_time = 30 if not self.is_playback() else 0
+        time.sleep(delete_interval_time)
+
+        # list deleted certificates
+        deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
+        self.assertTrue(all(c in deleted for c in [bank_certificate_operation.name, storage_certificate_operation.name]))

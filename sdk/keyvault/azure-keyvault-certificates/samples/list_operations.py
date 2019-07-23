@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault. The vault has to be soft-delete enabled
@@ -88,9 +88,9 @@ def run_sample():
 
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 
-        updated_certificate_operation = client.create_certificate(name=bank_certificate_operation.name, policy=cert_policy, expires=expires)
+        updated_bank_certificate_operation = client.create_certificate(name=bank_certificate_operation.name, policy=cert_policy, expires=expires)
         print(
-            "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_certificate_operation.name, expires)
+            "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_bank_certificate_operation.name, expires)
         )
 
         # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.
@@ -103,11 +103,11 @@ def run_sample():
         client.delete_certificate(name=bank_certificate_operation.name)
         client.delete_certificate(name=storage_certificate_operation.name)
 
-        # To ensure secret is deleted on the server side.
+        # To ensure certificate is deleted on the server side.
         print("Deleting certificates...")
         time.sleep(30)
 
-        # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
+        # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
         print("\n3. List deleted certificates from the Key Vault")
         deleted_certificates = client.list_deleted_certificates()
         for deleted_certificate in deleted_certificates:
