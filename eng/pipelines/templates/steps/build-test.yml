@@ -37,7 +37,7 @@ steps:
     displayName: 'Setup Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}"'
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
