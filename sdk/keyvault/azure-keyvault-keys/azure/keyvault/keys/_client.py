@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, Dict, Generator, Mapping, Optional, List
 
 try:
     from typing import TYPE_CHECKING
