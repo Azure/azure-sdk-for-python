@@ -31,7 +31,7 @@ class KeyVaultClientBase(object):
     """
 
     @staticmethod
-    def create_config(credential, api_version=None, **kwargs):
+    def _create_config(credential, api_version=None, **kwargs):
         # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
@@ -39,8 +39,8 @@ class KeyVaultClientBase(object):
         config.authentication_policy = ChallengeAuthPolicy(credential)
         return config
 
-    def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
-        # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+    def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
+        # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, such as a credential from azure-identity"
@@ -59,11 +59,11 @@ class KeyVaultClientBase(object):
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
-        config = config or self.create_config(credential, api_version=api_version, **kwargs)
-        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport)
+        config = self._create_config(credential, api_version=api_version, **kwargs)
+        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=False, **kwargs)
 
-    def _build_pipeline(self, config, transport):
+    def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport) -> Pipeline
         policies = [
             config.headers_policy,
@@ -76,7 +76,7 @@ class KeyVaultClientBase(object):
         ]
 
         if transport is None:
-            transport = RequestsTransport(config)
+            transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies=policies)
 

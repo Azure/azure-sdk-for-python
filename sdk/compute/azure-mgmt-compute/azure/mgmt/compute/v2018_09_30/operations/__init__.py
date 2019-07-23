@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .disks_operations import DisksOperations
-from .snapshots_operations import SnapshotsOperations
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'DisksOperations',

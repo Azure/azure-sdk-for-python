@@ -13,8 +13,6 @@ from ._application_gateways_operations import ApplicationGatewaysOperations
 from ._application_security_groups_operations import ApplicationSecurityGroupsOperations
 from ._available_delegations_operations import AvailableDelegationsOperations
 from ._available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
-from ._available_private_endpoint_types_operations import AvailablePrivateEndpointTypesOperations
-from ._available_resource_group_private_endpoint_types_operations import AvailableResourceGroupPrivateEndpointTypesOperations
 from ._azure_firewalls_operations import AzureFirewallsOperations
 from ._azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
 from ._bastion_hosts_operations import BastionHostsOperations
@@ -35,6 +33,7 @@ from ._express_route_ports_locations_operations import ExpressRoutePortsLocation
 from ._express_route_ports_operations import ExpressRoutePortsOperations
 from ._express_route_links_operations import ExpressRouteLinksOperations
 from ._private_endpoints_operations import PrivateEndpointsOperations
+from ._available_private_endpoint_types_operations import AvailablePrivateEndpointTypesOperations
 from ._private_link_services_operations import PrivateLinkServicesOperations
 from ._load_balancers_operations import LoadBalancersOperations
 from ._load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
@@ -94,8 +93,6 @@ __all__ = [
     'ApplicationSecurityGroupsOperations',
     'AvailableDelegationsOperations',
     'AvailableResourceGroupDelegationsOperations',
-    'AvailablePrivateEndpointTypesOperations',
-    'AvailableResourceGroupPrivateEndpointTypesOperations',
     'AzureFirewallsOperations',
     'AzureFirewallFqdnTagsOperations',
     'BastionHostsOperations',
@@ -116,6 +113,7 @@ __all__ = [
     'ExpressRoutePortsOperations',
     'ExpressRouteLinksOperations',
     'PrivateEndpointsOperations',
+    'AvailablePrivateEndpointTypesOperations',
     'PrivateLinkServicesOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',

@@ -51,7 +51,7 @@ class AsyncKeyVaultClientBase:
     """
 
     @staticmethod
-    def create_config(
+    def _create_config(
         credential: "TokenCredential", api_version: str = None, **kwargs: Mapping[str, Any]
     ) -> Configuration:
         if api_version is None:
@@ -64,7 +64,6 @@ class AsyncKeyVaultClientBase:
         self,
         vault_url: str,
         credential: "TokenCredential",
-        config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
@@ -87,12 +86,12 @@ class AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
-        config = config or self.create_config(credential, api_version=api_version, **kwargs)
-        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport)
+        config = self._create_config(credential, api_version=api_version, **kwargs)
+        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: HttpTransport, **kwargs: Any) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -104,7 +103,7 @@ class AsyncKeyVaultClientBase:
         ]
 
         if transport is None:
-            transport = AsyncioRequestsTransport(config)
+            transport = AsyncioRequestsTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)
 

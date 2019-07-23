@@ -61,6 +61,26 @@ class MockClient:
         time.sleep(0.001)
         return 5
 
+    @distributed_trace_async(name_of_span="different name")
+    async def check_name_is_different(self):
+        time.sleep(0.001)
+
+
+@pytest.mark.asyncio
+async def test_decorator_has_different_name():
+    with ContextHelper():
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+        with trace.span("overall"):
+            client = MockClient()
+            await client.check_name_is_different()
+        trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 2
+        assert parent.children[0].span_data.name == "MockClient.__init__"
+        assert parent.children[1].span_data.name == "different name"
+
 
 @pytest.mark.asyncio
 async def test_with_nothing_imported():
@@ -110,6 +130,7 @@ async def test_span_with_opencensus_complicated(value):
             client = MockClient()
             await client.make_request(2)
             with trace.span("child") as child:
+                time.sleep(0.001)
                 await client.make_request(2, parent_span=parent)
                 assert OpenCensusSpan.get_current_span() == child
                 await client.make_request(2)

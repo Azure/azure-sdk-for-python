@@ -5,6 +5,7 @@
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
 
 from opencensus.trace import Span, execution_context
+from opencensus.trace.span import SpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
@@ -15,6 +16,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     from typing import Dict, Optional, Union
+
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 
 class OpenCensusSpan(object):
@@ -33,8 +36,13 @@ class OpenCensusSpan(object):
         """
         if not span:
             tracer = self.get_current_tracer()
-            span = tracer.span(name=name) # type: Span
+            span = tracer.start_span(name=name) # type: Span
         self._span_instance = span
+        self._span_component = "component"
+        self._http_user_agent = "http.user_agent"
+        self._http_method = "http.method"
+        self._http_url = "http.url"
+        self._http_status_code = "http.status_code"
 
     @property
     def span_instance(self):
@@ -62,7 +70,8 @@ class OpenCensusSpan(object):
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        self.span_instance.finish()
+        tracer = self.get_current_tracer()
+        tracer.end_span()
 
     def to_header(self):
         # type: () -> Dict[str, str]
@@ -74,7 +83,10 @@ class OpenCensusSpan(object):
         temp_headers = {}
         if tracer_from_context is not None:
             ctx = tracer_from_context.span_context
-            temp_headers = tracer_from_context.propagator.to_headers(ctx)
+            try:
+                temp_headers = tracer_from_context.propagator.to_headers(ctx)
+            except AttributeError:
+                pass
         return temp_headers
 
     def add_attribute(self, key, value):
@@ -88,6 +100,28 @@ class OpenCensusSpan(object):
         :type value: str
         """
         self.span_instance.add_attribute(key, value)
+
+    def set_http_attributes(self, request, response=None):
+        # type: (HttpRequest, Optional[HttpResponse]) -> None
+        """
+        Add correct attributes for a http client span.
+
+        :param request: The request made
+        :type request: HttpRequest
+        :param response: The response received by the server. Is None if no response received.
+        :type response: HttpResponse
+        """
+        self._span_instance.span_kind = SpanKind.CLIENT
+        self.span_instance.add_attribute(self._span_component, "http")
+        self.span_instance.add_attribute(self._http_method, request.method)
+        self.span_instance.add_attribute(self._http_url, request.url)
+        user_agent = request.headers.get("User-Agent")
+        if user_agent:
+            self.span_instance.add_attribute(self._http_user_agent, user_agent)
+        if response:
+            self._span_instance.add_attribute(self._http_status_code, response.status_code)
+        else:
+            self._span_instance.add_attribute(self._http_status_code, 504)
 
     @classmethod
     def link(cls, headers):

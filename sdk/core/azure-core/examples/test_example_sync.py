@@ -45,7 +45,7 @@ def test_example_requests():
     # [START requests]
     from azure.core.pipeline.transport import RequestsTransport
 
-    with Pipeline(transport=RequestsTransport(config), policies=policies) as pipeline:
+    with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
     # [END requests]
     assert pipeline._transport.session is None
