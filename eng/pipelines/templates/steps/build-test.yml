@@ -43,5 +43,29 @@ steps:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+      testResultsFiles: '**/test-junit-py34-*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.4'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-py35-*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.5'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-py36-*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.6'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-py37-*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.7'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-py27*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 2.7'
