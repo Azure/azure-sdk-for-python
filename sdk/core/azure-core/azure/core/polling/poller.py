@@ -174,6 +174,7 @@ class LROPoller(object):
         """
         return self._polling_method.status()
 
+    @distributed_trace
     def result(self, timeout=None):
         # type: (Optional[int]) -> Model
         """Return the result of the long running operation, or
