@@ -1087,7 +1087,7 @@ class NetworkWatchersOperations(object):
 
     def set_flow_log_configuration(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Configures flow log  and traffic analytics (optional) on a specified
+        """Configures flow log and traffic analytics (optional) on a specified
         resource.
 
         :param resource_group_name: The name of the network watcher resource
