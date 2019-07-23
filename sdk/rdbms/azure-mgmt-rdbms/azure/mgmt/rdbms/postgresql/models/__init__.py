@@ -23,8 +23,6 @@ try:
     from ._models_py3 import PerformanceTierServiceLevelObjectives
     from ._models_py3 import ProxyResource
     from ._models_py3 import Server
-    from ._models_py3 import ServerAdministratorProperties
-    from ._models_py3 import ServerAdministratorResource
     from ._models_py3 import ServerForCreate
     from ._models_py3 import ServerPropertiesForCreate
     from ._models_py3 import ServerPropertiesForDefaultCreate
@@ -51,8 +49,6 @@ except (SyntaxError, ImportError):
     from ._models import PerformanceTierServiceLevelObjectives
     from ._models import ProxyResource
     from ._models import Server
-    from ._models import ServerAdministratorProperties
-    from ._models import ServerAdministratorResource
     from ._models import ServerForCreate
     from ._models import ServerPropertiesForCreate
     from ._models import ServerPropertiesForDefaultCreate
@@ -98,8 +94,6 @@ __all__ = [
     'PerformanceTierServiceLevelObjectives',
     'ProxyResource',
     'Server',
-    'ServerAdministratorProperties',
-    'ServerAdministratorResource',
     'ServerForCreate',
     'ServerPropertiesForCreate',
     'ServerPropertiesForDefaultCreate',

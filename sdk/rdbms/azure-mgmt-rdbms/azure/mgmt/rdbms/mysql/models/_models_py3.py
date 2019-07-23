@@ -645,57 +645,6 @@ class Server(TrackedResource):
         self.replica_capacity = replica_capacity
 
 
-class ServerAdministratorProperties(Model):
-    """The properties used to create a new external administrator.
-
-    :param administrator_type: The administrator type.
-    :type administrator_type: str
-    :param login: The administrator login.
-    :type login: str
-    :param sid: The administrator sid.
-    :type sid: str
-    :param tenant_id: The administrator tenantId.
-    :type tenant_id: str
-    """
-
-    _attribute_map = {
-        'administrator_type': {'key': 'administratorType', 'type': 'str'},
-        'login': {'key': 'login', 'type': 'str'},
-        'sid': {'key': 'sid', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, *, administrator_type: str=None, login: str=None, sid: str=None, tenant_id: str=None, **kwargs) -> None:
-        super(ServerAdministratorProperties, self).__init__(**kwargs)
-        self.administrator_type = administrator_type
-        self.login = login
-        self.sid = sid
-        self.tenant_id = tenant_id
-
-
-class ServerAdministratorResource(Model):
-    """Represents a and external administrator to be created.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param properties: Required. Properties of the server AAD administrator.
-    :type properties:
-     ~azure.mgmt.rdbms.mysql.models.ServerAdministratorProperties
-    """
-
-    _validation = {
-        'properties': {'required': True},
-    }
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ServerAdministratorProperties'},
-    }
-
-    def __init__(self, *, properties, **kwargs) -> None:
-        super(ServerAdministratorResource, self).__init__(**kwargs)
-        self.properties = properties
-
-
 class ServerForCreate(Model):
     """Represents a server to be created.
 

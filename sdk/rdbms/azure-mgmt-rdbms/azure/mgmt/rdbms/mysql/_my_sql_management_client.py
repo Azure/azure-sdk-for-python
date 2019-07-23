@@ -20,7 +20,6 @@ from .operations import VirtualNetworkRulesOperations
 from .operations import DatabasesOperations
 from .operations import ConfigurationsOperations
 from .operations import LogFilesOperations
-from .operations import ServerAdministratorsOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
 from .operations import ServerSecurityAlertPoliciesOperations
@@ -48,8 +47,6 @@ class MySQLManagementClient(SDKClient):
     :vartype configurations: azure.mgmt.rdbms.mysql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
     :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
-    :ivar server_administrators: ServerAdministrators operations
-    :vartype server_administrators: azure.mgmt.rdbms.mysql.operations.ServerAdministratorsOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
@@ -92,8 +89,6 @@ class MySQLManagementClient(SDKClient):
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.server_administrators = ServerAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self.config, self._serialize, self._deserialize)
