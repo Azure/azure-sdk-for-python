@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from ._generated import KeyVaultClient
 
 if TYPE_CHECKING:
@@ -73,6 +74,7 @@ class KeyVaultClientBase(object):
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
+            DistributedTracingPolicy(),
         ]
 
         if transport is None:
