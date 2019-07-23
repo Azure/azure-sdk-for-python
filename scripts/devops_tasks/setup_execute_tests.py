@@ -65,7 +65,7 @@ def collect_coverage_files(targeted_packages):
         print(source)
         print(dest)
 
-        shutil.move(source, root_dir)
+        shutil.move(source, os.path.join(root_dir, '.coverage'))
 
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))

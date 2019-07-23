@@ -2,3 +2,5 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-keyvault
 aiohttp>=3.0; python_version >= '3.5'
+pylint==2.3.0; python_version >= '3.4'
+pylint==1.9.4; python_version < '3.4'
