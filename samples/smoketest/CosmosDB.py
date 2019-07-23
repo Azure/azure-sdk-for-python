@@ -1,5 +1,4 @@
-import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+from azure.cosmos import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 import os
 
@@ -7,7 +6,7 @@ class CosmosDB:
     def __init__(self):
         URL = os.environ["COSMOS_ENDPOINT"]
         KEY = os.environ["COSMOS_KEY"]
-        self.client = cosmos_client.CosmosClient(URL,{'masterKey': KEY})
+        self.client = CosmosClient(URL,{'masterKey': KEY})
 
     def CreateDatabase(self):
         dbName="pySolarSystem"
