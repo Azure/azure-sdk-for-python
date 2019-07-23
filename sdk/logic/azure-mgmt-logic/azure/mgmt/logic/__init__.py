@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient
-from .version import VERSION
+from ._configuration import LogicManagementClientConfiguration
+from ._logic_management_client import LogicManagementClient
+__all__ = ['LogicManagementClient', 'LogicManagementClientConfiguration']
 
-__all__ = ['LogicManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
