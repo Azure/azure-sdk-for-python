@@ -7,11 +7,11 @@ class CosmosDB:
         URL = os.environ["COSMOS_ENDPOINT"]
         KEY = os.environ["COSMOS_KEY"]
         self.client = CosmosClient(URL,{'masterKey': KEY})
+        self.dbName="pySolarSystem"
 
     def CreateDatabase(self):
-        dbName="pySolarSystem"
-        print("Creating '{0}' database...".format(dbName))
-        return self.client.create_database(dbName)
+        print("Creating '{0}' database...".format(self.dbName))
+        return self.client.create_database(self.dbName)
 
     def CreateContainer(self, db):
         collectionName = "Planets"
@@ -65,7 +65,7 @@ class CosmosDB:
     
     def DeleteDatabase(self):
         print("Cleaning up the resource...")
-        self.client.delete_database("pySolarSystem")
+        self.client.delete_database(self.dbName)
         print("\tdone")
 
     def Run(self):
