@@ -7,6 +7,7 @@
 import sys
 from io import BytesIO
 
+from azure.core.tracing.context import tracing_context
 from .models import ShareProperties, DirectoryProperties, FileProperties
 from ._generated.models import StorageErrorException
 from ._shared.utils import process_storage_error, parse_length_from_content_range
@@ -344,7 +345,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         if max_connections > 1:
             import concurrent.futures
             executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-            list(executor.map(downloader.process_chunk, downloader.get_chunk_offsets()))
+            list(executor.map(tracing_context.with_current_context(downloader.process_chunk), downloader.get_chunk_offsets()))
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)

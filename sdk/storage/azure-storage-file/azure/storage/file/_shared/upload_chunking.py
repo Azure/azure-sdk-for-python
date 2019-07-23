@@ -5,42 +5,36 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
+from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from threading import Lock
+from azure.core.tracing.context import tracing_context
 
 from math import ceil
 
 import six
 
 from .models import ModifiedAccessConditions
-from .utils import (
-    encode_base64,
-    url_quote,
-    get_length,
-    return_response_headers)
+from .utils import encode_base64, url_quote, get_length, return_response_headers
 from .encryption import _get_blob_encryptor_and_padder
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
-_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
+_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
 
-def upload_file_chunks(file_service, file_size, block_size, stream, max_connections,
-                       validate_content, timeout, **kwargs):
+def upload_file_chunks(
+        file_service, file_size, block_size, stream, max_connections, validate_content, timeout, **kwargs
+):
     uploader = FileChunkUploader(
-        file_service,
-        file_size,
-        block_size,
-        stream,
-        max_connections > 1,
-        validate_content,
-        timeout,
-        **kwargs
+        file_service, file_size, block_size, stream, max_connections > 1, validate_content, timeout, **kwargs
     )
     if max_connections > 1:
         import concurrent.futures
+
         executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-        range_ids = list(executor.map(uploader.process_chunk, uploader.get_chunk_offsets()))
+        range_ids = list(
+            executor.map(tracing_context.with_current_context(uploader.process_chunk), uploader.get_chunk_offsets())
+        )
     else:
         if file_size is not None:
             range_ids = [uploader.process_chunk(start) for start in uploader.get_chunk_offsets()]
@@ -49,14 +43,26 @@ def upload_file_chunks(file_service, file_size, block_size, stream, max_connecti
     return range_ids
 
 
-def upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connections, validate_content,  # pylint: disable=too-many-locals
-                       access_conditions, uploader_class, append_conditions=None, modified_access_conditions=None,
-                       timeout=None, content_encryption_key=None, initialization_vector=None, **kwargs):
+def upload_blob_chunks(
+        blob_service,
+        blob_size,
+        block_size,
+        stream,
+        max_connections,
+        validate_content,  # pylint: disable=too-many-locals
+        access_conditions,
+        uploader_class,
+        append_conditions=None,
+        modified_access_conditions=None,
+        timeout=None,
+        content_encryption_key=None,
+        initialization_vector=None,
+        **kwargs
+):
 
     encryptor, padder = _get_blob_encryptor_and_padder(
-        content_encryption_key,
-        initialization_vector,
-        uploader_class is not PageBlobChunkUploader)
+        content_encryption_key, initialization_vector, uploader_class is not PageBlobChunkUploader
+    )
 
     uploader = uploader_class(
         blob_service,
@@ -103,7 +109,7 @@ def upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connecti
                     running_futures.remove(f)
 
             chunk_throttler.acquire()
-            future = executor.submit(uploader.process_chunk, chunk)
+            future = executor.submit(tracing_context.with_current_context(uploader.process_chunk), chunk)
 
             # Calls callback upon completion (even if the callback was added after the Future task is done).
             future.add_done_callback(lambda x: chunk_throttler.release())
@@ -120,9 +126,20 @@ def upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connecti
     return uploader.response_headers
 
 
-def upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, max_connections,
-                                 validate_content, access_conditions, uploader_class,
-                                 append_conditions=None, modified_access_conditions=None, timeout=None, **kwargs):
+def upload_blob_substream_blocks(
+        blob_service,
+        blob_size,
+        block_size,
+        stream,
+        max_connections,
+        validate_content,
+        access_conditions,
+        uploader_class,
+        append_conditions=None,
+        modified_access_conditions=None,
+        timeout=None,
+        **kwargs
+):
 
     uploader = uploader_class(
         blob_service,
@@ -147,8 +164,13 @@ def upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, ma
 
     if max_connections > 1:
         import concurrent.futures
+
         executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-        range_ids = list(executor.map(uploader.process_substream_block, uploader.get_substream_blocks()))
+        range_ids = list(
+            executor.map(
+                tracing_context.with_current_context(uploader.process_substream_block), uploader.get_substream_blocks()
+            )
+        )
     else:
         range_ids = [uploader.process_substream_block(result) for result in uploader.get_substream_blocks()]
 
@@ -156,9 +178,21 @@ def upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, ma
 
 
 class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, blob_service, blob_size, chunk_size, stream, parallel, validate_content,
-                 access_conditions, append_conditions, timeout, encryptor, padder, **kwargs):
+    def __init__(
+        self,
+        blob_service,
+        blob_size,
+        chunk_size,
+        stream,
+        parallel,
+        validate_content,
+        access_conditions,
+        append_conditions,
+        timeout,
+        encryptor,
+        padder,
+        **kwargs
+    ):
         self.blob_service = blob_service
         self.blob_size = blob_size
         self.chunk_size = chunk_size
@@ -183,7 +217,7 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
     def get_chunk_streams(self):
         index = 0
         while True:
-            data = b''
+            data = b""
             read_size = self.chunk_size
 
             # Buffer until we either reach the end of the stream or get a whole chunk.
@@ -192,12 +226,12 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
                     read_size = min(self.chunk_size - len(data), self.blob_size - (index + len(data)))
                 temp = self.stream.read(read_size)
                 if not isinstance(temp, six.binary_type):
-                    raise TypeError('Blob data should be of type bytes.')
+                    raise TypeError("Blob data should be of type bytes.")
                 data += temp or b""
 
                 # We have read an empty string and so are at the end
                 # of the buffer or we have read a full chunk.
-                if temp == b'' or len(data) == self.chunk_size:
+                if temp == b"" or len(data) == self.chunk_size:
                     break
 
             if len(data) == self.chunk_size:
@@ -250,9 +284,12 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
         last_block_size = self.chunk_size if blob_length % self.chunk_size == 0 else blob_length % self.chunk_size
 
         for i in range(blocks):
-            yield ('BlockId{}'.format("%05d" % i),
-                   _SubStream(self.stream, i * self.chunk_size, last_block_size if i == blocks - 1 else self.chunk_size,
-                              lock))
+            yield (
+                "BlockId{}".format("%05d" % i),
+                _SubStream(
+                    self.stream, i * self.chunk_size, last_block_size if i == blocks - 1 else self.chunk_size, lock
+                ),
+            )
 
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
@@ -270,10 +307,9 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
 
 
 class BlockBlobChunkUploader(_BlobChunkUploader):
-
     def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        block_id = encode_base64(url_quote(encode_base64('{0:032d}'.format(chunk_offset))))
+        block_id = encode_base64(url_quote(encode_base64("{0:032d}".format(chunk_offset))))
         self.blob_service.stage_block(
             block_id,
             len(chunk_data),
@@ -283,7 +319,8 @@ class BlockBlobChunkUploader(_BlobChunkUploader):
             validate_content=self.validate_content,
             data_stream_total=self.blob_size,
             upload_stream_current=self.progress_total,
-            **self.request_options)
+            **self.request_options
+        )
         return block_id
 
     def _upload_substream_block(self, block_id, block_stream):
@@ -297,19 +334,19 @@ class BlockBlobChunkUploader(_BlobChunkUploader):
                 timeout=self.timeout,
                 data_stream_total=self.blob_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
+                **self.request_options
+            )
         finally:
             block_stream.close()
         return block_id
 
 
 class PageBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-method
-
     def _is_chunk_empty(self, chunk_data):
         # read until non-zero byte is encountered
         # if reached the end without returning, then chunk_data is all 0's
         for each_byte in chunk_data:
-            if each_byte not in [0, b'\x00']:
+            if each_byte not in [0, b"\x00"]:
                 return False
         return True
 
@@ -317,7 +354,7 @@ class PageBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-met
         # avoid uploading the empty pages
         if not self._is_chunk_empty(chunk_data):
             chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
+            content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
             computed_md5 = None
             self.response_headers = self.blob_service.upload_pages(
                 chunk_data,
@@ -331,15 +368,14 @@ class PageBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-met
                 cls=return_response_headers,
                 data_stream_total=self.blob_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
+                **self.request_options
+            )
 
             if not self.parallel:
-                self.modified_access_conditions = ModifiedAccessConditions(
-                    if_match=self.response_headers['etag'])
+                self.modified_access_conditions = ModifiedAccessConditions(if_match=self.response_headers["etag"])
 
 
 class AppendBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-method
-
     def __init__(self, *args, **kwargs):
         super(AppendBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
@@ -359,7 +395,7 @@ class AppendBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-m
                 upload_stream_current=self.progress_total,
                 **self.request_options
             )
-            self.current_length = int(self.response_headers['blob_append_offset'])
+            self.current_length = int(self.response_headers["blob_append_offset"])
         else:
             self.append_conditions.append_position = self.current_length + chunk_offset
             self.response_headers = self.blob_service.append_block(
@@ -378,9 +414,7 @@ class AppendBlobChunkUploader(_BlobChunkUploader):  # pylint: disable=abstract-m
 
 
 class FileChunkUploader(object):  # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, file_service, file_size, chunk_size, stream, parallel,
-                 validate_content, timeout, **kwargs):
+    def __init__(self, file_service, file_size, chunk_size, stream, parallel, validate_content, timeout, **kwargs):
         self.file_service = file_service
         self.file_size = file_size
         self.chunk_size = chunk_size
@@ -460,7 +494,7 @@ class FileChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        range_id = 'bytes={0}-{1}'.format(chunk_start, chunk_end)
+        range_id = "bytes={0}-{1}".format(chunk_start, chunk_end)
         self._update_progress(len(chunk_data))
         return range_id
 
@@ -485,8 +519,9 @@ class _SubStream(IOBase):
 
         # we must avoid buffering more than necessary, and also not use up too much memory
         # so the max buffer size is capped at 4MB
-        self._max_buffer_size = length if length < _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE \
-            else _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE
+        self._max_buffer_size = (
+            length if length < _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE else _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE
+        )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
         super(_SubStream, self).__init__()
@@ -516,7 +551,7 @@ class _SubStream(IOBase):
 
         # return fast
         if n == 0 or self._buffer.closed:
-            return b''
+            return b""
 
         # attempt first read from the read buffer and update position
         read_buffer = self._buffer.read(n)
@@ -572,7 +607,7 @@ class _SubStream(IOBase):
             start_index = self._position
         elif whence is SEEK_END:
             start_index = self._length
-            offset = - offset
+            offset = -offset
         else:
             raise ValueError("Invalid argument for the 'whence' parameter.")
 
@@ -615,10 +650,11 @@ class IterStreamer(object):
     """
     File-like streaming iterator.
     """
-    def __init__(self, generator, encoding='UTF-8'):
+
+    def __init__(self, generator, encoding="UTF-8"):
         self.generator = generator
         self.iterator = iter(generator)
-        self.leftover = b''
+        self.leftover = b""
         self.encoding = encoding
 
     def __len__(self):

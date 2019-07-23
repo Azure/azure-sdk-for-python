@@ -14,7 +14,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-
+from azure.core.tracing.decorator import distributed_trace
 from ._shared.shared_access_signature import FileSharedAccessSignature
 from .directory_client import DirectoryClient
 from .file_client import FileClient
@@ -170,6 +170,7 @@ class ShareClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
+    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,
             expiry=None,
@@ -284,6 +285,7 @@ class ShareClient(StorageAccountHostsMixin):
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
             _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
 
+    @distributed_trace
     def create_share( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             quota=None, # type: Optional[int]
@@ -328,6 +330,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
@@ -371,6 +374,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
@@ -406,6 +410,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> ShareProperties
         """Returns all user-defined metadata and system properties for the
@@ -437,6 +442,7 @@ class ShareClient(StorageAccountHostsMixin):
         props.snapshot = self.snapshot
         return props # type: ignore
 
+    @distributed_trace
     def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Any) ->  Dict[str, Any]
         """Sets the quota for the share.
@@ -466,6 +472,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
@@ -501,6 +508,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_access_policy(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the share. The permissions
@@ -523,6 +531,7 @@ class ShareClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace
     def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], **Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
@@ -561,6 +570,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
@@ -581,6 +591,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_directories_and_files( # type: ignore
             self, directory_name=None,  # type: Optional[str]
             name_starts_with=None,  # type: Optional[str]
@@ -616,6 +627,7 @@ class ShareClient(StorageAccountHostsMixin):
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
+    @distributed_trace
     def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
         # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
         """Creates a directory in the share and returns a client to interact

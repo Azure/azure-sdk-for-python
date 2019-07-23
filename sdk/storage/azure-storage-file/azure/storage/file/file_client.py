@@ -18,6 +18,7 @@ except ImportError:
 
 import six
 from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .models import HandlesPaged
 from ._generated import AzureFileStorage
@@ -185,6 +186,7 @@ class FileClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
+    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[FilePermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
@@ -278,6 +280,7 @@ class FileClient(StorageAccountHostsMixin):
             content_language=content_language,
             content_type=content_type)
 
+    @distributed_trace
     def create_file( # type: ignore
             self, size, # type: int
             content_settings=None, # type: Optional[ContentSettings]
@@ -337,6 +340,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def upload_file(
             self, data, # type: Any
             length=None, # type: Optional[int]
@@ -414,6 +418,7 @@ class FileClient(StorageAccountHostsMixin):
             self._config.data_settings,
             **kwargs)
 
+    @distributed_trace
     def copy_file_from_url(
             self, source_url, # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -462,6 +467,7 @@ class FileClient(StorageAccountHostsMixin):
             timeout=timeout)
         return poller
 
+    @distributed_trace
     def download_file(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
@@ -516,6 +522,7 @@ class FileClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
+    @distributed_trace
     def delete_file(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
         """Marks the specified file for deletion. The file is
@@ -538,6 +545,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_file_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -560,6 +568,7 @@ class FileClient(StorageAccountHostsMixin):
         file_props.share_name = self.share_name
         return file_props # type: ignore
 
+    @distributed_trace
     def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
         #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
@@ -590,6 +599,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
         #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
@@ -619,6 +629,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def upload_range( # type: ignore
             self, data,  # type: bytes
             start_range, # type: int
@@ -676,6 +687,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
@@ -717,6 +729,7 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': b.start, 'end': b.end} for b in ranges]
 
+    @distributed_trace
     def clear_range( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
@@ -761,6 +774,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def resize_file(self, size, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Resizes a file to the specified size.
@@ -781,6 +795,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_handles(self, marker=None, timeout=None, **kwargs):
         """Lists handles for file.
 
@@ -801,6 +816,7 @@ class FileClient(StorageAccountHostsMixin):
         return HandlesPaged(
             command, results_per_page=results_per_page, marker=marker)
 
+    @distributed_trace
     def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             timeout=None, # type: Optional[int]

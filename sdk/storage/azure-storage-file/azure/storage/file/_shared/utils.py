@@ -28,6 +28,7 @@ from azure.core import Configuration
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -515,6 +516,7 @@ def create_pipeline(credential, **kwargs):
         config.retry_policy,
         config.logging_policy,
         StorageResponseHook(**kwargs),
+        DistributedTracingPolicy(),
     ]
     return config, Pipeline(transport, policies=policies)
 
