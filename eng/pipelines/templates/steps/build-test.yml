@@ -41,31 +41,36 @@ steps:
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
+    displayName: 'Publish Python2.7 Test Results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-py27*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 2.7'
+
+  - task: PublishTestResults@2
+    displayName: 'ublish Python 3.4 Test Results'
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py34-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.4'
 
   - task: PublishTestResults@2
+    displayName: 'Publish Python 3.5 Test Results'
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py35-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.5'
 
   - task: PublishTestResults@2
+    displayName: 'Publish Python 3.6 Test Results'
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py36-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.6'
 
   - task: PublishTestResults@2
+    displayName: 'Publish Python3.7 Test Results'
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py37-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/test-junit-py27*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 2.7'
