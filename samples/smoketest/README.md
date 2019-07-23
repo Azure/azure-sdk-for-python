@@ -60,7 +60,7 @@ In the \SmokeTest\ directory, run Program.py
 python .\Program.py
 ```
 
-## Key Concepts
+## Key concepts
 
 
 ## Examples
