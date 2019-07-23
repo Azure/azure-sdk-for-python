@@ -16,14 +16,12 @@ from .models import ModifiedAccessConditions
 from .utils import encode_base64, url_quote, get_length, return_response_headers
 from .encryption import _get_blob_encryptor_and_padder
 from azure.core.tracing.context import tracing_context
-from azure.core.tracing.decorator import distributed_trace
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
 
-@distributed_trace
 def upload_blob_chunks(
         blob_service,
         blob_size,
@@ -107,7 +105,6 @@ def upload_blob_chunks(
     return uploader.response_headers
 
 
-@distributed_trace
 def upload_blob_substream_blocks(
         blob_service,
         blob_size,
@@ -232,7 +229,6 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
                 break
             index += len(data)
 
-    @distributed_trace
     def process_chunk(self, chunk_data):
         chunk_bytes = chunk_data[1]
         chunk_offset = chunk_data[0]
@@ -274,7 +270,6 @@ class _BlobChunkUploader(object):  # pylint: disable=too-many-instance-attribute
                 ),
             )
 
-    @distributed_trace
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
 
