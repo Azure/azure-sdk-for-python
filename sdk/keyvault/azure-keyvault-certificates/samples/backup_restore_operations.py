@@ -96,7 +96,7 @@ def run_sample():
         print ("\nPurging certificate...")
         client.purge_deleted_certificate(name=certificate_operation.name)
         # To ensure certificate is purged on the server side.
-        time.sleep(20)
+        time.sleep(30)
         print("Purged Certificate with name '{0}'".format(certificate_operation.name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
