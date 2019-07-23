@@ -53,7 +53,7 @@ export COSMOS_KEY=""
 ```
 
 ### Running the console app
-[Python](https://nodejs.org/en/) version 3.7.4 was used to run this sample.
+[Python](https://www.python.org/downloads/) version 3.7.4 was used to run this sample.
 
 In the \SmokeTest\ directory, run Program.py
 ```
