@@ -20,10 +20,9 @@ class CosmosDB:
         return db.create_container(id="Planets", partition_key=partition_key)
 
     def CreateDocuments(self, container):
-        planets = []
-
         # Cosmos will look for an 'id' field in the items, if the 'id' is not specify Cosmos is going to assing a random key.
-        planets.append({
+        planets = [
+            {
             'id' : "Earth",
             'HasRings' : False,
             'Radius' : 3959,
@@ -33,22 +32,22 @@ class CosmosDB:
                         'Name' : "Moon"
                     }
                 ]
-                })
-
-        planets.append({
-                "id" : "Mars",
-                "HasRings" : False,
-                "Radius" : 2106,
-                "Moons" : 
-                    [
-                        {
-                            "Name" : "Phobos"
-                        },
-                        {
-                            "Name" : "Deimos"
-                        }
-                    ]
-            })
+                },
+            {
+            "id" : "Mars",
+            "HasRings" : False,
+            "Radius" : 2106,
+            "Moons" : 
+                [
+                    {
+                        "Name" : "Phobos"
+                    },
+                    {
+                        "Name" : "Deimos"
+                    }
+                ]
+            }
+            ]
 
         print("Inserting items in the collection...")
         for planet in planets:
