@@ -308,7 +308,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> QueuePropertiesPaged
+        # type: (...) -> ItemPaged
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -327,7 +327,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
-        :rtype: ~azure.core.queue.models.QueuePropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.core.queue.models.QueueProperties]
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_service.py
