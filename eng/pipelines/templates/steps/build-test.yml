@@ -54,7 +54,7 @@ steps:
       mergeTestResults: true
 
   - task: PublishTestResults@2
-    displayName: 'ublish Python 3.4 Test Results'
+    displayName: 'Publish Python 3.4 Test Results'
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py34-*.xml'
