@@ -703,7 +703,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
             delimiter="/", # type: str
-            marker=None, # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
@@ -739,12 +738,11 @@ class ContainerClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return ItemPaged(
+        return BlobPrefix(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
-            delimiter=delimiter,
-            page_iterator_class=BlobPrefix)
+            delimiter=delimiter)
 
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]

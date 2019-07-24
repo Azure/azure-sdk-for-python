@@ -9,7 +9,7 @@
 from enum import Enum
 from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
-from azure.core.paging import PageIterator
+from azure.core.paging import PageIterator, ItemPaged
 
 from ._shared.utils import (
     decode_base64,
@@ -548,7 +548,7 @@ class BlobPropertiesPaged(PageIterator):
         return item
 
 
-class BlobPrefix(BlobPropertiesPaged, DictMixin):
+class BlobPrefix(ItemPaged, DictMixin):
     """An Iterable of Blob properties.
 
     Returned from walk_blobs when a delimiter is used.
@@ -582,27 +582,36 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         Options include 'primary' or 'secondary'.
     """
     def __init__(self, *args, **kwargs):
-        super(BlobPrefix, self).__init__(*args, **kwargs)
+        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
+        self.name = kwargs.get('prefix')
+        self.prefix = kwargs.get('prefix')
+        self.results_per_page = kwargs.get('results_per_page')
+        self.container = kwargs.get('container')
+        self.delimiter = kwargs.get('delimiter')
+        self.location_mode = kwargs.get('location_mode')
+
+class BlobPrefixPaged(BlobPropertiesPaged):
+    def __init__(self, *args, **kwargs):
+        super(BlobPrefixPaged, self).__init__(*args, **kwargs)
         self.name = self.prefix
 
     def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = super(BlobPrefix, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_items + self._response.segment.blob_prefixes
+        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
+        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
         self.current_page = [self._build_item(item) for item in self.current_page]
 
         return continuation_token, self.current_page
 
     def _build_item(self, item):
-        item = super(BlobPrefix, self)._build_item(item)
+        item = super(BlobPrefixPaged, self)._build_item(item)
         if isinstance(item, GenBlobPrefix):
             return BlobPrefix(
-                self._get_next,
+                self._command,
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
         return item
-
 
 class LeaseProperties(DictMixin):
     """Blob Lease Properties.
