@@ -484,7 +484,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 try:
                     # attempt to rewind the body to the initial position
                     request.body.seek(settings['body_position'], SEEK_SET)
-                except UnsupportedOperation:
+                except (UnsupportedOperation, ValueError):
                     # if body is not seekable, then retry would not work
                     return False
             settings['count'] += 1
