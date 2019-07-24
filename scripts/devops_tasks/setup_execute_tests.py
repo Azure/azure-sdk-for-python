@@ -26,9 +26,11 @@ ALLOWED_RETURN_CODES = []
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
-def prep_and_run_tox(targeted_packages, optional_argument_array=[]):
+def prep_and_run_tox(targeted_packages, tox_env, optional_argument_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
+        tox_execution_array = ['tox', '-q', '-p', 'all']
+
         print('Running test setup for {}'.format(os.path.basename(package_dir)))
 
         # if not present, copy it
@@ -36,7 +38,10 @@ def prep_and_run_tox(targeted_packages, optional_argument_array=[]):
             print('Tox.ini not available in package folder, copying base tox.ini to package folder.')
             shutil.copyfile(DEFAULT_TOX_INI_LOCATION, destination_tox_ini)
 
-        run_check_call(['tox', '-q', '-p', 'all'], package_dir)
+        if tox_env:
+            tox_execution_array.extend(['-e', tox_env])
+
+        run_check_call(tox_execution_array, package_dir)
 
 def collect_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, '_coverage/')
@@ -107,6 +112,13 @@ if __name__ == '__main__':
         help=('Name of service directory (under sdk/) to test.'
               'Example: --service applicationinsights'))
 
+    parser.add_argument(
+        '-t',
+        '--toxenv',
+        dest='tox_env',
+        help='Specific set of named environments to execute'
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -128,5 +140,5 @@ if __name__ == '__main__':
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
-    prep_and_run_tox(targeted_packages, test_results_arg)
+    prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
     collect_coverage_files(targeted_packages)
