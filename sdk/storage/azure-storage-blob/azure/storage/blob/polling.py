@@ -7,6 +7,7 @@
 import logging
 import time
 from typing import Callable, Any # pylint: disable=unused-import
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import PollingMethod, LROPoller
 
 from ._shared.response_handlers import process_storage_error
@@ -116,11 +117,13 @@ class CopyBlob(PollingMethod):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def status(self):
         # type: () -> str
         self._update_status()
         return self._status
 
+    @distributed_trace
     def finished(self):
         # type: () -> bool
         """Is this polling finished?
@@ -128,6 +131,7 @@ class CopyBlob(PollingMethod):
         """
         return str(self.status()).lower() in ['success', 'aborted', 'failed']
 
+    @distributed_trace
     def resource(self):
         # type: () -> Any
         self._update_status()
@@ -136,6 +140,7 @@ class CopyBlob(PollingMethod):
 
 class CopyBlobPolling(CopyBlob):
 
+    @distributed_trace
     def run(self):
         # type: () -> None
         try:
@@ -160,6 +165,7 @@ class CopyBlobPolling(CopyBlob):
         except AttributeError:
             return self._status # type: ignore
 
+    @distributed_trace
     def resource(self):
         # type: () -> Any
         if not self.blob:
