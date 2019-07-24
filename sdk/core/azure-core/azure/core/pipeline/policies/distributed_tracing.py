@@ -51,7 +51,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
 
     def __init__(self):
-        # type: (str, str, str) -> None
+        # type: () -> None
         self.parent_span_dict = {}
         self._request_id = "x-ms-client-request-id"
         self._response_id = "x-ms-request-id"
