@@ -129,10 +129,13 @@ class EventHubProducer(ConsumerProducerMixin):
                             error = OperationTimeoutError("send operation timed out")
                         log.info("%r send operation timed out. (%r)", self.name, error)
                         raise error
+                    self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
                     self._handler.queue_message(*self.unsent_events)
                     self._handler.wait()
                     self.unsent_events = self._handler.pending_messages
                     if self._outcome != constants.MessageSendResult.Ok:
+                        if self._outcome == constants.MessageSendResult.Timeout:
+                            self._condition = OperationTimeoutError("send operation timed out")
                         _error(self._outcome, self._condition)
                 return
             except Exception as exception:
@@ -162,6 +165,9 @@ class EventHubProducer(ConsumerProducerMixin):
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
         :type partition_key: str
+        :param timeout: The maximum wait time to send the event data.
+         If not specified, the default wait time specified when the producer was created will be used.
+        :type timeout:float
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
 
