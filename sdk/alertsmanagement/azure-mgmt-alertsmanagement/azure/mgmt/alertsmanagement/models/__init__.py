@@ -35,6 +35,7 @@ try:
     from ._models_py3 import ErrorResponse1, ErrorResponse1Exception
     from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Essentials
+    from ._models_py3 import ManagedResource
     from ._models_py3 import MonitorServiceDetails
     from ._models_py3 import MonitorServiceList
     from ._models_py3 import Operation
@@ -77,6 +78,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse1, ErrorResponse1Exception
     from ._models import ErrorResponseBody
     from ._models import Essentials
+    from ._models import ManagedResource
     from ._models import MonitorServiceDetails
     from ._models import MonitorServiceList
     from ._models import Operation
@@ -144,6 +146,7 @@ __all__ = [
     'ErrorResponse1', 'ErrorResponse1Exception',
     'ErrorResponseBody',
     'Essentials',
+    'ManagedResource',
     'MonitorServiceDetails',
     'MonitorServiceList',
     'Operation',
