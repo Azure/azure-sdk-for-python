@@ -19,14 +19,11 @@ except ImportError:
 import six
 
 from ._shared.shared_access_signature import BlobSharedAccessSignature
-from ._shared.utils import (
-    StorageAccountHostsMixin,
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    add_metadata_headers,
-    parse_connection_str,
-    serialize_iso,
-    parse_query,
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage
 from ._generated.models import (

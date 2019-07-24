@@ -18,22 +18,16 @@ import six
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .file_client import FileClient
-
-from .models import DirectoryPropertiesPaged, HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    return_response_headers,
-    add_metadata_headers,
-    process_storage_error,
-    parse_connection_str)
-
-from ._share_utils import deserialize_directory_properties
-from .polling import CloseHandles
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers
+from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._deserialize import deserialize_directory_properties
+from ._polling import CloseHandles
+from .file_client import FileClient
+from .models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
     from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
@@ -374,7 +368,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        polling_method = CloseHandles(self._config.copy_polling_interval)
         return LROPoller(
             command,
             start_close,

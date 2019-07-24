@@ -17,21 +17,14 @@ except ImportError:
 import six
 
 from ._shared.shared_access_signature import QueueSharedAccessSignature
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    add_metadata_headers,
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized,
-    parse_query,
-    serialize_iso,
-    parse_connection_str
-)
-from ._queue_utils import (
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    deserialize_queue_properties,
-    deserialize_queue_creation)
+    return_headers_and_deserialized)
+from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
+from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage

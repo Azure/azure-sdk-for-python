@@ -138,6 +138,26 @@ class StorageErrorCode(str, Enum):
     queue_not_empty = "QueueNotEmpty"
     queue_not_found = "QueueNotFound"
 
+    # File values
+    cannot_delete_file_or_directory = "CannotDeleteFileOrDirectory"
+    client_cache_flush_delay = "ClientCacheFlushDelay"
+    delete_pending = "DeletePending"
+    directory_not_empty = "DirectoryNotEmpty"
+    file_lock_conflict = "FileLockConflict"
+    invalid_file_or_directory_path_name = "InvalidFileOrDirectoryPathName"
+    parent_not_found = "ParentNotFound"
+    read_only_attribute = "ReadOnlyAttribute"
+    share_already_exists = "ShareAlreadyExists"
+    share_being_deleted = "ShareBeingDeleted"
+    share_disabled = "ShareDisabled"
+    share_not_found = "ShareNotFound"
+    sharing_violation = "SharingViolation"
+    share_snapshot_in_progress = "ShareSnapshotInProgress"
+    share_snapshot_count_exceeded = "ShareSnapshotCountExceeded"
+    share_snapshot_operation_not_supported = "ShareSnapshotOperationNotSupported"
+    share_has_snapshots = "ShareHasSnapshots"
+    container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
+
 
 class DictMixin(object):
 
@@ -188,30 +208,6 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
-
-
-class ModifiedAccessConditions(object):
-    """Additional parameters for a set of operations.
-
-    :param if_modified_since: Specify this header value to operate only on a
-     blob if it has been modified since the specified date/time.
-    :type if_modified_since: datetime
-    :param if_unmodified_since: Specify this header value to operate only on a
-     blob if it has not been modified since the specified date/time.
-    :type if_unmodified_since: datetime
-    :param if_match: Specify an ETag value to operate only on blobs with a
-     matching value.
-    :type if_match: str
-    :param if_none_match: Specify an ETag value to operate only on blobs
-     without a matching value.
-    :type if_none_match: str
-    """
-
-    def __init__(self, **kwargs):
-        self.if_modified_since = kwargs.get('if_modified_since', None)
-        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
-        self.if_match = kwargs.get('if_match', None)
-        self.if_none_match = kwargs.get('if_none_match', None)
 
 
 class LocationMode(object):
