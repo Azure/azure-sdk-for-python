@@ -9,26 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class OfferType(str, Enum):
+class SubscriptionName(Model):
+    """New name of the subscription.
 
-    ms_azr_0017_p = "MS-AZR-0017P"
-    ms_azr_0148_p = "MS-AZR-0148P"
+    :param subscription_name: New subscription name
+    :type subscription_name: str
+    """
 
+    _attribute_map = {
+        'subscription_name': {'key': 'subscriptionName', 'type': 'str'},
+    }
 
-class SubscriptionState(str, Enum):
-
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class SpendingLimit(str, Enum):
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
+    def __init__(self, **kwargs):
+        super(SubscriptionName, self).__init__(**kwargs)
+        self.subscription_name = kwargs.get('subscription_name', None)
