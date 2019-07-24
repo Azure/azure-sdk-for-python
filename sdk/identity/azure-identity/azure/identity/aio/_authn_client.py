@@ -20,12 +20,12 @@ class AsyncAuthnClient(AuthnClientBase):
     """Async authentication client"""
 
     def __init__(
-            self,
-            auth_url: str,
-            config: Optional[Configuration] = None,
-            policies: Optional[Iterable[HTTPPolicy]] = None,
-            transport: Optional[AsyncHttpTransport] = None,
-            **kwargs: Mapping[str, Any]
+        self,
+        auth_url: str,
+        config: Optional[Configuration] = None,
+        policies: Optional[Iterable[HTTPPolicy]] = None,
+        transport: Optional[AsyncHttpTransport] = None,
+        **kwargs: Mapping[str, Any]
     ) -> None:
         config = config or self.create_config(**kwargs)
         policies = policies or [
@@ -40,13 +40,13 @@ class AsyncAuthnClient(AuthnClientBase):
         super(AsyncAuthnClient, self).__init__(auth_url, **kwargs)
 
     async def request_token(
-            self,
-            scopes: Iterable[str],
-            method: Optional[str] = "POST",
-            headers: Optional[Mapping[str, str]] = None,
-            form_data: Optional[Mapping[str, str]] = None,
-            params: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self,
+        scopes: Iterable[str],
+        method: Optional[str] = "POST",
+        headers: Optional[Mapping[str, str]] = None,
+        form_data: Optional[Mapping[str, str]] = None,
+        params: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
