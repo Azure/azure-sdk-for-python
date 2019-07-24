@@ -74,10 +74,6 @@ class AuthnClientBase(object):
 
         # now we have an int expires_on, ensure the cache entry gets it
         payload["expires_on"] = expires_on
-        if "expires_in" in payload:
-            payload["expires_in"] = int(payload["expires_in"])
-        if "ext_expires_in" in payload:
-            payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
         self._cache.add({"response": payload, "scope": scopes})
 
