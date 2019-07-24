@@ -50,14 +50,14 @@ class KeyVaultClient(MultiApiClientMixin):
         """
         if api_version == V7_0_VERSION:
             if aio:
-                from .v7_0.aio import KeyVaultClientConfiguration as ImplConfig
+                from .v7_0.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
             else:
-                from .v7_0 import KeyVaultClientConfiguration as ImplConfig
+                from .v7_0._configuration import KeyVaultClientConfiguration as ImplConfig
         elif api_version == V2016_10_01_VERSION:
             if aio:
-                from .v2016_10_01.aio import KeyVaultClientConfiguration as ImplConfig
+                from .v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
             else:
-                from .v2016_10_01 import KeyVaultClientConfiguration as ImplConfig
+                from .v2016_10_01._configuration import KeyVaultClientConfiguration as ImplConfig
         else:
             raise NotImplementedError("API version {} is not available".format(api_version))
         return ImplConfig
