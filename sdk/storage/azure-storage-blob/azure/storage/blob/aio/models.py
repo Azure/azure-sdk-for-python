@@ -40,7 +40,7 @@ class ContainerPropertiesPaged(Paged):
     :param str marker: An opaque continuation token.
     """
     def __init__(self, command, prefix=None, results_per_page=None, marker=None):
-        super(ContainerPropertiesPaged, self).__init__(command, None)
+        super(ContainerPropertiesPaged, self).__init__(None, None, async_command=command)
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
@@ -48,20 +48,20 @@ class ContainerPropertiesPaged(Paged):
         self.next_marker = marker or ""
         self.location_mode = None
 
-    def _advance_page(self):
+    async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
 
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         try:
-            self.location_mode, self._response = self._get_next(
+            self.location_mode, self._response = await self._async_get_next(
                 marker=self.next_marker or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
@@ -77,8 +77,8 @@ class ContainerPropertiesPaged(Paged):
         self.next_marker = self._response.next_marker or None
         return self.current_page
 
-    def __next__(self): # type: ignore
-        item = super(ContainerPropertiesPaged, self).__next__()
+    async def __anext__(self): # type: ignore
+        item = await super(ContainerPropertiesPaged, self).__anext__()
         if isinstance(item, ContainerProperties):
             return item
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
@@ -121,7 +121,7 @@ class BlobPropertiesPaged(Paged):
             marker=None,
             delimiter=None,
             location_mode=None):
-        super(BlobPropertiesPaged, self).__init__(command, None)
+        super(BlobPropertiesPaged, self).__init__(None, None, async_command=command)
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
@@ -132,21 +132,21 @@ class BlobPropertiesPaged(Paged):
         self.current_page = None
         self.location_mode = location_mode
 
-    def _advance_page(self):
+    async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
 
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
 
         try:
-            self.location_mode, self._response = self._get_next(
+            self.location_mode, self._response = await self._async_get_next(
                 prefix=self.prefix,
                 marker=self.next_marker or None,
                 maxresults=self.results_per_page,
@@ -165,8 +165,8 @@ class BlobPropertiesPaged(Paged):
         self.delimiter = self._response.delimiter
         return self.current_page
 
-    def __next__(self):
-        item = super(BlobPropertiesPaged, self).__next__()
+    async def __anext__(self):
+        item = await super(BlobPropertiesPaged, self).__anext__()
         if isinstance(item, BlobProperties):
             return item
         if isinstance(item, BlobItem):
@@ -174,8 +174,6 @@ class BlobPropertiesPaged(Paged):
             blob.container = self.container
             return blob
         return item
-
-    next = __next__
 
 
 class BlobPrefix(BlobPropertiesPaged, DictMixin):
@@ -215,19 +213,19 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         super(BlobPrefix, self).__init__(*args, **kwargs)
         self.name = self.prefix
 
-    def _advance_page(self):
+    async def _async_advance_page(self):
         """Force moving the cursor to the next azure call.
 
         This method is for advanced usage, iterator protocol is prefered.
 
-        :raises: StopIteration if no further page
+        :raises: StopAsyncIteration if no further page
         :return: The current page list
         :rtype: list
         """
         if self.next_marker is None:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
-        self.location_mode, self._response = self._get_next(
+        self.location_mode, self._response = await self._async_get_next(
             prefix=self.prefix,
             marker=self.next_marker or None,
             maxresults=self.results_per_page,
@@ -243,8 +241,8 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         self.container = self._response.container_name
         self.delimiter = self._response.delimiter
 
-    def __next__(self):
-        item = super(BlobPrefix, self).__next__()
+    async def __anext__(self):
+        item = await super(BlobPrefix, self).__anext__()
         if isinstance(item, GenBlobPrefix):
             return BlobPrefix(
                 self._get_next,
