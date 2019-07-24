@@ -30,8 +30,8 @@ class AsyncAuthnClient(AuthnClientBase):
         config = config or self.create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
-            config.logging_policy,
             config.retry_policy,
+            config.logging_policy,
             DistributedTracingPolicy(),
         ]
         if not transport:

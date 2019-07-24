@@ -124,7 +124,7 @@ class AuthnClient(AuthnClientBase):
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
         config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy, DistributedTracingPolicy()]
+        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
         if not transport:
             transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
