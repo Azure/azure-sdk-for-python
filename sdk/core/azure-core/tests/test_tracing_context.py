@@ -22,6 +22,7 @@ class ContextHelper(object):
 
     def __enter__(self):
         self.orig_sdk_context_span = tracing_context.current_span.get()
+        tracing_context.current_span.clear()
         settings.tracing_implementation.set_value(self.tracer_to_use)
         self.os_env.start()
         return self

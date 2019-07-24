@@ -61,6 +61,26 @@ class MockClient:
         time.sleep(0.001)
         return 5
 
+    @distributed_trace_async(name_of_span="different name")
+    async def check_name_is_different(self):
+        time.sleep(0.001)
+
+
+@pytest.mark.asyncio
+async def test_decorator_has_different_name():
+    with ContextHelper():
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+        with trace.span("overall"):
+            client = MockClient()
+            await client.check_name_is_different()
+        trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 2
+        assert parent.children[0].span_data.name == "MockClient.__init__"
+        assert parent.children[1].span_data.name == "different name"
+
 
 @pytest.mark.asyncio
 async def test_with_nothing_imported():
