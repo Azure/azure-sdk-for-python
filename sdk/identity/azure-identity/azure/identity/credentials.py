@@ -98,23 +98,29 @@ class CertificateCredential(CertificateCredentialBase):
 
 class EnvironmentCredential:
     """
-    Authenticates as a service principal using a client ID/secret pair or a certificate,
-    depending on environment variable settings.
+    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
+    password, depending on environment variable settings. Configuration is attempted in this order, using these
+    environment variables:
 
-    These environment variables are required:
-
+    Service principal with secret:
       - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
 
-    Additionally, set **one** of these to configure client secret or certificate authentication:
-
-      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+    Service principal with certificate:
+      - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+
+    User with username and password:
+      - **AZURE_CLIENT_ID**: the application's client ID
+      - **AZURE_USERNAME**: a username (usually an email address)
+      - **AZURE_PASSWORD**: that user's password
     """
 
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
-        self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
+        self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -130,6 +136,14 @@ class EnvironmentCredential:
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
+        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
+            self._credential = UsernamePasswordCredential(
+                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+                username=os.environ[EnvironmentVariables.AZURE_USERNAME],
+                password=os.environ[EnvironmentVariables.AZURE_PASSWORD],
+                tenant=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
+                **kwargs
+            )
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -141,10 +155,7 @@ class EnvironmentCredential:
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if not self._credential:
-            message = "Missing environment settings. To authenticate with one of the service principal's client secrets, set {}. To authenticate with a certificate, set {}.".format(
-                ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
-            )
-            raise ClientAuthenticationError(message=message)
+            raise ClientAuthenticationError(message="Incomplete environment configuration.")
         return self._credential.get_token(*scopes)
 
 
