@@ -9,58 +9,32 @@ from io import SEEK_SET, UnsupportedOperation
 from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
 import six
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
+from azure.core.exceptions import ResourceModifiedError
 
-from ._shared.response_handlers import (
+from .._shared.response_handlers import (
     process_storage_error,
     return_response_headers)
-from ._shared.models import StorageErrorCode
-from ._shared.uploads import (
+from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks,
     BlockBlobChunkUploader,
     PageBlobChunkUploader,
     AppendBlobChunkUploader)
-from ._shared.encryption import generate_blob_encryption_data, encrypt_blob
-from ._generated.models import (
+from .._shared.encryption import generate_blob_encryption_data, encrypt_blob
+from .._generated.models import (
     StorageErrorException,
     BlockLookupList,
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .models import BlobProperties, ContainerProperties
+from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
     LeaseClient = TypeVar("LeaseClient")
 
-_LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
-_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
 
-
-def _convert_mod_error(error):
-    message = error.message.replace(
-        "The condition specified using HTTP conditional header(s) is not met.",
-        "The specified blob already exists.")
-    message = message.replace("ConditionNotMet", "BlobAlreadyExists")
-    overwrite_error = ResourceExistsError(
-        message=message,
-        response=error.response,
-        error=error)
-    overwrite_error.error_code = StorageErrorCode.blob_already_exists
-    raise overwrite_error
-
-
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
-    return any([
-        modified_access_conditions.if_modified_since,
-        modified_access_conditions.if_unmodified_since,
-        modified_access_conditions.if_none_match,
-        modified_access_conditions.if_match
-    ])
-
-
-def upload_block_blob(  # pylint: disable=too-many-locals
+async def upload_block_blob(  # pylint: disable=too-many-locals
         client=None,
         data=None,
         stream=None,
@@ -91,7 +65,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
-            return client.upload(
+            return await client.upload(
                 data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
@@ -114,7 +88,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 headers['x-ms-meta-encryptiondata'] = encryption_data
                 encryption_options['cek'] = cek
                 encryption_options['vector'] = iv
-            block_ids = upload_data_chunks(
+            block_ids = await upload_data_chunks(
                 service=client,
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
@@ -139,7 +113,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
 
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         block_lookup.latest = block_ids
-        return client.commit_block_list(
+        return await client.commit_block_list(
             block_lookup,
             blob_http_headers=blob_headers,
             cls=return_response_headers,
@@ -155,7 +129,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             raise
 
 
-def upload_page_blob(
+async def upload_page_blob(
         client=None,
         stream=None,
         length=None,
@@ -182,7 +156,7 @@ def upload_page_blob(
                 headers['x-ms-access-tier'] = premium_page_blob_tier
         if encryption_options and encryption_options.get('data'):
             headers['x-ms-meta-encryptiondata'] = encryption_options['data']
-        response = client.create(
+        response = await client.create(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,
@@ -194,7 +168,7 @@ def upload_page_blob(
             return response
 
         kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
-        return upload_data_chunks(
+        return await upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
             total_size=length,
@@ -214,7 +188,7 @@ def upload_page_blob(
             raise
 
 
-def upload_append_blob(  # pylint: disable=unused-argument
+async def upload_append_blob(  # pylint: disable=unused-argument
         client=None,
         stream=None,
         length=None,
@@ -234,12 +208,12 @@ def upload_append_blob(  # pylint: disable=unused-argument
             append_position=None)
         try:
             if overwrite:
-                client.create(
+                await client.create(
                     content_length=0,
                     blob_http_headers=blob_headers,
                     headers=headers,
                     **kwargs)
-            return upload_data_chunks(
+            return await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
                 total_size=length,
@@ -260,12 +234,12 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 except UnsupportedOperation:
                     # if body is not seekable, then retry would not work
                     raise error
-            client.create(
+            await client.create(
                 content_length=0,
                 blob_http_headers=blob_headers,
                 headers=headers,
                 **kwargs)
-            return upload_data_chunks(
+            return await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
                 total_size=length,

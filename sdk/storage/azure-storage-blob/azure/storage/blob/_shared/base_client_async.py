@@ -59,7 +59,7 @@ class AsyncStorageAccountHostsMixin(object):
         elif isinstance(credential, SharedKeyCredentialPolicy):
             credential_policy = credential
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))        
+            raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
