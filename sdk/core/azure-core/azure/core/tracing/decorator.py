@@ -32,8 +32,11 @@ from azure.core.settings import settings
 from azure.core.tracing.context import tracing_context
 
 
-def distributed_trace(func):
-    # type: (Callable[[Any], Any]) -> Callable[[Any], Any]
+def distributed_trace(func=None, name_of_span=None):
+    # type: (Callable[[Any], Any], str) -> Callable[[Any], Any]
+    if func is None:
+        return functools.partial(distributed_trace, name_of_span=name_of_span)
+
     @functools.wraps(func)
     def wrapper_use_tracer(self, *args, **kwargs):
         # type: (Any) -> Any
@@ -47,7 +50,7 @@ def distributed_trace(func):
         ans = None
         if common.should_use_trace(parent_span):
             common.set_span_contexts(parent_span)
-            name = self.__class__.__name__ + "." + func.__name__
+            name = name_of_span or self.__class__.__name__ + "." + func.__name__
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)
