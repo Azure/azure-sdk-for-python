@@ -244,7 +244,7 @@ def test_default_credential():
     DefaultAzureCredential()
 
 
-@patch("azure.identity.interactive_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch("azure.identity.browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
 def test_interactive_credential():
     oauth_state = "state"
     expected_token = "access-token"
@@ -278,12 +278,12 @@ def test_interactive_credential():
     )
 
     # ensure the request beginning the flow has a known state value
-    with patch("azure.identity.interactive_auth.uuid.uuid4", lambda: oauth_state):
+    with patch("azure.identity.browser_auth.uuid.uuid4", lambda: oauth_state):
         token = credential.get_token("scope")
     assert token.token == expected_token
 
 
-@patch("azure.identity.interactive_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch("azure.identity.browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
 def test_interactive_credential_timeout():
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
