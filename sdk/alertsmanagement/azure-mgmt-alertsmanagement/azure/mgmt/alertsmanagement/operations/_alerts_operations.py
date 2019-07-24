@@ -26,6 +26,7 @@ class AlertsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: client API version. Constant value: "2019-05-05-preview".
+    :ivar identifier: Identification of the information to be retrieved by API call. Constant value: "MonitorServiceList".
     """
 
     models = models
@@ -36,6 +37,7 @@ class AlertsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2019-05-05-preview"
+        self.identifier = "MonitorServiceList"
 
         self.config = config
 
@@ -60,7 +62,7 @@ class AlertsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['identifier'] = self._serialize.query("self.config.identifier", self.config.identifier, 'str')
+        query_parameters['identifier'] = self._serialize.query("self.identifier", self.identifier, 'str')
 
         # Construct headers
         header_parameters = {}
