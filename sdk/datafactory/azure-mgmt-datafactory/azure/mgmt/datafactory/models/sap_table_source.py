@@ -56,8 +56,11 @@ class SapTableSource(CopySource):
      string (or Expression with resultType string).
     :type custom_rfc_read_table_function_module: object
     :param partition_option: The partition mechanism that will be used for SAP
-     table read in parallel.
-    :type partition_option: object
+     table read in parallel. Possible values include: 'None', 'PartitionOnInt',
+     'PartitionOnCalendarYear', 'PartitionOnCalendarMonth',
+     'PartitionOnCalendarDate', 'PartitionOnTime'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.SapTablePartitionOption
     :param partition_settings: The settings that will be leveraged for SAP
      table source partitioning.
     :type partition_settings:
@@ -80,7 +83,7 @@ class SapTableSource(CopySource):
         'rfc_table_options': {'key': 'rfcTableOptions', 'type': 'object'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'custom_rfc_read_table_function_module': {'key': 'customRfcReadTableFunctionModule', 'type': 'object'},
-        'partition_option': {'key': 'partitionOption', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 

@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class OraclePartitionSettings(Model):
-    """The settings that will be leveraged for oracle source partitioning.
+    """The settings that will be leveraged for Oracle source partitioning.
 
-    :param partition_names: Names of the physical partitions of oracle table.
+    :param partition_names: Names of the physical partitions of Oracle table.
     :type partition_names: object
     :param partition_column_name: The name of the column in integer type that
      will be used for proceeding range partitioning. Type: string (or
