@@ -224,7 +224,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :dedent: 12
                 :caption: Upload a blob to the container.
         """
-        options = self._upload_blob_config(
+        options = self._upload_blob_options(
             data,
             blob_type=blob_type,
             overwrite=overwrite,
@@ -299,7 +299,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :dedent: 12
                 :caption: Download a blob.
         """
-        options = self._download_blob_config(
+        options = self._download_blob_options(
             offset=offset,
             length=length,
             validate_content=validate_content,
@@ -368,7 +368,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :dedent: 12
                 :caption: Delete a blob.
         """
-        options = self._delete_blob_config(delete_snapshots=delete_snapshots, **kwargs)
+        options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             await self._client.blob.delete(**options)
         except StorageErrorException as error:
@@ -499,7 +499,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_http_headers_config(content_settings=content_settings, **kwargs)
+        options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
         except StorageErrorException as error:
@@ -543,7 +543,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
         """
-        options = self._set_blob_metadata_config(metadata=metadata, **kwargs)
+        options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
         except StorageErrorException as error:
@@ -607,7 +607,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_page_blob_config(
+        options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
             sequence_number=sequence_number,
@@ -658,7 +658,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_append_blob_config(
+        options = self._create_append_blob_options(
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
@@ -720,7 +720,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :dedent: 8
                 :caption: Create a snapshot of the blob.
         """
-        options = self._create_snapshot_config(metadata=metadata, **kwargs)
+        options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
         except StorageErrorException as error:
@@ -856,7 +856,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: A pollable object to check copy operation status (and abort).
         :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
         """
-        options = self._start_copy_from_url_config(
+        options = self._start_copy_from_url_options(
             source_url,
             metadata=metadata,
             incremental_copy=incremental_copy,
@@ -1253,7 +1253,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        options = self._get_page_ranges_config(
+        options = self._get_page_ranges_options(
             start_range=start_range,
             end_range=end_range,
             previous_snapshot_diff=previous_snapshot_diff,
@@ -1504,7 +1504,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._clear_page_options(start_range, end_range, **kwargs)
         try:
-            return await self._client.page_blob.clear_pages(**options)  # type: ignore
+            return await self._client.page_blob.clear_pages(0, **options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
