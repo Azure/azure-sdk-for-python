@@ -15,11 +15,8 @@ except ImportError:
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    parse_connection_str,
-    process_storage_error)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties, StorageErrorException
 
@@ -364,7 +361,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. 
+        """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
         Returns a client with which to interact with the newly created queue.

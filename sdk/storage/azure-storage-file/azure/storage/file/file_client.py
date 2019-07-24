@@ -19,27 +19,62 @@ except ImportError:
 import six
 from azure.core.polling import LROPoller
 
-from .models import HandlesPaged
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
-from ._shared.upload_chunking import IterStreamer
+from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
+from ._shared.downloads import StorageStreamDownloader
 from ._shared.shared_access_signature import FileSharedAccessSignature
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    get_length,
-    return_response_headers,
-    add_metadata_headers,
-    process_storage_error,
-    parse_connection_str)
-from ._share_utils import upload_file_helper, deserialize_file_properties, StorageStreamDownloader
-from .polling import CopyStatusPoller, CloseHandles
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, get_length
+from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._deserialize import deserialize_file_properties, deserialize_file_stream
+from ._polling import CloseHandles
+from .models import HandlesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from .models import ShareProperties, FilePermissions, ContentSettings, FileProperties
     from ._generated.models import HandleItem
+
+
+def _upload_file_helper(
+        client,
+        stream,
+        size,
+        metadata,
+        content_settings,
+        validate_content,
+        timeout,
+        max_connections,
+        file_settings,
+        **kwargs):
+    try:
+        if size is None or size < 0:
+            raise ValueError("A content size must be specified for a File.")
+        response = client.create_file(
+            size,
+            content_settings=content_settings,
+            metadata=metadata,
+            timeout=timeout,
+            **kwargs
+        )
+        if size == 0:
+            return response
+
+        return upload_data_chunks(
+            service=client,
+            uploader_class=FileChunkUploader,
+            total_size=size,
+            chunk_size=file_settings.max_range_size,
+            stream=stream,
+            max_connections=max_connections,
+            validate_content=validate_content,
+            timeout=timeout,
+            **kwargs)
+    except StorageErrorException as error:
+        process_storage_error(error)
+
 
 class FileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
@@ -402,7 +437,7 @@ class FileClient(StorageAccountHostsMixin):
             stream = IterStreamer(data, encoding=encoding) # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return upload_file_helper( # type: ignore
+        return _upload_file_helper( # type: ignore
             self,
             stream,
             length,
@@ -411,18 +446,21 @@ class FileClient(StorageAccountHostsMixin):
             validate_content,
             timeout,
             max_connections,
-            self._config.data_settings,
+            self._config,
             **kwargs)
 
-    def copy_file_from_url(
+    def start_copy_from_url(
             self, source_url, # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
         # type: (...) -> Any
-        """Copies the file from the provided URL to the file referenced by
-        the client.
+        """Initiates the copying of data from a source URL into the file
+        referenced by the client.
+
+        The status of this copy operation can be found using the `get_properties`
+        method.
 
         :param str source_url:
             Specifies the URL of the source file.
@@ -431,8 +469,7 @@ class FileClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: Polling object in order to wait on or abort the operation
-        :rtype: ~azure.storage.file.polling.CopyStatusPoller
+        :rtype: dict(str, Any)
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_file.py
@@ -446,9 +483,9 @@ class FileClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
 
         try:
-            start_copy = self._client.file.start_copy(
+            return self._client.file.start_copy(
                 source_url,
-                timeout=None,
+                timeout=timeout,
                 metadata=metadata,
                 headers=headers,
                 cls=return_response_headers,
@@ -456,11 +493,30 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        poller = CopyStatusPoller(
-            self, start_copy,
-            configuration=self._config,
-            timeout=timeout)
-        return poller
+    def abort_copy(self, copy_id, timeout=None, **kwargs):
+        # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
+        """Abort an ongoing copy operation.
+
+        This will leave a destination file with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :param copy_id:
+            The copy operation to abort. This can be either an ID, or an
+            instance of FileProperties.
+        :type copy_id: str or ~azure.storage.file.models.FileProperties
+        :rtype: None
+        """
+        try:
+            copy_id = copy_id.copy.id
+        except AttributeError:
+            try:
+                copy_id = copy_id['copy_id']
+            except TypeError:
+                pass
+        try:
+            self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def download_file(
             self, offset=None,  # type: Optional[int]
@@ -505,14 +561,18 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Offset value must not be None is length is set.")
 
         return StorageStreamDownloader(
-            share=self.share_name,
-            file_name=self.file_name,
-            file_path='/'.join(self.file_path),
             service=self._client.file,
-            config=self._config.data_settings,
+            config=self._config,
             offset=offset,
             length=length,
             validate_content=validate_content,
+            encryption_options=None,
+            extra_properties={
+                'share': self.share_name,
+                'name': self.file_name,
+                'path': '/'.join(self.file_path),
+            },
+            cls=deserialize_file_stream,
             timeout=timeout,
             **kwargs)
 
@@ -557,7 +617,9 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
         file_props.name = self.file_name
-        file_props.share_name = self.share_name
+        file_props.share = self.share_name
+        file_props.snapshot = self.snapshot
+        file_props.path = '/'.join(self.file_path)
         return file_props # type: ignore
 
     def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
@@ -837,7 +899,7 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.data_settings.copy_polling_interval)
+        polling_method = CloseHandles(self._config.copy_polling_interval)
         return LROPoller(
             command,
             start_close,

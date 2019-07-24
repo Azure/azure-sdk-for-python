@@ -16,12 +16,8 @@ except ImportError:
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    return_response_headers,
-    parse_connection_str,
-    process_storage_error,
-    parse_query)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from .container_client import ContainerClient

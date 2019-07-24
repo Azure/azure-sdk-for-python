@@ -14,19 +14,16 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
-from .share_client import ShareClient
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import Services
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_connection_str,
-    process_storage_error,
-    parse_query)
-
-from .models import SharePropertiesPaged
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
+from .share_client import ShareClient
+from .models import SharePropertiesPaged
+
 if TYPE_CHECKING:
     from datetime import datetime
     from ._shared.models import ResourceTypes, AccountPermissions
