@@ -48,6 +48,7 @@ from ._blob_utils import (
 from .models import BlobType, BlobBlock
 from .lease import LeaseClient
 from .polling import CopyStatusPoller
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -221,6 +222,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return cls(
             account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
 
+    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
@@ -312,6 +314,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_type=content_type,
         )
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
@@ -327,6 +330,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
@@ -526,6 +530,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 **kwargs)
         raise ValueError("Unsupported BlobType: {}".format(blob_type))
 
+    @distributed_trace
     def download_blob(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
@@ -625,6 +630,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             timeout=timeout,
             **kwargs)
 
+    @distributed_trace
     def delete_blob(
             self, delete_snapshots=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -708,6 +714,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def undelete_blob(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> None
         """Restores soft-deleted blobs or snapshots.
@@ -732,6 +739,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_blob_properties(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -800,6 +808,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
+    @distributed_trace
     def set_http_headers(
             self, content_settings=None,  # type: Optional[ContentSettings]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -871,6 +880,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_blob_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -934,6 +944,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
@@ -1036,6 +1047,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def create_append_blob( # type: ignore
             self, content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -1116,6 +1128,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -1194,6 +1207,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def copy_blob_from_url(  # pylint: disable=too-many-locals
             self, source_url,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -1396,6 +1410,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             timeout=timeout)
         return poller
 
+    @distributed_trace
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
@@ -1466,6 +1481,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         return lease
 
+    @distributed_trace
     def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
         # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
         """This operation sets the tier on a block blob.
@@ -1500,6 +1516,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def stage_block(
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -1563,6 +1580,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def stage_block_from_url(
             self, block_id,  # type: str
             source_url,  # type: str
@@ -1618,6 +1636,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -1659,6 +1678,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
         return committed, uncommitted
 
+    @distributed_trace
     def commit_block_list( # type: ignore
             self, block_list,  # type: List[BlobBlock]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -1761,6 +1781,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
@@ -1792,6 +1813,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
@@ -1903,6 +1925,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
         return page_range, clear_range # type: ignore
 
+    @distributed_trace
     def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
@@ -1971,6 +1994,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def resize_blob( # type: ignore
             self, size,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -2035,6 +2059,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def upload_page( # type: ignore
             self, page,  # type: bytes
             start_range,  # type: int
@@ -2156,6 +2181,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def clear_page( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
@@ -2250,6 +2276,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def append_block( # type: ignore
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
