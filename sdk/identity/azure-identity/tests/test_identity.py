@@ -22,7 +22,7 @@ from azure.identity import (
     EnvironmentCredential,
     ManagedIdentityCredential,
     ChainedTokenCredential,
-    InteractiveCredential,
+    InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
 from azure.identity._managed_identity import ImdsCredential
@@ -269,7 +269,7 @@ def test_interactive_credential():
     auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
-    credential = InteractiveCredential(
+    credential = InteractiveBrowserCredential(
         client_id="guid",
         client_secret="secret",
         server_class=server_class,
@@ -297,7 +297,7 @@ def test_interactive_credential_timeout():
     server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 1))
     server_class = Mock(return_value=server_instance)
 
-    credential = InteractiveCredential(
+    credential = InteractiveBrowserCredential(
         client_id="guid",
         client_secret="secret",
         server_class=server_class,

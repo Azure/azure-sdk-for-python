@@ -21,7 +21,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential
 
 
-class InteractiveCredential(ConfidentialClientCredential):
+class InteractiveBrowserCredential(ConfidentialClientCredential):
     """
     Authenticates a user through the authorization code flow. This is an interactive flow: ``get_token`` opens a
     browser to a login URL provided by Azure Active Directory, and waits for the user to authenticate there.
@@ -44,7 +44,7 @@ class InteractiveCredential(ConfidentialClientCredential):
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
         authority = "https://login.microsoftonline.com/" + kwargs.pop("tenant", "organizations")
-        super(InteractiveCredential, self).__init__(
+        super(InteractiveBrowserCredential, self).__init__(
             client_id=client_id, client_credential=client_secret, authority=authority, **kwargs
         )
 
@@ -74,7 +74,8 @@ class InteractiveCredential(ConfidentialClientCredential):
         # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
         request_state = str(uuid.uuid4())
-        auth_url = self._app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state)
+        app = self._get_app()
+        auth_url = app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state)
 
         # open browser to that url
         webbrowser.open(auth_url)
@@ -89,7 +90,7 @@ class InteractiveCredential(ConfidentialClientCredential):
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
         now = int(time.time())
-        result = self._app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri)
+        result = app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri)
 
         if "access_token" not in result:
             raise ClientAuthenticationError(message="Authentication failed: {}".format(result.get("error_description")))
