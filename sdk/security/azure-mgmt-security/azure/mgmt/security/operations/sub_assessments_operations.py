@@ -38,7 +38,7 @@ class SubAssessmentsOperations(object):
         self.config = config
 
     def list(
-            self, scope, assessment_name, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, assessment_name, custom_headers=None, raw=False, **operation_config):
         """Get security sub-assessments on all your scanned resources inside a
         scope.
 
@@ -49,12 +49,6 @@ class SubAssessmentsOperations(object):
         :param assessment_name: The Assessment Key - Unique key for the
          assessment type
         :type assessment_name: str
-        :param filter: OData filter. Optional.
-        :type filter: str
-        :param select: OData select. Optional.
-        :type select: str
-        :param expand: OData expand. Optional.
-        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -79,12 +73,6 @@ class SubAssessmentsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if select is not None:
-                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
             else:
                 url = next_link

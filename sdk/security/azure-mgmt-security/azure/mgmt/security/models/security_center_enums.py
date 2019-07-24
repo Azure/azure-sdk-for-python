@@ -114,13 +114,6 @@ class Severity(str, Enum):
     high = "High"
 
 
-class Risk(str, Enum):
-
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-
-
 class SecuritySolutionStatus(str, Enum):
 
     enabled = "Enabled"
