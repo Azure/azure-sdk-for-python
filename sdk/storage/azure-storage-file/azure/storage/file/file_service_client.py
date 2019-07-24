@@ -290,7 +290,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.SharePropertiesPaged]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.ShareProperties]
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_service.py
