@@ -108,7 +108,7 @@ class ItemPaged(Iterator[ReturnType]):
         :returns: An iterator of pages (themselves iterator of objects)
         """
         return self._page_iterator_class(
-            *self._args, **self._kwargs, continuation_token=continuation_token
+            continuation_token=continuation_token, *self._args, **self._kwargs
         )
 
     def __iter__(self):
