@@ -9,7 +9,7 @@
 from enum import Enum
 from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
-from azure.core.paging import Paged
+from azure.core.paging import PageIterator
 
 from ._shared.utils import (
     decode_base64,
@@ -287,14 +287,14 @@ class ContainerProperties(DictMixin):
         return props
 
 
-class ContainerPropertiesPaged(Paged):
+class ContainerPropertiesPaged(PageIterator):
     """An Iterable of Container properties.
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A container name prefix being used to filter the list.
     :ivar str current_marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -305,53 +305,47 @@ class ContainerPropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of container names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, marker=None):
-        super(ContainerPropertiesPaged, self).__init__(command, None)
+    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+        super(ContainerPropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.location_mode = None
+        self.current_page = []
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-
-        This method is for advanced usage, iterator protocol is prefered.
-
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
-                marker=self.next_marker or None,
+            return self._command(
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.container_items
-        self.next_marker = self._response.next_marker or None
-        return self.current_page
+        self.current_page = [self._build_item(item) for item in self._response.container_items]
 
-    def __next__(self): # type: ignore
-        item = super(ContainerPropertiesPaged, self).__next__()
+        return self._response.next_marker or None, self.current_page
+
+    @staticmethod
+    def _build_item(item):
         if isinstance(item, ContainerProperties):
             return item
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
-
-    next = __next__
 
 
 class BlobProperties(DictMixin):
@@ -469,14 +463,14 @@ class BlobProperties(DictMixin):
         return blob
 
 
-class BlobPropertiesPaged(Paged):
+class BlobPropertiesPaged(PageIterator):
     """An Iterable of Blob properties.
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A blob name prefix being used to filter the list.
     :ivar str current_marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -489,7 +483,7 @@ class BlobPropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of blobs to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     :param str delimiter:
         Used to capture blobs whose names begin with the same substring up to
         the appearance of the delimiter character. The delimiter may be a single
@@ -503,55 +497,48 @@ class BlobPropertiesPaged(Paged):
             container=None,
             prefix=None,
             results_per_page=None,
-            marker=None,
+            continuation_token=None,
             delimiter=None,
             location_mode=None):
-        super(BlobPropertiesPaged, self).__init__(command, None)
+        super(BlobPropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.container = container
         self.delimiter = delimiter
         self.current_page = None
         self.location_mode = location_mode
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-
-        This method is for advanced usage, iterator protocol is prefered.
-
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
-
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
+            return self._command(
                 prefix=self.prefix,
-                marker=self.next_marker or None,
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.blob_items
-        self.next_marker = self._response.next_marker or None
         self.container = self._response.container_name
+        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
         self.delimiter = self._response.delimiter
-        return self.current_page
 
-    def __next__(self):
-        item = super(BlobPropertiesPaged, self).__next__()
+        return self._response.next_marker or None, self.current_page
+
+    def _build_item(self, item):
         if isinstance(item, BlobProperties):
             return item
         if isinstance(item, BlobItem):
@@ -559,8 +546,6 @@ class BlobPropertiesPaged(Paged):
             blob.container = self.container
             return blob
         return item
-
-    next = __next__
 
 
 class BlobPrefix(BlobPropertiesPaged, DictMixin):
@@ -600,36 +585,15 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         super(BlobPrefix, self).__init__(*args, **kwargs)
         self.name = self.prefix
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
+    def _extract_data_cb(self, get_next_return):
+        continuation_token, _ = super(BlobPrefix, self)._extract_data_cb(get_next_return)
+        self.current_page = self._response.segment.blob_items + self._response.segment.blob_prefixes
+        self.current_page = [self._build_item(item) for item in self.current_page]
 
-        This method is for advanced usage, iterator protocol is prefered.
+        return continuation_token, self.current_page
 
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
-        self.location_mode, self._response = self._get_next(
-            prefix=self.prefix,
-            marker=self.next_marker or None,
-            maxresults=self.results_per_page,
-            cls=return_context_and_deserialized,
-            use_location=self.location_mode)
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.blob_prefixes
-        self.current_page.extend(self._response.segment.blob_items)
-        self.next_marker = self._response.next_marker or None
-        self.container = self._response.container_name
-        self.delimiter = self._response.delimiter
-
-    def __next__(self):
-        item = super(BlobPrefix, self).__next__()
+    def _build_item(self, item):
+        item = super(BlobPrefix, self)._build_item(item)
         if isinstance(item, GenBlobPrefix):
             return BlobPrefix(
                 self._get_next,
@@ -638,8 +602,6 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
         return item
-
-    next = __next__
 
 
 class LeaseProperties(DictMixin):
