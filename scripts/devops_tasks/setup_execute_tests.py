@@ -79,6 +79,7 @@ if __name__ == '__main__':
               'Example: --service applicationinsights'))
 
     parser.add_argument(
+        '-r',
         '--runtype',
         choices = ['setup', 'execute', 'all'],
         default = 'all'
@@ -93,6 +94,8 @@ if __name__ == '__main__':
         target_dir = os.path.join(root_dir, service_dir)
     else:
         target_dir = root_dir
+
+    print(args.glob_string);
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
