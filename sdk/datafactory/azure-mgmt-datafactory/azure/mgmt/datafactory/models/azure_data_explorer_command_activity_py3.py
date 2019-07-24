@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .execution_activity import ExecutionActivity
+from .execution_activity_py3 import ExecutionActivity
 
 
-class AzureDataExplorerCommand(ExecutionActivity):
+class AzureDataExplorerCommandActivity(ExecutionActivity):
     """Azure Data Explorer command activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -39,6 +39,10 @@ class AzureDataExplorerCommand(ExecutionActivity):
      Explorer command syntax. Type: string (or Expression with resultType
      string).
     :type command: object
+    :param command_timeout: Control command timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..)
+    :type command_timeout: object
     """
 
     _validation = {
@@ -57,9 +61,11 @@ class AzureDataExplorerCommand(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'command': {'key': 'typeProperties.command', 'type': 'object'},
+        'command_timeout': {'key': 'typeProperties.commandTimeout', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureDataExplorerCommand, self).__init__(**kwargs)
-        self.command = kwargs.get('command', None)
+    def __init__(self, *, name: str, command, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, command_timeout=None, **kwargs) -> None:
+        super(AzureDataExplorerCommandActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+        self.command = command
+        self.command_timeout = command_timeout
         self.type = 'AzureDataExplorerCommand'
