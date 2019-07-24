@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
+import uuid
 from datetime import datetime
 from typing import Any, AsyncIterable, Mapping, Optional, Dict, Generator, Iterable, List
 
@@ -690,6 +691,64 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     # TODO: get_pending_certificate_signing_request async
+    async def get_pending_certificate_signing_request(self, name: str, custom_headers: Optional[Dict[str, str]] = None, **kwargs: Mapping[str, Any]) -> str:
+        """Gets the Base64 pending certificate signing request (PKCS-10).
+        :param name: The name of the certificate
+        :type name: str
+        :param custom_headers: headers that will be added to the request
+        :type custom_headers: dict
+        :return: Base64 encoded pending certificate signing request (PKCS-10).
+        :rtype: str
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+
+        # Construct URL
+        url = '/certificates/{certificate-name}/pending'
+        path_format_arguments = {
+            'certificate-name': self._client._serialize.url("vault_base_url", self._vault_url, 'str', skip_quote=True)
+        }
+        url = self._client._client.format_url(url, **path_format_arguments)
+        vault_base_url = self.vault_url
+        # Construct URL
+        url = '/certificates/{certificate-name}/pending'
+        path_format_arguments = {
+            'vaultBaseUrl': self._client._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'certificate-name': self._client._serialize.url("certificate_name", name, 'str')
+        }
+        url = self._client._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/pkcs10'
+        if self._client._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self._client._config.accept_language is not None:
+            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
+                                                                                  self._client._config.accept_language,
+                                                                                  'str')
+
+        # Construct and send request
+        request = self._client._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            raise self._client.models.KeyVaultErrorException(self._client._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = response.body() if hasattr(response, 'body') else response.content
+
+        return deserialized
 
     async def get_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
         """Gets the specified certificate issuer.
@@ -778,7 +837,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
-    def update_issuer(
+    async def update_issuer(
         self,
         name: str,
         provider: Optional[str] = None,
