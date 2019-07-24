@@ -116,4 +116,4 @@ if __name__ == '__main__':
         prep_tests(targeted_packages, args.python_version)
     
     if args.runtype == 'execute' or args.runtype == 'all':
-        prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+        run_tests(targeted_packages, args.python_version, test_results_arg)
