@@ -100,7 +100,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 **kwargs
             )
         else:
-            block_ids = upload_substream_blocks(
+            block_ids = await upload_substream_blocks(
                 service=client,
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
