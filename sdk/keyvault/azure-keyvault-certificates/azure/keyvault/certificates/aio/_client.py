@@ -5,9 +5,10 @@
 import base64
 import uuid
 from datetime import datetime
-from typing import Any, AsyncIterable, Mapping, Optional, Dict, Generator, Iterable, List
+from typing import Any, AsyncIterable, Mapping, Optional, Iterable, List, Dict
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
     CertificateBase, Contact, Issuer
@@ -108,6 +109,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return policy_bundle
 
+    @distributed_trace_async
     async def create_certificate(
         self,
         name: str,
@@ -161,6 +163,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
+    @distributed_trace_async
     async def get_certificate(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Certificate:
         """Gets information about a certificate.
 
@@ -188,6 +191,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def delete_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
         """Deletes a certificate from the key vault.
 
@@ -206,6 +210,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def get_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
         """Retrieves information about the specified deleted certificate.
 
@@ -229,6 +234,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def purge_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> None:
         """Permanently deletes the specified deleted certificate.
 
@@ -246,6 +252,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         await self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
 
+    @distributed_trace_async
     async def recover_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> Certificate:
         """Recovers the deleted certificate back to its current version under
         /certificates.
@@ -265,6 +272,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def import_certificate(
         self,
         name: str,
@@ -327,6 +335,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def get_policy(self, name: str, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
         """Gets the policy for a certificate.
 
@@ -343,6 +352,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.get_certificate_policy(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
+    @distributed_trace_async
     async def update_policy(self, name: str, policy: CertificatePolicy, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
         """Updates the policy for a certificate.
 
@@ -366,6 +376,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
+    @distributed_trace_async
     async def update_certificate(
         self,
         name: str,
@@ -417,6 +428,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def backup_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
         """Backs up the specified certificate.
 
@@ -439,6 +451,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return backup_result.value
 
+    @distributed_trace_async
     async def restore_certificate(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Certificate:
         """Restores a backed up certificate to a vault.
 
@@ -460,6 +473,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
+    @distributed_trace_async
     async def list_deleted_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedCertificate]:
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
@@ -488,6 +502,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, DeletedCertificate._from_deleted_certificate_item)
         return iterable
 
+    @distributed_trace_async
     async def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
         """List certificates in the key vault.
 
@@ -514,6 +529,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
         return iterable
 
+    @distributed_trace_async
     async def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
         """List the versions of a certificate.
 
@@ -538,6 +554,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
         return iterable
 
+    @distributed_trace_async
     async def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Sets the certificate contacts for the key vault.
 
@@ -555,6 +572,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(bundle, Contact._from_certificate_contacts_item)
         return iterable
 
+    @distributed_trace_async
     async def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Gets the certificate contacts for the key vault.
 
@@ -569,6 +587,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, Contact._from_certificate_contacts_item)
         return iterable
 
+    @distributed_trace_async
     async def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Deletes the certificate contacts for the key vault.
 
@@ -584,6 +603,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(bundle, Contact._from_certificate_contacts_item)
         return iterable
 
+    @distributed_trace_async
     async def get_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
         """Gets the creation operation of a certificate.
 
@@ -601,6 +621,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
+    @distributed_trace_async
     async def delete_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
         """Deletes the creation operation for a specific certificate.
 
@@ -618,6 +639,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.delete_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
+    @distributed_trace_async
     async def cancel_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
         """Updates a certificate operation.
 
@@ -642,6 +664,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
+    @distributed_trace_async
     async def merge_certificate(
         self,
         name: str,
@@ -690,7 +713,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
-    # TODO: get_pending_certificate_signing_request async
+    @distributed_trace_async
     async def get_pending_certificate_signing_request(self, name: str, custom_headers: Optional[Dict[str, str]] = None, **kwargs: Mapping[str, Any]) -> str:
         """Gets the Base64 pending certificate signing request (PKCS-10).
         :param name: The name of the certificate
@@ -750,6 +773,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         return deserialized
 
+    @distributed_trace_async
     async def get_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
         """Gets the specified certificate issuer.
 
@@ -837,6 +861,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
+    @distributed_trace_async
     async def update_issuer(
         self,
         name: str,
@@ -914,6 +939,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
+    @distributed_trace_async
     async def delete_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
         """Deletes the specified certificate issuer.
 
@@ -930,6 +956,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         issuer_bundle = await self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
+    @distributed_trace_async
     async def list_issuers(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[IssuerBase]:
         """List certificate issuers for the key vault.
 
