@@ -220,13 +220,15 @@ class ManagedResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar type: Azure resource type
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -236,6 +238,7 @@ class ManagedResource(Resource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -246,7 +249,7 @@ class ManagedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(ManagedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -259,13 +262,15 @@ class ActionRule(ManagedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar type: Azure resource type
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -277,6 +282,7 @@ class ActionRule(ManagedResource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -288,7 +294,7 @@ class ActionRule(ManagedResource):
         'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, properties=None, **kwargs) -> None:
         super(ActionRule, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 

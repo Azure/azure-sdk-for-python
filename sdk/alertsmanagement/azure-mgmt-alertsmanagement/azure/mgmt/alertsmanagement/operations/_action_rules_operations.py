@@ -283,7 +283,7 @@ class ActionRulesOperations(object):
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules'}
 
-    def get(
+    def get_by_name(
             self, resource_group_name, action_rule_name, custom_headers=None, raw=False, **operation_config):
         """Get action rule by name.
 
@@ -307,7 +307,7 @@ class ActionRulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_by_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -350,9 +350,9 @@ class ActionRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
+    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
 
-    def create_or_update(
+    def create_update(
             self, resource_group_name, action_rule_name, action_rule, custom_headers=None, raw=False, **operation_config):
         """Create/update an action rule.
 
@@ -378,7 +378,7 @@ class ActionRulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -425,7 +425,7 @@ class ActionRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
+    create_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
 
     def delete(
             self, resource_group_name, action_rule_name, custom_headers=None, raw=False, **operation_config):
