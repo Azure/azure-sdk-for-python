@@ -214,48 +214,7 @@ class Resource(Model):
         self.name = None
 
 
-class ManagedResource(Resource):
-    """An azure managed resource object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource Id
-    :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
-    :ivar name: Azure resource name
-    :vartype name: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(ManagedResource, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
-class ActionRule(ManagedResource):
+class ActionRule(Resource):
     """Action rule object containing target scope, conditions and suppression
     logic.
 
@@ -270,12 +229,12 @@ class ActionRule(ManagedResource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param properties: action rule properties
+    :type properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
     :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param properties: action rule properties
-    :type properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
     """
 
     _validation = {
@@ -289,14 +248,16 @@ class ActionRule(ManagedResource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
     }
 
-    def __init__(self, *, location: str, tags=None, properties=None, **kwargs) -> None:
-        super(ActionRule, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, properties=None, tags=None, **kwargs) -> None:
+        super(ActionRule, self).__init__(**kwargs)
         self.properties = properties
+        self.location = location
+        self.tags = tags
 
 
 class Alert(Resource):
