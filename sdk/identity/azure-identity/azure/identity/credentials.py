@@ -180,7 +180,6 @@ class ManagedIdentityCredential(object):
         """
         return Configuration(**kwargs)
 
-    @distributed_trace
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """

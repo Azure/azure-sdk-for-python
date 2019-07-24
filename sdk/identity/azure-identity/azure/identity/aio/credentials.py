@@ -178,7 +178,6 @@ class ManagedIdentityCredential(object):
         """
         return Configuration(**kwargs)
 
-    @distributed_trace_async
     async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request an access token for `scopes`.
