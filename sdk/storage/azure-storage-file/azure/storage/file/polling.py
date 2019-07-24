@@ -120,6 +120,7 @@ class CopyFile(PollingMethod):
         self._update_status()
         return self._status
 
+    @distributed_trace
     def finished(self):
         # type: () -> bool
         """Is this polling finished?
