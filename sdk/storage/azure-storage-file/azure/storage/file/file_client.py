@@ -18,6 +18,7 @@ except ImportError:
 
 import six
 from azure.core.polling import LROPoller
+from azure.core.paging import ItemPaged
 
 from .models import HandlesPaged
 from ._generated import AzureFileStorage
@@ -784,10 +785,6 @@ class FileClient(StorageAccountHostsMixin):
     def list_handles(self, marker=None, timeout=None, **kwargs):
         """Lists handles for file.
 
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
@@ -798,8 +795,9 @@ class FileClient(StorageAccountHostsMixin):
             sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return HandlesPaged(
-            command, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=HandlesPaged)
 
     def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
