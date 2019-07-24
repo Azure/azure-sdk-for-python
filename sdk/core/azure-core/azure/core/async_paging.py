@@ -64,7 +64,7 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        get_next: Callable[[str], Awaitable[ResponseType]],
+        get_next: Callable[[Optional[str]], Awaitable[ResponseType]],
         extract_data: Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
         ],

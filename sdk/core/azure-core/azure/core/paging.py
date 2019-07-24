@@ -25,16 +25,12 @@
 # --------------------------------------------------------------------------
 import itertools
 from typing import (
-    Dict,
-    Any,
-    List,
     Callable,
     Optional,
     TypeVar,
     Iterator,
     Iterable,
     Tuple,
-    Type,
 )  # pylint: disable=unused-import
 import logging
 
@@ -46,8 +42,12 @@ ResponseType = TypeVar("ResponseType")
 
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
-    def __init__(self, get_next, extract_data, continuation_token=None):
-        # type: (Callable[[str], ResponseType], Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]], Optional[str]) -> None
+    def __init__(
+        self,
+        get_next,  # type: Callable[[Optional[str]], ResponseType]
+        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
+        continuation_token=None,  # type: Optional[str]
+    ):
         """Return an iterator of pages.
 
         :param get_next: Callable that take the continuation token and return a HTTP response
@@ -59,8 +59,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._response = None
-        self._current_page = None
+        self._response = None  # type: Optional[ResponseType]
+        self._current_page = None  # type: Optional[Iterable[ReturnType]]
 
     def __iter__(self):
         """Return 'self'."""
