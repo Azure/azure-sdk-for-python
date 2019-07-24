@@ -1,7 +1,7 @@
-from KeyVaultSecrets import KeyVault
-from StorageBlobs import StorageBlob
-from EventHubs import EventHub
-from CosmosDB import CosmosDB
+from key_vault_secrets import KeyVault
+from storage_blob import StorageBlob
+from event_hubs import EventHub
+from cosmos_db import CosmosDB
 
 print("==========================================")
 print("      AZURE TRACK 2 SDKs SMOKE TEST")
