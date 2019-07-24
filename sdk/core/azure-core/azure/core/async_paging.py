@@ -124,6 +124,14 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
     def by_page(
         self, continuation_token: Optional[str] = None
     ) -> AsyncIterator[AsyncIterator[ReturnType]]:
+        """Get an async iterator of pages of objects, instead of an async iterator of objects.
+
+        :param str continuation_token:
+            An opaque continuation token. This value can be retrieved from the
+            continuation_token field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :returns: An async iterator of pages (themselves async iterator of objects)
+        """
         return self._page_iterator_class(
             *self._args, **self._kwargs, continuation_token=continuation_token
         )

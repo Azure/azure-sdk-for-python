@@ -99,6 +99,14 @@ class ItemPaged(Iterator[ReturnType]):
 
     def by_page(self, continuation_token=None):
         # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
+        """Get an iterator of pages of objects, instead of an iterator of objects.
+
+        :param str continuation_token:
+            An opaque continuation token. This value can be retrieved from the
+            continuation_token field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :returns: An iterator of pages (themselves iterator of objects)
+        """
         return self._page_iterator_class(
             *self._args, **self._kwargs, continuation_token=continuation_token
         )
