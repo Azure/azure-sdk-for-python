@@ -64,7 +64,6 @@ try:
     from .registry_key_entity_py3 import RegistryKeyEntity
     from .registry_value_entity_py3 import RegistryValueEntity
     from .url_entity_py3 import UrlEntity
-    from .bookmark_entity_py3 import BookmarkEntity
     from .entity_expand_parameters_py3 import EntityExpandParameters
     from .entity_expand_response_value_py3 import EntityExpandResponseValue
     from .expansion_result_aggregation_py3 import ExpansionResultAggregation
@@ -137,7 +136,6 @@ except (SyntaxError, ImportError):
     from .registry_key_entity import RegistryKeyEntity
     from .registry_value_entity import RegistryValueEntity
     from .url_entity import UrlEntity
-    from .bookmark_entity import BookmarkEntity
     from .entity_expand_parameters import EntityExpandParameters
     from .entity_expand_response_value import EntityExpandResponseValue
     from .expansion_result_aggregation import ExpansionResultAggregation
@@ -245,7 +243,6 @@ __all__ = [
     'RegistryKeyEntity',
     'RegistryValueEntity',
     'UrlEntity',
-    'BookmarkEntity',
     'EntityExpandParameters',
     'EntityExpandResponseValue',
     'ExpansionResultAggregation',

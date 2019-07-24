@@ -19,7 +19,7 @@ class Entity(Model):
     sub-classes are: AccountEntity, HostEntity, FileEntity, SecurityAlert,
     FileHashEntity, MalwareEntity, SecurityGroupEntity, AzureResourceEntity,
     CloudApplicationEntity, ProcessEntity, DnsEntity, IpEntity,
-    RegistryKeyEntity, RegistryValueEntity, UrlEntity, BookmarkEntity
+    RegistryKeyEntity, RegistryValueEntity, UrlEntity
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -51,7 +51,7 @@ class Entity(Model):
     }
 
     _subtype_map = {
-        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHashEntity', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity', 'Bookmark': 'BookmarkEntity'}
+        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHashEntity', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity'}
     }
 
     def __init__(self, **kwargs) -> None:
