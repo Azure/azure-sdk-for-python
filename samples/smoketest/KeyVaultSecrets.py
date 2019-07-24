@@ -1,6 +1,7 @@
+import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-import os
+
 
 class KeyVault:
     def __init__(self):
@@ -9,7 +10,9 @@ class KeyVault:
         # * AZURE_CLIENT_SECRET
         # * AZURE_TENANT_ID
         credential = DefaultAzureCredential()
-        self.secret_client = SecretClient(vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential)
+        self.secret_client = SecretClient(
+            vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
+        )
 
     def SetSecret(self):
         print("Setting a secret...")

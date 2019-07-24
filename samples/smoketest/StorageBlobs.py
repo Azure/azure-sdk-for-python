@@ -1,15 +1,19 @@
-from azure.storage.blob import BlobClient
 import os
+from azure.storage.blob import BlobClient
+from azure.core import exceptions
+
 
 class StorageBlob:
     def __init__(self):
         connectionString = os.environ["STORAGE_CONNECTION_STRING"]
-        self.blob = BlobClient.from_connection_string(connectionString, container="mycontainer", blob="pyTestBlob.txt")
+        self.blob = BlobClient.from_connection_string(
+            connectionString, container="mycontainer", blob="pyTestBlob.txt"
+        )
 
     def UploadBLob(self):
         print("uploading blob...")
-        self.data = "This is a sample data for Python Test"
-        self.blob.upload_blob(self.data)
+        data = "This is a sample data for Python Test"
+        self.blob.upload_blob(data)
         print("\tdone")
 
     def DownloadBlob(self):
@@ -33,13 +37,13 @@ class StorageBlob:
         print("2) Download a Blob")
         print("3) Delete that Blob (Clean up the resource)")
         print()
-        
-        #Ensure that the blob does not exists before the tests
+
+        # Ensure that the blob does not exists before the tests
         try:
             self.DeleteBlob()
-        except:
+        except exceptions.AzureError:
             pass
-        
+
         try:
             self.UploadBLob()
             self.DownloadBlob()
