@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.core.exceptions import map_error
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from ... import models
 import uuid
 

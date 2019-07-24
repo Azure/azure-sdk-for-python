@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.core.exceptions import map_error
+from azure.core.paging import ItemPaged
 from .. import models
 import uuid
 
