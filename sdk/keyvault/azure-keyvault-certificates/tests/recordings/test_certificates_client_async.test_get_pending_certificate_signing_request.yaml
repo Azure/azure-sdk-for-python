@@ -1,0 +1,162 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault91f91eda.vault.azure.net/certificates/unknownIssuerCert/create?api-version=7.0
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 24 Jul 2019 20:41:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.872
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"policy": {"key_props": {"exportable": true, "kty": "RSA", "key_size":
+      2048, "reuse_key": false}, "secret_props": {"contentType": "application/x-pkcs12"},
+      "x509_props": {"subject": "CN=*.microsoft.com", "sans": {"dns_names": ["onedrive.microsoft.com",
+      "xbox.microsoft.com"]}, "validity_months": 24}, "issuer": {"name": "Self"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '329'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault91f91eda.vault.azure.net/certificates/unknownIssuerCert/create?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault91f91eda.vault.azure.net/certificates/unknownIssuerCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlDeuYt7aPTSvYLINZuhmKdgf/jgq4QYfQTfefb1SvZhEiFbS5mUMO6ilrCcUewr5LDv3r9kC0h6id9ErrJnha7Ao6ht+orVqJupGDYSAyiAy+48QGZxymxwM/4u7U5CULXURcw1eJFL8mipUHhqBMjqtMzAkzRfpw4sn6CVoDYUMKXBIeS8a/zKQNlY8AzCxDUUZAwaGOXwmv3iAs7TJsInMTpI2Lax3PKnOhfauiE7x5BRcRdjgiXdylh7PGa3DTEJANE7S68Mw5mqDZvwmH9IzkQ2R4+CJ5vmqradK5Qmt7DQtd1E/8JXiynj6sfsqML19w5SOpmow2MoJY2xIJQIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD34IbSw9iFPy4gNhPaDYb+4WZiLNdV11XNeR92nONgaTVgwrEtkwqu5WShCrfxR4VXMVjSYDI/oYLSfzZAQJ1XqCA5yVm0hvV9P2aka4sNg1w8yDPv5szIOSilRj020PnL5N5yM8VYxo4dxulVOIQtpTdWqgXX64bVwuB8dUqeetvohg67feIriXziD8ur++l9j9dbxgsuD6NaOhBvxP0vhvJnKhm6CJ5GUGjS7Z4zkhm4cKi8p3A/IoiKyw0Z3aiwVsV4+vE/Utq/84EEokscjHB4ev6NRMZ1AUEm2ZX0YqpEcYhTI7JzYLp07N5V/MLBbxsbjlMk4moccEdbKH3c=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Certificate request is in progress. This may take some
+        time based on the issuer provider. Please check again later.","request_id":"14450af1729e456f99f24c5e643b79b3"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1376'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 24 Jul 2019 20:41:52 GMT
+      expires:
+      - '-1'
+      location:
+      - https://vault91f91eda.vault.azure.net/certificates/unknownIssuerCert/pending?api-version=7.0&request_id=14450af1729e456f99f24c5e643b79b3
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.872
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/pkcs10
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
+    method: GET
+    uri: https://vault91f91eda.vault.azure.net/certificates/unknownIssuerCert/pending?api-version=7.0
+  response:
+    body:
+      string: MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlDeuYt7aPTSvYLINZuhmKdgf/jgq4QYfQTfefb1SvZhEiFbS5mUMO6ilrCcUewr5LDv3r9kC0h6id9ErrJnha7Ao6ht+orVqJupGDYSAyiAy+48QGZxymxwM/4u7U5CULXURcw1eJFL8mipUHhqBMjqtMzAkzRfpw4sn6CVoDYUMKXBIeS8a/zKQNlY8AzCxDUUZAwaGOXwmv3iAs7TJsInMTpI2Lax3PKnOhfauiE7x5BRcRdjgiXdylh7PGa3DTEJANE7S68Mw5mqDZvwmH9IzkQ2R4+CJ5vmqradK5Qmt7DQtd1E/8JXiynj6sfsqML19w5SOpmow2MoJY2xIJQIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD34IbSw9iFPy4gNhPaDYb+4WZiLNdV11XNeR92nONgaTVgwrEtkwqu5WShCrfxR4VXMVjSYDI/oYLSfzZAQJ1XqCA5yVm0hvV9P2aka4sNg1w8yDPv5szIOSilRj020PnL5N5yM8VYxo4dxulVOIQtpTdWqgXX64bVwuB8dUqeetvohg67feIriXziD8ur++l9j9dbxgsuD6NaOhBvxP0vhvJnKhm6CJ5GUGjS7Z4zkhm4cKi8p3A/IoiKyw0Z3aiwVsV4+vE/Utq/84EEokscjHB4ev6NRMZ1AUEm2ZX0YqpEcYhTI7JzYLp07N5V/MLBbxsbjlMk4moccEdbKH3c=
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '992'
+      content-type:
+      - application/pkcs10; charset=utf-8
+      date:
+      - Wed, 24 Jul 2019 20:41:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.200;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.872
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1

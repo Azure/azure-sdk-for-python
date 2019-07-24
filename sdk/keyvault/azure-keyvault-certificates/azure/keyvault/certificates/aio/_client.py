@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any, AsyncIterable, Mapping, Optional, Iterable, List, Dict
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
@@ -473,8 +474,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
-    @distributed_trace_async
-    async def list_deleted_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedCertificate]:
+    @distributed_trace
+    def list_deleted_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedCertificate]:
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
@@ -502,8 +503,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, DeletedCertificate._from_deleted_certificate_item)
         return iterable
 
-    @distributed_trace_async
-    async def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
+    @distributed_trace
+    def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -529,8 +530,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
         return iterable
 
-    @distributed_trace_async
-    async def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
+    @distributed_trace
+    def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -665,10 +666,69 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
+    async def get_pending_certificate_signing_request(
+            self,
+            name: str,
+            custom_headers: Optional[Dict[str, str]]= None,
+            **kwargs: Mapping[str, Any]) -> str:
+        """Gets the Base64 pending certificate signing request (PKCS-10).
+        :param name: The name of the certificate
+        :type name: str
+        :param custom_headers: headers that will be added to the request
+        :type custom_headers: dict
+        :return: Base64 encoded pending certificate signing request (PKCS-10).
+        :rtype: str
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+
+        vault_base_url = self.vault_url
+        # Construct URL
+        url = '/certificates/{certificate-name}/pending'
+        path_format_arguments = {
+            'vaultBaseUrl': self._client._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'certificate-name': self._client._serialize.url("certificate_name", name, 'str')
+        }
+        url = self._client._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self._client.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/pkcs10'
+        if self._client._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self._client._config.accept_language is not None:
+            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
+                                                                                  self._client._config.accept_language,
+                                                                                  'str')
+
+        # Construct and send request
+        request = self._client._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            self._client.map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise self._client.models.KeyVaultErrorException(response, self._client._deserialize)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = response.body() if hasattr(response, 'body') else response.content
+
+        return deserialized
+
+    @distributed_trace_async
     async def merge_certificate(
         self,
         name: str,
-        x509_certificates: list[bytearray],
+        x509_certificates: List[bytearray],
         enabled: Optional[bool] = True,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
@@ -712,66 +772,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
-
-    @distributed_trace_async
-    async def get_pending_certificate_signing_request(self, name: str, custom_headers: Optional[Dict[str, str]] = None, **kwargs: Mapping[str, Any]) -> str:
-        """Gets the Base64 pending certificate signing request (PKCS-10).
-        :param name: The name of the certificate
-        :type name: str
-        :param custom_headers: headers that will be added to the request
-        :type custom_headers: dict
-        :return: Base64 encoded pending certificate signing request (PKCS-10).
-        :rtype: str
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
-        """
-        error_map = kwargs.pop('error_map', None)
-
-        # Construct URL
-        url = '/certificates/{certificate-name}/pending'
-        path_format_arguments = {
-            'certificate-name': self._client._serialize.url("vault_base_url", self._vault_url, 'str', skip_quote=True)
-        }
-        url = self._client._client.format_url(url, **path_format_arguments)
-        vault_base_url = self.vault_url
-        # Construct URL
-        url = '/certificates/{certificate-name}/pending'
-        path_format_arguments = {
-            'vaultBaseUrl': self._client._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._client._serialize.url("certificate_name", name, 'str')
-        }
-        url = self._client._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/pkcs10'
-        if self._client._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self._client._config.accept_language is not None:
-            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
-                                                                                  self._client._config.accept_language,
-                                                                                  'str')
-
-        # Construct and send request
-        request = self._client._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            raise self._client.models.KeyVaultErrorException(self._client._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = response.body() if hasattr(response, 'body') else response.content
-
-        return deserialized
 
     @distributed_trace_async
     async def get_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
@@ -956,8 +956,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         issuer_bundle = await self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
-    @distributed_trace_async
-    async def list_issuers(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[IssuerBase]:
+    @distributed_trace
+    def list_issuers(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[IssuerBase]:
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
