@@ -7,7 +7,6 @@ import logging
 import time
 from typing import Any, Callable
 from azure.core.polling import PollingMethod, LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.utils import process_storage_error
 from ._generated.models import StorageErrorException
@@ -48,7 +47,7 @@ class CopyStatusPoller(LROPoller):
         """
         return self._polling_method.abort()
 
-    def status(self): # pylint: disable=useless-super-delegation
+    def status(self):  # pylint: disable=useless-super-delegation
         # type: () -> str
         """Returns the current status of the copy operation.
 
@@ -70,6 +69,7 @@ class CopyStatusPoller(LROPoller):
 class CopyFile(PollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
+
     def __init__(self, interval, **kwargs):
         self._client = None
         self._status = None
@@ -84,7 +84,8 @@ class CopyFile(PollingMethod):
     def _update_status(self):
         try:
             self.file = self._client._client.file.get_properties(  # pylint: disable=protected-access
-                cls=deserialize_file_properties, **self.kwargs)
+                cls=deserialize_file_properties, **self.kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
         self._status = self.file.copy.status
@@ -98,10 +99,10 @@ class CopyFile(PollingMethod):
             self.id = initial_status
             self._update_status()
         else:
-            self._status = initial_status['copy_status']
-            self.id = initial_status['copy_id']
-            self.etag = initial_status['etag']
-            self.last_modified = initial_status['last_modified']
+            self._status = initial_status["copy_status"]
+            self.id = initial_status["copy_id"]
+            self.etag = initial_status["etag"]
+            self.last_modified = initial_status["last_modified"]
 
     def run(self):
         # type: () -> None
@@ -110,25 +111,21 @@ class CopyFile(PollingMethod):
 
     def abort(self):
         try:
-            return self._client._client.file.abort_copy(  # pylint: disable=protected-access
-                self.id, **self.kwargs)
+            return self._client._client.file.abort_copy(self.id, **self.kwargs)  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
     def status(self):
         self._update_status()
         return self._status
 
-    @distributed_trace
     def finished(self):
         # type: () -> bool
         """Is this polling finished?
         :rtype: bool
         """
-        return str(self.status()).lower() in ['success', 'aborted', 'failed']
+        return str(self.status()).lower() in ["success", "aborted", "failed"]
 
-    @distributed_trace
     def resource(self):
         # type: () -> Any
         self._update_status()
@@ -136,17 +133,15 @@ class CopyFile(PollingMethod):
 
 
 class CopyFilePolling(CopyFile):
-
-    @distributed_trace
     def run(self):
         # type: () -> None
         try:
             while not self.finished():
                 self._update_status()
                 time.sleep(self.polling_interval)
-            if str(self.status()).lower() == 'aborted':
+            if str(self.status()).lower() == "aborted":
                 raise ValueError("Copy operation aborted.")
-            if str(self.status()).lower() == 'failed':
+            if str(self.status()).lower() == "failed":
                 raise ValueError("Copy operation failed: {}".format(self.file.copy.status_description))
         except Exception as e:
             logger.warning(str(e))
@@ -158,11 +153,10 @@ class CopyFilePolling(CopyFile):
         :rtype: str
         """
         try:
-            return self._status.value # type: ignore
+            return self._status.value  # type: ignore
         except AttributeError:
-            return self._status # type: ignore
+            return self._status  # type: ignore
 
-    @distributed_trace
     def resource(self):
         # type: () -> Any
         if not self.file:
@@ -171,7 +165,6 @@ class CopyFilePolling(CopyFile):
 
 
 class CloseHandles(PollingMethod):
-
     def __init__(self, interval):
         self._command = None
         self._status = None
@@ -184,16 +177,15 @@ class CloseHandles(PollingMethod):
             status = self._command()  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
-        self._status = status.get('marker')
-        self.handles_closed += status['number_of_handles_closed']
+        self._status = status.get("marker")
+        self.handles_closed += status["number_of_handles_closed"]
 
     def initialize(self, command, initial_status, _):  # pylint: disable=arguments-differ
         # type: (Any, Any, Callable) -> None
         self._command = command
-        self._status = initial_status['marker']
-        self.handles_closed = initial_status['number_of_handles_closed']
+        self._status = initial_status["marker"]
+        self.handles_closed = initial_status["number_of_handles_closed"]
 
-    @distributed_trace
     def run(self):
         # type: () -> None
         try:
@@ -204,7 +196,6 @@ class CloseHandles(PollingMethod):
             logger.warning(str(e))
             raise
 
-    @distributed_trace
     def status(self):
         self._update_status()
         return self.handles_closed
@@ -216,7 +207,6 @@ class CloseHandles(PollingMethod):
         """
         return self._status is None
 
-    @distributed_trace
     def resource(self):
         # type: () -> Any
         if not self.finished:
