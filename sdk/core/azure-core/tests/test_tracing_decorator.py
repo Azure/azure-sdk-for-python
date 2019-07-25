@@ -105,15 +105,6 @@ class TestCommon(object):
             should_be_old_parent = common.get_parent_span(parent.span_instance)
             assert should_be_old_parent.span_instance == parent.span_instance
 
-    def test_should_use_trace(self):
-        with ContextHelper(environ={"AZURE_TRACING_ONLY_PROPAGATE": "yes"}):
-            parent_span = OpenCensusSpan()
-            assert not common.should_use_trace(parent_span)
-            assert not common.should_use_trace(None)
-        parent_span = OpenCensusSpan()
-        assert common.should_use_trace(parent_span)
-        assert not common.should_use_trace(None)
-
 
 class TestDecorator(object):
     def test_decorator_has_different_name(self):
@@ -190,21 +181,3 @@ class TestDecorator(object):
             assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
             children = parent.children[1].children
             assert len(children) == 2
-
-    def test_should_only_propagate(self):
-        with ContextHelper(should_only_propagate=True):
-            exporter = MockExporter()
-            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-            with trace.start_span(name="OverAll") as parent:
-                client = MockClient()
-                client.make_request(2)
-                with trace.span("child") as child:
-                    client.make_request(2, parent_span=parent)
-                    assert OpenCensusSpan.get_current_span() == child
-                    client.make_request(2)
-            trace.finish()
-            exporter.build_tree()
-            parent = exporter.root
-            assert len(parent.children) == 1
-            assert parent.children[0].span_data.name == "child"
-            assert not parent.children[0].children
