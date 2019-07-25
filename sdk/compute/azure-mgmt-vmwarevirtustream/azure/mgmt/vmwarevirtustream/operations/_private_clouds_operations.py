@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -48,9 +50,8 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
+        :return: PrivateCloudResponseList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponseList
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -86,7 +87,7 @@ class PrivateCloudsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[AzurePrivateCloudResponse]', response)
+            deserialized = self._deserialize('PrivateCloudResponseList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -106,9 +107,9 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: PrivateCloudResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -144,7 +145,7 @@ class PrivateCloudsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -165,9 +166,8 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse]
+        :return: PrivateCloudResponseList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponseList
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -204,7 +204,7 @@ class PrivateCloudsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[AzurePrivateCloudResponse]', response)
+            deserialized = self._deserialize('PrivateCloudResponseList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -227,9 +227,9 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: PrivateCloudResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -266,7 +266,7 @@ class PrivateCloudsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -275,28 +275,9 @@ class PrivateCloudsOperations(object):
         return deserialized
     get_by_id_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def create_or_update(
-            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """create a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
-        :type private_cloud_name: str
-        :param parameters:
-        :type parameters:
-         ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -322,7 +303,7 @@ class PrivateCloudsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AzurePrivateCloudRequest')
+        body_content = self._serialize.body(parameters, 'PrivateCloudRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -333,27 +314,20 @@ class PrivateCloudsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        header_dict = {}
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
-            header_dict = {
-                'Location': 'str',
-                'Azure-AsyncOperation': 'str',
-                'Retry-After': 'str',
-            }
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def update(
-            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """modify a private cloud.
+    def create_or_update(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """create a private cloud.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
@@ -362,17 +336,50 @@ class PrivateCloudsOperations(object):
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
-         ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudRequest
+         ~azure.mgmt.vmwarevirtustream.models.PrivateCloudRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
+
+
+    def _update_initial(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -398,7 +405,7 @@ class PrivateCloudsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AzurePrivateCloudRequest')
+        body_content = self._serialize.body(parameters, 'PrivateCloudRequest')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -410,34 +417,71 @@ class PrivateCloudsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def delete(
-            self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """delete a private cloud.
+    def update(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """modify a private cloud.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param private_cloud_name: The name of the private cloud.
         :type private_cloud_name: str
+        :param parameters:
+        :type parameters:
+         ~azure.mgmt.vmwarevirtustream.models.PrivateCloudRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -472,6 +516,47 @@ class PrivateCloudsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """delete a private cloud.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param private_cloud_name: The name of the private cloud.
+        :type private_cloud_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
     def operation_results_get_by_id(
@@ -490,9 +575,9 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :return: PrivateCloudResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -528,18 +613,12 @@ class PrivateCloudsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'str',
-            }
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -561,8 +640,8 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzureOperationStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzureOperationStatus or
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.OperationStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -602,7 +681,7 @@ class PrivateCloudsOperations(object):
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AzureOperationStatus', response)
+            deserialized = self._deserialize('OperationStatus', response)
             header_dict = {
                 'Retry-After': 'str',
             }
@@ -615,27 +694,9 @@ class PrivateCloudsOperations(object):
         return deserialized
     operation_statuses_get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/operationstatuses/{operationId}'}
 
-    def add_authorization(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """adds a number of hosts to a cluster.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
-        :type private_cloud_name: str
-        :param authorization_name: The name of the ER authorization.
-        :type authorization_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _add_authorization_initial(
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.add_authorization.metadata['url']
         path_format_arguments = {
@@ -670,18 +731,18 @@ class PrivateCloudsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    add_authorization.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/addAuthorization/{authorizationName}'}
 
-    def delete_authorization(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
+    def add_authorization(
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """adds a number of hosts to a cluster.
 
         :param resource_group_name: The name of the resource group within the
@@ -692,15 +753,48 @@ class PrivateCloudsOperations(object):
         :param authorization_name: The name of the ER authorization.
         :type authorization_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._add_authorization_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            authorization_name=authorization_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    add_authorization.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/addAuthorization/{authorizationName}'}
+
+
+    def _delete_authorization_initial(
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_authorization.metadata['url']
         path_format_arguments = {
@@ -735,38 +829,70 @@ class PrivateCloudsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    delete_authorization.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/deleteAuthorization/{authorizationName}'}
 
-    def add_identity_source(
-            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """adds an identity source for the privateCloud.
+    def delete_authorization(
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """adds a number of hosts to a cluster.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param private_cloud_name: The name of the privateCloud.
         :type private_cloud_name: str
-        :param parameters:
-        :type parameters:
-         ~azure.mgmt.vmwarevirtustream.models.AddIdentitySourceRequest
+        :param authorization_name: The name of the ER authorization.
+        :type authorization_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._delete_authorization_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            authorization_name=authorization_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_authorization.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/deleteAuthorization/{authorizationName}'}
+
+
+    def _add_identity_source_initial(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.add_identity_source.metadata['url']
         path_format_arguments = {
@@ -804,19 +930,19 @@ class PrivateCloudsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    add_identity_source.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/addIdentitySource'}
 
-    def delete_identity_source(
-            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """deletes an identity source from the private cloud.
+    def add_identity_source(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """adds an identity source for the privateCloud.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
@@ -825,17 +951,50 @@ class PrivateCloudsOperations(object):
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
-         ~azure.mgmt.vmwarevirtustream.models.DeleteIdentitySourceRequest
+         ~azure.mgmt.vmwarevirtustream.models.AddIdentitySourceRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzurePrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzurePrivateCloudResponse
-         or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._add_identity_source_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    add_identity_source.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/addIdentitySource'}
+
+
+    def _delete_identity_source_initial(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_identity_source.metadata['url']
         path_format_arguments = {
@@ -873,14 +1032,66 @@ class PrivateCloudsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzurePrivateCloudResponse', response)
+            deserialized = self._deserialize('PrivateCloudResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+
+    def delete_identity_source(
+            self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """deletes an identity source from the private cloud.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param private_cloud_name: The name of the privateCloud.
+        :type private_cloud_name: str
+        :param parameters:
+        :type parameters:
+         ~azure.mgmt.vmwarevirtustream.models.DeleteIdentitySourceRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns PrivateCloudResponse or
+         ClientRawResponse<PrivateCloudResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_identity_source_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateCloudResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete_identity_source.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/deleteIdentitySource'}
 
     def get_admin_credentials(

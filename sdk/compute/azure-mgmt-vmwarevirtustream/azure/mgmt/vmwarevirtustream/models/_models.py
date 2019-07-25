@@ -64,172 +64,6 @@ class AddIdentitySourceRequest(Model):
         self.credential = kwargs.get('credential', None)
 
 
-class AzureClusterRequest(Model):
-    """AzureClusterRequest.
-
-    :param location:
-    :type location: str
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterRequest
-    """
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClusterRequest'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzureClusterRequest, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class AzureClusterResponse(Model):
-    """AzureClusterResponse.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id:
-    :vartype id: str
-    :param location:
-    :type location: str
-    :ivar name:
-    :vartype name: str
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.Cluster
-    :ivar type:
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Cluster'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzureClusterResponse, self).__init__(**kwargs)
-        self.id = None
-        self.location = kwargs.get('location', None)
-        self.name = None
-        self.properties = kwargs.get('properties', None)
-        self.type = None
-
-
-class AzureOperationStatus(Model):
-    """AzureOperationStatus.
-
-    :param end_time:
-    :type end_time: str
-    :param id:
-    :type id: str
-    :param percent_complete:
-    :type percent_complete: float
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
-    :param start_time:
-    :type start_time: str
-    :param status: Possible values include: 'Succeeded', 'Failed', 'Cancelled'
-    :type status: str or ~azure.mgmt.vmwarevirtustream.models.enum
-    """
-
-    _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzureOperationStatus, self).__init__(**kwargs)
-        self.end_time = kwargs.get('end_time', None)
-        self.id = kwargs.get('id', None)
-        self.percent_complete = kwargs.get('percent_complete', None)
-        self.properties = kwargs.get('properties', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.status = kwargs.get('status', None)
-
-
-class AzurePrivateCloudRequest(Model):
-    """AzurePrivateCloudRequest.
-
-    :param location:
-    :type location: str
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
-    :param tags:
-    :type tags: object
-    """
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
-        'tags': {'key': 'tags', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzurePrivateCloudRequest, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
-        self.tags = kwargs.get('tags', None)
-
-
-class AzurePrivateCloudResponse(Model):
-    """AzurePrivateCloudResponse.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id:
-    :vartype id: str
-    :param location:
-    :type location: str
-    :ivar name:
-    :vartype name: str
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
-    :ivar type:
-    :vartype type: str
-    :param tags:
-    :type tags: object
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzurePrivateCloudResponse, self).__init__(**kwargs)
-        self.id = None
-        self.location = kwargs.get('location', None)
-        self.name = None
-        self.properties = kwargs.get('properties', None)
-        self.type = None
-        self.tags = kwargs.get('tags', None)
-
-
 class Circuit(Model):
     """Circuit.
 
@@ -298,8 +132,8 @@ class Cluster(Model):
         self.hosts = kwargs.get('hosts', None)
 
 
-class ClusterRequest(Model):
-    """ClusterRequest.
+class ClusterDetail(Model):
+    """ClusterDetail.
 
     :param cluster_size: number of hosts in PrivateCloud cluster
     :type cluster_size: int
@@ -310,8 +144,69 @@ class ClusterRequest(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ClusterRequest, self).__init__(**kwargs)
+        super(ClusterDetail, self).__init__(**kwargs)
         self.cluster_size = kwargs.get('cluster_size', None)
+
+
+class ClusterRequest(Model):
+    """ClusterRequest.
+
+    :param location:
+    :type location: str
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ClusterDetail'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClusterRequest, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class ClusterResponse(Model):
+    """ClusterResponse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id:
+    :vartype id: str
+    :param location:
+    :type location: str
+    :ivar name:
+    :vartype name: str
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.Cluster
+    :ivar type:
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'Cluster'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClusterResponse, self).__init__(**kwargs)
+        self.id = None
+        self.location = kwargs.get('location', None)
+        self.name = None
+        self.properties = kwargs.get('properties', None)
+        self.type = None
 
 
 class DeleteIdentitySourceRequest(Model):
@@ -524,6 +419,42 @@ class OperationDisplay(Model):
         self.description = None
 
 
+class OperationStatus(Model):
+    """OperationStatus.
+
+    :param end_time:
+    :type end_time: str
+    :param id:
+    :type id: str
+    :param percent_complete:
+    :type percent_complete: float
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
+    :param start_time:
+    :type start_time: str
+    :param status: Possible values include: 'Succeeded', 'Failed', 'Cancelled'
+    :type status: str or ~azure.mgmt.vmwarevirtustream.models.enum
+    """
+
+    _attribute_map = {
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
+        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationStatus, self).__init__(**kwargs)
+        self.end_time = kwargs.get('end_time', None)
+        self.id = kwargs.get('id', None)
+        self.percent_complete = kwargs.get('percent_complete', None)
+        self.properties = kwargs.get('properties', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.status = kwargs.get('status', None)
+
+
 class PrivateCloud(Model):
     """PrivateCloud.
 
@@ -568,3 +499,95 @@ class PrivateCloud(Model):
         self.internet_enabled = kwargs.get('internet_enabled', None)
         self.identity_sources = kwargs.get('identity_sources', None)
         self.vpc = kwargs.get('vpc', None)
+
+
+class PrivateCloudRequest(Model):
+    """PrivateCloudRequest.
+
+    :param location:
+    :type location: str
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
+    :param tags:
+    :type tags: object
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
+        'tags': {'key': 'tags', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateCloudRequest, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.properties = kwargs.get('properties', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class PrivateCloudResponse(Model):
+    """PrivateCloudResponse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id:
+    :vartype id: str
+    :param location:
+    :type location: str
+    :ivar name:
+    :vartype name: str
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
+    :ivar type:
+    :vartype type: str
+    :param tags:
+    :type tags: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateCloudResponse, self).__init__(**kwargs)
+        self.id = None
+        self.location = kwargs.get('location', None)
+        self.name = None
+        self.properties = kwargs.get('properties', None)
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+
+
+class PrivateCloudResponseList(Model):
+    """PrivateCloudResponseList.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value:
+    :vartype value: object
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateCloudResponseList, self).__init__(**kwargs)
+        self.value = None

@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -54,8 +56,7 @@ class ClustersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.mgmt.vmwarevirtustream.models.AzureClusterResponse] or
+        :rtype: list[~azure.mgmt.vmwarevirtustream.models.ClusterResponse] or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -93,7 +94,7 @@ class ClustersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[AzureClusterResponse]', response)
+            deserialized = self._deserialize('[ClusterResponse]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -118,8 +119,8 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzureClusterResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzureClusterResponse or
+        :return: ClusterResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.ClusterResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -158,7 +159,7 @@ class ClustersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AzureClusterResponse', response)
+            deserialized = self._deserialize('ClusterResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -167,32 +168,10 @@ class ClustersOperations(object):
         return deserialized
     get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
-    def create_or_update(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """create cluster.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
-        :type private_cloud_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
-        :param location:
-        :type location: str
-        :param properties:
-        :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzureClusterResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.AzureClusterResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.AzureClusterRequest(location=location, properties=properties)
+    def _create_or_update_initial(
+            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ClusterRequest(location=location, properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -220,7 +199,7 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AzureClusterRequest')
+        body_content = self._serialize.body(parameters, 'ClusterRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -231,27 +210,20 @@ class ClustersOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        header_dict = {}
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('AzureClusterResponse', response)
-            header_dict = {
-                'Location': 'str',
-                'Azure-AsyncOperation': 'str',
-                'Retry-After': 'str',
-            }
+            deserialized = self._deserialize('ClusterResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
-    def update(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """modify cluster.
+    def create_or_update(
+            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """create cluster.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
@@ -263,17 +235,53 @@ class ClustersOperations(object):
         :param location:
         :type location: str
         :param properties:
-        :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterRequest
+        :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ClusterResponse or
+         ClientRawResponse<ClusterResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.ClusterResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.ClusterResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.AzureClusterRequest(location=location, properties=properties)
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            cluster_name=cluster_name,
+            location=location,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ClusterResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+
+
+    def _update_initial(
+            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ClusterRequest(location=location, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -291,6 +299,7 @@ class ClustersOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -300,7 +309,7 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AzureClusterRequest')
+        body_content = self._serialize.body(parameters, 'ClusterRequest')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -311,14 +320,20 @@ class ClustersOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+        deserialized = None
 
-    def delete(
-            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """delete cluster.
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """modify cluster.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
@@ -327,15 +342,55 @@ class ClustersOperations(object):
         :type private_cloud_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
+        :param location:
+        :type location: str
+        :param properties:
+        :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ClusterResponse or
+         ClientRawResponse<ClusterResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.ClusterResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.ClusterResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            cluster_name=cluster_name,
+            location=location,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ClusterResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -371,4 +426,48 @@ class ClustersOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """delete cluster.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param private_cloud_name: The name of the private cloud.
+        :type private_cloud_name: str
+        :param cluster_name: The name of the cluster.
+        :type cluster_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            cluster_name=cluster_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}

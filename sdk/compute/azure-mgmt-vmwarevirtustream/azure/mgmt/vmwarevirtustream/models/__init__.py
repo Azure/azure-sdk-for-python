@@ -11,14 +11,11 @@
 
 try:
     from ._models_py3 import AddIdentitySourceRequest
-    from ._models_py3 import AzureClusterRequest
-    from ._models_py3 import AzureClusterResponse
-    from ._models_py3 import AzureOperationStatus
-    from ._models_py3 import AzurePrivateCloudRequest
-    from ._models_py3 import AzurePrivateCloudResponse
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
+    from ._models_py3 import ClusterDetail
     from ._models_py3 import ClusterRequest
+    from ._models_py3 import ClusterResponse
     from ._models_py3 import DeleteIdentitySourceRequest
     from ._models_py3 import Endpoints
     from ._models_py3 import ExpressRouteAuthorization
@@ -26,17 +23,18 @@ try:
     from ._models_py3 import IdentitySource
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationStatus
     from ._models_py3 import PrivateCloud
+    from ._models_py3 import PrivateCloudRequest
+    from ._models_py3 import PrivateCloudResponse
+    from ._models_py3 import PrivateCloudResponseList
 except (SyntaxError, ImportError):
     from ._models import AddIdentitySourceRequest
-    from ._models import AzureClusterRequest
-    from ._models import AzureClusterResponse
-    from ._models import AzureOperationStatus
-    from ._models import AzurePrivateCloudRequest
-    from ._models import AzurePrivateCloudResponse
     from ._models import Circuit
     from ._models import Cluster
+    from ._models import ClusterDetail
     from ._models import ClusterRequest
+    from ._models import ClusterResponse
     from ._models import DeleteIdentitySourceRequest
     from ._models import Endpoints
     from ._models import ExpressRouteAuthorization
@@ -44,19 +42,20 @@ except (SyntaxError, ImportError):
     from ._models import IdentitySource
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationStatus
     from ._models import PrivateCloud
+    from ._models import PrivateCloudRequest
+    from ._models import PrivateCloudResponse
+    from ._models import PrivateCloudResponseList
 from ._paged_models import OperationPaged
 
 __all__ = [
     'AddIdentitySourceRequest',
-    'AzureClusterRequest',
-    'AzureClusterResponse',
-    'AzureOperationStatus',
-    'AzurePrivateCloudRequest',
-    'AzurePrivateCloudResponse',
     'Circuit',
     'Cluster',
+    'ClusterDetail',
     'ClusterRequest',
+    'ClusterResponse',
     'DeleteIdentitySourceRequest',
     'Endpoints',
     'ExpressRouteAuthorization',
@@ -64,6 +63,10 @@ __all__ = [
     'IdentitySource',
     'Operation',
     'OperationDisplay',
+    'OperationStatus',
     'PrivateCloud',
+    'PrivateCloudRequest',
+    'PrivateCloudResponse',
+    'PrivateCloudResponseList',
     'OperationPaged',
 ]
