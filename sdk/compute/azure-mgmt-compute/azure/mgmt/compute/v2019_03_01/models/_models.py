@@ -4857,6 +4857,9 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param automatic_os_upgrade_properties:
     :type automatic_os_upgrade_properties:
      ~azure.mgmt.compute.v2019_03_01.models.AutomaticOSUpgradeProperties
+    :param hyper_vgeneration: Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_03_01.models.HyperVGeneration
     """
 
     _validation = {
@@ -4873,6 +4876,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
+        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4881,6 +4885,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.os_disk_image = kwargs.get('os_disk_image', None)
         self.data_disk_images = kwargs.get('data_disk_images', None)
         self.automatic_os_upgrade_properties = kwargs.get('automatic_os_upgrade_properties', None)
+        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
 
 
 class VirtualMachineInstanceView(Model):
