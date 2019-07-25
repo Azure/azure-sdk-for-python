@@ -37,6 +37,9 @@
 /sql/sql/ @jaredmoo
 /sdk/servicebus/azure-servicebus/ @annatisch
 
+# Management Plane
+/**/*mgmt*/ @zikalino
+
 ###########
 # Eng Sys
 ###########
