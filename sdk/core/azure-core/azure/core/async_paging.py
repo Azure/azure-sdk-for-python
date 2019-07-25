@@ -94,8 +94,6 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self.continuation_token, self._current_page = await self._extract_data(
             self._response
         )
-        if not self._current_page:
-            raise StopAsyncIteration("End of paging")
 
         # If current_page was a sync list, wrap it async-like
         if isinstance(self._current_page, collections.abc.Iterable):
