@@ -31,7 +31,7 @@ import asyncio
 import aiohttp
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
 from requests.exceptions import (
@@ -181,7 +181,8 @@ class AioHttpTransport(AsyncHttpTransport):
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
             error = ServiceRequestError(err, error=err)
-
+        except asyncio.TimeoutError as err:
+            error = ServiceResponseError(err, error=err)
         if error:
             raise error
         return response
