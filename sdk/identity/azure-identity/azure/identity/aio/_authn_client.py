@@ -8,6 +8,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
@@ -27,7 +28,12 @@ class AsyncAuthnClient(AuthnClientBase):
         **kwargs: Mapping[str, Any]
     ) -> None:
         config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         if not transport:
             transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
