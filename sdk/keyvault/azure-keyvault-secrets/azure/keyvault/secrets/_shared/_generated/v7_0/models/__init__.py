@@ -22,9 +22,11 @@ try:
     from ._models_py3 import CertificateCreateParameters
     from ._models_py3 import CertificateImportParameters
     from ._models_py3 import CertificateIssuerItem
+    from ._models_py3 import CertificateIssuerListResult
     from ._models_py3 import CertificateIssuerSetParameters
     from ._models_py3 import CertificateIssuerUpdateParameters
     from ._models_py3 import CertificateItem
+    from ._models_py3 import CertificateListResult
     from ._models_py3 import CertificateMergeParameters
     from ._models_py3 import CertificateOperation
     from ._models_py3 import CertificateOperationUpdateParameter
@@ -35,14 +37,19 @@ try:
     from ._models_py3 import Contacts
     from ._models_py3 import DeletedCertificateBundle
     from ._models_py3 import DeletedCertificateItem
+    from ._models_py3 import DeletedCertificateListResult
     from ._models_py3 import DeletedKeyBundle
     from ._models_py3 import DeletedKeyItem
+    from ._models_py3 import DeletedKeyListResult
     from ._models_py3 import DeletedSasDefinitionBundle
     from ._models_py3 import DeletedSasDefinitionItem
+    from ._models_py3 import DeletedSasDefinitionListResult
     from ._models_py3 import DeletedSecretBundle
     from ._models_py3 import DeletedSecretItem
+    from ._models_py3 import DeletedSecretListResult
     from ._models_py3 import DeletedStorageAccountItem
     from ._models_py3 import DeletedStorageBundle
+    from ._models_py3 import DeletedStorageListResult
     from ._models_py3 import Error
     from ._models_py3 import IssuerAttributes
     from ._models_py3 import IssuerBundle
@@ -54,6 +61,7 @@ try:
     from ._models_py3 import KeyCreateParameters
     from ._models_py3 import KeyImportParameters
     from ._models_py3 import KeyItem
+    from ._models_py3 import KeyListResult
     from ._models_py3 import KeyOperationResult
     from ._models_py3 import KeyOperationsParameters
     from ._models_py3 import KeyProperties
@@ -70,10 +78,12 @@ try:
     from ._models_py3 import SasDefinitionBundle
     from ._models_py3 import SasDefinitionCreateParameters
     from ._models_py3 import SasDefinitionItem
+    from ._models_py3 import SasDefinitionListResult
     from ._models_py3 import SasDefinitionUpdateParameters
     from ._models_py3 import SecretAttributes
     from ._models_py3 import SecretBundle
     from ._models_py3 import SecretItem
+    from ._models_py3 import SecretListResult
     from ._models_py3 import SecretProperties
     from ._models_py3 import SecretRestoreParameters
     from ._models_py3 import SecretSetParameters
@@ -84,6 +94,7 @@ try:
     from ._models_py3 import StorageAccountRegenerteKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageBundle
+    from ._models_py3 import StorageListResult
     from ._models_py3 import StorageRestoreParameters
     from ._models_py3 import SubjectAlternativeNames
     from ._models_py3 import Trigger
@@ -101,9 +112,11 @@ except (SyntaxError, ImportError):
     from ._models import CertificateCreateParameters
     from ._models import CertificateImportParameters
     from ._models import CertificateIssuerItem
+    from ._models import CertificateIssuerListResult
     from ._models import CertificateIssuerSetParameters
     from ._models import CertificateIssuerUpdateParameters
     from ._models import CertificateItem
+    from ._models import CertificateListResult
     from ._models import CertificateMergeParameters
     from ._models import CertificateOperation
     from ._models import CertificateOperationUpdateParameter
@@ -114,14 +127,19 @@ except (SyntaxError, ImportError):
     from ._models import Contacts
     from ._models import DeletedCertificateBundle
     from ._models import DeletedCertificateItem
+    from ._models import DeletedCertificateListResult
     from ._models import DeletedKeyBundle
     from ._models import DeletedKeyItem
+    from ._models import DeletedKeyListResult
     from ._models import DeletedSasDefinitionBundle
     from ._models import DeletedSasDefinitionItem
+    from ._models import DeletedSasDefinitionListResult
     from ._models import DeletedSecretBundle
     from ._models import DeletedSecretItem
+    from ._models import DeletedSecretListResult
     from ._models import DeletedStorageAccountItem
     from ._models import DeletedStorageBundle
+    from ._models import DeletedStorageListResult
     from ._models import Error
     from ._models import IssuerAttributes
     from ._models import IssuerBundle
@@ -133,6 +151,7 @@ except (SyntaxError, ImportError):
     from ._models import KeyCreateParameters
     from ._models import KeyImportParameters
     from ._models import KeyItem
+    from ._models import KeyListResult
     from ._models import KeyOperationResult
     from ._models import KeyOperationsParameters
     from ._models import KeyProperties
@@ -149,10 +168,12 @@ except (SyntaxError, ImportError):
     from ._models import SasDefinitionBundle
     from ._models import SasDefinitionCreateParameters
     from ._models import SasDefinitionItem
+    from ._models import SasDefinitionListResult
     from ._models import SasDefinitionUpdateParameters
     from ._models import SecretAttributes
     from ._models import SecretBundle
     from ._models import SecretItem
+    from ._models import SecretListResult
     from ._models import SecretProperties
     from ._models import SecretRestoreParameters
     from ._models import SecretSetParameters
@@ -163,21 +184,11 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountRegenerteKeyParameters
     from ._models import StorageAccountUpdateParameters
     from ._models import StorageBundle
+    from ._models import StorageListResult
     from ._models import StorageRestoreParameters
     from ._models import SubjectAlternativeNames
     from ._models import Trigger
     from ._models import X509CertificateProperties
-from ._paged_models import CertificateIssuerItemPaged
-from ._paged_models import CertificateItemPaged
-from ._paged_models import DeletedCertificateItemPaged
-from ._paged_models import DeletedKeyItemPaged
-from ._paged_models import DeletedSasDefinitionItemPaged
-from ._paged_models import DeletedSecretItemPaged
-from ._paged_models import DeletedStorageAccountItemPaged
-from ._paged_models import KeyItemPaged
-from ._paged_models import SasDefinitionItemPaged
-from ._paged_models import SecretItemPaged
-from ._paged_models import StorageAccountItemPaged
 from ._key_vault_client_enums import (
     JsonWebKeyType,
     JsonWebKeyCurveName,
@@ -203,9 +214,11 @@ __all__ = [
     'CertificateCreateParameters',
     'CertificateImportParameters',
     'CertificateIssuerItem',
+    'CertificateIssuerListResult',
     'CertificateIssuerSetParameters',
     'CertificateIssuerUpdateParameters',
     'CertificateItem',
+    'CertificateListResult',
     'CertificateMergeParameters',
     'CertificateOperation',
     'CertificateOperationUpdateParameter',
@@ -216,14 +229,19 @@ __all__ = [
     'Contacts',
     'DeletedCertificateBundle',
     'DeletedCertificateItem',
+    'DeletedCertificateListResult',
     'DeletedKeyBundle',
     'DeletedKeyItem',
+    'DeletedKeyListResult',
     'DeletedSasDefinitionBundle',
     'DeletedSasDefinitionItem',
+    'DeletedSasDefinitionListResult',
     'DeletedSecretBundle',
     'DeletedSecretItem',
+    'DeletedSecretListResult',
     'DeletedStorageAccountItem',
     'DeletedStorageBundle',
+    'DeletedStorageListResult',
     'Error',
     'IssuerAttributes',
     'IssuerBundle',
@@ -235,6 +253,7 @@ __all__ = [
     'KeyCreateParameters',
     'KeyImportParameters',
     'KeyItem',
+    'KeyListResult',
     'KeyOperationResult',
     'KeyOperationsParameters',
     'KeyProperties',
@@ -251,10 +270,12 @@ __all__ = [
     'SasDefinitionBundle',
     'SasDefinitionCreateParameters',
     'SasDefinitionItem',
+    'SasDefinitionListResult',
     'SasDefinitionUpdateParameters',
     'SecretAttributes',
     'SecretBundle',
     'SecretItem',
+    'SecretListResult',
     'SecretProperties',
     'SecretRestoreParameters',
     'SecretSetParameters',
@@ -265,21 +286,11 @@ __all__ = [
     'StorageAccountRegenerteKeyParameters',
     'StorageAccountUpdateParameters',
     'StorageBundle',
+    'StorageListResult',
     'StorageRestoreParameters',
     'SubjectAlternativeNames',
     'Trigger',
     'X509CertificateProperties',
-    'KeyItemPaged',
-    'DeletedKeyItemPaged',
-    'SecretItemPaged',
-    'DeletedSecretItemPaged',
-    'CertificateItemPaged',
-    'CertificateIssuerItemPaged',
-    'DeletedCertificateItemPaged',
-    'StorageAccountItemPaged',
-    'DeletedStorageAccountItemPaged',
-    'SasDefinitionItemPaged',
-    'DeletedSasDefinitionItemPaged',
     'JsonWebKeyType',
     'JsonWebKeyCurveName',
     'DeletionRecoveryLevel',
