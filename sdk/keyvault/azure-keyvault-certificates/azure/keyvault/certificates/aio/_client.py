@@ -555,8 +555,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
         return iterable
 
-    @distributed_trace_async
-    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace
+    def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
@@ -573,8 +573,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(bundle, Contact._from_certificate_contacts_item)
         return iterable
 
-    @distributed_trace_async
-    async def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace
+    def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -588,8 +588,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, Contact._from_certificate_contacts_item)
         return iterable
 
-    @distributed_trace_async
-    async def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace
+    def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
@@ -790,6 +790,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         issuer_bundle = await self._client.get_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
+    @distributed_trace_async
     async def create_issuer(
         self,
         name: str,
@@ -928,7 +929,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = self._client.models.IssuerAttributes(enabled=enabled)
         else:
             issuer_attributes = None
-        issuer_bundle = self._client.update_certificate_issuer(
+        issuer_bundle = await self._client.update_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=name,
             provider=provider,
