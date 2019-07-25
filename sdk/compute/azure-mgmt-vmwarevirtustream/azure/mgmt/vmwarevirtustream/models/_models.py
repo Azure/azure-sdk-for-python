@@ -419,42 +419,6 @@ class OperationDisplay(Model):
         self.description = None
 
 
-class OperationStatus(Model):
-    """OperationStatus.
-
-    :param end_time:
-    :type end_time: str
-    :param id:
-    :type id: str
-    :param percent_complete:
-    :type percent_complete: float
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
-    :param start_time:
-    :type start_time: str
-    :param status: Possible values include: 'Succeeded', 'Failed', 'Cancelled'
-    :type status: str or ~azure.mgmt.vmwarevirtustream.models.enum
-    """
-
-    _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(OperationStatus, self).__init__(**kwargs)
-        self.end_time = kwargs.get('end_time', None)
-        self.id = kwargs.get('id', None)
-        self.percent_complete = kwargs.get('percent_complete', None)
-        self.properties = kwargs.get('properties', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.status = kwargs.get('status', None)
-
-
 class PrivateCloud(Model):
     """PrivateCloud.
 

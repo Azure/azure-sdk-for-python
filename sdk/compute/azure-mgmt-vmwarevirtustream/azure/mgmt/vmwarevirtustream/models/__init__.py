@@ -23,7 +23,6 @@ try:
     from ._models_py3 import IdentitySource
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationStatus
     from ._models_py3 import PrivateCloud
     from ._models_py3 import PrivateCloudRequest
     from ._models_py3 import PrivateCloudResponse
@@ -42,7 +41,6 @@ except (SyntaxError, ImportError):
     from ._models import IdentitySource
     from ._models import Operation
     from ._models import OperationDisplay
-    from ._models import OperationStatus
     from ._models import PrivateCloud
     from ._models import PrivateCloudRequest
     from ._models import PrivateCloudResponse
@@ -63,7 +61,6 @@ __all__ = [
     'IdentitySource',
     'Operation',
     'OperationDisplay',
-    'OperationStatus',
     'PrivateCloud',
     'PrivateCloudRequest',
     'PrivateCloudResponse',

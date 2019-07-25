@@ -419,42 +419,6 @@ class OperationDisplay(Model):
         self.description = None
 
 
-class OperationStatus(Model):
-    """OperationStatus.
-
-    :param end_time:
-    :type end_time: str
-    :param id:
-    :type id: str
-    :param percent_complete:
-    :type percent_complete: float
-    :param properties:
-    :type properties: ~azure.mgmt.vmwarevirtustream.models.PrivateCloud
-    :param start_time:
-    :type start_time: str
-    :param status: Possible values include: 'Succeeded', 'Failed', 'Cancelled'
-    :type status: str or ~azure.mgmt.vmwarevirtustream.models.enum
-    """
-
-    _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloud'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(self, *, end_time: str=None, id: str=None, percent_complete: float=None, properties=None, start_time: str=None, status=None, **kwargs) -> None:
-        super(OperationStatus, self).__init__(**kwargs)
-        self.end_time = end_time
-        self.id = id
-        self.percent_complete = percent_complete
-        self.properties = properties
-        self.start_time = start_time
-        self.status = status
-
-
 class PrivateCloud(Model):
     """PrivateCloud.
 
