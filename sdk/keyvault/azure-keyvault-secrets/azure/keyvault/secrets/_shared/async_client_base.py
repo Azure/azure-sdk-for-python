@@ -6,7 +6,7 @@ from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
