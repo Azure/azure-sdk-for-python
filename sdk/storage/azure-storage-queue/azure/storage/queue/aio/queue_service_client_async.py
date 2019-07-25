@@ -13,6 +13,9 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from azure.storage.queue._shared.policies_async import ExponentialRetry
 from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
 from azure.storage.queue._shared.models import LocationMode
@@ -95,6 +98,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
         self._loop = loop
 
+    @distributed_trace_async
     async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
@@ -126,6 +130,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_service_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
@@ -148,6 +153,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_service_properties( # type: ignore
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -202,6 +208,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -253,6 +260,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         return QueuePropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
+    @distributed_trace_async
     async def create_queue( # type: ignore
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -287,6 +295,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
+    @distributed_trace_async
     async def delete_queue( # type: ignore
             self, queue,  # type: Union[QueueProperties, str]
             timeout=None,  # type: Optional[int]
