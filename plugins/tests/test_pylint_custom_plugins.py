@@ -120,6 +120,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
 
     def test_ignores_methods_with_decorators(self):
         class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        from azure.core.tracing.decorator import distributed_trace
         class SomeClient(): #@
             @distributed_trace
             def create_configuration(self): #@
@@ -140,6 +141,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
 
     def test_ignores_async_methods_with_decorators(self):
         class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        from azure.core.tracing.decorator_async import distributed_trace_async
         class SomeClient(): #@
             @distributed_trace_async
             async def create_configuration(self): #@
@@ -160,6 +162,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
 
     def test_finds_sync_decorator_on_async_method(self):
         class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        from azure.core.tracing.decorator import distributed_trace
         class SomeClient(): #@
             @distributed_trace
             async def create_configuration(self): #@
@@ -189,6 +192,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
 
     def test_finds_async_decorator_on_sync_method(self):
         class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        from azure.core.tracing.decorator_async import distributed_trace_async
         class SomeClient(): #@
             @distributed_trace_async
             def create_configuration(self): #@
@@ -219,6 +223,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     def test_ignores_other_decorators(self):
         class_node, func_node_a, func_node_b = astroid.extract_node(
             """
+        from azure.core.tracing.decorator import distributed_trace
         class SomeClient(): #@
             @classmethod
             @distributed_trace
@@ -240,6 +245,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     def test_ignores_other_decorators_async(self):
         class_node, func_node_a, func_node_b = astroid.extract_node(
             """
+        from azure.core.tracing.decorator_async import distributed_trace_async
         class SomeClient(): #@
             @classmethod
             @distributed_trace_async
@@ -597,6 +603,7 @@ class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
             func_node_h, func_node_i, func_node_j, func_node_k, func_node_l, func_node_m, func_node_n, func_node_o, \
             func_node_p = astroid.extract_node("""
         class SomeClient(): #@
+            @distributed_trace
             def build_configuration(self): #@
                 pass
             def generate_thing(self): #@
@@ -793,6 +800,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             function_node_e, function_node_f, function_node_g, function_node_h, function_node_i, function_node_j, \
             function_node_k, function_node_l, function_node_m = astroid.extract_node("""
         class SomeClient(): #@
+            @distributed_trace
             def do_thing(): #@
                 pass
             def do_thing_a(self): #@
@@ -845,6 +853,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             function_node_e, function_node_f, function_node_g, function_node_h, function_node_i, function_node_j, \
             function_node_k, function_node_l, function_node_m = astroid.extract_node("""
         class SomeClient(): #@
+            @distributed_trace_async
             async def do_thing(): #@
                 pass
             async def do_thing_a(self): #@
@@ -896,6 +905,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
         class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
             function_node_e, function_node_f = astroid.extract_node("""
         class SomeClient(): #@
+            @distributed_trace
             def do_thing(self, one, two, three, four, five, six): #@
                 pass
             def do_thing_a(self, one, two, three, four, five, six, seven=7): #@
@@ -948,6 +958,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
         class_node, function_node, function_node_a, function_node_b, function_node_c, function_node_d, \
             function_node_e, function_node_f = astroid.extract_node("""
         class SomeClient(): #@
+            @distributed_trace_async
             async def do_thing(self, one, two, three, four, five, six): #@
                 pass
             async def do_thing_a(self, one, two, three, four, five, six, seven=7): #@
@@ -1692,6 +1703,7 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         class SomeClient(): #@
             def get_thing(self, **kwargs): #@
                 pass
+            @distributed_trace
             def remove_thing(self, **kwargs): #@
                 pass
         """)
@@ -1741,6 +1753,7 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         class SomeClient(): #@
             async def get_thing(self): #@
                 pass
+            @distributed_trace_async
             async def remove_thing(self): #@
                 pass
         """)
@@ -1759,6 +1772,187 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
 
     def test_guidelines_link_active(self):
         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestAsyncClientCorrectNaming(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.AsyncClientCorrectNaming
+
+    def test_ignores_private_client(self):
+        class_node = astroid.extract_node("""
+        class _AsyncBaseSomeClient(): #@
+            def create_configuration(self):
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_ignores_correct_client(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def create_configuration(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_ignores_async_base_named_client(self):
+        class_node_a = astroid.extract_node("""
+        class AsyncSomeClientBase(): #@
+            def get_thing(self, **kwargs):
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node_a)
+
+    def test_finds_incorrectly_named_client(self):
+        class_node_a = astroid.extract_node("""
+        class AsyncSomeClient(): #@
+            def get_thing(self, **kwargs):
+                pass
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="async-client-bad-name", node=class_node_a
+            ),
+        ):
+            self.checker.visit_classdef(class_node_a)
+
+    def test_ignores_non_client(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def create_configuration(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-aio-suffix"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestFileHasCopyrightHeader(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.FileHasCopyrightHeader
+
+    # Unable to use the astroid for this testcase.
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#github-source-headers"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.SpecifyParameterNamesInCall
+
+    def test_ignores_call_with_only_two_unnamed_params(self):
+        class_node, call_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self):
+                self._client.thing(one, two) #@
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node)
+
+    def test_ignores_call_with_two_unnamed_params_and_one_named(self):
+        class_node, call_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self):
+                self._client.thing(one, two, three=3) #@
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node)
+
+    def test_ignores_call_from_non_client(self):
+        class_node, call_node = astroid.extract_node("""
+        class SomethingElse(): #@
+            def do_thing(self):
+                self._other.thing(one, two, three) #@
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node)
+
+    def test_ignores_call_with_named_params(self):
+        class_node, call_node_a, call_node_b, call_node_c = astroid.extract_node("""
+        class SomethingElse(): #@
+            def do_thing_a(self):
+                self._other.thing(one=one, two=two, three=three) #@
+            def do_thing_b(self):
+                self._other.thing(zero, number, one=one, two=two, three=three) #@
+            def do_thing_c(self):
+                self._other.thing(zero, one=one, two=two, three=three) #@      
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node_a)
+            self.checker.visit_call(call_node_b)
+            self.checker.visit_call(call_node_c)
+
+    def test_ignores_non_client_function_call(self):
+        call_node = astroid.extract_node("""
+        def do_thing():
+            self._client.thing(one, two, three) #@
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_call(call_node)
+
+    def test_finds_call_with_more_than_two_unnamed_params(self):
+        class_node, call_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self):
+                self._client.thing(one, two, three) #@
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="specify-parameter-names-in-call", node=call_node
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node)
+
+    def test_finds_call_with_more_than_two_unnamed_params_and_some_named(self):
+        class_node, call_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def do_thing(self):
+                self._client.thing(one, two, three, four=4, five=5) #@
+        """)
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="specify-parameter-names-in-call", node=call_node
+            ),
+        ):
+            self.checker.visit_classdef(class_node)
+            self.checker.visit_call(call_node)
+
+    def test_guidelines_link_active(self):
+        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-parameter-name"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
