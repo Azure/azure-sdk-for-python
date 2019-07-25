@@ -22,13 +22,12 @@ except ImportError:
 
 
 class ContextHelper(object):
-    def __init__(self, environ={}, tracer_to_use=None, should_only_propagate=None):
+    def __init__(self, environ={}, tracer_to_use=None):
         self.orig_tracer = OpenCensusSpan.get_current_tracer()
         self.orig_current_span = OpenCensusSpan.get_current_span()
         self.orig_sdk_context_span = tracing_context.current_span.get()
         self.os_env = mock.patch.dict(os.environ, environ)
         self.tracer_to_use = tracer_to_use
-        self.should_only_propagate = should_only_propagate
 
     def __enter__(self):
         self.orig_tracer = OpenCensusSpan.get_current_tracer()
@@ -38,8 +37,6 @@ class ContextHelper(object):
         tracing_context.current_span.clear()
         if self.tracer_to_use is not None:
             settings.tracing_implementation.set_value(self.tracer_to_use)
-        if self.should_only_propagate is not None:
-            settings.tracing_should_only_propagate.set_value(self.should_only_propagate)
         self.os_env.start()
         execution_context.clear()
         tracing_context.current_span.clear()
@@ -50,7 +47,6 @@ class ContextHelper(object):
         OpenCensusSpan.set_current_span(self.orig_current_span)
         tracing_context.current_span.set(self.orig_sdk_context_span)
         settings.tracing_implementation.unset_value()
-        settings.tracing_should_only_propagate.unset_value()
         self.os_env.stop()
 
 

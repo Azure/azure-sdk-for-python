@@ -410,9 +410,5 @@ class Settings(object):
         "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
     )
 
-    tracing_should_only_propagate = PrioritizedSetting(
-        "tracing_should_only_propagate", env_var="AZURE_TRACING_ONLY_PROPAGATE", convert=convert_bool, default=False
-    )
-
 
 settings = Settings()
