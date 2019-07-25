@@ -41,6 +41,7 @@ from .models import ( # pylint: disable=unused-import
     BlobPrefix)
 from .lease import LeaseClient
 from .blob_client import BlobClient
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
@@ -276,6 +277,7 @@ class ContainerClient(StorageAccountHostsMixin):
             content_type=content_type,
         )
 
+    @distributed_trace
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
         """
@@ -312,6 +314,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_container(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -375,6 +378,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
@@ -443,6 +447,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
         return lease
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -458,6 +463,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -491,6 +497,7 @@ class ContainerClient(StorageAccountHostsMixin):
         response.name = self.container_name
         return response # type: ignore
 
+    @distributed_trace
     def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -544,6 +551,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
@@ -579,6 +587,7 @@ class ContainerClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace
     def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -655,6 +664,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Any], Optional[str], Optional[int], **Any) -> Iterable[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
@@ -695,6 +705,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
         return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
@@ -747,6 +758,7 @@ class ContainerClient(StorageAccountHostsMixin):
             marker=marker,
             delimiter=delimiter)
 
+    @distributed_trace
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -877,6 +889,7 @@ class ContainerClient(StorageAccountHostsMixin):
         )
         return blob
 
+    @distributed_trace
     def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
