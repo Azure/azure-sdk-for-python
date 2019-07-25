@@ -48,7 +48,7 @@ def distributed_trace_async(func=None, name_of_span=None):
             original_span_instance = wrapper_class.get_current_span()
         parent_span = common.get_parent_span(passed_in_parent)
         ans = None
-        if common.should_use_trace(parent_span):
+        if parent_span is not None:
             common.set_span_contexts(parent_span)
             name = name_of_span or self.__class__.__name__ + "." + func.__name__
             child = parent_span.span(name=name)
