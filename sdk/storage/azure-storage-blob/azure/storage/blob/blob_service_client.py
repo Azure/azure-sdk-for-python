@@ -150,7 +150,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
             permission,  # type: Union[AccountPermissions, str]

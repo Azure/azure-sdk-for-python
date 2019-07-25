@@ -222,7 +222,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return cls(
             account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]

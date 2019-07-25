@@ -181,7 +181,6 @@ class ContainerClient(StorageAccountHostsMixin):
         return cls(
             account_url, container=container, credential=credential, **kwargs)
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
