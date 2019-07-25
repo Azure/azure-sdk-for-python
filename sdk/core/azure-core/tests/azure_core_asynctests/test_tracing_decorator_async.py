@@ -149,23 +149,3 @@ async def test_span_with_opencensus_complicated(value):
         assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
         children = parent.children[1].children
         assert len(children) == 2
-
-
-@pytest.mark.asyncio
-async def test_should_only_propagate():
-    with ContextHelper(should_only_propagate=True):
-        exporter = MockExporter()
-        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
-        with trace.start_span(name="OverAll") as parent:
-            client = MockClient()
-            await client.make_request(2)
-            with trace.span("child") as child:
-                await client.make_request(2, parent_span=parent)
-                assert OpenCensusSpan.get_current_span() == child
-                await client.make_request(2)
-        trace.finish()
-        exporter.build_tree()
-        parent = exporter.root
-        assert len(parent.children) == 1
-        assert parent.children[0].span_data.name == "child"
-        assert not parent.children[0].children
