@@ -282,7 +282,7 @@ class QueuePropertiesPaged(PageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A queue name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -301,19 +301,19 @@ class QueuePropertiesPaged(PageIterator):
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
+            continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
-        self.continuation_token = continuation_token or ""
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
         try:
             return self._command(
-                marker=self.continuation_token or None,
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
@@ -324,7 +324,7 @@ class QueuePropertiesPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.continuation_token = self._response.next_marker or None
 

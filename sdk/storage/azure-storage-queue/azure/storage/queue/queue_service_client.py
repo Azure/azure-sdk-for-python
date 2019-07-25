@@ -308,7 +308,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[QueueProperties]
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by

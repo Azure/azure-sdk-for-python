@@ -248,7 +248,7 @@ class SharePropertiesPaged(PageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -272,7 +272,7 @@ class SharePropertiesPaged(PageIterator):
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
         self.location_mode = None
         self.current_page = []
@@ -291,7 +291,7 @@ class SharePropertiesPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
         return self._response.next_marker or None, self.current_page
@@ -352,7 +352,7 @@ class Handle(DictMixin):
 class HandlesPaged(PageIterator):
     """An iterable of Handles.
 
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -372,7 +372,7 @@ class HandlesPaged(PageIterator):
             continuation_token=continuation_token or ""
         )
         self._command = command
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
         self.location_mode = None
         self.current_page = []
@@ -436,7 +436,7 @@ class DirectoryPropertiesPaged(PageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -460,7 +460,7 @@ class DirectoryPropertiesPaged(PageIterator):
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
         self.location_mode = None
         self.current_page = []
@@ -480,7 +480,7 @@ class DirectoryPropertiesPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
         self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])

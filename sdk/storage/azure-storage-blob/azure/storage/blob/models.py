@@ -292,7 +292,7 @@ class ContainerPropertiesPaged(PageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A container name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -316,7 +316,7 @@ class ContainerPropertiesPaged(PageIterator):
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
         self.location_mode = None
         self.current_page = []
@@ -335,7 +335,7 @@ class ContainerPropertiesPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [self._build_item(item) for item in self._response.container_items]
 
@@ -343,8 +343,6 @@ class ContainerPropertiesPaged(PageIterator):
 
     @staticmethod
     def _build_item(item):
-        if isinstance(item, ContainerProperties):
-            return item
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
 
 
@@ -468,7 +466,7 @@ class BlobPropertiesPaged(PageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -508,7 +506,7 @@ class BlobPropertiesPaged(PageIterator):
         self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
         self.container = container
         self.delimiter = delimiter
@@ -530,7 +528,7 @@ class BlobPropertiesPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
         self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
@@ -557,7 +555,7 @@ class BlobPrefix(ItemPaged, DictMixin):
     :ivar str name: The prefix, or "directory name" of the blob.
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available

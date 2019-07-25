@@ -661,7 +661,7 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> Iterable[BlobProperties]
+        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -706,7 +706,7 @@ class ContainerClient(StorageAccountHostsMixin):
             timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
-        # type: (...) -> Iterable[BlobProperties]
+        # type: (...) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,

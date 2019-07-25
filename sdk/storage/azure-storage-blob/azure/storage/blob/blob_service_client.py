@@ -386,7 +386,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> Iterable[ContainerProperties]
+        # type: (...) -> ItemPaged[ContainerProperties]
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by

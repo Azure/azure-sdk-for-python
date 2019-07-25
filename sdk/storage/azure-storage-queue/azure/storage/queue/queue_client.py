@@ -514,7 +514,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
+        # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> ItemPaged[Message]
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -542,7 +542,7 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.storage.queue.models.MessagesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.models.Message]
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_message.py

@@ -6,7 +6,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
 try:

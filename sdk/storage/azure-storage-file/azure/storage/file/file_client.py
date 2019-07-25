@@ -782,12 +782,14 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_handles(self, marker=None, timeout=None, **kwargs):
+    def list_handles(self, timeout=None, **kwargs):
+        # type: (int, Any) -> ItemPaged[Handle]
         """Lists handles for file.
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.Handle]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
