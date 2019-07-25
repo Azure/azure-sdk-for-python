@@ -6,20 +6,20 @@
 ###########
 
 # Catch all
-# /sdk/ @mayurid
+/sdk/ @mayurid
 
 # Core
-/sdk/core/ @lmazuel
+/sdk/core/ @lmazuel @xiangyan99 @johanste
 /sdk/core/azure-core/ @xiangyan99 @bryevdv
 
 # Service team
-# /sdk/identity/
-# /sdk/eventhub/
-# /sdk/storage/
+/sdk/identity/ @chlowell @schaabs
+/sdk/eventhub/ @annatisch @yunhaoling @YijunXieMS
+/sdk/storage/ @zezha-msft @annatisch @rakshith91
 /sdk/applicationinsights/ @alexeldeib
 /sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
-/sdk/keyvault/ @schaabs @chlowell
+/sdk/keyvault/ @schaabs @chlowell @iscai-msft
 /sdk/loganalytics/ @alexeldeib
 /sdk/consumption/ @sandeepnl
 /sdk/containerinstance/ @samkreter @xizhamsft
@@ -35,7 +35,10 @@
 /sdk/recoveryservices/ @DheerendraRathor
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
-/sdk/servicebus/azure-servicebus/ @annatisch
+/sdk/servicebus/azure-servicebus/ @annatisch @yunhaoling @YijunXieMS
+
+# Management Plane
+/**/*mgmt*/ @zikalino
 
 ###########
 # Eng Sys
