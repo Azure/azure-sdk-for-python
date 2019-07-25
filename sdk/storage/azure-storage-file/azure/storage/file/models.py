@@ -247,7 +247,7 @@ class SharePropertiesPaged(PageIterator):
     :ivar str prefix: A file name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -351,7 +351,7 @@ class HandlesPaged(PageIterator):
 
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -435,7 +435,7 @@ class DirectoryPropertiesPaged(PageIterator):
     :ivar str prefix: A file name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
