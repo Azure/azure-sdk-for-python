@@ -423,10 +423,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('KeyListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -497,10 +494,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('KeyListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1180,10 +1174,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('DeletedKeyListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1687,10 +1678,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('SecretListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1761,10 +1749,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('SecretListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1832,10 +1817,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('DeletedSecretListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2188,10 +2170,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('CertificateListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2485,10 +2464,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('CertificateIssuerListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2975,10 +2951,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('CertificateListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -3560,10 +3533,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('DeletedCertificateListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -3798,10 +3768,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('StorageListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -4191,10 +4158,7 @@ class KeyVaultClientOperationsMixin(object):
 
         def extract_data(response):
             deserialized = self._deserialize('SasDefinitionListResult', response)
-            list_of_elem = deserialized.value
-            if cls:
-               list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, iter(deserialized.value)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
