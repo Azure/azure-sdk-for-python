@@ -36,6 +36,14 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport.base import _HttpResponseBase
 
 
+def _get_status_code(resonse):
+    # type: (_HttpResponseBase) -> int
+    try:
+        return response.status_code  # Requests
+    except AttributeError:
+        return response.status  # Aiohttp
+
+
 def raise_with_traceback(exception, *args, **kwargs):
     # type: (Callable, Any, Any) -> None
     """Raise exception with a specified traceback.
@@ -113,10 +121,8 @@ class HttpResponseError(AzureError):
         self.response = response
         if response:
             self.reason = response.reason
-            try:
-                self.status_code = response.status_code  # Requests
-            except AttributeError:
-                self.status_code = response.status  # Aiohttp
+            self.status_code = _get_status_code(response)
+
         message = message or "Operation returned an invalid status '{}'".format(self.reason)
         try:
             try:
