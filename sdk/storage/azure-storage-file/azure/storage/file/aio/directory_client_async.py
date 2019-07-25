@@ -12,6 +12,9 @@ from typing import ( # pylint: disable=unused-import
 from azure.core.polling import async_poller
 from azure.core.async_paging import AsyncItemPaged
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import StorageErrorException
@@ -133,6 +136,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
+    @distributed_trace_async
     async def create_directory( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None, # type: Optional[int]
@@ -168,6 +172,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def delete_directory(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> None
         """Marks the directory for deletion. The directory is
@@ -190,8 +195,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[str], Optional[int], **Any) -> AsyncItemPaged
+        # type: (Optional[str], Optional[int], **Any) -> AsyncItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
@@ -220,6 +226,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=DirectoryPropertiesPaged)
 
+    @distributed_trace
     def list_handles(self, recursive=False, timeout=None, **kwargs) -> AsyncItemPaged:
         """Lists opened handles on a directory or a file under the directory.
 
@@ -242,6 +249,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             command, results_per_page=results_per_page,
             page_iterator_class=HandlesPaged)
 
+    @distributed_trace_async
     async def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             recursive=False,  # type: bool
@@ -290,6 +298,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             None,
             polling_method)
 
+    @distributed_trace_async
     async def get_directory_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> DirectoryProperties
         """Returns all user-defined metadata and system properties for the
@@ -310,6 +319,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
         return response # type: ignore
 
+    @distributed_trace_async
     async def set_directory_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
@@ -337,6 +347,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_subdirectory(
             self, directory_name,  # type: str
             metadata=None, #type: Optional[Dict[str, Any]]
@@ -369,6 +380,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         await subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
         return subdir # type: ignore
 
+    @distributed_trace_async
     async def delete_subdirectory(
             self, directory_name,  # type: str
             timeout=None, # type: Optional[int]
@@ -394,6 +406,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.delete_directory(timeout=timeout, **kwargs)
 
+    @distributed_trace_async
     async def upload_file(
             self, file_name,  # type: str
             data, # type: Any
@@ -458,6 +471,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             **kwargs)
         return file_client # type: ignore
 
+    @distributed_trace_async
     async def delete_file(
             self, file_name,  # type: str
             timeout=None,  # type: Optional[int]

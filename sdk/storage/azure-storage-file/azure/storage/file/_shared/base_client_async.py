@@ -15,6 +15,8 @@ try:
     from azure.core.pipeline.transport import AioHttpTransport as AsyncTransport
 except ImportError:
     from azure.core.pipeline.transport import AsyncioRequestsTransport as AsyncTransport
+
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
@@ -81,5 +83,6 @@ class AsyncStorageAccountHostsMixin(object):
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
+            DistributedTracingPolicy(),
         ]
         return config, AsyncPipeline(config.transport, policies=policies)

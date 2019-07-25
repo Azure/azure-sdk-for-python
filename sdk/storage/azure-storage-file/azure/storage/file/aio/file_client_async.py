@@ -6,14 +6,14 @@
 
 import functools
 from io import BytesIO
-from typing import ( # pylint: disable=unused-import
-    Optional, Union, IO, List, Dict, Any, Iterable,
-    TYPE_CHECKING
-)
+from typing import Optional, Union, IO, List, Dict, Any, Iterable, TYPE_CHECKING  # pylint: disable=unused-import
 
 import six
 from azure.core.polling import async_poller
 from azure.core.async_paging import AsyncItemPaged
+
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
@@ -36,25 +36,22 @@ if TYPE_CHECKING:
 
 
 async def _upload_file_helper(
-        client,
-        stream,
-        size,
-        metadata,
-        content_settings,
-        validate_content,
-        timeout,
-        max_connections,
-        file_settings,
-        **kwargs):
+    client,
+    stream,
+    size,
+    metadata,
+    content_settings,
+    validate_content,
+    timeout,
+    max_connections,
+    file_settings,
+    **kwargs
+):
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
         response = await client.create_file(
-            size,
-            content_settings=content_settings,
-            metadata=metadata,
-            timeout=timeout,
-            **kwargs
+            size, content_settings=content_settings, metadata=metadata, timeout=timeout, **kwargs
         )
         if size == 0:
             return response
@@ -68,7 +65,8 @@ async def _upload_file_helper(
             max_connections=max_connections,
             validate_content=validate_content,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
     except StorageErrorException as error:
         process_storage_error(error)
 
@@ -109,35 +107,34 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
     """
-    def __init__( # type: ignore
-            self, file_url,  # type: str
-            share=None,  # type: Optional[Union[str, ShareProperties]]
-            file_path=None,  # type: Optional[str]
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
-            **kwargs  # type: Any
-        ):
+
+    def __init__(  # type: ignore
+        self,
+        file_url,  # type: str
+        share=None,  # type: Optional[Union[str, ShareProperties]]
+        file_path=None,  # type: Optional[str]
+        snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+        credential=None,  # type: Optional[Any]
+        loop=None,  # type: Any
+        **kwargs  # type: Any
+    ):
         # type: (...) -> None
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         super(FileClient, self).__init__(
-            file_url,
-            share=share,
-            file_path=file_path,
-            snapshot=snapshot,
-            credential=credential,
-            loop=loop,
-            **kwargs)
+            file_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, loop=loop, **kwargs
+        )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
-    async def create_file( # type: ignore
-            self, size, # type: int
-            content_settings=None, # type: Optional[ContentSettings]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
+    @distributed_trace_async
+    async def create_file(  # type: ignore
+        self,
+        size,  # type: int
+        content_settings=None,  # type: Optional[ContentSettings]
+        metadata=None,  # type: Optional[Dict[str, str]]
+        timeout=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Dict[str, Any]
         """Creates a new file.
 
@@ -166,7 +163,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
-        headers = kwargs.pop('headers', {})
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         file_http_headers = None
         if content_settings:
@@ -176,31 +173,34 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 file_content_encoding=content_settings.content_encoding,
                 file_content_language=content_settings.content_language,
-                file_content_disposition=content_settings.content_disposition
+                file_content_disposition=content_settings.content_disposition,
             )
         try:
-            return await self._client.file.create( # type: ignore
+            return await self._client.file.create(  # type: ignore
                 file_content_length=size,
                 timeout=timeout,
                 metadata=metadata,
                 file_http_headers=file_http_headers,
                 headers=headers,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def upload_file(
-            self, data, # type: Any
-            length=None, # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None, # type: Optional[ContentSettings]
-            validate_content=False,  # type: bool
-            max_connections=1,  # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',  # type: str
-            **kwargs # type: Any
-        ):
+        self,
+        data,  # type: Any
+        length=None,  # type: Optional[int]
+        metadata=None,  # type: Optional[Dict[str, str]]
+        content_settings=None,  # type: Optional[ContentSettings]
+        validate_content=False,  # type: bool
+        max_connections=1,  # type: Optional[int]
+        timeout=None,  # type: Optional[int]
+        encoding="UTF-8",  # type: str
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Dict[str, Any]
         """Uploads a new file.
 
@@ -249,13 +249,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         if isinstance(data, bytes):
             stream = BytesIO(data)
-        elif hasattr(data, 'read'):
+        elif hasattr(data, "read"):
             stream = data
-        elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding) # type: ignore
+        elif hasattr(data, "__iter__"):
+            stream = IterStreamer(data, encoding=encoding)  # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return await _upload_file_helper( # type: ignore
+        return await _upload_file_helper(  # type: ignore
             self,
             stream,
             length,
@@ -265,14 +265,17 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             timeout,
             max_connections,
             self._config,
-            **kwargs)
+            **kwargs
+        )
 
+    @distributed_trace_async
     async def start_copy_from_url(
-            self, source_url, # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
+        self,
+        source_url,  # type: str
+        metadata=None,  # type: Optional[Dict[str, str]]
+        timeout=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Any
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
@@ -297,20 +300,17 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Copy a file from a URL
         """
-        headers = kwargs.pop('headers', {})
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
         try:
             return await self._client.file.start_copy(
-                source_url,
-                timeout=timeout,
-                metadata=metadata,
-                headers=headers,
-                cls=return_response_headers,
-                **kwargs)
+                source_url, timeout=timeout, metadata=metadata, headers=headers, cls=return_response_headers, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def abort_copy(self, copy_id, timeout=None, **kwargs):
         # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
         """Abort an ongoing copy operation.
@@ -328,7 +328,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             copy_id = copy_id.copy.id
         except AttributeError:
             try:
-                copy_id = copy_id['copy_id']
+                copy_id = copy_id["copy_id"]
             except TypeError:
                 pass
         try:
@@ -336,13 +336,15 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def download_file(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            validate_content=False,  # type: bool
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
+        self,
+        offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        validate_content=False,  # type: bool
+        timeout=None,  # type: Optional[int]
+        **kwargs
+    ):
         # type: (...) -> Iterable[bytes]
         """Downloads a file to a stream with automatic chunking.
 
@@ -387,15 +389,14 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             encryption_options=None,
             cls=deserialize_file_stream,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         await downloader.setup(
-            extra_properties={
-                'share': self.share_name,
-                'name': self.file_name,
-                'path': '/'.join(self.file_path),
-            })
+            extra_properties={"share": self.share_name, "name": self.file_name, "path": "/".join(self.file_path)}
+        )
         return downloader
 
+    @distributed_trace_async
     async def delete_file(self, timeout=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> None
         """Marks the specified file for deletion. The file is
@@ -418,6 +419,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_file_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -430,20 +432,19 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """
         try:
             file_props = await self._client.file.get_properties(
-                sharesnapshot=self.snapshot,
-                timeout=timeout,
-                cls=deserialize_file_properties,
-                **kwargs)
+                sharesnapshot=self.snapshot, timeout=timeout, cls=deserialize_file_properties, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
         file_props.name = self.file_name
         file_props.share = self.share_name
         file_props.snapshot = self.snapshot
-        file_props.path = '/'.join(self.file_path)
-        return file_props # type: ignore
+        file_props.path = "/".join(self.file_path)
+        return file_props  # type: ignore
 
-    async def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
-        #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
+    @distributed_trace_async
+    async def set_http_headers(self, content_settings, timeout=None, **kwargs):  # type: ignore
+        # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.models.ContentSettings content_settings:
@@ -453,27 +454,29 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        file_content_length = kwargs.pop('size', None)
+        file_content_length = kwargs.pop("size", None)
         file_http_headers = FileHTTPHeaders(
             file_cache_control=content_settings.cache_control,
             file_content_type=content_settings.content_type,
             file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
             file_content_encoding=content_settings.content_encoding,
             file_content_language=content_settings.content_language,
-            file_content_disposition=content_settings.content_disposition
+            file_content_disposition=content_settings.content_disposition,
         )
         try:
-            return await self._client.file.set_http_headers( # type: ignore
+            return await self._client.file.set_http_headers(  # type: ignore
                 timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
-        #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
+    @distributed_trace_async
+    async def set_file_metadata(self, metadata=None, timeout=None, **kwargs):  # type: ignore
+        # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
 
@@ -489,27 +492,26 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers = kwargs.pop("headers", {})
+        headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
-            return await self._client.file.set_metadata( # type: ignore
-                timeout=timeout,
-                cls=return_response_headers,
-                headers=headers,
-                metadata=metadata,
-                **kwargs)
+            return await self._client.file.set_metadata(  # type: ignore
+                timeout=timeout, cls=return_response_headers, headers=headers, metadata=metadata, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def upload_range( # type: ignore
-            self, data,  # type: bytes
-            start_range, # type: int
-            end_range, # type: int
-            validate_content=False, # type: Optional[bool]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def upload_range(  # type: ignore
+        self,
+        data,  # type: bytes
+        start_range,  # type: int
+        end_range,  # type: int
+        validate_content=False,  # type: Optional[bool]
+        timeout=None,  # type: Optional[int]
+        encoding="UTF-8",
+        **kwargs
+    ):
         # type: (...) -> Dict[str, Any]
         """Upload a range of bytes to a file.
 
@@ -544,26 +546,29 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
 
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        content_range = "bytes={0}-{1}".format(start_range, end_range)
         content_length = end_range - start_range + 1
         try:
-            return await self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
                 content_length=content_length,
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def get_ranges( # type: ignore
-            self, start_range=None, # type: Optional[int]
-            end_range=None, # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def get_ranges(  # type: ignore
+        self,
+        start_range=None,  # type: Optional[int]
+        end_range=None,  # type: Optional[int]
+        timeout=None,  # type: Optional[int]
+        **kwargs
+    ):
         # type: (...) -> List[dict[str, int]]
         """Returns the list of valid ranges of a file.
 
@@ -586,25 +591,25 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         content_range = None
         if start_range is not None:
             if end_range is not None:
-                content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+                content_range = "bytes={0}-{1}".format(start_range, end_range)
             else:
-                content_range = 'bytes={0}-'.format(start_range)
+                content_range = "bytes={0}-".format(start_range)
         try:
             ranges = await self._client.file.get_range_list(
-                sharesnapshot=self.snapshot,
-                timeout=timeout,
-                range=content_range,
-                **kwargs)
+                sharesnapshot=self.snapshot, timeout=timeout, range=content_range, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
-        return [{'start': b.start, 'end': b.end} for b in ranges]
+        return [{"start": b.start, "end": b.end} for b in ranges]
 
-    async def clear_range( # type: ignore
-            self, start_range,  # type: int
-            end_range,  # type: int
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def clear_range(  # type: ignore
+        self,
+        start_range,  # type: int
+        end_range,  # type: int
+        timeout=None,  # type: Optional[int]
+        **kwargs
+    ):
         # type: (...) -> Dict[str, Any]
         """Clears the specified range and releases the space used in storage for
         that range.
@@ -631,19 +636,21 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("start_range must be an integer that aligns with 512 file size")
         if end_range is None or end_range % 512 != 511:
             raise ValueError("end_range must be an integer that aligns with 512 file size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        content_range = "bytes={0}-{1}".format(start_range, end_range)
         try:
-            return await self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
                 file_range_write="clear",
                 range=content_range,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def resize_file(self, size, timeout=None, **kwargs): # type: ignore
+    @distributed_trace_async
+    async def resize_file(self, size, timeout=None, **kwargs):  # type: ignore
         # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
@@ -655,14 +662,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: Dict[str, Any]
         """
         try:
-            return await self._client.file.set_http_headers( # type: ignore
-                timeout=timeout,
-                file_content_length=size,
-                cls=return_response_headers,
-                **kwargs)
+            return await self._client.file.set_http_headers(  # type: ignore
+                timeout=timeout, file_content_length=size, cls=return_response_headers, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
         """Lists handles for file.
 
@@ -671,7 +677,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: An auto-paging iterable of HandleItems
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.Handle]
         """
-        results_per_page = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.file.list_handles,
             sharesnapshot=self.snapshot,
@@ -681,11 +687,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             command, results_per_page=results_per_page,
             page_iterator_class=HandlesPaged)
 
+    @distributed_trace_async
     async def close_handles(
-            self, handle=None, # type: Union[str, HandleItem]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
+        self,
+        handle=None,  # type: Union[str, HandleItem]
+        timeout=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Any
         """Close open file handles.
 
@@ -702,24 +710,22 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: ~azure.core.polling.LROPoller
         """
         try:
-            handle_id = handle.id # type: ignore
+            handle_id = handle.id  # type: ignore
         except AttributeError:
-            handle_id = handle or '*'
+            handle_id = handle or "*"
         command = functools.partial(
             self._client.file.force_close_handles,
             handle_id,
             timeout=timeout,
             sharesnapshot=self.snapshot,
             cls=return_response_headers,
-            **kwargs)
+            **kwargs
+        )
         try:
             start_close = await command()
         except StorageErrorException as error:
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(
-            command,
-            start_close,
-            None,
-            polling_method)
+        return async_poller(command, start_close, None, polling_method)
+

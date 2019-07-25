@@ -24,6 +24,7 @@ from ._generated.models import StorageServiceProperties, StorageErrorException
 
 from .models import QueuePropertiesPaged
 from .queue_client import QueueClient
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -191,6 +192,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
@@ -222,6 +224,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
@@ -244,6 +247,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties( # type: ignore
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -298,6 +302,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -346,6 +351,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             page_iterator_class=QueuePropertiesPaged
         )
 
+    @distributed_trace
     def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -380,6 +386,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
+    @distributed_trace
     def delete_queue(
             self, queue,  # type: Union[QueueProperties, str]
             timeout=None,  # type: Optional[int]

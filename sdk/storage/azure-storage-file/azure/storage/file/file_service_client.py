@@ -15,8 +15,8 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
-from .share_client import ShareClient
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import Services
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -197,6 +197,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.FILE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
@@ -219,6 +220,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties(
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
@@ -266,6 +268,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_shares(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -313,6 +316,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=SharePropertiesPaged)
 
+    @distributed_trace
     def create_share(
             self, share_name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -348,6 +352,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         share.create_share(metadata, quota, timeout, **kwargs)
         return share
 
+    @distributed_trace
     def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
             delete_snapshots=False, # type: Optional[bool]
