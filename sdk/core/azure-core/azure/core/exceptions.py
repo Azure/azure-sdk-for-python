@@ -24,12 +24,16 @@
 #
 # --------------------------------------------------------------------------
 
+import json
 import logging
 import sys
 
-from typing import Callable, Any
+from typing import Callable, Any, Dict, Optional, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport.base import _HttpResponseBase
 
 
 def raise_with_traceback(exception, *args, **kwargs):
@@ -159,3 +163,118 @@ class TooManyRedirectsError(HttpResponseError):
         self.history = history
         message = "Reached maximum redirect attempts."
         super(TooManyRedirectsError, self).__init__(message, *args, **kwargs)
+
+class ODataV4Format(object):
+    """Class to describe OData V4 error format.
+
+    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
+
+    :param dict json_object: A Python dict representing a ODataV4 JSON
+    :ivar str code: Its value is a service-defined error code.
+     This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str message: Human-readable, language-dependent representation of the error.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+     This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
+     for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined.
+     Usually this object contains information that will help debug the service.
+    """
+
+    def __init__(self, json_object):
+        # Required fields, but assume they could be missing still to be robust
+        self.code = json_object.get("code")  # type: Optional[str]
+        self.message = json_object.get("message")  # type: Optional[str]
+
+        # Optional fields
+        self.target = json_object.get("target", None)  # type: Optional[str]
+
+        # details is recursive of this very format
+        self.details = [
+            self.__class__(detail_node)
+            for detail_node in json_object.get("details", [])
+        ]  # type: List[ODataV4Format]
+
+        self.innererror = json_object.get("innererror", {})  # type: Dict[str, Any]
+
+    def __str__(self):
+        error_str = "Code: {}".format(self.code)
+        error_str += "\nMessage: {}".format(self.message)
+        if self.target:
+            error_str += "\nTarget: {}".format(self.target)
+
+        if self.details:
+            error_str += "\nException Details:"
+            for error_obj in self.details:
+                # Indent for visibility
+                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
+
+        if self.innererror:
+            error_str += "\nInner error: {}".format(
+                json.dumps(self.innererror, indent=4)
+            )
+        return error_str
+
+
+class ODataV4Error(HttpResponseError):
+    """An HTTP response error where the JSON is decoded as OData V4 error format.
+
+    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
+
+    :ivar dict odata_json: The parsed JSON body as attribute for convenience.
+    :ivar str code: Its value is a service-defined error code.
+     This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str message: Human-readable, language-dependent representation of the error.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+     This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
+     for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined.
+     Usually this object contains information that will help debug the service.
+    """
+
+    _ERROR_FORMAT = ODataV4Format
+
+    def __init__(self, response, **kwargs):
+        # type: (_HttpResponseBase, Dict[str, Any]) -> None
+
+        # Ensure field are declared, whatever can happen afterwards
+        self.odata_json = None  # type: Optional[dict[str, Any]]
+        try:
+            self.odata_json = json.loads(response.text())
+            odata_message = self.odata_json.setdefault("error", {}).get("message")
+        except Exception:  #pylint: disable=broad-except
+            # If the body is not JSON valid, just stop now
+            odata_message = None
+
+        self.code = None  # type: Optional[str]
+        self.message = kwargs.get("message", odata_message)  # type: Optional[str]
+        self.target = None  # type: Optional[str]
+        self.details = []  # type: Optional[List[Any]]
+        self.innererror = {}  # type: Optional[Dict[str, Any]]
+
+        if self.message and "message" not in kwargs:
+            kwargs["message"] = self.message
+
+        super(ODataV4Error, self).__init__(response=response, **kwargs)
+
+        self._error_format = None
+        if self.odata_json:
+            try:
+                error_node = self.odata_json["error"]
+                self._error_format = self._ERROR_FORMAT(error_node)
+                self.__dict__.update(
+                    {
+                        k: v
+                        for k, v in self._error_format.__dict__.items()
+                        if v is not None
+                    }
+                )
+            except Exception:  #pylint: disable=broad-except
+                _LOGGER.info("Received error message was not valid OdataV4 format.")
+                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
+
+    def __str__(self):
+        if self._error_format:
+            return str(self._error_format)
+        return super(ODataV4Error, self).__str__()

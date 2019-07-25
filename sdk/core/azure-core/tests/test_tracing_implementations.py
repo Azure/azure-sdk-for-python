@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""The tests for opencensus_span.py"""
+
 import unittest
 
 try:
@@ -11,27 +13,11 @@ except ImportError:
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module
+from opencensus.trace.span import SpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
-from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.base_exporter import Exporter
+from tracing_common import MockExporter, ContextHelper
 import os
-
-
-class ContextHelper(object):
-    def __init__(self, environ={}):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env = mock.patch.dict(os.environ, environ)
-
-    def __enter__(self):
-        self.orig_tracer = OpenCensusSpan.get_current_tracer()
-        self.orig_current_span = OpenCensusSpan.get_current_span()
-        self.os_env.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        OpenCensusSpan.set_current_tracer(self.orig_tracer)
-        OpenCensusSpan.set_current_span(self.orig_current_span)
-        self.os_env.stop()
 
 
 class TestOpencensusWrapper(unittest.TestCase):
@@ -64,8 +50,9 @@ class TestOpencensusWrapper(unittest.TestCase):
             tracer.finish()
 
     def test_span(self):
+        exporter = MockExporter()
         with ContextHelper() as ctx:
-            tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            tracer = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             assert OpenCensusSpan.get_current_tracer() is tracer
             wrapped_class = OpenCensusSpan()
             assert tracer.current_span() == wrapped_class.span_instance
@@ -74,8 +61,11 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert child.span_instance.name == "span"
             assert child.span_instance.context_tracer.trace_id == tracer.span_context.trace_id
             assert child.span_instance.parent_span is wrapped_class.span_instance
-            assert len(wrapped_class.span_instance.children) == 1
-            assert wrapped_class.span_instance.children[0] == child.span_instance
+            tracer.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 1
+        assert parent.children[0].span_data.span_id == child.span_instance.span_id
 
     def test_start_finish(self):
         with ContextHelper() as ctx:
@@ -88,6 +78,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
             parent.finish()
+            tracer.finish()
 
     def test_to_header(self):
         with ContextHelper() as ctx:
@@ -120,3 +111,26 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.add_attribute("test", "test2")
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
+
+    def test_set_http_attributes(self):
+        with ContextHelper():
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(span=parent)
+            request = mock.Mock()
+            setattr(request, "method", "GET")
+            setattr(request, "url", "some url")
+            response = mock.Mock()
+            setattr(request, "headers", {})
+            setattr(response, "status_code", 200)
+            wrapped_class.set_http_attributes(request)
+            assert wrapped_class.span_instance.span_kind == SpanKind.CLIENT
+            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("component") == "http"
+            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") is None
+            request.headers["User-Agent"] = "some user agent"
+            wrapped_class.set_http_attributes(request, response)
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("http.user_agent") == request.headers.get("User-Agent")
