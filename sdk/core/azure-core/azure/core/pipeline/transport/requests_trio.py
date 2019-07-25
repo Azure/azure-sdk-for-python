@@ -140,7 +140,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         return super(TrioRequestsTransport, self).__exit__()
 
     async def sleep(self, duration):
-        return super(TrioRequestsTransport, self).sleep(duration)
+        await trio.sleep(duration)
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.

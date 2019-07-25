@@ -128,8 +128,13 @@ async def test_async_transport_sleep():
     async with AioHttpTransport() as transport:
         await transport.sleep(1)
 
-    async with TrioRequestsTransport() as transport:
-        await transport.sleep(1)
+def test_async_trio_transport_sleep():
+
+    async def do():
+        async with TrioRequestsTransport() as transport:
+            await transport.sleep(1)
+
+    response = trio.run(do)
 
 @pytest.mark.asyncio
 async def test_conf_async_requests():
