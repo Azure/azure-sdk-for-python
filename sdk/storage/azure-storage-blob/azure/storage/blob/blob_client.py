@@ -2247,6 +2247,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("end_range must be an integer that aligns with 512 page size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
         options = {
+            'content_length': 0,
             'timeout': kwargs.pop('timeout', None),
             'range': content_range,
             'lease_access_conditions': access_conditions,
@@ -2254,7 +2255,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers}
         options.update(kwargs)
-        return kwargs
+        return options
 
     def clear_page(self, start_range, end_range, **kwargs):
         # type: (int, int, Any) -> Dict[str, Union[str, datetime]]
@@ -2311,7 +2312,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._clear_page_options(start_range, end_range, **kwargs)
         try:
-            return self._client.page_blob.clear_pages(0, **options)  # type: ignore
+            return self._client.page_blob.clear_pages(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
