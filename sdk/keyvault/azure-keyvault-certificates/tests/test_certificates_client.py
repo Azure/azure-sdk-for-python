@@ -44,7 +44,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(pending_id.vault.strip('/'), vault.strip('/'))
         self.assertEqual(pending_id.name, cert_name)
 
-    def _validate_certificate_bundle(self, cert, vault, cert_name, cert_policy):
+    def _validate_certificate_bundle(self, cert, cert_name, cert_policy):
         self.assertIsNotNone(cert)
         self.assertEqual(cert_name, cert.name)
         self.assertIsNotNone(cert.cer)
@@ -181,7 +181,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # get certificate
         cert = client.get_certificate(name=cert_id.name)
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_url,
+            cert=cert,
             cert_name=cert_name,
             cert_policy=cert_policy
         )
@@ -191,7 +191,6 @@ class CertificateClientTests(KeyVaultTestCase):
         cert_bundle = client.update_certificate(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
             cert=cert_bundle,
-            vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy
         )
@@ -203,7 +202,6 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted_cert_bundle = client.delete_certificate(name=cert_name)
         self._validate_certificate_bundle(
             cert=deleted_cert_bundle,
-            vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy
         )
@@ -327,8 +325,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # delete all certificates
         for cert_name in certs.keys():
-            delcert = client.delete_certificate(name=cert_name)
-            print(delcert)
+            client.delete_certificate(name=cert_name)
 
         if not self.is_playback():
             time.sleep(30)
@@ -349,7 +346,7 @@ class CertificateClientTests(KeyVaultTestCase):
             time.sleep(30)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [KeyVaultId.parse_secret_id(id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
@@ -527,7 +524,6 @@ class CertificateClientTests(KeyVaultTestCase):
             pending_cert = client.get_certificate_operation(cert_name)
             self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
             if pending_cert.status.lower() == 'completed':
-                cert_id = KeyVaultId.parse_certificate_operation_id(id=pending_cert.target)
                 break
             elif pending_cert.status.lower() != 'inprogress':
                 raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
@@ -599,8 +595,6 @@ class CertificateClientTests(KeyVaultTestCase):
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)
             self._validate_certificate_issuer_base(issuer=issuer, expected=exp_issuer)
-
-
 
         # update certificate issuer
         admin_details = [AdministratorDetails(

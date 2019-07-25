@@ -1,9 +1,8 @@
 import time
 import os
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
-from azure.keyvault.certificates._generated.v7_0.models import SecretProperties, IssuerParameters, \
-    X509CertificateProperties, SubjectAlternativeNames, Trigger, Action, ActionType, CertificateAttributes
 from azure.keyvault.certificates._models import KeyProperties, LifetimeAction
+from azure.keyvault.certificates._shared._generated.v7_0.models import CertificateAttributes, ActionType
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
