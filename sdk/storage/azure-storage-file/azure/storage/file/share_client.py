@@ -166,7 +166,6 @@ class ShareClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,
             expiry=None,

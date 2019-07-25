@@ -221,7 +221,6 @@ class FileClient(StorageAccountHostsMixin):
         return cls(
             account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[FilePermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
