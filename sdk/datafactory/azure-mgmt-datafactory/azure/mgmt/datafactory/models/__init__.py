@@ -402,7 +402,7 @@ try:
     from .parquet_source_py3 import ParquetSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
-    from .azure_data_explorer_command_py3 import AzureDataExplorerCommand
+    from .azure_data_explorer_command_activity_py3 import AzureDataExplorerCommandActivity
     from .log_storage_settings_py3 import LogStorageSettings
     from .delete_activity_py3 import DeleteActivity
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
@@ -900,7 +900,7 @@ except (SyntaxError, ImportError):
     from .parquet_source import ParquetSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
-    from .azure_data_explorer_command import AzureDataExplorerCommand
+    from .azure_data_explorer_command_activity import AzureDataExplorerCommandActivity
     from .log_storage_settings import LogStorageSettings
     from .delete_activity import DeleteActivity
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
@@ -1478,7 +1478,7 @@ __all__ = [
     'ParquetSource',
     'CopySource',
     'LookupActivity',
-    'AzureDataExplorerCommand',
+    'AzureDataExplorerCommandActivity',
     'LogStorageSettings',
     'DeleteActivity',
     'SqlServerStoredProcedureActivity',
