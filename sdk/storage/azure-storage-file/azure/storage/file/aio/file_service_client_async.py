@@ -10,6 +10,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import process_storage_error
 from .._shared.policies_async import ExponentialRetry
@@ -85,6 +88,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
+    @distributed_trace_async
     async def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
@@ -107,6 +111,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_service_properties(
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
@@ -154,6 +159,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_shares(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -205,6 +211,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         return SharePropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
+    @distributed_trace_async
     async def create_share(
             self, share_name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -240,6 +247,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         await share.create_share(metadata, quota, timeout, **kwargs)
         return share
 
+    @distributed_trace_async
     async def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
             delete_snapshots=False, # type: Optional[bool]
