@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
 
 from .challenge_auth_policy import ChallengeAuthPolicy
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
@@ -73,6 +74,7 @@ class KeyVaultClientBase(object):
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
+            DistributedTracingPolicy(),
         ]
 
         if transport is None:
