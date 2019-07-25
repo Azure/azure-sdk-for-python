@@ -6,7 +6,7 @@
 
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
-from ._internal import _parse_vault_id
+from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
 
 
