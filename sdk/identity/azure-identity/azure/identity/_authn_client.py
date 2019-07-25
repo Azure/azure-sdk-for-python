@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from msal import TokenCache
 
@@ -119,7 +120,7 @@ class AuthnClient(AuthnClientBase):
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
         config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
+        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
         if not transport:
             transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
