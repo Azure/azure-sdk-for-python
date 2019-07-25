@@ -75,8 +75,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._did_a_call_already = True
 
         self.continuation_token, self._current_page = self._extract_data(self._response)
-        if not self._current_page:
-            raise StopIteration("End of paging")
 
         return iter(self._current_page)
 
