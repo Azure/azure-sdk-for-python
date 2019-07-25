@@ -12,6 +12,7 @@ from math import ceil
 
 import six
 
+from azure.core.tracing.context import tracing_context
 from .models import ModifiedAccessConditions
 from . import encode_base64, url_quote
 from .request_handlers import get_length
@@ -38,7 +39,7 @@ def upload_file_chunks(file_service, file_size, block_size, stream, max_connecti
     if max_connections > 1:
         import concurrent.futures
         executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-        range_ids = list(executor.map(uploader.process_chunk, uploader.get_chunk_offsets()))
+        range_ids = list(executor.map(tracing_context.with_current_context(uploader.process_chunk), uploader.get_chunk_offsets()))
     else:
         if file_size is not None:
             range_ids = [uploader.process_chunk(start) for start in uploader.get_chunk_offsets()]
@@ -101,7 +102,7 @@ def upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connecti
                     running_futures.remove(f)
 
             chunk_throttler.acquire()
-            future = executor.submit(uploader.process_chunk, chunk)
+            future = executor.submit(tracing_context.with_current_context(uploader.process_chunk), chunk)
 
             # Calls callback upon completion (even if the callback was added after the Future task is done).
             future.add_done_callback(lambda x: chunk_throttler.release())
@@ -146,7 +147,7 @@ def upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, ma
     if max_connections > 1:
         import concurrent.futures
         executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-        range_ids = list(executor.map(uploader.process_substream_block, uploader.get_substream_blocks()))
+        range_ids = list(executor.map(tracing_context.with_current_context(uploader.process_substream_block), uploader.get_substream_blocks()))
     else:
         range_ids = [uploader.process_substream_block(result) for result in uploader.get_substream_blocks()]
 
