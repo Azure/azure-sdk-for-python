@@ -249,6 +249,9 @@ class MessagesPaged(PageIterator):
             process_storage_error(error)
 
     def _extract_data_cb(self, messages):
+        # There is no concept of continuation token, so raising on my own condition
+        if not messages:
+            raise StopIteration("End of paging")
         return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 
