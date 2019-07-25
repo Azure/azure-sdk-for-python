@@ -13,6 +13,8 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.async_paging import AsyncItemPaged
+
 from azure.storage.queue._shared.policies_async import ExponentialRetry
 from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
 from azure.storage.queue._shared.models import LocationMode
@@ -205,12 +207,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            marker=None,  # type: Optional[str]
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
-        ):
-        # type: (...) -> QueuePropertiesPaged
+        ) -> AsyncItemPaged:
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -221,10 +221,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             begin with the specified prefix.
         :param bool include_metadata:
             Specifies that queue metadata be returned in the response.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int results_per_page:
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -233,7 +229,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
-        :rtype: ~azure.core.queue.models.QueuePropertiesPaged
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.core.queue.models.QueueProperties]
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_service.py
@@ -250,8 +246,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             include=include,
             timeout=timeout,
             **kwargs)
-        return QueuePropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=QueuePropertiesPaged
+        )
 
     async def create_queue( # type: ignore
             self, name,  # type: str

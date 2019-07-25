@@ -13,6 +13,7 @@ from typing import ( # pylint: disable=unused-import
 
 import six
 from azure.core.polling import async_poller
+from azure.core.async_paging import AsyncItemPaged
 
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
@@ -662,16 +663,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_handles(self, marker=None, timeout=None, **kwargs):
+    def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
         """Lists handles for file.
 
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.Handle]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -679,8 +677,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return HandlesPaged(
-            command, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=HandlesPaged)
 
     async def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
