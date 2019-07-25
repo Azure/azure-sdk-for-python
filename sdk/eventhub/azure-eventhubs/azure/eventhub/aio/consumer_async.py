@@ -35,6 +35,7 @@ class EventHubConsumer(ConsumerProducerMixin):
     """
     timeout = 0
     _epoch = b'com.microsoft:epoch'
+    _timeout = b'com.microsoft:timeout'
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, event_position=None, prefetch=300, owner_level=None,
@@ -72,11 +73,13 @@ class EventHubConsumer(ConsumerProducerMixin):
         self.reconnect_backoff = 1
         self.redirected = None
         self.error = None
-        self.properties = None
+        self._link_properties = {}
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
-            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(owner_level))}
+            self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
+        link_property_timeout_ms = (self.client.config.receive_timeout or self.timeout) * 1000
+        self._link_properties[types.AMQPSymbol(self._timeout)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
 
     def __aiter__(self):
@@ -110,7 +113,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             auth=self.client.get_auth(**alt_creds),
             debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
-            link_properties=self.properties,
+            link_properties=self._link_properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
