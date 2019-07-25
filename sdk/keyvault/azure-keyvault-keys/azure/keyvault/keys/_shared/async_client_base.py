@@ -21,6 +21,25 @@ if TYPE_CHECKING:
         pass
 
 
+class AsyncPagingAdapter:
+    """For each item in an AsyncIterator, returns the result of applying fn to that item.
+    Python 3.6 added syntax that could replace this (yield within async for)."""
+
+    def __init__(self, pages: AsyncIterator, fn: Callable[[Model], Any]) -> None:
+        self._pages = pages
+        self._fn = fn
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self) -> Any:
+        item = await self._pages.__anext__()
+        if not item:
+            raise StopAsyncIteration
+        return self._fn(item)
+        # TODO: expected type Model got Coroutine instead?
+
+
 class AsyncKeyVaultClientBase:
     """
     :param credential:  A credential or credential provider which can be used to authenticate to the vault,
