@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport.base import _HttpResponseBase
 
 
-def _get_status_code(resonse):
+def _get_status_code(response):
     # type: (_HttpResponseBase) -> int
     try:
         return response.status_code  # Requests
