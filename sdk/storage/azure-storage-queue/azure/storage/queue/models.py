@@ -326,9 +326,8 @@ class QueuePropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.continuation_token = self._response.next_marker or None
 
-        return self.continuation_token, [QueueProperties._from_generated(q) for q in self._response.queue_items]  # pylint: disable=protected-access
+        return self._response.next_marker or None, [QueueProperties._from_generated(q) for q in self._response.queue_items]  # pylint: disable=protected-access
 
 
 class QueuePermissions(object):
