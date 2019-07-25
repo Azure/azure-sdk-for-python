@@ -51,14 +51,6 @@ _LOGGER = logging.getLogger(__name__)
 ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
 
 
-def _get_content_type(response):
-    # type: (PipelineResponse) -> str
-    try:
-        return response.content_type.strip().lower()
-    except AttributeError:
-        return response.content_type[0].strip().lower()
-
-
 class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers with the request.
 
@@ -358,7 +350,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # Try to use content-type from headers if available
         content_type = None
         if response.content_type: # type: ignore
-            content_type = _get_content_type(response)
+            content_type = response.content_type.split(";")[0].strip().lower() # type: ignore
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
