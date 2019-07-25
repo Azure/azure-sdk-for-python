@@ -341,6 +341,37 @@ class CertificateIssuerItem(Model):
         self.provider = kwargs.get('provider', None)
 
 
+class CertificateIssuerListResult(Model):
+    """The certificate issuer list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of certificate issuers
+     in the key vault along with a link to the next page of certificate
+     issuers.
+    :vartype value:
+     list[~azure.keyvault.v2016_10_01.models.CertificateIssuerItem]
+    :ivar next_link: The URL to get the next set of certificate issuers.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CertificateIssuerItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CertificateIssuerListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class CertificateIssuerSetParameters(Model):
     """The certificate issuer set parameters.
 
@@ -433,6 +464,35 @@ class CertificateItem(Model):
         self.attributes = kwargs.get('attributes', None)
         self.tags = kwargs.get('tags', None)
         self.x509_thumbprint = kwargs.get('x509_thumbprint', None)
+
+
+class CertificateListResult(Model):
+    """The certificate list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of certificates in the
+     key vault along with a link to the next page of certificates.
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.CertificateItem]
+    :ivar next_link: The URL to get the next set of certificates.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CertificateItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CertificateListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class CertificateMergeParameters(Model):
@@ -805,6 +865,36 @@ class DeletedCertificateItem(CertificateItem):
         self.deleted_date = None
 
 
+class DeletedCertificateListResult(Model):
+    """A list of certificates that have been deleted in this vault.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of deleted certificates
+     in the vault along with a link to the next page of deleted certificates
+    :vartype value:
+     list[~azure.keyvault.v2016_10_01.models.DeletedCertificateItem]
+    :ivar next_link: The URL to get the next set of deleted certificates.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DeletedCertificateItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedCertificateListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class KeyBundle(Model):
     """A KeyBundle consisting of a WebKey plus its attributes.
 
@@ -973,6 +1063,35 @@ class DeletedKeyItem(KeyItem):
         self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None
+
+
+class DeletedKeyListResult(Model):
+    """A list of keys that have been deleted in this vault.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of deleted keys in the
+     vault along with a link to the next page of deleted keys
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.DeletedKeyItem]
+    :ivar next_link: The URL to get the next set of deleted keys.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DeletedKeyItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedKeyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class SecretBundle(Model):
@@ -1174,6 +1293,35 @@ class DeletedSecretItem(SecretItem):
         self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None
+
+
+class DeletedSecretListResult(Model):
+    """The deleted secret list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of the deleted secrets
+     in the vault along with a link to the next page of deleted secrets
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.DeletedSecretItem]
+    :ivar next_link: The URL to get the next set of deleted secrets.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DeletedSecretItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedSecretListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class Error(Model):
@@ -1529,6 +1677,35 @@ class KeyImportParameters(Model):
         self.key = kwargs.get('key', None)
         self.key_attributes = kwargs.get('key_attributes', None)
         self.tags = kwargs.get('tags', None)
+
+
+class KeyListResult(Model):
+    """The key list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of keys in the key vault
+     along with a link to the next page of keys.
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.KeyItem]
+    :ivar next_link: The URL to get the next set of keys.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[KeyItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class KeyOperationResult(Model):
@@ -2012,6 +2189,35 @@ class SasDefinitionItem(Model):
         self.tags = None
 
 
+class SasDefinitionListResult(Model):
+    """The storage account SAS definition list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of SAS definitions along
+     with a link to the next page of SAS definitions.
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.SasDefinitionItem]
+    :ivar next_link: The URL to get the next set of SAS definitions.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SasDefinitionItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SasDefinitionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class SasDefinitionUpdateParameters(Model):
     """The SAS definition update parameters.
 
@@ -2082,6 +2288,35 @@ class SecretAttributes(Attributes):
     def __init__(self, **kwargs):
         super(SecretAttributes, self).__init__(**kwargs)
         self.recovery_level = None
+
+
+class SecretListResult(Model):
+    """The secret list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of secrets in the key
+     vault along with a link to the next page of secrets.
+    :vartype value: list[~azure.keyvault.v2016_10_01.models.SecretItem]
+    :ivar next_link: The URL to get the next set of secrets.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SecretItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecretListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class SecretProperties(Model):
@@ -2413,6 +2648,36 @@ class StorageBundle(Model):
         self.regeneration_period = None
         self.attributes = None
         self.tags = None
+
+
+class StorageListResult(Model):
+    """The storage accounts list result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: A response message containing a list of storage accounts in
+     the key vault along with a link to the next page of storage accounts.
+    :vartype value:
+     list[~azure.keyvault.v2016_10_01.models.StorageAccountItem]
+    :ivar next_link: The URL to get the next set of storage accounts.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[StorageAccountItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class SubjectAlternativeNames(Model):
