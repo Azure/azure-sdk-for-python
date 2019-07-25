@@ -1,6 +1,7 @@
-import asyncio
+import time
 import os
-from azure.keyvault.secrets.aio import SecretClient
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import CertificatePolicy
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -11,7 +12,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
 #
 # 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-secrets/
+#    https://pypi.python.org/pypi/azure-keyvault-certificates/
 #
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
@@ -20,57 +21,78 @@ from azure.core.exceptions import HttpResponseError
 # How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a secret (set_secret)
+# 1. Create a certificate (create_certificate)
 #
-# 2. Delete a secret (delete_secret)
+# 2. Delete a certificate (delete_certificate)
 #
-# 3. Recover a deleted secret (recover_deleted_secret)
+# 3. Recover a deleted certificate (recover_deleted_certificate)
 #
-# 4. Purge a deleted secret (purge_deleted_secret)
+# 4. Purge a deleted certificate (purge_deleted_certificate)
 # ----------------------------------------------------------------------------------------------------------
+from azure.keyvault.certificates._models import KeyProperties
+
+
 async def run_sample():
-    # Instantiate a secret client that will be used to call the service.
+    # Instantiate a certificate client that will be used to call the service.
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
-        # Let's create secrets holding storage and bank accounts credentials. If the secret
-        # already exists in the Key Vault, then a new version of the secret is created.
+        # Let's create certificates holding storage and bank accounts credentials. If the certificate
+        # already exists in the Key Vault, then a new version of the certificate is created.
         print("\n1. Create Secret")
-        bank_secret = await client.set_secret("bankSecretName", "secretValue1")
-        storage_secret = await client.set_secret("storageSecretName", "secretValue2")
-        print("Secret with name '{0}' was created.".format(bank_secret.name))
-        print("Secret with name '{0}' was created.".format(storage_secret.name))
+
+        # Before creating your certificate, let's create the management policy for your certificate.
+        # Here you specify the properties of the key, secret, and issuer backing your certificate,
+        # the X509 component of your certificate, and any lifetime actions you would like to be taken
+        # on your certificate
+        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                     key_type='RSA',
+                                                                     key_size=2048,
+                                                                     reuse_key=False),
+                                        content_type='application/x-pkcs12',
+                                        issuer_name='Self',
+                                        subject_name='CN=*.microsoft.com',
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
+                                        validity_in_months=24
+                                        )
+        bank_cert_name = "BankRecoverCertificate"
+        storage_cert_name = "ServerRecoverCertificate"
+
+        bank_certificate_operation = await client.create_certificate(name=bank_cert_name, policy=cert_policy)
+        storage_certificate_operation = await client.create_certificate(name=storage_cert_name, policy=cert_policy)
+        print("Certificate with name '{0}' was created.".format(bank_certificate_operation.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate_operation.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n2. Delete a Secret")
-        secret = await client.delete_secret(bank_secret.name)
-        await asyncio.sleep(20)
-        print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
+        print("\n2. Delete a Certificate")
+        deleted_bank_certificate = await client.delete_certificate(name=bank_certificate_operation.name)
+        time.sleep(20)
+        print("Certificate with name '{0}' was deleted on date {1}.".format(deleted_bank_certificate.name, deleted_bank_certificate.deleted_date))
 
-        # We accidentally deleted the bank account secret. Let's recover it.
-        # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n3. Recover Deleted  Secret")
-        recovered_secret = await client.recover_deleted_secret(bank_secret.name)
-        print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
+        # We accidentally deleted the bank account certificate. Let's recover it.
+        # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
+        print("\n3. Recover Deleted Certificate")
+        recovered_bank_certificate = await client.recover_deleted_certificate(deleted_bank_certificate.name)
+        print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
         # Let's delete storage account now.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
-        await client.delete_secret(storage_secret.name)
+        # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
+        await client.delete_certificate(name=storage_certificate_operation.name)
 
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting Storage Secret...")
-        await asyncio.sleep(20)
+        # To ensure certificate is deleted on the server side.
+        print("\nDeleting Storage Certificate...")
+        time.sleep(20)
 
         # To ensure permanent deletion, we might need to purge the secret.
-        print("\n4. Purge Deleted Secret")
-        await client.purge_deleted_secret(storage_secret.name)
-        print("Secret has been permanently deleted.")
+        print("\n4. Purge Deleted Certificate")
+        await client.purge_deleted_certificate(name=storage_certificate_operation.name)
+        print("Certificate has been permanently deleted.")
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:
@@ -84,9 +106,7 @@ async def run_sample():
 
 if __name__ == "__main__":
     try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_sample())
-        loop.close()
+        run_sample()
 
     except Exception as e:
         print("Top level Error: {0}".format(str(e)))

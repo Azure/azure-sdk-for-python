@@ -555,8 +555,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
         return iterable
 
-    @distributed_trace
-    def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace_async
+    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
@@ -569,12 +569,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
-        iterable = AsyncPagingAdapter(bundle, Contact._from_certificate_contacts_item)
-        return iterable
+        contacts = await self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
+        contacts_ret = []
+        for contact in contacts.contact_list:
+            contacts_ret.append(Contact._from_certificate_contacts_item(contact_item=contact))
+        return contacts_ret
 
-    @distributed_trace
-    def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace_async
+    async def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -584,12 +586,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: The certificate contacts for the key vault.
         :rtype: Iterator[azure.security.keyvault.certificates._models.Contact]
         """
-        pages = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
-        iterable = AsyncPagingAdapter(pages, Contact._from_certificate_contacts_item)
-        return iterable
+        contacts = await self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
+        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
-    @distributed_trace
-    def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    @distributed_trace_async
+    async def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
@@ -600,9 +601,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
-        iterable = AsyncPagingAdapter(bundle, Contact._from_certificate_contacts_item)
-        return iterable
+        contacts = await self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
+        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
     async def get_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:

@@ -13,9 +13,9 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import Certifica
 from azure.keyvault.certificates._models import CertificatePolicy as CertificatePolicy
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
-    SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
+    SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates._models import (
-    AdministratorDetails, IssuerBase, KeyProperties)
+    AdministratorDetails, Contact, IssuerBase, KeyProperties)
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 
@@ -110,12 +110,14 @@ class CertificateClientTests(KeyVaultTestCase):
                 self.assertTrue(False)
         self.assertEqual(len(expected), 0)
 
-    async def _validate_certificate_contacts(self, contacts, expected):
-        async for contact in contacts:
-            exp_contact = next(x for x in expected if x.email_address == contact.email_address)
+    def _validate_certificate_contacts(self, contacts, expected):
+        self.assertEqual(len(list(contacts)), len(expected))
+        for contact in contacts:
+            for x in expected:
+                if x.email_address == contact.email:
+                    exp_contact = x
+            #exp_contact = next(x for x in expected if x.email_address == contact.email_address)
             self.assertEqual(contact, exp_contact)
-            expected.remove(exp_contact)
-        self.assertEqual(len(expected), 0)
 
     def _admin_detail_equal(self, admin_detail, exp_admin_detail):
         return (admin_detail.first_name == exp_admin_detail.first_name and
@@ -286,25 +288,25 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         contact_list = [
-            Contact(email_address='admin@contoso.com',
+            Contact(email='admin@contoso.com',
                     name='John Doe',
                     phone='1111111111'),
-            Contact(email_address='admin2@contoso.com',
+            Contact(email='admin2@contoso.com',
                     name='John Doe2',
                     phone='2222222222')
         ]
 
         # create certificate contacts
-        contacts = client.create_contacts(contacts=contact_list)
-        await self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        contacts = await client.create_contacts(contacts=contact_list)
+        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # get certificate contacts
-        contacts = client.get_contacts()
-        await self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        contacts = await client.get_contacts()
+        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # delete certificate contacts
-        contacts = client.delete_contacts()
-        await self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        contacts = await client.delete_contacts()
+        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # get certificate contacts returns not found
         try:

@@ -78,6 +78,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
+    async def sleep(self, duration):
+        return super(AsyncioRequestsTransport, self).sleep(duration)
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
 
