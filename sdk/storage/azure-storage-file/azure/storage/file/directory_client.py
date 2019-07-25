@@ -16,6 +16,7 @@ except ImportError:
 
 import six
 from azure.core.polling import LROPoller
+from azure.core.paging import ItemPaged
 
 from .file_client import FileClient
 
@@ -269,21 +270,17 @@ class DirectoryClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_directories_and_files(self, name_starts_with=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[str], Optional[int], **Any) -> DirectoryProperties
+    def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
+        # type: (Optional[str], Optional[str], Optional[int], **Any) -> ItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.storage.file.models.DirectoryPropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.DirectoryProperties]
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_directory.py
@@ -299,23 +296,20 @@ class DirectoryClient(StorageAccountHostsMixin):
             sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return DirectoryPropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=DirectoryPropertiesPaged)
 
-    def list_handles(self, marker=None, recursive=False, timeout=None, **kwargs):
+    def list_handles(self, recursive=False, timeout=None, **kwargs):
         """Lists opened handles on a directory or a file under the directory.
 
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.storage.file.models.HandlesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.Handles]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -324,8 +318,9 @@ class DirectoryClient(StorageAccountHostsMixin):
             timeout=timeout,
             recursive=recursive,
             **kwargs)
-        return HandlesPaged(
-            command, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=HandlesPaged)
 
     def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
