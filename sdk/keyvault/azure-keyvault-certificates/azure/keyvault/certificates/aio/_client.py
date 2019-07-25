@@ -570,10 +570,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         contacts = await self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
-        contacts_ret = []
-        for contact in contacts.contact_list:
-            contacts_ret.append(Contact._from_certificate_contacts_item(contact_item=contact))
-        return contacts_ret
+        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
     async def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:

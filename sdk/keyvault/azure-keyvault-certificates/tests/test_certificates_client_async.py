@@ -12,10 +12,10 @@ from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
 from azure.keyvault.certificates._models import CertificatePolicy as CertificatePolicy
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
-    SecretProperties, IssuerParameters, X509CertificateProperties,
+    Contact, SecretProperties, IssuerParameters, X509CertificateProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates._models import (
-    AdministratorDetails, Contact, IssuerBase, KeyProperties)
+    AdministratorDetails, IssuerBase, KeyProperties)
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 
@@ -116,7 +116,6 @@ class CertificateClientTests(KeyVaultTestCase):
             for x in expected:
                 if x.email_address == contact.email:
                     exp_contact = x
-            #exp_contact = next(x for x in expected if x.email_address == contact.email_address)
             self.assertEqual(contact, exp_contact)
 
     def _admin_detail_equal(self, admin_detail, exp_admin_detail):
@@ -288,10 +287,10 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         contact_list = [
-            Contact(email='admin@contoso.com',
+            Contact(email_address='admin@contoso.com',
                     name='John Doe',
                     phone='1111111111'),
-            Contact(email='admin2@contoso.com',
+            Contact(email_address='admin2@contoso.com',
                     name='John Doe2',
                     phone='2222222222')
         ]
