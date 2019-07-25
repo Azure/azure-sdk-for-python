@@ -6,6 +6,7 @@ from typing import Any, Callable, Mapping, TYPE_CHECKING
 from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
@@ -100,6 +101,7 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
+            DistributedTracingPolicy(),
         ]
 
         if transport is None:
