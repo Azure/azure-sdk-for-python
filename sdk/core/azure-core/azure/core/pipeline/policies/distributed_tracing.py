@@ -77,11 +77,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         if parent_span is None:
             return
 
-        only_propagate = settings.tracing_should_only_propagate()
-        if only_propagate:
-            self.set_header(request, parent_span)
-            return
-
         path = urlparse(request.http_request.url).path
         if not path:
             path = "/"
@@ -96,8 +91,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
         span = tracing_context.current_span.get()  # type: AbstractSpan
-        only_propagate = settings.tracing_should_only_propagate()
-        if span and not only_propagate:
+        if span is not None:
             span.set_http_attributes(request, response=response)
             request_id = request.headers.get(self._request_id)
             if request_id is not None:
