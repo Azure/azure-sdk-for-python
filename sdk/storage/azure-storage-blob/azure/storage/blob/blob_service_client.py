@@ -25,6 +25,7 @@ from ._generated.models import StorageErrorException, StorageServiceProperties
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, ContainerPropertiesPaged
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -215,6 +216,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -238,6 +240,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
@@ -277,6 +280,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
@@ -299,6 +303,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties(
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -375,6 +380,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -420,6 +426,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
 
+    @distributed_trace
     def create_container(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -459,6 +466,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
 
+    @distributed_trace
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]

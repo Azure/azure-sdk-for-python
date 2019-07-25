@@ -6,7 +6,7 @@
 
 import logging
 import time
-from typing import Callable, Any # pylint: disable=unused-import
+from typing import Callable, Any  # pylint: disable=unused-import
 from azure.core.polling import PollingMethod, LROPoller
 
 from ._shared.response_handlers import process_storage_error
@@ -48,7 +48,7 @@ class CopyStatusPoller(LROPoller):
         """
         return self._polling_method.abort()
 
-    def status(self): # pylint: disable=useless-super-delegation
+    def status(self):  # pylint: disable=useless-super-delegation
         # type: () -> str
         """Returns the current status of the copy operation.
 
@@ -67,10 +67,10 @@ class CopyStatusPoller(LROPoller):
         return super(CopyStatusPoller, self).result(timeout=timeout)
 
 
-
 class CopyBlob(PollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
+
     def __init__(self, interval, **kwargs):
         self._client = None
         self._status = None
@@ -85,7 +85,8 @@ class CopyBlob(PollingMethod):
     def _update_status(self):
         try:
             self.blob = self._client._client.blob.get_properties(  # pylint: disable=protected-access
-                cls=deserialize_blob_properties, **self.kwargs)
+                cls=deserialize_blob_properties, **self.kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
         self._status = self.blob.copy.status
@@ -99,10 +100,10 @@ class CopyBlob(PollingMethod):
             self.id = initial_status
             self._update_status()
         else:
-            self._status = initial_status['copy_status']
-            self.id = initial_status['copy_id']
-            self.etag = initial_status['etag']
-            self.last_modified = initial_status['last_modified']
+            self._status = initial_status["copy_status"]
+            self.id = initial_status["copy_id"]
+            self.etag = initial_status["etag"]
+            self.last_modified = initial_status["last_modified"]
 
     def run(self):
         # type: () -> None
@@ -112,7 +113,8 @@ class CopyBlob(PollingMethod):
         # type: () -> None
         try:
             return self._client._client.blob.abort_copy_from_url(  # pylint: disable=protected-access
-                self.id, **self.kwargs)
+                self.id, **self.kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -126,7 +128,7 @@ class CopyBlob(PollingMethod):
         """Is this polling finished?
         :rtype: bool
         """
-        return str(self.status()).lower() in ['success', 'aborted', 'failed']
+        return str(self.status()).lower() in ["success", "aborted", "failed"]
 
     def resource(self):
         # type: () -> Any
@@ -135,16 +137,15 @@ class CopyBlob(PollingMethod):
 
 
 class CopyBlobPolling(CopyBlob):
-
     def run(self):
         # type: () -> None
         try:
             while not self.finished():
                 self._update_status()
                 time.sleep(self.polling_interval)
-            if str(self.status()).lower() == 'aborted':
+            if str(self.status()).lower() == "aborted":
                 raise ValueError("Copy operation aborted.")
-            if str(self.status()).lower() == 'failed':
+            if str(self.status()).lower() == "failed":
                 raise ValueError("Copy operation failed: {}".format(self.blob.copy.status_description))
         except Exception as e:
             logger.warning(str(e))
@@ -156,9 +157,9 @@ class CopyBlobPolling(CopyBlob):
         :rtype: str
         """
         try:
-            return self._status.value # type: ignore
+            return self._status.value  # type: ignore
         except AttributeError:
-            return self._status # type: ignore
+            return self._status  # type: ignore
 
     def resource(self):
         # type: () -> Any

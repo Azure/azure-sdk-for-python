@@ -14,6 +14,7 @@ from typing import (  # pylint: disable=unused-import
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import StorageErrorException
 from ._blob_utils import get_modification_conditions
+from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -63,6 +64,7 @@ class LeaseClient(object):
     def __exit__(self, *args):
         self.release()
 
+    @distributed_trace
     def acquire(
             self, lease_duration=-1,  # type: int
             if_modified_since=None,  # type: Optional[datetime]
@@ -123,6 +125,7 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = kwargs.get('etag')  # type: str
 
+    @distributed_trace
     def renew(
             self, if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -180,6 +183,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def release(
             self, if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -235,6 +239,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def change(
             self, proposed_lease_id,  # type: str
             if_modified_since=None,  # type: Optional[datetime]
@@ -291,6 +296,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def break_lease(
             self, lease_break_period=None,  # type: Optional[int]
             if_modified_since=None,  # type: Optional[datetime]
