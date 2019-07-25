@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
+from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -23,10 +22,10 @@ if TYPE_CHECKING:
 
 
 class AsyncPagingAdapter:
-    """For each item in an AsyncPagedMixin, returns the result of applying fn to that item.
+    """For each item in an AsyncIterator, returns the result of applying fn to that item.
     Python 3.6 added syntax that could replace this (yield within async for)."""
 
-    def __init__(self, pages: AsyncPagedMixin, fn: Callable[[Model], Any]) -> None:
+    def __init__(self, pages: AsyncIterator, fn: Callable[[Model], Any]) -> None:
         self._pages = pages
         self._fn = fn
 

@@ -114,20 +114,21 @@ class StorageHandleTest(FileTestCase):
         root = share.get_directory_client()
 
         # Act
-        handle_generator = root.list_handles(recursive=True, results_per_page=1)
-        next(handle_generator)
+        handle_generator = root.list_handles(recursive=True, results_per_page=1).by_page()
+        handles = list(next(handle_generator))
 
         # Assert
-        self.assertIsNotNone(handle_generator.next_marker)
-        handles = handle_generator.current_page
+        self.assertIsNotNone(handle_generator.continuation_token)
         self._validate_handles(handles)
 
         # Note down a handle that we saw
         old_handle = handles[0]
 
         # Continue listing
-        remaining_handles = list(
-            root.list_handles(recursive=True, marker=handle_generator.next_marker))
+        remaining_handles = list(next(
+            root.list_handles(recursive=True).by_page(
+                continuation_token=handle_generator.continuation_token)
+        ))
         self._validate_handles(handles)
 
         # Make sure the old handle did not appear
