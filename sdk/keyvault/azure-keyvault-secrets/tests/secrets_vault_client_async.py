@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
