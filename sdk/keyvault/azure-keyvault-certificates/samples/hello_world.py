@@ -62,7 +62,6 @@ def run_sample():
                                         )
         cert_name="HelloWorldCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        print("right before create")
         certificate_operation = client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)
         print("Certificate with name '{0}' created".format(certificate_operation.name))
 
@@ -83,7 +82,7 @@ def run_sample():
         print("\n4. Delete Certificate")
         deleted_certificate = client.delete_certificate(name=bank_certificate.name)
         print("Deleting Certificate..")
-        print("Certificate with name '{0}' was deleted.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

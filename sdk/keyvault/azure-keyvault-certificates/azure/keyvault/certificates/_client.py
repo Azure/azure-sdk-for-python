@@ -9,7 +9,7 @@ from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
-from ._internal import _KeyVaultClientBase
+from ._shared import KeyVaultClientBase
 from ._models import (
     Certificate,
     CertificateBase,
@@ -22,7 +22,7 @@ from ._models import (
 )
 
 
-class CertificateClient(_KeyVaultClientBase):
+class CertificateClient(KeyVaultClientBase):
     """CertificateClient defines a high level interface for
     managing certificates in the specified vault.
     Example:
@@ -114,7 +114,7 @@ class CertificateClient(_KeyVaultClientBase):
         )
         return policy_bundle
 
-    def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
+    def create_certificate(self, name, policy, enabled=True, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
         """Creates a new certificate.
 
@@ -205,7 +205,8 @@ class CertificateClient(_KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
-        return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        asdf = DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        return asdf
 
     def get_deleted_certificate(self, name, **kwargs):
         # type: (str) -> DeletedCertificate
@@ -275,7 +276,7 @@ class CertificateClient(_KeyVaultClientBase):
         certificate_bytes,
         password=None,
         policy=None,
-        enabled=None,
+        enabled=True,
         not_before=None,
         expires=None,
         tags=None,
@@ -375,7 +376,7 @@ class CertificateClient(_KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
 
-    def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
+    def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=True, tags=None, **kwargs):
         # type: (str, str, Optional[bool], Optional[Dict[str, str]]) -> Certificate
         """Updates the specified attributes associated with the given certificate.
 
@@ -765,7 +766,7 @@ class CertificateClient(_KeyVaultClientBase):
         password=None,
         organization_id=None,
         admin_details=None,
-        enabled=None,
+        enabled=True,
         **kwargs
     ):
         # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]], Optional[bool], Mapping[str, Any]) -> Issuer

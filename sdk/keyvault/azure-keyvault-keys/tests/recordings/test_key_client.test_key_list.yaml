@@ -105,7 +105,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -157,7 +157,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -209,7 +209,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -261,7 +261,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -313,7 +313,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -365,7 +365,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"kty": "RSA"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -428,7 +428,7 @@ interactions:
       User-Agent:
       - python/2.7.15 (Windows-10-10.0.18362) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vaultb3510bf8.vault.azure.net/keys?api-version=7.0&maxresults=7
+    uri: https://vaultb3510bf8.vault.azure.net/keys?maxresults=7&api-version=7.0
   response:
     body:
       string: !!python/unicode '{"value":[{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key0","attributes":{"enabled":true,"created":1562703711,"updated":1562703711,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key1","attributes":{"enabled":true,"created":1562703712,"updated":1562703712,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key2","attributes":{"enabled":true,"created":1562703712,"updated":1562703712,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key3","attributes":{"enabled":true,"created":1562703712,"updated":1562703712,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key4","attributes":{"enabled":true,"created":1562703712,"updated":1562703712,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key5","attributes":{"enabled":true,"created":1562703712,"updated":1562703712,"recoveryLevel":"Purgeable"}},{"kid":"https://vaultb3510bf8.vault.azure.net/keys/key6","attributes":{"enabled":true,"created":1562703713,"updated":1562703713,"recoveryLevel":"Purgeable"}}],"nextLink":null}'
