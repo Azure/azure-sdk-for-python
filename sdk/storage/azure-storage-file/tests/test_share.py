@@ -341,14 +341,12 @@ class StorageShareTest(FileTestCase):
         share_names.sort()
 
         # Act
-        generator1 = self.fsc.list_shares(prefix, results_per_page=2)
-        next(generator1)
-        generator2 = self.fsc.list_shares(
-            prefix, marker=generator1.next_marker, results_per_page=2)
-        next(generator2)
+        generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()
+        shares1 = list(next(generator1))
 
-        shares1 = generator1.current_page
-        shares2 = generator2.current_page
+        generator2 = self.fsc.list_shares(
+            prefix, results_per_page=2).by_page(continuation_token=generator1.continuation_token)
+        shares2 = list(next(generator2))
 
         # Assert
         self.assertIsNotNone(shares1)
@@ -606,14 +604,14 @@ class StorageShareTest(FileTestCase):
         root.upload_file('fileb1', '1024')
 
         # Act
-        result = share_name.list_directories_and_files(results_per_page=2)
-        next(result)
+        result = share_name.list_directories_and_files(results_per_page=2).by_page()
+        result = list(next(result))
 
         # Assert
         self.assertIsNotNone(result)
-        self.assertEqual(len(result.current_page), 2)
-        self.assertNamedItemInContainer(result.current_page, 'dir1')
-        self.assertNamedItemInContainer(result.current_page, 'filea1')
+        self.assertEqual(len(result), 2)
+        self.assertNamedItemInContainer(result, 'dir1')
+        self.assertNamedItemInContainer(result, 'filea1')
 
     @record
     def test_list_directories_and_files_with_num_results_and_marker(self):
@@ -627,14 +625,13 @@ class StorageShareTest(FileTestCase):
         dir1.upload_file('fileb1', '1024')
 
         # Act
-        generator1 = share_name.list_directories_and_files('dir1', results_per_page=2)
-        next(generator1)
-        generator2 = share_name.list_directories_and_files(
-            'dir1', marker=generator1.next_marker, results_per_page=2)
-        next(generator2)
+        generator1 = share_name.list_directories_and_files(
+            'dir1', results_per_page=2).by_page()
+        result1 = list(next(generator1))
 
-        result1 = generator1.current_page
-        result2 = generator2.current_page
+        generator2 = share_name.list_directories_and_files(
+            'dir1', results_per_page=2).by_page(continuation_token=generator1.continuation_token)
+        result2 = list(next(generator2))
 
         # Assert
         self.assertEqual(len(result1), 2)
@@ -643,7 +640,7 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(result1, 'filea2')
         self.assertNamedItemInContainer(result2, 'filea3')
         self.assertNamedItemInContainer(result2, 'fileb1')
-        self.assertEqual(generator2.next_marker, None)
+        self.assertEqual(generator2.continuation_token, None)
 
     @record
     def test_list_directories_and_files_with_prefix(self):
