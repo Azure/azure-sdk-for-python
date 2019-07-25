@@ -23,7 +23,8 @@ class BillingAccountUpdateRequest(Model):
     :param address: The address associated with billing account.
     :type address: ~azure.mgmt.billing.models.Address
     :ivar agreement_type: The type of agreement. Possible values include:
-     'MicrosoftCustomerAgreement', 'EnterpriseAgreement', 'Legacy'
+     'MicrosoftCustomerAgreement', 'EnterpriseAgreement',
+     'MicrosoftOnlineServicesProgram'
     :vartype agreement_type: str or ~azure.mgmt.billing.models.enum
     :ivar customer_type: The type of customer. Possible values include:
      'Enterprise', 'Individual', 'Partner'
