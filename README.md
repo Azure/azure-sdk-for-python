@@ -46,7 +46,7 @@ Last stable versions of packages that have been provided for usage with Azure an
 Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.
 
 ## Need help?
-* For detailed documentation visit our [Azure SDK for Python documentation](aka.ms/python-docs)
+* For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
 * File an issue via [Github Issues](../../issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
