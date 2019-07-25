@@ -690,7 +690,6 @@ class CertificateClient(_KeyVaultClientBase):
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
-
     def get_pending_certificate_signing_request(self, name, custom_headers=None, **kwargs):
         """Gets the Base64 pending certificate signing request (PKCS-10).
         :param name: The name of the certificate
@@ -702,6 +701,7 @@ class CertificateClient(_KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -713,7 +713,8 @@ class CertificateClient(_KeyVaultClientBase):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self._client.api_version, 'str')
+        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self._client.api_version,
+                                                                        'str')
 
         # Construct headers
         header_parameters = {}
@@ -722,9 +723,6 @@ class CertificateClient(_KeyVaultClientBase):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self._client._config.accept_language is not None:
-            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
-                                                                          self._client._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client._client.get(url, query_parameters, header_parameters)
@@ -732,7 +730,8 @@ class CertificateClient(_KeyVaultClientBase):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            raise self._client.models.KeyVaultErrorException(self._client._deserialize, response)
+            self._client.map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise self._client.models.KeyVaultErrorException(response, self._deserialize)
 
         deserialized = None
 

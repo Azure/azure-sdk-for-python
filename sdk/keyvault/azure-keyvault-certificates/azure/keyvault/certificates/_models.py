@@ -7,7 +7,7 @@
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
 from ._internal import _parse_vault_id
-from ._generated.v7_0 import models
+from ._shared._generated.v7_0 import models
 
 
 class AdministratorDetails(object):
