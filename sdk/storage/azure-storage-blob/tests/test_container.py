@@ -120,7 +120,7 @@ class StorageContainerTest(StorageTestCase):
 
         blob = container.get_blob_client("blob1")
         blob.upload_blob(u'xyz')
-        
+
         anonymous_service = BlobClient(
             self._get_account_url(),
             container=container_name,
@@ -247,15 +247,12 @@ class StorageContainerTest(StorageTestCase):
         container_names.sort()
 
         # Act
-        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2)
-        next(generator1)
+        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2).by_page()
+        containers1 = list(next(generator1))
 
         generator2 = self.bsc.list_containers(
-            name_starts_with=prefix, marker=generator1.next_marker, results_per_page=2)
-        next(generator2)
-
-        containers1 = list(generator1.current_page)
-        containers2 = list(generator2.current_page)
+            name_starts_with=prefix, results_per_page=2).by_page(generator1.continuation_token)
+        containers2 = list(next(generator2))
 
         # Assert
         self.assertIsNotNone(containers1)
@@ -817,14 +814,13 @@ class StorageContainerTest(StorageTestCase):
 
 
         # Act
-        blobs = container.list_blobs(results_per_page=2)
-        next(blobs)
+        blobs = list(next(container.list_blobs(results_per_page=2).by_page()))
 
         # Assert
         self.assertIsNotNone(blobs)
-        self.assertEqual(len(blobs.current_page), 2)
-        self.assertNamedItemInContainer(blobs.current_page, 'blob_a1')
-        self.assertNamedItemInContainer(blobs.current_page, 'blob_a2')
+        self.assertEqual(len(blobs), 2)
+        self.assertNamedItemInContainer(blobs, 'blob_a1')
+        self.assertNamedItemInContainer(blobs, 'blob_a2')
 
     @record
     def test_list_blobs_with_include_snapshots(self):
