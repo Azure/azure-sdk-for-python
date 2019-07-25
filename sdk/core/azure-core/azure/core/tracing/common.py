@@ -83,10 +83,3 @@ def get_parent_span(parent_span):
         )
 
     return parent_span
-
-
-def should_use_trace(parent_span):
-    # type: (AbstractSpan) -> bool
-    """Given Parent Span Returns whether the function should be traced"""
-    only_propagate = settings.tracing_should_only_propagate()
-    return bool(parent_span and not only_propagate)
