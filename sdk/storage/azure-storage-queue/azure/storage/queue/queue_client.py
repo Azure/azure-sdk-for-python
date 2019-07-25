@@ -160,7 +160,6 @@ class QueueClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
 
-    @distributed_trace
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
