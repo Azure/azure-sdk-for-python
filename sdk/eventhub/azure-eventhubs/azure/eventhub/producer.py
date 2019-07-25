@@ -9,7 +9,7 @@ import logging
 import time
 from typing import Iterable, Union
 
-from uamqp import constants, errors
+from uamqp import types, constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
@@ -40,6 +40,7 @@ class EventHubProducer(ConsumerProducerMixin):
      to a partition.
 
     """
+    _timeout = b'com.microsoft:timeout'
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
@@ -83,6 +84,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self._handler = None
         self._outcome = None
         self._condition = None
+        self._link_properties = {types.AMQPSymbol(self._timeout): types.AMQPLong(int(self.timeout * 1000))}
 
     def _create_handler(self):
         self._handler = SendClient(
@@ -93,6 +95,7 @@ class EventHubProducer(ConsumerProducerMixin):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
+            link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
     def _open(self, timeout_time=None):
