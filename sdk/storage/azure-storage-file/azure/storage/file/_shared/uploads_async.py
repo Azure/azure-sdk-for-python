@@ -8,6 +8,7 @@
 import asyncio
 from asyncio import Lock
 from itertools import islice
+import threading
 
 from math import ceil
 
@@ -35,7 +36,7 @@ async def _parallel_uploads(uploader, pending, running):
         except StopIteration:
             break
         else:
-            running.add(asyncio.ensure_future(uploader.process_chunk(next_chunk)))
+            running.add(asyncio.ensure_future(uploader(next_chunk)))
 
     # Wait for the remaining uploads to finish
     if running:
@@ -56,7 +57,7 @@ async def upload_data_chunks(
 
     if encryption_options:
         encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('key'),
+            encryption_options.get('cek'),
             encryption_options.get('vector'),
             uploader_class is not PageBlobChunkUploader)
         kwargs['encryptor'] = encryptor
@@ -81,14 +82,14 @@ async def upload_data_chunks(
             asyncio.ensure_future(uploader.process_chunk(u))
             for u in islice(upload_tasks, 0, max_connections)
         ]
-        range_ids = await _parallel_uploads(uploader, upload_tasks, running_futures)
+        range_ids = await _parallel_uploads(uploader.process_chunk, upload_tasks, running_futures)
     else:
         range_ids = []
         for chunk in uploader.get_chunk_streams():
             range_ids.append(await uploader.process_chunk(chunk))
 
     if any(range_ids):
-        return range_ids
+        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
     return uploader.response_headers
 
 
@@ -118,11 +119,12 @@ async def upload_substream_blocks(
             asyncio.ensure_future(uploader.process_substream_block(u))
             for u in islice(upload_tasks, 0, max_connections)
         ]
-        return await _parallel_uploads(uploader, upload_tasks, running_futures)
-    blocks = []
-    for block in uploader.get_substream_blocks():
-        blocks.append(await uploader.process_substream_block(block))
-    return blocks
+        range_ids = await _parallel_uploads(uploader.process_substream_block, upload_tasks, running_futures)
+    else:
+        range_ids = []
+        for block in uploader.get_substream_blocks():
+            range_ids.append(await uploader.process_substream_block(block))
+    return sorted(range_ids)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -136,7 +138,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
         # Stream management
         self.stream_start = stream.tell() if parallel else None
-        self.stream_lock = Lock() if parallel else None
+        self.stream_lock = threading.Lock() if parallel else None
 
         # Progress feedback
         self.progress_total = 0
@@ -231,7 +233,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         raise NotImplementedError("Must be implemented by child class.")
 
     async def _upload_substream_block_with_progress(self, block_id, block_stream):
-        range_id = self._upload_substream_block(block_id, block_stream)
+        range_id = await self._upload_substream_block(block_id, block_stream)
         await self._update_progress(len(block_stream))
         return range_id
 
@@ -242,9 +244,15 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
 class BlockBlobChunkUploader(_ChunkUploader):
 
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('modified_access_conditions', None)
+        super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
+        self.current_length = None
+
     async def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        block_id = encode_base64(url_quote(encode_base64('{0:032d}'.format(chunk_offset))))
+        index = '{0:032d}'.format(chunk_offset)
+        block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -252,7 +260,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options)
-        return block_id
+        return index, block_id
 
     async def _upload_substream_block(self, block_id, block_stream):
         try:

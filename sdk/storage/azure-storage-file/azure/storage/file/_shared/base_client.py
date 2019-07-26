@@ -5,15 +5,23 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
+    Union,
+    Optional,
+    Any,
+    Iterable,
+    Dict,
+    List,
+    Type,
+    Tuple,
+    TYPE_CHECKING,
 )
 import logging
+
 try:
     from urllib.parse import parse_qs, quote
 except ImportError:
-    from urlparse import parse_qs # type: ignore
-    from urllib2 import quote # type: ignore
+    from urlparse import parse_qs  # type: ignore
+    from urllib2 import quote  # type: ignore
 
 import six
 
@@ -21,11 +29,7 @@ from azure.core import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies import (
-    RedirectPolicy,
-    ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy)
+from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .models import LocationMode
@@ -40,55 +44,51 @@ from .policies import (
     StorageLoggingPolicy,
     StorageHosts,
     QueueMessagePolicy,
-    ExponentialRetry)
+    ExponentialRetry,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
-    'blob': {'primary': 'BlobEndpoint', 'secondary': 'BlobSecondaryEndpoint'},
-    'queue': {'primary': 'QueueEndpoint', 'secondary': 'QueueSecondaryEndpoint'},
-    'file': {'primary': 'FileEndpoint', 'secondary': 'FileSecondaryEndpoint'},
+    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
+    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
+    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
 }
 
 
 class StorageAccountHostsMixin(object):
-
     def __init__(
-            self, parsed_url,  # type: Any
-            service, # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
+        self,
+        parsed_url,  # type: Any
+        service,  # type: str
+        credential=None,  # type: Optional[Any]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> None
-        self._location_mode = kwargs.get('_location_mode', LocationMode.PRIMARY)
-        self._hosts = kwargs.get('_hosts')
+        self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
+        self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ['blob', 'queue', 'file']:
+        if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
         secondary_hostname = None
         self.credential = format_shared_key_credential(account, credential)
-        if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
+        if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, 'account_name'):
-            secondary_hostname = "{}-secondary.{}.{}".format(
-                self.credential.account_name, service, SERVICE_HOST_BASE)
+        if hasattr(self.credential, "account_name"):
+            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(
-                    account[0],
-                    account[0] + '-secondary')
-            if kwargs.get('secondary_hostname'):
-                secondary_hostname = kwargs['secondary_hostname']
-            self._hosts = {
-                LocationMode.PRIMARY: parsed_url.netloc,
-                LocationMode.SECONDARY: secondary_hostname}
+                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
+            if kwargs.get("secondary_hostname"):
+                secondary_hostname = kwargs["secondary_hostname"]
+            self._hosts = {LocationMode.PRIMARY: parsed_url.netloc, LocationMode.SECONDARY: secondary_hostname}
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
+        self.require_encryption = kwargs.get("require_encryption", False)
+        self.key_encryption_key = kwargs.get("key_encryption_key")
+        self.key_resolver_function = kwargs.get("key_resolver_function")
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 
     def __enter__(self):
@@ -135,32 +135,32 @@ class StorageAccountHostsMixin(object):
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:
-            query_str += 'snapshot={}&'.format(self.snapshot)
+            query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
-            query_str += 'sharesnapshot={}&'.format(self.snapshot)
+            query_str += "sharesnapshot={}&".format(self.snapshot)
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
-            query_str += credential.lstrip('?')
+            query_str += credential.lstrip("?")
             credential = None
-        return query_str.rstrip('?&'), credential
+        return query_str.rstrip("?&"), credential
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         credential_policy = None
-        if hasattr(credential, 'get_token'):
+        if hasattr(credential, "get_token"):
             credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-        config = kwargs.get('_configuration') or create_configuration(**kwargs)
-        if kwargs.get('_pipeline'):
-            return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: ignore
-        if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
+        config = kwargs.get("_configuration") or create_configuration(**kwargs)
+        if kwargs.get("_pipeline"):
+            return config, kwargs["_pipeline"]
+        config.transport = kwargs.get("transport")  # type: ignore
+        if "connection_timeout" not in kwargs:
+            kwargs["connection_timeout"] = DEFAULT_SOCKET_TIMEOUT
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         policies = [
@@ -185,51 +185,45 @@ def format_shared_key_credential(account, credential):
     if isinstance(credential, six.string_types):
         if len(account) < 2:
             raise ValueError("Unable to determine account name for shared key credential.")
-        credential = {
-            'account_name': account[0],
-            'account_key': credential
-        }
+        credential = {"account_name": account[0], "account_key": credential}
     if isinstance(credential, dict):
-        if 'account_name' not in credential:
+        if "account_name" not in credential:
             raise ValueError("Shared key credential missing 'account_name")
-        if 'account_key' not in credential:
+        if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
     return credential
 
 
 def parse_connection_str(conn_str, credential, service):
-    conn_str = conn_str.rstrip(';')
-    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension
+    conn_str = conn_str.rstrip(";")
+    conn_settings = dict(
+        [s.split("=", 1) for s in conn_str.split(";")]
+    )  # pylint: disable=consider-using-dict-comprehension
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {
-                'account_name': conn_settings['AccountName'],
-                'account_key': conn_settings['AccountKey']
-            }
+            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
         except KeyError:
-            credential = conn_settings.get('SharedAccessSignature')
-    if endpoints['primary'] in conn_settings:
-        primary = conn_settings[endpoints['primary']]
-        if endpoints['secondary'] in conn_settings:
-            secondary = conn_settings[endpoints['secondary']]
+            credential = conn_settings.get("SharedAccessSignature")
+    if endpoints["primary"] in conn_settings:
+        primary = conn_settings[endpoints["primary"]]
+        if endpoints["secondary"] in conn_settings:
+            secondary = conn_settings[endpoints["secondary"]]
     else:
-        if endpoints['secondary'] in conn_settings:
+        if endpoints["secondary"] in conn_settings:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
             primary = "{}://{}.{}.{}".format(
-                conn_settings['DefaultEndpointsProtocol'],
-                conn_settings['AccountName'],
+                conn_settings["DefaultEndpointsProtocol"],
+                conn_settings["AccountName"],
                 service,
-                conn_settings['EndpointSuffix']
+                conn_settings["EndpointSuffix"],
             )
             secondary = "{}-secondary.{}.{}".format(
-                conn_settings['AccountName'],
-                service,
-                conn_settings['EndpointSuffix']
+                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
             )
         except KeyError:
             pass
@@ -237,9 +231,7 @@ def parse_connection_str(conn_str, credential, service):
     if not primary:
         try:
             primary = "https://{}.{}.{}".format(
-                conn_settings['AccountName'],
-                service,
-                conn_settings.get('EndpointSuffix', SERVICE_HOST_BASE)
+                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
@@ -251,28 +243,28 @@ def create_configuration(**kwargs):
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
-    config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
     # Storage settings
-    config.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
+    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
     config.copy_polling_interval = 15
 
     # Block blob uploads
-    config.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-    config.use_byte_buffer = kwargs.get('use_byte_buffer', False)
+    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
+    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
+    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
 
     # Page blob uploads
-    config.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
+    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
 
     # Blob downloads
-    config.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
+    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
+    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
 
     # File uploads
-    config.max_range_size = kwargs.get('max_range_size', 4 * 1024 * 1024)
+    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
     return config
 
 
@@ -282,9 +274,9 @@ def parse_query(query_str):
     sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
-        sas_token = '&'.join(sas_params)
+        sas_token = "&".join(sas_params)
 
-    snapshot = parsed_query.get('snapshot') or parsed_query.get('sharesnapshot')
+    snapshot = parsed_query.get("snapshot") or parsed_query.get("sharesnapshot")
     return snapshot, sas_token
 
 
@@ -293,7 +285,7 @@ def is_credential_sastoken(credential):
         return False
 
     sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip('?'))
+    parsed_query = parse_qs(credential.lstrip("?"))
     if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
         return True
     return False
