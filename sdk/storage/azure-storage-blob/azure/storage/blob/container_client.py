@@ -16,6 +16,9 @@ except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
+
 import six
 
 from ._shared.shared_access_signature import BlobSharedAccessSignature
@@ -274,6 +277,7 @@ class ContainerClient(StorageAccountHostsMixin):
             content_type=content_type,
         )
 
+    @distributed_trace
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
         """
@@ -310,6 +314,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_container(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
@@ -372,6 +377,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
@@ -429,6 +435,7 @@ class ContainerClient(StorageAccountHostsMixin):
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -444,6 +451,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -477,6 +485,7 @@ class ContainerClient(StorageAccountHostsMixin):
         response.name = self.container_name
         return response # type: ignore
 
+    @distributed_trace
     def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -529,6 +538,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
@@ -564,6 +574,7 @@ class ContainerClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace
     def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -639,8 +650,9 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Any], Optional[str], Optional[int], **Any) -> Iterable[BlobProperties]
+    @distributed_trace
+    def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
+        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -651,14 +663,10 @@ class ContainerClient(StorageAccountHostsMixin):
         :param list[str] include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.storage.blob.models.BlobPropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.models.BlobProperties]
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers.py
@@ -677,17 +685,20 @@ class ContainerClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=BlobPropertiesPaged)
 
+
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
             delimiter="/", # type: str
-            marker=None, # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
-        # type: (...) -> Iterable[BlobProperties]
+        # type: (...) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -704,20 +715,15 @@ class ContainerClient(StorageAccountHostsMixin):
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.storage.blob.models.BlobPrefix
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.models.BlobProperties]
         """
         if include and not isinstance(include, list):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
-        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
@@ -728,9 +734,9 @@ class ContainerClient(StorageAccountHostsMixin):
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
-            marker=marker,
             delimiter=delimiter)
 
+    @distributed_trace
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -849,6 +855,7 @@ class ContainerClient(StorageAccountHostsMixin):
         )
         return blob
 
+    @distributed_trace
     def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]

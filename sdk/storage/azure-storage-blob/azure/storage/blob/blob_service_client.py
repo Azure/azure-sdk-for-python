@@ -14,6 +14,9 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
+
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -213,6 +216,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -236,6 +240,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
@@ -275,6 +280,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
@@ -297,6 +303,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties(
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -373,15 +380,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            marker=None,  # type: Optional[str]
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> ContainerPropertiesPaged
+        # type: (...) -> ItemPaged[ContainerProperties]
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -393,17 +400,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param bool include_metadata:
             Specifies that container metadata be returned in the response.
             The default value is `False`.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
-        :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.core.blob.models.ContainerProperties]
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service.py
@@ -420,9 +423,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return ContainerPropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
 
+    @distributed_trace
     def create_container(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -462,6 +466,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
 
+    @distributed_trace
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]

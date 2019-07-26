@@ -11,6 +11,8 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import (
     StorageErrorException,
@@ -74,8 +76,9 @@ class LeaseClient(object):
     def __exit__(self, *args):
         self.release()
 
+    @distributed_trace
     def acquire(self, lease_duration=-1, timeout=None, **kwargs):
-        # type: (int, Optional[int], Any) -> None
+        # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -130,6 +133,7 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = kwargs.get('etag')  # type: str
 
+    @distributed_trace
     def renew(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> None
         """Renews the lease.
@@ -183,6 +187,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def release(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> None
         """Release the lease.
@@ -234,6 +239,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def change(self, proposed_lease_id, timeout=None, **kwargs):
         # type: (str, Optional[int], Any) -> None
         """Change the lease ID of an active lease.
@@ -285,6 +291,7 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace
     def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.
