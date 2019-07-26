@@ -1,9 +1,12 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import datetime
 import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy
-from azure.keyvault.certificates._models import KeyProperties
+from azure.keyvault.certificates import CertificatePolicy, KeyProperties
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------

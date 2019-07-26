@@ -30,86 +30,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-
-    def _to_certificate_policy_bundle(self, policy):
-        if policy.issuer_name or policy.certificate_type or policy.certificate_transparency:
-            issuer_parameters = self._client.models.IssuerParameters(
-                name=policy.issuer_name,
-                certificate_type=policy.certificate_type,
-                certificate_transparency=policy.certificate_transparency
-            )
-        else:
-            issuer_parameters = None
-
-        if policy.enabled is not None or policy.not_before is not None or policy.expires is not None or policy.created is not None or policy.updated is not None or policy.recovery_level:
-            attributes = self._client.models.CertificateAttributes(
-                enabled=policy.enabled,
-                not_before=policy.not_before,
-                expires=policy.expires,
-                created=policy.enabled,
-                updated=policy.updated,
-                recovery_level=policy.recovery_level
-            )
-        else:
-            attributes = None
-
-        if policy.lifetime_actions:
-            lifetime_actions = []
-            for lifetime_action in policy.lifetime_actions:
-                lifetime_actions.append(
-                    self._client.models.LifetimeAction(
-                        trigger=self._client.models.Trigger(
-                            lifetime_percentage=lifetime_action.lifetime_percentage,
-                            days_before_expiry=lifetime_action.days_before_expiry
-                        ),
-                        action=self._client.models.Action(action_type=lifetime_action.action_type)
-                    )
-                )
-        else:
-            lifetime_actions = None
-
-        if policy.subject_name or policy.key_properties.ekus or policy.key_properties.key_usage or policy.san_emails or policy.san_upns or policy.san_dns_names or policy.validity_in_months:
-            x509_certificate_properties = self._client.models.X509CertificateProperties(
-                subject=policy.subject_name,
-                ekus=policy.key_properties.ekus,
-                subject_alternative_names=self._client.models.SubjectAlternativeNames(
-                    emails=policy.san_emails,
-                    upns=policy.san_upns,
-                    dns_names=policy.san_dns_names
-                ),
-                key_usage=policy.key_properties.key_usage,
-                validity_in_months=policy.validity_in_months
-            )
-        else:
-            x509_certificate_properties = None
-
-        if policy.key_properties.exportable or policy.key_properties.key_type or policy.key_properties.key_size or policy.key_properties.reuse_key or policy.key_properties.curbe:
-            key_properties = self._client.models.KeyProperties(
-                exportable=policy.key_properties.exportable,
-                key_type=policy.key_properties.key_type,
-                key_size=policy.key_properties.key_size,
-                reuse_key=policy.key_properties.reuse_key,
-                curve=policy.key_properties.curve
-            )
-        else:
-            key_properties = None
-
-        if policy.content_type:
-            secret_properties = self._client.models.SecretProperties(content_type=policy.content_type)
-        else:
-            secret_properties = None
-
-        policy_bundle = self._client.models.CertificatePolicy(
-            id=policy.id,
-            key_properties=key_properties,
-            secret_properties=secret_properties,
-            x509_certificate_properties=x509_certificate_properties,
-            lifetime_actions=lifetime_actions,
-            issuer_parameters=issuer_parameters,
-            attributes=attributes
-        )
-        return policy_bundle
-
+    
     @distributed_trace_async
     async def create_certificate(
         self,
@@ -156,7 +77,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -258,7 +179,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
-        Performs hte reversal of the Delete operation. THe operation is applicable
+        Performs the reversal of the Delete operation. THe operation is applicable
         in vaults enabled for soft-delete, and must be issued during the retention
         interval (available in the deleted certificate's attributes). This operation
         requires the certificates/recover permission.
@@ -280,7 +201,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificate_bytes: bytes,
         password: Optional[str] = None,
         policy: Optional[CertificatePolicy] = None,
-        enabled: Optional[bool] = True,
+        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -329,7 +250,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_name=name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            certificate_policy=self._to_certificate_policy_bundle(policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -372,7 +293,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -384,7 +305,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         version: Optional[str] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        enabled: Optional[bool] = True,
+        enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Mapping[str, Any]
     ) -> Certificate:
@@ -486,14 +407,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :param include_pending: Specifies whether to include certificates which are not
         completely provisioned.
-        :type include_pending bool
+        :type include_pending: bool
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -520,7 +441,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -546,7 +467,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
             certificate_name=name,
@@ -646,9 +567,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :param name: The name of the certificate.
         :type name: str
-        :param cancellation_requested: Indicates if cancellation was requested
-         on the certificate operation.
-        :type cancellation_requested: bool
         :returns: The updated certificate operation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         :raises:
@@ -726,7 +644,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         self,
         name: str,
         x509_certificates: List[bytearray],
-        enabled: Optional[bool] = True,
+        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -796,7 +714,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         password: Optional[str] = None,
         organization_id: Optional[str] = None,
         admin_details: Optional[List[AdministratorDetails]] = None,
-        enabled: Optional[bool] = True,
+        enabled: Optional[bool] = None,
         **kwargs: Mapping[str, Any]
     ) -> Issuer:
         """Sets the specified certificate issuer.
@@ -827,17 +745,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details[0]:
-            admin_details_to_pass = []
-            for admin_detail in admin_details:
-                admin_details_to_pass.append(
-                    self._client.models.AdministratorDetails(
-                        first_name=admin_detail.first_name,
-                        last_name=admin_detail.last_name,
-                        email_address=admin_detail.email,
-                        phone=admin_detail.phone
-                    )
-                )
+        if admin_details and admin_details[0]:
+            admin_details_to_pass = list(self._client.models.AdministratorDetails(
+                                            first_name=admin_detail.first_name,
+                                            last_name=admin_detail.last_name,
+                                            email_address=admin_detail.email,
+                                            phone=admin_detail.phone
+                                        ) for admin_detail in admin_details)
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
@@ -868,7 +782,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         password: Optional[str] = None,
         organization_id: Optional[str] = None,
         admin_details: Optional[List[AdministratorDetails]] = None,
-        enabled: Optional[bool] = True,
+        enabled: Optional[bool] = None,
         **kwargs: Mapping[str, Any]
     ) -> Issuer:
         """Updates the specified certificate issuer.
@@ -905,17 +819,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details[0]:
-            admin_details_to_pass = []
-            for admin_detail in admin_details:
-                admin_details_to_pass.append(
-                    self._client.models.AdministratorDetails(
-                        first_name=admin_detail.first_name,
-                        last_name=admin_detail.last_name,
-                        email_address=admin_detail.email,
-                        phone=admin_detail.phone
-                    )
-                )
+        if admin_details and admin_details[0]:
+            admin_details_to_pass = list(self._client.models.AdministratorDetails(
+                                            first_name=admin_detail.first_name,
+                                            last_name=admin_detail.last_name,
+                                            email_address=admin_detail.email,
+                                            phone=admin_detail.phone
+                                        ) for admin_detail in admin_details)
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
@@ -967,7 +877,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
         iterable = AsyncPagingAdapter(paged_certificate_issuer_items, IssuerBase._from_issuer_item)
         return iterable

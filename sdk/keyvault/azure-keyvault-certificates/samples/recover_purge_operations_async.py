@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+import time
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
