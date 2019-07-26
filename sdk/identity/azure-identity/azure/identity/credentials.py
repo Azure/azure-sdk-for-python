@@ -332,12 +332,13 @@ class DeviceCodeCredential(PublicClientCredential):
 
     *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
         'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-    *timeout (int)* - seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
+        as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
     """
 
     def __init__(self, client_id, prompt_callback=None, **kwargs):
         # type: (str, Optional[Callable[[str, str], None]], Any) -> None
-        self._timeout = kwargs.pop("timeout", 300)
+        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
@@ -367,14 +368,17 @@ class DeviceCodeCredential(PublicClientCredential):
         else:
             print(flow["message"])
 
-        deadline = now + self._timeout
-        result = self._app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() >= deadline)
+        if self._timeout is not None and self._timeout < flow["expires_in"]:
+            deadline = now + self._timeout
+            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+        else:
+            result = app.acquire_token_by_device_flow(flow)
 
         if "access_token" not in result:
             if result.get("error") == "authorization_pending":
-                message = "Timed out after waiting {} seconds for user to authenticate".format(self._timeout)
+                message = "Timed out waiting for user to authenticate"
             else:
-                message = "Authentication failed: {}".format(result.get("error_description"))
+                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
             raise ClientAuthenticationError(message=message)
 
         token = AccessToken(result["access_token"], now + int(result["expires_in"]))
