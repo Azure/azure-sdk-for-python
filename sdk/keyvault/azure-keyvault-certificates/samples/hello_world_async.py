@@ -5,7 +5,7 @@
 import asyncio
 import datetime
 import os
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates import CertificatePolicy, KeyProperties
 from azure.core.exceptions import HttpResponseError
