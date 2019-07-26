@@ -4859,7 +4859,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
      ~azure.mgmt.compute.v2019_03_01.models.AutomaticOSUpgradeProperties
     :param hyper_vgeneration: Possible values include: 'V1', 'V2'
     :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_03_01.models.HyperVGeneration
+     ~azure.mgmt.compute.v2019_03_01.models.HyperVGenerationTypes
     """
 
     _validation = {

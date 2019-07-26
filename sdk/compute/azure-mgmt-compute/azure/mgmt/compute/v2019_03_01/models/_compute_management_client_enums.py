@@ -50,12 +50,6 @@ class OperatingSystemTypes(str, Enum):
     linux = "Linux"
 
 
-class HyperVGeneration(str, Enum):
-
-    v1 = "V1"
-    v2 = "V2"
-
-
 class VirtualMachineSizeTypes(str, Enum):
 
     basic_a0 = "Basic_A0"
