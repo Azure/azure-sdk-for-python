@@ -99,7 +99,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         if not 'content-type' in request.http_request.headers:
             request.http_request.headers['content-type'] = 'application/xml; charset=utf-8'
 
