@@ -193,16 +193,16 @@ class StorageQueueTestAsync(QueueTestCase):
             await self._create_queue(prefix + str(i))
 
         # Action
-        generator1 =  self.qsc.list_queues(name_starts_with=prefix, results_per_page=3)
+        generator1 =  self.qsc.list_queues(
+            name_starts_with=prefix,
+            results_per_page=3).by_page()
         await generator1.__anext__()
-        queues1 = generator1.current_page
+        queues1 = list(await generator1.__anext__())
 
         generator2 = self.qsc.list_queues(
             name_starts_with=prefix,
-            marker=generator1.next_marker,
-            include_metadata=True)
-        await generator2.__anext__()
-        queues2 = generator2.current_page
+            include_metadata=True).by_page(generator1.continuation_token)
+        queues2 = list(await generator2.__anext__())
 
         # Asserts
         self.assertIsNotNone(queues1)
@@ -410,14 +410,16 @@ class StorageQueueTestAsync(QueueTestCase):
         await queue_client.enqueue_message(u'message2')
         await queue_client.enqueue_message(u'message3')
         await queue_client.enqueue_message(u'message4')
-        result = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
-        await result.__anext__()
+        pager = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
+        result = []
+        async for el in pager:
+            result.append(el)
 
         # Asserts
         self.assertIsNotNone(result)
-        self.assertEqual(4, len(result.current_page))
+        self.assertEqual(4, len(result))
 
-        for message in result.current_page:
+        for message in result:
             self.assertIsNotNone(message)
             self.assertNotEqual('', message.id)
             self.assertNotEqual('', message.content)

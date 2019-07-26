@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -28,13 +27,12 @@ class VaultClient(AsyncKeyVaultClientBase):
         self,
         vault_url: str,
         credential: "TokenCredential",
-        config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
         super(VaultClient, self).__init__(
-            vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
+            vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
         self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 
