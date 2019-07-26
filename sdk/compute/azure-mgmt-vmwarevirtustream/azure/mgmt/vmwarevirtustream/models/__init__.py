@@ -11,6 +11,8 @@
 
 try:
     from ._models_py3 import AddIdentitySourceRequest
+    from ._models_py3 import ApiError, ApiErrorException
+    from ._models_py3 import ApiErrorBase
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterDetail
@@ -28,6 +30,8 @@ try:
     from ._models_py3 import PrivateCloudResponse
 except (SyntaxError, ImportError):
     from ._models import AddIdentitySourceRequest
+    from ._models import ApiError, ApiErrorException
+    from ._models import ApiErrorBase
     from ._models import Circuit
     from ._models import Cluster
     from ._models import ClusterDetail
@@ -48,6 +52,8 @@ from ._paged_models import PrivateCloudResponsePaged
 
 __all__ = [
     'AddIdentitySourceRequest',
+    'ApiError', 'ApiErrorException',
+    'ApiErrorBase',
     'Circuit',
     'Cluster',
     'ClusterDetail',

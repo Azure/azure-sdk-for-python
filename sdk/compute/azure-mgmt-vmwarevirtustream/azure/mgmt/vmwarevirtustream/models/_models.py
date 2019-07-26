@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AddIdentitySourceRequest(Model):
@@ -62,6 +63,54 @@ class AddIdentitySourceRequest(Model):
         self.use_ssl = kwargs.get('use_ssl', None)
         self.username = kwargs.get('username', None)
         self.credential = kwargs.get('credential', None)
+
+
+class ApiError(Model):
+    """API error response.
+
+    :param error:
+    :type error: ~azure.mgmt.vmwarevirtustream.models.ApiErrorBase
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ApiErrorBase'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ApiErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'ApiError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ApiErrorException, self).__init__(deserialize, response, 'ApiError', *args)
+
+
+class ApiErrorBase(Model):
+    """Api error.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiErrorBase, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class Circuit(Model):

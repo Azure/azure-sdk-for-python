@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -56,7 +55,8 @@ class PrivateCloudsOperations(object):
         :return: An iterator like instance of PrivateCloudResponse
         :rtype:
          ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponsePaged[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -96,9 +96,7 @@ class PrivateCloudsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ApiErrorException(self._deserialize, response)
 
             return response
 
@@ -128,7 +126,8 @@ class PrivateCloudsOperations(object):
         :return: PrivateCloudResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -158,9 +157,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -208,9 +205,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -246,7 +241,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -310,9 +306,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -348,7 +342,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -407,9 +402,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -433,7 +426,8 @@ class PrivateCloudsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -489,9 +483,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -527,7 +519,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._add_authorization_initial(
             resource_group_name=resource_group_name,
@@ -588,9 +581,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -625,7 +616,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._delete_authorization_initial(
             resource_group_name=resource_group_name,
@@ -689,9 +681,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -727,7 +717,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._add_identity_source_initial(
             resource_group_name=resource_group_name,
@@ -791,9 +782,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -829,7 +818,8 @@ class PrivateCloudsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         raw_result = self._delete_identity_source_initial(
             resource_group_name=resource_group_name,
@@ -876,7 +866,8 @@ class PrivateCloudsOperations(object):
         :rtype:
          ~azure.mgmt.vmwarevirtustream.models.GetAdminCredentialsResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         # Construct URL
         url = self.get_admin_credentials.metadata['url']
@@ -906,9 +897,7 @@ class PrivateCloudsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
