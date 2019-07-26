@@ -14,6 +14,8 @@ from azure.eventhub.error import EventDataError
 from uamqp import BatchMessage, Message, types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
 
+log = logging.getLogger(__name__)
+
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
@@ -251,15 +253,13 @@ class EventData(object):
 
 class EventDataBatch(object):
     """
-    The EventDataBatch class is a holder of a batch of event date within max message size bytes.
+    The EventDataBatch class is a holder of a batch of event data within max size bytes.
     Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
     Do not instantiate an EventDataBatch object directly.
     """
 
-    log = logging.getLogger(__name__)
-
     def __init__(self, max_size=None, partition_key=None):
-        self.max_size = max_size if max_size else constants.MAX_MESSAGE_LENGTH_BYTES
+        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
         self._partition_key = partition_key
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
 
@@ -302,7 +302,7 @@ class EventDataBatch(object):
         :return:
         """
         if event_data is None:
-            self.log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
             return
         if not isinstance(event_data, EventData):
             raise TypeError('event_data should be type of EventData')
