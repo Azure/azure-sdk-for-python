@@ -5,3 +5,5 @@
 # --------------------------------------------------------------------------
 
 from ._client import CertificateClient
+
+__all__ = ["CertificateClient"]
