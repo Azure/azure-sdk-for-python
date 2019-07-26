@@ -4531,15 +4531,9 @@ class AzureSqlDWTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL Data Warehouse. Type:
+     string (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_dw_table_dataset_schema: The schema name of the Azure SQL
-     Data Warehouse. Type: string (or Expression with resultType string).
-    :type azure_sql_dw_table_dataset_schema: object
-    :param table: The table name of the Azure SQL Data Warehouse. Type: string
-     (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -4558,15 +4552,11 @@ class AzureSqlDWTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_dw_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, azure_sql_dw_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(AzureSqlDWTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.azure_sql_dw_table_dataset_schema = azure_sql_dw_table_dataset_schema
-        self.table = table
         self.type = 'AzureSqlDWTable'
 
 
@@ -4882,15 +4872,9 @@ class AzureSqlTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL database. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_table_dataset_schema: The schema name of the Azure SQL
-     database. Type: string (or Expression with resultType string).
-    :type azure_sql_table_dataset_schema: object
-    :param table: The table name of the Azure SQL database. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -4909,15 +4893,11 @@ class AzureSqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, azure_sql_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(AzureSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.azure_sql_table_dataset_schema = azure_sql_table_dataset_schema
-        self.table = table
         self.type = 'AzureSqlTable'
 
 
@@ -8768,15 +8748,9 @@ class DrillTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Drill. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param drill_table_dataset_schema: The schema name of the Drill. Type:
-     string (or Expression with resultType string).
-    :type drill_table_dataset_schema: object
     """
 
     _validation = {
@@ -8795,15 +8769,11 @@ class DrillTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'drill_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, drill_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(DrillTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.drill_table_dataset_schema = drill_table_dataset_schema
         self.type = 'DrillTable'
 
 
@@ -11456,15 +11426,9 @@ class GoogleBigQueryObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     database + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type table: object
-    :param dataset: The database name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type dataset: object
     """
 
     _validation = {
@@ -11483,15 +11447,11 @@ class GoogleBigQueryObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'dataset': {'key': 'typeProperties.dataset', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, dataset=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(GoogleBigQueryObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.dataset = dataset
         self.type = 'GoogleBigQueryObject'
 
 
@@ -11673,15 +11633,9 @@ class GreenplumTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of Greenplum. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param greenplum_table_dataset_schema: The schema name of Greenplum. Type:
-     string (or Expression with resultType string).
-    :type greenplum_table_dataset_schema: object
     """
 
     _validation = {
@@ -11700,15 +11654,11 @@ class GreenplumTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'greenplum_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, greenplum_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(GreenplumTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.greenplum_table_dataset_schema = greenplum_table_dataset_schema
         self.type = 'GreenplumTable'
 
 
@@ -13055,15 +13005,9 @@ class HiveObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
-    :type table_name: object
-    :param table: The table name of the Hive. Type: string (or Expression with
+    :param table_name: The table name. Type: string (or Expression with
      resultType string).
-    :type table: object
-    :param hive_object_dataset_schema: The schema name of the Hive. Type:
-     string (or Expression with resultType string).
-    :type hive_object_dataset_schema: object
+    :type table_name: object
     """
 
     _validation = {
@@ -13082,15 +13026,11 @@ class HiveObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'hive_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, hive_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(HiveObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.hive_object_dataset_schema = hive_object_dataset_schema
         self.type = 'HiveObject'
 
 
@@ -13841,15 +13781,9 @@ class ImpalaObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Impala. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param impala_object_dataset_schema: The schema name of the Impala. Type:
-     string (or Expression with resultType string).
-    :type impala_object_dataset_schema: object
     """
 
     _validation = {
@@ -13868,15 +13802,11 @@ class ImpalaObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'impala_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, impala_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(ImpalaObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.impala_object_dataset_schema = impala_object_dataset_schema
         self.type = 'ImpalaObject'
 
 
@@ -18455,15 +18385,9 @@ class OracleTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the on-premises Oracle database.
+     Type: string (or Expression with resultType string).
     :type table_name: object
-    :param oracle_table_dataset_schema: The schema name of the on-premises
-     Oracle database. Type: string (or Expression with resultType string).
-    :type oracle_table_dataset_schema: object
-    :param table: The table name of the on-premises Oracle database. Type:
-     string (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -18482,15 +18406,11 @@ class OracleTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'oracle_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, oracle_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(OracleTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.oracle_table_dataset_schema = oracle_table_dataset_schema
-        self.table = table
         self.type = 'OracleTable'
 
 
@@ -19075,15 +18995,9 @@ class PhoenixObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Phoenix. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param phoenix_object_dataset_schema: The schema name of the Phoenix.
-     Type: string (or Expression with resultType string).
-    :type phoenix_object_dataset_schema: object
     """
 
     _validation = {
@@ -19102,15 +19016,11 @@ class PhoenixObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'phoenix_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, phoenix_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(PhoenixObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.phoenix_object_dataset_schema = phoenix_object_dataset_schema
         self.type = 'PhoenixObject'
 
 
@@ -19786,15 +19696,9 @@ class PrestoObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Presto. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param presto_object_dataset_schema: The schema name of the Presto. Type:
-     string (or Expression with resultType string).
-    :type presto_object_dataset_schema: object
     """
 
     _validation = {
@@ -19813,15 +19717,11 @@ class PrestoObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'presto_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, presto_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(PrestoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.presto_object_dataset_schema = presto_object_dataset_schema
         self.type = 'PrestoObject'
 
 
@@ -24133,15 +24033,9 @@ class SparkObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Spark. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param spark_object_dataset_schema: The schema name of the Spark. Type:
-     string (or Expression with resultType string).
-    :type spark_object_dataset_schema: object
     """
 
     _validation = {
@@ -24160,15 +24054,11 @@ class SparkObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'spark_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, spark_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(SparkObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.spark_object_dataset_schema = spark_object_dataset_schema
         self.type = 'SparkObject'
 
 
@@ -24763,15 +24653,9 @@ class SqlServerTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the SQL Server dataset. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param sql_server_table_dataset_schema: The schema name of the SQL Server
-     dataset. Type: string (or Expression with resultType string).
-    :type sql_server_table_dataset_schema: object
-    :param table: The table name of the SQL Server dataset. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -24790,15 +24674,11 @@ class SqlServerTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'sql_server_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, sql_server_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(SqlServerTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.sql_server_table_dataset_schema = sql_server_table_dataset_schema
-        self.table = table
         self.type = 'SqlServerTable'
 
 
@@ -26970,15 +26850,9 @@ class VerticaTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Vertica. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param vertica_table_dataset_schema: The schema name of the Vertica. Type:
-     string (or Expression with resultType string).
-    :type vertica_table_dataset_schema: object
     """
 
     _validation = {
@@ -26997,15 +26871,11 @@ class VerticaTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'vertica_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, vertica_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(VerticaTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.vertica_table_dataset_schema = vertica_table_dataset_schema
         self.type = 'VerticaTable'
 
 
