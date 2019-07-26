@@ -314,8 +314,8 @@ class EventHubProducer(object):
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
         :type partition_key: str
-        :return: None
-        :rtype: None
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:
             await self._open()
