@@ -124,11 +124,6 @@ def test_client_secret_environment_credential(monkeypatch):
     assert token.token == access_token
 
 
-def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        EnvironmentCredential().get_token("scope")
-
-
 def test_credential_chain_error_message():
     def raise_authn_error(message):
         raise ClientAuthenticationError(message)
