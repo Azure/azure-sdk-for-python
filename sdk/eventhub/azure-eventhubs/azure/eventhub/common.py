@@ -8,6 +8,7 @@ import datetime
 import calendar
 import json
 import six
+from enum import Enum
 
 from uamqp import BatchMessage, Message, types
 from uamqp.message import MessageHeader, MessageProperties
@@ -50,7 +51,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, to_device=None, message=None):
+    def __init__(self, **kwargs):
         """
         Initialize EventData.
 
@@ -63,6 +64,10 @@ class EventData(object):
         :param message: The received message.
         :type message: ~uamqp.message.Message
         """
+        body = kwargs.get("body", None)
+        to_device = kwargs.get("to_device", None)
+        message = kwargs.get("message", None)
+
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._app_properties = {}
@@ -205,7 +210,7 @@ class EventData(object):
         except TypeError:
             raise ValueError("Message data empty.")
 
-    def body_as_str(self, encoding='UTF-8'):
+    def body_as_str(self, **kwargs):
         """
         The body of the event data as a string if the data is of a
         compatible type.
@@ -214,6 +219,7 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: str or unicode
         """
+        encoding = kwargs.get("encoding", 'UTF-8')
         data = self.body
         try:
             return "".join(b.decode(encoding) for b in data)
@@ -226,7 +232,7 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
-    def body_as_json(self, encoding='UTF-8'):
+    def body_as_json(self, **kwargs):
         """
         The body of the event loaded as a JSON object is the data is compatible.
 
@@ -234,6 +240,7 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: dict
         """
+        encoding = kwargs.get("encoding", 'UTF-8')
         data_str = self.body_as_str(encoding=encoding)
         try:
             return json.loads(data_str)
@@ -279,7 +286,7 @@ class EventPosition(object):
       >>> event_pos = EventPosition(1506968696002)
     """
 
-    def __init__(self, value, inclusive=False):
+    def __init__(self, value, **kwargs):
         """
         Initialize EventPosition.
 
@@ -288,6 +295,7 @@ class EventPosition(object):
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
+        inclusive = kwargs.get("inclusive", False)
         self.value = value if value is not None else "-1"
         self.inclusive = inclusive
 

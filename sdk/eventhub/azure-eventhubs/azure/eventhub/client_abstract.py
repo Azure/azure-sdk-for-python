@@ -219,7 +219,7 @@ class EventHubClientAbstract(object):
         self.mgmt_target = redirect_uri
 
     @classmethod
-    def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
+    def from_connection_string(cls, conn_str, **kwargs):
         """Create an EventHubClient from an EventHub/IotHub connection string.
 
         :param conn_str: The connection string of an eventhub or IoT hub
@@ -266,6 +266,7 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
+        event_hub_path = kwargs.get("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         if not is_iot_conn_str:
             address, policy, key, entity = _parse_conn_str(conn_str)
@@ -281,12 +282,10 @@ class EventHubClientAbstract(object):
 
     @abstractmethod
     def create_consumer(
-            self, consumer_group, partition_id, event_position, owner_level=None,
-            operation=None,
-            prefetch=None,
+            self, consumer_group, partition_id, event_position, **kwargs
     ):
         pass
 
     @abstractmethod
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
+    def create_producer(self, **kwargs):
         pass

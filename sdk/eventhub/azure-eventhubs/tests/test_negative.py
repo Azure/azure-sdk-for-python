@@ -26,7 +26,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
-        sender._open()
+        sender.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
@@ -34,7 +34,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        receiver._open()
+        receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -43,7 +43,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
-        sender._open()
+        sender.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
@@ -51,7 +51,7 @@ def test_receive_with_invalid_key_sync(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        receiver._open()
+        receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -60,7 +60,7 @@ def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
-        sender._open()
+        sender.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
@@ -68,7 +68,7 @@ def test_receive_with_invalid_policy_sync(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        receiver._open()
+        receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -90,7 +90,7 @@ def test_non_existing_entity_sender(connection_str):
     client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
     sender = client.create_producer(partition_id="1")
     with pytest.raises(AuthenticationError):
-        sender._open()
+        sender.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
@@ -98,7 +98,7 @@ def test_non_existing_entity_receiver(connection_str):
     client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        receiver._open()
+        receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -122,7 +122,7 @@ def test_send_to_invalid_partitions(connection_str):
         sender = client.create_producer(partition_id=p)
         try:
             with pytest.raises(ConnectError):
-                sender._open()
+                sender.send(EventData("test data"))
         finally:
             sender.close()
 
