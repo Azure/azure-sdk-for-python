@@ -788,7 +788,7 @@ class StorageShareTest(FileTestCase):
         await root.upload_file('fileb1', '1024')
 
         # Act
-        result = share_name.list_directories_and_files(results_per_page=2)
+        result = share_name.list_directories_and_files(results_per_page=2).by_page()
         result = list(await result.__anext__())
 
         # Assert
