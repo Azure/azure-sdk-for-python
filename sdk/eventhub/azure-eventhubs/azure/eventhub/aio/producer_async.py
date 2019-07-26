@@ -111,9 +111,8 @@ class EventHubProducer(object):
             await self._connect()
             self.running = True
 
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size if\
-                self._handler.message_handler._link.peer_max_message_size\
-                else constants.MAX_MESSAGE_LENGTH_BYTES
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
 
     async def _connect(self):
         connected = await self._build_connection()
@@ -308,18 +307,22 @@ class EventHubProducer(object):
 
     async def create_batch(self, max_size=None, partition_key=None):
         """
-        Create an EventDataBatch object with max message size being max_message_size.
-        The max_message_size should be no greater than the max allowed message size defined by the service side.
-        :param max_message_size:
-        :param partition_key:
-        :return:
+        Create an EventDataBatch object with max size being max_size.
+        The max_size should be no greater than the max allowed message size defined by the service side.
+        :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :type max_size: int
+        :param partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :type partition_key: str
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:
             await self._open()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
-                                 .format(max_size, self._max_message_size_on_link))
+                             .format(max_size, self._max_message_size_on_link))
 
         return EventDataBatch(max_size or self._max_message_size_on_link, partition_key)
 
@@ -332,7 +335,8 @@ class EventHubProducer(object):
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
         :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
         :param partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
+         a particular partition of the Event Hub decided by the service. partition_key
+         could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
         :type partition_key: str
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
@@ -355,6 +359,8 @@ class EventHubProducer(object):
             wrapper_event_data = event_data
         else:
             if isinstance(event_data, EventDataBatch):
+                if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
+                    raise EventDataError('The partition_key does not match the one of the EventDataBatch')
                 wrapper_event_data = event_data
             else:
                 if partition_key:
