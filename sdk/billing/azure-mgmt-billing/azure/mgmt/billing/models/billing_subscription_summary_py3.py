@@ -57,10 +57,8 @@ class BillingSubscriptionSummary(Resource):
     :type sku_id: str
     :ivar sku_description: The sku description.
     :vartype sku_description: str
-    :param reseller_id: The reseller id.
-    :type reseller_id: str
-    :ivar description: The name of the reseller.
-    :vartype description: str
+    :ivar reseller: Reseller for this subscription.
+    :vartype reseller: ~azure.mgmt.billing.models.Reseller
     """
 
     _validation = {
@@ -78,7 +76,7 @@ class BillingSubscriptionSummary(Resource):
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
         'sku_description': {'readonly': True},
-        'description': {'readonly': True},
+        'reseller': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,11 +96,10 @@ class BillingSubscriptionSummary(Resource):
         'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
-        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
     }
 
-    def __init__(self, *, subscription_billing_status=None, sku_id: str=None, reseller_id: str=None, **kwargs) -> None:
+    def __init__(self, *, subscription_billing_status=None, sku_id: str=None, **kwargs) -> None:
         super(BillingSubscriptionSummary, self).__init__(**kwargs)
         self.display_name = None
         self.subscription_id = None
@@ -117,5 +114,4 @@ class BillingSubscriptionSummary(Resource):
         self.invoice_section_name = None
         self.sku_id = sku_id
         self.sku_description = None
-        self.reseller_id = reseller_id
-        self.description = None
+        self.reseller = None
