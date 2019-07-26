@@ -26,11 +26,7 @@ try:
     from ._models_py3 import AmazonS3Location
     from ._models_py3 import AmazonS3ReadSettings
     from ._models_py3 import AppendVariableActivity
-    from ._models_py3 import AvroDataset
     from ._models_py3 import AvroFormat
-    from ._models_py3 import AvroSink
-    from ._models_py3 import AvroSource
-    from ._models_py3 import AvroWriteSettings
     from ._models_py3 import AzureBatchLinkedService
     from ._models_py3 import AzureBlobDataset
     from ._models_py3 import AzureBlobFSDataset
@@ -393,9 +389,7 @@ try:
     from ._models_py3 import SalesforceServiceCloudSource
     from ._models_py3 import SalesforceSink
     from ._models_py3 import SalesforceSource
-    from ._models_py3 import SapBwCubeDataset
     from ._models_py3 import SapBWLinkedService
-    from ._models_py3 import SapBwSource
     from ._models_py3 import SapCloudForCustomerLinkedService
     from ._models_py3 import SapCloudForCustomerResourceDataset
     from ._models_py3 import SapCloudForCustomerSink
@@ -472,7 +466,6 @@ try:
     from ._models_py3 import SubResource
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
-    from ._models_py3 import SybaseTableDataset
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataPartitionSettings
     from ._models_py3 import TeradataSource
@@ -531,11 +524,7 @@ except (SyntaxError, ImportError):
     from ._models import AmazonS3Location
     from ._models import AmazonS3ReadSettings
     from ._models import AppendVariableActivity
-    from ._models import AvroDataset
     from ._models import AvroFormat
-    from ._models import AvroSink
-    from ._models import AvroSource
-    from ._models import AvroWriteSettings
     from ._models import AzureBatchLinkedService
     from ._models import AzureBlobDataset
     from ._models import AzureBlobFSDataset
@@ -898,9 +887,7 @@ except (SyntaxError, ImportError):
     from ._models import SalesforceServiceCloudSource
     from ._models import SalesforceSink
     from ._models import SalesforceSource
-    from ._models import SapBwCubeDataset
     from ._models import SapBWLinkedService
-    from ._models import SapBwSource
     from ._models import SapCloudForCustomerLinkedService
     from ._models import SapCloudForCustomerResourceDataset
     from ._models import SapCloudForCustomerSink
@@ -977,7 +964,6 @@ except (SyntaxError, ImportError):
     from ._models import SubResource
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
-    from ._models import SybaseTableDataset
     from ._models import TeradataLinkedService
     from ._models import TeradataPartitionSettings
     from ._models import TeradataSource
@@ -1070,7 +1056,6 @@ from ._data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DynamicsDeploymentType,
     DynamicsAuthenticationType,
-    AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
     NetezzaPartitionOption,
@@ -1117,11 +1102,7 @@ __all__ = [
     'AmazonS3Location',
     'AmazonS3ReadSettings',
     'AppendVariableActivity',
-    'AvroDataset',
     'AvroFormat',
-    'AvroSink',
-    'AvroSource',
-    'AvroWriteSettings',
     'AzureBatchLinkedService',
     'AzureBlobDataset',
     'AzureBlobFSDataset',
@@ -1484,9 +1465,7 @@ __all__ = [
     'SalesforceServiceCloudSource',
     'SalesforceSink',
     'SalesforceSource',
-    'SapBwCubeDataset',
     'SapBWLinkedService',
-    'SapBwSource',
     'SapCloudForCustomerLinkedService',
     'SapCloudForCustomerResourceDataset',
     'SapCloudForCustomerSink',
@@ -1563,7 +1542,6 @@ __all__ = [
     'SubResource',
     'SybaseLinkedService',
     'SybaseSource',
-    'SybaseTableDataset',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
@@ -1655,7 +1633,6 @@ __all__ = [
     'SybaseAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsAuthenticationType',
-    'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'NetezzaPartitionOption',
