@@ -323,10 +323,12 @@ class DeviceCodeCredential(PublicClientCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
 
     :param str client_id: the application's ID
-    :param prompt_callback: (optional) A callable with string parameters (``verification_uri``, ``user_code``).
-        ``verification_uri`` is the URL the user must visit. ``user_code`` is the code the user must enter there.
-        Provide this callback if you want to control how authentication instructions are presented. Otherwise, the
-        credential will print them to stdout.
+    :param prompt_callback: (optional) A callback enabling control of how authentication instructions are presented.
+        If not provided, the credential will print instructions to stdout.
+    :type prompt_callback: A callable accepting arguments (``verification_uri``, ``user_code``, ``expires_in``):
+        - ``verification_uri`` (str) the URL the user must visit
+        - ``user_code`` (str) the code the user must enter there
+        - ``expires_in`` (int) the number of seconds the code will be valid
 
     **Keyword arguments:**
 
@@ -364,7 +366,7 @@ class DeviceCodeCredential(PublicClientCredential):
             )
 
         if self._prompt_callback:
-            self._prompt_callback(flow["verification_uri"], flow["user_code"])
+            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
         else:
             print(flow["message"])
 
