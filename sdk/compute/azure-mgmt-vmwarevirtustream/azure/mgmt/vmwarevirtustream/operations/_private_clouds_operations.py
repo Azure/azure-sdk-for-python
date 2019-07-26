@@ -27,7 +27,7 @@ class PrivateCloudsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2016-09-01-preview".
+    :ivar api_version: Version of Azure VMware Solution by Virtustream API to be used with the client request. Constant value: "2016-09-01-preview".
     """
 
     models = models
@@ -42,124 +42,11 @@ class PrivateCloudsOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """list private clouds.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateCloudResponseList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponseList
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PrivateCloudResponseList', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareVirtustream/privateClouds'}
-
-    def get_by_id(
-            self, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """get a private cloud.
-
-        :param private_cloud_name: The name of the private cloud.
-        :type private_cloud_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateCloudResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_by_id.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PrivateCloudResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
-
-    def list_in_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """list private clouds in a resource group.
+        """List private clouds in a resource group.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -172,7 +59,7 @@ class PrivateCloudsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list_in_resource_group.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -211,16 +98,16 @@ class PrivateCloudsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds'}
 
-    def get_by_id_in_resource_group(
+    def get(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """get a private cloud in a resource group.
+        """Get a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -233,7 +120,7 @@ class PrivateCloudsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_by_id_in_resource_group.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -273,7 +160,7 @@ class PrivateCloudsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_id_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
 
     def _create_or_update_initial(
@@ -327,12 +214,12 @@ class PrivateCloudsOperations(object):
 
     def create_or_update(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """create a private cloud.
+        """Create or update a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
@@ -429,12 +316,12 @@ class PrivateCloudsOperations(object):
 
     def update(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """modify a private cloud.
+        """Update a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
@@ -519,12 +406,12 @@ class PrivateCloudsOperations(object):
 
     def delete(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """delete a private cloud.
+        """Delete a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -608,14 +495,15 @@ class PrivateCloudsOperations(object):
 
     def add_authorization(
             self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """adds a number of hosts to a cluster.
+        """Add ExpressRoute circuit authorization.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: The name of the ER authorization.
+        :param authorization_name: Name of the ExpressRoute circuit
+         authorization
         :type authorization_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -706,12 +594,12 @@ class PrivateCloudsOperations(object):
 
     def delete_authorization(
             self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """adds a number of hosts to a cluster.
+        """Delete ExpressRoute circuit authorization.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param authorization_name: The name of the ER authorization.
         :type authorization_name: str
@@ -807,12 +695,12 @@ class PrivateCloudsOperations(object):
 
     def add_identity_source(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """adds an identity source for the privateCloud.
+        """Add an identity source to the private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
@@ -909,12 +797,12 @@ class PrivateCloudsOperations(object):
 
     def delete_identity_source(
             self, resource_group_name, private_cloud_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """deletes an identity source from the private cloud.
+        """Delete an identity source from the private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param parameters:
         :type parameters:
@@ -961,12 +849,12 @@ class PrivateCloudsOperations(object):
 
     def get_admin_credentials(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """fetches the vcenter credentials for the private cloud.
+        """Get the admin credentials for the private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the privateCloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

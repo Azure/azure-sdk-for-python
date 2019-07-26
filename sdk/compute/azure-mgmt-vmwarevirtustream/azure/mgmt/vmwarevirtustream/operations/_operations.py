@@ -25,7 +25,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2016-09-01-preview".
+    :ivar api_version: Version of Azure VMware Solution by Virtustream API to be used with the client request. Constant value: "2016-09-01-preview".
     """
 
     models = models
@@ -41,7 +41,7 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available RP operations.
+        """Lists all of the available operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

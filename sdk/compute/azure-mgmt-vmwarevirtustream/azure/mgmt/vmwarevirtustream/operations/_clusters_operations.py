@@ -27,7 +27,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2016-09-01-preview".
+    :ivar api_version: Version of Azure VMware Solution by Virtustream API to be used with the client request. Constant value: "2016-09-01-preview".
     """
 
     models = models
@@ -43,12 +43,12 @@ class ClustersOperations(object):
 
     def list(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """list clusters in a private cloud.
+        """List clusters in a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -105,14 +105,14 @@ class ClustersOperations(object):
 
     def get_by_name(
             self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """get cluster.
+        """Get a cluster by name in a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param cluster_name: The name of the cluster.
+        :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -223,14 +223,14 @@ class ClustersOperations(object):
 
     def create_or_update(
             self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """create cluster.
+        """Create or update a cluster in a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
         :param private_cloud_name: The name of the private cloud.
         :type private_cloud_name: str
-        :param cluster_name: The name of the cluster.
+        :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
         :param location:
         :type location: str
@@ -333,14 +333,14 @@ class ClustersOperations(object):
 
     def update(
             self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """modify cluster.
+        """Update a cluster in a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param cluster_name: The name of the cluster.
+        :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
         :param location:
         :type location: str
@@ -429,14 +429,14 @@ class ClustersOperations(object):
 
     def delete(
             self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """delete cluster.
+        """Delete a cluster in a private cloud.
 
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
+        :param resource_group_name: Name of the resource group within the
+         Azure subscription
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param cluster_name: The name of the cluster.
+        :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

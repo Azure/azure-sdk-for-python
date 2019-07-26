@@ -71,11 +71,11 @@ class Circuit(Model):
     :type primary_subnet: str
     :param secondary_subnet: CIDR of secondary subnet
     :type secondary_subnet: str
-    :param express_route_id: ID of privateCloud customer ER (Microsoft Colo
+    :param express_route_id: Identifier of the ExpressRoute (Microsoft Colo
      only)
     :type express_route_id: str
-    :param authorizations: authorizations on privateCloud customer ER
-     (Microsoft Colo only)
+    :param authorizations: Authorizations for the ExpressRoute (Microsoft Colo
+     only)
     :type authorizations:
      list[~azure.mgmt.vmwarevirtustream.models.ExpressRouteAuthorization]
     """
@@ -135,7 +135,7 @@ class Cluster(Model):
 class ClusterDetail(Model):
     """ClusterDetail.
 
-    :param cluster_size: number of hosts in PrivateCloud cluster
+    :param cluster_size: Number of hosts in the cluster
     :type cluster_size: int
     """
 
@@ -355,11 +355,10 @@ class Operation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the operation being performed on this particular
-     object.
+    :ivar name: The name of the operation being performed on this object
     :vartype name: str
     :ivar display: Contains the localized display information for this
-     particular operation / action.
+     operation
     :vartype display: ~azure.mgmt.vmwarevirtustream.models.OperationDisplay
     """
 
@@ -380,20 +379,19 @@ class Operation(Model):
 
 
 class OperationDisplay(Model):
-    """Contains the localized display information for this particular operation /
-    action.
+    """Contains the localized display information for this operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provider: The localized friendly form of the resource provider name.
+    :ivar provider: Localized friendly form of the resource provider name
     :vartype provider: str
-    :ivar resource: The localized friendly form of the resource type related
-     to this action/operation.
+    :ivar resource: Localized friendly form of the resource type related to
+     this operation
     :vartype resource: str
-    :ivar operation: The localized friendly name for the operation.
+    :ivar operation: Localized friendly name for the operation
     :vartype operation: str
-    :ivar description: The localized friendly description for the operation.
+    :ivar description: Localized friendly description for the operation
     :vartype description: str
     """
 

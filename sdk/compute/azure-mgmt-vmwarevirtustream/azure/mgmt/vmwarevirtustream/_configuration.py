@@ -21,8 +21,7 @@ class VirtustreamPrivateCloudResourceProviderAPIConfiguration(AzureConfiguration
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The unique identifier for a Microsoft Azure
-     subscription.
+    :param subscription_id: Unique identifier for the Azure subscription
     :type subscription_id: str
     :param str base_url: Service URL
     """
