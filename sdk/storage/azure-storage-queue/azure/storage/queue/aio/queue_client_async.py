@@ -27,6 +27,8 @@ except ImportError:
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from azure.core.async_paging import AsyncItemPaged
+
 from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.storage.queue._shared.response_handlers import (
@@ -380,8 +382,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs):  # type: ignore
-        # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> QueueMessage
+    def receive_messages(self, messages_per_page=None, visibility_timeout=None, timeout=None, **kwargs): # type: ignore
+        # type: (Optional[int], Optional[int], Optional[int], Optional[Any]) -> AsyncItemPaged[Message]
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -409,7 +411,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.storage.queue.models.MessagesPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.models.Message]
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_message.py
@@ -430,7 +432,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return MessagesPaged(command, results_per_page=messages_per_page)
+            return AsyncItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
         except StorageErrorException as error:
             process_storage_error(error)
 

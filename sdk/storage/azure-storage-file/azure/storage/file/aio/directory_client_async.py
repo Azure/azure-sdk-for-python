@@ -10,6 +10,7 @@ from typing import ( # pylint: disable=unused-import
 )
 
 from azure.core.polling import async_poller
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -195,21 +196,17 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[str], Optional[int], **Any) -> DirectoryProperties
+    def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
+        # type: (Optional[str], Optional[int], **Any) -> AsyncItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.storage.file.models.DirectoryPropertiesPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.DirectoryProperties]
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_directory.py
@@ -225,17 +222,14 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return DirectoryPropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, marker=None, recursive=False, timeout=None, **kwargs):
+    def list_handles(self, recursive=False, timeout=None, **kwargs) -> AsyncItemPaged:
         """Lists opened handles on a directory or a file under the directory.
 
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
@@ -251,8 +245,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             timeout=timeout,
             recursive=recursive,
             **kwargs)
-        return HandlesPaged(
-            command, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=HandlesPaged)
 
     @distributed_trace_async
     async def close_handles(

@@ -34,7 +34,6 @@ class KeyVaultClientConfiguration(Configuration):
 
         self.user_agent_policy.add_user_agent('azsdk-python-azure-keyvault/{}'.format(VERSION))
         self.generate_client_request_id = True
-        self.accept_language = None
 
         self.credentials = credentials
 

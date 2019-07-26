@@ -441,14 +441,11 @@ class StorageShareTest(FileTestCase):
         share_names.sort()
 
         # Act
-        generator1 = self.fsc.list_shares(prefix, results_per_page=2)
-        await generator1.__anext__()
+        generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()
+        shares1 = list(await generator1.__anext__())
         generator2 = self.fsc.list_shares(
-            prefix, marker=generator1.next_marker, results_per_page=2)
-        await generator2.__anext__()
-
-        shares1 = generator1.current_page
-        shares2 = generator2.current_page
+            prefix, results_per_page=2).by_page(continuation_token=generator1.continuation_token)
+        shares2 = list(await generator2.__anext__())
 
         # Assert
         self.assertIsNotNone(shares1)
@@ -791,14 +788,14 @@ class StorageShareTest(FileTestCase):
         await root.upload_file('fileb1', '1024')
 
         # Act
-        result = share_name.list_directories_and_files(results_per_page=2)
-        await result.__anext__()
+        result = share_name.list_directories_and_files(results_per_page=2).by_page()
+        result = list(await result.__anext__())
 
         # Assert
         self.assertIsNotNone(result)
-        self.assertEqual(len(result.current_page), 2)
-        self.assertNamedItemInContainer(result.current_page, 'dir1')
-        self.assertNamedItemInContainer(result.current_page, 'filea1')
+        self.assertEqual(len(result), 2)
+        self.assertNamedItemInContainer(result, 'dir1')
+        self.assertNamedItemInContainer(result, 'filea1')
 
     def test_list_directories_and_files_with_num_results_async(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -817,14 +814,13 @@ class StorageShareTest(FileTestCase):
         await dir1.upload_file('fileb1', '1024')
 
         # Act
-        generator1 = share_name.list_directories_and_files('dir1', results_per_page=2)
-        await generator1.__anext__()
-        generator2 = share_name.list_directories_and_files(
-            'dir1', marker=generator1.next_marker, results_per_page=2)
-        await generator2.__anext__()
+        generator1 = share_name.list_directories_and_files(
+            'dir1', results_per_page=2).by_page()
+        result1 = list(await generator1.__anext__())
 
-        result1 = generator1.current_page
-        result2 = generator2.current_page
+        generator2 = share_name.list_directories_and_files(
+            'dir1', results_per_page=2).by_page(continuation_token=generator1.continuation_token)
+        result2 = list(await generator2.__anext__())
 
         # Assert
         self.assertEqual(len(result1), 2)

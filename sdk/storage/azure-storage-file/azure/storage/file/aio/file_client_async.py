@@ -10,6 +10,7 @@ from typing import Optional, Union, IO, List, Dict, Any, Iterable, TYPE_CHECKING
 
 import six
 from azure.core.polling import async_poller
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -668,22 +669,23 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, marker=None, timeout=None, **kwargs):
+    def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
         """Lists handles for file.
 
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.Handle]
         """
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.file.list_handles, sharesnapshot=self.snapshot, timeout=timeout, **kwargs
-        )
-        return HandlesPaged(command, results_per_page=results_per_page, marker=marker)
+            self._client.file.list_handles,
+            sharesnapshot=self.snapshot,
+            timeout=timeout,
+            **kwargs)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=HandlesPaged)
 
     @distributed_trace_async
     async def close_handles(

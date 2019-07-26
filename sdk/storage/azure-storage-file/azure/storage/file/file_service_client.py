@@ -6,7 +6,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
 try:
@@ -14,7 +14,9 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import Services
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -271,11 +273,10 @@ class FileServiceClient(StorageAccountHostsMixin):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
-            marker=None,
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> SharePropertiesPaged
+        # type: (...) -> ItemPaged[ShareProperties]
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all shares have been returned.
@@ -287,14 +288,10 @@ class FileServiceClient(StorageAccountHostsMixin):
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
             Specifies that share snapshot be returned in the response.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.storage.file.models.SharePropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.ShareProperties]
 
         Example:
             .. literalinclude:: ../tests/test_file_samples_service.py
@@ -315,8 +312,9 @@ class FileServiceClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return SharePropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=SharePropertiesPaged)
 
     @distributed_trace
     def create_share(
