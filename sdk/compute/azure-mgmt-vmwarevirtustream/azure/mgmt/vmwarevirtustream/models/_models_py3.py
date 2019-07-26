@@ -355,7 +355,7 @@ class Operation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the operation being performed on this object
+    :ivar name: Name of the operation being performed on this object
     :vartype name: str
     :ivar display: Contains the localized display information for this
      operation
