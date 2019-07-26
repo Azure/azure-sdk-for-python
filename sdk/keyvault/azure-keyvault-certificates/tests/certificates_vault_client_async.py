@@ -2,13 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
-from azure.core.configuration import Configuration
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
-from msrest.serialization import Model
+from typing import Any, TYPE_CHECKING
+from azure.core.pipeline.transport import HttpTransport
 
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import AsyncKeyVaultClientBase

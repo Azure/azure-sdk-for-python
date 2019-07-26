@@ -618,10 +618,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self._client._config.accept_language is not None:
-            header_parameters['accept-language'] = self._client._serialize.header("self.config.accept_language",
-                                                                                  self._client._config.accept_language,
-                                                                                  'str')
 
         # Construct and send request
         request = self._client._client.get(url, query_parameters, header_parameters)
