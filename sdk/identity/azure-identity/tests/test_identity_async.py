@@ -196,7 +196,7 @@ async def test_imds_credential_cache():
         text=lambda: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
@@ -225,7 +225,7 @@ async def test_imds_credential_retries():
     mock_response = Mock(
         text=lambda: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
