@@ -37,7 +37,7 @@ class CertificateClient(KeyVaultClientBase):
 
 
 
-    def create_certificate(self, name, policy, enabled=True, not_before=None, expires=None, tags=None, **kwargs):
+    def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
         """Creates a new certificate.
 
@@ -49,8 +49,7 @@ class CertificateClient(KeyVaultClientBase):
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.security.keyvault.certificates._models.CertificatePolicy
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :param bool enabled: Determines whether the object is enabled.
         :param not_before: Not before date of the secret in UTC
         :type not_before: datetime.datetime
         :param expires: Expiry date of the secret  in UTC.
@@ -128,8 +127,7 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
-        asdf = DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
-        return asdf
+        return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     def get_deleted_certificate(self, name, **kwargs):
         # type: (str) -> DeletedCertificate
@@ -156,7 +154,7 @@ class CertificateClient(KeyVaultClientBase):
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     def purge_deleted_certificate(self, name, **kwargs):
-        # type: (str) -> None
+        # type: (str, Mapping[str, Any]) -> None
         """Permanently deletes the specified deleted certificate.
 
         Performs an irreversible deletion of the specified certificate, without
@@ -178,7 +176,7 @@ class CertificateClient(KeyVaultClientBase):
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
-        Performs hte reversal of the Delete operation. THe operation is applicable
+        Performs the reversal of the Delete operation. THe operation is applicable
         in vaults enabled for soft-delete, and must be issued during the retention
         interval (available in the deleted certificate's attributes). This operation
         requires the certificates/recover permission.
@@ -199,7 +197,7 @@ class CertificateClient(KeyVaultClientBase):
         certificate_bytes,
         password=None,
         policy=None,
-        enabled=True,
+        enabled=None,
         not_before=None,
         expires=None,
         tags=None,
@@ -279,7 +277,7 @@ class CertificateClient(KeyVaultClientBase):
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leaves others as null.
-        This operation requries the certificates/update permission.
+        This operation requires the certificates/update permission.
 
         :param name: The name of the certificate in the given vault.
         :type name: str
@@ -299,7 +297,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
 
-    def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=True, tags=None, **kwargs):
+    def update_certificate(self, name, version=None, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
         # type: (str, str, Optional[bool], Optional[Dict[str, str]]) -> Certificate
         """Updates the specified attributes associated with the given certificate.
 
@@ -400,14 +398,14 @@ class CertificateClient(KeyVaultClientBase):
 
         :param include_pending: Specifies whether to include certificates which are not
         completely provisioned.
-        :type include_pending bool
+        :type include_pending: bool
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -433,7 +431,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -458,7 +456,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         pages = self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
             certificate_name=name,
@@ -557,9 +555,6 @@ class CertificateClient(KeyVaultClientBase):
 
         :param name: The name of the certificate.
         :type name: str
-        :param cancellation_requested: Indicates if cancellation was requested
-         on the certificate operation.
-        :type cancellation_requested: bool
         :returns: The updated certificate operation
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         :raises:
@@ -574,7 +569,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     def merge_certificate(
-        self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs):
+        self, name, x509_certificates, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, list[bytearray], Optional[bool], Optional[datetime], Optional[datetime]Optional[Dict[str, str]]) -> Certificate
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -689,7 +684,7 @@ class CertificateClient(KeyVaultClientBase):
         password=None,
         organization_id=None,
         admin_details=None,
-        enabled=True,
+        enabled=None,
         **kwargs
     ):
         # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]], Optional[bool], Mapping[str, Any]) -> Issuer
@@ -721,17 +716,13 @@ class CertificateClient(KeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details[0]:
-            admin_details_to_pass = []
-            for admin_detail in admin_details:
-                admin_details_to_pass.append(
-                    self._client.models.AdministratorDetails(
-                        first_name=admin_detail.first_name,
-                        last_name=admin_detail.last_name,
-                        email_address=admin_detail.email,
-                        phone=admin_detail.phone
-                    )
-                )
+        if admin_details and admin_details[0]:
+            admin_details_to_pass = list(self._client.models.AdministratorDetails(
+                                            first_name=admin_detail.first_name,
+                                            last_name=admin_detail.last_name,
+                                            email_address=admin_detail.email,
+                                            phone=admin_detail.phone
+                                        ) for admin_detail in admin_details)
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
@@ -761,7 +752,7 @@ class CertificateClient(KeyVaultClientBase):
         password=None,
         organization_id=None,
         admin_details=None,
-        enabled=True,
+        enabled=None,
         **kwargs
     ):
         # type: (str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]], Optional[bool], Mapping[str, Any]) -> Issuer
@@ -799,19 +790,14 @@ class CertificateClient(KeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details[0]:
-            admin_details_to_pass = []
-            for admin_detail in admin_details:
-                admin_details_to_pass.append(
-                    self._client.models.AdministratorDetails(
-                        first_name=admin_detail.first_name,
-                        last_name=admin_detail.last_name,
-                        email_address=admin_detail.email,
-                        phone=admin_detail.phone
-                    )
-                )
-        else:
-            admin_details_to_pass = admin_details
+        if admin_details and admin_details[0]:
+            if admin_details and admin_details[0]:
+                admin_details_to_pass = list(self._client.models.AdministratorDetails(
+                                                first_name=admin_detail.first_name,
+                                                last_name=admin_detail.last_name,
+                                                email_address=admin_detail.email,
+                                                phone=admin_detail.phone
+                                            ) for admin_detail in admin_details)
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
         else:
@@ -861,6 +847,6 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
         return (IssuerBase._from_issuer_item(issuer_item=item) for item in paged_certificate_issuer_items)
