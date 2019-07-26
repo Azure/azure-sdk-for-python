@@ -6,7 +6,7 @@ import asyncio
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy
+from azure.keyvault.certificates import CertificatePolicy, KeyProperties
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -36,7 +36,6 @@ from azure.core.exceptions import HttpResponseError
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 # ----------------------------------------------------------------------------------------------------------
-from azure.keyvault.certificates._models import KeyProperties
 
 
 async def run_sample():
