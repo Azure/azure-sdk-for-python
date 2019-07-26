@@ -120,6 +120,23 @@ async def test_basic_async_requests():
     assert response.http_response.status_code == 200
 
 @pytest.mark.asyncio
+async def test_async_transport_sleep():
+
+    async with AsyncioRequestsTransport() as transport:
+        await transport.sleep(1)
+
+    async with AioHttpTransport() as transport:
+        await transport.sleep(1)
+
+def test_async_trio_transport_sleep():
+
+    async def do():
+        async with TrioRequestsTransport() as transport:
+            await transport.sleep(1)
+
+    response = trio.run(do)
+
+@pytest.mark.asyncio
 async def test_conf_async_requests():
 
     request = HttpRequest("GET", "https://bing.com/")
