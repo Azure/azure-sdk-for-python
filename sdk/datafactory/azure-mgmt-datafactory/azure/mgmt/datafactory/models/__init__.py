@@ -273,7 +273,6 @@ try:
     from .azure_sql_mi_table_dataset_py3 import AzureSqlMITableDataset
     from .azure_sql_table_dataset_py3 import AzureSqlTableDataset
     from .azure_table_dataset_py3 import AzureTableDataset
-    from .azure_blob_dataset_py3 import AzureBlobDataset
     from .hdfs_location_py3 import HdfsLocation
     from .http_server_location_py3 import HttpServerLocation
     from .sftp_location_py3 import SftpLocation
@@ -284,6 +283,8 @@ try:
     from .azure_blob_fs_location_py3 import AzureBlobFSLocation
     from .azure_blob_storage_location_py3 import AzureBlobStorageLocation
     from .dataset_location_py3 import DatasetLocation
+    from .json_dataset_py3 import JsonDataset
+    from .azure_blob_dataset_py3 import AzureBlobDataset
     from .binary_dataset_py3 import BinaryDataset
     from .delimited_text_dataset_py3 import DelimitedTextDataset
     from .parquet_dataset_py3 import ParquetDataset
@@ -396,6 +397,7 @@ try:
     from .azure_blob_storage_read_settings_py3 import AzureBlobStorageReadSettings
     from .store_read_settings_py3 import StoreReadSettings
     from .binary_source_py3 import BinarySource
+    from .json_source_py3 import JsonSource
     from .format_read_settings_py3 import FormatReadSettings
     from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
@@ -456,8 +458,10 @@ try:
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
     from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
-    from .format_write_settings_py3 import FormatWriteSettings
     from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
+    from .format_write_settings_py3 import FormatWriteSettings
+    from .json_write_settings_py3 import JsonWriteSettings
+    from .json_sink_py3 import JsonSink
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
@@ -771,7 +775,6 @@ except (SyntaxError, ImportError):
     from .azure_sql_mi_table_dataset import AzureSqlMITableDataset
     from .azure_sql_table_dataset import AzureSqlTableDataset
     from .azure_table_dataset import AzureTableDataset
-    from .azure_blob_dataset import AzureBlobDataset
     from .hdfs_location import HdfsLocation
     from .http_server_location import HttpServerLocation
     from .sftp_location import SftpLocation
@@ -782,6 +785,8 @@ except (SyntaxError, ImportError):
     from .azure_blob_fs_location import AzureBlobFSLocation
     from .azure_blob_storage_location import AzureBlobStorageLocation
     from .dataset_location import DatasetLocation
+    from .json_dataset import JsonDataset
+    from .azure_blob_dataset import AzureBlobDataset
     from .binary_dataset import BinaryDataset
     from .delimited_text_dataset import DelimitedTextDataset
     from .parquet_dataset import ParquetDataset
@@ -894,6 +899,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_storage_read_settings import AzureBlobStorageReadSettings
     from .store_read_settings import StoreReadSettings
     from .binary_source import BinarySource
+    from .json_source import JsonSource
     from .format_read_settings import FormatReadSettings
     from .delimited_text_read_settings import DelimitedTextReadSettings
     from .delimited_text_source import DelimitedTextSource
@@ -954,8 +960,10 @@ except (SyntaxError, ImportError):
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
     from .azure_postgre_sql_sink import AzurePostgreSqlSink
-    from .format_write_settings import FormatWriteSettings
     from .delimited_text_write_settings import DelimitedTextWriteSettings
+    from .format_write_settings import FormatWriteSettings
+    from .json_write_settings import JsonWriteSettings
+    from .json_sink import JsonSink
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
@@ -1071,6 +1079,7 @@ from .data_factory_management_client_enums import (
     AzureSearchIndexWriteBehaviorType,
     PolybaseSettingsRejectType,
     SapCloudForCustomerSinkWriteBehavior,
+    JsonWriteFilePattern,
     WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
@@ -1349,7 +1358,6 @@ __all__ = [
     'AzureSqlMITableDataset',
     'AzureSqlTableDataset',
     'AzureTableDataset',
-    'AzureBlobDataset',
     'HdfsLocation',
     'HttpServerLocation',
     'SftpLocation',
@@ -1360,6 +1368,8 @@ __all__ = [
     'AzureBlobFSLocation',
     'AzureBlobStorageLocation',
     'DatasetLocation',
+    'JsonDataset',
+    'AzureBlobDataset',
     'BinaryDataset',
     'DelimitedTextDataset',
     'ParquetDataset',
@@ -1472,6 +1482,7 @@ __all__ = [
     'AzureBlobStorageReadSettings',
     'StoreReadSettings',
     'BinarySource',
+    'JsonSource',
     'FormatReadSettings',
     'DelimitedTextReadSettings',
     'DelimitedTextSource',
@@ -1532,8 +1543,10 @@ __all__ = [
     'AzureQueueSink',
     'SapCloudForCustomerSink',
     'AzurePostgreSqlSink',
-    'FormatWriteSettings',
     'DelimitedTextWriteSettings',
+    'FormatWriteSettings',
+    'JsonWriteSettings',
+    'JsonSink',
     'DelimitedTextSink',
     'CopySink',
     'CopyActivity',
@@ -1648,6 +1661,7 @@ __all__ = [
     'AzureSearchIndexWriteBehaviorType',
     'PolybaseSettingsRejectType',
     'SapCloudForCustomerSinkWriteBehavior',
+    'JsonWriteFilePattern',
     'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',

@@ -451,6 +451,12 @@ class SapCloudForCustomerSinkWriteBehavior(str, Enum):
     update = "Update"
 
 
+class JsonWriteFilePattern(str, Enum):
+
+    set_of_objects = "setOfObjects"
+    array_of_objects = "arrayOfObjects"
+
+
 class WebHookActivityMethod(str, Enum):
 
     post = "POST"
