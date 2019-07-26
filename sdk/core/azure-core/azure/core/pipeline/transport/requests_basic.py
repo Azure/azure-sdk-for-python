@@ -65,9 +65,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
-        content_type = requests_response.headers.get('content-type')
-        if content_type:
-            self.content_type = content_type.split(";")
+        self.content_type = requests_response.headers.get('content-type')
 
     def body(self):
         return self.internal_response.content
@@ -82,18 +80,16 @@ class StreamDownloadGenerator(object):
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
-    :param request: The request object
     :param response: The response object.
-    :param int block_size: Number of bytes to read into memory.
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline, request, response, block_size):
+    def __init__(self, pipeline, response):
         self.pipeline = pipeline
-        self.request = request
+        self.request = response.request
         self.response = response
-        self.block_size = block_size
-        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.block_size = response.block_size
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
@@ -115,7 +111,7 @@ class StreamDownloadGenerator(object):
                 self.downloaded += self.block_size
                 return chunk
             except StopIteration:
-                self.response.close()
+                self.response.internal_response.close()
                 raise StopIteration()
             except (requests.exceptions.ChunkedEncodingError,
                     requests.exceptions.ConnectionError):
@@ -138,7 +134,7 @@ class StreamDownloadGenerator(object):
                 raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.close()
+                self.response.internal_response.close()
                 raise
     next = __next__  # Python 2 compatibility.
 
@@ -149,7 +145,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     def stream_download(self, pipeline):
         # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
+        return StreamDownloadGenerator(pipeline, self)
 
 
 class RequestsTransport(HttpTransport):
