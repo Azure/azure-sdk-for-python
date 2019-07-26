@@ -47,6 +47,8 @@ class SignalRResource(TrackedResource):
      But keep in mind, the default value doesn't mean "false". It varies in
      terms of different FeatureFlags.
     :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
+    :param cors: Cross-Origin Resource Sharing (CORS) settings.
+    :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
      'Creating', 'Updating', 'Deleting', 'Moving'
@@ -88,6 +90,7 @@ class SignalRResource(TrackedResource):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
         'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -101,6 +104,7 @@ class SignalRResource(TrackedResource):
         self.sku = kwargs.get('sku', None)
         self.host_name_prefix = kwargs.get('host_name_prefix', None)
         self.features = kwargs.get('features', None)
+        self.cors = kwargs.get('cors', None)
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None

@@ -23,6 +23,7 @@ try:
     from .tracked_resource_py3 import TrackedResource
     from .resource_py3 import Resource
     from .signal_rfeature_py3 import SignalRFeature
+    from .signal_rcors_settings_py3 import SignalRCorsSettings
     from .signal_rcreate_or_update_properties_py3 import SignalRCreateOrUpdateProperties
     from .signal_rkeys_py3 import SignalRKeys
     from .regenerate_key_parameters_py3 import RegenerateKeyParameters
@@ -44,6 +45,7 @@ except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
     from .signal_rfeature import SignalRFeature
+    from .signal_rcors_settings import SignalRCorsSettings
     from .signal_rcreate_or_update_properties import SignalRCreateOrUpdateProperties
     from .signal_rkeys import SignalRKeys
     from .regenerate_key_parameters import RegenerateKeyParameters
@@ -74,6 +76,7 @@ __all__ = [
     'TrackedResource',
     'Resource',
     'SignalRFeature',
+    'SignalRCorsSettings',
     'SignalRCreateOrUpdateProperties',
     'SignalRKeys',
     'RegenerateKeyParameters',

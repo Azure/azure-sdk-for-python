@@ -47,6 +47,8 @@ class SignalRResource(TrackedResource):
      But keep in mind, the default value doesn't mean "false". It varies in
      terms of different FeatureFlags.
     :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
+    :param cors: Cross-Origin Resource Sharing (CORS) settings.
+    :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
      'Creating', 'Updating', 'Deleting', 'Moving'
@@ -88,6 +90,7 @@ class SignalRResource(TrackedResource):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
         'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -96,11 +99,12 @@ class SignalRResource(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, features=None, version: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, features=None, cors=None, version: str=None, **kwargs) -> None:
         super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.host_name_prefix = host_name_prefix
         self.features = features
+        self.cors = cors
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
