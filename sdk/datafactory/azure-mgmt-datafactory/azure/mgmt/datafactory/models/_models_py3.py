@@ -491,19 +491,18 @@ class Dataset(Model):
     WebTableDataset, SapTableResourceDataset, RestResourceDataset,
     SqlServerTableDataset, SapOpenHubTableDataset, SapHanaTableDataset,
     SapEccResourceDataset, SapCloudForCustomerResourceDataset,
-    SapBwCubeDataset, SybaseTableDataset, SalesforceServiceCloudObjectDataset,
-    SalesforceObjectDataset, MicrosoftAccessTableDataset,
-    PostgreSqlTableDataset, MySqlTableDataset, OdbcTableDataset,
-    InformixTableDataset, RelationalTableDataset, AzureMySqlTableDataset,
-    TeradataTableDataset, OracleTableDataset, ODataResourceDataset,
-    CosmosDbMongoDbApiCollectionDataset, MongoDbV2CollectionDataset,
-    MongoDbCollectionDataset, FileShareDataset, Office365Dataset,
-    AzureBlobFSDataset, AzureDataLakeStoreDataset,
+    SalesforceServiceCloudObjectDataset, SalesforceObjectDataset,
+    MicrosoftAccessTableDataset, PostgreSqlTableDataset, MySqlTableDataset,
+    OdbcTableDataset, InformixTableDataset, RelationalTableDataset,
+    AzureMySqlTableDataset, TeradataTableDataset, OracleTableDataset,
+    ODataResourceDataset, CosmosDbMongoDbApiCollectionDataset,
+    MongoDbV2CollectionDataset, MongoDbCollectionDataset, FileShareDataset,
+    Office365Dataset, AzureBlobFSDataset, AzureDataLakeStoreDataset,
     CommonDataServiceForAppsEntityDataset, DynamicsCrmEntityDataset,
     DynamicsEntityDataset, DocumentDbCollectionDataset, CustomDataset,
     CassandraTableDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset,
     AzureSqlTableDataset, AzureTableDataset, AzureBlobDataset, BinaryDataset,
-    DelimitedTextDataset, ParquetDataset, AvroDataset, AmazonS3Dataset
+    DelimitedTextDataset, ParquetDataset, AmazonS3Dataset
 
     All required parameters must be populated in order to send to Azure.
 
@@ -526,7 +525,7 @@ class Dataset(Model):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -553,7 +552,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
@@ -593,7 +592,7 @@ class AmazonMWSObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -648,12 +647,12 @@ class CopySource(Model):
     FileSystemSource, SqlDWSource, SqlMISource, AzureSqlSource,
     SqlServerSource, SqlSource, RestSource, SapTableSource, SapOpenHubSource,
     SapHanaSource, SapEccSource, SapCloudForCustomerSource,
-    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SapBwSource,
-    SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
+    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SybaseSource,
+    PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
     MicrosoftAccessSource, InformixSource, RelationalSource,
     CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
     DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
-    DelimitedTextSource, ParquetSource, AvroSource
+    DelimitedTextSource, ParquetSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -688,7 +687,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource'}
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -896,7 +895,7 @@ class AmazonS3Dataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -1307,77 +1306,6 @@ class AppendVariableActivity(ControlActivity):
         self.type = 'AppendVariable'
 
 
-class AvroDataset(Dataset):
-    """Avro dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param description: Dataset description.
-    :type description: str
-    :param structure: Columns that define the structure of the dataset. Type:
-     array (or Expression with resultType array), itemType: DatasetDataElement.
-    :type structure: object
-    :param schema: Columns that define the physical type schema of the
-     dataset. Type: array (or Expression with resultType array), itemType:
-     DatasetSchemaDataElement.
-    :type schema: object
-    :param linked_service_name: Required. Linked service reference.
-    :type linked_service_name:
-     ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param parameters: Parameters for dataset.
-    :type parameters: dict[str,
-     ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param annotations: List of tags that can be used for describing the
-     Dataset
-    :type annotations: list[object]
-    :param folder: The folder that this Dataset is in. If not specified,
-     Dataset will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param location: Required. The location of the avro storage.
-    :type location: ~azure.mgmt.datafactory.models.DatasetLocation
-    :param avro_compression_codec: Possible values include: 'none', 'deflate',
-     'snappy', 'xz', 'bzip2'
-    :type avro_compression_codec: str or
-     ~azure.mgmt.datafactory.models.AvroCompressionCodec
-    :param avro_compression_level:
-    :type avro_compression_level: int
-    """
-
-    _validation = {
-        'linked_service_name': {'required': True},
-        'type': {'required': True},
-        'location': {'required': True},
-        'avro_compression_level': {'maximum': 9, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'description': {'key': 'description', 'type': 'str'},
-        'structure': {'key': 'structure', 'type': 'object'},
-        'schema': {'key': 'schema', 'type': 'object'},
-        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
-        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
-        'avro_compression_codec': {'key': 'typeProperties.avroCompressionCodec', 'type': 'str'},
-        'avro_compression_level': {'key': 'typeProperties.avroCompressionLevel', 'type': 'int'},
-    }
-
-    def __init__(self, *, linked_service_name, location, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, avro_compression_codec=None, avro_compression_level: int=None, **kwargs) -> None:
-        super(AvroDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.location = location
-        self.avro_compression_codec = avro_compression_codec
-        self.avro_compression_level = avro_compression_level
-        self.type = 'Avro'
-
-
 class DatasetStorageFormat(Model):
     """The format definition of a storage.
 
@@ -1455,237 +1383,6 @@ class AvroFormat(DatasetStorageFormat):
     def __init__(self, *, additional_properties=None, serializer=None, deserializer=None, **kwargs) -> None:
         super(AvroFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs)
         self.type = 'AvroFormat'
-
-
-class CopySink(Model):
-    """A copy activity sink.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CosmosDbMongoDbApiSink, SalesforceServiceCloudSink,
-    SalesforceSink, AzureDataExplorerSink, CommonDataServiceForAppsSink,
-    DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
-    AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
-    SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, BinarySink,
-    ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
-    SapCloudForCustomerSink, AzurePostgreSqlSink, DelimitedTextSink
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param write_batch_size: Write batch size. Type: integer (or Expression
-     with resultType integer), minimum: 0.
-    :type write_batch_size: object
-    :param write_batch_timeout: Write batch timeout. Type: string (or
-     Expression with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
-    :param sink_retry_count: Sink retry count. Type: integer (or Expression
-     with resultType integer).
-    :type sink_retry_count: object
-    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
-     resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count
-     for the sink data store. Type: integer (or Expression with resultType
-     integer).
-    :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
-        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
-        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
-        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'DelimitedTextSink': 'DelimitedTextSink'}
-    }
-
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
-        super(CopySink, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.write_batch_size = write_batch_size
-        self.write_batch_timeout = write_batch_timeout
-        self.sink_retry_count = sink_retry_count
-        self.sink_retry_wait = sink_retry_wait
-        self.max_concurrent_connections = max_concurrent_connections
-        self.type = None
-
-
-class AvroSink(CopySink):
-    """A copy activity Avro sink.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param write_batch_size: Write batch size. Type: integer (or Expression
-     with resultType integer), minimum: 0.
-    :type write_batch_size: object
-    :param write_batch_timeout: Write batch timeout. Type: string (or
-     Expression with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
-    :param sink_retry_count: Sink retry count. Type: integer (or Expression
-     with resultType integer).
-    :type sink_retry_count: object
-    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
-     resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count
-     for the sink data store. Type: integer (or Expression with resultType
-     integer).
-    :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param store_settings: Avro store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
-    :param format_settings: Avro format settings.
-    :type format_settings: ~azure.mgmt.datafactory.models.AvroWriteSettings
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
-        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
-        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
-        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
-        'format_settings': {'key': 'formatSettings', 'type': 'AvroWriteSettings'},
-    }
-
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, format_settings=None, **kwargs) -> None:
-        super(AvroSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
-        self.store_settings = store_settings
-        self.format_settings = format_settings
-        self.type = 'AvroSink'
-
-
-class AvroSource(CopySource):
-    """A copy activity Avro source.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param source_retry_count: Source retry count. Type: integer (or
-     Expression with resultType integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression
-     with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count
-     for the source data store. Type: integer (or Expression with resultType
-     integer).
-    :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param store_settings: Avro store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
-    }
-
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
-        super(AvroSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
-        self.store_settings = store_settings
-        self.type = 'AvroSource'
-
-
-class FormatWriteSettings(Model):
-    """Format write settings.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, *, type: str, additional_properties=None, **kwargs) -> None:
-        super(FormatWriteSettings, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.type = type
-
-
-class AvroWriteSettings(FormatWriteSettings):
-    """Avro write settings.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
-    :param record_name: Top level record name in write result, which is
-     required in AVRO spec.
-    :type record_name: str
-    :param record_namespace: Record namespace in the write result.
-    :type record_namespace: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'record_name': {'key': 'recordName', 'type': 'str'},
-        'record_namespace': {'key': 'recordNamespace', 'type': 'str'},
-    }
-
-    def __init__(self, *, type: str, additional_properties=None, record_name: str=None, record_namespace: str=None, **kwargs) -> None:
-        super(AvroWriteSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
-        self.record_name = record_name
-        self.record_namespace = record_namespace
 
 
 class AzureBatchLinkedService(LinkedService):
@@ -1788,7 +1485,7 @@ class AzureBlobDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -1876,7 +1573,7 @@ class AzureBlobFSDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -2096,6 +1793,75 @@ class AzureBlobFSReadSettings(StoreReadSettings):
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+
+
+class CopySink(Model):
+    """A copy activity sink.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CosmosDbMongoDbApiSink, SalesforceServiceCloudSink,
+    SalesforceSink, AzureDataExplorerSink, CommonDataServiceForAppsSink,
+    DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
+    AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
+    SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
+    DocumentDbCollectionSink, FileSystemSink, BlobSink, BinarySink,
+    ParquetSink, AzureTableSink, AzureQueueSink, SapCloudForCustomerSink,
+    AzurePostgreSqlSink, DelimitedTextSink
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+    }
+
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
+        super(CopySink, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.write_batch_size = write_batch_size
+        self.write_batch_timeout = write_batch_timeout
+        self.sink_retry_count = sink_retry_count
+        self.sink_retry_wait = sink_retry_wait
+        self.max_concurrent_connections = max_concurrent_connections
+        self.type = None
 
 
 class AzureBlobFSSink(CopySink):
@@ -2957,7 +2723,7 @@ class AzureDataExplorerTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -3104,7 +2870,7 @@ class AzureDataLakeStoreDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -4096,7 +3862,7 @@ class AzureMySqlTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -4313,7 +4079,7 @@ class AzurePostgreSqlTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -4434,7 +4200,7 @@ class AzureSearchIndexDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -4758,22 +4524,16 @@ class AzureSqlDWTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL Data Warehouse. Type:
+     string (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_dw_table_dataset_schema: The schema name of the Azure SQL
-     Data Warehouse. Type: string (or Expression with resultType string).
-    :type azure_sql_dw_table_dataset_schema: object
-    :param table: The table name of the Azure SQL Data Warehouse. Type: string
-     (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -4792,15 +4552,11 @@ class AzureSqlDWTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_dw_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, azure_sql_dw_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(AzureSqlDWTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.azure_sql_dw_table_dataset_schema = azure_sql_dw_table_dataset_schema
-        self.table = table
         self.type = 'AzureSqlDWTable'
 
 
@@ -4903,7 +4659,7 @@ class AzureSqlMITableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -5109,22 +4865,16 @@ class AzureSqlTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL database. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_table_dataset_schema: The schema name of the Azure SQL
-     database. Type: string (or Expression with resultType string).
-    :type azure_sql_table_dataset_schema: object
-    :param table: The table name of the Azure SQL database. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -5143,15 +4893,11 @@ class AzureSqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, azure_sql_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(AzureSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.azure_sql_table_dataset_schema = azure_sql_table_dataset_schema
-        self.table = table
         self.type = 'AzureSqlTable'
 
 
@@ -5250,7 +4996,7 @@ class AzureTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -5502,7 +5248,7 @@ class BinaryDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -6169,7 +5915,7 @@ class CassandraTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -6282,7 +6028,7 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -6636,7 +6382,7 @@ class ConcurObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -6912,7 +6658,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -7246,7 +6992,7 @@ class CouchbaseTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -7459,7 +7205,7 @@ class CustomDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -8317,7 +8063,7 @@ class DelimitedTextDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -8568,6 +8314,33 @@ class DelimitedTextSource(CopySource):
         self.type = 'DelimitedTextSource'
 
 
+class FormatWriteSettings(Model):
+    """Format write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, type: str, additional_properties=None, **kwargs) -> None:
+        super(FormatWriteSettings, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = type
+
+
 class DelimitedTextWriteSettings(FormatWriteSettings):
     """Delimited text write settings.
 
@@ -8696,7 +8469,7 @@ class DocumentDbCollectionDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -8968,22 +8741,16 @@ class DrillTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Drill. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param drill_table_dataset_schema: The schema name of the Drill. Type:
-     string (or Expression with resultType string).
-    :type drill_table_dataset_schema: object
     """
 
     _validation = {
@@ -9002,15 +8769,11 @@ class DrillTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'drill_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, drill_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(DrillTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.drill_table_dataset_schema = drill_table_dataset_schema
         self.type = 'DrillTable'
 
 
@@ -9119,7 +8882,7 @@ class DynamicsAXResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -9225,7 +8988,7 @@ class DynamicsCrmEntityDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -9496,7 +9259,7 @@ class DynamicsEntityDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -9843,7 +9606,7 @@ class EloquaObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -10745,7 +10508,7 @@ class FileShareDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -11439,7 +11202,7 @@ class GoogleAdWordsObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -11656,22 +11419,16 @@ class GoogleBigQueryObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     database + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type table: object
-    :param dataset: The database name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type dataset: object
     """
 
     _validation = {
@@ -11690,15 +11447,11 @@ class GoogleBigQueryObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'dataset': {'key': 'typeProperties.dataset', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, dataset=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(GoogleBigQueryObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.dataset = dataset
         self.type = 'GoogleBigQueryObject'
 
 
@@ -11873,22 +11626,16 @@ class GreenplumTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of Greenplum. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param greenplum_table_dataset_schema: The schema name of Greenplum. Type:
-     string (or Expression with resultType string).
-    :type greenplum_table_dataset_schema: object
     """
 
     _validation = {
@@ -11907,15 +11654,11 @@ class GreenplumTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'greenplum_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, greenplum_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(GreenplumTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.greenplum_table_dataset_schema = greenplum_table_dataset_schema
         self.type = 'GreenplumTable'
 
 
@@ -12045,7 +11788,7 @@ class HBaseObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -13255,22 +12998,16 @@ class HiveObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
-    :type table_name: object
-    :param table: The table name of the Hive. Type: string (or Expression with
+    :param table_name: The table name. Type: string (or Expression with
      resultType string).
-    :type table: object
-    :param hive_object_dataset_schema: The schema name of the Hive. Type:
-     string (or Expression with resultType string).
-    :type hive_object_dataset_schema: object
+    :type table_name: object
     """
 
     _validation = {
@@ -13289,15 +13026,11 @@ class HiveObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'hive_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, hive_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(HiveObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.hive_object_dataset_schema = hive_object_dataset_schema
         self.type = 'HiveObject'
 
 
@@ -13370,7 +13103,7 @@ class HttpDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -13771,7 +13504,7 @@ class HubspotObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -14041,22 +13774,16 @@ class ImpalaObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Impala. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param impala_object_dataset_schema: The schema name of the Impala. Type:
-     string (or Expression with resultType string).
-    :type impala_object_dataset_schema: object
     """
 
     _validation = {
@@ -14075,15 +13802,11 @@ class ImpalaObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'impala_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, impala_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(ImpalaObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.impala_object_dataset_schema = impala_object_dataset_schema
         self.type = 'ImpalaObject'
 
 
@@ -14329,7 +14052,7 @@ class InformixTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -15118,7 +14841,7 @@ class JiraObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -15694,7 +15417,7 @@ class MagentoObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -16156,7 +15879,7 @@ class MariaDBTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -16294,7 +16017,7 @@ class MarketoObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -16572,7 +16295,7 @@ class MicrosoftAccessTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -16632,7 +16355,7 @@ class MongoDbCollectionDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -16876,7 +16599,7 @@ class MongoDbV2CollectionDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -17153,7 +16876,7 @@ class MySqlTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -17358,7 +17081,7 @@ class NetezzaTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -17533,7 +17256,7 @@ class ODataResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -17811,7 +17534,7 @@ class OdbcTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -17871,7 +17594,7 @@ class Office365Dataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -18432,7 +18155,7 @@ class OracleServiceCloudObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -18655,22 +18378,16 @@ class OracleTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the on-premises Oracle database.
+     Type: string (or Expression with resultType string).
     :type table_name: object
-    :param oracle_table_dataset_schema: The schema name of the on-premises
-     Oracle database. Type: string (or Expression with resultType string).
-    :type oracle_table_dataset_schema: object
-    :param table: The table name of the on-premises Oracle database. Type:
-     string (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -18689,15 +18406,11 @@ class OracleTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'oracle_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, oracle_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(OracleTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.oracle_table_dataset_schema = oracle_table_dataset_schema
-        self.table = table
         self.type = 'OracleTable'
 
 
@@ -18786,7 +18499,7 @@ class ParquetDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -19061,7 +18774,7 @@ class PaypalObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -19275,22 +18988,16 @@ class PhoenixObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Phoenix. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param phoenix_object_dataset_schema: The schema name of the Phoenix.
-     Type: string (or Expression with resultType string).
-    :type phoenix_object_dataset_schema: object
     """
 
     _validation = {
@@ -19309,15 +19016,11 @@ class PhoenixObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'phoenix_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, phoenix_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(PhoenixObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.phoenix_object_dataset_schema = phoenix_object_dataset_schema
         self.type = 'PhoenixObject'
 
 
@@ -19806,7 +19509,7 @@ class PostgreSqlTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -19986,22 +19689,16 @@ class PrestoObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Presto. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param presto_object_dataset_schema: The schema name of the Presto. Type:
-     string (or Expression with resultType string).
-    :type presto_object_dataset_schema: object
     """
 
     _validation = {
@@ -20020,15 +19717,11 @@ class PrestoObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'presto_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, presto_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(PrestoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.presto_object_dataset_schema = presto_object_dataset_schema
         self.type = 'PrestoObject'
 
 
@@ -20189,7 +19882,7 @@ class QuickBooksObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -20474,7 +20167,7 @@ class RelationalTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -20759,7 +20452,7 @@ class ResponsysObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -20864,7 +20557,7 @@ class RestResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -21385,7 +21078,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -21490,7 +21183,7 @@ class SalesforceObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -21625,7 +21318,7 @@ class SalesforceServiceCloudObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -21907,61 +21600,6 @@ class SalesforceSource(CopySource):
         self.type = 'SalesforceSource'
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param description: Dataset description.
-    :type description: str
-    :param structure: Columns that define the structure of the dataset. Type:
-     array (or Expression with resultType array), itemType: DatasetDataElement.
-    :type structure: object
-    :param schema: Columns that define the physical type schema of the
-     dataset. Type: array (or Expression with resultType array), itemType:
-     DatasetSchemaDataElement.
-    :type schema: object
-    :param linked_service_name: Required. Linked service reference.
-    :type linked_service_name:
-     ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param parameters: Parameters for dataset.
-    :type parameters: dict[str,
-     ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param annotations: List of tags that can be used for describing the
-     Dataset
-    :type annotations: list[object]
-    :param folder: The folder that this Dataset is in. If not specified,
-     Dataset will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'linked_service_name': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'description': {'key': 'description', 'type': 'str'},
-        'structure': {'key': 'structure', 'type': 'object'},
-        'schema': {'key': 'schema', 'type': 'object'},
-        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
-        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
-        super(SapBwCubeDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type = 'SapBwCube'
-
-
 class SapBWLinkedService(LinkedService):
     """SAP Business Warehouse Linked Service.
 
@@ -22036,51 +21674,6 @@ class SapBWLinkedService(LinkedService):
         self.password = password
         self.encrypted_credential = encrypted_credential
         self.type = 'SapBW'
-
-
-class SapBwSource(CopySource):
-    """A copy activity source for SapBW server via MDX.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param source_retry_count: Source retry count. Type: integer (or
-     Expression with resultType integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression
-     with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count
-     for the source data store. Type: integer (or Expression with resultType
-     integer).
-    :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param query: MDX query. Type: string (or Expression with resultType
-     string).
-    :type query: object
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'object'},
-    }
-
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SapBwSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
-        self.query = query
-        self.type = 'SapBwSource'
 
 
 class SapCloudForCustomerLinkedService(LinkedService):
@@ -22171,7 +21764,7 @@ class SapCloudForCustomerResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -22396,7 +21989,7 @@ class SapEccResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -22625,7 +22218,7 @@ class SapHanaTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -22818,7 +22411,7 @@ class SapOpenHubTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -23056,7 +22649,7 @@ class SapTableResourceDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -23787,7 +23380,7 @@ class ServiceNowObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -24209,7 +23802,7 @@ class ShopifyObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -24433,22 +24026,16 @@ class SparkObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Spark. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param spark_object_dataset_schema: The schema name of the Spark. Type:
-     string (or Expression with resultType string).
-    :type spark_object_dataset_schema: object
     """
 
     _validation = {
@@ -24467,15 +24054,11 @@ class SparkObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'spark_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, spark_object_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(SparkObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.spark_object_dataset_schema = spark_object_dataset_schema
         self.type = 'SparkObject'
 
 
@@ -25063,22 +24646,16 @@ class SqlServerTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the SQL Server dataset. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param sql_server_table_dataset_schema: The schema name of the SQL Server
-     dataset. Type: string (or Expression with resultType string).
-    :type sql_server_table_dataset_schema: object
-    :param table: The table name of the SQL Server dataset. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -25097,15 +24674,11 @@ class SqlServerTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'sql_server_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, sql_server_table_dataset_schema=None, table=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(SqlServerTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.sql_server_table_dataset_schema = sql_server_table_dataset_schema
-        self.table = table
         self.type = 'SqlServerTable'
 
 
@@ -25351,7 +24924,7 @@ class SquareObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -26203,66 +25776,6 @@ class SybaseSource(CopySource):
         self.type = 'SybaseSource'
 
 
-class SybaseTableDataset(Dataset):
-    """The Sybase table dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param description: Dataset description.
-    :type description: str
-    :param structure: Columns that define the structure of the dataset. Type:
-     array (or Expression with resultType array), itemType: DatasetDataElement.
-    :type structure: object
-    :param schema: Columns that define the physical type schema of the
-     dataset. Type: array (or Expression with resultType array), itemType:
-     DatasetSchemaDataElement.
-    :type schema: object
-    :param linked_service_name: Required. Linked service reference.
-    :type linked_service_name:
-     ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param parameters: Parameters for dataset.
-    :type parameters: dict[str,
-     ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param annotations: List of tags that can be used for describing the
-     Dataset
-    :type annotations: list[object]
-    :param folder: The folder that this Dataset is in. If not specified,
-     Dataset will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param table_name: The Sybase table name. Type: string (or Expression with
-     resultType string).
-    :type table_name: object
-    """
-
-    _validation = {
-        'linked_service_name': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'description': {'key': 'description', 'type': 'str'},
-        'structure': {'key': 'structure', 'type': 'object'},
-        'schema': {'key': 'schema', 'type': 'object'},
-        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
-        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-        'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-    }
-
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
-        super(SybaseTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.table_name = table_name
-        self.type = 'SybaseTable'
-
-
 class TeradataLinkedService(LinkedService):
     """Linked service for Teradata data source.
 
@@ -26447,7 +25960,7 @@ class TeradataTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -27330,22 +26843,16 @@ class VerticaTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Vertica. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param vertica_table_dataset_schema: The schema name of the Vertica. Type:
-     string (or Expression with resultType string).
-    :type vertica_table_dataset_schema: object
     """
 
     _validation = {
@@ -27364,15 +26871,11 @@ class VerticaTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'vertica_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, vertica_table_dataset_schema=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
         super(VerticaTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
-        self.table = table
-        self.vertica_table_dataset_schema = vertica_table_dataset_schema
         self.type = 'VerticaTable'
 
 
@@ -27886,7 +27389,7 @@ class WebTableDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -28033,7 +27536,7 @@ class XeroObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
@@ -28211,7 +27714,7 @@ class ZohoObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset
+     Dataset.
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
