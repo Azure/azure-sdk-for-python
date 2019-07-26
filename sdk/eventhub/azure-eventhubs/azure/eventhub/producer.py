@@ -35,14 +35,14 @@ def _set_partition_key(event_datas, partition_key):
 class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
-     grouped together in batches. Depending on the options specified at creation, the producer may
-     be created to allow event data to be automatically routed to an available partition or specific
-     to a partition.
+    grouped together in batches. Depending on the options specified at creation, the producer may
+    be created to allow event data to be automatically routed to an available partition or specific
+    to a partition.
 
     """
     _timeout = b'com.microsoft:timeout'
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, **kwargs):
         """
         Instantiate an EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer` method
          in EventHubClient.
@@ -64,6 +64,11 @@ class EventHubProducer(ConsumerProducerMixin):
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        partition = kwargs.get("partition", None)
+        send_timeout = kwargs.get("send_timeout", 60)
+        keep_alive = kwargs.get("keep_alive", None)
+        auto_reconnect = kwargs.get("auto_reconnect", True)
+
         super(EventHubProducer, self).__init__()
         self.running = False
         self.client = client
@@ -157,7 +162,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
-    def send(self, event_data, partition_key=None, timeout=None):
+    def send(self, event_data, **kwargs):
         # type:(Union[EventData, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
@@ -186,6 +191,9 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        partition_key = kwargs.get("partition_key", None)
+        timeout = kwargs.get("timeout", None)
+
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
@@ -200,7 +208,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data(timeout=timeout)
 
-    def close(self, exception=None):
+    def close(self, **kwargs):
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -220,4 +228,5 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
+        exception = kwargs.get("exception", None)
         super(EventHubProducer, self).close(exception)

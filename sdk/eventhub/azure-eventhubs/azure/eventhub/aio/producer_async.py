@@ -23,16 +23,15 @@ log = logging.getLogger(__name__)
 class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
-     grouped together in batches. Depending on the options specified at creation, the producer may
-     be created to allow event data to be automatically routed to an available partition or specific
-     to a partition.
+    grouped together in batches. Depending on the options specified at creation, the producer may
+    be created to allow event data to be automatically routed to an available partition or specific
+    to a partition.
 
     """
     _timeout = b'com.microsoft:timeout'
 
     def __init__(  # pylint: disable=super-init-not-called
-            self, client, target, partition=None, send_timeout=60,
-            keep_alive=None, auto_reconnect=True, loop=None):
+            self, client, target, **kwargs):
         """
         Instantiate an async EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer`
          method in EventHubClient.
@@ -55,6 +54,12 @@ class EventHubProducer(ConsumerProducerMixin):
         :type auto_reconnect: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         """
+        partition = kwargs.get("partition", None)
+        send_timeout = kwargs.get("send_timeout", 60)
+        keep_alive = kwargs.get("keep_alive", None)
+        auto_reconnect = kwargs.get("auto_reconnect", True)
+        loop = kwargs.get("loop", None)
+
         super(EventHubProducer, self).__init__()
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
@@ -150,7 +155,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
-    async def send(self, event_data, partition_key=None, timeout=None):
+    async def send(self, event_data, **kwargs):
         # type:(Union[EventData, Iterable[EventData]], Union[str, bytes]) -> None
         """
         Sends an event data and blocks until acknowledgement is
@@ -178,6 +183,9 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        partition_key = kwargs.get("partition_key", None)
+        timeout = kwargs.get("timeout", None)
+
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
@@ -192,7 +200,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         await self._send_event_data(timeout)
 
-    async def close(self, exception=None):
+    async def close(self, **kwargs):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -212,4 +220,5 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
+        exception = kwargs.get("exception", None)
         await super(EventHubProducer, self).close(exception)
