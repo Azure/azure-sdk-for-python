@@ -4,8 +4,7 @@
 # ------------------------------------
 import time
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy
-from azure.keyvault.certificates._models import KeyProperties, LifetimeAction
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, LifetimeAction
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
