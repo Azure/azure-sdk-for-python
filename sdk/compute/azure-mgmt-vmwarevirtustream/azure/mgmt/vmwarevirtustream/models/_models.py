@@ -200,20 +200,16 @@ class ClusterDetail(Model):
 class ClusterRequest(Model):
     """ClusterRequest.
 
-    :param location:
-    :type location: str
     :param properties:
     :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'ClusterDetail'},
     }
 
     def __init__(self, **kwargs):
         super(ClusterRequest, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
         self.properties = kwargs.get('properties', None)
 
 
@@ -225,8 +221,6 @@ class ClusterResponse(Model):
 
     :ivar id:
     :vartype id: str
-    :param location:
-    :type location: str
     :ivar name:
     :vartype name: str
     :param properties:
@@ -243,7 +237,6 @@ class ClusterResponse(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'Cluster'},
         'type': {'key': 'type', 'type': 'str'},
@@ -252,7 +245,6 @@ class ClusterResponse(Model):
     def __init__(self, **kwargs):
         super(ClusterResponse, self).__init__(**kwargs)
         self.id = None
-        self.location = kwargs.get('location', None)
         self.name = None
         self.properties = kwargs.get('properties', None)
         self.type = None

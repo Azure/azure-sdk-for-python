@@ -101,7 +101,7 @@ class ClustersOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters'}
 
-    def get_by_name(
+    def get(
             self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Get a cluster by name in a private cloud.
 
@@ -124,7 +124,7 @@ class ClustersOperations(object):
          :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         # Construct URL
-        url = self.get_by_name.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -163,12 +163,12 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/clusters/{clusterName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ClusterRequest(location=location, properties=properties)
+            self, resource_group_name, private_cloud_name, cluster_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ClusterRequest(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -217,7 +217,7 @@ class ClustersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, private_cloud_name, cluster_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a cluster in a private cloud.
 
         :param resource_group_name: Name of the resource group within the
@@ -227,8 +227,6 @@ class ClustersOperations(object):
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
-        :param location:
-        :type location: str
         :param properties:
         :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
         :param dict custom_headers: headers that will be added to the request
@@ -249,7 +247,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             cluster_name=cluster_name,
-            location=location,
             properties=properties,
             custom_headers=custom_headers,
             raw=True,
@@ -276,8 +273,8 @@ class ClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ClusterRequest(location=location, properties=properties)
+            self, resource_group_name, private_cloud_name, cluster_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ClusterRequest(properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -326,7 +323,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, private_cloud_name, cluster_name, location=None, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, private_cloud_name, cluster_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a cluster in a private cloud.
 
         :param resource_group_name: Name of the resource group within the
@@ -336,8 +333,6 @@ class ClustersOperations(object):
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
-        :param location:
-        :type location: str
         :param properties:
         :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterDetail
         :param dict custom_headers: headers that will be added to the request
@@ -358,7 +353,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             cluster_name=cluster_name,
-            location=location,
             properties=properties,
             custom_headers=custom_headers,
             raw=True,
