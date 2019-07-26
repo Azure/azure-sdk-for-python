@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
@@ -114,7 +115,9 @@ async def run_sample():
 
 if __name__ == "__main__":
     try:
-        run_sample()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(run_sample())
+        loop.close()
 
     except Exception as e:
         print("Top level Error: {0}".format(str(e)))
