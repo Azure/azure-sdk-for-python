@@ -19,6 +19,7 @@ _NO_RETRY_ERRORS = (
 
 log = logging.getLogger(__name__)
 
+
 def _error_handler(error):
     """
     Called internally when an event has failed to send so we
@@ -56,7 +57,8 @@ class EventHubError(Exception):
     :vartype details: dict[str, str]
     """
 
-    def __init__(self, message, details=None):
+    def __init__(self, message, **kwargs):
+        details = kwargs.get("details", None)
         self.error = None
         self.message = message
         self.details = details
