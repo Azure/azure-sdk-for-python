@@ -269,7 +269,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[int], **Any) -> DirectoryProperties
+        # type: (Optional[str], Optional[int], **Any) -> ItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:

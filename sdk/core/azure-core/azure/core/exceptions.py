@@ -113,10 +113,8 @@ class HttpResponseError(AzureError):
         self.response = response
         if response:
             self.reason = response.reason
-            try:
-                self.status_code = response.status_code  # Requests
-            except AttributeError:
-                self.status_code = response.status  # Aiohttp
+            self.status_code = response.status_code
+
         message = message or "Operation returned an invalid status '{}'".format(self.reason)
         try:
             try:

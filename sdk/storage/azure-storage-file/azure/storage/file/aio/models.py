@@ -71,7 +71,7 @@ class SharePropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
-        return self._response.continuation_token or None, self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class HandlesPaged(AsyncPageIterator):
@@ -115,7 +115,7 @@ class HandlesPaged(AsyncPageIterator):
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.current_page = [Handle._from_generated(h) for h in self._response.handle_list]  # pylint: disable=protected-access
-        return self._response.continuation_token or None, self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class DirectoryPropertiesPaged(AsyncPageIterator):
@@ -175,4 +175,4 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.results_per_page = self._response.max_results
         self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
         self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
-        return self._response.continuation_token or None, self.current_page
+        return self._response.next_marker or None, self.current_page

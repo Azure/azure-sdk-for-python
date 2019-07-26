@@ -442,10 +442,14 @@ class StorageShareTest(FileTestCase):
 
         # Act
         generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()
-        shares1 = list(await generator1.__anext__())
+        shares1 = []
+        async for s in await generator1.__anext__():
+            shares1.append(s)
         generator2 = self.fsc.list_shares(
             prefix, results_per_page=2).by_page(continuation_token=generator1.continuation_token)
-        shares2 = list(await generator2.__anext__())
+        shares2 = []
+        async for s in await generator2.__anext__():
+            shares2.append(s)
 
         # Assert
         self.assertIsNotNone(shares1)
@@ -789,13 +793,15 @@ class StorageShareTest(FileTestCase):
 
         # Act
         result = share_name.list_directories_and_files(results_per_page=2).by_page()
-        result = list(await result.__anext__())
+        results = []
+        async for r in await result.__anext__():
+            results.append(r)
 
         # Assert
         self.assertIsNotNone(result)
-        self.assertEqual(len(result), 2)
-        self.assertNamedItemInContainer(result, 'dir1')
-        self.assertNamedItemInContainer(result, 'filea1')
+        self.assertEqual(len(results), 2)
+        self.assertNamedItemInContainer(results, 'dir1')
+        self.assertNamedItemInContainer(results, 'filea1')
 
     def test_list_directories_and_files_with_num_results_async(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -816,11 +822,15 @@ class StorageShareTest(FileTestCase):
         # Act
         generator1 = share_name.list_directories_and_files(
             'dir1', results_per_page=2).by_page()
-        result1 = list(await generator1.__anext__())
+        result1 = []
+        async for r in await generator1.__anext__():
+            result1.append(r)
 
         generator2 = share_name.list_directories_and_files(
             'dir1', results_per_page=2).by_page(continuation_token=generator1.continuation_token)
-        result2 = list(await generator2.__anext__())
+        result2 = []
+        async for r in await generator2.__anext__():
+            result2.append(r)
 
         # Assert
         self.assertEqual(len(result1), 2)
@@ -829,7 +839,7 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(result1, 'filea2')
         self.assertNamedItemInContainer(result2, 'filea3')
         self.assertNamedItemInContainer(result2, 'fileb1')
-        self.assertEqual(generator2.next_marker, None)
+        self.assertEqual(generator2.continuation_token, None)
 
     def test_list_directories_and_files_with_num_results_and_marker_async(self):
         if TestMode.need_recording_file(self.test_mode):

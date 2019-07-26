@@ -196,13 +196,16 @@ class StorageQueueTestAsync(QueueTestCase):
         generator1 =  self.qsc.list_queues(
             name_starts_with=prefix,
             results_per_page=3).by_page()
-        await generator1.__anext__()
-        queues1 = list(await generator1.__anext__())
+        queues1 = []
+        async for el in await generator1.__anext__():
+            queues1.append(el)
 
         generator2 = self.qsc.list_queues(
             name_starts_with=prefix,
             include_metadata=True).by_page(generator1.continuation_token)
-        queues2 = list(await generator2.__anext__())
+        queues2 = []
+        async for el in await generator2.__anext__():
+            queues2.append(el)
 
         # Asserts
         self.assertIsNotNone(queues1)

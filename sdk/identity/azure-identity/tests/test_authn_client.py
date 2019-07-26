@@ -28,7 +28,7 @@ def test_authn_client_deserialization():
     scope = "scope"
 
     mock_response = Mock(
-        headers={"content-type": "application/json"}, status_code=200, content_type=["application/json"]
+        headers={"content-type": "application/json"}, status_code=200, content_type="application/json"
     )
     mock_send = Mock(return_value=mock_response)
 
@@ -87,7 +87,7 @@ def test_caching_when_only_expires_in_set():
         text=lambda: json.dumps({"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}),
         headers={"content-type": "application/json"},
         status_code=200,
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
@@ -106,7 +106,7 @@ def test_expires_in_strings():
     expected_token = "token"
 
     mock_response = Mock(
-        headers={"content-type": "application/json"}, status_code=200, content_type=["application/json"]
+        headers={"content-type": "application/json"}, status_code=200, content_type="application/json"
     )
     mock_send = Mock(return_value=mock_response)
 
@@ -133,7 +133,7 @@ def test_cache_expiry():
         text=lambda: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
