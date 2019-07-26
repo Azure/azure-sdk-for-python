@@ -6,6 +6,8 @@
 
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
+
+from azure.keyvault.certificates._shared._generated.v2016_10_01.models import ActionType
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
 
@@ -219,7 +221,7 @@ class CertificateBase(object):
 class Certificate(CertificateBase):
     """Consists of a certificate and its attributes"""
     def __init__(self, policy, cert_id, thumbprint=None, key_id=None, secret_id=None, attributes=None, cer=None, **kwargs):
-        # type: (models.CertificatePolicy, Optional[str], Optional[bytes], Optional[str], Optional[str], Optional[models.CertificateAttributes], Optional[bytes], Mapping[str, Any]) -> None
+        # type: (models.CertificatePolicy, Optional[str], Optional[bytes], Optional[str], Optional[str], Optional[CertificateAttributes], Optional[bytes], Mapping[str, Any]) -> None
         super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
         self._key_id = key_id
         self._secret_id = secret_id
@@ -276,7 +278,6 @@ class Certificate(CertificateBase):
 
 class CertificateOperation(object):
     """A certificate operation is returned in case of asynchronous requests. """
-
     def __init__(
         self,
         cert_operation_id=None,
@@ -424,7 +425,6 @@ class CertificateOperation(object):
 
 class CertificatePolicy(object):
     """Management policy for a certificate."""
-
     def __init__(
         self,
         attributes=None,
@@ -455,6 +455,89 @@ class CertificatePolicy(object):
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
+
+    @classmethod
+    def _to_certificate_policy_bundle(cls, policy):
+        # type: (CertificatePolicy) -> models.CertificatePolicy
+
+        """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
+        if policy.issuer_name or policy.certificate_type or policy.certificate_transparency:
+            issuer_parameters = models.IssuerParameters(
+                name=policy.issuer_name,
+                certificate_type=policy.certificate_type,
+                certificate_transparency=policy.certificate_transparency
+            )
+        else:
+            issuer_parameters = None
+
+        if policy.enabled is not None or policy.not_before is not None or policy.expires is not None or policy.created is not None or policy.updated is not None or policy.recovery_level:
+            attributes = models.CertificateAttributes(
+                enabled=policy.enabled,
+                not_before=policy.not_before,
+                expires=policy.expires,
+                created=policy.enabled,
+                updated=policy.updated,
+                recovery_level=policy.recovery_level
+            )
+        else:
+            attributes = None
+
+        if policy.lifetime_actions:
+            lifetime_actions = []
+            for lifetime_action in policy.lifetime_actions:
+                lifetime_actions.append(
+                    models.LifetimeAction(
+                        trigger=models.Trigger(
+                            lifetime_percentage=lifetime_action.lifetime_percentage,
+                            days_before_expiry=lifetime_action.days_before_expiry
+                        ),
+                        action=models.Action(action_type=lifetime_action.action_type)
+                    )
+                )
+        else:
+            lifetime_actions = None
+
+        if policy.subject_name or policy.key_properties.ekus or policy.key_properties.key_usage or policy.san_emails or policy.san_upns or policy.san_dns_names or policy.validity_in_months:
+            x509_certificate_properties=models.X509CertificateProperties(
+                subject=policy.subject_name,
+                ekus=policy.key_properties.ekus,
+                subject_alternative_names=models.SubjectAlternativeNames(
+                    emails=policy.san_emails,
+                    upns=policy.san_upns,
+                    dns_names=policy.san_dns_names
+                ),
+                key_usage=policy.key_properties.key_usage,
+                validity_in_months=policy.validity_in_months
+            )
+        else:
+            x509_certificate_properties = None
+
+        if policy.key_properties.exportable or policy.key_properties.key_type or policy.key_properties.key_size or policy.key_properties.reuse_key or policy.key_properties.curbe:
+            key_properties = models.KeyProperties(
+                exportable=policy.key_properties.exportable,
+                key_type=policy.key_properties.key_type,
+                key_size=policy.key_properties.key_size,
+                reuse_key=policy.key_properties.reuse_key,
+                curve=policy.key_properties.curve
+            )
+        else:
+            key_properties = None
+
+        if policy.content_type:
+            secret_properties = models.SecretProperties(content_type=policy.content_type)
+        else:
+            secret_properties = None
+
+        policy_bundle = models.CertificatePolicy(
+            id=policy.id,
+            key_properties=key_properties,
+            secret_properties=secret_properties,
+            x509_certificate_properties=x509_certificate_properties,
+            lifetime_actions=lifetime_actions,
+            issuer_parameters=issuer_parameters,
+            attributes=attributes
+        )
+        return policy_bundle
 
     @classmethod
     def _from_certificate_policy_bundle(cls, certificate_policy_bundle):
@@ -898,7 +981,7 @@ class LifetimeAction(object):
     """
 
     def __init__(self, action_type, lifetime_percentage=None, days_before_expiry=None):
-        # type: (models.ActionType, Optional[int], Optional[int]) -> None
+        # type: (str, Optional[int], Optional[int]) -> None
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
         self._action_type = action_type
@@ -921,9 +1004,10 @@ class LifetimeAction(object):
 
     @property
     def action_type(self):
-        # type: () -> models.ActionType
+        # type: () -> str
         """The type of the action that will be executed.
-        :rtype: models.ActionType
+        Valid values are "EmailContacts" and "AutoRenew"
+        :rtype: str or models.ActionType
         """
         return self._action_type
 

@@ -6,24 +6,32 @@
 
 from ._client import CertificateClient
 from ._models import (
+    AdministratorDetails,
     Certificate,
     CertificateBase,
     DeletedCertificate,
+    Error,
     CertificateOperation,
     CertificatePolicy,
     Contact,
     Issuer,
-    IssuerBase
+    IssuerBase,
+    KeyProperties,
+    LifetimeAction
 )
 
 __all__ = [
-    "CertificateClient",
-    "CertificateBase",
+    "AdministratorDetails",
     "Certificate",
-    "DeletedCertificate",
+    "CertificateBase",
+    "CertificateClient",
+    "CertificateOperation",
     "CertificatePolicy",
+    "Contact",
+    "DeletedCertificate",
+    "Error",
     "Issuer",
     "IssuerBase",
-    "Contact",
-    "CertificateOperation"
+    "KeyProperties",
+    "LifetimeAction"
 ]

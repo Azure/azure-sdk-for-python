@@ -35,84 +35,7 @@ class CertificateClient(KeyVaultClientBase):
     """
     # pylint:disable=protected-access
 
-    def _to_certificate_policy_bundle(self, policy):
-        if policy.issuer_name or policy.certificate_type or policy.certificate_transparency:
-            issuer_parameters = self._client.models.IssuerParameters(
-                name=policy.issuer_name,
-                certificate_type=policy.certificate_type,
-                certificate_transparency=policy.certificate_transparency
-            )
-        else:
-            issuer_parameters = None
 
-        if policy.enabled is not None or policy.not_before is not None or policy.expires is not None or policy.created is not None or policy.updated is not None or policy.recovery_level:
-            attributes = self._client.models.CertificateAttributes(
-                enabled=policy.enabled,
-                not_before=policy.not_before,
-                expires=policy.expires,
-                created=policy.enabled,
-                updated=policy.updated,
-                recovery_level=policy.recovery_level
-            )
-        else:
-            attributes = None
-
-        if policy.lifetime_actions:
-            lifetime_actions = []
-            for lifetime_action in policy.lifetime_actions:
-                lifetime_actions.append(
-                    self._client.models.LifetimeAction(
-                        trigger=self._client.models.Trigger(
-                            lifetime_percentage=lifetime_action.lifetime_percentage,
-                            days_before_expiry=lifetime_action.days_before_expiry
-                        ),
-                        action=self._client.models.Action(action_type=lifetime_action.action_type)
-                    )
-                )
-        else:
-            lifetime_actions = None
-
-        if policy.subject_name or policy.key_properties.ekus or policy.key_properties.key_usage or policy.san_emails or policy.san_upns or policy.san_dns_names or policy.validity_in_months:
-            x509_certificate_properties=self._client.models.X509CertificateProperties(
-                subject=policy.subject_name,
-                ekus=policy.key_properties.ekus,
-                subject_alternative_names=self._client.models.SubjectAlternativeNames(
-                    emails=policy.san_emails,
-                    upns=policy.san_upns,
-                    dns_names=policy.san_dns_names
-                ),
-                key_usage=policy.key_properties.key_usage,
-                validity_in_months=policy.validity_in_months
-            )
-        else:
-            x509_certificate_properties = None
-
-        if policy.key_properties.exportable or policy.key_properties.key_type or policy.key_properties.key_size or policy.key_properties.reuse_key or policy.key_properties.curbe:
-            key_properties = self._client.models.KeyProperties(
-                exportable=policy.key_properties.exportable,
-                key_type=policy.key_properties.key_type,
-                key_size=policy.key_properties.key_size,
-                reuse_key=policy.key_properties.reuse_key,
-                curve=policy.key_properties.curve
-            )
-        else:
-            key_properties = None
-
-        if policy.content_type:
-            secret_properties = self._client.models.SecretProperties(content_type=policy.content_type)
-        else:
-            secret_properties = None
-
-        policy_bundle = self._client.models.CertificatePolicy(
-            id=policy.id,
-            key_properties=key_properties,
-            secret_properties=secret_properties,
-            x509_certificate_properties=x509_certificate_properties,
-            lifetime_actions=lifetime_actions,
-            issuer_parameters=issuer_parameters,
-            attributes=attributes
-        )
-        return policy_bundle
 
     def create_certificate(self, name, policy, enabled=True, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
@@ -152,7 +75,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -326,7 +249,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_name=name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            certificate_policy=self._to_certificate_policy_bundle(policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -370,7 +293,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=self._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
