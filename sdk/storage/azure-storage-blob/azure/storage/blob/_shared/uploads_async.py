@@ -8,6 +8,7 @@
 import asyncio
 from asyncio import Lock
 from itertools import islice
+import threading
 
 from math import ceil
 
@@ -137,7 +138,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
         # Stream management
         self.stream_start = stream.tell() if parallel else None
-        self.stream_lock = Lock() if parallel else None
+        self.stream_lock = threading.Lock() if parallel else None
 
         # Progress feedback
         self.progress_total = 0
@@ -232,7 +233,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         raise NotImplementedError("Must be implemented by child class.")
 
     async def _upload_substream_block_with_progress(self, block_id, block_stream):
-        range_id = self._upload_substream_block(block_id, block_stream)
+        range_id = await self._upload_substream_block(block_id, block_stream)
         await self._update_progress(len(block_stream))
         return range_id
 
