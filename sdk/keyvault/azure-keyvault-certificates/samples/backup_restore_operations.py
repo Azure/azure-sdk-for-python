@@ -1,8 +1,11 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import time
 import os
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.keyvault.certificates._models import KeyProperties, LifetimeAction
-from azure.keyvault.certificates._shared._generated.v7_0.models import CertificateAttributes, ActionType
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -49,7 +52,7 @@ def run_sample():
         cert_name = 'BackupRestoreCertificate'
         lifetime_actions = [LifetimeAction(
             lifetime_percentage=2,
-            action_type=ActionType.email_contacts
+            action_type="EmailContacts"
         )]
 
         # Before creating your certificate, let's create the management policy for your certificate.
@@ -65,8 +68,7 @@ def run_sample():
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24,
-                                        lifetime_actions=lifetime_actions,
-                                        attributes=CertificateAttributes(recovery_level="Purgeable")
+                                        lifetime_actions=lifetime_actions
                                         )
 
         # Let's create a certificate for your key vault.

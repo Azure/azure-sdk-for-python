@@ -12,7 +12,7 @@ pip install azure-keyvault-certificates
 
 ### Prerequisites
 * An [Azure subscription][azure_sub].
-* Python 2.7, 3.4 or later to use this package.
+* Python 2.7, 3.5.3 or later to use this package.
 * An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
     ```Bash

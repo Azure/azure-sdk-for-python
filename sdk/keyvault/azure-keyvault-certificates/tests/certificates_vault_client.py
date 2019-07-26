@@ -10,10 +10,8 @@ except ImportError:
 from azure.keyvault.certificates._shared import KeyVaultClientBase
 from azure.keyvault.certificates import CertificateClient
 
-
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from azure.core import Configuration
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
     from typing import Any, Optional
@@ -29,4 +27,7 @@ class VaultClient(KeyVaultClientBase):
 
     @property
     def certificates(self):
+        """
+        :rtype: ~azure.keyvault.certificates.CertificateClient
+        """
         return self._certificates

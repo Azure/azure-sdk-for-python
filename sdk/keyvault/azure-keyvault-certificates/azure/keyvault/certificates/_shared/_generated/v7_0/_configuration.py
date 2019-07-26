@@ -34,7 +34,6 @@ class KeyVaultClientConfiguration(Configuration):
 
         self.user_agent_policy.add_user_agent('azsdk-python-azure-keyvault/{}'.format(VERSION))
         self.generate_client_request_id = True
-        self.accept_language = None
 
         self.credentials = credentials
 
@@ -45,4 +44,5 @@ class KeyVaultClientConfiguration(Configuration):
         self.proxy_policy = policies.ProxyPolicy(**kwargs)
         self.logging_policy = policies.NetworkTraceLoggingPolicy(**kwargs)
         self.retry_policy = policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = policies.RedirectPolicy(**kwargs)
