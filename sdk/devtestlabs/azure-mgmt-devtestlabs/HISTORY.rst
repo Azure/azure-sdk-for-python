@@ -3,6 +3,13 @@
 Release History
 ===============
 
+4.0.0 (2019-07-26)
+++++++++++++++++++
+
+**Breaking changes**
+
+- Removed operation ServiceRunnersOperations.list
+  
 3.0.0 (2019-02-07)
 ++++++++++++++++++
 
