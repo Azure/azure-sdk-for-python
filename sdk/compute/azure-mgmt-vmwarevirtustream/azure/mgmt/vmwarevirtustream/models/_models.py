@@ -530,26 +530,3 @@ class PrivateCloudResponse(Model):
         self.properties = kwargs.get('properties', None)
         self.type = None
         self.tags = kwargs.get('tags', None)
-
-
-class PrivateCloudResponseList(Model):
-    """PrivateCloudResponseList.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value:
-    :vartype value: object
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PrivateCloudResponseList, self).__init__(**kwargs)
-        self.value = None

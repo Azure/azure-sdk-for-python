@@ -25,3 +25,16 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class PrivateCloudResponsePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateCloudResponse <azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateCloudResponse]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateCloudResponsePaged, self).__init__(*args, **kwargs)

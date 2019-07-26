@@ -53,9 +53,9 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of None
+        :return: An iterator like instance of PrivateCloudResponse
         :rtype:
-         ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponseList[None]
+         ~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponsePaged[~azure.mgmt.vmwarevirtustream.models.PrivateCloudResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -106,7 +106,7 @@ class PrivateCloudsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PrivateCloudResponseList(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PrivateCloudResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds'}

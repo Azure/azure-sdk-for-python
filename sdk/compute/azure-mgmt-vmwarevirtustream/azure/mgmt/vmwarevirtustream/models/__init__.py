@@ -26,7 +26,6 @@ try:
     from ._models_py3 import PrivateCloud
     from ._models_py3 import PrivateCloudRequest
     from ._models_py3 import PrivateCloudResponse
-    from ._models_py3 import PrivateCloudResponseList
 except (SyntaxError, ImportError):
     from ._models import AddIdentitySourceRequest
     from ._models import Circuit
@@ -44,8 +43,8 @@ except (SyntaxError, ImportError):
     from ._models import PrivateCloud
     from ._models import PrivateCloudRequest
     from ._models import PrivateCloudResponse
-    from ._models import PrivateCloudResponseList
 from ._paged_models import OperationPaged
+from ._paged_models import PrivateCloudResponsePaged
 
 __all__ = [
     'AddIdentitySourceRequest',
@@ -64,6 +63,6 @@ __all__ = [
     'PrivateCloud',
     'PrivateCloudRequest',
     'PrivateCloudResponse',
-    'PrivateCloudResponseList',
     'OperationPaged',
+    'PrivateCloudResponsePaged',
 ]
