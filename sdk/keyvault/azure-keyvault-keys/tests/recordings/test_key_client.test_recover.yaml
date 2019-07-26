@@ -530,7 +530,7 @@ interactions:
       User-Agent:
       - python/2.7.15 (Windows-10-10.0.18362) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: DELETE
-    uri: https://vaulta7710b8a.vault.azure.net/keys/key2?api-version=7.0
+    uri: https://vaulta7710b8a.vault.azure.net/keys/key1?api-version=7.0
   response:
     body:
       string: !!python/unicode '{"recoveryId":"https://vaulta7710b8a.vault.azure.net/deletedkeys/key1","deletedDate":1562703713,"scheduledPurgeDate":1570479713,"key":{"kid":"https://vaulta7710b8a.vault.azure.net/keys/key1/2234742e6f39413f81bed92ad0c77b61","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sniM0631T66BBT5MJLD0RqPUeqR-KbZ1CeCrySxc0AYtd5DeRiUmnvAAHjjovafGMYKOEYvt-CdcL_HzfzoCoQFRcUCuGWaBbhEGPkEbZSCvT9rpLQGAqI-WxsqaifgjvQtyXe_LeZfr0_rqQT8r1sPPWncfKd9JqvgNSdYTPp0hxbKMS-hVPbdor6CmLolNuIAVxWgmFntxAJXxnvdh64iGKKytewwWOkQFw7Q_5hLrD-BqwTu-j9wVMK48URXcl4K6bbQcBk7az8KL15we8hNz_VYYbO32N36BlTNL85XRLxM4vadEaY58Qcg4iZOAlFMTH5LkAxcYes6L5bl4nw","e":"AQAB"},"attributes":{"enabled":true,"created":1562703711,"updated":1562703711,"recoveryLevel":"Recoverable+Purgeable"}}'
@@ -1070,7 +1070,7 @@ interactions:
       User-Agent:
       - python/2.7.15 (Windows-10-10.0.18362) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vaulta7710b8a.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vaulta7710b8a.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body:
       string: !!python/unicode '{"recoveryId":"https://vaulta7710b8a.vault.azure.net/deletedkeys/key1","deletedDate":1562703713,"scheduledPurgeDate":1570479713,"key":{"kid":"https://vaulta7710b8a.vault.azure.net/keys/key1/2234742e6f39413f81bed92ad0c77b61","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sniM0631T66BBT5MJLD0RqPUeqR-KbZ1CeCrySxc0AYtd5DeRiUmnvAAHjjovafGMYKOEYvt-CdcL_HzfzoCoQFRcUCuGWaBbhEGPkEbZSCvT9rpLQGAqI-WxsqaifgjvQtyXe_LeZfr0_rqQT8r1sPPWncfKd9JqvgNSdYTPp0hxbKMS-hVPbdor6CmLolNuIAVxWgmFntxAJXxnvdh64iGKKytewwWOkQFw7Q_5hLrD-BqwTu-j9wVMK48URXcl4K6bbQcBk7az8KL15we8hNz_VYYbO32N36BlTNL85XRLxM4vadEaY58Qcg4iZOAlFMTH5LkAxcYes6L5bl4nw","e":"AQAB"},"attributes":{"enabled":true,"created":1562703711,"updated":1562703711,"recoveryLevel":"Recoverable+Purgeable"}}'
@@ -1460,7 +1460,7 @@ interactions:
       User-Agent:
       - python/2.7.15 (Windows-10-10.0.18362) azure-core/1.0.0b1 azsdk-python-azure-keyvault/7.0
     method: POST
-    uri: https://vaulta7710b8a.vault.azure.net/deletedkeys/key2/recover?api-version=7.0
+    uri: https://vaulta7710b8a.vault.azure.net/deletedkeys/key1/recover?api-version=7.0
   response:
     body:
       string: !!python/unicode '{"key":{"kid":"https://vaulta7710b8a.vault.azure.net/keys/key1/2234742e6f39413f81bed92ad0c77b61","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sniM0631T66BBT5MJLD0RqPUeqR-KbZ1CeCrySxc0AYtd5DeRiUmnvAAHjjovafGMYKOEYvt-CdcL_HzfzoCoQFRcUCuGWaBbhEGPkEbZSCvT9rpLQGAqI-WxsqaifgjvQtyXe_LeZfr0_rqQT8r1sPPWncfKd9JqvgNSdYTPp0hxbKMS-hVPbdor6CmLolNuIAVxWgmFntxAJXxnvdh64iGKKytewwWOkQFw7Q_5hLrD-BqwTu-j9wVMK48URXcl4K6bbQcBk7az8KL15we8hNz_VYYbO32N36BlTNL85XRLxM4vadEaY58Qcg4iZOAlFMTH5LkAxcYes6L5bl4nw","e":"AQAB"},"attributes":{"enabled":true,"created":1562703711,"updated":1562703711,"recoveryLevel":"Recoverable+Purgeable"}}'
