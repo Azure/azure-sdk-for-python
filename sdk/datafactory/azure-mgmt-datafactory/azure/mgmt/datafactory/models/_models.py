@@ -491,14 +491,13 @@ class Dataset(Model):
     WebTableDataset, SapTableResourceDataset, RestResourceDataset,
     SqlServerTableDataset, SapOpenHubTableDataset, SapHanaTableDataset,
     SapEccResourceDataset, SapCloudForCustomerResourceDataset,
-    SapBwCubeDataset, SybaseTableDataset, SalesforceServiceCloudObjectDataset,
-    SalesforceObjectDataset, MicrosoftAccessTableDataset,
-    PostgreSqlTableDataset, MySqlTableDataset, OdbcTableDataset,
-    InformixTableDataset, RelationalTableDataset, AzureMySqlTableDataset,
-    TeradataTableDataset, OracleTableDataset, ODataResourceDataset,
-    CosmosDbMongoDbApiCollectionDataset, MongoDbV2CollectionDataset,
-    MongoDbCollectionDataset, FileShareDataset, Office365Dataset,
-    AzureBlobFSDataset, AzureDataLakeStoreDataset,
+    SalesforceServiceCloudObjectDataset, SalesforceObjectDataset,
+    MicrosoftAccessTableDataset, PostgreSqlTableDataset, MySqlTableDataset,
+    OdbcTableDataset, InformixTableDataset, RelationalTableDataset,
+    AzureMySqlTableDataset, TeradataTableDataset, OracleTableDataset,
+    ODataResourceDataset, CosmosDbMongoDbApiCollectionDataset,
+    MongoDbV2CollectionDataset, MongoDbCollectionDataset, FileShareDataset,
+    Office365Dataset, AzureBlobFSDataset, AzureDataLakeStoreDataset,
     CommonDataServiceForAppsEntityDataset, DynamicsCrmEntityDataset,
     DynamicsEntityDataset, DocumentDbCollectionDataset, CustomDataset,
     CassandraTableDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset,
@@ -553,7 +552,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, **kwargs):
@@ -648,8 +647,8 @@ class CopySource(Model):
     FileSystemSource, SqlDWSource, SqlMISource, AzureSqlSource,
     SqlServerSource, SqlSource, RestSource, SapTableSource, SapOpenHubSource,
     SapHanaSource, SapEccSource, SapCloudForCustomerSource,
-    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SapBwSource,
-    SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
+    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SybaseSource,
+    PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
     MicrosoftAccessSource, InformixSource, RelationalSource,
     CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
     DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
@@ -688,7 +687,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource'}
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource'}
     }
 
     def __init__(self, **kwargs):
@@ -4532,15 +4531,9 @@ class AzureSqlDWTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL Data Warehouse. Type:
+     string (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_dw_table_dataset_schema: The schema name of the Azure SQL
-     Data Warehouse. Type: string (or Expression with resultType string).
-    :type azure_sql_dw_table_dataset_schema: object
-    :param table: The table name of the Azure SQL Data Warehouse. Type: string
-     (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -4559,15 +4552,11 @@ class AzureSqlDWTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_dw_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureSqlDWTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.azure_sql_dw_table_dataset_schema = kwargs.get('azure_sql_dw_table_dataset_schema', None)
-        self.table = kwargs.get('table', None)
         self.type = 'AzureSqlDWTable'
 
 
@@ -4883,15 +4872,9 @@ class AzureSqlTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the Azure SQL database. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param azure_sql_table_dataset_schema: The schema name of the Azure SQL
-     database. Type: string (or Expression with resultType string).
-    :type azure_sql_table_dataset_schema: object
-    :param table: The table name of the Azure SQL database. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -4910,15 +4893,11 @@ class AzureSqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'azure_sql_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureSqlTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.azure_sql_table_dataset_schema = kwargs.get('azure_sql_table_dataset_schema', None)
-        self.table = kwargs.get('table', None)
         self.type = 'AzureSqlTable'
 
 
@@ -8769,15 +8748,9 @@ class DrillTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Drill. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param drill_table_dataset_schema: The schema name of the Drill. Type:
-     string (or Expression with resultType string).
-    :type drill_table_dataset_schema: object
     """
 
     _validation = {
@@ -8796,15 +8769,11 @@ class DrillTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'drill_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(DrillTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.drill_table_dataset_schema = kwargs.get('drill_table_dataset_schema', None)
         self.type = 'DrillTable'
 
 
@@ -11457,15 +11426,9 @@ class GoogleBigQueryObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     database + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type table: object
-    :param dataset: The database name of the Google BigQuery. Type: string (or
-     Expression with resultType string).
-    :type dataset: object
     """
 
     _validation = {
@@ -11484,15 +11447,11 @@ class GoogleBigQueryObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'dataset': {'key': 'typeProperties.dataset', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(GoogleBigQueryObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.dataset = kwargs.get('dataset', None)
         self.type = 'GoogleBigQueryObject'
 
 
@@ -11674,15 +11633,9 @@ class GreenplumTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of Greenplum. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param greenplum_table_dataset_schema: The schema name of Greenplum. Type:
-     string (or Expression with resultType string).
-    :type greenplum_table_dataset_schema: object
     """
 
     _validation = {
@@ -11701,15 +11654,11 @@ class GreenplumTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'greenplum_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(GreenplumTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.greenplum_table_dataset_schema = kwargs.get('greenplum_table_dataset_schema', None)
         self.type = 'GreenplumTable'
 
 
@@ -13056,15 +13005,9 @@ class HiveObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
-    :type table_name: object
-    :param table: The table name of the Hive. Type: string (or Expression with
+    :param table_name: The table name. Type: string (or Expression with
      resultType string).
-    :type table: object
-    :param hive_object_dataset_schema: The schema name of the Hive. Type:
-     string (or Expression with resultType string).
-    :type hive_object_dataset_schema: object
+    :type table_name: object
     """
 
     _validation = {
@@ -13083,15 +13026,11 @@ class HiveObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'hive_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(HiveObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.hive_object_dataset_schema = kwargs.get('hive_object_dataset_schema', None)
         self.type = 'HiveObject'
 
 
@@ -13842,15 +13781,9 @@ class ImpalaObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Impala. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param impala_object_dataset_schema: The schema name of the Impala. Type:
-     string (or Expression with resultType string).
-    :type impala_object_dataset_schema: object
     """
 
     _validation = {
@@ -13869,15 +13802,11 @@ class ImpalaObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'impala_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(ImpalaObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.impala_object_dataset_schema = kwargs.get('impala_object_dataset_schema', None)
         self.type = 'ImpalaObject'
 
 
@@ -18456,15 +18385,9 @@ class OracleTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the on-premises Oracle database.
+     Type: string (or Expression with resultType string).
     :type table_name: object
-    :param oracle_table_dataset_schema: The schema name of the on-premises
-     Oracle database. Type: string (or Expression with resultType string).
-    :type oracle_table_dataset_schema: object
-    :param table: The table name of the on-premises Oracle database. Type:
-     string (or Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -18483,15 +18406,11 @@ class OracleTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'oracle_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(OracleTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.oracle_table_dataset_schema = kwargs.get('oracle_table_dataset_schema', None)
-        self.table = kwargs.get('table', None)
         self.type = 'OracleTable'
 
 
@@ -19076,15 +18995,9 @@ class PhoenixObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Phoenix. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param phoenix_object_dataset_schema: The schema name of the Phoenix.
-     Type: string (or Expression with resultType string).
-    :type phoenix_object_dataset_schema: object
     """
 
     _validation = {
@@ -19103,15 +19016,11 @@ class PhoenixObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'phoenix_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(PhoenixObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.phoenix_object_dataset_schema = kwargs.get('phoenix_object_dataset_schema', None)
         self.type = 'PhoenixObject'
 
 
@@ -19787,15 +19696,9 @@ class PrestoObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Presto. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param presto_object_dataset_schema: The schema name of the Presto. Type:
-     string (or Expression with resultType string).
-    :type presto_object_dataset_schema: object
     """
 
     _validation = {
@@ -19814,15 +19717,11 @@ class PrestoObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'presto_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(PrestoObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.presto_object_dataset_schema = kwargs.get('presto_object_dataset_schema', None)
         self.type = 'PrestoObject'
 
 
@@ -21701,61 +21600,6 @@ class SalesforceSource(CopySource):
         self.type = 'SalesforceSource'
 
 
-class SapBwCubeDataset(Dataset):
-    """The SAP BW cube dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param description: Dataset description.
-    :type description: str
-    :param structure: Columns that define the structure of the dataset. Type:
-     array (or Expression with resultType array), itemType: DatasetDataElement.
-    :type structure: object
-    :param schema: Columns that define the physical type schema of the
-     dataset. Type: array (or Expression with resultType array), itemType:
-     DatasetSchemaDataElement.
-    :type schema: object
-    :param linked_service_name: Required. Linked service reference.
-    :type linked_service_name:
-     ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param parameters: Parameters for dataset.
-    :type parameters: dict[str,
-     ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param annotations: List of tags that can be used for describing the
-     Dataset.
-    :type annotations: list[object]
-    :param folder: The folder that this Dataset is in. If not specified,
-     Dataset will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'linked_service_name': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'description': {'key': 'description', 'type': 'str'},
-        'structure': {'key': 'structure', 'type': 'object'},
-        'schema': {'key': 'schema', 'type': 'object'},
-        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
-        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SapBwCubeDataset, self).__init__(**kwargs)
-        self.type = 'SapBwCube'
-
-
 class SapBWLinkedService(LinkedService):
     """SAP Business Warehouse Linked Service.
 
@@ -21830,51 +21674,6 @@ class SapBWLinkedService(LinkedService):
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SapBW'
-
-
-class SapBwSource(CopySource):
-    """A copy activity source for SapBW server via MDX.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param source_retry_count: Source retry count. Type: integer (or
-     Expression with resultType integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression
-     with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count
-     for the source data store. Type: integer (or Expression with resultType
-     integer).
-    :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param query: MDX query. Type: string (or Expression with resultType
-     string).
-    :type query: object
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SapBwSource, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-        self.type = 'SapBwSource'
 
 
 class SapCloudForCustomerLinkedService(LinkedService):
@@ -24234,15 +24033,9 @@ class SparkObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Spark. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param spark_object_dataset_schema: The schema name of the Spark. Type:
-     string (or Expression with resultType string).
-    :type spark_object_dataset_schema: object
     """
 
     _validation = {
@@ -24261,15 +24054,11 @@ class SparkObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'spark_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(SparkObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.spark_object_dataset_schema = kwargs.get('spark_object_dataset_schema', None)
         self.type = 'SparkObject'
 
 
@@ -24864,15 +24653,9 @@ class SqlServerTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name of the SQL Server dataset. Type: string
+     (or Expression with resultType string).
     :type table_name: object
-    :param sql_server_table_dataset_schema: The schema name of the SQL Server
-     dataset. Type: string (or Expression with resultType string).
-    :type sql_server_table_dataset_schema: object
-    :param table: The table name of the SQL Server dataset. Type: string (or
-     Expression with resultType string).
-    :type table: object
     """
 
     _validation = {
@@ -24891,15 +24674,11 @@ class SqlServerTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'sql_server_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(SqlServerTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.sql_server_table_dataset_schema = kwargs.get('sql_server_table_dataset_schema', None)
-        self.table = kwargs.get('table', None)
         self.type = 'SqlServerTable'
 
 
@@ -25997,66 +25776,6 @@ class SybaseSource(CopySource):
         self.type = 'SybaseSource'
 
 
-class SybaseTableDataset(Dataset):
-    """The Sybase table dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param description: Dataset description.
-    :type description: str
-    :param structure: Columns that define the structure of the dataset. Type:
-     array (or Expression with resultType array), itemType: DatasetDataElement.
-    :type structure: object
-    :param schema: Columns that define the physical type schema of the
-     dataset. Type: array (or Expression with resultType array), itemType:
-     DatasetSchemaDataElement.
-    :type schema: object
-    :param linked_service_name: Required. Linked service reference.
-    :type linked_service_name:
-     ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param parameters: Parameters for dataset.
-    :type parameters: dict[str,
-     ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param annotations: List of tags that can be used for describing the
-     Dataset.
-    :type annotations: list[object]
-    :param folder: The folder that this Dataset is in. If not specified,
-     Dataset will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param table_name: The Sybase table name. Type: string (or Expression with
-     resultType string).
-    :type table_name: object
-    """
-
-    _validation = {
-        'linked_service_name': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'description': {'key': 'description', 'type': 'str'},
-        'structure': {'key': 'structure', 'type': 'object'},
-        'schema': {'key': 'schema', 'type': 'object'},
-        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
-        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-        'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SybaseTableDataset, self).__init__(**kwargs)
-        self.table_name = kwargs.get('table_name', None)
-        self.type = 'SybaseTable'
-
-
 class TeradataLinkedService(LinkedService):
     """Linked service for Teradata data source.
 
@@ -27131,15 +26850,9 @@ class VerticaTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
     :type table_name: object
-    :param table: The table name of the Vertica. Type: string (or Expression
-     with resultType string).
-    :type table: object
-    :param vertica_table_dataset_schema: The schema name of the Vertica. Type:
-     string (or Expression with resultType string).
-    :type vertica_table_dataset_schema: object
     """
 
     _validation = {
@@ -27158,15 +26871,11 @@ class VerticaTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'vertica_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(VerticaTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.vertica_table_dataset_schema = kwargs.get('vertica_table_dataset_schema', None)
         self.type = 'VerticaTable'
 
 
