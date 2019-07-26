@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .signal_rmanagement_client import SignalRManagementClient
-from .version import VERSION
+from ._configuration import SignalRManagementClientConfiguration
+from ._signal_rmanagement_client import SignalRManagementClient
+__all__ = ['SignalRManagementClient', 'SignalRManagementClientConfiguration']
 
-__all__ = ['SignalRManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
