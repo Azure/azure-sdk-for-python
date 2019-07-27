@@ -226,7 +226,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
 
-    async def close(self, **kwargs):
+    async def close(self, exception=None):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -246,7 +246,6 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
-        exception = kwargs.get("exception", None)
         self.running = False
         if self.error:
             return

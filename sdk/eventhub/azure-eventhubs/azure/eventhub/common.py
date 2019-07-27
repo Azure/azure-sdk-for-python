@@ -57,7 +57,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, **kwargs):
+    def __init__(self, body=None, **kwargs):
         """
         Initialize EventData.
 
@@ -70,7 +70,6 @@ class EventData(object):
         :param message: The received message.
         :type message: ~uamqp.message.Message
         """
-        body = kwargs.get("body", None)
         to_device = kwargs.get("to_device", None)
         message = kwargs.get("message", None)
 
@@ -354,7 +353,7 @@ class EventPosition(object):
       >>> event_pos = EventPosition(1506968696002)
     """
 
-    def __init__(self, value, **kwargs):
+    def __init__(self, value, inclusive=False):
         """
         Initialize EventPosition.
 
@@ -363,7 +362,6 @@ class EventPosition(object):
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
-        inclusive = kwargs.get("inclusive", False)
         self.value = value if value is not None else "-1"
         self.inclusive = inclusive
 

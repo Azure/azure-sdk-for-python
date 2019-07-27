@@ -237,7 +237,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data(timeout=timeout)
 
-    def close(self, **kwargs):
+    def close(self, exception=None):
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -257,5 +257,4 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
-        exception = kwargs.get("exception", None)
         super(EventHubProducer, self).close(exception)
