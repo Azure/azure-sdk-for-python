@@ -1,0 +1,2 @@
+class ConsumerWorker(object):
+    pass
