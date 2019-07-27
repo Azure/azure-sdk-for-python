@@ -267,7 +267,7 @@ class TransactionsOperations(object):
     list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transactions'}
 
     def get(
-            self, billing_account_name, billing_profile_name, invoice_section_name, transaction_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, transaction_name, start_date, end_date, custom_headers=None, raw=False, **operation_config):
         """Get the transaction.
 
         :param billing_account_name: billing Account Id.
@@ -278,6 +278,10 @@ class TransactionsOperations(object):
         :type invoice_section_name: str
         :param transaction_name: Transaction name.
         :type transaction_name: str
+        :param start_date: Start date
+        :type start_date: str
+        :param end_date: End date
+        :type end_date: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -301,6 +305,8 @@ class TransactionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
+        query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -330,4 +336,4 @@ class TransactionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transactions/{transactionName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/transactions/{transactionName}'}
