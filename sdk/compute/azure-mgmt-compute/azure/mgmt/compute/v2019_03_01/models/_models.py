@@ -1561,8 +1561,9 @@ class GalleryImage(Resource):
      **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemTypes
-    :param os_state: Required. The allowed values for OS State are
-     'Generalized'. Possible values include: 'Generalized', 'Specialized'
+    :param os_state: Required. This property allows the user to specify
+     whether the virtual machines created under this image are 'Generalized' or
+     'Specialized'. Possible values include: 'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemStateTypes
     :param end_of_life_date: The end of life date of the gallery Image
@@ -1791,7 +1792,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
 
 
 class GalleryImageVersionStorageProfile(Model):
-    """This is the storage profile of a gallery Image Version.
+    """This is the storage profile of a Gallery Image Version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
