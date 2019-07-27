@@ -113,7 +113,7 @@ class EventHubProducer(ConsumerProducerMixin):
     async def _send_event_data(self, timeout=None):
         timeout = timeout or self.client.config.send_timeout
         if not timeout:
-            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
         start_time = time.time()
         timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
