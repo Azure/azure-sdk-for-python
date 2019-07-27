@@ -16,8 +16,8 @@ from .version import VERSION
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.subscription_operation_operations import SubscriptionOperationOperations
 from .operations.subscription_factory_operations import SubscriptionFactoryOperations
-from .operations.operations import Operations
 from .operations.subscription_operations import SubscriptionOperations
+from .operations.operations import Operations
 from .operations.tenants_operations import TenantsOperations
 from . import models
 
@@ -61,10 +61,10 @@ class SubscriptionClient(SDKClient):
     :vartype subscription_operation: azure.mgmt.subscription.operations.SubscriptionOperationOperations
     :ivar subscription_factory: SubscriptionFactory operations
     :vartype subscription_factory: azure.mgmt.subscription.operations.SubscriptionFactoryOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.subscription.operations.Operations
     :ivar subscription_operations: SubscriptionOperations operations
     :vartype subscription_operations: azure.mgmt.subscription.operations.SubscriptionOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.subscription.operations.Operations
     :ivar tenants: Tenants operations
     :vartype tenants: azure.mgmt.subscription.operations.TenantsOperations
 
@@ -90,9 +90,9 @@ class SubscriptionClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_factory = SubscriptionFactoryOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.subscription_operations = SubscriptionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
