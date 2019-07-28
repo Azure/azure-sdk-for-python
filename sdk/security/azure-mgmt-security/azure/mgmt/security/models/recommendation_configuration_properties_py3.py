@@ -21,37 +21,39 @@ class RecommendationConfigurationProperties(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param recommendation_type: Required. The recommendation type. Possible
-     values include: 'OpenPortsOnDevice', 'PermissiveFirewallPolicy',
-     'PermissiveFirewallRuleInput', 'PermissiveFirewallRuleOut',
-     'OperationSystemNotValid', 'UnutilizedMessagesFromAgent',
-     'SecurityTwinConfigurationNotOptimal',
-     'SecurityTwinConfigurationConflict', 'IdenticalAuthenticationCredentials',
-     'DenyDefaultIpPolicy', 'TooLargeIPRange', 'EnableDiagnosticsLog'
+     values include: 'IoT_ACRAuthentication',
+     'IoT_AgentSendsUnutilizedMessages', 'IoT_Baseline',
+     'IoT_EdgeHubMemOptimize', 'IoT_EdgeLoggingOptions',
+     'IoT_InconsistentModuleSettings', 'IoT_InstallAgent',
+     'IoT_IPFilter_DenyAll', 'IoT_IPFilter_PermissiveRule', 'IoT_OpenPorts',
+     'IoT_PermissiveFirewallPolicy', 'IoT_PermissiveInputFirewallRules',
+     'IoT_PermissiveOutputFirewallRules', 'IoT_PrivilegedDockerOptions',
+     'IoT_SharedCredentials', 'IoT_VulnerableTLSCipherSuite'
     :type recommendation_type: str or
      ~azure.mgmt.security.models.RecommendationType
-    :ivar description:
-    :vartype description: str
+    :ivar name:
+    :vartype name: str
     :param status: Required. Recommendation status. The recommendation is not
-     generated when the status is turned off. Possible values include:
-     'TurnedOff', 'TurnedOn'. Default value: "TurnedOn" .
+     generated when the status is disabled. Possible values include:
+     'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
      ~azure.mgmt.security.models.RecommendationConfigStatus
     """
 
     _validation = {
         'recommendation_type': {'required': True},
-        'description': {'readonly': True},
+        'name': {'readonly': True},
         'status': {'required': True},
     }
 
     _attribute_map = {
         'recommendation_type': {'key': 'recommendationType', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, *, recommendation_type, status="TurnedOn", **kwargs) -> None:
+    def __init__(self, *, recommendation_type, status="Enabled", **kwargs) -> None:
         super(RecommendationConfigurationProperties, self).__init__(**kwargs)
         self.recommendation_type = recommendation_type
-        self.description = None
+        self.name = None
         self.status = status
