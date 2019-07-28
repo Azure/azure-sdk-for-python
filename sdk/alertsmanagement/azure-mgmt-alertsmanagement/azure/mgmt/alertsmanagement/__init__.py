@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .alerts_management_client import AlertsManagementClient
-from .version import VERSION
+from ._configuration import AlertsManagementClientConfiguration
+from ._alerts_management_client import AlertsManagementClient
+__all__ = ['AlertsManagementClient', 'AlertsManagementClientConfiguration']
 
-__all__ = ['AlertsManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
