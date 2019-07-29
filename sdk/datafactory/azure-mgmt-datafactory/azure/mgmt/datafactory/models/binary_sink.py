@@ -41,7 +41,7 @@ class BinarySink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Binary store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSetting
     """
 
     _validation = {
@@ -56,7 +56,7 @@ class BinarySink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSetting'},
     }
 
     def __init__(self, **kwargs):

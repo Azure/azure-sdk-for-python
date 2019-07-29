@@ -41,10 +41,10 @@ class DelimitedTextSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: DelimitedText store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSetting
     :param format_settings: DelimitedText format settings.
     :type format_settings:
-     ~azure.mgmt.datafactory.models.DelimitedTextWriteSettings
+     ~azure.mgmt.datafactory.models.DelimitedTextWriteSetting
     """
 
     _validation = {
@@ -59,8 +59,8 @@ class DelimitedTextSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
-        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextWriteSettings'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSetting'},
+        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextWriteSetting'},
     }
 
     def __init__(self, **kwargs):

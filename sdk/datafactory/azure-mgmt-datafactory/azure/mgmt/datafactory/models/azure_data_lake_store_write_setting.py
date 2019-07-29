@@ -9,32 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_source import CopySource
+from .store_write_setting import StoreWriteSetting
 
 
-class BinarySource(CopySource):
-    """A copy activity Binary source.
+class AzureDataLakeStoreWriteSetting(StoreWriteSetting):
+    """Azure data lake store write settings.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param source_retry_count: Source retry count. Type: integer (or
-     Expression with resultType integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression
-     with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :param type: Required. The write setting type.
+    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param store_settings: Binary store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSetting
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
     """
 
     _validation = {
@@ -43,14 +36,10 @@ class BinarySource(CopySource):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSetting'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(BinarySource, self).__init__(**kwargs)
-        self.store_settings = kwargs.get('store_settings', None)
-        self.type = 'BinarySource'
+        super(AzureDataLakeStoreWriteSetting, self).__init__(**kwargs)
