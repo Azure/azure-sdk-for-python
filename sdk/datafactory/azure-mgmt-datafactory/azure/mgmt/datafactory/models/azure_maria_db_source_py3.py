@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_source import CopySource
+from .copy_source_py3 import CopySource
 
 
-class Office365Source(CopySource):
-    """A copy activity source for an Office365 service.
+class AzureMariaDBSource(CopySource):
+    """A copy activity Azure MariaDB source.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,22 +33,9 @@ class Office365Source(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
-    :param allowed_groups: The groups containing all the users. Type: array of
-     strings (or Expression with resultType array of strings).
-    :type allowed_groups: object
-    :param user_scope_filter_uri: The user scope uri. Type: string (or
+    :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
-    :type user_scope_filter_uri: object
-    :param date_filter_column: The Column to apply the <paramref
-     name="StartTime"/> and <paramref name="EndTime"/>. Type: string (or
-     Expression with resultType string).
-    :type date_filter_column: object
-    :param start_time: Start time of the requested range for this dataset.
-     Type: string (or Expression with resultType string).
-    :type start_time: object
-    :param end_time: End time of the requested range for thsi dataset. Type:
-     string (or Expression with resultType string).
-    :type end_time: object
+    :type query: object
     """
 
     _validation = {
@@ -61,18 +48,10 @@ class Office365Source(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'allowed_groups': {'key': 'allowedGroups', 'type': 'object'},
-        'user_scope_filter_uri': {'key': 'userScopeFilterUri', 'type': 'object'},
-        'date_filter_column': {'key': 'dateFilterColumn', 'type': 'object'},
-        'start_time': {'key': 'startTime', 'type': 'object'},
-        'end_time': {'key': 'endTime', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(Office365Source, self).__init__(**kwargs)
-        self.allowed_groups = kwargs.get('allowed_groups', None)
-        self.user_scope_filter_uri = kwargs.get('user_scope_filter_uri', None)
-        self.date_filter_column = kwargs.get('date_filter_column', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.type = 'Office365Source'
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
+        super(AzureMariaDBSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.query = query
+        self.type = 'AzureMariaDBSource'
