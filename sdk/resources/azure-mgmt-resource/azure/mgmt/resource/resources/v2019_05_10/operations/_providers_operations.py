@@ -235,6 +235,80 @@ class ProvidersOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers'}
 
+    def list_at_tenant_scope(
+            self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all resource providers for the tenant.
+
+        :param top: The number of results to return. If null is passed returns
+         all providers.
+        :type top: int
+        :param expand: The properties to include in the results. For example,
+         use &$expand=metadata in the query string to retrieve resource
+         provider metadata. To include property aliases in response, use
+         $expand=resourceTypes/aliases.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Provider
+        :rtype:
+         ~azure.mgmt.resource.resources.v2019_05_10.models.ProviderPaged[~azure.mgmt.resource.resources.v2019_05_10.models.Provider]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_at_tenant_scope.metadata['url']
+
+                # Construct parameters
+                query_parameters = {}
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ProviderPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_at_tenant_scope.metadata = {'url': '/providers'}
+
     def get(
             self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets the specified resource provider.
@@ -298,3 +372,66 @@ class ProvidersOperations(object):
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'}
+
+    def get_at_tenant_scope(
+            self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified resource provider at the tenant level.
+
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
+        :type resource_provider_namespace: str
+        :param expand: The $expand query parameter. For example, to include
+         property aliases in response, use $expand=resourceTypes/aliases.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Provider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.Provider or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_at_tenant_scope.metadata['url']
+        path_format_arguments = {
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Provider', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_at_tenant_scope.metadata = {'url': '/providers/{resourceProviderNamespace}'}

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .qn_amaker_client import QnAMakerClient
-from .version import VERSION
+from ._configuration import QnAMakerRuntimeClientConfiguration
+from ._qn_amaker_runtime_client import QnAMakerRuntimeClient
+__all__ = ['QnAMakerRuntimeClient', 'QnAMakerRuntimeClientConfiguration']
 
-__all__ = ['QnAMakerClient']
+from .version import VERSION
 
 __version__ = VERSION
 
