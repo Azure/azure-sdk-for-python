@@ -70,7 +70,7 @@ class _SeparateConnectionManager(object):
     async def close_connection(self):
         pass
 
-    def reset_connection_if_broken(self):
+    async def reset_connection_if_broken(self):
         pass
 
 

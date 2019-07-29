@@ -185,7 +185,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
         if not timeout:
-            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
         data_batch = []  # type: List[EventData]
         start_time = time.time()
