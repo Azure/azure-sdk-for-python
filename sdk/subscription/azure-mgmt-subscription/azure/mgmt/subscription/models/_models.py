@@ -13,35 +13,13 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class AdPrincipal(Model):
-    """Active Directory Principal for subscription creation delegated permission.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param object_id: Required. Object id of the Principal
-    :type object_id: str
-    """
-
-    _validation = {
-        'object_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AdPrincipal, self).__init__(**kwargs)
-        self.object_id = kwargs.get('object_id', None)
-
-
 class CanceledSubscriptionId(Model):
-    """Canceled Subscription Id.
+    """The ID of the canceled subscription.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Canceled Subscription Id
+    :ivar value: The ID of the canceled subscription
     :vartype value: str
     """
 
@@ -90,7 +68,7 @@ class EnabledSubscriptionId(Model):
 
 
 class ErrorResponse(Model):
-    """Describes the format of Error response.
+    """Describes the error if the operation is not successful.
 
     :param code: Error code
     :type code: str
@@ -170,44 +148,6 @@ class Location(Model):
         self.longitude = None
 
 
-class ModernSubscriptionCreationParameters(Model):
-    """Subscription Creation Parameters required to create a new Azure
-    subscription.
-
-    :param display_name: The display name of the subscription.
-    :type display_name: str
-    :param billing_profile_id: The ARM id of the billing profile.
-    :type billing_profile_id: str
-    :param sku_id: The commerce id of the sku.
-    :type sku_id: str
-    :param cost_center: optional customer cost center
-    :type cost_center: str
-    :param owner: rbac owner of the subscription
-    :type owner: ~azure.mgmt.subscription.models.AdPrincipal
-    :param additional_parameters: Additional, untyped parameters to support
-     custom subscription creation scenarios.
-    :type additional_parameters: dict[str, object]
-    """
-
-    _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
-        'sku_id': {'key': 'skuId', 'type': 'str'},
-        'cost_center': {'key': 'costCenter', 'type': 'str'},
-        'owner': {'key': 'owner', 'type': 'AdPrincipal'},
-        'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ModernSubscriptionCreationParameters, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.billing_profile_id = kwargs.get('billing_profile_id', None)
-        self.sku_id = kwargs.get('sku_id', None)
-        self.cost_center = kwargs.get('cost_center', None)
-        self.owner = kwargs.get('owner', None)
-        self.additional_parameters = kwargs.get('additional_parameters', None)
-
-
 class Operation(Model):
     """REST API operation.
 
@@ -276,12 +216,12 @@ class OperationListResult(Model):
 
 
 class RenamedSubscriptionId(Model):
-    """Renamed Subscription Id.
+    """The ID of the subscriptions that is being renamed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Renamed Subscription Id
+    :ivar value: The ID of the subscriptions that is being renamed
     :vartype value: str
     """
 
@@ -350,60 +290,8 @@ class Subscription(Model):
         self.authorization_source = kwargs.get('authorization_source', None)
 
 
-class SubscriptionCreationParameters(Model):
-    """Subscription Creation Parameters required to create a new Azure
-    subscription.
-
-    :param display_name: The display name of the subscription.
-    :type display_name: str
-    :param owners: The list of principals that should be granted Owner access
-     on the subscription. Principals should be of type User, Service Principal
-     or Security Group.
-    :type owners: list[~azure.mgmt.subscription.models.AdPrincipal]
-    :param offer_type: The offer type of the subscription. For example,
-     MS-AZR-0017P (EnterpriseAgreement) and MS-AZR-0148P (EnterpriseAgreement
-     devTest) are available. Only valid when creating a subscription in a
-     enrollment account scope. Possible values include: 'MS-AZR-0017P',
-     'MS-AZR-0148P'
-    :type offer_type: str or ~azure.mgmt.subscription.models.OfferType
-    :param additional_parameters: Additional, untyped parameters to support
-     custom subscription creation scenarios.
-    :type additional_parameters: dict[str, object]
-    """
-
-    _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
-        'offer_type': {'key': 'offerType', 'type': 'str'},
-        'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionCreationParameters, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.owners = kwargs.get('owners', None)
-        self.offer_type = kwargs.get('offer_type', None)
-        self.additional_parameters = kwargs.get('additional_parameters', None)
-
-
-class SubscriptionCreationResult(Model):
-    """The created subscription object.
-
-    :param subscription_link: The link to the new subscription.
-    :type subscription_link: str
-    """
-
-    _attribute_map = {
-        'subscription_link': {'key': 'subscriptionLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionCreationResult, self).__init__(**kwargs)
-        self.subscription_link = kwargs.get('subscription_link', None)
-
-
 class SubscriptionName(Model):
-    """New name of the subscription.
+    """The new name of the subscription.
 
     :param subscription_name: New subscription name
     :type subscription_name: str
@@ -416,53 +304,6 @@ class SubscriptionName(Model):
     def __init__(self, **kwargs):
         super(SubscriptionName, self).__init__(**kwargs)
         self.subscription_name = kwargs.get('subscription_name', None)
-
-
-class SubscriptionOperation(Model):
-    """status of the subscription POST operation.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The operation Id.
-    :vartype id: str
-    :param status: Status of the pending subscription
-    :type status: str
-    :param status_detail: Status Detail of the pending subscription
-    :type status_detail: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_detail': {'key': 'statusDetail', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperation, self).__init__(**kwargs)
-        self.id = None
-        self.status = kwargs.get('status', None)
-        self.status_detail = kwargs.get('status_detail', None)
-
-
-class SubscriptionOperationListResult(Model):
-    """A list of pending subscription operations.
-
-    :param value: A list of pending SubscriptionOperations
-    :type value: list[~azure.mgmt.subscription.models.SubscriptionOperation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubscriptionOperation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionOperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
 
 
 class SubscriptionPolicies(Model):
