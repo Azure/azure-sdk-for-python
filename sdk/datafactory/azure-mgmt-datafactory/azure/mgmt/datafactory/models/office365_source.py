@@ -46,7 +46,7 @@ class Office365Source(CopySource):
     :param start_time: Start time of the requested range for this dataset.
      Type: string (or Expression with resultType string).
     :type start_time: object
-    :param end_time: End time of the requested range for thsi dataset. Type:
+    :param end_time: End time of the requested range for this dataset. Type:
      string (or Expression with resultType string).
     :type end_time: object
     """
