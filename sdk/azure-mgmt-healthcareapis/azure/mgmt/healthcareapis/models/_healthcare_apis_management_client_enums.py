@@ -25,6 +25,13 @@ class ProvisioningState(str, Enum):
     deprovisioned = "Deprovisioned"
 
 
+class Kind(str, Enum):
+
+    fhir = "fhir"
+    fhir_stu3 = "fhir-Stu3"
+    fhir_r4 = "fhir-R4"
+
+
 class ServiceNameUnavailabilityReason(str, Enum):
 
     invalid = "Invalid"

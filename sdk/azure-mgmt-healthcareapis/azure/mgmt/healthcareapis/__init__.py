@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .healthcare_apis_management_client import HealthcareApisManagementClient
-from .version import VERSION
+from ._configuration import HealthcareApisManagementClientConfiguration
+from ._healthcare_apis_management_client import HealthcareApisManagementClient
+__all__ = ['HealthcareApisManagementClient', 'HealthcareApisManagementClientConfiguration']
 
-__all__ = ['HealthcareApisManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
