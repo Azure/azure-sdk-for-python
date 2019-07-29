@@ -257,7 +257,7 @@ class LeaseClient(LeaseClientBase):
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
         try:
-            response = self._client.change_lease(
+            response = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=timeout,

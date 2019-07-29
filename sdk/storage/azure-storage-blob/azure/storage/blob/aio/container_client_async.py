@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.async_paging import AsyncItemPaged
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -476,8 +477,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Any], Optional[str], Optional[int], **Any) -> Iterable[BlobProperties]
+    def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
+        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> AsyncItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -488,14 +489,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param list[str] include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.storage.blob.models.BlobPropertiesPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.BlobProperties]
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers.py
@@ -514,17 +511,16 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             include=include,
             timeout=timeout,
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=BlobPropertiesPaged)
 
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
             delimiter="/", # type: str
-            marker=None, # type: Optional[str]
             timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
-        # type: (...) -> Iterable[BlobProperties]
+        # type: (...) -> AsyncItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -541,20 +537,15 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.storage.blob.models.BlobPrefix
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.BlobProperties]
         """
         if include and not isinstance(include, list):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
-        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
@@ -565,7 +556,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
-            marker=marker,
             delimiter=delimiter)
 
     async def upload_blob(
