@@ -60,7 +60,7 @@ async def pump(_pid, receiver, _args, _dl):
     try:
         async with receiver:
             while time.time() < deadline:
-                batch = await receiver.receive(timeout=1)
+                batch = await receiver.receive(timeout=3)
                 size = len(batch)
                 total += size
                 iteration += 1

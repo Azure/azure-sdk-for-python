@@ -36,9 +36,9 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
 @pytest.mark.asyncio
 async def test_receive_with_invalid_hostname_async(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
-    sender = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
+        await receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -55,9 +55,9 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
 @pytest.mark.asyncio
 async def test_receive_with_invalid_key_async(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
-    sender = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
+        await receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
@@ -74,9 +74,9 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
 @pytest.mark.asyncio
 async def test_receive_with_invalid_policy_async(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
-    sender = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
+        await receiver.receive(timeout=3)
 
 
 @pytest.mark.liveTest
