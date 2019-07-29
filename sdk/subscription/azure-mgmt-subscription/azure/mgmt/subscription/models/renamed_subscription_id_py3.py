@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class RenamedSubscriptionId(Model):
-    """Renamed Subscription Id.
+    """The ID of the subscriptions that is being renamed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Renamed Subscription Id
+    :ivar value: The ID of the subscriptions that is being renamed
     :vartype value: str
     """
 

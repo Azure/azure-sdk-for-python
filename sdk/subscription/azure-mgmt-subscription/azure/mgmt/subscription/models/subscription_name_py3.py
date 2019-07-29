@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SubscriptionName(Model):
-    """New name of the subscription.
+    """The new name of the subscription.
 
     :param subscription_name: New subscription name
     :type subscription_name: str

@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class CanceledSubscriptionId(Model):
-    """Canceled Subscription Id.
+    """The ID of the canceled subscription.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Canceled Subscription Id
+    :ivar value: The ID of the canceled subscription
     :vartype value: str
     """
 
