@@ -27,9 +27,6 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
     :type subscription_id: str
     :param subscription_id1: The Azure subscription id.
     :type subscription_id1: str
-    :ivar identifier: Identification of the information to be retrieved by API
-     call.
-    :type identifier: str
     :param str base_url: Service URL
     """
 
@@ -56,4 +53,3 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.subscription_id = subscription_id
         self.subscription_id1 = subscription_id1
-        self.identifier = "MonitorServiceList"
