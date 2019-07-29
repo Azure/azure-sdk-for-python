@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector import DataConnector
+from .resource import Resource
 
 
-class MCASDataConnector(DataConnector):
-    """Represents MCAS (Microsoft Cloud App Security) data connector.
+class CaseComment(Resource):
+    """Represents a case comment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,36 +26,34 @@ class MCASDataConnector(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
-    :type etag: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.MCASDataConnectorDataTypes
+    :param message: Required. The comment message
+    :type message: str
+    :param created_time_utc: Required. The time the comment was created
+    :type created_time_utc: datetime
+    :param user_info: Required. Describes the user that created the comment
+    :type user_info: ~azure.mgmt.securityinsight.models.UserInfo
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'kind': {'required': True},
+        'message': {'required': True},
+        'created_time_utc': {'required': True},
+        'user_info': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'MCASDataConnectorDataTypes'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
+        'user_info': {'key': 'properties.userInfo', 'type': 'UserInfo'},
     }
 
     def __init__(self, **kwargs):
-        super(MCASDataConnector, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.data_types = kwargs.get('data_types', None)
-        self.kind = 'MicrosoftCloudAppSecurity'
+        super(CaseComment, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.created_time_utc = kwargs.get('created_time_utc', None)
+        self.user_info = kwargs.get('user_info', None)

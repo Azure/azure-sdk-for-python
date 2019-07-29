@@ -18,7 +18,7 @@ class DataConnector(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: OfficeDataConnector, TIDataConnector,
     AwsCloudTrailDataConnector, AADDataConnector, ASCDataConnector,
-    MCASDataConnector
+    MCASDataConnector, AATPDataConnector, MDATPDataConnector
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,7 +53,7 @@ class DataConnector(Model):
     }
 
     _subtype_map = {
-        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'AmazonWebServicesCloudTrail': 'AwsCloudTrailDataConnector', 'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector'}
+        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'AmazonWebServicesCloudTrail': 'AwsCloudTrailDataConnector', 'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector', 'AzureAdvancedThreatProtection': 'AATPDataConnector', 'MicrosoftDefenderAdvancedThreatProtection': 'MDATPDataConnector'}
     }
 
     def __init__(self, *, etag: str=None, **kwargs) -> None:

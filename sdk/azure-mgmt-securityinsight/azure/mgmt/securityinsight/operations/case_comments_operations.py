@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class CasesOperations(object):
-    """CasesOperations operations.
+class CaseCommentsOperations(object):
+    """CaseCommentsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,8 +38,8 @@ class CasesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, filter=None, orderby=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all cases.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, filter=None, orderby=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all case comments.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -49,6 +49,8 @@ class CasesOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
+        :param case_id: Case ID
+        :type case_id: str
         :param filter: Filters the results, based on a Boolean condition.
          Optional.
         :type filter: str
@@ -67,9 +69,9 @@ class CasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Case
+        :return: An iterator like instance of CaseComment
         :rtype:
-         ~azure.mgmt.securityinsight.models.CasePaged[~azure.mgmt.securityinsight.models.Case]
+         ~azure.mgmt.securityinsight.models.CaseCommentPaged[~azure.mgmt.securityinsight.models.CaseComment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -81,7 +83,8 @@ class CasesOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1)
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
+                    'caseId': self._serialize.url("case_id", case_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -123,19 +126,19 @@ class CasesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.CasePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.CaseCommentPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.CasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.CaseCommentPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}/comments'}
 
-    def get(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a case.
+    def get_comment_by_id(
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case_comment_id, custom_headers=None, raw=False, **operation_config):
+        """Gets a case comment.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -147,24 +150,27 @@ class CasesOperations(object):
         :type workspace_name: str
         :param case_id: Case ID
         :type case_id: str
+        :param case_comment_id: Case comment ID
+        :type case_comment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Case or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.Case or
+        :return: CaseComment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.CaseComment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_comment_by_id.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'caseId': self._serialize.url("case_id", case_id, 'str')
+            'caseId': self._serialize.url("case_id", case_id, 'str'),
+            'caseCommentId': self._serialize.url("case_comment_id", case_comment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -194,18 +200,18 @@ class CasesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Case', response)
+            deserialized = self._deserialize('CaseComment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}'}
+    get_comment_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}/comments/{caseCommentId}'}
 
-    def create_or_update(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the case.
+    def create_comment(
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case_comment_id, message, custom_headers=None, raw=False, **operation_config):
+        """Creates the case comment.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -217,26 +223,31 @@ class CasesOperations(object):
         :type workspace_name: str
         :param case_id: Case ID
         :type case_id: str
-        :param case: The case
-        :type case: ~azure.mgmt.securityinsight.models.Case
+        :param case_comment_id: Case comment ID
+        :type case_comment_id: str
+        :param message: The comment message
+        :type message: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Case or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.Case or
+        :return: CaseComment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.CaseComment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        case_comment_request_body = models.CaseCommentRequestBody(message=message)
+
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_comment.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'caseId': self._serialize.url("case_id", case_id, 'str')
+            'caseId': self._serialize.url("case_id", case_id, 'str'),
+            'caseCommentId': self._serialize.url("case_comment_id", case_comment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -256,7 +267,7 @@ class CasesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(case, 'Case')
+        body_content = self._serialize.body(case_comment_request_body, 'CaseCommentRequestBody')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -270,74 +281,13 @@ class CasesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Case', response)
+            deserialized = self._deserialize('CaseComment', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('Case', response)
+            deserialized = self._deserialize('CaseComment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}'}
-
-    def delete(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, custom_headers=None, raw=False, **operation_config):
-        """Delete the case.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param operational_insights_resource_provider: The namespace of
-         workspaces resource provider- Microsoft.OperationalInsights.
-        :type operational_insights_resource_provider: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param case_id: Case ID
-        :type case_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.delete.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'caseId': self._serialize.url("case_id", case_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}'}
+    create_comment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/cases/{caseId}/comments/{caseCommentId}'}

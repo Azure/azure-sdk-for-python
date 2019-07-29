@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector import DataConnector
+from .resource import Resource
 
 
-class MCASDataConnector(DataConnector):
-    """Represents MCAS (Microsoft Cloud App Security) data connector.
+class CaseCommentRequestBody(Resource):
+    """Represents a case comment request body.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,36 +26,24 @@ class MCASDataConnector(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
-    :type etag: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.MCASDataConnectorDataTypes
+    :param message: Required. The comment message
+    :type message: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'kind': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'MCASDataConnectorDataTypes'},
+        'message': {'key': 'properties.message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(MCASDataConnector, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.data_types = kwargs.get('data_types', None)
-        self.kind = 'MicrosoftCloudAppSecurity'
+        super(CaseCommentRequestBody, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)

@@ -16,8 +16,10 @@ try:
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .action_py3 import Action
-    from .user_info_py3 import UserInfo
     from .case_py3 import Case
+    from .user_info_py3 import UserInfo
+    from .case_comment_py3 import CaseComment
+    from .case_comment_request_body_py3 import CaseCommentRequestBody
     from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
@@ -36,7 +38,11 @@ try:
     from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .aad_data_connector_py3 import AADDataConnector
     from .asc_data_connector_py3 import ASCDataConnector
+    from .mcas_data_connector_data_types_discovery_logs_py3 import MCASDataConnectorDataTypesDiscoveryLogs
+    from .mcas_data_connector_data_types_py3 import MCASDataConnectorDataTypes
     from .mcas_data_connector_py3 import MCASDataConnector
+    from .aatp_data_connector_py3 import AATPDataConnector
+    from .mdatp_data_connector_py3 import MDATPDataConnector
     from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
@@ -63,8 +69,10 @@ except (SyntaxError, ImportError):
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
     from .action import Action
-    from .user_info import UserInfo
     from .case import Case
+    from .user_info import UserInfo
+    from .case_comment import CaseComment
+    from .case_comment_request_body import CaseCommentRequestBody
     from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
@@ -83,7 +91,11 @@ except (SyntaxError, ImportError):
     from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .aad_data_connector import AADDataConnector
     from .asc_data_connector import ASCDataConnector
+    from .mcas_data_connector_data_types_discovery_logs import MCASDataConnectorDataTypesDiscoveryLogs
+    from .mcas_data_connector_data_types import MCASDataConnectorDataTypes
     from .mcas_data_connector import MCASDataConnector
+    from .aatp_data_connector import AATPDataConnector
+    from .mdatp_data_connector import MDATPDataConnector
     from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
@@ -107,6 +119,7 @@ from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
 from .case_paged import CasePaged
+from .case_comment_paged import CaseCommentPaged
 from .bookmark_paged import BookmarkPaged
 from .data_connector_paged import DataConnectorPaged
 from .entity_paged import EntityPaged
@@ -136,8 +149,10 @@ __all__ = [
     'AlertRuleKind1',
     'ScheduledAlertRule',
     'Action',
-    'UserInfo',
     'Case',
+    'UserInfo',
+    'CaseComment',
+    'CaseCommentRequestBody',
     'Bookmark',
     'DataConnector',
     'DataConnectorKind1',
@@ -156,7 +171,11 @@ __all__ = [
     'AlertsDataTypeOfDataConnector',
     'AADDataConnector',
     'ASCDataConnector',
+    'MCASDataConnectorDataTypesDiscoveryLogs',
+    'MCASDataConnectorDataTypes',
     'MCASDataConnector',
+    'AATPDataConnector',
+    'MDATPDataConnector',
     'DataConnectorWithAlertsProperties',
     'DataConnectorDataTypeCommon',
     'Entity',
@@ -180,6 +199,7 @@ __all__ = [
     'AlertRulePaged',
     'ActionPaged',
     'CasePaged',
+    'CaseCommentPaged',
     'BookmarkPaged',
     'DataConnectorPaged',
     'EntityPaged',

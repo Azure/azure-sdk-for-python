@@ -34,7 +34,7 @@ class Case(Resource):
     :type created_time_utc: datetime
     :param end_time_utc: The end time of the case
     :type end_time_utc: datetime
-    :param start_time_utc: The start time of the case
+    :param start_time_utc: Required. The start time of the case
     :type start_time_utc: datetime
     :param labels: List of labels relevant to this case
     :type labels: list[str]
@@ -43,7 +43,7 @@ class Case(Resource):
     :param title: Required. The title of the case
     :type title: str
     :param assigned_to: Describes a user that the case is assigned to
-    :type assigned_to: ~azure.mgmt.securityinsight.models.UserInfo
+    :type assigned_to: str
     :param severity: Required. The severity of the case. Possible values
      include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
@@ -53,12 +53,23 @@ class Case(Resource):
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
+    :param closed_reason_text: the case close reason details
+    :type closed_reason_text: str
+    :param related_alert_ids: List of related alert identifiers
+    :type related_alert_ids: list[str]
+    :param case_number: a sequential number
+    :type case_number: int
+    :param last_comment: the last comment in the case
+    :type last_comment: str
+    :param total_comments: the number of total comments in the case
+    :type total_comments: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'start_time_utc': {'required': True},
         'title': {'required': True},
         'severity': {'required': True},
         'status': {'required': True},
@@ -76,10 +87,15 @@ class Case(Resource):
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
-        'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
+        'assigned_to': {'key': 'properties.assignedTo', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
+        'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
+        'related_alert_ids': {'key': 'properties.relatedAlertIds', 'type': '[str]'},
+        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
+        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
+        'total_comments': {'key': 'properties.totalComments', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -96,3 +112,8 @@ class Case(Resource):
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
         self.close_reason = kwargs.get('close_reason', None)
+        self.closed_reason_text = kwargs.get('closed_reason_text', None)
+        self.related_alert_ids = kwargs.get('related_alert_ids', None)
+        self.case_number = kwargs.get('case_number', None)
+        self.last_comment = kwargs.get('last_comment', None)
+        self.total_comments = kwargs.get('total_comments', None)
