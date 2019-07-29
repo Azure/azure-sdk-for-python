@@ -40,7 +40,7 @@ class EventHubConsumer(ConsumerProducerMixin):
     def __init__(self, client, source, **kwargs):
         """
         Instantiate a consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient
@@ -185,7 +185,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
         if not timeout:
-            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
         data_batch = []  # type: List[EventData]
         start_time = time.time()
@@ -217,7 +217,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
 
-    def close(self, **kwargs):
+    def close(self, exception=None):
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -237,7 +237,6 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
-        exception = kwargs.get("exception", None)
         if self.messages_iter:
             self.messages_iter.close()
             self.messages_iter = None

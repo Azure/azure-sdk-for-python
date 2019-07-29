@@ -13,9 +13,10 @@ from uamqp import types, constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
-from azure.eventhub.common import EventData, _BatchSendEventData
-from azure.eventhub.error import OperationTimeoutError, _error_handler
+from azure.eventhub.common import EventData, EventDataBatch
+from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ._consumer_producer_mixin import ConsumerProducerMixin
+
 
 log = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ class EventHubProducer(ConsumerProducerMixin):
     def __init__(self, client, target, **kwargs):
         """
         Instantiate an EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient.
@@ -70,6 +71,7 @@ class EventHubProducer(ConsumerProducerMixin):
         auto_reconnect = kwargs.get("auto_reconnect", True)
 
         super(EventHubProducer, self).__init__()
+        self._max_message_size_on_link = None
         self.running = False
         self.client = client
         self.target = target
@@ -117,9 +119,9 @@ class EventHubProducer(ConsumerProducerMixin):
         super(EventHubProducer, self)._open(timeout_time)
 
     def _send_event_data(self, timeout=None):
-        timeout = self.client.config.send_timeout if timeout is None else timeout
+        timeout = timeout or self.client.config.send_timeout
         if not timeout:
-            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
         start_time = time.time()
         timeout_time = start_time + timeout
         max_retries = self.client.config.max_retries
@@ -162,8 +164,31 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
+    def create_batch(self, **kwargs):
+        """
+        Create an EventDataBatch object with max size being max_size.
+        The max_size should be no greater than the max allowed message size defined by the service side.
+        :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :type max_size: int
+        :param partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :type partition_key: str
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
+        """
+        max_size = kwargs.get("max_size", None)
+        partition_key = kwargs.get("partition_key", None)
+        if not self._max_message_size_on_link:
+            self._open()
+
+        if max_size and max_size > self._max_message_size_on_link:
+            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+                             .format(max_size, self._max_message_size_on_link))
+
+        return EventDataBatch(max_size or self._max_message_size_on_link, partition_key)
+
     def send(self, event_data, **kwargs):
-        # type:(Union[EventData, Iterable[EventData]], Union[str, bytes], float) -> None
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -171,14 +196,14 @@ class EventHubProducer(ConsumerProducerMixin):
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
         :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
         :param partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
+         a particular partition of the Event Hub decided by the service. partition_key
+         could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
         :type partition_key: str
         :param timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
         :type timeout:float
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
-
         :return: None
         :rtype: None
 
@@ -197,18 +222,22 @@ class EventHubProducer(ConsumerProducerMixin):
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
-                event_data._set_partition_key(partition_key)
+                event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
         else:
-            event_data_with_pk = _set_partition_key(event_data, partition_key)
-            wrapper_event_data = _BatchSendEventData(
-                event_data_with_pk,
-                partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
+            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
+                if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
+                    raise EventDataError('The partition_key does not match the one of the EventDataBatch')
+                wrapper_event_data = event_data
+            else:
+                if partition_key:
+                    event_data = self._set_partition_key(event_data, partition_key)
+                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data(timeout=timeout)
 
-    def close(self, **kwargs):
+    def close(self, exception=None):
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -228,5 +257,4 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
-        exception = kwargs.get("exception", None)
         super(EventHubProducer, self).close(exception)
