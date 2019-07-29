@@ -137,7 +137,8 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -183,7 +184,8 @@ class ApplicationResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -307,7 +309,8 @@ class ApplicationResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -392,7 +395,8 @@ class ApplicationTypeResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -470,7 +474,8 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -2044,7 +2049,8 @@ class ServiceResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
@@ -2287,7 +2293,8 @@ class ServiceResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Azure resource location.
+    :param location: It will be deprecated in New API, resource location
+     depends on the parent resource.
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]

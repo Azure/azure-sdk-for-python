@@ -121,7 +121,8 @@ class ApplicationTypesOperations(object):
         :param application_type_name: The name of the application type name
          resource.
         :type application_type_name: str
-        :param location: Azure resource location.
+        :param location: It will be deprecated in New API, resource location
+         depends on the parent resource.
         :type location: str
         :param tags: Azure resource tags.
         :type tags: dict[str, str]
