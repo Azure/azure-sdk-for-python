@@ -1,4 +1,3 @@
-import asyncio
 import time
 import uuid
 import sqlite3
@@ -27,9 +26,6 @@ class Sqlite3PartitionManager(PartitionManager):
         finally:
             c.close()
         self.conn = conn
-
-    def __del__(self):
-        self.conn.close()
 
     async def list_ownership(self, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()

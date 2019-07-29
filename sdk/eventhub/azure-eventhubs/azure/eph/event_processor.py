@@ -1,17 +1,22 @@
 from typing import Callable
 import uuid
 import asyncio
+import logging
+
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
 from ._cancellation_token import CancellationToken
 from .checkpoint_manager import CheckpointManager
 from .partition_manager import PartitionManager
 from .partition_processor import PartitionProcessor
+from .close_reason import CloseReason
+
+logger = logging.getLogger(__name__)
 
 
 class EventProcessor(object):
     def __init__(self, consumer_group_name: str, eventhub_client: EventHubClient,
-                 partition_processor_callable: Callable[[str, str, str, CheckpointManager], PartitionProcessor],
+                 partition_processor_callable: Callable[..., PartitionProcessor],
                  partition_manager: PartitionManager, **kwargs):
         """
 
@@ -36,14 +41,25 @@ class EventProcessor(object):
         self.partition_ids = None
 
     async def start(self):
+        """Start the EventProcessor.
+
+        :param timeout:
+        """
+        logger.info("EventProcessor %r is being started", self.instance_id)
         client = self.eventhub_client
         partition_ids = await client.get_partition_ids()
         self.partition_ids = partition_ids
 
         claimed_list = await self._claim_partitions()
         await self._start_claimed_partitions(claimed_list)
+        logger.info("EventProcessor %r is started", self.instance_id)
 
     async def stop(self):
+        """Stop all the partition consumer
+
+        :param kwargs:
+        :return:
+        """
         self.cancellation_token.cancel()
         await self.partition_manager.close()
 
@@ -86,7 +102,6 @@ class EventProcessor(object):
                 checkpoint_manager=CheckpointManager(partition_id, self.eventhub_name, self.consumer_group_name,
                                                      self.instance_id, self.partition_manager)
             )
-
             loop = asyncio.get_running_loop()
             task = loop.create_task(
                 _receive(consumer, partition_processor, self.max_wait_time, self.cancellation_token))
@@ -103,10 +118,10 @@ async def _receive(partition_consumer, partition_processor, max_wait_time, cance
                 events = await partition_consumer.receive(timeout=max_wait_time)
                 await partition_processor.process_events(events)
             else:
-                await partition_processor.close(reason="Cancelled")
-                await partition_consumer.close()
-    except EventHubError as eh_err:
+                await partition_processor.close(reason=CloseReason.SHUTDOWN)
+    except Exception as exception:
+        # TODO: separate exception lease stolen
+        await partition_processor.close(reason=CloseReason.EXCEPTION)
+    finally:
         await partition_consumer.close()
-        await partition_processor.close(reason=eh_err)
-    except Exception as err:
-        await partition_processor.process_error(err)
+        # TODO: try to inform other EventProcessors to take the partition?
