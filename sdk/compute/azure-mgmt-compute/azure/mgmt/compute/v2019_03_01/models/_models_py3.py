@@ -801,7 +801,7 @@ class DedicatedHostGroup(Resource):
      host group.
     :vartype hosts:
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group � only single
+    :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
      enforces each host in the group to be in the same zone.
@@ -853,7 +853,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
      host group.
     :vartype hosts:
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group � only single
+    :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
      enforces each host in the group to be in the same zone.
@@ -6379,6 +6379,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
+    :param scheduled_events_profile: Specifies Scheduled Event related
+     configurations.
+    :type scheduled_events_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -6388,9 +6392,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -6398,6 +6403,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile
         self.license_type = license_type
+        self.scheduled_events_profile = scheduled_events_profile
 
 
 class VirtualMachineScaleSetVM(Resource):

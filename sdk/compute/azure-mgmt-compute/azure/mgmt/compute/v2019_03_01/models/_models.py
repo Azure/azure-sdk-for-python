@@ -801,7 +801,7 @@ class DedicatedHostGroup(Resource):
      host group.
     :vartype hosts:
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group � only single
+    :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
      enforces each host in the group to be in the same zone.
@@ -853,7 +853,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
      host group.
     :vartype hosts:
      list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group � only single
+    :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
      enforces each host in the group to be in the same zone.
@@ -6379,6 +6379,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
+    :param scheduled_events_profile: Specifies Scheduled Event related
+     configurations.
+    :type scheduled_events_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -6388,6 +6392,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -6398,6 +6403,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.extension_profile = kwargs.get('extension_profile', None)
         self.license_type = kwargs.get('license_type', None)
+        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
 
 
 class VirtualMachineScaleSetVM(Resource):
