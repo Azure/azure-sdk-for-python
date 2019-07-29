@@ -15,13 +15,24 @@ from msrest.serialization import Model
 class UserInfo(Model):
     """User information that made some action.
 
-    :param object_id: The object id of the user.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_id: Required. The object id of the user.
     :type object_id: str
-    :param email: The email of the user.
-    :type email: str
-    :param name: The name of the user.
-    :type name: str
+    :ivar email: The email of the user.
+    :vartype email: str
+    :ivar name: The name of the user.
+    :vartype name: str
     """
+
+    _validation = {
+        'object_id': {'required': True},
+        'email': {'readonly': True},
+        'name': {'readonly': True},
+    }
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -32,5 +43,5 @@ class UserInfo(Model):
     def __init__(self, **kwargs):
         super(UserInfo, self).__init__(**kwargs)
         self.object_id = kwargs.get('object_id', None)
-        self.email = kwargs.get('email', None)
-        self.name = kwargs.get('name', None)
+        self.email = None
+        self.name = None

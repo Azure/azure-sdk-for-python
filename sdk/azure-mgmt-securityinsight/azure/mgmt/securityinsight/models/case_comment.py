@@ -28,10 +28,10 @@ class CaseComment(Resource):
     :vartype name: str
     :param message: Required. The comment message
     :type message: str
-    :param created_time_utc: Required. The time the comment was created
-    :type created_time_utc: datetime
-    :param user_info: Required. Describes the user that created the comment
-    :type user_info: ~azure.mgmt.securityinsight.models.UserInfo
+    :ivar created_time_utc: The time the comment was created
+    :vartype created_time_utc: datetime
+    :ivar user_info: Describes the user that created the comment
+    :vartype user_info: ~azure.mgmt.securityinsight.models.UserInfo
     """
 
     _validation = {
@@ -39,8 +39,8 @@ class CaseComment(Resource):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'message': {'required': True},
-        'created_time_utc': {'required': True},
-        'user_info': {'required': True},
+        'created_time_utc': {'readonly': True},
+        'user_info': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,5 +55,5 @@ class CaseComment(Resource):
     def __init__(self, **kwargs):
         super(CaseComment, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
-        self.created_time_utc = kwargs.get('created_time_utc', None)
-        self.user_info = kwargs.get('user_info', None)
+        self.created_time_utc = None
+        self.user_info = None

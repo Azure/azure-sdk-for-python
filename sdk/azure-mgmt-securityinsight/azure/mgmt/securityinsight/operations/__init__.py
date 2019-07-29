@@ -13,6 +13,7 @@ from .operations import Operations
 from .alert_rules_operations import AlertRulesOperations
 from .actions_operations import ActionsOperations
 from .cases_operations import CasesOperations
+from .comments_operations import CommentsOperations
 from .case_comments_operations import CaseCommentsOperations
 from .bookmarks_operations import BookmarksOperations
 from .data_connectors_operations import DataConnectorsOperations
@@ -27,6 +28,7 @@ __all__ = [
     'AlertRulesOperations',
     'ActionsOperations',
     'CasesOperations',
+    'CommentsOperations',
     'CaseCommentsOperations',
     'BookmarksOperations',
     'DataConnectorsOperations',

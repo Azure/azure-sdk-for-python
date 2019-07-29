@@ -16,10 +16,9 @@ try:
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .action_py3 import Action
-    from .case_py3 import Case
     from .user_info_py3 import UserInfo
+    from .case_py3 import Case
     from .case_comment_py3 import CaseComment
-    from .case_comment_request_body_py3 import CaseCommentRequestBody
     from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
@@ -69,10 +68,9 @@ except (SyntaxError, ImportError):
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
     from .action import Action
-    from .case import Case
     from .user_info import UserInfo
+    from .case import Case
     from .case_comment import CaseComment
-    from .case_comment_request_body import CaseCommentRequestBody
     from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
@@ -149,10 +147,9 @@ __all__ = [
     'AlertRuleKind1',
     'ScheduledAlertRule',
     'Action',
-    'Case',
     'UserInfo',
+    'Case',
     'CaseComment',
-    'CaseCommentRequestBody',
     'Bookmark',
     'DataConnector',
     'DataConnectorKind1',

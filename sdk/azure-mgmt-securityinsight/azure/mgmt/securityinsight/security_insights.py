@@ -17,6 +17,7 @@ from .operations.operations import Operations
 from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.actions_operations import ActionsOperations
 from .operations.cases_operations import CasesOperations
+from .operations.comments_operations import CommentsOperations
 from .operations.case_comments_operations import CaseCommentsOperations
 from .operations.bookmarks_operations import BookmarksOperations
 from .operations.data_connectors_operations import DataConnectorsOperations
@@ -74,6 +75,8 @@ class SecurityInsights(SDKClient):
     :vartype actions: azure.mgmt.securityinsight.operations.ActionsOperations
     :ivar cases: Cases operations
     :vartype cases: azure.mgmt.securityinsight.operations.CasesOperations
+    :ivar comments: Comments operations
+    :vartype comments: azure.mgmt.securityinsight.operations.CommentsOperations
     :ivar case_comments: CaseComments operations
     :vartype case_comments: azure.mgmt.securityinsight.operations.CaseCommentsOperations
     :ivar bookmarks: Bookmarks operations
@@ -117,6 +120,8 @@ class SecurityInsights(SDKClient):
         self.actions = ActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.cases = CasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.comments = CommentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.case_comments = CaseCommentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
