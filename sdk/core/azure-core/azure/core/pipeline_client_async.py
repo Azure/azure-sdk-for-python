@@ -48,7 +48,6 @@ if TYPE_CHECKING:
 from .pipeline import AsyncPipeline
 from .pipeline.transport.base import PipelineClientBase
 from .pipeline.policies import ContentDecodePolicy
-from .pipeline.transport import AioHttpTransport
 from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
 
 
@@ -121,6 +120,7 @@ class AsyncPipelineClient(PipelineClientBase):
             ]
 
         if not transport:
+            from .pipeline.transport import AioHttpTransport
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
