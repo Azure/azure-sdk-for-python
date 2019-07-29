@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AdPrincipal(Model):
-    """Active Directory Principal for subscription creation delegated permission.
+    """Active Directory Principal who’ll get owner access on the new subscription.
 
     All required parameters must be populated in order to send to Azure.
 

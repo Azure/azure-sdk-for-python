@@ -15,7 +15,8 @@ from msrest.serialization import Model
 class SubscriptionCreationResult(Model):
     """The created subscription object.
 
-    :param subscription_link: The link to the new subscription.
+    :param subscription_link: The link to the new subscription. Use this link
+     to check the status of subscription creation operation.
     :type subscription_link: str
     """
 
