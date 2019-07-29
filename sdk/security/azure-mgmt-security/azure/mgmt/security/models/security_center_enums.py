@@ -118,24 +118,28 @@ class DataSource(str, Enum):
 
 class RecommendationType(str, Enum):
 
-    open_ports_on_device = "OpenPortsOnDevice"  #: A listening endpoint was found on the device.
-    permissive_firewall_policy = "PermissiveFirewallPolicy"  #: Allowed firewall policy found (INPUT/OUTPUT). Firewall policy should deny all traffic by default, and define rules to allow necessary communication to/from the device.
-    permissive_firewall_rule_input = "PermissiveFirewallRuleInput"  #: A rule in the firewall in the input chain has been found that contains a permissive pattern for a wide range of IP addresses or ports.
-    permissive_firewall_rule_out = "PermissiveFirewallRuleOut"  #: A rule in the firewall in the output chain has been found that contains a permissive pattern for a wide range of IP addresses or ports.
-    operation_system_not_valid = "OperationSystemNotValid"  #: Device doesn't comply with CIS Linux benchmarks.
-    unutilized_messages_from_agent = "UnutilizedMessagesFromAgent"  #: 10% or more of security messages were smaller than 4kb during the last 24 hours.
-    security_twin_configuration_not_optimal = "SecurityTwinConfigurationNotOptimal"  #: Security twin configuration is not optimal.
-    security_twin_configuration_conflict = "SecurityTwinConfigurationConflict"  #: Conflicts were identified in the security twin configuration.
-    identical_authentication_credentials = "IdenticalAuthenticationCredentials"  #: IoT Hub authentication credentials are used by multiple devices. This may indicate an illegitimate device impersonating a legitimate device. Duplicate credential use increases the risk of device impersonation by a malicious actor.
-    deny_default_ip_policy = "DenyDefaultIpPolicy"  #: IP filter configuration should have rules defined for allowed traffic, and should by default, deny all other traffic by default.
-    too_large_ip_range = "TooLargeIPRange"  #: An allow IP filter rule source IP range is too large. Overly permissive rules can expose your IoT hub to malicious actors.
-    enable_diagnostics_log = "EnableDiagnosticsLog"  #: Enable logs and retain them for up to a year. Retaining logs enables you to recreate activity trails for investigation purposes when a security incident occurs or your network is compromised.
+    io_t_acrauthentication = "IoT_ACRAuthentication"  #: Authentication schema used for pull an edge module from an ACR repository does not use Service Principal Authentication.
+    io_t_agent_sends_unutilized_messages = "IoT_AgentSendsUnutilizedMessages"  #: IoT agent message size capacity is currently underutilized, causing an increase in the number of sent messages. Adjust message intervals for better utilization.
+    io_t_baseline = "IoT_Baseline"  #: Identified security related system configuration issues.
+    io_t_edge_hub_mem_optimize = "IoT_EdgeHubMemOptimize"  #: You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used by Edge modules in your solution.
+    io_t_edge_logging_options = "IoT_EdgeLoggingOptions"  #: Logging is disabled for this edge module.
+    io_t_inconsistent_module_settings = "IoT_InconsistentModuleSettings"  #: A minority within a device security group has inconsistent Edge Module settings with the rest of their group.
+    io_t_install_agent = "IoT_InstallAgent"  #: Install the Azure Security of Things Agent.
+    io_t_ipfilter_deny_all = "IoT_IPFilter_DenyAll"  #: IP Filter Configuration should have rules defined for allowed traffic and should deny all other traffic by default.
+    io_t_ipfilter_permissive_rule = "IoT_IPFilter_PermissiveRule"  #: An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose your IoT hub to malicious intenders.
+    io_t_open_ports = "IoT_OpenPorts"  #: A listening endpoint was found on the device.
+    io_t_permissive_firewall_policy = "IoT_PermissiveFirewallPolicy"  #: An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by default and define rules to allow necessary communication to/from the device.
+    io_t_permissive_input_firewall_rules = "IoT_PermissiveInputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
+    io_t_permissive_output_firewall_rules = "IoT_PermissiveOutputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
+    io_t_privileged_docker_options = "IoT_PrivilegedDockerOptions"  #: Edge module is configured to run in privileged mode, with extensive Linux capabilities or with host-level network access (send/receive data to host machine).
+    io_t_shared_credentials = "IoT_SharedCredentials"  #: Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an illegitimate device impersonating a legitimate device. It also exposes the risk of device impersonation by an attacker.
+    io_t_vulnerable_tls_cipher_suite = "IoT_VulnerableTLSCipherSuite"  #: Insecure TLS configurations detected. Immediate upgrade recommended.
 
 
 class RecommendationConfigStatus(str, Enum):
 
-    turned_off = "TurnedOff"
-    turned_on = "TurnedOn"
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class State(str, Enum):
