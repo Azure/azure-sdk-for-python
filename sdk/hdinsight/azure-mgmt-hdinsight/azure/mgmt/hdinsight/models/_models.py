@@ -147,14 +147,15 @@ class ApplicationGetHttpsEndpoint(Model):
     """Gets the application HTTP endpoints.
 
     :param access_modes: The list of access modes for the application.
-    :type access_modes: list[str]
+    :type access_modes: list[str or
+     ~azure.mgmt.hdinsight.models.ApplicationHttpsEndpointAccessMode]
     :param location: The location of the endpoint.
     :type location: str
     :param destination_port: The destination port to connect to.
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
-    :param sub_domain_suffix: The subDomainSuffix of the application.
+    :param sub_domain_suffix: The subdomain suffix of the application.
     :type sub_domain_suffix: str
     :param disable_gateway_auth: The value indicates whether to disable
      GatewayAuth.
@@ -202,8 +203,10 @@ class ApplicationProperties(Model):
      list[~azure.mgmt.hdinsight.models.ApplicationGetEndpoint]
     :ivar provisioning_state: The provisioning state of the application.
     :vartype provisioning_state: str
-    :param application_type: The application type.
-    :type application_type: str
+    :param application_type: The application type. Possible values include:
+     'CustomApplication', 'RServer'
+    :type application_type: str or
+     ~azure.mgmt.hdinsight.models.ApplicationType
     :ivar application_state: The application state.
     :vartype application_state: str
     :param errors: The list of errors.
@@ -434,6 +437,43 @@ class BillingResponseListResult(Model):
         self.vm_sizes = kwargs.get('vm_sizes', None)
         self.vm_size_filters = kwargs.get('vm_size_filters', None)
         self.billing_resources = kwargs.get('billing_resources', None)
+
+
+class CapabilitiesResult(Model):
+    """The Get Capabilities operation response.
+
+    :param versions: The version capability.
+    :type versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
+    :param regions: The virtual machine size compatibility features.
+    :type regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
+    :param vm_sizes: The virtual machine sizes.
+    :type vm_sizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
+    :param vm_size_filters: The virtual machine size compatibility filters.
+    :type vm_size_filters:
+     list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilter]
+    :param features: The capability features.
+    :type features: list[str]
+    :param quota: The quota capability.
+    :type quota: ~azure.mgmt.hdinsight.models.QuotaCapability
+    """
+
+    _attribute_map = {
+        'versions': {'key': 'versions', 'type': '{VersionsCapability}'},
+        'regions': {'key': 'regions', 'type': '{RegionsCapability}'},
+        'vm_sizes': {'key': 'vmSizes', 'type': '{VmSizesCapability}'},
+        'vm_size_filters': {'key': 'vmSize_filters', 'type': '[VmSizeCompatibilityFilter]'},
+        'features': {'key': 'features', 'type': '[str]'},
+        'quota': {'key': 'quota', 'type': 'QuotaCapability'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CapabilitiesResult, self).__init__(**kwargs)
+        self.versions = kwargs.get('versions', None)
+        self.regions = kwargs.get('regions', None)
+        self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.features = kwargs.get('features', None)
+        self.quota = kwargs.get('quota', None)
 
 
 class CloudError(Model):
@@ -1374,6 +1414,32 @@ class OsProfile(Model):
         self.linux_operating_system_profile = kwargs.get('linux_operating_system_profile', None)
 
 
+class QuotaCapability(Model):
+    """The regional quota capability.
+
+    :param cores_used: The number of cores used in the subscription.
+    :type cores_used: long
+    :param max_cores_allowed: The number of cores that the subscription
+     allowed.
+    :type max_cores_allowed: long
+    :param regional_quotas: The list of region quota capabilities.
+    :type regional_quotas:
+     list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
+    """
+
+    _attribute_map = {
+        'cores_used': {'key': 'cores_used', 'type': 'long'},
+        'max_cores_allowed': {'key': 'max_cores_allowed', 'type': 'long'},
+        'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaCapability, self).__init__(**kwargs)
+        self.cores_used = kwargs.get('cores_used', None)
+        self.max_cores_allowed = kwargs.get('max_cores_allowed', None)
+        self.regional_quotas = kwargs.get('regional_quotas', None)
+
+
 class QuotaInfo(Model):
     """The quota properties for the cluster.
 
@@ -1388,6 +1454,46 @@ class QuotaInfo(Model):
     def __init__(self, **kwargs):
         super(QuotaInfo, self).__init__(**kwargs)
         self.cores_used = kwargs.get('cores_used', None)
+
+
+class RegionalQuotaCapability(Model):
+    """The regional quota capacity.
+
+    :param region_name: The region name.
+    :type region_name: str
+    :param cores_used: The number of cores used in the region.
+    :type cores_used: long
+    :param cores_available: The number of cores available in the region.
+    :type cores_available: long
+    """
+
+    _attribute_map = {
+        'region_name': {'key': 'region_name', 'type': 'str'},
+        'cores_used': {'key': 'cores_used', 'type': 'long'},
+        'cores_available': {'key': 'cores_available', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RegionalQuotaCapability, self).__init__(**kwargs)
+        self.region_name = kwargs.get('region_name', None)
+        self.cores_used = kwargs.get('cores_used', None)
+        self.cores_available = kwargs.get('cores_available', None)
+
+
+class RegionsCapability(Model):
+    """The regions capability.
+
+    :param available: The list of region capabilities.
+    :type available: list[str]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RegionsCapability, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)
 
 
 class Role(Model):
@@ -1871,6 +1977,50 @@ class UsagesListResult(Model):
         self.value = kwargs.get('value', None)
 
 
+class VersionsCapability(Model):
+    """The version capability.
+
+    :param available: The list of version capabilities.
+    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[VersionSpec]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VersionsCapability, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)
+
+
+class VersionSpec(Model):
+    """The version properties.
+
+    :param friendly_name: The friendly name
+    :type friendly_name: str
+    :param display_name: The display name
+    :type display_name: str
+    :param is_default: Whether or not the version is the default version.
+    :type is_default: str
+    :param component_versions: The component version property.
+    :type component_versions: dict[str, str]
+    """
+
+    _attribute_map = {
+        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'str'},
+        'component_versions': {'key': 'componentVersions', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VersionSpec, self).__init__(**kwargs)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.component_versions = kwargs.get('component_versions', None)
+
+
 class VirtualNetworkProfile(Model):
     """The virtual network properties.
 
@@ -1889,6 +2039,42 @@ class VirtualNetworkProfile(Model):
         super(VirtualNetworkProfile, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.subnet = kwargs.get('subnet', None)
+
+
+class VmSizeCompatibilityFilter(Model):
+    """The virtual machine type compatibility filter.
+
+    :param filter_mode: The mode for the filter.
+    :type filter_mode: str
+    :param regions: The list of regions.
+    :type regions: list[str]
+    :param cluster_flavors: The list of cluster types available.
+    :type cluster_flavors: list[str]
+    :param node_types: The list of node types.
+    :type node_types: list[str]
+    :param cluster_versions: The list of cluster versions.
+    :type cluster_versions: list[str]
+    :param vmsizes: The list of virtual machine sizes.
+    :type vmsizes: list[str]
+    """
+
+    _attribute_map = {
+        'filter_mode': {'key': 'FilterMode', 'type': 'str'},
+        'regions': {'key': 'Regions', 'type': '[str]'},
+        'cluster_flavors': {'key': 'ClusterFlavors', 'type': '[str]'},
+        'node_types': {'key': 'NodeTypes', 'type': '[str]'},
+        'cluster_versions': {'key': 'ClusterVersions', 'type': '[str]'},
+        'vmsizes': {'key': 'vmsizes', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VmSizeCompatibilityFilter, self).__init__(**kwargs)
+        self.filter_mode = kwargs.get('filter_mode', None)
+        self.regions = kwargs.get('regions', None)
+        self.cluster_flavors = kwargs.get('cluster_flavors', None)
+        self.node_types = kwargs.get('node_types', None)
+        self.cluster_versions = kwargs.get('cluster_versions', None)
+        self.vmsizes = kwargs.get('vmsizes', None)
 
 
 class VmSizeCompatibilityFilterV2(Model):
@@ -1938,3 +2124,19 @@ class VmSizeCompatibilityFilterV2(Model):
         self.cluster_versions = kwargs.get('cluster_versions', None)
         self.os_type = kwargs.get('os_type', None)
         self.vm_sizes = kwargs.get('vm_sizes', None)
+
+
+class VmSizesCapability(Model):
+    """The virtual machine sizes capability.
+
+    :param available: The list of virtual machine size capabilities.
+    :type available: list[str]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VmSizesCapability, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)

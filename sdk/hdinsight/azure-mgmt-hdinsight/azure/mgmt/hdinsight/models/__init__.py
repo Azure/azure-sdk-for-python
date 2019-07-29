@@ -22,6 +22,7 @@ try:
     from ._models_py3 import BillingMeters
     from ._models_py3 import BillingResources
     from ._models_py3 import BillingResponseListResult
+    from ._models_py3 import CapabilitiesResult
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
@@ -55,7 +56,10 @@ try:
     from ._models_py3 import OperationResource
     from ._models_py3 import OsProfile
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QuotaCapability
     from ._models_py3 import QuotaInfo
+    from ._models_py3 import RegionalQuotaCapability
+    from ._models_py3 import RegionsCapability
     from ._models_py3 import Resource
     from ._models_py3 import Role
     from ._models_py3 import RuntimeScriptAction
@@ -72,8 +76,12 @@ try:
     from ._models_py3 import UpdateGatewaySettingsParameters
     from ._models_py3 import Usage
     from ._models_py3 import UsagesListResult
+    from ._models_py3 import VersionsCapability
+    from ._models_py3 import VersionSpec
     from ._models_py3 import VirtualNetworkProfile
+    from ._models_py3 import VmSizeCompatibilityFilter
     from ._models_py3 import VmSizeCompatibilityFilterV2
+    from ._models_py3 import VmSizesCapability
 except (SyntaxError, ImportError):
     from ._models import Application
     from ._models import ApplicationGetEndpoint
@@ -87,6 +95,7 @@ except (SyntaxError, ImportError):
     from ._models import BillingMeters
     from ._models import BillingResources
     from ._models import BillingResponseListResult
+    from ._models import CapabilitiesResult
     from ._models import Cluster
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
@@ -120,7 +129,10 @@ except (SyntaxError, ImportError):
     from ._models import OperationResource
     from ._models import OsProfile
     from ._models import ProxyResource
+    from ._models import QuotaCapability
     from ._models import QuotaInfo
+    from ._models import RegionalQuotaCapability
+    from ._models import RegionsCapability
     from ._models import Resource
     from ._models import Role
     from ._models import RuntimeScriptAction
@@ -137,8 +149,12 @@ except (SyntaxError, ImportError):
     from ._models import UpdateGatewaySettingsParameters
     from ._models import Usage
     from ._models import UsagesListResult
+    from ._models import VersionsCapability
+    from ._models import VersionSpec
     from ._models import VirtualNetworkProfile
+    from ._models import VmSizeCompatibilityFilter
     from ._models import VmSizeCompatibilityFilterV2
+    from ._models import VmSizesCapability
 from ._paged_models import ApplicationPaged
 from ._paged_models import ClusterPaged
 from ._paged_models import OperationPaged
@@ -152,6 +168,8 @@ from ._hd_insight_management_client_enums import (
     ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
+    ApplicationHttpsEndpointAccessMode,
+    ApplicationType,
     FilterMode,
 )
 
@@ -168,6 +186,7 @@ __all__ = [
     'BillingMeters',
     'BillingResources',
     'BillingResponseListResult',
+    'CapabilitiesResult',
     'Cluster',
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
@@ -201,7 +220,10 @@ __all__ = [
     'OperationResource',
     'OsProfile',
     'ProxyResource',
+    'QuotaCapability',
     'QuotaInfo',
+    'RegionalQuotaCapability',
+    'RegionsCapability',
     'Resource',
     'Role',
     'RuntimeScriptAction',
@@ -218,8 +240,12 @@ __all__ = [
     'UpdateGatewaySettingsParameters',
     'Usage',
     'UsagesListResult',
+    'VersionsCapability',
+    'VersionSpec',
     'VirtualNetworkProfile',
+    'VmSizeCompatibilityFilter',
     'VmSizeCompatibilityFilterV2',
+    'VmSizesCapability',
     'ClusterPaged',
     'ApplicationPaged',
     'RuntimeScriptActionDetailPaged',
@@ -232,5 +258,7 @@ __all__ = [
     'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
+    'ApplicationHttpsEndpointAccessMode',
+    'ApplicationType',
     'FilterMode',
 ]
