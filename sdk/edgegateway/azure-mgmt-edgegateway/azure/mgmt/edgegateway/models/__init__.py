@@ -10,124 +10,124 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .address_py3 import Address
-    from .alert_error_details_py3 import AlertErrorDetails
-    from .alert_py3 import Alert
-    from .arm_base_model_py3 import ARMBaseModel
-    from .asymmetric_encrypted_secret_py3 import AsymmetricEncryptedSecret
-    from .symmetric_key_py3 import SymmetricKey
-    from .authentication_py3 import Authentication
-    from .azure_container_info_py3 import AzureContainerInfo
-    from .bandwidth_schedule_py3 import BandwidthSchedule
-    from .client_access_right_py3 import ClientAccessRight
-    from .contact_details_py3 import ContactDetails
-    from .sku_py3 import Sku
-    from .data_box_edge_device_py3 import DataBoxEdgeDevice
-    from .data_box_edge_device_extended_info_py3 import DataBoxEdgeDeviceExtendedInfo
-    from .data_box_edge_device_patch_py3 import DataBoxEdgeDevicePatch
-    from .file_source_info_py3 import FileSourceInfo
-    from .role_sink_info_py3 import RoleSinkInfo
-    from .file_event_trigger_py3 import FileEventTrigger
-    from .io_tdevice_info_py3 import IoTDeviceInfo
-    from .mount_point_map_py3 import MountPointMap
-    from .io_trole_py3 import IoTRole
-    from .ipv4_config_py3 import Ipv4Config
-    from .ipv6_config_py3 import Ipv6Config
-    from .job_error_item_py3 import JobErrorItem
-    from .job_error_details_py3 import JobErrorDetails
-    from .update_download_progress_py3 import UpdateDownloadProgress
-    from .update_install_progress_py3 import UpdateInstallProgress
-    from .job_py3 import Job
-    from .metric_dimension_v1_py3 import MetricDimensionV1
-    from .metric_specification_v1_py3 import MetricSpecificationV1
-    from .network_adapter_position_py3 import NetworkAdapterPosition
-    from .network_adapter_py3 import NetworkAdapter
-    from .network_settings_py3 import NetworkSettings
-    from .operation_display_py3 import OperationDisplay
-    from .service_specification_py3 import ServiceSpecification
-    from .operation_py3 import Operation
-    from .order_status_py3 import OrderStatus
-    from .tracking_info_py3 import TrackingInfo
-    from .order_py3 import Order
-    from .periodic_timer_source_info_py3 import PeriodicTimerSourceInfo
-    from .periodic_timer_event_trigger_py3 import PeriodicTimerEventTrigger
-    from .refresh_details_py3 import RefreshDetails
-    from .role_py3 import Role
-    from .security_settings_py3 import SecuritySettings
-    from .user_access_right_py3 import UserAccessRight
-    from .share_py3 import Share
-    from .share_access_right_py3 import ShareAccessRight
-    from .storage_account_credential_py3 import StorageAccountCredential
-    from .trigger_py3 import Trigger
-    from .update_summary_py3 import UpdateSummary
-    from .upload_certificate_request_py3 import UploadCertificateRequest
-    from .upload_certificate_response_py3 import UploadCertificateResponse
-    from .user_py3 import User
+    from ._models_py3 import Address
+    from ._models_py3 import Alert
+    from ._models_py3 import AlertErrorDetails
+    from ._models_py3 import ARMBaseModel
+    from ._models_py3 import AsymmetricEncryptedSecret
+    from ._models_py3 import Authentication
+    from ._models_py3 import AzureContainerInfo
+    from ._models_py3 import BandwidthSchedule
+    from ._models_py3 import ClientAccessRight
+    from ._models_py3 import ContactDetails
+    from ._models_py3 import DataBoxEdgeDevice
+    from ._models_py3 import DataBoxEdgeDeviceExtendedInfo
+    from ._models_py3 import DataBoxEdgeDevicePatch
+    from ._models_py3 import FileEventTrigger
+    from ._models_py3 import FileSourceInfo
+    from ._models_py3 import IoTDeviceInfo
+    from ._models_py3 import IoTRole
+    from ._models_py3 import Ipv4Config
+    from ._models_py3 import Ipv6Config
+    from ._models_py3 import Job
+    from ._models_py3 import JobErrorDetails
+    from ._models_py3 import JobErrorItem
+    from ._models_py3 import MetricDimensionV1
+    from ._models_py3 import MetricSpecificationV1
+    from ._models_py3 import MountPointMap
+    from ._models_py3 import NetworkAdapter
+    from ._models_py3 import NetworkAdapterPosition
+    from ._models_py3 import NetworkSettings
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Order
+    from ._models_py3 import OrderStatus
+    from ._models_py3 import PeriodicTimerEventTrigger
+    from ._models_py3 import PeriodicTimerSourceInfo
+    from ._models_py3 import RefreshDetails
+    from ._models_py3 import Role
+    from ._models_py3 import RoleSinkInfo
+    from ._models_py3 import SecuritySettings
+    from ._models_py3 import ServiceSpecification
+    from ._models_py3 import Share
+    from ._models_py3 import ShareAccessRight
+    from ._models_py3 import Sku
+    from ._models_py3 import StorageAccountCredential
+    from ._models_py3 import SymmetricKey
+    from ._models_py3 import TrackingInfo
+    from ._models_py3 import Trigger
+    from ._models_py3 import UpdateDownloadProgress
+    from ._models_py3 import UpdateInstallProgress
+    from ._models_py3 import UpdateSummary
+    from ._models_py3 import UploadCertificateRequest
+    from ._models_py3 import UploadCertificateResponse
+    from ._models_py3 import User
+    from ._models_py3 import UserAccessRight
 except (SyntaxError, ImportError):
-    from .address import Address
-    from .alert_error_details import AlertErrorDetails
-    from .alert import Alert
-    from .arm_base_model import ARMBaseModel
-    from .asymmetric_encrypted_secret import AsymmetricEncryptedSecret
-    from .symmetric_key import SymmetricKey
-    from .authentication import Authentication
-    from .azure_container_info import AzureContainerInfo
-    from .bandwidth_schedule import BandwidthSchedule
-    from .client_access_right import ClientAccessRight
-    from .contact_details import ContactDetails
-    from .sku import Sku
-    from .data_box_edge_device import DataBoxEdgeDevice
-    from .data_box_edge_device_extended_info import DataBoxEdgeDeviceExtendedInfo
-    from .data_box_edge_device_patch import DataBoxEdgeDevicePatch
-    from .file_source_info import FileSourceInfo
-    from .role_sink_info import RoleSinkInfo
-    from .file_event_trigger import FileEventTrigger
-    from .io_tdevice_info import IoTDeviceInfo
-    from .mount_point_map import MountPointMap
-    from .io_trole import IoTRole
-    from .ipv4_config import Ipv4Config
-    from .ipv6_config import Ipv6Config
-    from .job_error_item import JobErrorItem
-    from .job_error_details import JobErrorDetails
-    from .update_download_progress import UpdateDownloadProgress
-    from .update_install_progress import UpdateInstallProgress
-    from .job import Job
-    from .metric_dimension_v1 import MetricDimensionV1
-    from .metric_specification_v1 import MetricSpecificationV1
-    from .network_adapter_position import NetworkAdapterPosition
-    from .network_adapter import NetworkAdapter
-    from .network_settings import NetworkSettings
-    from .operation_display import OperationDisplay
-    from .service_specification import ServiceSpecification
-    from .operation import Operation
-    from .order_status import OrderStatus
-    from .tracking_info import TrackingInfo
-    from .order import Order
-    from .periodic_timer_source_info import PeriodicTimerSourceInfo
-    from .periodic_timer_event_trigger import PeriodicTimerEventTrigger
-    from .refresh_details import RefreshDetails
-    from .role import Role
-    from .security_settings import SecuritySettings
-    from .user_access_right import UserAccessRight
-    from .share import Share
-    from .share_access_right import ShareAccessRight
-    from .storage_account_credential import StorageAccountCredential
-    from .trigger import Trigger
-    from .update_summary import UpdateSummary
-    from .upload_certificate_request import UploadCertificateRequest
-    from .upload_certificate_response import UploadCertificateResponse
-    from .user import User
-from .operation_paged import OperationPaged
-from .data_box_edge_device_paged import DataBoxEdgeDevicePaged
-from .alert_paged import AlertPaged
-from .bandwidth_schedule_paged import BandwidthSchedulePaged
-from .order_paged import OrderPaged
-from .role_paged import RolePaged
-from .share_paged import SharePaged
-from .storage_account_credential_paged import StorageAccountCredentialPaged
-from .trigger_paged import TriggerPaged
-from .user_paged import UserPaged
-from .data_box_edge_management_client_enums import (
+    from ._models import Address
+    from ._models import Alert
+    from ._models import AlertErrorDetails
+    from ._models import ARMBaseModel
+    from ._models import AsymmetricEncryptedSecret
+    from ._models import Authentication
+    from ._models import AzureContainerInfo
+    from ._models import BandwidthSchedule
+    from ._models import ClientAccessRight
+    from ._models import ContactDetails
+    from ._models import DataBoxEdgeDevice
+    from ._models import DataBoxEdgeDeviceExtendedInfo
+    from ._models import DataBoxEdgeDevicePatch
+    from ._models import FileEventTrigger
+    from ._models import FileSourceInfo
+    from ._models import IoTDeviceInfo
+    from ._models import IoTRole
+    from ._models import Ipv4Config
+    from ._models import Ipv6Config
+    from ._models import Job
+    from ._models import JobErrorDetails
+    from ._models import JobErrorItem
+    from ._models import MetricDimensionV1
+    from ._models import MetricSpecificationV1
+    from ._models import MountPointMap
+    from ._models import NetworkAdapter
+    from ._models import NetworkAdapterPosition
+    from ._models import NetworkSettings
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Order
+    from ._models import OrderStatus
+    from ._models import PeriodicTimerEventTrigger
+    from ._models import PeriodicTimerSourceInfo
+    from ._models import RefreshDetails
+    from ._models import Role
+    from ._models import RoleSinkInfo
+    from ._models import SecuritySettings
+    from ._models import ServiceSpecification
+    from ._models import Share
+    from ._models import ShareAccessRight
+    from ._models import Sku
+    from ._models import StorageAccountCredential
+    from ._models import SymmetricKey
+    from ._models import TrackingInfo
+    from ._models import Trigger
+    from ._models import UpdateDownloadProgress
+    from ._models import UpdateInstallProgress
+    from ._models import UpdateSummary
+    from ._models import UploadCertificateRequest
+    from ._models import UploadCertificateResponse
+    from ._models import User
+    from ._models import UserAccessRight
+from ._paged_models import AlertPaged
+from ._paged_models import BandwidthSchedulePaged
+from ._paged_models import DataBoxEdgeDevicePaged
+from ._paged_models import OperationPaged
+from ._paged_models import OrderPaged
+from ._paged_models import RolePaged
+from ._paged_models import SharePaged
+from ._paged_models import StorageAccountCredentialPaged
+from ._paged_models import TriggerPaged
+from ._paged_models import UserPaged
+from ._data_box_edge_management_client_enums import (
     AlertSeverity,
     EncryptionAlgorithm,
     AzureContainerDataFormat,
@@ -167,58 +167,58 @@ from .data_box_edge_management_client_enums import (
 
 __all__ = [
     'Address',
-    'AlertErrorDetails',
     'Alert',
+    'AlertErrorDetails',
     'ARMBaseModel',
     'AsymmetricEncryptedSecret',
-    'SymmetricKey',
     'Authentication',
     'AzureContainerInfo',
     'BandwidthSchedule',
     'ClientAccessRight',
     'ContactDetails',
-    'Sku',
     'DataBoxEdgeDevice',
     'DataBoxEdgeDeviceExtendedInfo',
     'DataBoxEdgeDevicePatch',
-    'FileSourceInfo',
-    'RoleSinkInfo',
     'FileEventTrigger',
+    'FileSourceInfo',
     'IoTDeviceInfo',
-    'MountPointMap',
     'IoTRole',
     'Ipv4Config',
     'Ipv6Config',
-    'JobErrorItem',
-    'JobErrorDetails',
-    'UpdateDownloadProgress',
-    'UpdateInstallProgress',
     'Job',
+    'JobErrorDetails',
+    'JobErrorItem',
     'MetricDimensionV1',
     'MetricSpecificationV1',
-    'NetworkAdapterPosition',
+    'MountPointMap',
     'NetworkAdapter',
+    'NetworkAdapterPosition',
     'NetworkSettings',
-    'OperationDisplay',
-    'ServiceSpecification',
     'Operation',
-    'OrderStatus',
-    'TrackingInfo',
+    'OperationDisplay',
     'Order',
-    'PeriodicTimerSourceInfo',
+    'OrderStatus',
     'PeriodicTimerEventTrigger',
+    'PeriodicTimerSourceInfo',
     'RefreshDetails',
     'Role',
+    'RoleSinkInfo',
     'SecuritySettings',
-    'UserAccessRight',
+    'ServiceSpecification',
     'Share',
     'ShareAccessRight',
+    'Sku',
     'StorageAccountCredential',
+    'SymmetricKey',
+    'TrackingInfo',
     'Trigger',
+    'UpdateDownloadProgress',
+    'UpdateInstallProgress',
     'UpdateSummary',
     'UploadCertificateRequest',
     'UploadCertificateResponse',
     'User',
+    'UserAccessRight',
     'OperationPaged',
     'DataBoxEdgeDevicePaged',
     'AlertPaged',

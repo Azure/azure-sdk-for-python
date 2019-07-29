@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_box_edge_management_client import DataBoxEdgeManagementClient
-from .version import VERSION
+from ._configuration import DataBoxEdgeManagementClientConfiguration
+from ._data_box_edge_management_client import DataBoxEdgeManagementClient
+__all__ = ['DataBoxEdgeManagementClient', 'DataBoxEdgeManagementClientConfiguration']
 
-__all__ = ['DataBoxEdgeManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

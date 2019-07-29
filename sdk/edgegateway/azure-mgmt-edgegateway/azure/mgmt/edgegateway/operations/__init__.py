@@ -9,18 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .devices_operations import DevicesOperations
-from .alerts_operations import AlertsOperations
-from .bandwidth_schedules_operations import BandwidthSchedulesOperations
-from .jobs_operations import JobsOperations
-from .operations_status_operations import OperationsStatusOperations
-from .orders_operations import OrdersOperations
-from .roles_operations import RolesOperations
-from .shares_operations import SharesOperations
-from .storage_account_credentials_operations import StorageAccountCredentialsOperations
-from .triggers_operations import TriggersOperations
-from .users_operations import UsersOperations
+from ._operations import Operations
+from ._devices_operations import DevicesOperations
+from ._alerts_operations import AlertsOperations
+from ._bandwidth_schedules_operations import BandwidthSchedulesOperations
+from ._jobs_operations import JobsOperations
+from ._operations_status_operations import OperationsStatusOperations
+from ._orders_operations import OrdersOperations
+from ._roles_operations import RolesOperations
+from ._shares_operations import SharesOperations
+from ._storage_account_credentials_operations import StorageAccountCredentialsOperations
+from ._triggers_operations import TriggersOperations
+from ._users_operations import UsersOperations
 
 __all__ = [
     'Operations',
