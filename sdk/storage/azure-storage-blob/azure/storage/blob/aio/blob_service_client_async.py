@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.async_paging import AsyncItemPaged
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -269,12 +270,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            marker=None,  # type: Optional[str]
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> ContainerPropertiesPaged
+        # type: (...) -> AsyncItemPaged[ContainerProperties]
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -286,17 +286,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param bool include_metadata:
             Specifies that container metadata be returned in the response.
             The default value is `False`.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
-        :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.core.blob.aio.models.ContainerProperties]
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service.py
@@ -313,8 +309,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             include=include,
             timeout=timeout,
             **kwargs)
-        return ContainerPropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return AsyncItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
 
     async def create_container(
             self, name,  # type: str

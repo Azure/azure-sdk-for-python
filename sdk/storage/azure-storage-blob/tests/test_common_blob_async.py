@@ -642,6 +642,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_list_blobs_server_encryption())
 
     async def _test_no_server_encryption(self):
+        pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
