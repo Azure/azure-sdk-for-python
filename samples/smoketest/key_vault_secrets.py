@@ -30,14 +30,14 @@ class KeyVault:
         print("\tdone: " + deleted_secret.name)
 
     def Run(self):
-        print()
+        print("")
         print("------------------------")
         print("Key Vault - Secrets\nIdentity - Credential")
         print("------------------------")
         print("1) Set a secret")
         print("2) Get that secret")
         print("3) Delete that secret (Clean up the resource)")
-        print()
+        print("")
 
         try:
             self.SetSecret()

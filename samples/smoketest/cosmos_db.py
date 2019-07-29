@@ -58,7 +58,7 @@ class CosmosDB:
         print("\tdone")
 
     def Run(self):
-        print()
+        print("")
         print("------------------------")
         print("Cosmos DB")
         print("------------------------")
@@ -66,7 +66,7 @@ class CosmosDB:
         print("2) Create a Container in the database")
         print("3) Insert Documents (items) into the Container")
         print("4) Delete Database (Clean up the resource)")
-        print()
+        print("")
 
         # Ensure that the database does not exists
         try:

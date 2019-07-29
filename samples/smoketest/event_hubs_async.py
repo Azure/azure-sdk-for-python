@@ -1,43 +1,46 @@
 import os
 from datetime import datetime
-from azure.eventhub import EventHubClient, EventData, EventPosition
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData, EventPosition
 
 
-class EventHub:
+class EventHub_async:
     def __init__(self):
         # This test requires a previusly created Event Hub.
         # In this example the name is "myeventhub", but it could be change below
-        connectionString = os.environ["EVENT_HUBS_CONNECTION_STRING"]
-        eventHubName = "myeventhub"
+        connection_string = os.environ["EVENT_HUBS_CONNECTION_STRING"]
+        event_hub_name = "myeventhub"
         self.client = EventHubClient.from_connection_string(
-            connectionString, eventHubName
+            connection_string, event_hub_name
         )
 
-    def GetPartitionIds(self):
+    async def Getpartition_ids(self):
         print("Getting partitions id...")
-        partition_ids = self.client.get_partition_ids()
+        partition_ids = await self.client.get_partition_ids()
         print("\tdone")
         return partition_ids
 
-    def SendAndReceiveEvents(self, partitionID):
-        with self.client.create_consumer(
+    async def SendAndReceiveEvents(self, partition_id):
+        async with self.client.create_consumer(
             consumer_group="$default",
-            partition_id=partitionID,
+            partition_id=partition_id,
             event_position=EventPosition(datetime.utcnow()),
         ) as consumer:
 
             print("Sending events...")
-            with self.client.create_producer(partition_id=partitionID) as producer:
+            async with self.client.create_producer(
+                partition_id=partition_id
+            ) as producer:
                 event_list = [
                     EventData(b"Test Event 1 in Python"),
                     EventData(b"Test Event 2 in Python"),
                     EventData(b"Test Event 3 in Python"),
                 ]
-                producer.send(event_list)
+                await producer.send(event_list)
             print("\tdone")
 
             print("Receiving events...")
-            received = consumer.receive(max_batch_size=len(event_list), timeout=2)
+            received = await consumer.receive(max_batch_size=len(event_list), timeout=2)
             for event_data in received:
                 print("\tEvent Received: " + event_data.body_as_str())
 
@@ -50,7 +53,7 @@ class EventHub:
                     )
                 )
 
-    def Run(self):
+    async def Run(self):
         print("")
         print("------------------------")
         print("Event Hubs")
@@ -60,7 +63,7 @@ class EventHub:
         print("3) Consume Events")
         print("")
 
-        partitionID = self.GetPartitionIds()
+        partition_id = await self.Getpartition_ids()
         # In this sample the same partition id is going to be used for the producer and consumer,
         # It is the first one, but it could be any (is not relevant as long as it is the same in both producer and consumer)
-        self.SendAndReceiveEvents(partitionID[0])
+        await self.SendAndReceiveEvents(partition_id[0])

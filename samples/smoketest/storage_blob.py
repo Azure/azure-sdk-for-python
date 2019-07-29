@@ -29,14 +29,14 @@ class StorageBlob:
         print("\tdone")
 
     def Run(self):
-        print()
+        print("")
         print("------------------------")
         print("Storage - Blob")
         print("------------------------")
         print("1) Upload a Blob")
         print("2) Download a Blob")
         print("3) Delete that Blob (Clean up the resource)")
-        print()
+        print("")
 
         # Ensure that the blob does not exists before the tests
         try:
