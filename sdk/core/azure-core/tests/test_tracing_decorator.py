@@ -177,7 +177,4 @@ class TestDecorator(object):
             assert parent.children[2].span_data.name == "child"
             assert parent.children[2].children[0].span_data.name == "MockClient.make_request"
             assert parent.children[3].span_data.name == "MockClient.make_request"
-            assert parent.children[3].children[0].span_data.name == "MockClient.get_foo"
-            assert parent.children[3].children[1].span_data.name == "MockClient.make_request"
-            children = parent.children[1].children
-            assert len(children) == 2
+            assert not parent.children[3].children
