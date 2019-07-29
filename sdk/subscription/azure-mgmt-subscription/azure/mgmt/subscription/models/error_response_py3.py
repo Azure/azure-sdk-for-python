@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Describes the format of Error response.
+    """Describes the error if the operation is not successful.
 
     :param code: Error code
     :type code: str
