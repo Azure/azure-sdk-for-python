@@ -244,6 +244,8 @@ try:
     from .sap_hana_table_dataset_py3 import SapHanaTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
+    from .sap_bw_cube_dataset_py3 import SapBwCubeDataset
+    from .sybase_table_dataset_py3 import SybaseTableDataset
     from .salesforce_service_cloud_object_dataset_py3 import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
     from .microsoft_access_table_dataset_py3 import MicrosoftAccessTableDataset
@@ -371,6 +373,7 @@ try:
     from .salesforce_service_cloud_source_py3 import SalesforceServiceCloudSource
     from .salesforce_source_py3 import SalesforceSource
     from .odata_source_py3 import ODataSource
+    from .sap_bw_source_py3 import SapBwSource
     from .sybase_source_py3 import SybaseSource
     from .postgre_sql_source_py3 import PostgreSqlSource
     from .my_sql_source_py3 import MySqlSource
@@ -742,6 +745,8 @@ except (SyntaxError, ImportError):
     from .sap_hana_table_dataset import SapHanaTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
+    from .sap_bw_cube_dataset import SapBwCubeDataset
+    from .sybase_table_dataset import SybaseTableDataset
     from .salesforce_service_cloud_object_dataset import SalesforceServiceCloudObjectDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
     from .microsoft_access_table_dataset import MicrosoftAccessTableDataset
@@ -869,6 +874,7 @@ except (SyntaxError, ImportError):
     from .salesforce_service_cloud_source import SalesforceServiceCloudSource
     from .salesforce_source import SalesforceSource
     from .odata_source import ODataSource
+    from .sap_bw_source import SapBwSource
     from .sybase_source import SybaseSource
     from .postgre_sql_source import PostgreSqlSource
     from .my_sql_source import MySqlSource
@@ -1320,6 +1326,8 @@ __all__ = [
     'SapHanaTableDataset',
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
+    'SapBwCubeDataset',
+    'SybaseTableDataset',
     'SalesforceServiceCloudObjectDataset',
     'SalesforceObjectDataset',
     'MicrosoftAccessTableDataset',
@@ -1447,6 +1455,7 @@ __all__ = [
     'SalesforceServiceCloudSource',
     'SalesforceSource',
     'ODataSource',
+    'SapBwSource',
     'SybaseSource',
     'PostgreSqlSource',
     'MySqlSource',
