@@ -57,8 +57,7 @@ class EventHubError(Exception):
     :vartype details: dict[str, str]
     """
 
-    def __init__(self, message, **kwargs):
-        details = kwargs.get("details", None)
+    def __init__(self, message, details=None):
         self.error = None
         self.message = message
         self.details = details
