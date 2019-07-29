@@ -9,22 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .annotations_operations import AnnotationsOperations
-from .api_keys_operations import APIKeysOperations
-from .export_configurations_operations import ExportConfigurationsOperations
-from .component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
-from .component_quota_status_operations import ComponentQuotaStatusOperations
-from .component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
-from .component_available_features_operations import ComponentAvailableFeaturesOperations
-from .proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
-from .components_operations import ComponentsOperations
-from .work_item_configurations_operations import WorkItemConfigurationsOperations
-from .favorites_operations import FavoritesOperations
-from .web_test_locations_operations import WebTestLocationsOperations
-from .web_tests_operations import WebTestsOperations
-from .analytics_items_operations import AnalyticsItemsOperations
-from .workbooks_operations import WorkbooksOperations
+from ._operations import Operations
+from ._annotations_operations import AnnotationsOperations
+from ._api_keys_operations import APIKeysOperations
+from ._export_configurations_operations import ExportConfigurationsOperations
+from ._component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
+from ._component_quota_status_operations import ComponentQuotaStatusOperations
+from ._component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
+from ._component_available_features_operations import ComponentAvailableFeaturesOperations
+from ._proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
+from ._components_operations import ComponentsOperations
+from ._work_item_configurations_operations import WorkItemConfigurationsOperations
+from ._favorites_operations import FavoritesOperations
+from ._web_test_locations_operations import WebTestLocationsOperations
+from ._web_tests_operations import WebTestsOperations
+from ._analytics_items_operations import AnalyticsItemsOperations
+from ._workbooks_operations import WorkbooksOperations
 
 __all__ = [
     'Operations',
