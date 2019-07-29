@@ -73,7 +73,7 @@ class ConsumerProducerMixin(object):
         await self.client._conn_manager.reset_connection_if_broken()
 
     async def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
-        await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+        return await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
 
     async def close(self, exception=None):
         # type: (Exception) -> None
