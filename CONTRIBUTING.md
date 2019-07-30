@@ -60,6 +60,9 @@ Basic usage of `tox` is:
 
 However, take a look at the above environment list. Running just `tox` will result in a virtual environment for each of the above environment list! 
 
+#### `dev` environment
+This is the most straightforward environment. Installs a given package in `develop` mode.
+
 #### `*-tests` environments
 Used for test execution across the spectrum of all the platforms we want to support. Maintained at a `platform specific` level just in case we run into platform-specific bugs.
 
@@ -68,13 +71,26 @@ Used for test execution across the spectrum of all the platforms we want to supp
 #### `*-lint` environments
 Used to execute pylint on python 2.7 and python 3.7.
 
-* Installs package in editable mode
+```
+# both
+\> tox -e py36-lint,py27-lint
+
+# single
+\> tox -e py27-lint
+
+```
 
 #### `dev` environment
 Used for the local dev loop.
 
 * Installs package in editable mode
 * Runs tests using the editable mode installation, not the wheel
+
+```
+
+\> tox -e dev
+
+```
 
 ## Code of Conduct
 This project's code of conduct can be found in the
