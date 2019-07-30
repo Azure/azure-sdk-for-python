@@ -143,39 +143,6 @@ class EventHubProducer(ConsumerProducerMixin):
                 _error(self._outcome, self._condition)
         return
 
-    def _legacy_send_event_data(self, timeout=None):
-        timeout = timeout or self.client.config.send_timeout
-        if not timeout:
-            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
-        timeout_time = time.time() + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                if self.unsent_events:
-                    self._open(timeout_time)
-                    remaining_time = timeout_time - time.time()
-                    if remaining_time <= 0.0:
-                        if last_exception:
-                            error = last_exception
-                        else:
-                            error = OperationTimeoutError("send operation timed out")
-                        log.info("%r send operation timed out. (%r)", self.name, error)
-                        raise error
-                    self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
-                    self._handler.queue_message(*self.unsent_events)
-                    self._handler.wait()
-                    self.unsent_events = self._handler.pending_messages
-                    if self._outcome != constants.MessageSendResult.Ok:
-                        if self._outcome == constants.MessageSendResult.Timeout:
-                            self._condition = OperationTimeoutError("send operation timed out")
-                        _error(self._outcome, self._condition)
-                return
-            except Exception as exception:
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
-                retry_count += 1
-
     def _on_outcome(self, outcome, condition):
         """
         Called when the outcome is received for a delivery.
@@ -204,11 +171,11 @@ class EventHubProducer(ConsumerProducerMixin):
         partition_key = kwargs.get("partition_key", None)
 
         @_retry_decorator
-        def wrapped_open(*args, **kwargs):
+        def _wrapped_open(*args, **kwargs):
             self._open(**kwargs)
 
         if not self._max_message_size_on_link:
-            wrapped_open(self, timeout=self.client.config.send_timeout)
+            _wrapped_open(self, timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'

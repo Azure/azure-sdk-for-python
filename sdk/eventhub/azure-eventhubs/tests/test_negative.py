@@ -216,9 +216,28 @@ def test_message_body_types(connstr_senders):
 
 
 @pytest.mark.liveTest
-def test_create_batch_with_invalid_hostname(invalid_hostname):
+def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         batch_event_data = sender.create_batch(max_size=300, partition_key="key")
+    sender.close()
+
+
+@pytest.mark.liveTest
+def test_create_batch_with_none_sync(connection_str):
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_producer()
+    batch_event_data = sender.create_batch(max_size=300, partition_key="key")
+    with pytest.raises(ValueError):
+        batch_event_data.try_add(EventData(None))
+    sender.close()
+
+
+@pytest.mark.liveTest
+def test_create_batch_with_too_large_size_sync(connection_str):
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_producer()
+    with pytest.raises(ValueError):
+        batch_event_data = sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
     sender.close()
