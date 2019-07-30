@@ -171,23 +171,23 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     def action_groups(self):
         """Instance depends on the API version:
 
-           * 2017-04-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2017_04_01.operations.ActionGroupsOperations>`
+           * 2019-06-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2019_06_01.operations.ActionGroupsOperations>`
+           * 2019-03-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2019_03_01.operations.ActionGroupsOperations>`
            * 2018-03-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2018_03_01.operations.ActionGroupsOperations>`
            * 2018-09-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2018_09_01.operations.ActionGroupsOperations>`
-           * 2019-03-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2019_03_01.operations.ActionGroupsOperations>`
-           * 2019-06-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2019_06_01.operations.ActionGroupsOperations>`
+           * 2017-04-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2017_04_01.operations.ActionGroupsOperations>`
         """
         api_version = self._get_api_version('action_groups')
-        if api_version == '2017-04-01':
-            from .v2017_04_01.operations import ActionGroupsOperations as OperationClass
+        if api_version == '2019-06-01':
+            from .v2019_06_01.operations import ActionGroupsOperations as OperationClass
+        elif api_version == '2019-03-01':
+            from .v2019_03_01.operations import ActionGroupsOperations as OperationClass
         elif api_version == '2018-03-01':
             from .v2018_03_01.operations import ActionGroupsOperations as OperationClass
         elif api_version == '2018-09-01':
             from .v2018_09_01.operations import ActionGroupsOperations as OperationClass
-        elif api_version == '2019-03-01':
-            from .v2019_03_01.operations import ActionGroupsOperations as OperationClass
-        elif api_version == '2019-06-01':
-            from .v2019_06_01.operations import ActionGroupsOperations as OperationClass
+        elif api_version == '2017-04-01':
+            from .v2017_04_01.operations import ActionGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -410,17 +410,17 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     def metric_definitions(self):
         """Instance depends on the API version:
 
-           * 2016-03-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2016_03_01.operations.MetricDefinitionsOperations>`
-           * 2017-05-01-preview: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2017_05_01_preview.operations.MetricDefinitionsOperations>`
            * 2018-01-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2018_01_01.operations.MetricDefinitionsOperations>`
+           * 2017-05-01-preview: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2017_05_01_preview.operations.MetricDefinitionsOperations>`
+           * 2016-03-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2016_03_01.operations.MetricDefinitionsOperations>`
         """
         api_version = self._get_api_version('metric_definitions')
-        if api_version == '2016-03-01':
-            from .v2016_03_01.operations import MetricDefinitionsOperations as OperationClass
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import MetricDefinitionsOperations as OperationClass
         elif api_version == '2017-05-01-preview':
             from .v2017_05_01_preview.operations import MetricDefinitionsOperations as OperationClass
-        elif api_version == '2018-01-01':
-            from .v2018_01_01.operations import MetricDefinitionsOperations as OperationClass
+        elif api_version == '2016-03-01':
+            from .v2016_03_01.operations import MetricDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -442,17 +442,17 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     def metrics(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`MetricsOperations<azure.mgmt.monitor.v2016_09_01.operations.MetricsOperations>`
-           * 2017-05-01-preview: :class:`MetricsOperations<azure.mgmt.monitor.v2017_05_01_preview.operations.MetricsOperations>`
            * 2018-01-01: :class:`MetricsOperations<azure.mgmt.monitor.v2018_01_01.operations.MetricsOperations>`
+           * 2017-05-01-preview: :class:`MetricsOperations<azure.mgmt.monitor.v2017_05_01_preview.operations.MetricsOperations>`
+           * 2016-09-01: :class:`MetricsOperations<azure.mgmt.monitor.v2016_09_01.operations.MetricsOperations>`
         """
         api_version = self._get_api_version('metrics')
-        if api_version == '2016-09-01':
-            from .v2016_09_01.operations import MetricsOperations as OperationClass
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import MetricsOperations as OperationClass
         elif api_version == '2017-05-01-preview':
             from .v2017_05_01_preview.operations import MetricsOperations as OperationClass
-        elif api_version == '2018-01-01':
-            from .v2018_01_01.operations import MetricsOperations as OperationClass
+        elif api_version == '2016-09-01':
+            from .v2016_09_01.operations import MetricsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -487,14 +487,14 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     def service_diagnostic_settings(self):
         """Instance depends on the API version:
 
-           * 2015-07-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.monitor.v2015_07_01.operations.ServiceDiagnosticSettingsOperations>`
            * 2016-09-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.monitor.v2016_09_01.operations.ServiceDiagnosticSettingsOperations>`
+           * 2015-07-01: :class:`ServiceDiagnosticSettingsOperations<azure.mgmt.monitor.v2015_07_01.operations.ServiceDiagnosticSettingsOperations>`
         """
         api_version = self._get_api_version('service_diagnostic_settings')
-        if api_version == '2015-07-01':
-            from .v2015_07_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
-        elif api_version == '2016-09-01':
+        if api_version == '2016-09-01':
             from .v2016_09_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
+        elif api_version == '2015-07-01':
+            from .v2015_07_01.operations import ServiceDiagnosticSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
