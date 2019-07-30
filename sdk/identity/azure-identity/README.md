@@ -173,6 +173,12 @@ client = EventHubClient(host, event_hub_path, credential)
 ```
 
 ## Async credentials:
+This library includes a complete async API supported on Python 3.5+. To use the
+async credentials in `azure.identity.aio`, you must first install an async
+transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/). See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
 This example demonstrates authenticating the asynchronous `SecretClient` from
 [`azure-keyvault-secrets`][azure_keyvault_secrets] with asynchronous credentials.
 ```py
