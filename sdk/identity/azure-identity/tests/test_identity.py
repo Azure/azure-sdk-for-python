@@ -21,6 +21,7 @@ from azure.identity import (
     EnvironmentCredential,
     ManagedIdentityCredential,
     ChainedTokenCredential,
+    UsernamePasswordCredential,
 )
 from azure.identity._managed_identity import ImdsCredential
 from azure.identity.constants import EnvironmentVariables
@@ -239,3 +240,33 @@ def test_imds_credential_retries():
 
 def test_default_credential():
     DefaultAzureCredential()
+
+
+def test_username_password_credential():
+    expected_token = "access-token"
+    transport = validating_transport(
+        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expecting tenant discovery then a token request
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "token_type": "Bearer",
+                    "ext_expires_in": 42,
+                }
+            ),
+        ],
+    )
+
+    credential = UsernamePasswordCredential(
+        client_id="some-guid",
+        username="user@azure",
+        password="secret_password",
+        transport=transport,
+        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
