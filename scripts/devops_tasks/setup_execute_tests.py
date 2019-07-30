@@ -29,7 +29,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-serv
 def prep_and_run_tox(targeted_packages, tox_env, optional_argument_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
-        tox_execution_array = ['tox', '-p', 'all']
+        tox_execution_array = ['tox']
 
         print('Running test setup for {}'.format(os.path.basename(package_dir)))
 
