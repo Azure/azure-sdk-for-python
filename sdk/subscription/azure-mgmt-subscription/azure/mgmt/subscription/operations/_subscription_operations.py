@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class SubscriptionOperations(object):
+    """SubscriptionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,15 +40,18 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Microsoft.Subscription API operations.
+        """Lists all of the available pending Microsoft.Subscription API
+        operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.OperationListResult or
+        :return: SubscriptionOperationListResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.subscription.models.SubscriptionOperationListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
@@ -79,11 +82,11 @@ class Operations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationListResult', response)
+            deserialized = self._deserialize('SubscriptionOperationListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Subscription/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Subscription/subscriptionOperations'}
