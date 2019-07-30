@@ -33,17 +33,17 @@ class AsyncMsalTransportAdapter:
         transport: "Optional[AsyncHttpTransport]" = None,
         **kwargs: "Any"
     ) -> None:
-        config = config or self.create_config(**kwargs)
+
+        config = config or self._create_config(**kwargs)
         policies = policies or [config.retry_policy, config.logging_policy]
-
         self._transport = transport or AioHttpTransport(configuration=config)
-        atexit.register(self._close_transport_session)
-
+        atexit.register(self._close_transport_session)  # prevent aiohttp warnings
         self._pipeline = AsyncPipeline(transport=self._transport, policies=policies)
+
         self.loop = None  # type: asyncio.AbstractEventLoop
 
     def _close_transport_session(self) -> None:
-        """If transport has a 'close' method, invoke it. This prevents aiohttp warnings."""
+        """If transport has a 'close' method, invoke it."""
 
         close = getattr(self._transport, "close", None)
         if not callable(close):
@@ -65,13 +65,12 @@ class AsyncMsalTransportAdapter:
         verify: "Optional[bool]" = None,
         **kwargs: "Any"
     ) -> MsalTransportResponse:
-        # no default because lack of loop indicates MSAL's kwargs-passing behavior has changed
-        loop = kwargs.pop("loop", None) or self.loop
 
         request = HttpRequest("GET", url, headers=headers)
         if params:
             request.format_parameters(params)
 
+        loop = kwargs.pop("loop", None) or self.loop
         future = asyncio.run_coroutine_threadsafe(
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
@@ -89,8 +88,6 @@ class AsyncMsalTransportAdapter:
         verify: "Optional[bool]" = None,
         **kwargs: "Any"
     ) -> MsalTransportResponse:
-        # no default because lack of loop indicates MSAL's kwargs-passing behavior has changed
-        loop = kwargs.pop("loop", None) or self.loop
 
         request = HttpRequest("POST", url, headers=headers)
         if params:
@@ -99,6 +96,7 @@ class AsyncMsalTransportAdapter:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
             request.set_formdata_body(data)
 
+        loop = kwargs.pop("loop", None) or self.loop
         future = asyncio.run_coroutine_threadsafe(
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
@@ -107,7 +105,7 @@ class AsyncMsalTransportAdapter:
         return MsalTransportResponse(response)
 
     @staticmethod
-    def create_config(**kwargs: "Any") -> Configuration:
+    def _create_config(**kwargs: "Any") -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
