@@ -36,7 +36,11 @@ try:
     from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .aad_data_connector_py3 import AADDataConnector
     from .asc_data_connector_py3 import ASCDataConnector
+    from .mcas_data_connector_data_types_discovery_logs_py3 import MCASDataConnectorDataTypesDiscoveryLogs
+    from .mcas_data_connector_data_types_py3 import MCASDataConnectorDataTypes
     from .mcas_data_connector_py3 import MCASDataConnector
+    from .aatp_data_connector_py3 import AATPDataConnector
+    from .mdatp_data_connector_py3 import MDATPDataConnector
     from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
@@ -83,7 +87,11 @@ except (SyntaxError, ImportError):
     from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .aad_data_connector import AADDataConnector
     from .asc_data_connector import ASCDataConnector
+    from .mcas_data_connector_data_types_discovery_logs import MCASDataConnectorDataTypesDiscoveryLogs
+    from .mcas_data_connector_data_types import MCASDataConnectorDataTypes
     from .mcas_data_connector import MCASDataConnector
+    from .aatp_data_connector import AATPDataConnector
+    from .mdatp_data_connector import MDATPDataConnector
     from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
@@ -156,7 +164,11 @@ __all__ = [
     'AlertsDataTypeOfDataConnector',
     'AADDataConnector',
     'ASCDataConnector',
+    'MCASDataConnectorDataTypesDiscoveryLogs',
+    'MCASDataConnectorDataTypes',
     'MCASDataConnector',
+    'AATPDataConnector',
+    'MDATPDataConnector',
     'DataConnectorWithAlertsProperties',
     'DataConnectorDataTypeCommon',
     'Entity',
