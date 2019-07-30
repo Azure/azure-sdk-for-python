@@ -60,10 +60,8 @@ class EventProcessor(object):
         client = self._eventhub_client
         partition_ids = await client.get_partition_ids()
         self.partition_ids = partition_ids
-
         claimed_list = await self._claim_partitions()
         await self._start_claimed_partitions(claimed_list)
-        log.info("EventProcessor %r is started", self._instance_id)
 
     async def stop(self):
         """Stop all the partition consumer
@@ -73,7 +71,7 @@ class EventProcessor(object):
         """
         self._cancellation_token.cancel()
         # It's not agreed whether a partition manager has method close().
-        await self._partition_manager.close()
+        log.info("EventProcessor %r cancellation token has been sent", self._instance_id)
 
     async def _claim_partitions(self):
         partitions_ownership = await self._partition_manager.list_ownership(self._eventhub_name, self._consumer_group_name)
@@ -120,6 +118,9 @@ class EventProcessor(object):
             self._tasks.append(task)
 
         await asyncio.gather(*self._tasks)
+        await self._partition_manager.close()
+        log.info("EventProcessor %r partition manager is closed", self._instance_id)
+        log.info("EventProcessor %r partition has stopped", self._instance_id)
 
 
 async def _receive(partition_consumer, partition_processor, receive_timeout, cancellation_token):
@@ -149,22 +150,22 @@ async def _receive(partition_consumer, partition_processor, receive_timeout, can
                 log.info(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "has met an exception from user code process_events. It's being closed. The exception is %r.",
-                    partition_processor.checkpoint_manager.instance_id,
-                    partition_processor.eventhub_name,
-                    partition_processor.partition_id,
-                    partition_processor.consumer_group_name,
+                    partition_processor._checkpoint_manager._instance_id,
+                    partition_processor._eventhub_name,
+                    partition_processor._partition_id,
+                    partition_processor._consumer_group_name,
                     exp
                 )
                 await partition_processor.close(reason=CloseReason.USER_EXCEPTION)
                 break
         else:
+            await partition_processor.close(reason=CloseReason.SHUTDOWN)
             log.info(
                 "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                 "has been shutdown",
-                partition_processor.checkpoint_manager.instance_id,
-                partition_processor.eventhub_name,
-                partition_processor.partition_id,
-                partition_processor.consumer_group_name
+                partition_processor._checkpoint_manager._instance_id,
+                partition_processor._eventhub_name,
+                partition_processor._partition_id,
+                partition_processor._consumer_group_name
             )
-            await partition_processor.close(reason=CloseReason.SHUTDOWN)
         # TODO: try to inform other EventProcessors to take the partition when this partition is closed in preview 3?
