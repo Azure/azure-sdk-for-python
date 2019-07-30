@@ -753,14 +753,6 @@ class CertificateUpdateParameters(Model):
         self.tags = tags
 
 
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
 class Contact(Model):
     """The contact information for the vault certificates.
 
