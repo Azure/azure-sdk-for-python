@@ -271,10 +271,12 @@ class DeviceCodeCredential(PublicClientCredential):
 
     **Keyword arguments:**
 
-    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-        'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-    *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
-        as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+    - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
+      'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+
+    - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
+      as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+
     """
 
     def __init__(self, client_id, prompt_callback=None, **kwargs):
@@ -345,8 +347,9 @@ class UsernamePasswordCredential(PublicClientCredential):
 
     **Keyword arguments:**
 
-    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-        'organizations' tenant.
+    - **tenant (str)** - a tenant ID or a domain associated with a tenant. If not provided, defaults to the
+      'organizations' tenant.
+
     """
 
     def __init__(self, client_id, username, password, **kwargs):
