@@ -6,6 +6,7 @@
 Credentials for Azure SDK authentication.
 """
 import os
+import time
 
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
@@ -14,6 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
+from ._internal import PublicClientCredential
 from ._managed_identity import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
 
@@ -26,6 +28,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+    EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 # pylint:disable=too-few-public-methods
 
@@ -96,23 +99,29 @@ class CertificateCredential(CertificateCredentialBase):
 
 class EnvironmentCredential:
     """
-    Authenticates as a service principal using a client ID/secret pair or a certificate,
-    depending on environment variable settings.
+    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
+    password, depending on environment variable settings. Configuration is attempted in this order, using these
+    environment variables:
 
-    These environment variables are required:
-
+    Service principal with secret:
       - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
 
-    Additionally, set **one** of these to configure client secret or certificate authentication:
-
-      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+    Service principal with certificate:
+      - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+
+    User with username and password:
+      - **AZURE_CLIENT_ID**: the application's client ID
+      - **AZURE_USERNAME**: a username (usually an email address)
+      - **AZURE_PASSWORD**: that user's password
     """
 
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
-        self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
+        self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -128,6 +137,14 @@ class EnvironmentCredential:
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
+        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
+            self._credential = UsernamePasswordCredential(
+                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+                username=os.environ[EnvironmentVariables.AZURE_USERNAME],
+                password=os.environ[EnvironmentVariables.AZURE_PASSWORD],
+                tenant=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
+                **kwargs
+            )
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -139,10 +156,7 @@ class EnvironmentCredential:
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if not self._credential:
-            message = "Missing environment settings. To authenticate with one of the service principal's client secrets, set {}. To authenticate with a certificate, set {}.".format(
-                ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
-            )
-            raise ClientAuthenticationError(message=message)
+            raise ClientAuthenticationError(message="Incomplete environment configuration.")
         return self._credential.get_token(*scopes)
 
 
@@ -233,3 +247,65 @@ class ChainedTokenCredential(object):
             else:
                 attempts.append(credential.__class__.__name__)
         return "No valid token received. {}".format(". ".join(attempts))
+
+
+class UsernamePasswordCredential(PublicClientCredential):
+    """
+    Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
+    authentication, because it's less secure than other authentication flows.
+
+    Authentication with this credential is not interactive, so it is **not compatible with any form of
+    multi-factor authentication or consent prompting**. The application must already have the user's consent.
+
+    This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
+    See this document for more information about account types:
+    https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/sign-up-organization
+
+    :param str client_id: the application's client ID
+    :param str username: the user's username (usually an email address)
+    :param str password: the user's password
+
+    **Keyword arguments:**
+
+    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
+        'organizations' tenant.
+    """
+
+    def __init__(self, client_id, username, password, **kwargs):
+        # type: (str, str, str, Any) -> None
+        super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
+        self._username = username
+        self._password = password
+
+    def get_token(self, *scopes):
+        # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+
+        # MSAL requires scopes be a list
+        scopes = list(scopes)  # type: ignore
+        now = int(time.time())
+
+        app = self._get_app()
+        accounts = app.get_accounts(username=self._username)
+        result = None
+        for account in accounts:
+            result = app.acquire_token_silent(scopes, account=account)
+            if result:
+                break
+
+        if not result:
+            # cache miss -> request a new token
+            result = app.acquire_token_by_username_password(
+                username=self._username, password=self._password, scopes=scopes
+            )
+
+        if "access_token" not in result:
+            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
+
+        return AccessToken(result["access_token"], now + int(result["expires_in"]))
