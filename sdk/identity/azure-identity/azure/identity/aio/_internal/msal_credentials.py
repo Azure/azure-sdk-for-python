@@ -65,7 +65,6 @@ class MsalCredential:
     async def _app(self, executor: "Optional[Executor]" = None) -> msal.ClientApplication:
         if not self._msal_app:
             async with self._lock:
-                # TODO: double-check?
                 await self._create_msal_app(executor)
         return self._msal_app
 
@@ -73,17 +72,24 @@ class MsalCredential:
         if self._msal_app:
             return self._msal_app
 
-        self._adapter.loop = asyncio.get_event_loop()
         initializer = functools.partial(
             self._app_class,
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority=self._authority,
+            validate_authority=False
         )
 
-        # application initializers use msal.authority to send requests to AAD
-        with mock.patch("msal.authority.requests", self._adapter):
-            self._msal_app = await self._adapter.loop.run_in_executor(executor, initializer)
+        loop = asyncio.get_event_loop()
+
+        # patch msal.authority so the MSAL app's init's network requests are received by the adapter
+        with mock.patch("msal.authority.requests", self._adapter) as adapter:
+            # We want the adapter to schedule transport on the event loop executing this method, so we need to pass
+            # the loop to the adapter. No argument passed to the MSAL app's init is passed through to the transport.
+            # So, we reluctantly use an instance attribute on the adapter. This should be safe because this method
+            # is called only from _app, and therefore within an asyncio Lock.
+            adapter.loop = loop
+            self._msal_app = await loop.run_in_executor(executor, initializer)
 
         # replace the client's requests.Session with adapter
         self._msal_app.client.session = self._adapter
@@ -106,11 +112,12 @@ class ConfidentialClientCredential(MsalCredential):
             app = await self._app(executor)
             # TODO: if we have a refresh token, acquire_token_silent will use the network
             result = app.acquire_token_silent(scopes, account=None)
-            if not result:
-                # cache miss -> acquire new token
-                self._adapter.loop = asyncio.get_event_loop()
-                acquire_token = functools.partial(app.acquire_token_for_client, scopes=scopes)
-                result = await self._adapter.loop.run_in_executor(executor, acquire_token)
+            if not result:  # cache miss -> acquire new token
+                # Provide the loop executing this code to the adapter so the adapter can schedule transport on it.
+                # This relies on MSAL passing kwargs from its user-facing API to transport (which it currently does).
+                loop = asyncio.get_event_loop()
+                acquire_token = functools.partial(app.acquire_token_for_client, scopes=scopes, loop=loop)
+                result = await loop.run_in_executor(executor, acquire_token)
         except Exception as ex:
             raise ClientAuthenticationError(message=str(ex))
 
