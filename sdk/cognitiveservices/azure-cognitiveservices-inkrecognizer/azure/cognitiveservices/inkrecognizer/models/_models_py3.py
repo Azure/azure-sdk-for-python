@@ -71,11 +71,11 @@ class AnalysisRequest(Model):
      application. Possible values include: 'drawing', 'writing', 'mixed'
     :type application_type: str or
      ~azure.cognitiveservices.inkrecognizer.models.Application
-    :param input_devicekind: This identifies the kind of device used as the
+    :param input_device_kind: This identifies the kind of device used as the
      writing instrument. Possible values include: 'digitizer', 'pen',
      'lightPen', 'touchScreen', 'touchPad', 'whiteBoard', '3dDigitizer',
      'stereoPlotter', 'articulatedArm', 'armature'
-    :type input_devicekind: str or
+    :type input_device_kind: str or
      ~azure.cognitiveservices.inkrecognizer.models.InputDevice
     :param unit: This is the physical unit of the ink strokes. It is up to the
      application developer to decide how to convert the device specific units
@@ -107,7 +107,7 @@ class AnalysisRequest(Model):
 
     _attribute_map = {
         'application_type': {'key': 'applicationType', 'type': 'str'},
-        'input_devicekind': {'key': 'inputDevicekind', 'type': 'str'},
+        'input_device_kind': {'key': 'inputDeviceKind', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'unit_multiple': {'key': 'unitMultiple', 'type': 'float'},
         'language': {'key': 'language', 'type': 'str'},
@@ -115,10 +115,10 @@ class AnalysisRequest(Model):
         'strokes': {'key': 'strokes', 'type': '[Stroke]'},
     }
 
-    def __init__(self, *, language: str, strokes, application_type=None, input_devicekind=None, unit=None, unit_multiple: float=None, ink_point_value_attributes=None, **kwargs) -> None:
+    def __init__(self, *, language: str, strokes, application_type=None, input_device_kind=None, unit=None, unit_multiple: float=None, ink_point_value_attributes=None, **kwargs) -> None:
         super(AnalysisRequest, self).__init__(**kwargs)
         self.application_type = application_type
-        self.input_devicekind = input_devicekind
+        self.input_device_kind = input_device_kind
         self.unit = unit
         self.unit_multiple = unit_multiple
         self.language = language
@@ -422,7 +422,8 @@ class InkPoint(Model):
 
 
 class InkPointValueAttribute(Model):
-    """A container for the attributes of a value contained in the inkpoint object.
+    """A container for the attributes of a value contained in the ink point
+    object.
 
     :param name: The name of the point attribute.
     :type name: str
