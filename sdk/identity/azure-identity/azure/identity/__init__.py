@@ -8,6 +8,7 @@ from .credentials import (
     ClientSecretCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
+    UsernamePasswordCredential,
 )
 
 
@@ -35,4 +36,5 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
+    "UsernamePasswordCredential",
 ]
