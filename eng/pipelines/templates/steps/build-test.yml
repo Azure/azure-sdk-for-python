@@ -7,7 +7,7 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-  ToxTestEnvString: 'python2.7-linux-test,python2.7-macos-test,python3.4-linux-test,python3.5-windows-test,python3.6-linux-test,python3.7-linux-test'
+  ToxTestEnvString: 'py37-windows-test,py27-windows-test,dev'
   ToxLintEnvString: 'python3.6-lint,python2.7-lint'
 
 steps:
