@@ -14,7 +14,7 @@ from uamqp import ReceiveClientAsync, Source
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
 from ..aio.error_async import _handle_exception
-from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
 
 log = logging.getLogger(__name__)
 
@@ -159,7 +159,68 @@ class EventHubConsumer(ConsumerProducerMixin):
             return self._handler._received_messages.qsize()
         return 0
 
+    @_retry_decorator
+    async def _receive(self, **kwargs):
+        timeout_time = kwargs.get("timeout_time")
+        last_exception = kwargs.get("last_exception")
+        max_batch_size = kwargs.get("max_batch_size")
+        data_batch = kwargs.get("data_batch")
+
+        await self._open(timeout_time)
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                raise last_exception
+            return data_batch
+
+        remaining_time_ms = 1000 * remaining_time
+        message_batch = await self._handler.receive_message_batch_async(
+            max_batch_size=max_batch_size,
+            timeout=remaining_time_ms)
+        for message in message_batch:
+            event_data = EventData(message=message)
+            self.offset = EventPosition(event_data.offset)
+            data_batch.append(event_data)
+        return data_batch
+
     async def receive(self, **kwargs):
+        # type: (int, float) -> List[EventData]
+        """
+        Receive events asynchronously from the EventHub.
+
+        :param max_batch_size: Receive a batch of events. Batch size will
+         be up to the maximum specified, but will return as soon as service
+         returns no new events. If combined with a timeout and no events are
+         retrieve before the time, the result will be empty. If no batch
+         size is supplied, the prefetch size will be the maximum.
+        :type max_batch_size: int
+        :param timeout: The maximum wait time to build up the requested message count for the batch.
+         If not specified, the default wait time specified when the consumer was created will be used.
+        :type timeout: float
+        :rtype: list[~azure.eventhub.common.EventData]
+        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
+                ~azure.eventhub.EventHubError
+
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_client_async_receive]
+                :end-before: [END eventhub_client_async_receive]
+                :language: python
+                :dedent: 4
+                :caption: Receives events asynchronously
+
+        """
+        self._check_closed()
+
+        max_batch_size = kwargs.get("max_batch_size", None)
+        timeout = kwargs.get("timeout", None) or self.client.config.receive_timeout
+        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
+        data_batch = []  # type: List[EventData]
+
+        return await self._receive(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
+
+    async def _legacy_receive(self, **kwargs):
         # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.

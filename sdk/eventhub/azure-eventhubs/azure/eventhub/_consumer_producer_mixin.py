@@ -7,10 +7,28 @@ from __future__ import unicode_literals
 import logging
 import time
 
-from uamqp import errors
+from uamqp import errors, constants
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
+
+
+def _retry_decorator(to_be_wrapped_func):
+    def wrapped_func(*args, **kwargs):
+        timeout = kwargs.get("timeout", None)
+        if not timeout:
+            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
+        timeout_time = time.time() + timeout
+        max_retries = args[0].client.config.max_retries
+        retry_count = 0
+        last_exception = None
+        while True:
+            try:
+                return to_be_wrapped_func(args[0], timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+            except Exception as exception:
+                last_exception = args[0]._handle_exception(exception, retry_count, max_retries, timeout_time)
+                retry_count += 1
+    return wrapped_func
 
 
 class ConsumerProducerMixin(object):
@@ -61,6 +79,8 @@ class ConsumerProducerMixin(object):
                 if timeout_time and time.time() >= timeout_time:
                     return
                 time.sleep(0.05)
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
             self.running = True
 
     def _close_handler(self):
