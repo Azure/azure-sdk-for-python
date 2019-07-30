@@ -100,6 +100,7 @@ async def test_non_existing_entity_sender_async(connection_str):
     sender = client.create_producer(partition_id="1")
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
+    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -109,6 +110,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=5)
+    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -196,3 +198,13 @@ async def test_max_receivers_async(connstr_senders):
     failed = [o for o in outputs if isinstance(o, EventHubError)]
     assert len(failed) == 1
     print(failed[0].message)
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_create_batch_with_invalid_hostname(invalid_hostname):
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    sender = client.create_producer()
+    with pytest.raises(AuthenticationError):
+        batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
+    await sender.close()

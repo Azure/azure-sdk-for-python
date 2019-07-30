@@ -185,7 +185,7 @@ async def test_exclusive_receiver_async(connstr_senders):
         await pump(receiver1)
         output2 = await pump(receiver2)
         with pytest.raises(ConnectionLostError):
-            await receiver1.receive(timeout=1)
+            await receiver1.receive(timeout=3)
         assert output2 == 1
     finally:
         await receiver1.close()
@@ -230,7 +230,7 @@ async def test_exclusive_receiver_after_non_exclusive_receiver_async(connstr_sen
         await pump(receiver1)
         output2 = await pump(receiver2)
         with pytest.raises(ConnectionLostError):
-            await receiver1.receive(timeout=1)
+            await receiver1.receive(timeout=3)
         assert output2 == 1
     finally:
         await receiver1.close()
@@ -248,7 +248,7 @@ async def test_non_exclusive_receiver_after_exclusive_receiver_async(connstr_sen
     receiver2 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10)
     try:
         output1 = await pump(receiver1)
-        with pytest.raises(ConnectError):
+        with pytest.raises(ConnectionLostError):
             await pump(receiver2)
         assert output1 == 1
     finally:
