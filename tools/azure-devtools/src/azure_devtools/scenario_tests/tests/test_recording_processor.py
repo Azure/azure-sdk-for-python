@@ -37,6 +37,25 @@ class TestRecordingProcessors(unittest.TestCase):
         rp.replace_header_fn(request_sample, 'beta', lambda v: 'customized')
         self.assertSequenceEqual(request_sample['headers']['beta'], ['customized', 'customized'])
 
+    def test_recording_processor_headers_as_string(self):
+        rp = RecordingProcessor()
+        response_sample = {'body': 'something', 'headers': {'charlie': 'value_1'}}
+
+        rp.replace_header(response_sample, 'charlie', 'value_1', 'replaced_1')
+        assert response_sample['headers']['charlie'] == 'replaced_1'
+
+        rp.replace_header(response_sample, 'Charlie', 'value_1', 'replaced_1')  # case insensitive
+        assert response_sample['headers']['charlie'] == 'replaced_1'
+
+        rp.replace_header(response_sample, 'Charlie', 'replaced_1', 'replaced_2')  # case insensitive
+        assert response_sample['headers']['charlie'] == 'replaced_2'
+
+        rp.replace_header(response_sample, 'sigma', 'replaced_2', 'replaced_3')  # ignore KeyError
+        assert response_sample['headers']['charlie'] == 'replaced_2'
+
+        rp.replace_header_fn(response_sample, 'charlie', lambda v: 'customized')
+        assert response_sample['headers']['charlie'] == 'customized'
+
     def test_access_token_processor(self):
         replaced_subscription_id = 'test_fake_token'
         rp = AccessTokenReplacer(replaced_subscription_id)
