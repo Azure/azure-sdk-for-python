@@ -71,17 +71,6 @@ class AsyncOperationState(str, Enum):
     failed = "Failed"
 
 
-class ApplicationHttpsEndpointAccessMode(str, Enum):
-
-    web_page = "WebPage"
-
-
-class ApplicationType(str, Enum):
-
-    custom_application = "CustomApplication"
-    rserver = "RServer"
-
-
 class FilterMode(str, Enum):
 
     exclude = "Exclude"

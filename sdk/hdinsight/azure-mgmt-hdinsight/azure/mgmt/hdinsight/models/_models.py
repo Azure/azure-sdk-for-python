@@ -147,8 +147,7 @@ class ApplicationGetHttpsEndpoint(Model):
     """Gets the application HTTP endpoints.
 
     :param access_modes: The list of access modes for the application.
-    :type access_modes: list[str or
-     ~azure.mgmt.hdinsight.models.ApplicationHttpsEndpointAccessMode]
+    :type access_modes: list[str]
     :param location: The location of the endpoint.
     :type location: str
     :param destination_port: The destination port to connect to.
@@ -203,10 +202,8 @@ class ApplicationProperties(Model):
      list[~azure.mgmt.hdinsight.models.ApplicationGetEndpoint]
     :ivar provisioning_state: The provisioning state of the application.
     :vartype provisioning_state: str
-    :param application_type: The application type. Possible values include:
-     'CustomApplication', 'RServer'
-    :type application_type: str or
-     ~azure.mgmt.hdinsight.models.ApplicationType
+    :param application_type: The application type.
+    :type application_type: str
     :ivar application_state: The application state.
     :vartype application_state: str
     :param errors: The list of errors.
