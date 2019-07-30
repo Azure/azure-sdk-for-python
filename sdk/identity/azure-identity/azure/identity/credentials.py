@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Callable, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 # pylint:disable=too-few-public-methods
@@ -249,6 +250,83 @@ class ChainedTokenCredential(object):
         return "No valid token received. {}".format(". ".join(attempts))
 
 
+class DeviceCodeCredential(PublicClientCredential):
+    """
+    Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
+    verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
+    authenticate with Directory. If the user authenticates successfully, the credential receives an access token.
+
+    This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
+
+    For more information about the device code flow, see Azure Active Directory documentation:
+    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
+
+    :param str client_id: the application's ID
+    :param prompt_callback: (optional) A callback enabling control of how authentication instructions are presented.
+        If not provided, the credential will print instructions to stdout.
+    :type prompt_callback: A callable accepting arguments (``verification_uri``, ``user_code``, ``expires_in``):
+        - ``verification_uri`` (str) the URL the user must visit
+        - ``user_code`` (str) the code the user must enter there
+        - ``expires_in`` (int) the number of seconds the code will be valid
+
+    **Keyword arguments:**
+
+    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
+        'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+    *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
+        as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+    """
+
+    def __init__(self, client_id, prompt_callback=None, **kwargs):
+        # type: (str, Optional[Callable[[str, str], None]], Any) -> None
+        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
+        self._prompt_callback = prompt_callback
+        super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
+
+    def get_token(self, *scopes):
+        # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
+        authentication flow.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+
+        # MSAL requires scopes be a list
+        scopes = list(scopes)  # type: ignore
+        now = int(time.time())
+
+        app = self._get_app()
+        flow = app.initiate_device_flow(scopes)
+        if "error" in flow:
+            raise ClientAuthenticationError(
+                message="Couldn't begin authentication: {}".format(flow.get("error_description") or flow.get("error"))
+            )
+
+        if self._prompt_callback:
+            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
+        else:
+            print(flow["message"])
+
+        if self._timeout is not None and self._timeout < flow["expires_in"]:
+            deadline = now + self._timeout
+            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+        else:
+            result = app.acquire_token_by_device_flow(flow)
+
+        if "access_token" not in result:
+            if result.get("error") == "authorization_pending":
+                message = "Timed out waiting for user to authenticate"
+            else:
+                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
+            raise ClientAuthenticationError(message=message)
+
+        token = AccessToken(result["access_token"], now + int(result["expires_in"]))
+        return token
+
+
 class UsernamePasswordCredential(PublicClientCredential):
     """
     Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
@@ -309,79 +387,3 @@ class UsernamePasswordCredential(PublicClientCredential):
             raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
 
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
-
-
-class DeviceCodeCredential(PublicClientCredential):
-    """
-    Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
-    verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
-    authenticate with Directory. If the user authenticates successfully, the credential receives an access token.
-
-    This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
-
-    For more information about the device code flow, see Azure Active Directory documentation:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
-
-    :param str client_id: the application's ID
-    :param prompt_callback: (optional) A callback enabling control of how authentication instructions are presented.
-        If not provided, the credential will print instructions to stdout.
-    :type prompt_callback: A callable accepting arguments (``verification_uri``, ``user_code``, ``expires_in``):
-        - ``verification_uri`` (str) the URL the user must visit
-        - ``user_code`` (str) the code the user must enter there
-        - ``expires_in`` (int) the number of seconds the code will be valid
-
-    **Keyword arguments:**
-
-    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-        'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-    *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
-        as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
-    """
-
-    def __init__(self, client_id, prompt_callback=None, **kwargs):
-        # type: (str, Optional[Callable[[str, str], None]], Any) -> None
-        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = prompt_callback
-        super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
-
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
-        """
-        Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
-        authentication flow.
-
-        :param str scopes: desired scopes for the token
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
-        """
-
-        # MSAL requires scopes be a list
-        scopes = list(scopes)  # type: ignore
-        now = int(time.time())
-
-        flow = self._app.initiate_device_flow(scopes)
-        if "error" in flow:
-            raise ClientAuthenticationError(
-                message="Couldn't begin authentication: {}".format(flow.get("error_description") or flow.get("error"))
-            )
-
-        if self._prompt_callback:
-            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
-        else:
-            print(flow["message"])
-
-        if self._timeout is not None and self._timeout < flow["expires_in"]:
-            deadline = now + self._timeout
-            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
-        else:
-            result = app.acquire_token_by_device_flow(flow)
-
-        if "access_token" not in result:
-            if result.get("error") == "authorization_pending":
-                message = "Timed out waiting for user to authenticate"
-            else:
-                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
-
-        token = AccessToken(result["access_token"], now + int(result["expires_in"]))
-        return token
