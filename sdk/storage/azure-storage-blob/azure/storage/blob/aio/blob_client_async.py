@@ -1504,7 +1504,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._clear_page_options(start_range, end_range, **kwargs)
         try:
-            return await self._client.page_blob.clear_pages(0, **options)  # type: ignore
+            return await self._client.page_blob.clear_pages(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
