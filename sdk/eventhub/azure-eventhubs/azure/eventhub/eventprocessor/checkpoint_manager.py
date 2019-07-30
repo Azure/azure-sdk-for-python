@@ -18,8 +18,7 @@ class CheckpointManager(object):
         self._instance_id = instance_id
         self._partition_manager = partition_manager
 
-    async def update_checkpoint(self,
-                                offset, sequence_number):
+    async def update_checkpoint(self, offset, sequence_number):
         """Users call this method in PartitionProcessor.process_events() to save checkpoints
 
         :param offset: offset of the processed EventData
