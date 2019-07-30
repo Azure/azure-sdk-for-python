@@ -214,8 +214,8 @@ Http request and response details are printed to stdout with this logging config
 
 
 <!-- LINKS -->
-[azconfig_docs]: https://docs.microsoft.com/en-us/azure/azure-app-configuration/
-[azconfig_rest]: https://github.com/Azure/AppConfiguration#rest-api-reference
+[appconfig_docs]: https://docs.microsoft.com/en-us/azure/azure-app-configuration/
+[appconfig_rest]: https://github.com/Azure/AppConfiguration#rest-api-reference
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [configuration_client_class]: ./azure/configuration/azure_configuration_client.py

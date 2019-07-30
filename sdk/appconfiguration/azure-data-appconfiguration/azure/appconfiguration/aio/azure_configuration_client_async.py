@@ -46,10 +46,10 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
         self._impl = ConfigurationClient(
             connection_string,
             base_url,
-            pipeline=self._create_azconfig_pipeline(),
+            pipeline=self._create_appconfig_pipeline(),
         )
 
-    def _create_azconfig_pipeline(self):
+    def _create_appconfig_pipeline(self):
         policies = [
             self.config.headers_policy,
             self.config.user_agent_policy,
