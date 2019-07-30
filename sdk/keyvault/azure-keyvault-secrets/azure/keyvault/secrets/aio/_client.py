@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.keyvault.secrets._models import Secret, DeletedSecret, SecretAttributes
-from .._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
+from .._shared import AsyncKeyVaultClientBase
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -182,9 +182,12 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_secrets(self.vault_url, maxresults=max_results)
-        iterable = AsyncPagingAdapter(pages, SecretAttributes._from_secret_item)
-        return iterable
+        return self._client.get_secrets(
+            self.vault_url,
+            maxresults=max_results,
+            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def list_secret_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[SecretAttributes]:
@@ -208,9 +211,13 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_secret_versions(self.vault_url, name, maxresults=max_results)
-        iterable = AsyncPagingAdapter(pages, SecretAttributes._from_secret_item)
-        return iterable
+        return self._client.get_secret_versions(
+            self.vault_url,
+            name,
+            maxresults=max_results,
+            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace_async
     async def backup_secret(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
@@ -335,9 +342,12 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results, **kwargs)
-        iterable = AsyncPagingAdapter(pages, DeletedSecret._from_deleted_secret_item)
-        return iterable
+        return self._client.get_deleted_secrets(
+            self.vault_url,
+            maxresults=max_results,
+            cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace_async
     async def purge_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> None:

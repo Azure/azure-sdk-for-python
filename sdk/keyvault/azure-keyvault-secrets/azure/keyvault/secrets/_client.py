@@ -179,8 +179,12 @@ class SecretClient(KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_secrets(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (SecretAttributes._from_secret_item(item) for item in pages)
+        return self._client.get_secrets(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [DeletedSecret._from_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def list_secret_versions(self, name, **kwargs):
@@ -206,8 +210,13 @@ class SecretClient(KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_secret_versions(self._vault_url, name, maxresults=max_page_size, **kwargs)
-        return (SecretAttributes._from_secret_item(item) for item in pages)
+        return self._client.get_secret_versions(
+            self._vault_url,
+            name,
+            maxresults=max_page_size,
+            cls=lambda objs: [DeletedSecret._from_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def backup_secret(self, name, **kwargs):
@@ -336,8 +345,12 @@ class SecretClient(KeyVaultClientBase):
 
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_deleted_secrets(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
+        return self._client.get_deleted_secrets(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def purge_deleted_secret(self, name, **kwargs):
