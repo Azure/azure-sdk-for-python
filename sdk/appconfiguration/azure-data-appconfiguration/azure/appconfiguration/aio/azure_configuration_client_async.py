@@ -21,13 +21,13 @@ from .._generated.models import ConfigurationSetting
 
 class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
     """
-    This is the async version of :class:`azure.configuration.ConfigurationClient`
+    This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     Example
 
     .. code-block:: python
 
-        from azure.configuration.aio import AzureAppConfigurationClient
+        from azure.appconfiguration.aio import AzureAppConfigurationClient
         connection_str = "<my connection string>"
         async_client = AzureAppConfigurationClient(connection_str)
     """

@@ -10,13 +10,13 @@ Use the client library for App Configuration to create and manage application co
 ## Getting started
 
 ### Supported Python version
-Python 2.7 and 3.4+
+Python 2.7 and 3.5+
 ### Install the package
 
 Install the Azure App Configuration client library for Python with pip:
 
 ```commandline
-pip install azure-configuration
+pip install azure-appconfiguration
 ```
 
 **Prerequisites**: You must have an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
@@ -38,7 +38,7 @@ az appconfig create --name <config-store-name> --resource-group <resource-group-
 
 ### Authenticate the client
 
-In order to interact with the App Configuration service, you'll need to create an instance of the [AzureConfigurationClient][configuration_client_class] class. To make this possible, you'll need the connection string of the Configuration Store.
+In order to interact with the App Configuration service, you'll need to create an instance of the [AzureAppConfigurationClient][configuration_client_class] class. To make this possible, you'll need the connection string of the Configuration Store.
 
 #### Get credentials
 Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store.
@@ -53,10 +53,10 @@ Alternatively, get the connection string from the Azure Portal.
 Once you have the value of the connection string, you can create the ConfigurationClient:
 
 ```python
-    from azure.configuration import AzureConfigurationClient
+    from azure.appconfiguration import AzureAppConfigurationClient
 
     connection_str = "<connection_string>"
-    client = AzureConfigurationClient(connection_str)
+    client = AzureAppConfigurationClient(connection_str)
 ```
 
 ## Key concepts
@@ -82,11 +82,24 @@ Properties of a Configuration Setting:
 
 ## Examples
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
-- [Create a Configuration Setting](#create-a-Configuration-Setting)
-- [Retrieve a Configuration Setting](#retrieve-a-Configuration-Setting)
-- [Update an existing Configuration Setting](#update-an-existing-Configuration-Setting)
-- [Delete a Configuration Setting](#delete-a-Configuration-Setting)
-- [Query multiple Configuration Settings](#query-Configuration-Settings)
+- [Azure App Configuration client library for Python](#azure-app-configuration-client-library-for-python)
+  - [Getting started](#getting-started)
+    - [Supported Python version](#supported-python-version)
+    - [Install the package](#install-the-package)
+    - [Authenticate the client](#authenticate-the-client)
+      - [Get credentials](#get-credentials)
+      - [Create client](#create-client)
+  - [Key concepts](#key-concepts)
+    - [Configuration Setting](#configuration-setting)
+  - [Examples](#examples)
+    - [Create a Configuration Setting](#create-a-configuration-setting)
+    - [Retrieve a Configuration Setting](#retrieve-a-configuration-setting)
+    - [Update a Configuration Setting](#update-a-configuration-setting)
+    - [Delete a Configuration Setting](#delete-a-configuration-setting)
+    - [Query Configuration Settings](#query-configuration-settings)
+  - [Async Client](#async-client)
+  - [Troubleshooting](#troubleshooting)
+    - [Logging](#logging)
 ### Create a Configuration Setting
 Create a Configuration Setting to be stored in the Configuration Store.
 There are two ways to store a Configuration Setting:
@@ -158,14 +171,14 @@ for item in filtered_listed:
 
 ## Async Client
 Async client is supported for python 3.5+. 
-To use the async client library, import the AzureConfigurationClient from package azure.configuration.aio instead of azure.configuration
+To use the async client library, import the AzureAppConfigurationClient from package azure.appconfiguration.aio instead of azure.appconfiguration
 ```python
-from azure.configuration.aio import AzureConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 connection_str = "<connection_string>"
-async_client = AzureConfigurationClient(connection_str)
+async_client = AzureAppConfigurationClient(connection_str)
 ```
-This async AzureConfigurationClient has the same method signatures as the sync ones except that they're async.
+This async AzureAppConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
 ```python
 fetched_config_setting = await async_client.get_configuration_setting(
