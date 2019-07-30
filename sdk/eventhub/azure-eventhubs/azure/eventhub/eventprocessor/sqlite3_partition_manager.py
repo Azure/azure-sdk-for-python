@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# -----------------------------------------------------------------------------------
+
 import time
 import uuid
 import sqlite3
@@ -5,7 +10,18 @@ from .partition_manager import PartitionManager
 
 
 class Sqlite3PartitionManager(PartitionManager):
+    """An implementation of PartitionManager by using the sqlite3 in Python standard library.
+    Sqlite3 is a mini sql database that runs in memory or files.
+
+
+    """
     def __init__(self, db_filename, ownership_table="ownership"):
+        """
+
+        :param db_filename: name of file that saves the sql data.
+        Sqlite3 will run in memory without a file when db_filename is ":memory:".
+        :param ownership_table: The table name of the sqlite3 database.
+        """
         super(Sqlite3PartitionManager, self).__init__()
         self.ownership_table = ownership_table
         conn = sqlite3.connect(db_filename)

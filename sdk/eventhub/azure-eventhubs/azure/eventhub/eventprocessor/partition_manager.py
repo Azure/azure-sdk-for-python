@@ -1,11 +1,15 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# -----------------------------------------------------------------------------------
+
 from typing import Iterable, Dict, Any
 from abc import ABC, abstractmethod
 
 
 class PartitionManager(ABC):
-    """Subclass this class to implement the read/write access to storage service.
+    """Subclass PartitionManager to implement the read/write access to storage service to list/claim ownership and save checkpoint.
 
-    Users may do their own subclass for checkpoint storage.
     """
 
     @abstractmethod
@@ -36,6 +40,5 @@ class PartitionManager(ABC):
                                 offset, sequence_number) -> None:
         pass
 
-    @abstractmethod
     async def close(self):
         pass
