@@ -42,8 +42,8 @@ class Case(Resource):
     :type description: str
     :param title: Required. The title of the case
     :type title: str
-    :param assigned_to: Describes a user that the case is assigned to
-    :type assigned_to: ~azure.mgmt.securityinsight.models.UserInfo
+    :param owner: Describes a user that the case is assigned to
+    :type owner: ~azure.mgmt.securityinsight.models.UserInfo
     :param severity: Required. The severity of the case. Possible values
      include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
@@ -51,7 +51,7 @@ class Case(Resource):
      'Draft', 'New', 'InProgress', 'Closed'
     :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
-     include: 'Resolved', 'Dismissed', 'Other'
+     include: 'Resolved', 'Dismissed', 'TruePositive', 'FalsePositive', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
     :param closed_reason_text: the case close reason details
     :type closed_reason_text: str
@@ -93,7 +93,7 @@ class Case(Resource):
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
-        'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
+        'owner': {'key': 'properties.owner', 'type': 'UserInfo'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
@@ -114,7 +114,7 @@ class Case(Resource):
         self.labels = kwargs.get('labels', None)
         self.description = kwargs.get('description', None)
         self.title = kwargs.get('title', None)
-        self.assigned_to = kwargs.get('assigned_to', None)
+        self.owner = kwargs.get('owner', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
         self.close_reason = kwargs.get('close_reason', None)

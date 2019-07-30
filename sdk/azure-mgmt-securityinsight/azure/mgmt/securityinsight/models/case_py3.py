@@ -42,8 +42,8 @@ class Case(Resource):
     :type description: str
     :param title: Required. The title of the case
     :type title: str
-    :param assigned_to: Describes a user that the case is assigned to
-    :type assigned_to: ~azure.mgmt.securityinsight.models.UserInfo
+    :param owner: Describes a user that the case is assigned to
+    :type owner: ~azure.mgmt.securityinsight.models.UserInfo
     :param severity: Required. The severity of the case. Possible values
      include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
@@ -51,7 +51,7 @@ class Case(Resource):
      'Draft', 'New', 'InProgress', 'Closed'
     :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
-     include: 'Resolved', 'Dismissed', 'Other'
+     include: 'Resolved', 'Dismissed', 'TruePositive', 'FalsePositive', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
     :param closed_reason_text: the case close reason details
     :type closed_reason_text: str
@@ -93,7 +93,7 @@ class Case(Resource):
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
-        'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
+        'owner': {'key': 'properties.owner', 'type': 'UserInfo'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
@@ -104,7 +104,7 @@ class Case(Resource):
         'total_comments': {'key': 'properties.totalComments', 'type': 'int'},
     }
 
-    def __init__(self, *, start_time_utc, title: str, severity, status, etag: str=None, end_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, closed_reason_text: str=None, **kwargs) -> None:
+    def __init__(self, *, start_time_utc, title: str, severity, status, etag: str=None, end_time_utc=None, labels=None, description: str=None, owner=None, close_reason=None, closed_reason_text: str=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
         self.last_updated_time_utc = None
@@ -114,7 +114,7 @@ class Case(Resource):
         self.labels = labels
         self.description = description
         self.title = title
-        self.assigned_to = assigned_to
+        self.owner = owner
         self.severity = severity
         self.status = status
         self.close_reason = close_reason
