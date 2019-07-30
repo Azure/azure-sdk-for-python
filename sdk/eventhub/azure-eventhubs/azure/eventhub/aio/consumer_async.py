@@ -22,23 +22,23 @@ log = logging.getLogger(__name__)
 class EventHubConsumer(ConsumerProducerMixin):
     """
     A consumer responsible for reading EventData from a specific Event Hub
-     partition and as a member of a specific consumer group.
+    partition and as a member of a specific consumer group.
 
     A consumer may be exclusive, which asserts ownership over the partition for the consumer
-     group to ensure that only one consumer from that group is reading the from the partition.
-     These exclusive consumers are sometimes referred to as "Epoch Consumers."
+    group to ensure that only one consumer from that group is reading the from the partition.
+    These exclusive consumers are sometimes referred to as "Epoch Consumers."
 
     A consumer may also be non-exclusive, allowing multiple consumers from the same consumer
-     group to be actively reading events from the partition.  These non-exclusive consumers are
-     sometimes referred to as "Non-Epoch Consumers."
+    group to be actively reading events from the partition.  These non-exclusive consumers are
+    sometimes referred to as "Non-Epoch Consumers."
 
     """
     timeout = 0
     _epoch = b'com.microsoft:epoch'
+    _timeout = b'com.microsoft:timeout'
 
     def __init__(  # pylint: disable=super-init-not-called
-            self, client, source, event_position=None, prefetch=300, owner_level=None,
-            keep_alive=None, auto_reconnect=True, loop=None):
+            self, client, source, **kwargs):
         """
         Instantiate an async consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
          in EventHubClient.
@@ -57,6 +57,13 @@ class EventHubConsumer(ConsumerProducerMixin):
         :type owner_level: int
         :param loop: An event loop.
         """
+        event_position = kwargs.get("event_position", None)
+        prefetch = kwargs.get("prefetch", 300)
+        owner_level = kwargs.get("owner_level", None)
+        keep_alive = kwargs.get("keep_alive", None)
+        auto_reconnect = kwargs.get("auto_reconnect", True)
+        loop = kwargs.get("loop", None)
+
         super(EventHubConsumer, self).__init__()
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
@@ -72,11 +79,13 @@ class EventHubConsumer(ConsumerProducerMixin):
         self.reconnect_backoff = 1
         self.redirected = None
         self.error = None
-        self.properties = None
+        self._link_properties = {}
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
-            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(owner_level))}
+            self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
+        link_property_timeout_ms = (self.client.config.receive_timeout or self.timeout) * 1000
+        self._link_properties[types.AMQPSymbol(self._timeout)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
 
     def __aiter__(self):
@@ -110,7 +119,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             auth=self.client.get_auth(**alt_creds),
             debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
-            link_properties=self.properties,
+            link_properties=self._link_properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
@@ -150,7 +159,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             return self._handler._received_messages.qsize()
         return 0
 
-    async def receive(self, max_batch_size=None, timeout=None):
+    async def receive(self, **kwargs):
         # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.
@@ -177,6 +186,9 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Receives events asynchronously
 
         """
+        max_batch_size = kwargs.get("max_batch_size", None)
+        timeout = kwargs.get("timeout", None)
+
         self._check_closed()
         max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
         timeout = self.client.config.receive_timeout if timeout is None else timeout
@@ -214,7 +226,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
 
-    async def close(self, exception=None):
+    async def close(self, **kwargs):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -234,6 +246,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
+        exception = kwargs.get("exception", None)
         self.running = False
         if self.error:
             return

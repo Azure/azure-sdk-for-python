@@ -194,8 +194,7 @@ class EventHubClient(EventHubClientAbstract):
         return output
 
     def create_consumer(
-            self, consumer_group, partition_id, event_position, owner_level=None,
-            operation=None, prefetch=None, loop=None):
+            self, consumer_group, partition_id, event_position, **kwargs):
         # type: (str, str, EventPosition, int, str, int, asyncio.AbstractEventLoop) -> EventHubConsumer
         """
         Create an async consumer to the client for a particular consumer group and partition.
@@ -227,8 +226,12 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
-        prefetch = self.config.prefetch if prefetch is None else prefetch
+        owner_level = kwargs.get("owner_level", None)
+        operation = kwargs.get("operation", None)
+        prefetch = kwargs.get("prefetch", None)
+        loop = kwargs.get("loop", None)
 
+        prefetch = prefetch or self.config.prefetch
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
@@ -238,7 +241,7 @@ class EventHubClient(EventHubClientAbstract):
         return handler
 
     def create_producer(
-            self, partition_id=None, operation=None, send_timeout=None, loop=None):
+            self, **kwargs):
         # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
         """
         Create an async producer to send EventData object to an EventHub.
@@ -265,6 +268,11 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async producer to the client to send EventData.
 
         """
+        partition_id = kwargs.get("partition_id", None)
+        operation = kwargs.get("operation", None)
+        send_timeout = kwargs.get("send_timeout", None)
+        loop = kwargs.get("loop", None)
+
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation

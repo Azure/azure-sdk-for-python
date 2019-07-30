@@ -9,7 +9,7 @@ import logging
 import time
 from typing import Iterable, Union
 
-from uamqp import constants, errors
+from uamqp import types, constants, errors
 from uamqp import compat
 from uamqp import SendClient
 
@@ -35,13 +35,14 @@ def _set_partition_key(event_datas, partition_key):
 class EventHubProducer(ConsumerProducerMixin):
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
-     grouped together in batches. Depending on the options specified at creation, the producer may
-     be created to allow event data to be automatically routed to an available partition or specific
-     to a partition.
+    grouped together in batches. Depending on the options specified at creation, the producer may
+    be created to allow event data to be automatically routed to an available partition or specific
+    to a partition.
 
     """
+    _timeout = b'com.microsoft:timeout'
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, **kwargs):
         """
         Instantiate an EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer` method
          in EventHubClient.
@@ -63,6 +64,11 @@ class EventHubProducer(ConsumerProducerMixin):
          Default value is `True`.
         :type auto_reconnect: bool
         """
+        partition = kwargs.get("partition", None)
+        send_timeout = kwargs.get("send_timeout", 60)
+        keep_alive = kwargs.get("keep_alive", None)
+        auto_reconnect = kwargs.get("auto_reconnect", True)
+
         super(EventHubProducer, self).__init__()
         self.running = False
         self.client = client
@@ -83,6 +89,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self._handler = None
         self._outcome = None
         self._condition = None
+        self._link_properties = {types.AMQPSymbol(self._timeout): types.AMQPLong(int(self.timeout * 1000))}
 
     def _create_handler(self):
         self._handler = SendClient(
@@ -93,6 +100,7 @@ class EventHubProducer(ConsumerProducerMixin):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
+            link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
     def _open(self, timeout_time=None):
@@ -129,10 +137,13 @@ class EventHubProducer(ConsumerProducerMixin):
                             error = OperationTimeoutError("send operation timed out")
                         log.info("%r send operation timed out. (%r)", self.name, error)
                         raise error
+                    self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
                     self._handler.queue_message(*self.unsent_events)
                     self._handler.wait()
                     self.unsent_events = self._handler.pending_messages
                     if self._outcome != constants.MessageSendResult.Ok:
+                        if self._outcome == constants.MessageSendResult.Timeout:
+                            self._condition = OperationTimeoutError("send operation timed out")
                         _error(self._outcome, self._condition)
                 return
             except Exception as exception:
@@ -151,7 +162,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
-    def send(self, event_data, partition_key=None, timeout=None):
+    def send(self, event_data, **kwargs):
         # type:(Union[EventData, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
@@ -162,6 +173,9 @@ class EventHubProducer(ConsumerProducerMixin):
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
         :type partition_key: str
+        :param timeout: The maximum wait time to send the event data.
+         If not specified, the default wait time specified when the producer was created will be used.
+        :type timeout:float
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
 
@@ -177,6 +191,9 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        partition_key = kwargs.get("partition_key", None)
+        timeout = kwargs.get("timeout", None)
+
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
@@ -191,7 +208,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data(timeout=timeout)
 
-    def close(self, exception=None):
+    def close(self, **kwargs):
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -211,4 +228,5 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
+        exception = kwargs.get("exception", None)
         super(EventHubProducer, self).close(exception)
