@@ -214,3 +214,12 @@ def test_message_body_types(connstr_senders):
         raise
     finally:
         receiver.close()
+
+
+@pytest.mark.liveTest
+def test_create_batch_with_invalid_hostname(invalid_hostname):
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    sender = client.create_producer()
+    with pytest.raises(AuthenticationError):
+        batch_event_data = sender.create_batch(max_size=300, partition_key="key")
+    sender.close()
