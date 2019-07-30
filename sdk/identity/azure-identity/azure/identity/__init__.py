@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from .browser_auth import InteractiveBrowserCredential
 from .credentials import (
     CertificateCredential,
     ChainedTokenCredential,
@@ -35,6 +36,7 @@ __all__ = [
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "EnvironmentCredential",
+    "InteractiveBrowserCredential",
     "ManagedIdentityCredential",
     "UsernamePasswordCredential",
 ]
