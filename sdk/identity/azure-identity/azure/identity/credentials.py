@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+    EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 # pylint:disable=too-few-public-methods
 
@@ -290,16 +291,17 @@ class UsernamePasswordCredential(PublicClientCredential):
         scopes = list(scopes)  # type: ignore
         now = int(time.time())
 
-        accounts = self._app.get_accounts(username=self._username)
+        app = self._get_app()
+        accounts = app.get_accounts(username=self._username)
         result = None
         for account in accounts:
-            result = self._app.acquire_token_silent(scopes, account=account)
+            result = app.acquire_token_silent(scopes, account=account)
             if result:
                 break
 
         if not result:
             # cache miss -> request a new token
-            result = self._app.acquire_token_by_username_password(
+            result = app.acquire_token_by_username_password(
                 username=self._username, password=self._password, scopes=scopes
             )
 
