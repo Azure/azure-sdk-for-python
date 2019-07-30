@@ -13,8 +13,11 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import SubscriptionClientConfiguration
-from .operations import Operations
 from .operations import SubscriptionsOperations
+from .operations import SubscriptionOperationOperations
+from .operations import SubscriptionFactoryOperations
+from .operations import SubscriptionOperations
+from .operations import Operations
 from .operations import TenantsOperations
 from . import models
 
