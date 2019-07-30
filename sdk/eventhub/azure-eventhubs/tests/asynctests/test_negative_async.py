@@ -121,7 +121,7 @@ async def test_receive_from_invalid_partitions_async(connection_str):
         client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
         receiver = client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"))
         with pytest.raises(ConnectError):
-            await receiver.receive(timeout=10)
+            await receiver.receive(timeout=5)
         await receiver.close()
 
 

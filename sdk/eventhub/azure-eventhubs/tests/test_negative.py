@@ -108,7 +108,6 @@ def test_non_existing_entity_receiver(connection_str):
     receiver.close()
 
 
-
 @pytest.mark.liveTest
 def test_receive_from_invalid_partitions_sync(connection_str):
     partitions = ["XYZ", "-1", "1000", "-"]
@@ -117,7 +116,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
         receiver = client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"))
         try:
             with pytest.raises(ConnectError):
-                receiver.receive(timeout=10)
+                receiver.receive(timeout=5)
         finally:
             receiver.close()
 
