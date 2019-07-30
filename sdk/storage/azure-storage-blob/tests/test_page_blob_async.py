@@ -101,13 +101,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        actual_data = await blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        stream = await blob.download_blob()
+        actual_data = await stream.content_as_bytes()
+        self.assertEqual(actual_data, expected_data)
 
     async def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        actual_data = await blob.download_blob(offset=start_range, length=end_range)
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        stream = await blob.download_blob(offset=start_range, length=end_range)
+        actual_data = await stream.content_as_bytes()
+        self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -171,10 +173,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob(lease=lease)
-        cl = []
-        async for cn in content:
-            cl.append(cn)
-        self.assertEqual(b"".join(cn), data)
+        actual = await content.content_as_bytes()
+        self.assertEqual(actual, data)
 
     def test_put_page_with_lease_id(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -195,7 +195,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertIsNotNone(resp.get('blob_sequence_number'))
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
     def test_update_page(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -259,7 +259,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertIsNotNone(resp.get('blob_sequence_number'))
-        self.assertRangeEqual(self.container_name, blob.blob_name, data, start_range, end_range)
+        await self.assertRangeEqual(self.container_name, blob.blob_name, data, start_range, end_range)
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(1, len(page_ranges))
         self.assertEqual(page_ranges[0]['start'], start_range)
@@ -300,7 +300,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertIsNotNone(resp.get('blob_sequence_number'))
-        self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512)
 
     def test_clear_page(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -309,7 +309,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_clear_page())
 
     async def _test_put_page_if_sequence_number_lt_success(self):
-        # Arrange     
+        # Arrange
         await self._setup()
         blob = self._get_blob_reference() 
         data = self.get_random_bytes(512)
@@ -321,7 +321,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.upload_page(data, 0, 511, if_sequence_number_lt=start_sequence + 1)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
     def test_put_page_if_sequence_number_lt_success(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -361,7 +361,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.upload_page(data, 0, 511, if_sequence_number_lte=start_sequence)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
     def test_update_page_if_sequence_number_lte_success(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -401,7 +401,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.upload_page(data, 0, 511, if_sequence_number_eq=start_sequence)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
     def test_update_page_if_sequence_number_eq_success(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -627,7 +627,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data1)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data1)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.metadata, {'BlobData': 'Data1'})
@@ -662,7 +662,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data2)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data2)
         self.assertEqual(props.etag, update_resp.get('etag'))
         self.assertEqual(props.last_modified, update_resp.get('last_modified'))
         self.assertEqual(props.metadata, {'BlobData': 'Data2'})
@@ -690,7 +690,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -715,7 +715,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -748,7 +748,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
@@ -774,7 +774,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.upload_blob(data[index:], blob_type=BlobType.PageBlob)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:])
 
     def test_create_blob_from_bytes_with_index(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -795,7 +795,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[index:index + count])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[index:index + count])
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -824,7 +824,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -858,7 +858,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
             await blob.upload_blob(stream, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data)
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_path_with_progress(self):
@@ -886,7 +886,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -919,8 +919,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
         # the uploader should have skipped the empty ranges
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        page_ranges, cleared = list(blob.get_page_ranges())
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        ranges = await blob.get_page_ranges()
+        page_ranges, cleared = list(ranges)
         self.assertEqual(len(page_ranges), 2)
         self.assertEqual(page_ranges[0]['start'], 0)
         self.assertEqual(page_ranges[0]['end'], 4095)
@@ -958,7 +959,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
                 blob_type=BlobType.PageBlob)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
 
     def test_create_blob_from_stream_non_seekable(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -992,7 +993,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
                 stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_stream_with_progress(self):
@@ -1019,7 +1020,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
             await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
 
     def test_create_blob_from_stream_truncated(self):
         if TestMode.need_recording_file(self.test_mode):
@@ -1053,7 +1054,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
                 stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
+        await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
         self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
 
     def test_create_blob_from_stream_with_progress_truncated(self):
@@ -1124,14 +1125,14 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         dest_blob = self.bs.get_blob_client(self.container_name, 'dest_blob')
-        copy = dest_blob.start_copy_from_url(sas_blob.url, incremental_copy=True)
+        copy = await dest_blob.start_copy_from_url(sas_blob.url, incremental_copy=True)
 
         # Assert
         self.assertIsNotNone(copy)
         self.assertIsNotNone(copy['copy_id'])
         self.assertEqual(copy['copy_status'], 'pending')
 
-        copy_blob = self._wait_for_async_copy(dest_blob)
+        copy_blob = await self._wait_for_async_copy(dest_blob)
         self.assertEqual(copy_blob.copy.status, 'success')
         self.assertIsNotNone(copy_blob.copy.destination_snapshot)
 
