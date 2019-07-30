@@ -603,7 +603,7 @@ class RecognitionUnitItemBoundingRectangle(Model):
 
     :param top_x: This is the top left x coordinate
     :type top_x: float
-    :param top_y: This isthe top left y coordinate
+    :param top_y: This is the top left y coordinate
     :type top_y: float
     :param width: This is width of the bounding rectangle
     :type width: float
