@@ -44,7 +44,7 @@ steps:
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="${{ parameters.TestMarkArgument }}"
+        --toxenv="${{ parameters.ToxTestEnvString }}"
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
