@@ -43,9 +43,15 @@ class PrestoObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name. Type: string (or Expression with
-     resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
+    :param table: The table name of the Presto. Type: string (or Expression
+     with resultType string).
+    :type table: object
+    :param presto_object_dataset_schema: The schema name of the Presto. Type:
+     string (or Expression with resultType string).
+    :type presto_object_dataset_schema: object
     """
 
     _validation = {
@@ -64,9 +70,13 @@ class PrestoObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+        'presto_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, presto_object_dataset_schema=None, **kwargs) -> None:
         super(PrestoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
+        self.table = table
+        self.presto_object_dataset_schema = presto_object_dataset_schema
         self.type = 'PrestoObject'

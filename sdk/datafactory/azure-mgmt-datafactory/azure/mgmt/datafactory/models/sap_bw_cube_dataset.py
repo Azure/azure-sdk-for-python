@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class HiveObjectDataset(Dataset):
-    """Hive Server dataset.
+class SapBwCubeDataset(Dataset):
+    """The SAP BW cube dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,15 +43,6 @@ class HiveObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: This property will be retired. Please consider using
-     schema + table properties instead.
-    :type table_name: object
-    :param table: The table name of the Hive. Type: string (or Expression with
-     resultType string).
-    :type table: object
-    :param hive_object_dataset_schema: The schema name of the Hive. Type:
-     string (or Expression with resultType string).
-    :type hive_object_dataset_schema: object
     """
 
     _validation = {
@@ -69,14 +60,8 @@ class HiveObjectDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
-        'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
-        'table': {'key': 'typeProperties.table', 'type': 'object'},
-        'hive_object_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(HiveObjectDataset, self).__init__(**kwargs)
-        self.table_name = kwargs.get('table_name', None)
-        self.table = kwargs.get('table', None)
-        self.hive_object_dataset_schema = kwargs.get('hive_object_dataset_schema', None)
-        self.type = 'HiveObject'
+        super(SapBwCubeDataset, self).__init__(**kwargs)
+        self.type = 'SapBwCube'
