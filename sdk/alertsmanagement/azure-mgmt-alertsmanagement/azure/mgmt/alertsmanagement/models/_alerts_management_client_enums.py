@@ -81,6 +81,41 @@ class State(str, Enum):
     closed = "Closed"
 
 
+class ScopeType(str, Enum):
+
+    resource_group = "ResourceGroup"
+    resource = "Resource"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+    contains = "Contains"
+    does_not_contain = "DoesNotContain"
+
+
+class SuppressionType(str, Enum):
+
+    always = "Always"
+    once = "Once"
+    daily = "Daily"
+    weekly = "Weekly"
+    monthly = "Monthly"
+
+
+class ActionRuleStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class AlertRuleState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class TimeRange(str, Enum):
 
     oneh = "1h"
