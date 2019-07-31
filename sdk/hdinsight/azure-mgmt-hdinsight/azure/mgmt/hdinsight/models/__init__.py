@@ -168,8 +168,6 @@ from ._hd_insight_management_client_enums import (
     ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
-    ApplicationHttpsEndpointAccessMode,
-    ApplicationType,
     FilterMode,
 )
 
@@ -258,7 +256,5 @@ __all__ = [
     'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
-    'ApplicationHttpsEndpointAccessMode',
-    'ApplicationType',
     'FilterMode',
 ]
