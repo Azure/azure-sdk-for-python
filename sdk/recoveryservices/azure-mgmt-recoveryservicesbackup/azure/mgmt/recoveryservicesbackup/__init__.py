@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .recovery_services_backup_client import RecoveryServicesBackupClient
-from .version import VERSION
+from ._configuration import RecoveryServicesBackupClientConfiguration
+from ._recovery_services_backup_client import RecoveryServicesBackupClient
+__all__ = ['RecoveryServicesBackupClient', 'RecoveryServicesBackupClientConfiguration']
 
-__all__ = ['RecoveryServicesBackupClient']
+from .version import VERSION
 
 __version__ = VERSION
 
