@@ -80,7 +80,7 @@ class OpenCensusSpan(object):
         :return: A key value pair dictionary
         """
         tracer_from_context = self.get_current_tracer()
-        temp_headers = {}
+        temp_headers = {} # type: Dict[str, str]
         if tracer_from_context is not None:
             ctx = tracer_from_context.span_context
             try:

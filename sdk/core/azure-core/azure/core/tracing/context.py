@@ -29,8 +29,8 @@ class ContextProtocol(Protocol):
      Implements set and get variables in a thread safe way.
      """
 
-    def __init__(self, name, default):
-        # type: (string, Any) -> None
+    def __init__(self, name, default):  # pylint: disable=super-init-not-called
+        # type: (str, Any) -> None
         pass
 
     def clear(self):
@@ -55,8 +55,9 @@ class _AsyncContext(object):
     """
 
     def __init__(self, name, default):
+        # type: (str, Any) -> None
         self.name = name
-        self.contextvar = contextvars.ContextVar(name)
+        self.contextvar = contextvars.ContextVar(name)  # type: contextvars.ContextVar
         self.default = default if callable(default) else (lambda: default)
 
     def clear(self):
@@ -84,6 +85,7 @@ class _ThreadLocalContext(object):
     """
     Uses thread local storage to set and get variables globally in a thread safe way.
     """
+
     _thread_local = threading.local()
 
     def __init__(self, name, default):
@@ -115,7 +117,7 @@ class _ThreadLocalContext(object):
 class TracingContext(object):
     def __init__(self):
         # type: () -> None
-        context_class = _AsyncContext if contextvars else _ThreadLocalContext
+        context_class = _AsyncContext if contextvars else _ThreadLocalContext  # type: ContextProtocol
         self.current_span = context_class("current_span", None)
 
     def with_current_context(self, func):
@@ -140,5 +142,6 @@ class TracingContext(object):
             return func(*args, **kwargs)
 
         return call_with_current_context
+
 
 tracing_context = TracingContext()

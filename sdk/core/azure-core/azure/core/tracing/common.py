@@ -36,11 +36,27 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Optional, Union, Callable
+
+
+def get_function_and_class_name(func, *args):
+    # type: (Callable, List[Any]) -> str
+    """
+    Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
+    is `self`. If there are no arguments then it only returns the function name.
+
+    :param func: the function passed in
+    :type func: `collections.abc.Callable`
+    :param args: List of arguments passed into the function
+    :type args: List[Any]
+    """
+    if args:
+        return "{}.{}".format(args[0].__class_.__name__, func.__name__) # pylint: disable=protected-access
+    return func.__name__
 
 
 def set_span_contexts(wrapped_span, span_instance=None):
-    # type: (AbstractSpan, Optional[AbstractSpan]) -> None
+    # type: (Union[AbstractSpan, None], Optional[AbstractSpan]) -> None
     """
     Set the sdk context and the implementation context. `span_instance` will be used to set the implementation context
     if passed in else will use `wrapped_span.span_instance`.
