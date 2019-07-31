@@ -135,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import Usage
     from ._models import UsageName
     from ._models import VirtualNetworkRule
+from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuPaged
@@ -239,6 +240,7 @@ __all__ = [
     'SkuPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
     'ReasonCode',
     'SkuName',
