@@ -6,20 +6,75 @@
 import os
 import sys
 import platform
+import re
 from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransport
-from azure.core.exceptions import ResourceModifiedError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
+from requests.structures import CaseInsensitiveDict
 from ..utils import get_endpoint_from_connection_string
 from .._generated.aio import ConfigurationClient
 from .._generated.aio._configuration_async import ConfigurationClientConfiguration
 from ..azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from ..azure_appconfiguration_client_abstract import AzureAppConfigurationClientAbstract
 from .._generated.models import ConfigurationSetting
 
-
-class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
+def escape_reserved(value):
     """
+    Reserved characters are star(*), comma(,) and backslash(\\)
+    If a reserved character is part of the value, then it must be escaped using \\{Reserved Character}.
+    Non-reserved characters can also be escaped.
+
+    """
+    if value is None:
+        return None
+    elif value == "":
+        return "\0"  # '\0' will be encoded to %00 in the url.
+    else:
+        if isinstance(value, list):
+            return [
+                escape_reserved(s) for s in value
+            ]
+        else:
+            value = str(value)  # value is unicode for Python 2.7
+            # precede all reserved characters with a backslash.
+            # But if a * is at the beginning or the end, don't add the backslash
+            return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
+
+def escape_and_tolist(value):
+    if value is not None:
+        if isinstance(value, str):
+            value = [value]
+        value = escape_reserved(value)
+    return value
+
+def quote_etag(etag):
+    if etag != "*" and etag is not None:
+        return '"' + etag + '"'
+    else:
+        return etag
+
+def prep_update_configuration_setting(key, etag=None, **kwargs):
+    # type: (str, str, dict) -> CaseInsensitiveDict
+    if not key:
+        raise ValueError("key is mandatory to update a ConfigurationSetting")
+
+    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+    if etag:
+        custom_headers["if-match"] = quote_etag(
+            etag
+        )
+    elif "if-match" not in custom_headers:
+        custom_headers["if-match"] = "*"
+
+    return custom_headers
+
+class AzureAppConfigurationClient():
+    """Represents an client that calls restful API of Azure App Configuration service.
+
+        :param connection_string: Connection String (one of the access keys of the Azure App Configuration resource)
+            used to access the Azure App Configuration.
+        :type connection_string: str
+
     This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     Example
@@ -32,7 +87,6 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
     """
 
     def __init__(self, connection_string):
-        super().__init__()
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         program_name = os.path.basename(sys.argv[0]) or "noprogram"
         self.config = ConfigurationClientConfiguration(
@@ -64,7 +118,25 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
     def list_configuration_settings(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
-        """
+
+        """List the configuration settings stored in the configuration service, optionally filtered by
+        label and accept_date_time
+
+        :param labels: filter results based on their label. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type labels: list[str]
+        :param keys: filter results based on their keys. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type keys: list[str]
+        :param accept_date_time: filter out ConfigurationSetting created after this datetime
+        :type accept_date_time: datetime
+        :param fields: specify which fields to include in the results. Leave None to include all fields
+        :type fields: list[str]
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: An iterator of :class:`ConfigurationSetting`
+        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :raises: :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -83,14 +155,34 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
             async for item in filtered_listed:
                 pass  # do something
         """
-        return super().list_configuration_settings(
-            labels, keys, accept_date_time, fields, **kwargs
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
+        return self._impl.list_configuration_settings(
+            label=labels,
+            key=keys,
+            fields=fields,
+            accept_date_time=accept_date_time,
+            headers=kwargs.get("headers"),
         )
 
     async def get_configuration_setting(
         self, key, label=None, accept_date_time=None, **kwargs
     ):
-        """
+        # type: (str, str, datetime, dict) -> ConfigurationSetting
+
+        """Get the matched ConfigurationSetting from Azure App Configuration service
+
+        :param key: key of the ConfigurationSetting
+        :type key: str
+        :param label: label of the ConfigurationSetting
+        :type label: str
+        :param accept_date_time: The retrieved ConfigurationSetting must be created no later than this datetime
+        :type accept_date_time: datetime
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The matched ConfigurationSetting object
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -100,13 +192,27 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
                 key="MyKey", label="MyLabel"
             )
         """
-        return await super().get_configuration_setting(
-            key, label=label, accept_date_time=accept_date_time, **kwargs
+        error_map = {404: ResourceNotFoundError, 412: ResourceNotFoundError}
+        return await self._impl.get_configuration_setting(
+            key=key,
+            label=label,
+            accept_date_time=accept_date_time,
+            headers=kwargs.get("headers"),
+            error_map=error_map,
         )
 
     async def add_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
-        """
+
+        """Add a ConfigurationSetting into the Azure App Configuration service.
+
+        :param configuration_setting: the ConfigurationSetting object to be added
+        :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The ConfigurationSetting object returned from the App Configuration service
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceExistsError`, :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -121,7 +227,15 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
             )
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
-        return await super().add_configuration_setting(configuration_setting, **kwargs)
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        custom_headers["if-none-match"] = "*"
+        return await self._impl.create_or_update_configuration_setting(
+            configuration_setting=configuration_setting,
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            headers=custom_headers,
+            error_map={412: ResourceExistsError},
+        )
 
     async def update_configuration_setting(
         self,
@@ -134,7 +248,19 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
         **kwargs
     ):
         # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
-        """
+        """Update specified attributes of the ConfigurationSetting
+
+        :param key: key used to identify the ConfigurationSetting
+        :param value: the value to be updated to the ConfigurationSetting. None means unchanged.
+        :param content_type: the content type to be updated to the ConfigurationSetting. None means unchanged.
+        :param tags: tags to be updated to the ConfigurationSetting. None means unchanged.
+        :param label: lable used together with key to identify the ConfigurationSetting.
+        :param etag: the ETag (http entity tag) of the ConfigurationSetting.
+            Used to check if the configuration setting has changed. Leave None to skip the check.
+        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -148,7 +274,7 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
                 tags={"my updated tag": "my updated tag value"}
             )
         """
-        custom_headers = AzureAppConfigurationClientAbstract.prep_update_configuration_setting(
+        custom_headers = prep_update_configuration_setting(
             key, etag, **kwargs
         )
         current_configuration_setting = await self.get_configuration_setting(key, label)
@@ -169,7 +295,19 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
     async def set_configuration_setting(
         self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
-        """
+
+        """Add or update a ConfigurationSetting.
+        If the configuration setting identified by key and label does not exist, this is a create.
+        Otherwise this is an update.
+
+        :param configuration_setting: the ConfigurationSetting to be added (if not exists) or updated (if exists) to the service
+        :type configuration_setting: :class:`ConfigurationSetting`
+        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :type kwargs: dict
+        :return: The ConfigurationSetting returned from the service
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -184,12 +322,38 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
             )
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
-        return await super().set_configuration_setting(configuration_setting, **kwargs)
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        etag = configuration_setting.etag
+        if etag:
+            custom_headers["if-match"] = quote_etag(
+                etag
+            )
+        return await self._impl.create_or_update_configuration_setting(
+            configuration_setting=configuration_setting,
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            headers=custom_headers,
+            error_map={412: ResourceModifiedError},
+        )
 
     async def delete_configuration_setting(
         self, key, label=None, etag=None, **kwargs
     ):  # type: (str, str, str, dict) -> ConfigurationSetting
-        """
+
+        """Delete a ConfigurationSetting if it exists
+
+        :param key: key used to identify the ConfigurationSetting
+        :type key: str
+        :param label: label used to identify the ConfigurationSetting
+        :type label: str
+        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :type etag: str
+        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request
+        :type kwargs: dict
+        :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -199,12 +363,43 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
                 key="MyKey", label="MyLabel"
             )
         """
-        return await super().delete_configuration_setting(key, label, etag, **kwargs)
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        if etag:
+            custom_headers["if-match"] = quote_etag(
+                etag
+            )
+        return await self._impl.delete_configuration_setting(
+            key=key,
+            label=label,
+            headers=custom_headers,
+            error_map={
+                404: ResourceNotFoundError,  # 404 doesn't happen actually. return None if no match
+                412: ResourceModifiedError,
+            },
+        )
 
     def list_revisions(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+
         """
+        Find the ConfigurationSetting revision history.
+
+        :param labels: filter results based on their label. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type labels: list[str]
+        :param keys: filter results based on their keys. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type keys: list[str]
+        :param accept_date_time: filter out ConfigurationSetting created after this datetime
+        :type accept_date_time: datetime
+        :param fields: specify which fields to include in the results. Leave None to include all fields
+        :type fields: list[str]
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: An iterator of :class:`ConfigurationSetting`
+        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :raises: :class:`HttpRequestError`
+
         Example
 
         .. code-block:: python
@@ -224,37 +419,12 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
             async for item in filtered_revisions:
                 pass  # do something
         """
-        return super().list_revisions(labels, keys, accept_date_time, fields, **kwargs)
-
-
-AzureAppConfigurationClient.__doc__ = (
-    AzureAppConfigurationClientAbstract.__doc__ + AzureAppConfigurationClient.__doc__
-)
-AzureAppConfigurationClient.get_configuration_setting.__doc__ = (
-    AzureAppConfigurationClientAbstract.get_configuration_setting.__doc__
-    + AzureAppConfigurationClient.get_configuration_setting.__doc__
-)
-AzureAppConfigurationClient.add_configuration_setting.__doc__ = (
-    AzureAppConfigurationClientAbstract.add_configuration_setting.__doc__
-    + AzureAppConfigurationClient.add_configuration_setting.__doc__
-)
-AzureAppConfigurationClient.set_configuration_setting.__doc__ = (
-    AzureAppConfigurationClientAbstract.set_configuration_setting.__doc__
-    + AzureAppConfigurationClient.set_configuration_setting.__doc__
-)
-AzureAppConfigurationClient.update_configuration_setting.__doc__ = (
-    AzureAppConfigurationClientAbstract.update_configuration_setting.__doc__
-    + AzureAppConfigurationClient.update_configuration_setting.__doc__
-)
-AzureAppConfigurationClient.delete_configuration_setting.__doc__ = (
-    AzureAppConfigurationClientAbstract.delete_configuration_setting.__doc__
-    + AzureAppConfigurationClient.delete_configuration_setting.__doc__
-)
-AzureAppConfigurationClient.list_configuration_settings.__doc__ = (
-    AzureAppConfigurationClientAbstract.list_configuration_settings.__doc__
-    + AzureAppConfigurationClient.list_configuration_settings.__doc__
-)
-AzureAppConfigurationClient.list_revisions.__doc__ = (
-    AzureAppConfigurationClientAbstract.list_revisions.__doc__
-    + AzureAppConfigurationClient.list_revisions.__doc__
-)
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
+        return self._impl.list_revisions(
+            label=labels,
+            key=keys,
+            fields=fields,
+            accept_date_time=accept_date_time,
+            headers=kwargs.get("headers"),
+        )
