@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ServicesDescriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServicesDescription <azure.mgmt.healthcareapis.models.ServicesDescription>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServicesDescription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServicesDescriptionPaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.healthcareapis.models.Operation>` object

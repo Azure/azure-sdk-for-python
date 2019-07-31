@@ -10,64 +10,66 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .service_access_policy_entry_py3 import ServiceAccessPolicyEntry
-    from .service_cosmos_db_configuration_info_py3 import ServiceCosmosDbConfigurationInfo
-    from .service_authentication_configuration_info_py3 import ServiceAuthenticationConfigurationInfo
-    from .service_cors_configuration_info_py3 import ServiceCorsConfigurationInfo
-    from .services_properties_py3 import ServicesProperties
-    from .services_description_py3 import ServicesDescription
-    from .services_patch_description_py3 import ServicesPatchDescription
-    from .resource_py3 import Resource
-    from .error_details_internal_py3 import ErrorDetailsInternal
-    from .error_details_py3 import ErrorDetails, ErrorDetailsException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
-    from .services_name_availability_info_py3 import ServicesNameAvailabilityInfo
-    from .operation_results_description_py3 import OperationResultsDescription
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import ErrorDetails, ErrorDetailsException
+    from ._models_py3 import ErrorDetailsInternal
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationResultsDescription
+    from ._models_py3 import Resource
+    from ._models_py3 import ServiceAccessPolicyEntry
+    from ._models_py3 import ServiceAuthenticationConfigurationInfo
+    from ._models_py3 import ServiceCorsConfigurationInfo
+    from ._models_py3 import ServiceCosmosDbConfigurationInfo
+    from ._models_py3 import ServicesDescription
+    from ._models_py3 import ServicesNameAvailabilityInfo
+    from ._models_py3 import ServicesPatchDescription
+    from ._models_py3 import ServicesProperties
 except (SyntaxError, ImportError):
-    from .service_access_policy_entry import ServiceAccessPolicyEntry
-    from .service_cosmos_db_configuration_info import ServiceCosmosDbConfigurationInfo
-    from .service_authentication_configuration_info import ServiceAuthenticationConfigurationInfo
-    from .service_cors_configuration_info import ServiceCorsConfigurationInfo
-    from .services_properties import ServicesProperties
-    from .services_description import ServicesDescription
-    from .services_patch_description import ServicesPatchDescription
-    from .resource import Resource
-    from .error_details_internal import ErrorDetailsInternal
-    from .error_details import ErrorDetails, ErrorDetailsException
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .check_name_availability_parameters import CheckNameAvailabilityParameters
-    from .services_name_availability_info import ServicesNameAvailabilityInfo
-    from .operation_results_description import OperationResultsDescription
-from .services_description_paged import ServicesDescriptionPaged
-from .operation_paged import OperationPaged
-from .healthcare_apis_management_client_enums import (
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import ErrorDetails, ErrorDetailsException
+    from ._models import ErrorDetailsInternal
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationResultsDescription
+    from ._models import Resource
+    from ._models import ServiceAccessPolicyEntry
+    from ._models import ServiceAuthenticationConfigurationInfo
+    from ._models import ServiceCorsConfigurationInfo
+    from ._models import ServiceCosmosDbConfigurationInfo
+    from ._models import ServicesDescription
+    from ._models import ServicesNameAvailabilityInfo
+    from ._models import ServicesPatchDescription
+    from ._models import ServicesProperties
+from ._paged_models import OperationPaged
+from ._paged_models import ServicesDescriptionPaged
+from ._healthcare_apis_management_client_enums import (
     ProvisioningState,
+    Kind,
     ServiceNameUnavailabilityReason,
     OperationResultStatus,
 )
 
 __all__ = [
+    'CheckNameAvailabilityParameters',
+    'ErrorDetails', 'ErrorDetailsException',
+    'ErrorDetailsInternal',
+    'Operation',
+    'OperationDisplay',
+    'OperationResultsDescription',
+    'Resource',
     'ServiceAccessPolicyEntry',
-    'ServiceCosmosDbConfigurationInfo',
     'ServiceAuthenticationConfigurationInfo',
     'ServiceCorsConfigurationInfo',
-    'ServicesProperties',
+    'ServiceCosmosDbConfigurationInfo',
     'ServicesDescription',
-    'ServicesPatchDescription',
-    'Resource',
-    'ErrorDetailsInternal',
-    'ErrorDetails', 'ErrorDetailsException',
-    'OperationDisplay',
-    'Operation',
-    'CheckNameAvailabilityParameters',
     'ServicesNameAvailabilityInfo',
-    'OperationResultsDescription',
+    'ServicesPatchDescription',
+    'ServicesProperties',
     'ServicesDescriptionPaged',
     'OperationPaged',
     'ProvisioningState',
+    'Kind',
     'ServiceNameUnavailabilityReason',
     'OperationResultStatus',
 ]
