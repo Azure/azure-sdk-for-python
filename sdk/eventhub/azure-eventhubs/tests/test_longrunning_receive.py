@@ -14,6 +14,7 @@ import argparse
 import time
 import os
 import sys
+import threading
 import pytest
 
 from logging.handlers import RotatingFileHandler
@@ -21,6 +22,7 @@ from logging.handlers import RotatingFileHandler
 from azure.eventhub import EventPosition
 from azure.eventhub import EventHubClient
 from azure.eventhub import EventHubSharedKeyCredential
+
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -47,38 +49,33 @@ def get_logger(filename, level=logging.INFO):
 logger = get_logger("recv_test.log", logging.INFO)
 
 
-def get_partitions(args):
-    eh_data = args.get_properties()
-    return eh_data["partition_ids"]
-
-
-def pump(receivers, duration):
+def pump(receiver, duration):
     total = 0
     iteration = 0
     deadline = time.time() + duration
-    try:
-        while time.time() < deadline:
-            for pid, receiver in receivers.items():
+    with receiver:
+        try:
+            while time.time() < deadline:
                 batch = receiver.receive(timeout=5)
                 size = len(batch)
                 total += size
                 iteration += 1
                 if size == 0:
                     print("{}: No events received, queue size {}, delivered {}".format(
-                        pid,
+                        receiver.partition,
                         receiver.queue_size,
                         total))
-                elif iteration >= 50:
+                elif iteration >= 5:
                     iteration = 0
                     print("{}: total received {}, last sn={}, last offset={}".format(
-                                pid,
+                                receiver.partition,
                                 total,
                                 batch[-1].sequence_number,
                                 batch[-1].offset))
-            print("Total received {}".format(total))
-    except Exception as e:
-        print("EventHubConsumer failed: {}".format(e))
-        raise
+            print("{}: Total received {}".format(receiver.partition, total))
+        except Exception as e:
+            print("EventHubConsumer failed: {}".format(e))
+            raise
 
 
 @pytest.mark.liveTest
@@ -112,22 +109,23 @@ def test_long_running_receive(connection_str):
         except ImportError:
             raise ValueError("Must specify either '--conn-str' or '--address'")
 
-    try:
-        if not args.partitions:
-            partitions = get_partitions(client)
-        else:
-            partitions = args.partitions.split(",")
-        pumps = {}
-        for pid in partitions:
-            pumps[pid] = client.create_consumer(consumer_group="$default",
-                partition_id=pid,
-                event_position=EventPosition(args.offset),
-                prefetch=50)
-        pump(pumps, args.duration)
-    finally:
-        for pid in partitions:
-            pumps[pid].close()
+    if args.partitions:
+        partitions = args.partitions.split(",")
+    else:
+        partitions = client.get_partition_ids()
+
+    threads = []
+    for pid in partitions:
+        consumer = client.create_consumer(consumer_group="$default",
+            partition_id=pid,
+            event_position=EventPosition(args.offset),
+            prefetch=300)
+        thread = threading.Thread(target=pump, args=(consumer, args.duration))
+        thread.start()
+        threads.append(thread)
+    for thread in threads:
+        thread.join()
 
 
 if __name__ == '__main__':
-    test_long_running_receive(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    test_long_running_receive(os.environ.get('EVENT_HUB_PERF_CONN_STR'))
