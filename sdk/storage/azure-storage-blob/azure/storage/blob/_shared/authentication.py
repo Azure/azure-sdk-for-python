@@ -6,10 +6,10 @@
 
 import logging
 import sys
-from yarl import URL
 
 try:
     from urllib.parse import urlparse, unquote
+    from yarl import URL
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import unquote # type: ignore
