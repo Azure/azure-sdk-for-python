@@ -11,46 +11,14 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operations import Operations
-from .operations.alerts_operations import AlertsOperations
-from .operations.smart_groups_operations import SmartGroupsOperations
+
+from ._configuration import AlertsManagementClientConfiguration
+from .operations import Operations
+from .operations import AlertsOperations
+from .operations import SmartGroupsOperations
+from .operations import ActionRulesOperations
+from .operations import SmartDetectorAlertRulesOperations
 from . import models
-
-
-class AlertsManagementClientConfiguration(AzureConfiguration):
-    """Configuration for AlertsManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'http://localhost'
-
-        super(AlertsManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-alertsmanagement/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class AlertsManagementClient(SDKClient):
@@ -65,6 +33,10 @@ class AlertsManagementClient(SDKClient):
     :vartype alerts: azure.mgmt.alertsmanagement.operations.AlertsOperations
     :ivar smart_groups: SmartGroups operations
     :vartype smart_groups: azure.mgmt.alertsmanagement.operations.SmartGroupsOperations
+    :ivar action_rules: ActionRules operations
+    :vartype action_rules: azure.mgmt.alertsmanagement.operations.ActionRulesOperations
+    :ivar smart_detector_alert_rules: SmartDetectorAlertRules operations
+    :vartype smart_detector_alert_rules: azure.mgmt.alertsmanagement.operations.SmartDetectorAlertRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -73,17 +45,18 @@ class AlertsManagementClient(SDKClient):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :param subscription_id1: The Azure subscription id.
+    :type subscription_id1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
-        self.config = AlertsManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = AlertsManagementClientConfiguration(credentials, subscription_id, subscription_id1, base_url)
         super(AlertsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-05-05'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -92,4 +65,8 @@ class AlertsManagementClient(SDKClient):
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.smart_groups = SmartGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.action_rules = ActionRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.smart_detector_alert_rules = SmartDetectorAlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
