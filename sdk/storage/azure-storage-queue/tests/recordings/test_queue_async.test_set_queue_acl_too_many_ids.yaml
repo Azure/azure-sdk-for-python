@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 1ca36d12-b3da-11e9-8f92-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:28:17 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuee72f13d2
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:28:15 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: d9cc4bae-7003-0009-1ae6-4722e7000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueuee72f13d2
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 4d36054a-b3da-11e9-80bc-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:39 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuee72f13d2
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:29:37 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: e6de1e49-0003-00ca-2ae7-47aba4000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueuee72f13d2
+        - ''
+        - ''
+version: 1

@@ -172,8 +172,8 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/remotestoragename/listqueue1560410cb</NextMarker></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/remotestoragename/listqueue1560410cb</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -215,11 +215,11 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/?prefix=listqueue&marker=%2Fremotestoragename%2Flistqueue1560410cb&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/remotestoragename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata\
-        \ /></Queue></Queues><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/remotestoragename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -413,8 +413,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/storagename/listqueue1560410cb</NextMarker></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/storagename/listqueue1560410cb</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -456,11 +456,11 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue1560410cb&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata\
-        \ /></Queue></Queues><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -654,8 +654,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/storagename/listqueue1560410cb</NextMarker></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0</Name></Queue><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1</Name></Queue></Queues><NextMarker>/storagename/listqueue1560410cb</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -697,11 +697,11 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue1560410cb&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata\
-        \ /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata\
-        \ /></Queue></Queues><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue1560410cb</Marker><Queues><Queue><Name>listqueue1560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue2</Name><Metadata /></Queue><Queue><Name>listqueue2560410cb</Name><Metadata
+        /></Queue><Queue><Name>listqueue3</Name><Metadata /></Queue><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -895,8 +895,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue3</NextMarker></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue3</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -938,9 +938,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue3&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue3</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata\
-        \ /></Queue></Queues><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue3</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -956,6 +956,257 @@ interactions:
       - Origin
       x-ms-request-id:
       - d0c3a781-f003-0014-163a-29a764000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3b792fd4-b3da-11e9-bde8-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue0560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 47533091-b003-00d8-71e6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3ba8f8be-b3da-11e9-9e7e-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue1560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 475330b7-b003-00d8-15e6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3bb57474-b3da-11e9-82e1-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue2560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 475330ee-b003-00d8-49e6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3bc32740-b3da-11e9-b29f-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue3560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 4753311e-b003-00d8-72e6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3bcf7a62-b3da-11e9-9233-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://rakshithqueueasynctest.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/rakshithqueueasynctest/listqueue3560410cb</NextMarker></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 4753313c-b003-00d8-0fe6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3bda6f64-b3da-11e9-9c8e-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/?prefix=listqueue&marker=%2Frakshithqueueasynctest%2Flistqueue3560410cb&include=metadata&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://rakshithqueueasynctest.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/rakshithqueueasynctest/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:07 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 4753316c-b003-00d8-3ee6-479fb8000000
       x-ms-version:
       - '2018-03-28'
     status:

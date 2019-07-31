@@ -1,0 +1,184 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 17bbdbb6-b3da-11e9-80b7-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:28:09 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueueaa2a1b80
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:28:07 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: f03f5c49-b003-0014-16e6-47fb0d000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueueaa2a1b80
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 17cd998a-b3da-11e9-8345-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:28:09 GMT
+      x-ms-meta:
+      - '{''val'': ''value''}'
+      x-ms-meta-val:
+      - value
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueueaa2a1b80
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueAlreadyExists</Code><Message>The
+        specified queue already exists.\nRequestId:f03f5c59-b003-0014-23e6-47fb0d000000\nTime:2019-07-31T21:28:07.7446266Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '222'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:28:07 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: QueueAlreadyExists
+      x-ms-request-id: f03f5c59-b003-0014-23e6-47fb0d000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 409
+      message: The specified queue already exists.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueueaa2a1b80
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 46d21b02-b3da-11e9-bd76-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:28 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueueaa2a1b80
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:29:26 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 07fbc9b7-5003-0037-5ae7-4794c6000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueueaa2a1b80
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 46e72586-b3da-11e9-9aad-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:28 GMT
+      x-ms-meta:
+      - '{''val'': ''value''}'
+      x-ms-meta-val:
+      - value
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueueaa2a1b80
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueAlreadyExists</Code><Message>The
+        specified queue already exists.\nRequestId:07fbc9c7-5003-0037-68e7-4794c6000000\nTime:2019-07-31T21:29:26.7744117Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '222'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:29:26 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: QueueAlreadyExists
+      x-ms-request-id: 07fbc9c7-5003-0037-68e7-4794c6000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 409
+      message: The specified queue already exists.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueueaa2a1b80
+        - ''
+        - ''
+version: 1

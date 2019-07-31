@@ -26,10 +26,9 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:8853e50d-d003-00a2-0c36-29a99c000000\n\
-        Time:2019-06-22T20:12:31.1824569Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:8853e50d-d003-00a2-0c36-29a99c000000\nTime:2019-06-22T20:12:31.1824569Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -75,10 +74,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:27caead9-c003-0017-1d37-29a463000000\n\
-        Time:2019-06-22T20:17:55.5796408Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:27caead9-c003-0017-1d37-29a463000000\nTime:2019-06-22T20:17:55.5796408Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -124,10 +122,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:dc702338-5003-003b-0c38-29265e000000\n\
-        Time:2019-06-22T20:22:04.8948219Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:dc702338-5003-003b-0c38-29265e000000\nTime:2019-06-22T20:22:04.8948219Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -173,10 +170,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:bcf6c940-6003-0055-013a-298f77000000\n\
-        Time:2019-06-22T20:38:04.1467573Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:bcf6c940-6003-0055-013a-298f77000000\nTime:2019-06-22T20:38:04.1467573Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -190,6 +186,54 @@ interactions:
       - InvalidXmlDocument
       x-ms-request-id:
       - bcf6c940-6003-0055-013a-298f77000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 64243bae-b3da-11e9-b780-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:30:17 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:3cf9bd6e-d003-000f-05e7-47d59f000000\nTime:2019-07-31T21:30:16.0794087Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+    headers:
+      Content-Length:
+      - '376'
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:30:15 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-request-id:
+      - 3cf9bd6e-d003-000f-05e7-47d59f000000
       x-ms-version:
       - '2018-03-28'
     status:

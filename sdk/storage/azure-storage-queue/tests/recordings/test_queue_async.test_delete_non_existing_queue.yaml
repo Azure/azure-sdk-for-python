@@ -1,0 +1,94 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 18a7f6f0-b3da-11e9-9391-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:28:10 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueued2ca137a
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:6d87ccd4-1003-00d5-4ae6-4770b4000000\nTime:2019-07-31T21:28:09.2637935Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '217'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:28:08 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: QueueNotFound
+      x-ms-request-id: 6d87ccd4-1003-00d5-4ae6-4770b4000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueued2ca137a
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 48042e52-b3da-11e9-bd31-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueued2ca137a
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:781a5be5-1003-0019-48e7-471401000000\nTime:2019-07-31T21:29:28.7272204Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '217'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 31 Jul 2019 21:29:28 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: QueueNotFound
+      x-ms-request-id: 781a5be5-1003-0019-48e7-471401000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - rakshithqueueasynctest.queue.core.windows.net
+        - /pythonqueued2ca137a
+        - ''
+        - ''
+version: 1

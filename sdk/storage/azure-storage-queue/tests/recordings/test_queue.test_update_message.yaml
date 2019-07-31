@@ -64,10 +64,10 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:13:16 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA0Qhw7TYp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:13:16 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:13:16
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA0Qhw7TYp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:13:16 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       Content-Type:
       - application/xml
@@ -105,10 +105,10 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:13:16 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAnsNZ/zYp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:13:46 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:13:16
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAnsNZ/zYp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:13:46 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -194,10 +194,10 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:13:16 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAANqFr/zYp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:13:46 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>83095281-1ec9-4175-9dea-586954608941</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:13:16 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:13:16
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAANqFr/zYp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:13:46 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -283,10 +283,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:18:35 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA1Uaqqzcp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:18:35 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:18:35
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA1Uaqqzcp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:18:35 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       Content-Type:
       - application/xml
@@ -324,10 +324,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:18:35 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAALeyUvTcp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:19:05 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:18:35
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAALeyUvTcp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:19:05 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -413,10 +413,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:18:35 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAusmmvTcp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:19:05 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>e14c8959-6eb7-4504-9d4d-27fa682ba738</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:18:35 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:18:35
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAusmmvTcp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:19:05 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -502,10 +502,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:22:56 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAz57/Rjgp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:22:56 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:22:56
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAz57/Rjgp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:22:56 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       Content-Type:
       - application/xml
@@ -543,10 +543,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:22:56 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAUZLqWDgp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:23:26 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:22:56
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAUZLqWDgp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:23:26 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -632,10 +632,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:22:56 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAnKj9WDgp1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:23:26 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f446f6b5-e9f9-4abf-a32b-3ed9358b4851</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:22:56 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:22:56
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAnKj9WDgp1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:23:26 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -721,10 +721,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:39:09 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAQDBPizop1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:39:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:39:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAQDBPizop1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:39:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       Content-Type:
       - application/xml
@@ -762,10 +762,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:39:09 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAHW48nTop1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:39:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:39:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAHW48nTop1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:39:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -851,10 +851,10 @@ interactions:
     uri: https://storagename.queue.core.windows.net/pythonqueuec0820c59/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,\
-        \ 22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019\
-        \ 20:39:09 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAvyBQnTop1QE=</PopReceipt><TimeNextVisible>Sat,\
-        \ 22 Jun 2019 20:39:40 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0b1b2830-4f09-42fb-a348-490c551b040b</MessageId><InsertionTime>Sat,
+        22 Jun 2019 20:39:09 GMT</InsertionTime><ExpirationTime>Sat, 29 Jun 2019 20:39:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAvyBQnTop1QE=</PopReceipt><TimeNextVisible>Sat,
+        22 Jun 2019 20:39:40 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       Cache-Control:
       - no-cache
@@ -870,6 +870,231 @@ interactions:
       - Origin
       x-ms-request-id:
       - e1088960-7003-002c-193a-29e63d000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 44bd03d4-b3da-11e9-87e5-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:24 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuec0820c59
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 6408f316-9003-00a9-74e7-47ed81000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 44efafe8-b3da-11e9-a6d6-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:25 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuec0820c59/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a9074efa-89d4-4504-a4e8-0e23cefb1a1d</MessageId><InsertionTime>Wed,
+        31 Jul 2019 21:29:23 GMT</InsertionTime><ExpirationTime>Wed, 07 Aug 2019 21:29:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAxeemBedH1QE=</PopReceipt><TimeNextVisible>Wed,
+        31 Jul 2019 21:29:23 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - 6408f331-9003-00a9-0de7-47ed81000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 450f0b0a-b3da-11e9-ad0b-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:25 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuec0820c59/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a9074efa-89d4-4504-a4e8-0e23cefb1a1d</MessageId><InsertionTime>Wed,
+        31 Jul 2019 21:29:23 GMT</InsertionTime><ExpirationTime>Wed, 07 Aug 2019 21:29:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAJpSsF+dH1QE=</PopReceipt><TimeNextVisible>Wed,
+        31 Jul 2019 21:29:53 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 6408f366-9003-00a9-3fe7-47ed81000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 4524a56e-b3da-11e9-b1b2-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:25 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuec0820c59/messages/a9074efa-89d4-4504-a4e8-0e23cefb1a1d?popreceipt=AgAAAAMAAAAAAAAAJpSsF%2BdH1QE%3D&visibilitytimeout=0
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-popreceipt:
+      - AwAAAAMAAAAAAAAA2/XcBedH1QEBAAAA
+      x-ms-request-id:
+      - 6408f380-9003-00a9-56e7-47ed81000000
+      x-ms-time-next-visible:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 453342a2-b3da-11e9-8e26-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:25 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueuec0820c59/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a9074efa-89d4-4504-a4e8-0e23cefb1a1d</MessageId><InsertionTime>Wed,
+        31 Jul 2019 21:29:23 GMT</InsertionTime><ExpirationTime>Wed, 07 Aug 2019 21:29:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAR3DJF+dH1QE=</PopReceipt><TimeNextVisible>Wed,
+        31 Jul 2019 21:29:53 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 6408f387-9003-00a9-5de7-47ed81000000
       x-ms-version:
       - '2018-03-28'
     status:

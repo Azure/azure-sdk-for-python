@@ -100,9 +100,9 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -224,9 +224,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -348,9 +348,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -472,9 +472,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        /></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -490,6 +490,136 @@ interactions:
       - Origin
       x-ms-request-id:
       - 2d5a1ccf-4003-0042-423a-294f14000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3adf7be4-b3da-11e9-9cfe-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:08 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueue665a1100
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:06 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 4f6d7a15-8003-0131-27e6-4725eb000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3b1978d4-b3da-11e9-a461-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:08 GMT
+      x-ms-meta-val1:
+      - test
+      x-ms-meta-val2:
+      - blah
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueue665a1100?comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 31 Jul 2019 21:29:06 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 4f6d7a31-8003-0131-3ce6-4725eb000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3b31d064-b3da-11e9-b6c2-2816a845e8c6
+      x-ms-date:
+      - Wed, 31 Jul 2019 21:29:08 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://rakshithqueueasynctest.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://rakshithqueueasynctest.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 31 Jul 2019 21:29:06 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 4f6d7a42-8003-0131-48e6-4725eb000000
       x-ms-version:
       - '2018-03-28'
     status:
