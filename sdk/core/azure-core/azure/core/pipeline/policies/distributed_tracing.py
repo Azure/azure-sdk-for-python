@@ -46,6 +46,13 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
+def set_header(request, span):
+    # type: (PipelineRequest[HttpRequest], Any) -> None
+    """
+    Sets the header information on the span.
+    """
+    headers = span.to_header()
+    request.http_request.headers.update(headers)
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
@@ -56,13 +63,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         self._request_id = "x-ms-client-request-id"
         self._response_id = "x-ms-request-id"
 
-    def set_header(self, request, span):
-        # type: (PipelineRequest[HttpRequest], Any) -> None
-        """
-        Sets the header information on the span.
-        """
-        headers = span.to_header()
-        request.http_request.headers.update(headers)
+
 
     def on_request(self, request):
         # type: (PipelineRequest[HttpRequest], Any) -> None
@@ -85,7 +86,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
         set_span_contexts(child)
         self.parent_span_dict[child] = original_context
-        self.set_header(request, child)
+        set_header(request, child)
 
     def end_span(self, request, response=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None

@@ -49,6 +49,20 @@ CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 
 
+def _build_ssl_config(cert, verify):
+    ssl_ctx = None
+
+    if cert or verify not in (True, False):
+        import ssl
+        if verify not in (True, False):
+            ssl_ctx = ssl.create_default_context(cafile=verify)
+        else:
+            ssl_ctx = ssl.create_default_context()
+        if cert:
+            ssl_ctx.load_cert_chain(*cert)
+        return ssl_ctx
+    return verify
+
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
 
@@ -103,20 +117,6 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, cert, verify):
-        ssl_ctx = None
-
-        if cert or verify not in (True, False):
-            import ssl
-            if verify not in (True, False):
-                ssl_ctx = ssl.create_default_context(cafile=verify)
-            else:
-                ssl_ctx = ssl.create_default_context()
-            if cert:
-                ssl_ctx.load_cert_chain(*cert)
-            return ssl_ctx
-        return verify
-
     def _get_request_data(self, request): #pylint: disable=no-self-use
         if request.files:
             form_data = aiohttp.FormData()
@@ -161,7 +161,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         error = None
         response = None
-        config['ssl'] = self._build_ssl_config(
+        config['ssl'] = _build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
             verify=config.pop('connection_verify', self.connection_config.verify)
         )

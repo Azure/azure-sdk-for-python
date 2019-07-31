@@ -31,8 +31,9 @@
 from collections import namedtuple
 import logging
 import os
-import six
 import sys
+import six
+from azure.core.tracing import AbstractSpan
 
 try:
     from typing import TYPE_CHECKING
@@ -41,10 +42,6 @@ except ImportError:
 
 if TYPE_CHECKING:
     from typing import Any, Union
-
-
-from azure.core.tracing import AbstractSpan
-
 
 __all__ = ("settings",)
 

@@ -30,7 +30,6 @@ from typing import (
     TypeVar,
     Iterator,
     Iterable,
-    Tuple,
 )  # pylint: disable=unused-import
 import logging
 
@@ -43,10 +42,10 @@ ResponseType = TypeVar("ResponseType")
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
-        self,
-        get_next,  # type: Callable[[Optional[str]], ResponseType]
-        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
-        continuation_token=None,  # type: Optional[str]
+            self,
+            get_next,  # type: Callable[[Optional[str]], ResponseType]
+            extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
+            continuation_token=None,  # type: Optional[str]
     ):
         """Return an iterator of pages.
 
