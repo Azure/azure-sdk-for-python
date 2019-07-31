@@ -101,6 +101,6 @@ steps:
     displayName: 'Publish Python3.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-python3.7-*.xml'
+      testResultsFiles: '**/test-junit-py3.7-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
       mergeTestResults: true
