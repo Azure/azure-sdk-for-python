@@ -76,8 +76,6 @@ class ConsumerProducerMixin(object):
                 self.client.get_auth(**alt_creds)
             ))
             while not self._handler.client_ready():
-                if timeout_time and time.time() >= timeout_time:
-                    return
                 time.sleep(0.05)
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
