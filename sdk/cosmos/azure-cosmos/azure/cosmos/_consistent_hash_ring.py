@@ -26,10 +26,10 @@ from struct import unpack
 import six
 from six.moves import xrange
 
-from . import partition
+from . import _partition
 
 
-class _ConsistentHashRing(object):
+class ConsistentHashRing(object):
     """The ConsistentHashRing class implements a consistent hash ring using the 
     hash generator specified.
     """
@@ -79,13 +79,13 @@ class _ConsistentHashRing(object):
         using the hashing algorithm and then finally sorting the partitions based on the hash value.
         """
         collections_node_count = len(collection_links)
-        partitions = [partition._Partition() for _ in xrange(0, partitions_per_node * collections_node_count)]
+        partitions = [_partition.Partition() for _ in xrange(0, partitions_per_node * collections_node_count)]
 
         index = 0
         for collection_node in collection_links:
             hash_value = self.hash_generator.ComputeHash(self._GetBytes(collection_node))
             for _ in xrange(0, partitions_per_node):
-                partitions[index] = partition._Partition(hash_value, collection_node)
+                partitions[index] = _partition.Partition(hash_value, collection_node)
                 index += 1
                 hash_value = self.hash_generator.ComputeHash(hash_value)
 
