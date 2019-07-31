@@ -119,6 +119,7 @@ try:
     from .phoenix_linked_service_py3 import PhoenixLinkedService
     from .paypal_linked_service_py3 import PaypalLinkedService
     from .marketo_linked_service_py3 import MarketoLinkedService
+    from .azure_maria_db_linked_service_py3 import AzureMariaDBLinkedService
     from .maria_db_linked_service_py3 import MariaDBLinkedService
     from .magento_linked_service_py3 import MagentoLinkedService
     from .jira_linked_service_py3 import JiraLinkedService
@@ -208,6 +209,7 @@ try:
     from .phoenix_object_dataset_py3 import PhoenixObjectDataset
     from .paypal_object_dataset_py3 import PaypalObjectDataset
     from .marketo_object_dataset_py3 import MarketoObjectDataset
+    from .azure_maria_db_table_dataset_py3 import AzureMariaDBTableDataset
     from .maria_db_table_dataset_py3 import MariaDBTableDataset
     from .magento_object_dataset_py3 import MagentoObjectDataset
     from .jira_object_dataset_py3 import JiraObjectDataset
@@ -254,6 +256,8 @@ try:
     from .odbc_table_dataset_py3 import OdbcTableDataset
     from .informix_table_dataset_py3 import InformixTableDataset
     from .relational_table_dataset_py3 import RelationalTableDataset
+    from .db2_table_dataset_py3 import Db2TableDataset
+    from .amazon_redshift_table_dataset_py3 import AmazonRedshiftTableDataset
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
     from .teradata_table_dataset_py3 import TeradataTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
@@ -324,6 +328,7 @@ try:
     from .phoenix_source_py3 import PhoenixSource
     from .paypal_source_py3 import PaypalSource
     from .marketo_source_py3 import MarketoSource
+    from .azure_maria_db_source_py3 import AzureMariaDBSource
     from .maria_db_source_py3 import MariaDBSource
     from .magento_source_py3 import MagentoSource
     from .jira_source_py3 import JiraSource
@@ -464,6 +469,7 @@ try:
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
+    from .azure_my_sql_sink_py3 import AzureMySqlSink
     from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
@@ -624,6 +630,7 @@ except (SyntaxError, ImportError):
     from .phoenix_linked_service import PhoenixLinkedService
     from .paypal_linked_service import PaypalLinkedService
     from .marketo_linked_service import MarketoLinkedService
+    from .azure_maria_db_linked_service import AzureMariaDBLinkedService
     from .maria_db_linked_service import MariaDBLinkedService
     from .magento_linked_service import MagentoLinkedService
     from .jira_linked_service import JiraLinkedService
@@ -713,6 +720,7 @@ except (SyntaxError, ImportError):
     from .phoenix_object_dataset import PhoenixObjectDataset
     from .paypal_object_dataset import PaypalObjectDataset
     from .marketo_object_dataset import MarketoObjectDataset
+    from .azure_maria_db_table_dataset import AzureMariaDBTableDataset
     from .maria_db_table_dataset import MariaDBTableDataset
     from .magento_object_dataset import MagentoObjectDataset
     from .jira_object_dataset import JiraObjectDataset
@@ -759,6 +767,8 @@ except (SyntaxError, ImportError):
     from .odbc_table_dataset import OdbcTableDataset
     from .informix_table_dataset import InformixTableDataset
     from .relational_table_dataset import RelationalTableDataset
+    from .db2_table_dataset import Db2TableDataset
+    from .amazon_redshift_table_dataset import AmazonRedshiftTableDataset
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
     from .teradata_table_dataset import TeradataTableDataset
     from .oracle_table_dataset import OracleTableDataset
@@ -829,6 +839,7 @@ except (SyntaxError, ImportError):
     from .phoenix_source import PhoenixSource
     from .paypal_source import PaypalSource
     from .marketo_source import MarketoSource
+    from .azure_maria_db_source import AzureMariaDBSource
     from .maria_db_source import MariaDBSource
     from .magento_source import MagentoSource
     from .jira_source import JiraSource
@@ -969,6 +980,7 @@ except (SyntaxError, ImportError):
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
+    from .azure_my_sql_sink import AzureMySqlSink
     from .azure_postgre_sql_sink import AzurePostgreSqlSink
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
@@ -1210,6 +1222,7 @@ __all__ = [
     'PhoenixLinkedService',
     'PaypalLinkedService',
     'MarketoLinkedService',
+    'AzureMariaDBLinkedService',
     'MariaDBLinkedService',
     'MagentoLinkedService',
     'JiraLinkedService',
@@ -1299,6 +1312,7 @@ __all__ = [
     'PhoenixObjectDataset',
     'PaypalObjectDataset',
     'MarketoObjectDataset',
+    'AzureMariaDBTableDataset',
     'MariaDBTableDataset',
     'MagentoObjectDataset',
     'JiraObjectDataset',
@@ -1345,6 +1359,8 @@ __all__ = [
     'OdbcTableDataset',
     'InformixTableDataset',
     'RelationalTableDataset',
+    'Db2TableDataset',
+    'AmazonRedshiftTableDataset',
     'AzureMySqlTableDataset',
     'TeradataTableDataset',
     'OracleTableDataset',
@@ -1415,6 +1431,7 @@ __all__ = [
     'PhoenixSource',
     'PaypalSource',
     'MarketoSource',
+    'AzureMariaDBSource',
     'MariaDBSource',
     'MagentoSource',
     'JiraSource',
@@ -1555,6 +1572,7 @@ __all__ = [
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
+    'AzureMySqlSink',
     'AzurePostgreSqlSink',
     'DelimitedTextSink',
     'CopySink',
