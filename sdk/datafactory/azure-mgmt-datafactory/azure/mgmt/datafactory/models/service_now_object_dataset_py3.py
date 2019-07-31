@@ -36,7 +36,7 @@ class ServiceNowObjectDataset(Dataset):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     Dataset
     :type annotations: list[object]
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
