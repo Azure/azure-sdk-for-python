@@ -21,6 +21,9 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.queue.aio import QueueServiceClient, QueueClient
 from azure.storage.queue import (
     QueuePermissions,
@@ -42,6 +45,15 @@ TEST_QUEUE_PREFIX = 'pythonqueue'
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 class StorageQueueTestAsync(QueueTestCase):
     def setUp(self):
@@ -49,7 +61,7 @@ class StorageQueueTestAsync(QueueTestCase):
 
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials)
+        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_queues = []
 
     def tearDown(self):
@@ -180,9 +192,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(queues)
         self.assertTrue(len(self.test_queues) <= len(queues))
 
+    @record
     def test_list_queues(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_queues())
 

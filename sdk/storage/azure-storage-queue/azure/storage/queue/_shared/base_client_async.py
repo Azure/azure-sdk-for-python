@@ -11,10 +11,6 @@ from typing import (  # pylint: disable=unused-import
 import logging
 
 from azure.core.pipeline import AsyncPipeline
-try:
-    from azure.core.pipeline.transport import AioHttpTransport as AsyncTransport
-except ImportError:
-    from azure.core.pipeline.transport import AsyncioRequestsTransport as AsyncTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -68,7 +64,8 @@ class AsyncStorageAccountHostsMixin(object):
         if 'connection_timeout' not in kwargs:
             kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
         if not config.transport:
-            config.transport = AsyncTransport(**kwargs)
+            from azure.core.pipeline.transport import AioHttpTransport
+            config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
