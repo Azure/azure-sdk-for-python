@@ -48,6 +48,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
         sender.send(EventData("test data"))
     sender.close()
 
+
 @pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
