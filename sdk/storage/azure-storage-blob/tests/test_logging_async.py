@@ -11,6 +11,9 @@ import asyncio
 import sys
 from datetime import datetime, timedelta
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -28,6 +31,7 @@ from testcase import (
     StorageTestCase,
     TestMode,
     LogCaptured,
+    record
 )
 
 if sys.version_info >= (3,):
@@ -39,6 +43,17 @@ else:
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
 
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageLoggingTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -47,7 +62,7 @@ class StorageLoggingTestAsync(StorageTestCase):
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(url, credential=credential)
+        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.container_name = self.get_resource_name('utcontainer')
 
     def tearDown(self):
@@ -95,13 +110,16 @@ class StorageLoggingTestAsync(StorageTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
+    @record
     def test_authorization_is_scrubbed_off(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_authorization_is_scrubbed_off())
 
     async def _test_sas_signature_is_scrubbed_off(self):
+        # Test can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         await self._setup()
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
@@ -125,13 +143,16 @@ class StorageLoggingTestAsync(StorageTestCase):
             self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
+    @record
     def test_sas_signature_is_scrubbed_off(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_signature_is_scrubbed_off())
 
     async def _test_copy_source_sas_is_scrubbed_off(self):
+        # Test can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         await self._setup()
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
@@ -157,8 +178,7 @@ class StorageLoggingTestAsync(StorageTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
+    @record
     def test_copy_source_sas_is_scrubbed_off(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_source_sas_is_scrubbed_off())

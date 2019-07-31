@@ -14,6 +14,9 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -33,6 +36,17 @@ from testcase import (
 )
 
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 # --Test Class -----------------------------------------------------------------
 class StorageRetryTestAsync(StorageTestCase):
     def setUp(self):
@@ -46,7 +60,7 @@ class StorageRetryTestAsync(StorageTestCase):
     async def _test_retry_on_server_error_async(self):
         # Arrange
         container_name = self.get_resource_name()
-        service = self._create_storage_service(BlobServiceClient, self.settings)
+        service = self._create_storage_service(BlobServiceClient, self.settings, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -73,7 +87,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -99,7 +113,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -136,7 +150,7 @@ class StorageRetryTestAsync(StorageTestCase):
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         socket_timeout = 0.000000000001
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout)
+            BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout, transport=AiohttpTestTransport())
 
         assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
@@ -166,7 +180,7 @@ class StorageRetryTestAsync(StorageTestCase):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=NoRetry())
+            BlobServiceClient, self.settings, retry_policy=NoRetry(), transport=AiohttpTestTransport())
 
 
         # Force the create call to 'timeout' with a 408
@@ -193,7 +207,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -220,7 +234,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             container = await service.create_container(container_name)
@@ -309,7 +323,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to fail by pretending it's a teapot
         callback = ResponseCallback(status=201, new_status=418).override_status
@@ -362,7 +376,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -396,7 +410,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -428,7 +442,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -457,7 +471,7 @@ class StorageRetryTestAsync(StorageTestCase):
         # Arrange
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         # Fail the first request and set the retry policy to retry to secondary
@@ -496,7 +510,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
         service.credential.account_name = "dummy_account_name"
         service.credential.account_key = "dummy_account_key"
 
