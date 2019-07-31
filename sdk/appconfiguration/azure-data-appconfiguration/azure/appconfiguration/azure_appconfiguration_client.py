@@ -28,18 +28,16 @@ def escape_reserved(value):
     """
     if value is None:
         return None
-    elif value == "":
+    if value == "":
         return "\0"  # '\0' will be encoded to %00 in the url.
-    else:
-        if isinstance(value, list):
-            return [
-                escape_reserved(s) for s in value
-            ]
-        else:
-            value = str(value)  # value is unicode for Python 2.7
-            # precede all reserved characters with a backslash.
-            # But if a * is at the beginning or the end, don't add the backslash
-            return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
+    if isinstance(value, list):
+        return [
+            escape_reserved(s) for s in value
+        ]
+    value = str(value)  # value is unicode for Python 2.7
+    # precede all reserved characters with a backslash.
+    # But if a * is at the beginning or the end, don't add the backslash
+    return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
 
 def escape_and_tolist(value):
     if value is not None:
@@ -51,8 +49,7 @@ def escape_and_tolist(value):
 def quote_etag(etag):
     if etag != "*" and etag is not None:
         return '"' + etag + '"'
-    else:
-        return etag
+    return etag
 
 def prep_update_configuration_setting(key, etag=None, **kwargs):
     # type: (str, str, dict) -> CaseInsensitiveDict
@@ -114,7 +111,7 @@ class AzureAppConfigurationClient():
         )
 
     def list_configuration_settings(
-        self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
+            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -164,7 +161,7 @@ class AzureAppConfigurationClient():
         )
 
     def get_configuration_setting(
-        self, key, label=None, accept_date_time=None, **kwargs
+            self, key, label=None, accept_date_time=None, **kwargs
     ):  # type: (str, str, datetime, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -233,14 +230,14 @@ class AzureAppConfigurationClient():
         )
 
     def update_configuration_setting(
-        self,
-        key,
-        value=None,
-        content_type=None,
-        tags=None,
-        label=None,
-        etag=None,
-        **kwargs
+            self,
+            key,
+            value=None,
+            content_type=None,
+            tags=None,
+            label=None,
+            etag=None,
+            **kwargs
     ):  # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
         """Update specified attributes of the ConfigurationSetting
 
@@ -287,14 +284,15 @@ class AzureAppConfigurationClient():
         )
 
     def set_configuration_setting(
-        self, configuration_setting, **kwargs
+            self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
 
-        :param configuration_setting: the ConfigurationSetting to be added (if not exists) or updated (if exists) to the service
+        :param configuration_setting: the ConfigurationSetting to be added (if not exists)
+        or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
         :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :type kwargs: dict
@@ -330,7 +328,7 @@ class AzureAppConfigurationClient():
         )
 
     def delete_configuration_setting(
-        self, key, label=None, etag=None, **kwargs
+            self, key, label=None, etag=None, **kwargs
     ):  # type: (str, str, str, dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
@@ -371,7 +369,7 @@ class AzureAppConfigurationClient():
         )
 
     def list_revisions(
-        self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
+            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """

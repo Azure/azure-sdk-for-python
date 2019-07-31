@@ -12,5 +12,3 @@
 from .azure_configuration_client_async import AzureAppConfigurationClient
 
 __all__ = ['AzureAppConfigurationClient']
-
-

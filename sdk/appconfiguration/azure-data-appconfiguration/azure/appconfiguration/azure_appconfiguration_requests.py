@@ -52,17 +52,17 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "Authorization": "HMAC-SHA256 Credential="
-            + credential
-            + ", SignedHeaders="
-            + signed_headers
-            + ", Signature="
-            + signature,
+                             + credential
+                             + ", SignedHeaders="
+                             + signed_headers
+                             + ", Signature="
+                             + signature,
         }
 
         request.http_request.headers.update(signature_header)
 
         return request
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         self._signed_request(request)
-        return self.next.send(request, **kwargs)
+        return self.next.send(request)
