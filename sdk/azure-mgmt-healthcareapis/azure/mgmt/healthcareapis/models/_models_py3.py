@@ -240,8 +240,9 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir.
-     Possible values include: 'fhir', 'fhir-Stu3', 'fhir-R4'
+    :param kind: Required. The kind of the service. Valid values are: fhir,
+     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
+     'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -399,8 +400,9 @@ class ServicesDescription(Resource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir.
-     Possible values include: 'fhir', 'fhir-Stu3', 'fhir-R4'
+    :param kind: Required. The kind of the service. Valid values are: fhir,
+     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
+     'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
