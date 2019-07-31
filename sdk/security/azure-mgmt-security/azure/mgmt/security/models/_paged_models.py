@@ -51,6 +51,45 @@ class SettingPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SettingPaged, self).__init__(*args, **kwargs)
+class IoTSecuritySolutionModelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IoTSecuritySolutionModel <azure.mgmt.security.models.IoTSecuritySolutionModel>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IoTSecuritySolutionModel]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IoTSecuritySolutionModelPaged, self).__init__(*args, **kwargs)
+class IoTSecurityAggregatedAlertPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IoTSecurityAggregatedAlert <azure.mgmt.security.models.IoTSecurityAggregatedAlert>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IoTSecurityAggregatedAlert]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IoTSecurityAggregatedAlertPaged, self).__init__(*args, **kwargs)
+class IoTSecurityAggregatedRecommendationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IoTSecurityAggregatedRecommendation <azure.mgmt.security.models.IoTSecurityAggregatedRecommendation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IoTSecurityAggregatedRecommendation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IoTSecurityAggregatedRecommendationPaged, self).__init__(*args, **kwargs)
 class AllowedConnectionsResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`AllowedConnectionsResource <azure.mgmt.security.models.AllowedConnectionsResource>` object
@@ -220,45 +259,6 @@ class WorkspaceSettingPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkspaceSettingPaged, self).__init__(*args, **kwargs)
-class IoTSecuritySolutionModelPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`IoTSecuritySolutionModel <azure.mgmt.security.models.IoTSecuritySolutionModel>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[IoTSecuritySolutionModel]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(IoTSecuritySolutionModelPaged, self).__init__(*args, **kwargs)
-class IoTSecurityAggregatedAlertPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`IoTSecurityAggregatedAlert <azure.mgmt.security.models.IoTSecurityAggregatedAlert>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[IoTSecurityAggregatedAlert]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(IoTSecurityAggregatedAlertPaged, self).__init__(*args, **kwargs)
-class IoTSecurityAggregatedRecommendationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`IoTSecurityAggregatedRecommendation <azure.mgmt.security.models.IoTSecurityAggregatedRecommendation>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[IoTSecurityAggregatedRecommendation]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(IoTSecurityAggregatedRecommendationPaged, self).__init__(*args, **kwargs)
 class RegulatoryComplianceStandardPaged(Paged):
     """
     A paging container for iterating over a list of :class:`RegulatoryComplianceStandard <azure.mgmt.security.models.RegulatoryComplianceStandard>` object
