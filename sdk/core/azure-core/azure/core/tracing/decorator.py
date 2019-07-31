@@ -58,9 +58,7 @@ def distributed_trace(func=None, name_of_span=None):
         ans = None
         if parent_span is not None and orig_wrapped_span is None:
             common.set_span_contexts(parent_span)
-            name = (
-                name_of_span or getattr(func, "__qualname__", None) or common.get_function_and_class_name(func, *args)
-            )
+            name = name_of_span or common.get_function_and_class_name(func, *args)
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)

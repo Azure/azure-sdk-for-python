@@ -50,9 +50,12 @@ def get_function_and_class_name(func, *args):
     :param args: List of arguments passed into the function
     :type args: List[Any]
     """
-    if args:
-        return "{}.{}".format(args[0].__class_.__name__, func.__name__) # pylint: disable=protected-access
-    return func.__name__
+    try:
+        return func.__qualname__
+    except AttributeError:
+        if args:
+            return "{}.{}".format(args[0].__class_.__name__, func.__name__)  # pylint: disable=protected-access
+        return func.__name__
 
 
 def set_span_contexts(wrapped_span, span_instance=None):
