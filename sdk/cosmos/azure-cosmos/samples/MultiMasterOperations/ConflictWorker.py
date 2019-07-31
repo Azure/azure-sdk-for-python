@@ -4,7 +4,6 @@ from multiprocessing.pool import ThreadPool
 import json
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
-import azure.cosmos.base as base
 
 class ConflictWorker(object):
     def __init__(self, database_name, basic_collection_name, manual_collection_name, lww_collection_name, udp_collection_name):

@@ -22,14 +22,14 @@
 """Internal class for partition key range implementation in the Azure Cosmos database service.
 """
 
-class _PartitionKeyRange(object):
+class PartitionKeyRange(object):
     """Partition Key Range Constants"""
     MinInclusive = 'minInclusive'
     MaxExclusive = 'maxExclusive'
     Id = 'id'
     Parents = 'parents'
 
-class _Range(object):
+class Range(object):
     """description of class"""
     
     MinPath = 'min'
@@ -58,13 +58,13 @@ class _Range(object):
 
     @classmethod
     def PartitionKeyRangeToRange(cls, partition_key_range):
-        self = cls(partition_key_range[_PartitionKeyRange.MinInclusive], partition_key_range[_PartitionKeyRange.MaxExclusive],
+        self = cls(partition_key_range[PartitionKeyRange.MinInclusive], partition_key_range[PartitionKeyRange.MaxExclusive],
                    True, False)
         return self
     
     @classmethod
     def ParseFromDict(cls, range_as_dict):
-        self = cls(range_as_dict[_Range.MinPath], range_as_dict[_Range.MaxPath], range_as_dict[_Range.IsMinInclusivePath], range_as_dict[_Range.IsMaxInclusivePath])
+        self = cls(range_as_dict[Range.MinPath], range_as_dict[Range.MaxPath], range_as_dict[Range.IsMinInclusivePath], range_as_dict[Range.IsMaxInclusivePath])
         return self
     
     def isSingleValue(self):
@@ -97,8 +97,8 @@ class _Range(object):
         if range1 is None or range2 is None: return False
         if range1.isEmpty() or range2.isEmpty(): return False
             
-        cmp1 = _Range._compare_helper(range1.min, range2.max)
-        cmp2 = _Range._compare_helper(range2.min, range1.max)
+        cmp1 = Range._compare_helper(range1.min, range2.max)
+        cmp2 = Range._compare_helper(range2.min, range1.max)
 
         if (cmp1 <= 0 or cmp2 <= 0):
             if ((cmp1 == 0 and not(range1.isMinInclusive and range2.isMaxInclusive)) or (cmp2 == 0 and not(range2.isMinInclusive and range1.isMaxInclusive))):

@@ -24,9 +24,9 @@
 
 from six.moves.urllib.parse import urlparse
 import threading
-from . import constants
+from . import _constants as constants
 from . import errors
-from .location_cache import LocationCache
+from ._location_cache import LocationCache
 
 class _GlobalEndpointManager(object):
     """

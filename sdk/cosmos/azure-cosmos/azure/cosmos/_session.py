@@ -25,9 +25,9 @@
 import sys, traceback
 import threading
 
-from . import base
+from . import _base
 from . import http_constants
-from .vector_session_token import VectorSessionToken
+from ._vector_session_token import VectorSessionToken
 from .errors import HTTPFailure
 
 class SessionContainer(object):
@@ -51,17 +51,17 @@ class SessionContainer(object):
         """
 
         with self.session_lock:
-            is_name_based = base.IsNameBased(resource_path)
+            is_name_based = _base.IsNameBased(resource_path)
             collection_rid = ''
             session_token = ''
 
             try:
                 if is_name_based:
                     # get the collection name
-                    collection_name = base.GetItemContainerLink(resource_path)
+                    collection_name = _base.GetItemContainerLink(resource_path)
                     collection_rid = self.collection_name_to_rid[collection_name]
                 else:
-                    collection_rid = base.GetItemContainerLink(resource_path)
+                    collection_rid = _base.GetItemContainerLink(resource_path)
 
                 if collection_rid in self.rid_to_session_token:
                     token_dict = self.rid_to_session_token[collection_rid]
@@ -112,7 +112,7 @@ class SessionContainer(object):
                     response_result_id = response_result[response_result_id_key]
                 else:
                     return
-                collection_rid, collection_name = base.GetItemContainerInfo(self_link, alt_content_path, response_result_id)
+                collection_rid, collection_name = _base.GetItemContainerInfo(self_link, alt_content_path, response_result_id)
          
             except ValueError:
                 return

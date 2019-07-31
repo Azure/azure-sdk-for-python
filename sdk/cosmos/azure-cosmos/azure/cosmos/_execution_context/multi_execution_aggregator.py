@@ -23,9 +23,9 @@
 """
 
 import heapq
-from azure.cosmos.execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos.execution_context import document_producer
-from azure.cosmos.routing import routing_range
+from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context import document_producer
+from azure.cosmos._routing import routing_range
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     """This class is capable of queries which requires rewriting based on 
@@ -147,4 +147,4 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     def _get_target_parition_key_range(self):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
-        return self._routing_provider.get_overlapping_ranges(self._resource_link, [routing_range._Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges])
+        return self._routing_provider.get_overlapping_ranges(self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges])

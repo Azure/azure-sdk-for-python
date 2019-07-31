@@ -2,9 +2,9 @@ import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import pytest
-import azure.cosmos.constants as constants
+import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import HttpHeaders
-import azure.cosmos.retry_utility as retry_utility
+from azure.cosmos import _retry_utility
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 
@@ -31,8 +31,8 @@ class MultiMasterTests(unittest.TestCase):
 
     
     def _validate_tentative_write_headers(self):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
@@ -115,7 +115,7 @@ class MultiMasterTests(unittest.TestCase):
         # Delete Database
         self.assertEqual(self.last_headers[10], is_allow_tentative_writes_set)
 
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.counter += 1

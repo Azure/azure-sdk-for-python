@@ -23,13 +23,13 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
 from .http_constants import StatusCodes
 from .errors import HTTPFailure
 from .user import User
-from .query_iterable import QueryIterable
+from ._query_iterable import QueryIterable
 from .partition_key import  PartitionKey
 
 from typing import (
@@ -332,7 +332,7 @@ class Database(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of container properties (dicts).
+        :returns: An Iterable of container properties (dicts).
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START list_containers]
@@ -385,7 +385,7 @@ class Database(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of container properties (dicts).
+        :returns: An Iterable of container properties (dicts).
 
         """
         if not feed_options:
@@ -503,7 +503,7 @@ class Database(object):
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of user properties (dicts).
+        :returns: An Iterable of user properties (dicts).
 
         """
         if not feed_options:
@@ -536,7 +536,7 @@ class Database(object):
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of user properties (dicts).
+        :returns: An Iterable of user properties (dicts).
 
         """
         if not feed_options:

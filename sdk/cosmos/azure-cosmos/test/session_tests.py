@@ -9,8 +9,8 @@ import azure.cosmos.documents as documents
 import test_config
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
-import azure.cosmos.synchronized_request as synchronized_request
-import azure.cosmos.retry_utility as retry_utility
+import azure.cosmos._synchronized_request as synchronized_request
+from azure.cosmos import _retry_utility
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -62,8 +62,8 @@ class SessionTests(unittest.TestCase):
     def test_clear_session_token(self):
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
             self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         except errors.HTTPFailure as e:
@@ -71,7 +71,7 @@ class SessionTests(unittest.TestCase):
                 'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionInvalidSessionToken(self, function, *args, **kwargs):
         response = {'_self':'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id':'1'}
@@ -79,12 +79,12 @@ class SessionTests(unittest.TestCase):
         return (response, headers)
 
     def test_internal_server_error_raised_for_invalid_session_token_received_from_server(self):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
         try:
             self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
             self.fail()
         except errors.HTTPFailure as e:
             self.assertEqual(e._http_error_message, "Could not parse the received session token: 2")
             self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction

@@ -21,7 +21,7 @@
 
 import unittest
 import pytest
-import azure.cosmos.utils as utils
+import azure.cosmos._utils as _utils
 import platform
 import azure.cosmos.http_constants as http_constants
 
@@ -33,7 +33,7 @@ class UtilsTests(unittest.TestCase):
     """
 
     def test_user_agent(self):
-        user_agent = utils._get_user_agent()
+        user_agent = _utils.get_user_agent()
 
         expected_user_agent = "{}/{} Python/{} azure-cosmos/{}".format(
             platform.system(), platform.release(), platform.python_version(), 

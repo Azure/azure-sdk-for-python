@@ -23,10 +23,10 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
-from .query_iterable import QueryIterable
+from ._query_iterable import QueryIterable
 from typing import (
     Any,
     Callable,
@@ -184,7 +184,7 @@ class CosmosClient:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
+        :returns: An Iterable of database properties (dicts).
 
         """
         if not feed_options:
@@ -231,7 +231,7 @@ class CosmosClient:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
+        :returns: An Iterable of database properties (dicts).
 
         """
         if not feed_options:

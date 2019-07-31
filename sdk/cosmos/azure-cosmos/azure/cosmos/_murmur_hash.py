@@ -43,7 +43,7 @@ This module is written to have the same format as mmh3 python package found here
 
 https://pypi.python.org/pypi/mmh3/2.0 
 '''
-class _MurmurHash(object):
+class MurmurHash(object):
     """ The 32 bit x86 version of MurmurHash3 implementation.
     """
     def ComputeHash(self, key):

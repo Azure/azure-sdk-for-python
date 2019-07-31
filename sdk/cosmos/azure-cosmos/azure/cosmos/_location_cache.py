@@ -25,7 +25,6 @@
 import collections
 import time
 
-from . import base
 from . import documents
 from . import http_constants
 
