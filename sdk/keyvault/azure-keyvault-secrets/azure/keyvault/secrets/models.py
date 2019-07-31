@@ -2,25 +2,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import datetime
-
 try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from datetime import datetime
     from typing import Any, Dict, Mapping, Optional
+    from ._shared._generated.v7_0 import models as _models
 
 from ._shared import parse_vault_id
-from ._shared._generated.v7_0 import models
 
 
 class SecretAttributes(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
+        # type: (_models.SecretAttributes, str, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -31,7 +31,7 @@ class SecretAttributes(object):
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
-        # type: (models.SecretBundle) -> SecretAttributes
+        # type: (_models.SecretBundle) -> SecretAttributes
         """Construct a SecretAttributes from an autorest-generated SecretBundle"""
         return cls(
             secret_bundle.attributes,
@@ -44,7 +44,7 @@ class SecretAttributes(object):
 
     @classmethod
     def _from_secret_item(cls, secret_item):
-        # type: (models.SecretItem) -> SecretAttributes
+        # type: (_models.SecretItem) -> SecretAttributes
         """Construct a SecretAttributes from an autorest-generated SecretItem"""
         return cls(
             secret_item.attributes,
@@ -57,98 +57,115 @@ class SecretAttributes(object):
     @property
     def content_type(self):
         # type: () -> str
-        """Type of the secret value such as a password
-        :rtype: str"""
+        """:rtype: str"""
         return self._content_type
 
     @property
     def id(self):
         # type: () -> str
-        """The secret id
-        :rtype: str"""
+        """:rtype: str"""
         return self._id
 
     @property
     def key_id(self):
         # type: () -> str
-        """Specifies the corresponding key id backing the KV certificate
-        :rtype: str"""
+        """
+        If this secret backs a certificate, this property is the identifier of the corresponding key.
+
+        :rtype: str
+        """
         return self._key_id
 
     @property
     def enabled(self):
         # type: () -> bool
-        """The Secret's 'enabled' attribute
-        :rtype: bool"""
+        """:rtype: bool"""
         return self._attributes.enabled
 
     @property
     def not_before(self):
         # type: () -> datetime
-        """The Secret's not_before date in UTC
-        :rtype: datetime"""
+        """
+        Not-before time, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._attributes.not_before
 
     @property
     def expires(self):
         # type: () -> datetime
-        """The Secret's expiry date in UTC
-        :rtype: datetime"""
+        """
+        When the secret expires, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._attributes.expires
 
     @property
     def created(self):
         # type: () -> datetime
-        """The Secret's creation time in UTC
-        :rtype: datetime"""
+        """
+        When the secret was created, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._attributes.created
 
     @property
     def updated(self):
         # type: () -> datetime
-        """The Secret's last updated time in UTC
-        :rtype: datetime"""
+        """
+        When the secret was last updated, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._attributes.updated
 
     @property
     def recovery_level(self):
         # type: () -> str
-        """Reflects the deletion recovery level currently in effect for secrets in the current vault
-        :rtype: str"""
+        """
+        The vault's deletion recovery level for secrets
+
+        :rtype: str
+        """
         return self._attributes.recovery_level
 
     @property
     def vault_url(self):
         # type: () -> str
-        """The url of the vault containing the secret
-        :rtype: str"""
+        """
+        URL of the vault containing the secret
+
+        :rtype: str
+        """
         return self._vault_id.vault_url
 
     @property
     def name(self):
         # type: () -> str
-        """The name of the secret
-        :rtype: str"""
+        """:rtype: str"""
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """The version of the secret
-        :rtype: str"""
+        """:rtype: str"""
         return self._vault_id.version
 
     @property
     def tags(self):
         # type: () -> Dict[str, str]
-        """Application specific metadata in the form of key-value pairs.
+        """
+        Application specific metadata in the form of key-value pairs
+
         :rtype: dict"""
         return self._tags
 
 
 class Secret(SecretAttributes):
-    """A secret consisting of all SecretAttributes and value information.
-    """
+    """All a secret's attributes, and its value."""
 
     def __init__(self, attributes, vault_id, value, **kwargs):
         super(Secret, self).__init__(attributes, vault_id, **kwargs)
@@ -156,7 +173,7 @@ class Secret(SecretAttributes):
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
-        # type: (models.SecretBundle) -> Secret
+        # type: (_models.SecretBundle) -> Secret
         """Construct a Secret from an autorest-generated SecretBundle"""
         return cls(
             secret_bundle.attributes,
@@ -171,18 +188,19 @@ class Secret(SecretAttributes):
     @property
     def value(self):
         # type: () -> str
-        """The secret's value.
-        :rtype: str"""
+        """
+        The secret value
+
+        :rtype: str
+        """
         return self._value
 
 
 class DeletedSecret(SecretAttributes):
-    """A Deleted Secret consisting of its id, attributes, and tags, as
-    well as when it will be purged, if soft-delete is enabled for the vault.
-    """
+    """A deleted secret's attributes, as well as when it will be purged, if soft-delete is enabled for its vault."""
 
     def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        # type: (_models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
@@ -190,7 +208,7 @@ class DeletedSecret(SecretAttributes):
 
     @classmethod
     def _from_deleted_secret_bundle(cls, deleted_secret_bundle):
-        # type: (models.DeletedSecretBundle) -> DeletedSecret
+        # type: (_models.DeletedSecretBundle) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
             deleted_secret_bundle.attributes,
@@ -206,7 +224,7 @@ class DeletedSecret(SecretAttributes):
 
     @classmethod
     def _from_deleted_secret_item(cls, deleted_secret_item):
-        # type: (models.DeletedSecretItem) -> DeletedSecret
+        # type: (_models.DeletedSecretItem) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
             deleted_secret_item.attributes,
@@ -222,20 +240,29 @@ class DeletedSecret(SecretAttributes):
     @property
     def deleted_date(self):
         # type: () -> datetime
-        """The time when the secret was deleted, in UTC
-        :rtype: datetime"""
+        """
+        When the secret was deleted, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._deleted_date
 
     @property
     def recovery_id(self):
         # type: () -> str
-        """The url of the recovery object, used to identify and recover the deleted secret
-        :rtype: str"""
+        """
+        An identifier used to recover the deleted secret
+
+        :rtype: str
+        """
         return self._recovery_id
 
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """The time when the secret is scheduled to be purged, in UTC
-        :rtype: datetime"""
+        """
+        When the secret is scheduled to be purged, in UTC
+
+        :rtype: datetime.datetime
+        """
         return self._scheduled_purge_date
