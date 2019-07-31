@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ._internal import PublicClientCredential
+from ._internal import PublicClientCredential, wrap_exceptions
 from ._managed_identity import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
 
@@ -285,6 +285,7 @@ class DeviceCodeCredential(PublicClientCredential):
         self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
+    @wrap_exceptions
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
@@ -358,6 +359,7 @@ class UsernamePasswordCredential(PublicClientCredential):
         self._username = username
         self._password = password
 
+    @wrap_exceptions
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """
