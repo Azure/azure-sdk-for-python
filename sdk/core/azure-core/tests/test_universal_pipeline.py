@@ -160,6 +160,18 @@ def test_raw_deserializer():
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
+    # Simple JSON with complex content_type
+    response = build_response(b'{"success": true}', content_type="application/vnd.microsoft.appconfig.kv.v1+json")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
+    # Simple JSON with complex content_type, v2
+    response = build_response(b'{"success": true}', content_type="text/vnd.microsoft.appconfig.kv.v1+json")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
     # For compat, if no content-type, decode JSON
     response = build_response(b'"data"')
     raw_deserializer.on_response(None, response)
