@@ -122,4 +122,4 @@ async def test_long_running_partition_send_async(connection_str):
 
 
 if __name__ == '__main__':
-    asyncio.run(test_long_running_partition_send_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))
+    asyncio.run(test_long_running_partition_send_async(os.environ.get('EVENT_HUB_PERF_CONN_STR')))
