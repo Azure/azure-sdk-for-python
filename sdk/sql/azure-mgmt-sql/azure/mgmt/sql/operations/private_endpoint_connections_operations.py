@@ -150,7 +150,7 @@ class PrivateEndpointConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -177,10 +177,13 @@ class PrivateEndpointConnectionsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns
+         PrivateEndpointConnection or
+         ClientRawResponse<PrivateEndpointConnection> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.PrivateEndpointConnection]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.PrivateEndpointConnection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -194,7 +197,7 @@ class PrivateEndpointConnectionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
