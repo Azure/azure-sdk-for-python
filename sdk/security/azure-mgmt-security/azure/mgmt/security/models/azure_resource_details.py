@@ -9,34 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_details import ResourceDetails
 
 
-class IoTSecurityAlertedDevicesList(Model):
-    """List of devices with the count of raised alerts.
+class AzureResourceDetails(ResourceDetails):
+    """Details of the resource that was assessed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of aggregated alerts data
-    :type value: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
+    :param assessed_resource_source: Required. Constant filled by server.
+    :type assessed_resource_source: str
+    :ivar id: Azure resource ID of the assessed resource
+    :vartype id: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        'assessed_resource_source': {'required': True},
+        'id': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IoTSecurityAlertedDevice]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'assessed_resource_source': {'key': 'assessedResourceSource', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(IoTSecurityAlertedDevicesList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = None
+        super(AzureResourceDetails, self).__init__(**kwargs)
+        self.id = None
+        self.assessed_resource_source = 'Azure'

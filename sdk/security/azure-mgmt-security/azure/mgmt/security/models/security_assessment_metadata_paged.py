@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AppWhitelistingGroups(Model):
-    """Represents a list of VM/server groups and set of rules that are Recommended
-    by Azure Security Center to be allowed.
-
-    :param value:
-    :type value: list[~azure.mgmt.security.models.AppWhitelistingGroup]
+class SecurityAssessmentMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityAssessmentMetadata <azure.mgmt.security.models.SecurityAssessmentMetadata>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AppWhitelistingGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityAssessmentMetadata]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(AppWhitelistingGroups, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityAssessmentMetadataPaged, self).__init__(*args, **kwargs)

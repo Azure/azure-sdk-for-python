@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class TagsResource(Model):
-    """A container holding only the Tags for a resource, allowing the user to
-    update the tags.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
+class SecurityAssessmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityAssessment <azure.mgmt.security.models.SecurityAssessment>` object
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityAssessment]'}
     }
 
-    def __init__(self, **kwargs):
-        super(TagsResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityAssessmentPaged, self).__init__(*args, **kwargs)
