@@ -20,6 +20,9 @@ from os import (
 )
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob._shared.encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -56,6 +59,18 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, 
                                            ' for this method.'
 #------------------------------------------------------------------------------
 
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageBlobEncryptionTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -72,7 +87,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             credential=credential,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
-            max_page_size=4 * 1024)
+            max_page_size=4 * 1024,
+            transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
@@ -152,9 +168,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
+    @record
     def test_missing_attribute_kek_wrap_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_missing_attribute_kek_wrap_async())
 
@@ -181,9 +196,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
+    @record
     def test_invalid_value_kek_wrap_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_value_kek_wrap_async())
 
@@ -213,9 +227,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
+    @record
     def test_missing_attribute_kek_unwrap_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_missing_attribute_kek_unwrap_async())
 
@@ -236,9 +249,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
+    @record
     def test_invalid_value_kek_unwrap_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_value_kek_unwrap_async())
 
@@ -254,10 +266,9 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Assert
         self.assertEqual(content, self.bytes)
-        
+
+    @record
     def test_get_blob_kek_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_kek_async())
 
@@ -278,9 +289,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
+    @record
     def test_get_blob_resolver_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_resolver_async())
 
@@ -305,9 +315,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(data, self.bytes)
 
+    @record
     def test_get_blob_kek_RSA_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_kek_RSA_async())
 
@@ -328,9 +337,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
+    @record
     def test_get_blob_nonmatching_kid_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_nonmatching_kid_async())
 
@@ -355,9 +363,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.upload_blob(large_stream)
         self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
+    @record
     def test_put_blob_invalid_stream_type_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_invalid_stream_type_async())
 
@@ -382,9 +389,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @record
     def test_put_blob_chunking_required_mult_of_block_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_chunking_required_mult_of_block_size_async())
 
@@ -408,9 +414,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @record
     def test_put_blob_chunking_required_non_mult_of_block_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_chunking_required_non_mult_of_block_size_async())
 
@@ -437,9 +442,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
 
+    @record
     def test_put_blob_chunking_required_range_specified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_chunking_required_range_specified_async())
 
@@ -459,9 +463,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @record
     def test_put_block_blob_single_shot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_blob_single_shot_async())
 
@@ -487,9 +490,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
+    @record
     def test_put_blob_range_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_range_async())
 
@@ -509,9 +511,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @record
     def test_put_blob_empty_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_empty_async())
 
@@ -531,9 +532,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @record
     def test_put_blob_serial_upload_chunking_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_serial_upload_chunking_async())
 
@@ -553,9 +553,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[:51], blob_content)
 
+    @record
     def test_get_blob_range_beginning_to_middle_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_beginning_to_middle_async())
 
@@ -577,9 +576,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         self.assertEqual(content[50:], blob_content)
         self.assertEqual(content[50:], blob_content2)
 
+    @record
     def test_get_blob_range_middle_to_end_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_middle_to_end_async())
 
@@ -599,9 +597,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[50:94], blob_content)
 
+    @record
     def test_get_blob_range_middle_to_middle_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_middle_to_middle_async())
 
@@ -621,9 +618,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[48:64], blob_content)
 
+    @record
     def test_get_blob_range_aligns_on_16_byte_block_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_aligns_on_16_byte_block_async())
 
@@ -643,9 +639,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[5:51], blob_content)
 
+    @record
     def test_get_blob_range_expanded_to_beginning_block_align_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_expanded_to_beginning_block_align_async())
 
@@ -665,9 +660,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[22:43], blob_content)
 
+    @record
     def test_get_blob_range_expanded_to_beginning_iv_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_expanded_to_beginning_iv_async())
 
@@ -699,9 +693,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             with self.assertRaises(ValueError):
                 await blob.upload_blob('To encrypt', blob_type=service)
 
+    @record
     def test_put_blob_strict_mode_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_strict_mode_async())
 
@@ -719,9 +712,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(ValueError):
             await (await blob.download_blob()).content_as_bytes()
 
+    @record
     def test_get_blob_strict_mode_no_policy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_strict_mode_no_policy_async())
 
@@ -738,9 +730,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
+    @record
     def test_get_blob_strict_mode_unencrypted_blob_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_strict_mode_unencrypted_blob_async())
 
@@ -760,9 +751,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.commit_block_list(['block1'])
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
+    @record
     def test_invalid_methods_fail_block_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_methods_fail_block_async())
 
@@ -787,9 +777,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.upload_blob(b'To encrypt', blob_type=BlobType.AppendBlob)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
+    @record
     def test_invalid_methods_fail_append_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_methods_fail_append_async())
 
@@ -809,9 +798,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.create_page_blob(512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
+    @record
     def test_invalid_methods_fail_page_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_methods_fail_page_async())
 
@@ -841,9 +829,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         
         self.assertEqual(self.bytes, content)
 
+    @record
     def test_validate_encryption_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_validate_encryption_async())
 
@@ -862,7 +849,9 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         await self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt')
 
+    @record
     def test_create_block_blob_from_star_async(self):
+        # This test only runs live
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
@@ -883,7 +872,9 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             await self._create_blob_from_star(BlobType.PageBlob, content, stream)
 
+    @record
     def test_create_page_blob_from_star_async(self):
+        # This test only runs live
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
@@ -923,9 +914,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         self.assertEqual(self.bytes, stream_blob.read())
         self.assertEqual(self.bytes.decode(), text_blob)
 
+    @record
     def test_get_blob_to_star_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_star_async())
 

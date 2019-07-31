@@ -18,6 +18,9 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob import (
     Logging,
     Metrics,
@@ -29,12 +32,21 @@ from azure.storage.blob import (
 from testcase import (
     StorageTestCase,
     TestMode,
+    record,
     not_for_emulator,
 )
 
 
 # ------------------------------------------------------------------------------
-
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 class ServicePropertiesTestAsync(StorageTestCase):
     def setUp(self):
@@ -42,7 +54,7 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential)
+        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
@@ -139,9 +151,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         self._assert_properties_default(props)
         self.assertEqual('2014-02-14', props.default_service_version)
 
+    @record
     def test_blob_service_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_properties_async())
 
@@ -156,9 +169,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self.assertEqual(received_props.default_service_version, '2014-02-14')
 
+    @record
     def test_set_default_service_version_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_default_service_version_async())
 
@@ -173,9 +187,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
+    @record
     def test_set_delete_retention_policy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_delete_retention_policy_async())
 
@@ -216,9 +231,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(received_props.delete_retention_policy, delete_retention_policy)
 
+    @record
     def test_set_delete_retention_policy_edge_cases_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_delete_retention_policy_edge_cases_async())
 
@@ -233,9 +249,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
+    @record
     def test_set_disabled_delete_retention_policy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_disabled_delete_retention_policy_async())
 
@@ -253,9 +270,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
+    @record
     def test_set_static_website_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_async())
 
@@ -290,9 +308,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
+    @record
     def test_set_static_website_properties_missing_field_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_missing_field_async())
 
@@ -308,9 +327,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, StaticWebsite(enabled=False))
 
+    @record
     def test_disabled_static_website_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_disabled_static_website_properties_async())
 
@@ -351,9 +371,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         self._assert_static_website_equal(received_props.static_website, static_website)
         self._assert_cors_equal(received_props.cors, cors)
 
+    @record
     def test_set_static_website_properties_does_not_impact_other_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_does_not_impact_other_properties_async())
 
@@ -368,9 +389,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_logging_equal(received_props.logging, logging)
 
+    @record
     def test_set_logging_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_logging_async())
 
@@ -385,9 +407,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
+    @record
     def test_set_hour_metrics_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_hour_metrics_async())
 
@@ -403,9 +426,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
+    @record
     def test_set_minute_metrics_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_minute_metrics_async())
 
@@ -434,9 +458,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         received_props = await self.bsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
+    @record
     def test_set_cors_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_cors_async())
 
@@ -447,9 +472,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
                           RetentionPolicy,
                           True, None)
 
+    @record
     def test_retention_no_days_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_no_days_async())
 
@@ -463,9 +489,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await self.bsc.set_service_properties(None, None, None, cors)
 
+    @record
     def test_too_many_cors_rules_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_too_many_cors_rules_async())
 
@@ -478,9 +505,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await self.bsc.set_service_properties(None, None, minute_metrics)
 
+    @record
     def test_retention_too_long_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        # if TestMode.need_recording_file(self.test_mode):
+        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_too_long_async())
 

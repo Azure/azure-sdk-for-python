@@ -11,6 +11,9 @@ import asyncio
 import os
 import unittest
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -29,6 +32,18 @@ FILE_PATH = 'blob_input.temp.dat'
 LARGE_BLOB_SIZE = 64 * 1024
 #------------------------------------------------------------------------------
 
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageAppendBlobTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -37,7 +52,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(url, credential=credential, max_block_size=4 * 1024)
+        self.bsc = BlobServiceClient(url, credential=credential, max_block_size=4 * 1024, transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -109,9 +124,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_async())
 
@@ -130,9 +144,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_with_lease_id_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_lease_id_async())
 
@@ -150,9 +163,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         md = await blob.get_blob_properties()
         self.assertDictEqual(md.metadata, metadata)
 
+    @record
     def test_create_blob_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_metadata_async())
 
@@ -172,9 +184,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, b'block 0block 1block 2block 3block 4')
 
+    @record
     def test_append_block_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_async())
 
@@ -192,9 +203,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_append_block_unicode_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_unicode_async())
 
@@ -212,9 +222,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_append_block_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_md5_async())
 
@@ -252,9 +261,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(props.metadata, {'BlobData': 'Data1'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE + LARGE_BLOB_SIZE + 512)
 
+    @record
     def test_create_append_blob_with_no_overwrite_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_append_blob_with_no_overwrite_async())
 
@@ -290,9 +298,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(props.blob_type, BlobType.AppendBlob)
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
+    @record
     def test_create_append_blob_with_overwrite_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_append_blob_with_overwrite_async())
 
@@ -311,9 +318,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp['etag'])
         self.assertEqual(blob_properties.last_modified, append_resp['last_modified'])
 
+    @record
     def test_append_blob_from_bytes_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_async())
 
@@ -332,9 +338,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertIsNone(append_resp.get('etag'))
         self.assertIsNone(append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_0_bytes_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_0_bytes_async())
 
@@ -358,9 +363,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(blob, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_append_blob_from_bytes_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_progress_async())
 
@@ -376,9 +380,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data[3:])
 
+    @record
     def test_append_blob_from_bytes_with_index_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_index_async())
 
@@ -394,9 +397,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data[3:8])
 
+    @record
     def test_append_blob_from_bytes_with_index_and_count_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_index_and_count_async())
 
@@ -415,9 +417,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp['etag'])
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_bytes_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_chunked_upload_async())
 
@@ -447,9 +448,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(blob, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_append_blob_from_bytes_with_progress_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_progress_chunked_upload_async())
 
@@ -467,9 +467,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data[index:index + blob_size])
 
+    @record
     def test_append_blob_from_bytes_chunked_upload_with_index_and_count_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_chunked_upload_with_index_and_count_async())
 
@@ -492,9 +491,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_path_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_path_chunked_upload_async())
 
@@ -529,9 +527,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(blob, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_append_blob_from_path_with_progress_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_path_with_progress_chunked_upload_async())
 
@@ -553,9 +550,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_stream_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_chunked_upload_async())
 
@@ -576,9 +572,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data[:blob_size])
 
+    @record
     def test_append_blob_from_stream_non_seekable_chunked_upload_known_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_non_seekable_chunked_upload_known_size_async())
 
@@ -598,9 +593,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data)
 
+    @record
     def test_append_blob_from_stream_non_seekable_chunked_upload_unknown_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_non_seekable_chunked_upload_unknown_size_async())
 
@@ -624,9 +618,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         data = data * 2
         await self.assertBlobEqual(blob, data)
 
+    @record
     def test_append_blob_from_stream_with_multiple_appends_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_with_multiple_appends_async())
 
@@ -646,9 +639,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data[:blob_size])
 
+    @record
     def test_append_blob_from_stream_chunked_upload_with_count_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_chunked_upload_with_count_async())
 
@@ -675,9 +667,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_stream_chunked_upload_with_count_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_stream_chunked_upload_with_count_parallel_async())
 
@@ -697,9 +688,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
+    @record
     def test_append_blob_from_text_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_text_async())
 
@@ -716,9 +706,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, data)
 
+    @record
     def test_append_blob_from_text_with_encoding_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_text_with_encoding_async())
 
@@ -742,9 +731,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_append_blob_from_text_with_encoding_and_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_text_with_encoding_and_progress_async())
 
@@ -761,9 +749,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(blob, encoded_data)
 
+    @record
     def test_append_blob_from_text_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_text_chunked_upload_async())
 
@@ -778,9 +765,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_append_blob_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_with_md5_async())
 
