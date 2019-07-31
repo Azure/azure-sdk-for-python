@@ -31,8 +31,6 @@ def prep_and_run_tox(targeted_packages, tox_env, optional_argument_array=[]):
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
         tox_execution_array = ['tox']
 
-        print('Running test setup for {}'.format(os.path.basename(package_dir)))
-
         # if not present, copy it
         if not os.path.exists(destination_tox_ini):
             print('Tox.ini not available in package folder, copying base tox.ini to package folder.')

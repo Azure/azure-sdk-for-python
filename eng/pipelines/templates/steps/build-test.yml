@@ -66,10 +66,10 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - task: PublishTestResults@2
-    displayName: 'Publish Python2.7 Test Results'
+    displayName: 'Publish Python 2.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-python2.7*.xml'
+      testResultsFiles: '**/test-junit-py27-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 2.7'
       mergeTestResults: true
 
@@ -101,14 +101,14 @@ steps:
     displayName: 'Publish Python3.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-py3.7-*.xml'
+      testResultsFiles: '**/test-junit-py37-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
       mergeTestResults: true
 
   - task: PublishTestResults@2
-    displayName: 'Publish Dev Install Test Results'
+    displayName: 'Publish Python 3.6 Dev Install Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-sdist-*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.7'
+      testResultsFiles: '**/test-junit-sdist.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.6 Develop Installation Tests'
       mergeTestResults: true
