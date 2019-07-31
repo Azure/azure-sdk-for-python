@@ -8,10 +8,16 @@ import datetime
 import calendar
 import json
 import six
-from enum import Enum
+import logging
 
-from uamqp import BatchMessage, Message, types
+from azure.eventhub.error import EventDataError
+from uamqp import BatchMessage, Message, types, constants
 from uamqp.message import MessageHeader, MessageProperties
+
+log = logging.getLogger(__name__)
+
+# event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
+_BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 
 def parse_sas_token(sas_token):
@@ -51,7 +57,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, **kwargs):
+    def __init__(self, body=None, to_device=None, message=None):
         """
         Initialize EventData.
 
@@ -64,9 +70,6 @@ class EventData(object):
         :param message: The received message.
         :type message: ~uamqp.message.Message
         """
-        body = kwargs.get("body", None)
-        to_device = kwargs.get("to_device", None)
-        message = kwargs.get("message", None)
 
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
@@ -210,7 +213,7 @@ class EventData(object):
         except TypeError:
             raise ValueError("Message data empty.")
 
-    def body_as_str(self, **kwargs):
+    def body_as_str(self, encoding='UTF-8'):
         """
         The body of the event data as a string if the data is of a
         compatible type.
@@ -219,7 +222,6 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: str or unicode
         """
-        encoding = kwargs.get("encoding", 'UTF-8')
         data = self.body
         try:
             return "".join(b.decode(encoding) for b in data)
@@ -232,7 +234,7 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
-    def body_as_json(self, **kwargs):
+    def body_as_json(self, encoding='UTF-8'):
         """
         The body of the event loaded as a JSON object is the data is compatible.
 
@@ -240,7 +242,6 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: dict
         """
-        encoding = kwargs.get("encoding", 'UTF-8')
         data_str = self.body_as_str(encoding=encoding)
         try:
             return json.loads(data_str)
@@ -251,10 +252,38 @@ class EventData(object):
         return self.message.encode_message()
 
 
-class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, partition_key=None):
-        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+class EventDataBatch(object):
+    """
+    The EventDataBatch class is a holder of a batch of event data within max size bytes.
+    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Do not instantiate an EventDataBatch object directly.
+    """
+
+    def __init__(self, max_size=None, partition_key=None):
+        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
+        self._partition_key = partition_key
+        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+
         self._set_partition_key(partition_key)
+        self._size = self.message.gather()[0].get_message_encoded_size()
+        self._count = 0
+
+    def __len__(self):
+        return self._count
+
+    @property
+    def size(self):
+        """The size in bytes
+
+        :return: int
+        """
+        return self._size
+
+    @staticmethod
+    def _from_batch(batch_data, partition_key=None):
+        batch_data_instance = EventDataBatch(partition_key=partition_key)
+        batch_data_instance.message._body_gen = batch_data
+        return batch_data_instance
 
     def _set_partition_key(self, value):
         if value:
@@ -266,6 +295,38 @@ class _BatchSendEventData(EventData):
             header.durable = True
             self.message.annotations = annotations
             self.message.header = header
+
+    def try_add(self, event_data):
+        """
+        The message size is a sum up of body, properties, header, etc.
+        :param event_data:
+        :return:
+        """
+        if event_data is None:
+            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            return
+        if not isinstance(event_data, EventData):
+            raise TypeError('event_data should be type of EventData')
+
+        if self._partition_key:
+            if event_data.partition_key and not (event_data.partition_key == self._partition_key):
+                raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
+            if not event_data.partition_key:
+                event_data._set_partition_key(self._partition_key)
+
+        event_data_size = event_data.message.get_message_encoded_size()
+
+        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        #  message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = self._size + event_data_size\
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+
+        if size_after_add > self.max_size:
+            raise ValueError("EventDataBatch has reached its size limit {}".format(self.max_size))
+
+        self.message._body_gen.append(event_data)  # pylint: disable=protected-access
+        self._size = size_after_add
+        self._count += 1
 
 
 class EventPosition(object):
@@ -286,7 +347,7 @@ class EventPosition(object):
       >>> event_pos = EventPosition(1506968696002)
     """
 
-    def __init__(self, value, **kwargs):
+    def __init__(self, value, inclusive=False):
         """
         Initialize EventPosition.
 
@@ -295,7 +356,6 @@ class EventPosition(object):
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
-        inclusive = kwargs.get("inclusive", False)
         self.value = value if value is not None else "-1"
         self.inclusive = inclusive
 

@@ -276,6 +276,7 @@ class EventHubClientAbstract(object):
                 host = address[left_slash_pos + 2:]
             else:
                 host = address
+            kwargs.pop("event_hub_path", None)
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
             return cls._from_iothub_connection_string(conn_str, **kwargs)

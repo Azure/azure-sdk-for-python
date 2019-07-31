@@ -8,13 +8,12 @@ import logging
 from typing import List
 import time
 
-from uamqp import errors, types, compat
+from uamqp import errors, types
 from uamqp import ReceiveClientAsync, Source
 
 from azure.eventhub import EventData, EventPosition
-from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
-from ..aio.error_async import _handle_exception
-from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from azure.eventhub.error import EventHubError, ConnectError, _error_handler
+from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +40,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             self, client, source, **kwargs):
         """
         Instantiate an async consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClientAsync.
         :type client: ~azure.eventhub.aio.EventHubClientAsync
@@ -81,6 +80,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         self.error = None
         self._link_properties = {}
         partition = self.source.split('/')[-1]
+        self.partition = partition
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
             self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
@@ -102,6 +102,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 message = await self.messages_iter.__anext__()
                 event_data = EventData(message=message)
                 self.offset = EventPosition(event_data.offset, inclusive=False)
+                retry_count = 0
                 return event_data
             except Exception as exception:
                 await self._handle_exception(exception, retry_count, max_retries)
@@ -146,6 +147,31 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open(timeout_time)
 
+    @_retry_decorator
+    async def _receive(self, **kwargs):
+        timeout_time = kwargs.get("timeout_time")
+        last_exception = kwargs.get("last_exception")
+        max_batch_size = kwargs.get("max_batch_size")
+        data_batch = kwargs.get("data_batch")
+
+        await self._open(timeout_time)
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                raise last_exception
+            return data_batch
+
+        remaining_time_ms = 1000 * remaining_time
+        message_batch = await self._handler.receive_message_batch_async(
+            max_batch_size=max_batch_size,
+            timeout=remaining_time_ms)
+        for message in message_batch:
+            event_data = EventData(message=message)
+            self.offset = EventPosition(event_data.offset)
+            data_batch.append(event_data)
+        return data_batch
+
     @property
     def queue_size(self):
         # type: () -> int
@@ -159,7 +185,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             return self._handler._received_messages.qsize()
         return 0
 
-    async def receive(self, **kwargs):
+    async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.
@@ -186,47 +212,15 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Receives events asynchronously
 
         """
-        max_batch_size = kwargs.get("max_batch_size", None)
-        timeout = kwargs.get("timeout", None)
-
         self._check_closed()
-        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
-        timeout = self.client.config.receive_timeout if timeout is None else timeout
-        if not timeout:
-            timeout = 100_000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
-        data_batch = []
-        start_time = time.time()
-        timeout_time = start_time + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                await self._open(timeout_time)
-                remaining_time = timeout_time - time.time()
-                if remaining_time <= 0.0:
-                    if last_exception:
-                        log.info("%r receive operation timed out. (%r)", self.name, last_exception)
-                        raise last_exception
-                    return data_batch
+        timeout = timeout or self.client.config.receive_timeout
+        max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
+        data_batch = []  # type: List[EventData]
 
-                remaining_time_ms = 1000 * remaining_time
-                message_batch = await self._handler.receive_message_batch_async(
-                    max_batch_size=max_batch_size,
-                    timeout=remaining_time_ms)
-                for message in message_batch:
-                    event_data = EventData(message=message)
-                    self.offset = EventPosition(event_data.offset)
-                    data_batch.append(event_data)
-                return data_batch
-            except EventHubError:
-                raise
-            except Exception as exception:
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
-                retry_count += 1
+        return await self._receive(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
 
-    async def close(self, **kwargs):
+    async def close(self, exception=None):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
@@ -246,7 +240,6 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Close down the handler.
 
         """
-        exception = kwargs.get("exception", None)
         self.running = False
         if self.error:
             return

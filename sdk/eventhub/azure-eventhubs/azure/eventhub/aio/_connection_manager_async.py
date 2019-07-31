@@ -70,9 +70,9 @@ class _SeparateConnectionManager(object):
     async def close_connection(self):
         pass
 
-    def reset_connection_if_broken(self):
+    async def reset_connection_if_broken(self):
         pass
 
 
 def get_connection_manager(**kwargs):
-    return _SharedConnectionManager(**kwargs)
+    return _SeparateConnectionManager(**kwargs)
