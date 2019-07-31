@@ -38,6 +38,10 @@ class SapCloudForCustomerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
@@ -57,6 +61,7 @@ class SapCloudForCustomerSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
     }

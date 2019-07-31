@@ -38,6 +38,10 @@ class BinarySink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Binary store settings.
@@ -55,11 +59,12 @@ class BinarySink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
-        super(BinarySink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, table_option=None, store_settings=None, **kwargs) -> None:
+        super(BinarySink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, table_option=table_option, **kwargs)
         self.store_settings = store_settings
         self.type = 'BinarySink'

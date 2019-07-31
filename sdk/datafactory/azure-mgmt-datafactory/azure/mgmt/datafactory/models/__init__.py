@@ -119,6 +119,7 @@ try:
     from .phoenix_linked_service_py3 import PhoenixLinkedService
     from .paypal_linked_service_py3 import PaypalLinkedService
     from .marketo_linked_service_py3 import MarketoLinkedService
+    from .azure_maria_db_linked_service_py3 import AzureMariaDBLinkedService
     from .maria_db_linked_service_py3 import MariaDBLinkedService
     from .magento_linked_service_py3 import MagentoLinkedService
     from .jira_linked_service_py3 import JiraLinkedService
@@ -208,6 +209,7 @@ try:
     from .phoenix_object_dataset_py3 import PhoenixObjectDataset
     from .paypal_object_dataset_py3 import PaypalObjectDataset
     from .marketo_object_dataset_py3 import MarketoObjectDataset
+    from .azure_maria_db_table_dataset_py3 import AzureMariaDBTableDataset
     from .maria_db_table_dataset_py3 import MariaDBTableDataset
     from .magento_object_dataset_py3 import MagentoObjectDataset
     from .jira_object_dataset_py3 import JiraObjectDataset
@@ -324,6 +326,7 @@ try:
     from .phoenix_source_py3 import PhoenixSource
     from .paypal_source_py3 import PaypalSource
     from .marketo_source_py3 import MarketoSource
+    from .azure_maria_db_source_py3 import AzureMariaDBSource
     from .maria_db_source_py3 import MariaDBSource
     from .magento_source_py3 import MagentoSource
     from .jira_source_py3 import JiraSource
@@ -624,6 +627,7 @@ except (SyntaxError, ImportError):
     from .phoenix_linked_service import PhoenixLinkedService
     from .paypal_linked_service import PaypalLinkedService
     from .marketo_linked_service import MarketoLinkedService
+    from .azure_maria_db_linked_service import AzureMariaDBLinkedService
     from .maria_db_linked_service import MariaDBLinkedService
     from .magento_linked_service import MagentoLinkedService
     from .jira_linked_service import JiraLinkedService
@@ -713,6 +717,7 @@ except (SyntaxError, ImportError):
     from .phoenix_object_dataset import PhoenixObjectDataset
     from .paypal_object_dataset import PaypalObjectDataset
     from .marketo_object_dataset import MarketoObjectDataset
+    from .azure_maria_db_table_dataset import AzureMariaDBTableDataset
     from .maria_db_table_dataset import MariaDBTableDataset
     from .magento_object_dataset import MagentoObjectDataset
     from .jira_object_dataset import JiraObjectDataset
@@ -829,6 +834,7 @@ except (SyntaxError, ImportError):
     from .phoenix_source import PhoenixSource
     from .paypal_source import PaypalSource
     from .marketo_source import MarketoSource
+    from .azure_maria_db_source import AzureMariaDBSource
     from .maria_db_source import MariaDBSource
     from .magento_source import MagentoSource
     from .jira_source import JiraSource
@@ -1210,6 +1216,7 @@ __all__ = [
     'PhoenixLinkedService',
     'PaypalLinkedService',
     'MarketoLinkedService',
+    'AzureMariaDBLinkedService',
     'MariaDBLinkedService',
     'MagentoLinkedService',
     'JiraLinkedService',
@@ -1299,6 +1306,7 @@ __all__ = [
     'PhoenixObjectDataset',
     'PaypalObjectDataset',
     'MarketoObjectDataset',
+    'AzureMariaDBTableDataset',
     'MariaDBTableDataset',
     'MagentoObjectDataset',
     'JiraObjectDataset',
@@ -1415,6 +1423,7 @@ __all__ = [
     'PhoenixSource',
     'PaypalSource',
     'MarketoSource',
+    'AzureMariaDBSource',
     'MariaDBSource',
     'MagentoSource',
     'JiraSource',

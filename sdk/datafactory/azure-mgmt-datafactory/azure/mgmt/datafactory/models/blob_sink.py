@@ -38,6 +38,10 @@ class BlobSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param blob_writer_overwrite_files: Blob writer overwrite files. Type:
@@ -64,6 +68,7 @@ class BlobSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'blob_writer_overwrite_files': {'key': 'blobWriterOverwriteFiles', 'type': 'object'},
         'blob_writer_date_time_format': {'key': 'blobWriterDateTimeFormat', 'type': 'object'},

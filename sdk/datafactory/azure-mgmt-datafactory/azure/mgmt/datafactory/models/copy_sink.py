@@ -48,6 +48,10 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -63,6 +67,7 @@ class CopySink(Model):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -78,4 +83,5 @@ class CopySink(Model):
         self.sink_retry_count = kwargs.get('sink_retry_count', None)
         self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
         self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.table_option = kwargs.get('table_option', None)
         self.type = None

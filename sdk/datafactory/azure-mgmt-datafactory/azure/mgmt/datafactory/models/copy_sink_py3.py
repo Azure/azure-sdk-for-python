@@ -48,6 +48,10 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -63,6 +67,7 @@ class CopySink(Model):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -70,7 +75,7 @@ class CopySink(Model):
         'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, table_option=None, **kwargs) -> None:
         super(CopySink, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.write_batch_size = write_batch_size
@@ -78,4 +83,5 @@ class CopySink(Model):
         self.sink_retry_count = sink_retry_count
         self.sink_retry_wait = sink_retry_wait
         self.max_concurrent_connections = max_concurrent_connections
+        self.table_option = table_option
         self.type = None
