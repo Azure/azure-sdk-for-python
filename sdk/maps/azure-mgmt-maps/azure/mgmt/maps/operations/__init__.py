@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .accounts_operations import AccountsOperations
+from ._accounts_operations import AccountsOperations
 
 __all__ = [
     'AccountsOperations',
