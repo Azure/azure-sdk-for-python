@@ -23,9 +23,9 @@
 """
 
 from collections import deque
-from .. import retry_utility
+from .. import _retry_utility
 from .. import http_constants
-from .. import base
+from .. import _base
 
 class _QueryExecutionContextBase(object):
     """
@@ -140,7 +140,7 @@ class _QueryExecutionContextBase(object):
         def callback():
             return self._fetch_items_helper_no_retries(fetch_function)
                 
-        return retry_utility._Execute(self._client, self._client._global_endpoint_manager, callback)
+        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
     
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
@@ -208,8 +208,8 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
             raise ValueError("_collection_links_length is not greater than 0.")
 
         # Creating the QueryFeed for the first collection
-        path = base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
-        collection_id = base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
+        path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
+        collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
         
         self._current_collection_index += 1
 
@@ -241,8 +241,8 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         # creating separate feed queries for each collection and fetching the items
         while not fetched_items:
             if self._collection_links and self._current_collection_index < self._collection_links_length:
-                path = base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
-                collection_id = base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
+                path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
+                collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
                 
                 self._continuation = None
                 self._has_started = False
