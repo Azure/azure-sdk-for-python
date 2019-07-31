@@ -23,7 +23,7 @@
 """
 import numbers
 
-from azure.cosmos.execution_context.aggregators import _AverageAggregator, _CountAggregator, _MaxAggregator, \
+from azure.cosmos._execution_context.aggregators import _AverageAggregator, _CountAggregator, _MaxAggregator, \
     _MinAggregator, _SumAggregator
 
 

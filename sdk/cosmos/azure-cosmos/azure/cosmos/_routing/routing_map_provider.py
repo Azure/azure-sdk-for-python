@@ -22,14 +22,14 @@
 """Internal class for partition key range cache implementation in the Azure Cosmos database service.
 """
 
-from .. import base
-from .collection_routing_map import _CollectionRoutingMap
+from .. import _base
+from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
-from .routing_range import _PartitionKeyRange
+from .routing_range import PartitionKeyRange
 
-class _PartitionKeyRangeCache(object):
+class PartitionKeyRangeCache(object):
     '''
-    _PartitionKeyRangeCache provides list of effective partition key ranges for a collection.
+    PartitionKeyRangeCache provides list of effective partition key ranges for a collection.
     This implementation loads and caches the collection routing map per collection on demand.
 
     '''
@@ -59,7 +59,7 @@ class _PartitionKeyRangeCache(object):
         '''
         cl = self._documentClient
         
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
@@ -67,8 +67,8 @@ class _PartitionKeyRangeCache(object):
             # for large collections, a split may complete between the read partition key ranges query page responses, 
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need 
             # to discard the parent ranges to have a valid routing map.
-            collection_pk_ranges = _PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
-            collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap([(r, True) for r in collection_pk_ranges], collection_id)
+            collection_pk_ranges = PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
+            collection_routing_map = CollectionRoutingMap.CompleteRoutingMap([(r, True) for r in collection_pk_ranges], collection_id)
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
         return collection_routing_map.get_overlapping_ranges(partition_key_ranges)
 
@@ -76,17 +76,17 @@ class _PartitionKeyRangeCache(object):
     def _discard_parent_ranges(partitionKeyRanges):
         parentIds = set()
         for r in partitionKeyRanges:
-            if isinstance(r, dict) and _PartitionKeyRange.Parents in r:
-                for parentId in r[_PartitionKeyRange.Parents]:
+            if isinstance(r, dict) and PartitionKeyRange.Parents in r:
+                for parentId in r[PartitionKeyRange.Parents]:
                     parentIds.add(parentId)
-        return (r for r in partitionKeyRanges if r[_PartitionKeyRange.Id] not in parentIds)
+        return (r for r in partitionKeyRanges if r[PartitionKeyRange.Id] not in parentIds)
 
-class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
+class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of _CollectionRoutingMap.get_overlapping_ranges()
+    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
     def __init__(self, client):
-        super(_SmartRoutingMapProvider, self).__init__(client)
+        super(SmartRoutingMapProvider, self).__init__(client)
 
     
     def _second_range_is_after_first_range(self, range1, range2):
@@ -112,20 +112,20 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
         Evaluates and returns r - partition_key_range
         :param dict partition_key_range:
             Partition key range.
-        :param routing_range._Range r: query range.
+        :param routing_range.Range r: query range.
         :return:
             The subtract r - partition_key_range.
-        :rtype: routing_range._Range
+        :rtype: routing_range.Range
         """
         
-        left = max(partition_key_range[routing_range._PartitionKeyRange.MaxExclusive], r.min)
+        left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
 
         if left == r.min:
             leftInclusive = r.isMinInclusive
         else:
             leftInclusive = False
 
-        queryRange = routing_range._Range(left, r.max, leftInclusive,
+        queryRange = routing_range.Range(left, r.max, leftInclusive,
                 r.isMaxInclusive)
         return queryRange
             
@@ -136,7 +136,7 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
         
         :param str collection_link:
             The collection link.
-        :param (list of routing_range._Range) sorted_ranges: The sorted list of non-overlapping ranges.
+        :param (list of routing_range.Range) sorted_ranges: The sorted list of non-overlapping ranges.
         :return:
             List of partition key ranges.
         :rtype: list of dict
@@ -163,11 +163,11 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
                 else:
                     queryRange = currentProvidedRange
     
-                overlappingRanges = _PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, queryRange)
+                overlappingRanges = PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, queryRange)
                 assert len(overlappingRanges), ("code bug: returned overlapping ranges for queryRange {} is empty".format(queryRange))
                 target_partition_key_ranges.extend(overlappingRanges)
 
-                lastKnownTargetRange = routing_range._Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])
+                lastKnownTargetRange = routing_range.Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])
                 
                 # the overlapping ranges must contain the requested range
                 assert currentProvidedRange.max <= lastKnownTargetRange.max, "code bug: returned overlapping ranges {} does not contain the requested range {}".format(overlappingRanges, queryRange)

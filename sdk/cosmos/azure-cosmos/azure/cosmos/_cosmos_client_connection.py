@@ -25,18 +25,18 @@ import requests
 
 import six
 from typing import cast
-from . import base
+from . import _base as base
 from . import documents
-from . import constants
+from . import _constants as constants
 from . import http_constants
-from . import query_iterable
-from . import runtime_constants
-from . import request_object
-from . import synchronized_request
-from . import global_endpoint_manager
-from .routing import routing_map_provider as routing_map_provider
-from . import session
-from . import utils
+from . import _query_iterable as query_iterable
+from . import _runtime_constants as runtime_constants
+from . import _request_object
+from . import _synchronized_request as synchronized_request
+from . import _global_endpoint_manager as global_endpoint_manager
+from ._routing import routing_map_provider as routing_map_provider
+from . import _session
+from . import _utils
 from .partition_key import _Undefined, _Empty
 
 
@@ -110,7 +110,7 @@ class CosmosClientConnection(object):
             http_constants.HttpHeaders.Version:
                 http_constants.Versions.CurrentVersion,
             http_constants.HttpHeaders.UserAgent:
-                utils._get_user_agent(),
+                _utils.get_user_agent(),
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False
@@ -127,7 +127,7 @@ class CosmosClientConnection(object):
             '''create a session - this is maintained only if the default consistency level
             on the client is set to session, or if the user explicitly sets it as a property
             via setter'''
-            self.session = session.Session(self.url_connection)
+            self.session = _session.Session(self.url_connection)
         else:
             self.session = None
 
@@ -150,7 +150,7 @@ class CosmosClientConnection(object):
         self._query_compatibility_mode = CosmosClientConnection._QueryCompatibilityMode.Default
 
         # Routing map provider
-        self._routing_map_provider = routing_map_provider._SmartRoutingMapProvider(self)
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount()
         self._global_endpoint_manager.force_refresh(database_account)
@@ -1932,7 +1932,7 @@ class CosmosClientConnection(object):
                                   {})
 
         # ReadMedia will always use WriteEndpoint since it's not replicated in readable Geo regions
-        request = request_object._RequestObject('media', documents._OperationType.Read)
+        request = _request_object.RequestObject('media', documents._OperationType.Read)
         result, self.last_response_headers = self.__Get(path,
                                                         request,
                                                         headers)
@@ -1981,7 +1981,7 @@ class CosmosClientConnection(object):
                                   options)
 
         # UpdateMedia will use WriteEndpoint since it uses PUT operation
-        request = request_object._RequestObject('media', documents._OperationType.Update)
+        request = _request_object.RequestObject('media', documents._OperationType.Update)
         result, self.last_response_headers = self.__Put(path,
                                                         request,
                                                         readable_stream,
@@ -2200,7 +2200,7 @@ class CosmosClientConnection(object):
                                   options)
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
-        request = request_object._RequestObject('sprocs', documents._OperationType.ExecuteJavaScript)
+        request = _request_object.RequestObject('sprocs', documents._OperationType.ExecuteJavaScript)
         result, self.last_response_headers = self.__Post(path,
                                                          request,
                                                          params,
@@ -2389,7 +2389,7 @@ class CosmosClientConnection(object):
                                   '',  # type
                                   {})
 
-        request = request_object._RequestObject('databaseaccount', documents._OperationType.Read, url_connection)
+        request = _request_object.RequestObject('databaseaccount', documents._OperationType.Read, url_connection)
         result, self.last_response_headers = self.__Get('',
                                                         request,
                                                         headers)
@@ -2449,7 +2449,7 @@ class CosmosClientConnection(object):
                                   options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request = request_object._RequestObject(type, documents._OperationType.Create)
+        request = _request_object.RequestObject(type, documents._OperationType.Create)
         result, self.last_response_headers = self.__Post(path,
                                                          request,
                                                          body,
@@ -2491,7 +2491,7 @@ class CosmosClientConnection(object):
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request = request_object._RequestObject(type, documents._OperationType.Upsert)
+        request = _request_object.RequestObject(type, documents._OperationType.Upsert)
         result, self.last_response_headers = self.__Post(path,
                                                          request,
                                                          body,
@@ -2529,7 +2529,7 @@ class CosmosClientConnection(object):
                                   type,
                                   options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request = request_object._RequestObject(type, documents._OperationType.Replace)
+        request = _request_object.RequestObject(type, documents._OperationType.Replace)
         result, self.last_response_headers = self.__Put(path,
                                                         request,
                                                         resource,
@@ -2567,7 +2567,7 @@ class CosmosClientConnection(object):
                                   type,
                                   options)
         # Read will use ReadEndpoint since it uses GET operation
-        request = request_object._RequestObject(type, documents._OperationType.Read)
+        request = _request_object.RequestObject(type, documents._OperationType.Read)
         result, self.last_response_headers = self.__Get(path,
                                                         request,
                                                         headers)
@@ -2601,7 +2601,7 @@ class CosmosClientConnection(object):
                                   type,
                                   options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request = request_object._RequestObject(type, documents._OperationType.Delete)
+        request = _request_object.RequestObject(type, documents._OperationType.Delete)
         result, self.last_response_headers = self.__Delete(path,
                                                            request,
                                                            headers)
@@ -2783,7 +2783,7 @@ class CosmosClientConnection(object):
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request = request_object._RequestObject(type, documents._OperationType.ReadFeed)
+            request = _request_object.RequestObject(type, documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'get',
@@ -2811,7 +2811,7 @@ class CosmosClientConnection(object):
                 raise SystemError('Unexpected query compatibility mode.')
 
             # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-            request = request_object._RequestObject(type, documents._OperationType.SqlQuery)
+            request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'post',
