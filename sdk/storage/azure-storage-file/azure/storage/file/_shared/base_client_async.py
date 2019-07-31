@@ -11,11 +11,6 @@ from typing import (  # pylint: disable=unused-import
 import logging
 
 from azure.core.pipeline import AsyncPipeline
-try:
-    from azure.core.pipeline.transport import AioHttpTransport as AsyncTransport
-except ImportError:
-    from azure.core.pipeline.transport import AsyncioRequestsTransport as AsyncTransport
-
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -61,7 +56,7 @@ class AsyncStorageAccountHostsMixin(object):
         elif isinstance(credential, SharedKeyCredentialPolicy):
             credential_policy = credential
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))        
+            raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
@@ -69,7 +64,8 @@ class AsyncStorageAccountHostsMixin(object):
         if 'connection_timeout' not in kwargs:
             kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
         if not config.transport:
-            config.transport = AsyncTransport(**kwargs)
+            from azure.core.pipeline.transport import AioHttpTransport
+            config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
