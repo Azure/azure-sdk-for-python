@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.9.0 (2019-07-31)
+++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter hana_db_credentials_msi_id
+- Model SapMonitor has a new parameter hana_db_password_key_vault_url
+
+**Breaking changes**
+
+- Removed operation HanaInstancesOperations.enable_monitoring
+
 0.8.0 (2019-06-26)
 ++++++++++++++++++
 
