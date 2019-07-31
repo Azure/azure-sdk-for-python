@@ -26,17 +26,17 @@ import platform
 import re as re
 from . import http_constants
 
-def _get_user_agent():
-    os_name = _safe_user_agent_header(platform.system())
-    os_version = _safe_user_agent_header(platform.release())
-    python_version = _safe_user_agent_header(platform.python_version())
+def get_user_agent():
+    os_name = safe_user_agent_header(platform.system())
+    os_version = safe_user_agent_header(platform.release())
+    python_version = safe_user_agent_header(platform.python_version())
 
     user_agent = "{}/{} Python/{} {}/{}".format(os_name, os_version,
         python_version,
         http_constants.Versions.SDKName, http_constants.Versions.SDKVersion)
     return user_agent
 
-def _safe_user_agent_header(s):
+def safe_user_agent_header(s):
     if s is None:
         s = "unknown"
     # remove all white spaces
