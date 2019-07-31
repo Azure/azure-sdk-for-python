@@ -28,12 +28,12 @@ class _ManagedIdentityBase(object):
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
-        config = config or self.create_config(**kwargs)
+        config = config or self._create_config(**kwargs)
         policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
         self._client = client_cls(endpoint, config, policies, **kwargs)
 
     @staticmethod
-    def create_config(**kwargs):
+    def _create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
         """
         Build a default configuration for the credential's HTTP pipeline.

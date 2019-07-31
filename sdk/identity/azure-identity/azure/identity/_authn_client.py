@@ -119,7 +119,7 @@ class AuthnClient(AuthnClientBase):
 
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
-        config = config or self.create_config(**kwargs)
+        config = config or self._create_config(**kwargs)
         policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
         if not transport:
             transport = RequestsTransport(**kwargs)
@@ -135,7 +135,7 @@ class AuthnClient(AuthnClientBase):
         return token
 
     @staticmethod
-    def create_config(**kwargs):
+    def _create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)

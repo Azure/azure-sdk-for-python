@@ -20,13 +20,13 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
         super().__init__(endpoint=endpoint, config=config, client_cls=AsyncAuthnClient, **kwargs)
 
     @staticmethod
-    def create_config(**kwargs: Any) -> Configuration:  # type: ignore
+    def _create_config(**kwargs: Any) -> Configuration:  # type: ignore
         """
         Build a default configuration for the credential's HTTP pipeline.
 
         :rtype: :class:`azure.core.configuration`
         """
-        return _ManagedIdentityBase.create_config(retry_policy=AsyncRetryPolicy, **kwargs)
+        return _ManagedIdentityBase._create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
 class ImdsCredential(_AsyncManagedIdentityBase):
