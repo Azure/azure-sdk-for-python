@@ -15,28 +15,20 @@ from msrest.serialization import Model
 class IoTSecurityAlertedDevicesList(Model):
     """List of devices with the count of raised alerts.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. List of aggregated alerts data
     :type value: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
     """
 
     _validation = {
         'value': {'required': True},
-        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IoTSecurityAlertedDevice]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IoTSecurityAlertedDevicesList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = None

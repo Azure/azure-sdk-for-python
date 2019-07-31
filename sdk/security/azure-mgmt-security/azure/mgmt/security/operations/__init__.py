@@ -13,6 +13,14 @@ from .compliance_results_operations import ComplianceResultsOperations
 from .pricings_operations import PricingsOperations
 from .alerts_operations import AlertsOperations
 from .settings_operations import SettingsOperations
+from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
+from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
+from .iot_security_solution_operations import IotSecuritySolutionOperations
+from .io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
+from .io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+from .io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+from .io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from .io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
 from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
@@ -28,14 +36,6 @@ from .compliances_operations import CompliancesOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
-from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
-from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
-from .iot_security_solution_operations import IotSecuritySolutionOperations
-from .io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
-from .io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
-from .io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-from .io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
-from .io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
@@ -46,6 +46,14 @@ __all__ = [
     'PricingsOperations',
     'AlertsOperations',
     'SettingsOperations',
+    'IoTSecuritySolutionsOperations',
+    'IoTSecuritySolutionsResourceGroupOperations',
+    'IotSecuritySolutionOperations',
+    'IoTSecuritySolutionsAnalyticsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'AllowedConnectionsOperations',
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
@@ -61,14 +69,6 @@ __all__ = [
     'InformationProtectionPoliciesOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
-    'IoTSecuritySolutionsOperations',
-    'IoTSecuritySolutionsResourceGroupOperations',
-    'IotSecuritySolutionOperations',
-    'IoTSecuritySolutionsAnalyticsOperations',
-    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
-    'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
-    'IoTSecuritySolutionsAnalyticsRecommendationOperations',
-    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
