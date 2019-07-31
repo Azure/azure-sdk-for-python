@@ -78,7 +78,7 @@ class CryptographyClient(KeyVaultClientBase):
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
     def decrypt(self, ciphertext, algorithm, **kwargs):
-        # type: (bytes, EncryptionAlgorithm, Any) -> bytes
+        # type: (bytes, EncryptionAlgorithm, Any) -> DecryptResult
         """
         **Keyword arguments:**
 
@@ -95,7 +95,7 @@ class CryptographyClient(KeyVaultClientBase):
         result = self._client.decrypt(
             self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, ciphertext, **kwargs
         )
-        return result.result
+        return DecryptResult(decrypted_bytes=result.result)
 
     def wrap(self, key, algorithm, **kwargs):
         # type: (bytes, KeyWrapAlgorithm, Any) -> WrapKeyResult
@@ -108,7 +108,7 @@ class CryptographyClient(KeyVaultClientBase):
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
     def unwrap(self, encrypted_key, algorithm, **kwargs):
-        # type: (bytes, KeyWrapAlgorithm, Any) -> bytes
+        # type: (bytes, KeyWrapAlgorithm, Any) -> UnwrapKeyResult
         """
         """
 
@@ -120,7 +120,7 @@ class CryptographyClient(KeyVaultClientBase):
             value=encrypted_key,
             **kwargs
         )
-        return result.result
+        return UnwrapKeyResult(unwrapped_bytes=result.result)
 
     def sign(self, digest, algorithm, **kwargs):
         # type: (bytes, SignatureAlgorithm, Any) -> SignResult
@@ -133,11 +133,11 @@ class CryptographyClient(KeyVaultClientBase):
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
     def verify(self, digest, signature, algorithm, **kwargs):
-        # type: (bytes, bytes, SignatureAlgorithm, Any) -> bool
+        # type: (bytes, bytes, SignatureAlgorithm, Any) -> VerifyResult
         """
         """
 
         result = self._client.verify(
             self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, signature, **kwargs
         )
-        return result.value
+        return VerifyResult(result=result.value)

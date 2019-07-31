@@ -71,7 +71,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
-    async def decrypt(self, ciphertext: bytes, algorithm: "EncryptionAlgorithm", **kwargs: "Any") -> bytes:
+    async def decrypt(self, ciphertext: bytes, algorithm: "EncryptionAlgorithm", **kwargs: "Any") -> DecryptResult:
         """
         **Keyword arguments:**
 
@@ -88,7 +88,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         result = await self._client.decrypt(
             self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, ciphertext, **kwargs
         )
-        return result.result
+        return DecryptResult(decrypted_bytes=result.result)
 
     async def wrap(self, key: bytes, algorithm: "KeyWrapAlgorithm", **kwargs: "Any") -> WrapKeyResult:
         """
@@ -99,7 +99,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
-    async def unwrap(self, encrypted_key: bytes, algorithm: "KeyWrapAlgorithm", **kwargs: "Any") -> bytes:
+    async def unwrap(self, encrypted_key: bytes, algorithm: "KeyWrapAlgorithm", **kwargs: "Any") -> UnwrapKeyResult:
         """
         """
 
@@ -111,7 +111,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             value=encrypted_key,
             **kwargs
         )
-        return result.result
+        return UnwrapKeyResult(unwrapped_bytes=result.result)
 
     async def sign(self, digest: bytes, algorithm: "SignatureAlgorithm", **kwargs: "Any") -> SignResult:
         """
@@ -122,11 +122,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
-    async def verify(self, digest: bytes, signature: bytes, algorithm: "SignatureAlgorithm", **kwargs: "Any") -> bool:
+    async def verify(self, digest: bytes, signature: bytes, algorithm: "SignatureAlgorithm", **kwargs: "Any") -> VerifyResult:
         """
         """
 
         result = await self._client.verify(
             self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, signature, **kwargs
         )
-        return result.value
+        return VerifyResult(result=result.value)

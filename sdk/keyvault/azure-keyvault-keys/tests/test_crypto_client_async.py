@@ -76,8 +76,8 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self.assertEqual(key_id, imported_key.id)
         assert authentication_tag is None
 
-        decrypted_bytes = await crypto_client.decrypt(ciphertext, algorithm)
-        self.assertEqual(self.plaintext, decrypted_bytes)
+        result = await crypto_client.decrypt(ciphertext, algorithm)
+        self.assertEqual(self.plaintext, result.decrypted_bytes)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -98,7 +98,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self.assertEqual(key_id, imported_key.id)
 
         verified = await crypto_client.verify(digest, signature, algorithm)
-        self.assertTrue(verified)
+        self.assertTrue(verified.result)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -116,5 +116,5 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         key_id, wrap_algorithm, wrapped_bytes = await crypto_client.wrap(key_bytes, KeyWrapAlgorithm.rsa_oaep)
         self.assertEqual(key_id, created_key.id)
 
-        unwrapped_bytes = await crypto_client.unwrap(wrapped_bytes, wrap_algorithm)
-        self.assertEqual(key_bytes, unwrapped_bytes)
+        result = await crypto_client.unwrap(wrapped_bytes, wrap_algorithm)
+        self.assertEqual(key_bytes, result.unwrapped_bytes)
