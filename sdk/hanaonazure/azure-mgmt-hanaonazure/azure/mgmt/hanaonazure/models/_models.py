@@ -489,6 +489,12 @@ class SapMonitor(Resource):
     :type hana_db_username: str
     :param hana_db_password: Database password of the HANA instance.
     :type hana_db_password: str
+    :param hana_db_password_key_vault_url: KeyVault URL link to the password
+     for the HANA database.
+    :type hana_db_password_key_vault_url: str
+    :param hana_db_credentials_msi_id: MSI ID passed by customer which has
+     access to customer's KeyVault and to be assigned to the Collector VM.
+    :type hana_db_credentials_msi_id: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
      'Succeeded', 'Deleting', 'Migrating'
@@ -516,6 +522,8 @@ class SapMonitor(Resource):
         'hana_db_sql_port': {'key': 'properties.hanaDbSqlPort', 'type': 'int'},
         'hana_db_username': {'key': 'properties.hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
+        'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
+        'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -527,6 +535,8 @@ class SapMonitor(Resource):
         self.hana_db_sql_port = kwargs.get('hana_db_sql_port', None)
         self.hana_db_username = kwargs.get('hana_db_username', None)
         self.hana_db_password = kwargs.get('hana_db_password', None)
+        self.hana_db_password_key_vault_url = kwargs.get('hana_db_password_key_vault_url', None)
+        self.hana_db_credentials_msi_id = kwargs.get('hana_db_credentials_msi_id', None)
         self.provisioning_state = None
 
 
