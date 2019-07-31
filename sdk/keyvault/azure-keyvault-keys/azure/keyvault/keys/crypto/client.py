@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from collections import namedtuple
-
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -13,7 +11,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
-    from .enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
 from azure.core.exceptions import HttpResponseError
 import six
@@ -21,11 +19,6 @@ import six
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from ..models import Key
 from .._shared import KeyVaultClientBase, parse_vault_id
-
-
-EncryptResult = namedtuple("EncryptResult", ["key_id", "algorithm", "ciphertext", "authentication_tag"])
-SignResult = namedtuple("SignResult", ["key_id", "algorithm", "signature"])
-WrapKeyResult = namedtuple("WrapKeyResult", ["key_id", "algorithm", "encrypted_key"])
 
 
 class CryptographyClient(KeyVaultClientBase):
