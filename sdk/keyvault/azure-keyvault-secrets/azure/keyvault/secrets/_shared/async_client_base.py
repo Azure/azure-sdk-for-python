@@ -6,7 +6,7 @@ from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
+from azure.core.pipeline.transport import AsyncHttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
@@ -64,7 +64,7 @@ class AsyncKeyVaultClientBase:
         self,
         vault_url: str,
         credential: "TokenCredential",
-        transport: HttpTransport = None,
+        transport: AsyncHttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
@@ -91,7 +91,7 @@ class AsyncKeyVaultClientBase:
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport, **kwargs: Any) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: Any) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -104,7 +104,8 @@ class AsyncKeyVaultClientBase:
         ]
 
         if transport is None:
-            transport = AsyncioRequestsTransport(**kwargs)
+            from azure.core.pipeline.transport import AioHttpTransport
+            transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)
 
