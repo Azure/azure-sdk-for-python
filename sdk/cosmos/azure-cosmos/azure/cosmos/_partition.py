@@ -24,7 +24,7 @@
 
 from six.moves import xrange
 
-class _Partition(object):
+class Partition(object):
     """Represents a class that holds the hash value and node name for each partition.
     """
     def __init__(self, hash_value = None, node = None):

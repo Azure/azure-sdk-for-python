@@ -23,13 +23,13 @@ import unittest
 import json
 import pytest
 
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
-import azure.cosmos.constants as constants
+import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import StatusCodes
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
-import azure.cosmos.retry_utility as retry_utility
+import azure.cosmos._global_endpoint_manager as global_endpoint_manager
+from azure.cosmos import _retry_utility
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -132,7 +132,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         # Copying the original objects and functions before assigning the mock versions of them
         self.OriginalGetDatabaseAccountStub = global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.OriginalGlobalEndpointManager = global_endpoint_manager._GlobalEndpointManager
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
 
         # Make azure-cosmos use the MockGlobalEndpointManager
         global_endpoint_manager._GlobalEndpointManager = MockGlobalEndpointManager
@@ -141,13 +141,13 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         # Restoring the original objects and functions
         global_endpoint_manager._GlobalEndpointManager = self.OriginalGlobalEndpointManager
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.OriginalGetDatabaseAccountStub
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
     
     def MockExecuteFunction(self, function, *args, **kwargs):
         global location_changed
 
         if self.endpoint_discovery_retry_count == 2:
-            retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
             return (json.dumps([{ 'id': 'mock database' }]), None)
         else:
             self.endpoint_discovery_retry_count += 1
@@ -158,8 +158,8 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         raise errors.HTTPFailure(StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
     
     def MockCreateDatabase(self, client, database):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self.MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self.MockExecuteFunction
         client.CreateDatabase(database)
 
     def test_globaldb_endpoint_discovery_retry_policy(self):

@@ -33,7 +33,7 @@ log_handler.setFormatter(log_formatter)
 logger.addHandler(log_handler)
 
 
-class _EndpointDiscoveryRetryPolicy(object):
+class EndpointDiscoveryRetryPolicy(object):
     """The endpoint discovery retry policy class used for geo-replicated database accounts
        to handle the write forbidden exceptions due to writable/readable location changes
        (say, after a failover).
@@ -44,9 +44,9 @@ class _EndpointDiscoveryRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.global_endpoint_manager = global_endpoint_manager
-        self._max_retry_attempt_count = _EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
+        self._max_retry_attempt_count = EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self.failover_retry_count = 0
-        self.retry_after_in_milliseconds = _EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
+        self.retry_after_in_milliseconds = EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         #clear previous location-based routing directive

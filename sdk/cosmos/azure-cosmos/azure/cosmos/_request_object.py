@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-class _RequestObject(object):
+class RequestObject(object):
     def __init__(self, resource_type, operation_type, endpoint_override = None):
         self.resource_type = resource_type
         self.operation_type = operation_type

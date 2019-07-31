@@ -3,7 +3,7 @@ from ConflictWorker import ConflictWorker
 from Worker import Worker
 from multiprocessing.pool import ThreadPool
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 
 class MultiMasterScenario(object):
     def __init__(self):

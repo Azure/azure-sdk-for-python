@@ -23,7 +23,7 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from typing import (
     Any,
     List,
@@ -99,7 +99,7 @@ class User:
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
+        :returns: An Iterable of permissions (dicts).
 
         """
         if not feed_options:
@@ -133,7 +133,7 @@ class User:
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
+        :returns: An Iterable of permissions (dicts).
 
         """
         if not feed_options:

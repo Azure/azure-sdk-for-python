@@ -24,7 +24,7 @@
 
 from . import http_constants
 
-class _ResourceThrottleRetryPolicy(object):
+class ResourceThrottleRetryPolicy(object):
 
     def __init__(self, max_retry_attempt_count, fixed_retry_interval_in_milliseconds, max_wait_time_in_seconds):
         self._max_retry_attempt_count = max_retry_attempt_count

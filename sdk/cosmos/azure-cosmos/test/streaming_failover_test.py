@@ -1,13 +1,13 @@
 import unittest
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import azure.cosmos.retry_utility as retry_utility
-import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
-from azure.cosmos.request_object import _RequestObject
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
+from azure.cosmos import _retry_utility
+from azure.cosmos import _endpoint_discovery_retry_policy
+from azure.cosmos._request_object import RequestObject
+import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -30,8 +30,8 @@ class TestStreamingFailover(unittest.TestCase):
     endpoint_sequence = []
 
     def test_streaming_failover(self):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
         connection_policy = documents.ConnectionPolicy()
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
         connection_policy.DisableSSLVerification = True
@@ -62,7 +62,7 @@ class TestStreamingFailover(unittest.TestCase):
                 self.assertEqual(self.endpoint_sequence[i], self.WRITE_ENDPOINT2)
 
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def mock_get_database_account(self, url_connection = None):
         database_account = documents.DatabaseAccount()
@@ -105,16 +105,16 @@ class TestStreamingFailover(unittest.TestCase):
         # these functions  should not be called
         self._read_counter = 0
         self._write_counter = 0
-        request = _RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
-        endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
+        request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
+        endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
         endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
 
         self._read_counter = 0
         self._write_counter = 0
-        request = _RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
-        endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
+        request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
+        endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
         endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)

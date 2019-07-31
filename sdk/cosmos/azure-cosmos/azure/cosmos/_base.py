@@ -33,8 +33,8 @@ from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
-from . import constants
-from . import runtime_constants
+from . import _constants as constants
+from . import _runtime_constants
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote
@@ -178,10 +178,10 @@ def GetHeaders(cosmos_client_connection,
 
     if verb == 'post' or verb == 'put':
         if not headers.get(http_constants.HttpHeaders.ContentType):
-            headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.Json
+            headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
     if not headers.get(http_constants.HttpHeaders.Accept):
-        headers[http_constants.HttpHeaders.Accept] = runtime_constants.MediaTypes.Json
+        headers[http_constants.HttpHeaders.Accept] = _runtime_constants.MediaTypes.Json
 
     if partition_key_range_id is not None:
         headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
