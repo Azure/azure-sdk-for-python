@@ -26,12 +26,12 @@ import unittest
 import time
 import pytest
 
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
-import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
-import azure.cosmos.retry_utility as retry_utility
+import azure.cosmos._global_endpoint_manager as global_endpoint_manager
+from azure.cosmos import _endpoint_discovery_retry_policy
+from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import test_config
 
@@ -359,8 +359,8 @@ class Test_globaldb_tests(unittest.TestCase):
     def test_globaldb_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_tests.host, {'masterKey': Test_globaldb_tests.masterKey})
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
         self.OriginalGetDatabaseAccount = client.GetDatabaseAccount
         client.GetDatabaseAccount = self._MockGetDatabaseAccount
@@ -368,8 +368,8 @@ class Test_globaldb_tests(unittest.TestCase):
         max_retry_attempt_count = 10
         retry_after_in_milliseconds = 500
 
-        endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
-        endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = retry_after_in_milliseconds
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = retry_after_in_milliseconds
 
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
@@ -382,7 +382,7 @@ class Test_globaldb_tests(unittest.TestCase):
             self.test_coll['_self'],
             document_definition)
 
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Write Forbidden", {'x-ms-substatus' : SubStatusCodes.WRITE_FORBIDDEN})

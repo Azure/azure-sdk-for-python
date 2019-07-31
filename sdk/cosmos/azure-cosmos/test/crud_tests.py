@@ -41,18 +41,18 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
-import azure.cosmos.consistent_hash_ring as consistent_hash_ring
+from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import azure.cosmos.murmur_hash as murmur_hash
+import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
-import azure.cosmos.base as base
+import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
-import azure.cosmos.retry_utility as retry_utility
+from azure.cosmos import _retry_utility
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -298,11 +298,11 @@ class CRUDTests(unittest.TestCase):
                                            }
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["WA"]')
         del self.last_headers[:]
 
@@ -315,11 +315,11 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
         del self.last_headers[:]
 
@@ -331,11 +331,11 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
         del self.last_headers[:]
 
@@ -358,10 +358,10 @@ class CRUDTests(unittest.TestCase):
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val1"]')
         del self.last_headers[:]
 
@@ -385,11 +385,11 @@ class CRUDTests(unittest.TestCase):
                                'level\" 1*()': {'le/vel2': 'val2'}
                                }
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val2"]')
         del self.last_headers[:]
 
@@ -851,13 +851,13 @@ class CRUDTests(unittest.TestCase):
         str = 'afdgdd'
         bytes = bytearray(str, encoding='utf-8')
 
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
         self.assertEqual(1099701186, hash_value)
 
         num = 374.0
         bytes = bytearray(pack('d', num))
 
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytes)
         self.assertEqual(3717946798, hash_value)
 
         self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326)
@@ -878,25 +878,25 @@ class CRUDTests(unittest.TestCase):
                              3381504877)
 
     def _validate_bytes(self, str, seed, expected_hash_bytes, expected_value):
-        hash_value = murmur_hash._MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
+        hash_value = _murmur_hash.MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
         bytes = bytearray(pack('I', hash_value))
         self.assertEqual(expected_value, hash_value)
         self.assertEqual(expected_hash_bytes, bytes)
 
     def test_get_bytes(self):
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("documentdb")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("documentdb")
         expected_bytes = bytearray(b'\x64\x6F\x63\x75\x6D\x65\x6E\x74\x64\x62')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("azure")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("azure")
         expected_bytes = bytearray(b'\x61\x7A\x75\x72\x65')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("json")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("json")
         expected_bytes = bytearray(b'\x6A\x73\x6F\x6E')
         self.assertEqual(expected_bytes, actual_bytes)
 
-        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("nosql")
+        actual_bytes = _consistent_hash_ring.ConsistentHashRing._GetBytes("nosql")
         expected_bytes = bytearray(b'\x6E\x6F\x73\x71\x6C')
         self.assertEqual(expected_bytes, actual_bytes)
 
