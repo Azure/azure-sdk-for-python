@@ -267,7 +267,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
     """
     # Accept "text" because we're open minded people...
-    JSON_REGEXP = re.compile(r'^(application|text)/([a-z+.]+\+)?json$')
+    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
 
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
