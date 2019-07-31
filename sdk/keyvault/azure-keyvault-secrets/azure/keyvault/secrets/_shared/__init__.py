@@ -49,8 +49,8 @@ def parse_vault_id(url):
 
 try:
     from .async_challenge_auth_policy import AsyncChallengeAuthPolicy
-    from .async_client_base import AsyncKeyVaultClientBase, AsyncPagingAdapter
+    from .async_client_base import AsyncKeyVaultClientBase
 
-    __all__.extend(["AsyncChallengeAuthPolicy", "AsyncKeyVaultClientBase", "AsyncPagingAdapter"])
+    __all__.extend(["AsyncChallengeAuthPolicy", "AsyncKeyVaultClientBase"])
 except (SyntaxError, ImportError):
     pass
