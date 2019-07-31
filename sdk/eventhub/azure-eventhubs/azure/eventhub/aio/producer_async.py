@@ -147,7 +147,8 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
-    async def create_batch(self, **kwargs):
+    async def create_batch(self, max_size=None, partition_key=None):
+        # type:(int, str) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
@@ -159,8 +160,6 @@ class EventHubProducer(ConsumerProducerMixin):
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
         """
-        max_size = kwargs.get("max_size", None)
-        partition_key = kwargs.get("partition_key", None)
 
         @_retry_decorator
         async def _wrapped_open(*args, **kwargs):
@@ -175,8 +174,8 @@ class EventHubProducer(ConsumerProducerMixin):
 
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
-    async def send(self, event_data, **kwargs):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes]) -> None
+    async def send(self, event_data, partition_key=None, timeout=None):
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -204,8 +203,6 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
-        partition_key = kwargs.get("partition_key", None)
-        timeout = kwargs.get("timeout", None)
 
         self._check_closed()
         if isinstance(event_data, EventData):

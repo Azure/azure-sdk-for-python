@@ -8,12 +8,11 @@ import logging
 from typing import List
 import time
 
-from uamqp import errors, types, compat
+from uamqp import errors, types
 from uamqp import ReceiveClientAsync, Source
 
 from azure.eventhub import EventData, EventPosition
-from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
-from ..aio.error_async import _handle_exception
+from azure.eventhub.error import EventHubError, ConnectError, _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
 
 log = logging.getLogger(__name__)
@@ -148,19 +147,6 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open(timeout_time)
 
-    @property
-    def queue_size(self):
-        # type: () -> int
-        """
-        The current size of the unprocessed Event queue.
-
-        :rtype: int
-        """
-        # pylint: disable=protected-access
-        if self._handler._received_messages:
-            return self._handler._received_messages.qsize()
-        return 0
-
     @_retry_decorator
     async def _receive(self, **kwargs):
         timeout_time = kwargs.get("timeout_time")
@@ -186,8 +172,21 @@ class EventHubConsumer(ConsumerProducerMixin):
             data_batch.append(event_data)
         return data_batch
 
-    async def receive(self, **kwargs):
-        # type: (...) -> List[EventData]
+    @property
+    def queue_size(self):
+        # type: () -> int
+        """
+        The current size of the unprocessed Event queue.
+
+        :rtype: int
+        """
+        # pylint: disable=protected-access
+        if self._handler._received_messages:
+            return self._handler._received_messages.qsize()
+        return 0
+
+    async def receive(self, max_batch_size=None, timeout=None):
+        # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.
 
@@ -215,9 +214,8 @@ class EventHubConsumer(ConsumerProducerMixin):
         """
         self._check_closed()
 
-        max_batch_size = kwargs.get("max_batch_size", None)
-        timeout = kwargs.get("timeout", None) or self.client.config.receive_timeout
-        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
+        timeout = timeout or self.client.config.receive_timeout
+        max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
 
         return await self._receive(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)

@@ -13,8 +13,9 @@ from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
 from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import _error_handler, EventHubError
+from azure.eventhub.error import _error_handler
 from ._consumer_producer_mixin import ConsumerProducerMixin, _retry_decorator
+
 
 log = logging.getLogger(__name__)
 
@@ -141,19 +142,6 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         super(EventHubConsumer, self)._open(timeout_time)
 
-    @property
-    def queue_size(self):
-        # type:() -> int
-        """
-        The current size of the unprocessed Event queue.
-
-        :rtype: int
-        """
-        # pylint: disable=protected-access
-        if self._handler._received_messages:
-            return self._handler._received_messages.qsize()
-        return 0
-
     @_retry_decorator
     def _receive(self, **kwargs):
         timeout_time = kwargs.get("timeout_time")
@@ -178,8 +166,21 @@ class EventHubConsumer(ConsumerProducerMixin):
             data_batch.append(event_data)
         return data_batch
 
-    def receive(self, **kwargs):
-        # type: (...) -> List[EventData]
+    @property
+    def queue_size(self):
+        # type:() -> int
+        """
+        The current size of the unprocessed Event queue.
+
+        :rtype: int
+        """
+        # pylint: disable=protected-access
+        if self._handler._received_messages:
+            return self._handler._received_messages.qsize()
+        return 0
+
+    def receive(self, max_batch_size=None, timeout=None):
+        # type: (int, float) -> List[EventData]
         """
         Receive events from the EventHub.
 
@@ -206,9 +207,8 @@ class EventHubConsumer(ConsumerProducerMixin):
         """
         self._check_closed()
 
-        max_batch_size = kwargs.get("max_batch_size", None)
-        timeout = kwargs.get("timeout", None) or self.client.config.receive_timeout
-        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
+        timeout = timeout or self.client.config.receive_timeout
+        max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
 
         return self._receive(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
