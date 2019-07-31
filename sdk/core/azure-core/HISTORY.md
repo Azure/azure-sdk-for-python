@@ -7,8 +7,8 @@
 
 ## Breaking changes
 
-- Transport classes don't take `config` parameter anymore (use kwargs instead)
-- `azure.core.paging` has been completely refactored
+- Transport classes don't take `config` parameter anymore (use kwargs instead)  #6372
+- `azure.core.paging` has been completely refactored  #6420
 - HttpResponse.content_type attribute is now a string (was a list)  #6490
 - For `StreamDownloadGenerator` subclasses, `response` is now an `HttpResponse`, and not a transport response like `aiohttp.ClientResponse` or `requests.Response`. The transport response is available in `internal_response` attribute  #6490
 
