@@ -7,7 +7,6 @@ from abc import abstractmethod
 import re
 from datetime import datetime
 from requests.structures import CaseInsensitiveDict
-from msrest.paging import Paged
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceModifiedError,
@@ -32,7 +31,7 @@ class AzureAppConfigurationClientAbstract(object):
     def list_configuration_settings(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
-        # type: (list, list, datetime, list, dict) -> Paged
+        # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_date_time
@@ -49,7 +48,7 @@ class AzureAppConfigurationClientAbstract(object):
         :type fields: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`Paged`
+        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpRequestError`
 
         """
@@ -214,7 +213,7 @@ class AzureAppConfigurationClientAbstract(object):
     def list_revisions(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
-        # type: (list, list, datetime, list, dict) -> Paged
+        # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -231,7 +230,7 @@ class AzureAppConfigurationClientAbstract(object):
         :type fields: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`Paged`
+        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpRequestError`
 
         """

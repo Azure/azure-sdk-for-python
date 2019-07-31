@@ -7,7 +7,6 @@ import os
 import sys
 import platform
 from datetime import datetime
-from msrest.paging import Paged
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError
@@ -61,7 +60,7 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
 
     def list_configuration_settings(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
-    ):  # type: (list, list, datetime, list, dict) -> Paged
+    ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
         """
         Example
 
@@ -87,7 +86,7 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
 
     def get_configuration_setting(
         self, key, label=None, accept_date_time=None, **kwargs
-    ):  # type: (str, str, datetime, dict) -> Paged
+    ):  # type: (str, str, datetime, dict) -> ConfigurationSetting
         """
         Example
 
@@ -196,7 +195,7 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientAbstract):
 
     def list_revisions(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
-    ):  # type: (list, list, datetime, list, dict) -> Paged
+    ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
         """
         Example
 
