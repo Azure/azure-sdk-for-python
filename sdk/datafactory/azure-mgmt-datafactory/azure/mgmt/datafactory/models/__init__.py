@@ -289,6 +289,7 @@ try:
     from .binary_dataset_py3 import BinaryDataset
     from .delimited_text_dataset_py3 import DelimitedTextDataset
     from .parquet_dataset_py3 import ParquetDataset
+    from .avro_dataset_py3 import AvroDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .activity_policy_py3 import ActivityPolicy
     from .azure_function_activity_py3 import AzureFunctionActivity
@@ -403,6 +404,7 @@ try:
     from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
     from .parquet_source_py3 import ParquetSource
+    from .avro_source_py3 import AvroSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
     from .azure_data_explorer_command_activity_py3 import AzureDataExplorerCommandActivity
@@ -455,12 +457,14 @@ try:
     from .azure_blob_storage_write_settings_py3 import AzureBlobStorageWriteSettings
     from .store_write_settings_py3 import StoreWriteSettings
     from .parquet_sink_py3 import ParquetSink
+    from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
+    from .format_write_settings_py3 import FormatWriteSettings
+    from .avro_write_settings_py3 import AvroWriteSettings
+    from .avro_sink_py3 import AvroSink
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
     from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
-    from .format_write_settings_py3 import FormatWriteSettings
-    from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
@@ -790,6 +794,7 @@ except (SyntaxError, ImportError):
     from .binary_dataset import BinaryDataset
     from .delimited_text_dataset import DelimitedTextDataset
     from .parquet_dataset import ParquetDataset
+    from .avro_dataset import AvroDataset
     from .amazon_s3_dataset import AmazonS3Dataset
     from .activity_policy import ActivityPolicy
     from .azure_function_activity import AzureFunctionActivity
@@ -904,6 +909,7 @@ except (SyntaxError, ImportError):
     from .delimited_text_read_settings import DelimitedTextReadSettings
     from .delimited_text_source import DelimitedTextSource
     from .parquet_source import ParquetSource
+    from .avro_source import AvroSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
     from .azure_data_explorer_command_activity import AzureDataExplorerCommandActivity
@@ -956,12 +962,14 @@ except (SyntaxError, ImportError):
     from .azure_blob_storage_write_settings import AzureBlobStorageWriteSettings
     from .store_write_settings import StoreWriteSettings
     from .parquet_sink import ParquetSink
+    from .delimited_text_write_settings import DelimitedTextWriteSettings
+    from .format_write_settings import FormatWriteSettings
+    from .avro_write_settings import AvroWriteSettings
+    from .avro_sink import AvroSink
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
     from .azure_postgre_sql_sink import AzurePostgreSqlSink
-    from .format_write_settings import FormatWriteSettings
-    from .delimited_text_write_settings import DelimitedTextWriteSettings
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
@@ -1062,6 +1070,7 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DynamicsDeploymentType,
     DynamicsAuthenticationType,
+    AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
     NetezzaPartitionOption,
@@ -1371,6 +1380,7 @@ __all__ = [
     'BinaryDataset',
     'DelimitedTextDataset',
     'ParquetDataset',
+    'AvroDataset',
     'AmazonS3Dataset',
     'ActivityPolicy',
     'AzureFunctionActivity',
@@ -1485,6 +1495,7 @@ __all__ = [
     'DelimitedTextReadSettings',
     'DelimitedTextSource',
     'ParquetSource',
+    'AvroSource',
     'CopySource',
     'LookupActivity',
     'AzureDataExplorerCommandActivity',
@@ -1537,12 +1548,14 @@ __all__ = [
     'AzureBlobStorageWriteSettings',
     'StoreWriteSettings',
     'ParquetSink',
+    'DelimitedTextWriteSettings',
+    'FormatWriteSettings',
+    'AvroWriteSettings',
+    'AvroSink',
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
     'AzurePostgreSqlSink',
-    'FormatWriteSettings',
-    'DelimitedTextWriteSettings',
     'DelimitedTextSink',
     'CopySink',
     'CopyActivity',
@@ -1642,6 +1655,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsAuthenticationType',
+    'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'NetezzaPartitionOption',
