@@ -7,8 +7,8 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-  ToxTestEnvString: 'py37-windows-test,py27-windows-test,dev'
-  ToxLintEnvString: 'python3.6-lint,python2.7-lint'
+  ToxTestEnvString: 'py37-windows-test,py27-windows-test,sdist'
+  ToxLintEnvString: 'lint'
 
 steps:
   - powershell: |
@@ -102,5 +102,13 @@ steps:
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-junit-py3.7-*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python 3.7'
+      mergeTestResults: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Dev Install Test Results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-junit-sdist-*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
       mergeTestResults: true
