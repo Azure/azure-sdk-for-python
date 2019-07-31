@@ -9,7 +9,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys._models import Key, DeletedKey, KeyBase, KeyOperationResult
-from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 
 class KeyClient(AsyncKeyVaultClientBase):
@@ -354,9 +354,12 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_keys(self.vault_url, maxresults=max_results, **kwargs)
-        iterable = AsyncPagingAdapter(pages, KeyBase._from_key_item)
-        return iterable
+        return self._client.get_keys(
+            self.vault_url,
+            maxresults=max_results,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def list_key_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
@@ -380,9 +383,13 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_key_versions(self.vault_url, name, maxresults=max_results, **kwargs)
-        iterable = AsyncPagingAdapter(pages, KeyBase._from_key_item)
-        return iterable
+        return self._client.get_key_versions(
+            self.vault_url,
+            name,
+            maxresults=max_results,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace_async
     async def backup_key(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
@@ -538,9 +545,12 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_results = kwargs.get("max_page_size")
-        pages = self._client.get_deleted_keys(self.vault_url, maxresults=max_results, **kwargs)
-        iterable = AsyncPagingAdapter(pages, DeletedKey._from_deleted_key_item)
-        return iterable
+        return self._client.get_deleted_keys(
+            self.vault_url,
+            maxresults=max_results,
+            cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace_async
     async def purge_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> None:
