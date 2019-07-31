@@ -81,6 +81,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         self.error = None
         self._link_properties = {}
         partition = self.source.split('/')[-1]
+        self.partition = partition
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
             self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
@@ -102,6 +103,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 message = await self.messages_iter.__anext__()
                 event_data = EventData(message=message)
                 self.offset = EventPosition(event_data.offset, inclusive=False)
+                retry_count = 0
                 return event_data
             except Exception as exception:
                 await self._handle_exception(exception, retry_count, max_retries)
@@ -185,7 +187,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         return data_batch
 
     async def receive(self, **kwargs):
-        # type: (int, float) -> List[EventData]
+        # type: (...) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.
 
