@@ -23,9 +23,9 @@
 """
 
 import six
-from azure.cosmos.cosmos_client_connection import CosmosClientConnection
+from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
-from.query_iterable import QueryIterable
+from ._query_iterable import QueryIterable
 from typing import (
     Any,
     List,
@@ -64,7 +64,7 @@ class Scripts:
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of stored procedures (dicts).
+        :returns: An Iterable of stored procedures (dicts).
 
         """
         if not feed_options:
@@ -91,7 +91,7 @@ class Scripts:
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of stored procedures (dicts).
+        :returns: An Iterable of stored procedures (dicts).
 
         """
         if not feed_options:
@@ -246,7 +246,7 @@ class Scripts:
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of triggers (dicts).
+        :returns: An Iterable of triggers (dicts).
 
         """
         if not feed_options:
@@ -273,7 +273,7 @@ class Scripts:
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of triggers (dicts).
+        :returns: An Iterable of triggers (dicts).
 
         """
         if not feed_options:
@@ -394,7 +394,7 @@ class Scripts:
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of user defined functions (dicts).
+        :returns: An Iterable of user defined functions (dicts).
 
         """
         if not feed_options:
@@ -421,7 +421,7 @@ class Scripts:
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
-        :returns: A :class:`QueryIterable` instance representing an iterable of user defined functions (dicts).
+        :returns: An Iterable of user defined functions (dicts).
 
         """
         if not feed_options:
