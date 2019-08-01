@@ -41,9 +41,9 @@ class FooServiceClient():
         config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
         config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
         config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
-        config.transport = kwargs.get('transport', RequestsTransport(**kwargs))
 
     def __init__(self, **kwargs):
+        transport = kwargs.get('transport', RequestsTransport(**kwargs)
         config = FooServiceClient._create_config(**kwargs)
         policies = [
             config.user_agent_policy,
@@ -55,7 +55,7 @@ class FooServiceClient():
             config.retry_policy,
             config.logging_policy,
         ]
-        self._pipeline = Pipeline(config.transport, policies=policies)
+        self._pipeline = Pipeline(transport, policies=policies)
 
     def get_foo_properties(self, **kwargs)
         # Create a generic HTTP Request. This is not specific to any particular transport
