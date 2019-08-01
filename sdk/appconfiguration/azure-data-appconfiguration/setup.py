@@ -13,8 +13,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-appconfiguration"
-PACKAGE_PPRINT_NAME = "Azure App Configuration"
+PACKAGE_NAME = "azure-data-appconfiguration"
+PACKAGE_PPRINT_NAME = "App Configuration Data"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

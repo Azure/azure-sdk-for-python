@@ -56,7 +56,7 @@ Once you have the value of the connection string, you can create the Configurati
     from azure.appconfiguration import AzureAppConfigurationClient
 
     connection_str = "<connection_string>"
-    client = AzureAppConfigurationClient(connection_str)
+    client = AzureAppConfigurationClient.from_connection_string(connection_str)
 ```
 
 ## Key concepts
@@ -176,7 +176,7 @@ To use the async client library, import the AzureAppConfigurationClient from pac
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 connection_str = "<connection_string>"
-async_client = AzureAppConfigurationClient(connection_str)
+async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
 ```
 This async AzureAppConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
