@@ -30,32 +30,32 @@ from azure.core.pipeline.policies import (
 class FooServiceClient():
 
     @staticmethod
-    def create_config(credential, scopes, **kwargs):
+    def _create_config(credential, scopes, **kwargs):
         # Here the SDK developer would define the default
         # config to interact with the service
         config = Configuration(**kwargs)
-        config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
-        config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, scopes, **kwargs)
-        config.retry_policy = RetryPolicy(**kwargs)
-        config.redirect_policy = RedirectPolicy(**kwargs)
-        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.proxy_policy = ProxyPolicy(**kwargs)
-        config.transport = kwargs.get('transport', RequestsTransport)
+        config.headers_policy = kwargs.get('headers_policy', HeadersPolicy({"CustomHeader": "Value"}, **kwargs))
+        config.user_agent_policy = kwargs.get('user_agent_policy', UserAgentPolicy("ServiceUserAgentValue", **kwargs))
+        config.authentication_policy = kwargs.get('authentication_policy', BearerTokenCredentialPolicy(credential, scopes, **kwargs))
+        config.retry_policy = kwargs.get('retry_policy', RetryPolicy(**kwargs))
+        config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
+        config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
+        config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
+        config.transport = kwargs.get('transport', RequestsTransport(**kwargs))
 
-    def __init__(self, transport=None, configuration=None, **kwargs):
-        config = configuration or FooServiceClient.create_config(**kwargs)
-        transport = config.get_transport(**kwargs)
+    def __init__(self, **kwargs):
+        config = FooServiceClient._create_config(**kwargs)
         policies = [
             config.user_agent_policy,
             config.headers_policy,
             config.authentication_policy,
             ContentDecodePolicy(),
+            config.proxy_policy,
             config.redirect_policy,
             config.retry_policy,
             config.logging_policy,
         ]
-        self._pipeline = Pipeline(transport, policies=policies)
+        self._pipeline = Pipeline(config.transport, policies=policies)
 
     def get_foo_properties(self, **kwargs)
         # Create a generic HTTP Request. This is not specific to any particular transport
@@ -92,15 +92,15 @@ client = FooServiceClient(endpoint, creds)
 response = client.get_foo_properties(redirects_max=0)
 
 # Scenario where user wishes to fully customize the policies.
-# We expose the SDK-developer defined configuration to allow it to be tweaked
-# or entire policies replaced or patched.
-foo_config = FooServiceClient.create_config()
-
+# All configuration options are passed through kwargs
 foo_config.retry_policy = CustomRetryPolicy()
-foo_config.redirect_policy.max_redirects = 5
-foo_config.logging_policy.enable_http_logger = True
 
-client = FooServiceClient(endpoint, creds, config=config)
+client = FooServiceClient(
+    endpoint,
+    creds,
+    redirect_max=5,
+    logging_enable=True
+)
 response = client.get_foo_properties()
 ```
 
