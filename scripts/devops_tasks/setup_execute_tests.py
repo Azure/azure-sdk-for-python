@@ -95,8 +95,6 @@ if __name__ == '__main__':
     else:
         target_dir = root_dir
 
-    print(args.glob_string);
-
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
     if args.test_results:
