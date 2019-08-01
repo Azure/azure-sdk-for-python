@@ -29,7 +29,7 @@ if __name__ == '__main__':
     for wheel in discovered_wheels:
         # if the environment variable is set, that means that this is running where we
         # want to use the pre-built wheels
-        if os.environ["PREBUILT_WHEEL_DIR"]:
+        if os.getenv('PREBUILT_WHEEL_DIR') is not None:
             # find the wheel in the set of prebuilt wheels
             if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
                 check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])

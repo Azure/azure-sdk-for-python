@@ -7,7 +7,7 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-  ToxTestEnvString: 'py37-windows-test,py27-windows-test,sdist'
+  ToxTestEnvString: ''
   ToxLintEnvString: 'lint'
 
 steps:
@@ -76,39 +76,39 @@ steps:
     displayName: 'Publish Python 2.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-py27-*.xml'
+      testResultsFiles: '**/*py27*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 2.7'
       mergeTestResults: true
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Python 3.4 Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/test-junit-python3.4-*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.4'
-      mergeTestResults: true
+  # - task: PublishTestResults@2
+  #   displayName: 'Publish Python 3.4 Test Results'
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     testResultsFiles: '**/test-junit-python3.4-*.xml'
+  #     testRunTitle: '${{ parameters.OSName }} Python 3.4'
+  #     mergeTestResults: true
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Python 3.5 Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/test-junit-python3.5-*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.5'
-      mergeTestResults: true
+  # - task: PublishTestResults@2
+  #   displayName: 'Publish Python 3.5 Test Results'
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     testResultsFiles: '**/test-junit-python3.5-*.xml'
+  #     testRunTitle: '${{ parameters.OSName }} Python 3.5'
+  #     mergeTestResults: true
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Python 3.6 Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/test-junit-python3.6-*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.6'
-      mergeTestResults: true
+  # - task: PublishTestResults@2
+  #   displayName: 'Publish Python 3.6 Test Results'
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     testResultsFiles: '**/test-junit-python3.6-*.xml'
+  #     testRunTitle: '${{ parameters.OSName }} Python 3.6'
+  #     mergeTestResults: true
 
   - task: PublishTestResults@2
     displayName: 'Publish Python3.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-py37-*.xml'
+      testResultsFiles: '**/py37*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
       mergeTestResults: true
 
@@ -116,6 +116,6 @@ steps:
     displayName: 'Publish Python 3.6 Dev Install Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/test-junit-sdist.xml'
+      testResultsFiles: '**/*sdist*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.6 Develop Installation Tests'
       mergeTestResults: true
