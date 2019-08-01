@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import logging
 import time
 
-from uamqp import errors, constants
+from uamqp import errors, constants, compat
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
@@ -92,6 +92,10 @@ class ConsumerProducerMixin(object):
         self.client._conn_manager.reset_connection_if_broken()
 
     def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
+        if not self.running and isinstance(exception, compat.TimeoutException):
+            exception = errors.AuthenticationException("Authorization timeout.")
+            return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+
         return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
 
     def close(self, exception=None):
