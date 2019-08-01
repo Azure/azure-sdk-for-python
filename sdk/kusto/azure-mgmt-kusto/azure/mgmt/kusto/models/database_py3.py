@@ -29,14 +29,15 @@ class Database(ProxyResource):
     :param location: Resource location.
     :type location: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :param soft_delete_period: The time the data should be kept before it
      stops being accessible to queries in TimeSpan.
     :type soft_delete_period: timedelta
-    :param hot_cache_period: The time the data that should be kept in cache
-     for fast queries in TimeSpan.
+    :param hot_cache_period: The time the data should be kept in cache for
+     fast queries in TimeSpan.
     :type hot_cache_period: timedelta
     :param statistics: The statistics of the database.
     :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics

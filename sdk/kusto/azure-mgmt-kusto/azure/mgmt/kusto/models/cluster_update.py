@@ -37,7 +37,8 @@ class ClusterUpdate(Resource):
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
@@ -47,6 +48,14 @@ class ClusterUpdate(Resource):
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
+    :param optimized_autoscale: Optimized auto scale definition.
+    :type optimized_autoscale: ~azure.mgmt.kusto.models.OptimizedAutoscale
+    :param enable_disk_encryption: A boolean value that indicates if the
+     cluster's disks are encrypted.
+    :type enable_disk_encryption: bool
+    :param virtual_network_configuration: Virtual network definition.
+    :type virtual_network_configuration:
+     ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
     """
 
     _validation = {
@@ -71,6 +80,9 @@ class ClusterUpdate(Resource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
+        'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
+        'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
+        'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -83,3 +95,6 @@ class ClusterUpdate(Resource):
         self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
+        self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
+        self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
+        self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)

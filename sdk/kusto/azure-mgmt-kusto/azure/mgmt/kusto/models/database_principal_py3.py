@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class DatabasePrincipal(Model):
     """A class representing database principal entity.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param role: Required. Database principal role. Possible values include:
@@ -32,12 +35,15 @@ class DatabasePrincipal(Model):
     :param app_id: Application id - relevant only for application principal
      type.
     :type app_id: str
+    :ivar tenant_name: The tenant name of the principal
+    :vartype tenant_name: str
     """
 
     _validation = {
         'role': {'required': True},
         'name': {'required': True},
         'type': {'required': True},
+        'tenant_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -47,6 +53,7 @@ class DatabasePrincipal(Model):
         'fqn': {'key': 'fqn', 'type': 'str'},
         'email': {'key': 'email', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'tenant_name': {'key': 'tenantName', 'type': 'str'},
     }
 
     def __init__(self, *, role, name: str, type, fqn: str=None, email: str=None, app_id: str=None, **kwargs) -> None:
@@ -57,3 +64,4 @@ class DatabasePrincipal(Model):
         self.fqn = fqn
         self.email = email
         self.app_id = app_id
+        self.tenant_name = None
