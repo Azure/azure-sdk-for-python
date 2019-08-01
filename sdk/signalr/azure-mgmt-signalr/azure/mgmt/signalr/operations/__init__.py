@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .signal_roperations import SignalROperations
-from .usages_operations import UsagesOperations
+from ._operations import Operations
+from ._signal_roperations import SignalROperations
+from ._usages_operations import UsagesOperations
 
 __all__ = [
     'Operations',
