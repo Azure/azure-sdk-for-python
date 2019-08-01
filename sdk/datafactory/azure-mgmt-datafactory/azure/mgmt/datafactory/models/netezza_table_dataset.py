@@ -43,8 +43,8 @@ class NetezzaTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name of the Netezza which includes both
-     schema and table. Type: string (or Expression with resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
     :param table: The table name of the Netezza. Type: string (or Expression
      with resultType string).

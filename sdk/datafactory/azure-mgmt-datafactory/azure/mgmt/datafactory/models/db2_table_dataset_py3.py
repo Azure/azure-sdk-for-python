@@ -43,9 +43,15 @@ class Db2TableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The Db2 table name. Type: string (or Expression with
-     resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
+    :param db2_table_dataset_schema: The Db2 schema name. Type: string (or
+     Expression with resultType string).
+    :type db2_table_dataset_schema: object
+    :param table: The Db2 table name. Type: string (or Expression with
+     resultType string).
+    :type table: object
     """
 
     _validation = {
@@ -64,9 +70,13 @@ class Db2TableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'db2_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, db2_table_dataset_schema=None, table=None, **kwargs) -> None:
         super(Db2TableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
+        self.db2_table_dataset_schema = db2_table_dataset_schema
+        self.table = table
         self.type = 'Db2Table'
