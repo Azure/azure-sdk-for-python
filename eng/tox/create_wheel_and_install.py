@@ -27,12 +27,17 @@ if __name__ == '__main__':
     discovered_wheels = [f for f in os.listdir(args.distribution_directory) if os.path.isfile(os.path.join(args.distribution_directory, f))]
 
     for wheel in discovered_wheels:
-        if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
-            check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
-            print('Installed {w} from wheel directory'.format(w=wheel))
+        # if the environment variable is set, that means that this is running where we
+        # want to use the pre-built wheels
+        if os.environ["PREBUILT_WHEEL_DIR"]:
+            # find the wheel in the set of prebuilt wheels
+            if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
+                check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
+                print('Installed {w} from wheel directory'.format(w=wheel))
+            # it does't exist, so we need to error out
+            else:
+                print('{w} not present in the prebuilt wheels directory. Exiting.')
+                exit(1)
         else:
             check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
             print('Installed {w} from fresh wheel.'.format(w=wheel))
-
-    exit(1)
-        
