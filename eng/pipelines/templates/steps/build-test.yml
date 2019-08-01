@@ -74,7 +74,7 @@ steps:
     displayName: 'Publish Python 2.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/*py27*.xml'
+      testResultsFiles: '**/*python2.7*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 2.7'
       mergeTestResults: true
 
@@ -103,10 +103,10 @@ steps:
   #     mergeTestResults: true
 
   - task: PublishTestResults@2
-    displayName: 'Publish Python3.7 Test Results'
+    displayName: 'Publish Python 3.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/py37*.xml'
+      testResultsFiles: '**/*python3.7*.xml'
       testRunTitle: '${{ parameters.OSName }} Python 3.7'
       mergeTestResults: true
 
