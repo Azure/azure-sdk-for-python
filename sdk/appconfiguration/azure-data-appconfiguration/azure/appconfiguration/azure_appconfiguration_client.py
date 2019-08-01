@@ -84,6 +84,12 @@ class AzureAppConfigurationClient():
         client = AzureAppConfigurationClient(connection_str)
     """
 
+    @classmethod
+    def from_connection_string(
+            cls, connection_string,  # type: str
+    ):
+        return cls(connection_string=connection_string)
+
     def __init__(self, connection_string):
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         program_name = os.path.basename(sys.argv[0]) or "noprogram"
