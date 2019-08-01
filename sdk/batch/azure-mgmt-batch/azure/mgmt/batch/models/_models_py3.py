@@ -371,14 +371,16 @@ class AutoUserSpecification(Model):
     """Specifies the parameters for the auto user that runs a task on the Batch
     service.
 
-    :param scope: The scope for the auto user. The default value is task.
+    :param scope: The scope for the auto user. The default value is Pool. If
+     the pool is running Windows a value of Task should be specified if
+     stricter isolation between tasks is required. For example, if the task
+     mutates the registry in a way which could impact other tasks, or if
+     certificates have been specified on the pool which should not be
+     accessible by normal tasks but should be accessible by start tasks.
      Possible values include: 'Task', 'Pool'
     :type scope: str or ~azure.mgmt.batch.models.AutoUserScope
-    :param elevation_level: The elevation level of the auto user. nonAdmin -
-     The auto user is a standard user without elevated access. admin - The auto
-     user is a user with elevated access and operates with full Administrator
-     permissions. The default value is nonAdmin. Possible values include:
-     'NonAdmin', 'Admin'
+    :param elevation_level: The elevation level of the auto user. The default
+     value is nonAdmin. Possible values include: 'NonAdmin', 'Admin'
     :type elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
     """
 
@@ -391,6 +393,101 @@ class AutoUserSpecification(Model):
         super(AutoUserSpecification, self).__init__(**kwargs)
         self.scope = scope
         self.elevation_level = elevation_level
+
+
+class AzureBlobFileSystemConfiguration(Model):
+    """Blobfuse file system details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The Azure Storage account name.
+    :type account_name: str
+    :param container_name: Required. The Azure Blob Storage container name.
+    :type container_name: str
+    :param account_key: The Azure Storage account key. This property is
+     mutually exclusive with sasKey and one must be specified.
+    :type account_key: str
+    :param sas_key: The Azure Storage SAS token. This property is mutually
+     exclusive with accountKey and one must be specified.
+    :type sas_key: str
+    :param blobfuse_options: Additional command line options to pass to the
+     mount command. These are 'net use' options in Windows and 'mount' options
+     in Linux.
+    :type blobfuse_options: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+        'container_name': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+        'sas_key': {'key': 'sasKey', 'type': 'str'},
+        'blobfuse_options': {'key': 'blobfuseOptions', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+    }
+
+    def __init__(self, *, account_name: str, container_name: str, relative_mount_path: str, account_key: str=None, sas_key: str=None, blobfuse_options: str=None, **kwargs) -> None:
+        super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
+        self.account_name = account_name
+        self.container_name = container_name
+        self.account_key = account_key
+        self.sas_key = sas_key
+        self.blobfuse_options = blobfuse_options
+        self.relative_mount_path = relative_mount_path
+
+
+class AzureFileShareConfiguration(Model):
+    """Azure Files details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The Azure Storage account name.
+    :type account_name: str
+    :param azure_file_url: Required. The Azure Files URL.
+    :type azure_file_url: str
+    :param account_key: Required. The Azure Storage account key.
+    :type account_key: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Specifies various mount options that can be used.
+    :type mount_options: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+        'azure_file_url': {'required': True},
+        'account_key': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'azure_file_url': {'key': 'azureFileUrl', 'type': 'str'},
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+    }
+
+    def __init__(self, *, account_name: str, azure_file_url: str, account_key: str, relative_mount_path: str, mount_options: str=None, **kwargs) -> None:
+        super(AzureFileShareConfiguration, self).__init__(**kwargs)
+        self.account_name = account_name
+        self.azure_file_url = azure_file_url
+        self.account_key = account_key
+        self.relative_mount_path = relative_mount_path
+        self.mount_options = mount_options
 
 
 class Resource(Model):
@@ -1009,6 +1106,51 @@ class CheckNameAvailabilityResult(Model):
         self.message = None
 
 
+class CIFSMountConfiguration(Model):
+    """CIFS file system details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param username: Required. The user to use for authentication against the
+     CIFS file system.
+    :type username: str
+    :param source: Required. The URI of the file system to mount.
+    :type source: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Specifies various mount options that can be used.
+    :type mount_options: str
+    :param password: Required. The password to authenticate with.
+    :type password: str
+    """
+
+    _validation = {
+        'username': {'required': True},
+        'source': {'required': True},
+        'relative_mount_path': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, *, username: str, source: str, relative_mount_path: str, password: str, mount_options: str=None, **kwargs) -> None:
+        super(CIFSMountConfiguration, self).__init__(**kwargs)
+        self.username = username
+        self.source = source
+        self.relative_mount_path = relative_mount_path
+        self.mount_options = mount_options
+        self.password = password
+
+
 class CloudError(Model):
     """An error response from the Batch service.
 
@@ -1179,8 +1321,9 @@ class ContainerRegistry(Model):
 
 
 class DataDisk(Model):
-    """Data Disk settings which will be used by the data disks associated to
-    Compute Nodes in the pool.
+    """Settings which will be used by the data disks associated to Compute Nodes
+    in the Pool. When using attached data disks, you need to mount and format
+    the disks from within a VM to use them.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1377,22 +1520,25 @@ class ImageReference(Model):
      image. For example, UbuntuServer or WindowsServer.
     :type offer: str
     :param sku: The SKU of the Azure Virtual Machines Marketplace image. For
-     example, 14.04.0-LTS or 2012-R2-Datacenter.
+     example, 18.04-LTS or 2019-Datacenter.
     :type sku: str
     :param version: The version of the Azure Virtual Machines Marketplace
      image. A value of 'latest' can be specified to select the latest version
      of an image. If omitted, the default is 'latest'.
     :type version: str
-    :param id: The ARM resource identifier of the virtual machine image.
-     Computes nodes of the pool will be created using this custom image. This
-     is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
-     This property is mutually exclusive with other properties. The virtual
-     machine image must be in the same region and subscription as the Azure
-     Batch account. For information about the firewall settings for Batch node
-     agent to communicate with Batch service see
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
-     .
+    :param id: The ARM resource identifier of the Virtual Machine Image or
+     Shared Image Gallery Image. Compute Nodes of the Pool will be created
+     using this Image Id. This is of either the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}
+     for Virtual Machine Image or
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}
+     for SIG image. This property is mutually exclusive with other properties.
+     For Virtual Machine Image it must be in the same region and subscription
+     as the Azure Batch account. For SIG image it must have replicas in the
+     same region as the Azure Batch account. For information about the firewall
+     settings for the Batch node agent to communicate with the Batch service
+     see
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type id: str
     """
 
@@ -1581,6 +1727,46 @@ class MetadataItem(Model):
         self.value = value
 
 
+class MountConfiguration(Model):
+    """The file system to mount on each node.
+
+    Each property is mutually exclusive.
+
+    :param azure_blob_file_system_configuration: The Azure Storage container
+     to mount using blob FUSE on each node. This property is mutually exclusive
+     with all other properties.
+    :type azure_blob_file_system_configuration:
+     ~azure.mgmt.batch.models.AzureBlobFileSystemConfiguration
+    :param nfs_mount_configuration: The NFS file system to mount on each node.
+     This property is mutually exclusive with all other properties.
+    :type nfs_mount_configuration:
+     ~azure.mgmt.batch.models.NFSMountConfiguration
+    :param cifs_mount_configuration: The CIFS/SMB file system to mount on each
+     node. This property is mutually exclusive with all other properties.
+    :type cifs_mount_configuration:
+     ~azure.mgmt.batch.models.CIFSMountConfiguration
+    :param azure_file_share_configuration: The Azure File Share to mount on
+     each node. This is CIFS based for linux and net use for for windows, and
+     this property is mutually exclusive with all other properties.
+    :type azure_file_share_configuration:
+     ~azure.mgmt.batch.models.AzureFileShareConfiguration
+    """
+
+    _attribute_map = {
+        'azure_blob_file_system_configuration': {'key': 'azureBlobFileSystemConfiguration', 'type': 'AzureBlobFileSystemConfiguration'},
+        'nfs_mount_configuration': {'key': 'nfsMountConfiguration', 'type': 'NFSMountConfiguration'},
+        'cifs_mount_configuration': {'key': 'cifsMountConfiguration', 'type': 'CIFSMountConfiguration'},
+        'azure_file_share_configuration': {'key': 'azureFileShareConfiguration', 'type': 'AzureFileShareConfiguration'},
+    }
+
+    def __init__(self, *, azure_blob_file_system_configuration=None, nfs_mount_configuration=None, cifs_mount_configuration=None, azure_file_share_configuration=None, **kwargs) -> None:
+        super(MountConfiguration, self).__init__(**kwargs)
+        self.azure_blob_file_system_configuration = azure_blob_file_system_configuration
+        self.nfs_mount_configuration = nfs_mount_configuration
+        self.cifs_mount_configuration = cifs_mount_configuration
+        self.azure_file_share_configuration = azure_file_share_configuration
+
+
 class NetworkConfiguration(Model):
     """The network configuration for a pool.
 
@@ -1615,17 +1801,27 @@ class NetworkConfiguration(Model):
      pools with the virtualMachineConfiguration property.
     :type endpoint_configuration:
      ~azure.mgmt.batch.models.PoolEndpointConfiguration
+    :param public_ips: The list of public IPs which the Batch service will use
+     when provisioning Compute Nodes. The number of IPs specified here limits
+     the maximum size of the Pool - 50 dedicated nodes or 20 low-priority nodes
+     can be allocated for each public IP. For example, a pool needing 150
+     dedicated VMs would need at least 3 public IPs specified. This is of the
+     form:
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+    :type public_ips: list[str]
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
     }
 
-    def __init__(self, *, subnet_id: str=None, endpoint_configuration=None, **kwargs) -> None:
+    def __init__(self, *, subnet_id: str=None, endpoint_configuration=None, public_ips=None, **kwargs) -> None:
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = subnet_id
         self.endpoint_configuration = endpoint_configuration
+        self.public_ips = public_ips
 
 
 class NetworkSecurityGroupRule(Model):
@@ -1651,6 +1847,12 @@ class NetworkSecurityGroupRule(Model):
      addresses).  If any other values are provided the request fails with HTTP
      status code 400.
     :type source_address_prefix: str
+    :param source_port_ranges: The source port ranges to match for the rule.
+     Valid values are '*' (for all ports 0 - 65535) or arrays of ports or port
+     ranges (i.e. 100-200). The ports should in the range of 0 to 65535 and the
+     port ranges or ports can't overlap. If any other values are provided the
+     request fails with HTTP status code 400. Default value will be *.
+    :type source_port_ranges: list[str]
     """
 
     _validation = {
@@ -1663,13 +1865,49 @@ class NetworkSecurityGroupRule(Model):
         'priority': {'key': 'priority', 'type': 'int'},
         'access': {'key': 'access', 'type': 'NetworkSecurityGroupRuleAccess'},
         'source_address_prefix': {'key': 'sourceAddressPrefix', 'type': 'str'},
+        'source_port_ranges': {'key': 'sourcePortRanges', 'type': '[str]'},
     }
 
-    def __init__(self, *, priority: int, access, source_address_prefix: str, **kwargs) -> None:
+    def __init__(self, *, priority: int, access, source_address_prefix: str, source_port_ranges=None, **kwargs) -> None:
         super(NetworkSecurityGroupRule, self).__init__(**kwargs)
         self.priority = priority
         self.access = access
         self.source_address_prefix = source_address_prefix
+        self.source_port_ranges = source_port_ranges
+
+
+class NFSMountConfiguration(Model):
+    """NFS file system detail.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. The URI of the file system to mount.
+    :type source: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Specifies various mount options that can be used.
+    :type mount_options: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+    }
+
+    def __init__(self, *, source: str, relative_mount_path: str, mount_options: str=None, **kwargs) -> None:
+        super(NFSMountConfiguration, self).__init__(**kwargs)
+        self.source = source
+        self.relative_mount_path = relative_mount_path
+        self.mount_options = mount_options
 
 
 class Operation(Model):
@@ -1861,6 +2099,10 @@ class Pool(ProxyResource):
      completed resize operation.
     :vartype resize_operation_status:
      ~azure.mgmt.batch.models.ResizeOperationStatus
+    :param mount_configuration: A list of file systems to mount on each node
+     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :type mount_configuration:
+     list[~azure.mgmt.batch.models.MountConfiguration]
     """
 
     _validation = {
@@ -1909,9 +2151,10 @@ class Pool(ProxyResource):
         'application_packages': {'key': 'properties.applicationPackages', 'type': '[ApplicationPackageReference]'},
         'application_licenses': {'key': 'properties.applicationLicenses', 'type': '[str]'},
         'resize_operation_status': {'key': 'properties.resizeOperationStatus', 'type': 'ResizeOperationStatus'},
+        'mount_configuration': {'key': 'properties.mountConfiguration', 'type': '[MountConfiguration]'},
     }
 
-    def __init__(self, *, display_name: str=None, vm_size: str=None, deployment_configuration=None, scale_settings=None, inter_node_communication=None, network_configuration=None, max_tasks_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, start_task=None, certificates=None, application_packages=None, application_licenses=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, vm_size: str=None, deployment_configuration=None, scale_settings=None, inter_node_communication=None, network_configuration=None, max_tasks_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, start_task=None, certificates=None, application_packages=None, application_licenses=None, mount_configuration=None, **kwargs) -> None:
         super(Pool, self).__init__(**kwargs)
         self.display_name = display_name
         self.last_modified = None
@@ -1937,6 +2180,7 @@ class Pool(ProxyResource):
         self.application_packages = application_packages
         self.application_licenses = application_licenses
         self.resize_operation_status = None
+        self.mount_configuration = mount_configuration
 
 
 class PoolEndpointConfiguration(Model):
@@ -2202,7 +2446,7 @@ class StartTask(Model):
      the Batch service will not wait for the start task to complete. In this
      case, other tasks can start executing on the compute node while the start
      task is still running; and even if the start task fails, new tasks will
-     continue to be scheduled on the node. The default is false.
+     continue to be scheduled on the node. The default is true.
     :type wait_for_success: bool
     :param container_settings: The settings for the container under which the
      start task runs. When this is specified, all directories recursively below
@@ -2251,6 +2495,11 @@ class TaskContainerSettings(Model):
     :param registry: The private registry which contains the container image.
      This setting can be omitted if was already provided at pool creation.
     :type registry: ~azure.mgmt.batch.models.ContainerRegistry
+    :param working_directory: A flag to indicate where the container task
+     working directory is. The default is 'taskWorkingDirectory'. Possible
+     values include: 'TaskWorkingDirectory', 'ContainerImageDefault'
+    :type working_directory: str or
+     ~azure.mgmt.batch.models.ContainerWorkingDirectory
     """
 
     _validation = {
@@ -2261,13 +2510,15 @@ class TaskContainerSettings(Model):
         'container_run_options': {'key': 'containerRunOptions', 'type': 'str'},
         'image_name': {'key': 'imageName', 'type': 'str'},
         'registry': {'key': 'registry', 'type': 'ContainerRegistry'},
+        'working_directory': {'key': 'workingDirectory', 'type': 'ContainerWorkingDirectory'},
     }
 
-    def __init__(self, *, image_name: str, container_run_options: str=None, registry=None, **kwargs) -> None:
+    def __init__(self, *, image_name: str, container_run_options: str=None, registry=None, working_directory=None, **kwargs) -> None:
         super(TaskContainerSettings, self).__init__(**kwargs)
         self.container_run_options = container_run_options
         self.image_name = image_name
         self.registry = registry
+        self.working_directory = working_directory
 
 
 class TaskSchedulingPolicy(Model):

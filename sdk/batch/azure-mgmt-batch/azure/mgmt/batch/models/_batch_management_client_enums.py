@@ -129,6 +129,12 @@ class AutoUserScope(str, Enum):
     pool = "Pool"  #: Specifies that the task runs as the common auto user account which is created on every node in a pool.
 
 
+class ContainerWorkingDirectory(str, Enum):
+
+    task_working_directory = "TaskWorkingDirectory"  #: Use the standard Batch service task working directory, which will contain the Task resource files populated by Batch.
+    container_image_default = "ContainerImageDefault"  #: Using container image defined working directory. Beware that this directory will not contain the resource files downloaded by Batch.
+
+
 class CertificateStoreLocation(str, Enum):
 
     current_user = "CurrentUser"  #: Certificates should be installed to the CurrentUser certificate store.
@@ -137,7 +143,7 @@ class CertificateStoreLocation(str, Enum):
 
 class CertificateVisibility(str, Enum):
 
-    start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run.
+    start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
     task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
     remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
