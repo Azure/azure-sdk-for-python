@@ -983,7 +983,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue0560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue0560410cb
   response:
     body:
       string: ''
@@ -1023,7 +1023,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue1560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue1560410cb
   response:
     body:
       string: ''
@@ -1063,7 +1063,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue2560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue2560410cb
   response:
     body:
       string: ''
@@ -1103,7 +1103,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/listqueue3560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue3560410cb
   response:
     body:
       string: ''
@@ -1141,11 +1141,11 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://rakshithqueueasynctest.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/rakshithqueueasynctest/listqueue3560410cb</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue3560410cb</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
@@ -1186,11 +1186,11 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/?prefix=listqueue&marker=%2Frakshithqueueasynctest%2Flistqueue3560410cb&include=metadata&comp=list
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue3560410cb&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://rakshithqueueasynctest.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/rakshithqueueasynctest/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
         /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
@@ -1207,6 +1207,508 @@ interactions:
       - Origin
       x-ms-request-id:
       - 4753316c-b003-00d8-3ee6-479fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 897fc65a-b4ac-11e9-b34d-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue0560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - bbe710d9-b003-00d8-1cb9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 89aff20a-b4ac-11e9-a84a-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue1560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - bbe7111c-b003-00d8-5db9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 89bda9cc-b4ac-11e9-afb7-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:34 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue2560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - bbe71154-b003-00d8-13b9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 89cc4a5c-b4ac-11e9-8117-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:35 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue3560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - bbe71196-b003-00d8-54b9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 89ee11f4-b4ac-11e9-a386-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:35 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue3560410cb</NextMarker></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - bbe71214-b003-00d8-4eb9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 89fb41b0-b4ac-11e9-9be0-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:35 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue3560410cb&include=metadata&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:34:31 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - bbe7123f-b003-00d8-79b9-489fb8000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 77d8e962-b4ad-11e9-a618-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue0560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:41:11 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e091a605-2003-0038-2eba-487930000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 78074f1e-b4ad-11e9-b943-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue1560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:41:11 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e091a611-2003-0038-37ba-487930000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 7816472c-b4ad-11e9-a88b-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue2560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:41:11 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e091a616-2003-0038-3bba-487930000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 7824cbf8-b4ad-11e9-aee7-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/listqueue3560410cb
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:41:12 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e091a61b-2003-0038-3fba-487930000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 7830e5f4-b4ad-11e9-9070-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:15 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue33f3115c5</NextMarker></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:41:12 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - e091a623-2003-0038-45ba-487930000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 783d6454-b4ad-11e9-af82-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:15 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue33f3115c5&include=metadata&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue33f3115c5</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        /></Queue></Queues><NextMarker /></EnumerationResults>"
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:41:12 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - e091a62b-2003-0038-4dba-487930000000
       x-ms-version:
       - '2018-03-28'
     status:

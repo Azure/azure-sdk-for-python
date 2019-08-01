@@ -193,7 +193,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/pythonqueue637410fd
+    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
@@ -211,6 +211,96 @@ interactions:
       - QueueNotFound
       x-ms-request-id:
       - be6227e7-1003-011d-11e6-47a7d6000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 85173be4-b4ac-11e9-b335-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:34:27 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:1cc44f80-6003-0016-28b9-48f9f7000000\nTime:2019-08-01T22:34:24.5864073Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:34:23 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - QueueNotFound
+      x-ms-request-id:
+      - 1cc44f80-6003-0016-28b9-48f9f7000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 736da5ee-b4ad-11e9-9abf-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:07 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:d96843bf-b003-009c-7cba-4843d4000000\nTime:2019-08-01T22:41:04.4658938Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:41:03 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - QueueNotFound
+      x-ms-request-id:
+      - d96843bf-b003-009c-7cba-4843d4000000
       x-ms-version:
       - '2018-03-28'
     status:

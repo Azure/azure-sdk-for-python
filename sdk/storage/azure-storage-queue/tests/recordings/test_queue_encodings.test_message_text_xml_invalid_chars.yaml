@@ -205,7 +205,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/mytestqueue93de171a/messages
+    uri: https://storagename.queue.core.windows.net/mytestqueue93de171a/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
@@ -224,6 +224,52 @@ interactions:
       - InvalidXmlDocument
       x-ms-request-id:
       - 84ce018e-5003-00d9-1ce7-479e45000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+- request:
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '96'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 91434700-b4ad-11e9-947d-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:57 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/mytestqueue93de171a/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:92990201-1003-00de-56ba-4868c0000000\nTime:2019-08-01T22:41:54.5017748Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
+    headers:
+      Content-Length:
+      - '327'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:41:53 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-request-id:
+      - 92990201-1003-00de-56ba-4868c0000000
       x-ms-version:
       - '2018-03-28'
     status:

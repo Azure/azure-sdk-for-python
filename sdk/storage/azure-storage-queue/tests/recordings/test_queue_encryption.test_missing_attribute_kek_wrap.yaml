@@ -173,7 +173,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/encryptionqueue56cd161c
+    uri: https://storagename.queue.core.windows.net/encryptionqueue56cd161c
   response:
     body:
       string: ''
@@ -186,6 +186,46 @@ interactions:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
       - 6c9e8b1a-5003-00b4-40e7-47346b000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 98044562-b4ad-11e9-b75a-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:42:08 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/encryptionqueue56cd161c
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 01 Aug 2019 22:42:05 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 1cc933a0-6003-0016-1cba-48f9f7000000
       x-ms-version:
       - '2018-03-28'
     status:

@@ -62,7 +62,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://rakshithqueueasynctest.queue.core.windows.net/cont5391106b?comp=metadata
+    uri: https://storagename.queue.core.windows.net/cont5391106b?comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
@@ -82,6 +82,51 @@ interactions:
       - QueueNotFound
       x-ms-request-id:
       - 5dee33a0-1003-0012-42e7-470c75000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 8d7f4d1c-b4ad-11e9-a112-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 22:41:50 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/cont5391106b?comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:5c8712f2-8003-0017-72ba-48f80a000000\nTime:2019-08-01T22:41:48.1779601Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 01 Aug 2019 22:41:47 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-error-code:
+      - QueueNotFound
+      x-ms-request-id:
+      - 5c8712f2-8003-0017-72ba-48f80a000000
       x-ms-version:
       - '2018-03-28'
     status:
