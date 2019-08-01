@@ -39,10 +39,10 @@ jobs:
 
       - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
 
-       - task: PublishPipelineArtifact@0
-         inputs:
-           artifactName: 'artifacts' 
-           targetPath: $(Build.ArtifactStagingDirectory)
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: 'artifacts' 
+          targetPath: $(Build.ArtifactStagingDirectory)
 
       - task: PublishBuildArtifacts@1
         condition: succeededOrFailed()
