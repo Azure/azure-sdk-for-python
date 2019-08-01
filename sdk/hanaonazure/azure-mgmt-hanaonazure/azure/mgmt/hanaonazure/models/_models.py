@@ -500,6 +500,12 @@ class SapMonitor(Resource):
      'Succeeded', 'Deleting', 'Migrating'
     :vartype provisioning_state: str or
      ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
+    :ivar managed_resource_group_name: The name of the resource group the SAP
+     Monitor resources get deployed into.
+    :vartype managed_resource_group_name: str
+    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
+     Workspace that is used for monitoring
+    :vartype log_analytics_workspace_arm_id: str
     """
 
     _validation = {
@@ -508,6 +514,8 @@ class SapMonitor(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'managed_resource_group_name': {'readonly': True},
+        'log_analytics_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -525,6 +533,8 @@ class SapMonitor(Resource):
         'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
         'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
+        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmID', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -538,6 +548,8 @@ class SapMonitor(Resource):
         self.hana_db_password_key_vault_url = kwargs.get('hana_db_password_key_vault_url', None)
         self.hana_db_credentials_msi_id = kwargs.get('hana_db_credentials_msi_id', None)
         self.provisioning_state = None
+        self.managed_resource_group_name = None
+        self.log_analytics_workspace_arm_id = None
 
 
 class StorageProfile(Model):
