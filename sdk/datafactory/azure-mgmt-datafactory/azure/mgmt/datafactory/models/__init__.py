@@ -119,6 +119,7 @@ try:
     from .phoenix_linked_service_py3 import PhoenixLinkedService
     from .paypal_linked_service_py3 import PaypalLinkedService
     from .marketo_linked_service_py3 import MarketoLinkedService
+    from .azure_maria_db_linked_service_py3 import AzureMariaDBLinkedService
     from .maria_db_linked_service_py3 import MariaDBLinkedService
     from .magento_linked_service_py3 import MagentoLinkedService
     from .jira_linked_service_py3 import JiraLinkedService
@@ -208,6 +209,7 @@ try:
     from .phoenix_object_dataset_py3 import PhoenixObjectDataset
     from .paypal_object_dataset_py3 import PaypalObjectDataset
     from .marketo_object_dataset_py3 import MarketoObjectDataset
+    from .azure_maria_db_table_dataset_py3 import AzureMariaDBTableDataset
     from .maria_db_table_dataset_py3 import MariaDBTableDataset
     from .magento_object_dataset_py3 import MagentoObjectDataset
     from .jira_object_dataset_py3 import JiraObjectDataset
@@ -289,6 +291,7 @@ try:
     from .binary_dataset_py3 import BinaryDataset
     from .delimited_text_dataset_py3 import DelimitedTextDataset
     from .parquet_dataset_py3 import ParquetDataset
+    from .avro_dataset_py3 import AvroDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .activity_policy_py3 import ActivityPolicy
     from .azure_function_activity_py3 import AzureFunctionActivity
@@ -323,6 +326,7 @@ try:
     from .phoenix_source_py3 import PhoenixSource
     from .paypal_source_py3 import PaypalSource
     from .marketo_source_py3 import MarketoSource
+    from .azure_maria_db_source_py3 import AzureMariaDBSource
     from .maria_db_source_py3 import MariaDBSource
     from .magento_source_py3 import MagentoSource
     from .jira_source_py3 import JiraSource
@@ -403,6 +407,7 @@ try:
     from .delimited_text_read_settings_py3 import DelimitedTextReadSettings
     from .delimited_text_source_py3 import DelimitedTextSource
     from .parquet_source_py3 import ParquetSource
+    from .avro_source_py3 import AvroSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
     from .azure_data_explorer_command_activity_py3 import AzureDataExplorerCommandActivity
@@ -455,12 +460,14 @@ try:
     from .azure_blob_storage_write_settings_py3 import AzureBlobStorageWriteSettings
     from .store_write_settings_py3 import StoreWriteSettings
     from .parquet_sink_py3 import ParquetSink
+    from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
+    from .format_write_settings_py3 import FormatWriteSettings
+    from .avro_write_settings_py3 import AvroWriteSettings
+    from .avro_sink_py3 import AvroSink
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
     from .azure_postgre_sql_sink_py3 import AzurePostgreSqlSink
-    from .format_write_settings_py3 import FormatWriteSettings
-    from .delimited_text_write_settings_py3 import DelimitedTextWriteSettings
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
@@ -620,6 +627,7 @@ except (SyntaxError, ImportError):
     from .phoenix_linked_service import PhoenixLinkedService
     from .paypal_linked_service import PaypalLinkedService
     from .marketo_linked_service import MarketoLinkedService
+    from .azure_maria_db_linked_service import AzureMariaDBLinkedService
     from .maria_db_linked_service import MariaDBLinkedService
     from .magento_linked_service import MagentoLinkedService
     from .jira_linked_service import JiraLinkedService
@@ -709,6 +717,7 @@ except (SyntaxError, ImportError):
     from .phoenix_object_dataset import PhoenixObjectDataset
     from .paypal_object_dataset import PaypalObjectDataset
     from .marketo_object_dataset import MarketoObjectDataset
+    from .azure_maria_db_table_dataset import AzureMariaDBTableDataset
     from .maria_db_table_dataset import MariaDBTableDataset
     from .magento_object_dataset import MagentoObjectDataset
     from .jira_object_dataset import JiraObjectDataset
@@ -790,6 +799,7 @@ except (SyntaxError, ImportError):
     from .binary_dataset import BinaryDataset
     from .delimited_text_dataset import DelimitedTextDataset
     from .parquet_dataset import ParquetDataset
+    from .avro_dataset import AvroDataset
     from .amazon_s3_dataset import AmazonS3Dataset
     from .activity_policy import ActivityPolicy
     from .azure_function_activity import AzureFunctionActivity
@@ -824,6 +834,7 @@ except (SyntaxError, ImportError):
     from .phoenix_source import PhoenixSource
     from .paypal_source import PaypalSource
     from .marketo_source import MarketoSource
+    from .azure_maria_db_source import AzureMariaDBSource
     from .maria_db_source import MariaDBSource
     from .magento_source import MagentoSource
     from .jira_source import JiraSource
@@ -904,6 +915,7 @@ except (SyntaxError, ImportError):
     from .delimited_text_read_settings import DelimitedTextReadSettings
     from .delimited_text_source import DelimitedTextSource
     from .parquet_source import ParquetSource
+    from .avro_source import AvroSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
     from .azure_data_explorer_command_activity import AzureDataExplorerCommandActivity
@@ -956,12 +968,14 @@ except (SyntaxError, ImportError):
     from .azure_blob_storage_write_settings import AzureBlobStorageWriteSettings
     from .store_write_settings import StoreWriteSettings
     from .parquet_sink import ParquetSink
+    from .delimited_text_write_settings import DelimitedTextWriteSettings
+    from .format_write_settings import FormatWriteSettings
+    from .avro_write_settings import AvroWriteSettings
+    from .avro_sink import AvroSink
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
     from .azure_postgre_sql_sink import AzurePostgreSqlSink
-    from .format_write_settings import FormatWriteSettings
-    from .delimited_text_write_settings import DelimitedTextWriteSettings
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
@@ -1062,6 +1076,7 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DynamicsDeploymentType,
     DynamicsAuthenticationType,
+    AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
     NetezzaPartitionOption,
@@ -1201,6 +1216,7 @@ __all__ = [
     'PhoenixLinkedService',
     'PaypalLinkedService',
     'MarketoLinkedService',
+    'AzureMariaDBLinkedService',
     'MariaDBLinkedService',
     'MagentoLinkedService',
     'JiraLinkedService',
@@ -1290,6 +1306,7 @@ __all__ = [
     'PhoenixObjectDataset',
     'PaypalObjectDataset',
     'MarketoObjectDataset',
+    'AzureMariaDBTableDataset',
     'MariaDBTableDataset',
     'MagentoObjectDataset',
     'JiraObjectDataset',
@@ -1371,6 +1388,7 @@ __all__ = [
     'BinaryDataset',
     'DelimitedTextDataset',
     'ParquetDataset',
+    'AvroDataset',
     'AmazonS3Dataset',
     'ActivityPolicy',
     'AzureFunctionActivity',
@@ -1405,6 +1423,7 @@ __all__ = [
     'PhoenixSource',
     'PaypalSource',
     'MarketoSource',
+    'AzureMariaDBSource',
     'MariaDBSource',
     'MagentoSource',
     'JiraSource',
@@ -1485,6 +1504,7 @@ __all__ = [
     'DelimitedTextReadSettings',
     'DelimitedTextSource',
     'ParquetSource',
+    'AvroSource',
     'CopySource',
     'LookupActivity',
     'AzureDataExplorerCommandActivity',
@@ -1537,12 +1557,14 @@ __all__ = [
     'AzureBlobStorageWriteSettings',
     'StoreWriteSettings',
     'ParquetSink',
+    'DelimitedTextWriteSettings',
+    'FormatWriteSettings',
+    'AvroWriteSettings',
+    'AvroSink',
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
     'AzurePostgreSqlSink',
-    'FormatWriteSettings',
-    'DelimitedTextWriteSettings',
     'DelimitedTextSink',
     'CopySink',
     'CopyActivity',
@@ -1642,6 +1664,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsAuthenticationType',
+    'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'NetezzaPartitionOption',
