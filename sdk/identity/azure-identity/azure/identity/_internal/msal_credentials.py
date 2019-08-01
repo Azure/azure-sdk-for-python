@@ -12,6 +12,7 @@ import msal
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
+from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
 
 try:
@@ -75,6 +76,7 @@ class MsalCredential(ABC):
 class ConfidentialClientCredential(MsalCredential):
     """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""
 
+    @wrap_exceptions
     def get_token(self, *scopes):
         # type: (str) -> AccessToken
 

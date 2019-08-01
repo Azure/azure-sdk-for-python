@@ -353,8 +353,12 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_deleted_keys(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (DeletedKey._from_deleted_key_item(item) for item in pages)
+        return self._client.get_deleted_keys(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def list_keys(self, **kwargs):
@@ -381,8 +385,12 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_keys(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (KeyBase._from_key_item(item) for item in pages)
+        return self._client.get_keys(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def list_key_versions(self, name, **kwargs):
@@ -407,8 +415,13 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_key_versions(self._vault_url, name, maxresults=max_page_size, **kwargs)
-        return (KeyBase._from_key_item(item) for item in pages)
+        return self._client.get_key_versions(
+            self._vault_url,
+            name,
+            maxresults=max_page_size,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace
     def purge_deleted_key(self, name, **kwargs):
