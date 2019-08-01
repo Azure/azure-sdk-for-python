@@ -35,12 +35,16 @@ import six
 import sys
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     from typing import Any, Union
+    try:
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+    except ImportError:
+        pass
 
 
 from azure.core.tracing import AbstractSpan
@@ -49,7 +53,7 @@ from azure.core.tracing import AbstractSpan
 __all__ = ("settings",)
 
 
-class _Unset(object):
+class _Unset(AbstractSpan):
     pass
 
 
@@ -119,7 +123,7 @@ def convert_logging(value):
 
 
 def get_opencensus_span():
-    # type: () -> OpenCensusSpan
+    # type: () -> Optional[Type[AbstractSpan]]
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
@@ -130,16 +134,17 @@ def get_opencensus_span():
 
 
 def get_opencensus_span_if_opencensus_is_imported():
+    # type: () -> Optional[Type[AbstractSpan]]
     if "opencensus" not in sys.modules:
         return None
     return get_opencensus_span()
 
 
-_tracing_implementation_dict = {"opencensus": get_opencensus_span}
+_tracing_implementation_dict = {"opencensus": get_opencensus_span}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
 
 
 def convert_tracing_impl(value):
-    # type: (Union[str, AbstractSpan]) -> AbstractSpan
+    # type: (Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
@@ -156,18 +161,19 @@ def convert_tracing_impl(value):
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    wrapper_class = value
-    if isinstance(value, six.string_types):
-        value = value.lower()
-        get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
-        wrapper_class = get_wrapper_class()
-        if wrapper_class is _Unset:
-            raise ValueError(
-                "Cannot convert {} to AbstractSpan, valid values are: {}".format(
-                    value, ", ".join(_tracing_implementation_dict)
-                )
-            )
+    if not isinstance(value, six.string_types):
+        return value
 
+    value = cast(str, value)  # mypy clarity
+    value = value.lower()
+    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
+    wrapper_class = get_wrapper_class()
+    if wrapper_class is _Unset:
+        raise ValueError(
+            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                value, ", ".join(_tracing_implementation_dict)
+            )
+        )
     return wrapper_class
 
 
