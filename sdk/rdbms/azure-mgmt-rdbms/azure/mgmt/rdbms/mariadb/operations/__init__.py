@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .servers_operations import ServersOperations
-from .replicas_operations import ReplicasOperations
-from .firewall_rules_operations import FirewallRulesOperations
-from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .databases_operations import DatabasesOperations
-from .configurations_operations import ConfigurationsOperations
-from .log_files_operations import LogFilesOperations
-from .location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
-from .check_name_availability_operations import CheckNameAvailabilityOperations
-from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
-from .operations import Operations
+from ._servers_operations import ServersOperations
+from ._replicas_operations import ReplicasOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
+from ._databases_operations import DatabasesOperations
+from ._configurations_operations import ConfigurationsOperations
+from ._log_files_operations import LogFilesOperations
+from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from ._check_name_availability_operations import CheckNameAvailabilityOperations
+from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from ._operations import Operations
 
 __all__ = [
     'ServersOperations',
