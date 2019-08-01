@@ -11,10 +11,10 @@ parameters:
   ToxLintEnvString: 'lint'
 
 steps:
-   - task: DownloadPipelineArtifact@0
-     inputs:
-       artifactName: 'artifacts' 
-       targetPath: $(Build.ArtifactStagingDirectory)
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'artifacts' 
+      targetPath: $(Build.ArtifactStagingDirectory)
 
   - powershell: |
       Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
@@ -66,11 +66,6 @@ steps:
         --toxenv="${{ parameters.ToxLintEnvString }}"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
-
-  - task: UsePythonVersion@0
-    displayName: 'Reset Python version to ${{ parameters.PythonVersion }}'
-    inputs:
-      versionSpec: '${{ parameters.PythonVersion }}'
 
   - task: PublishTestResults@2
     displayName: 'Publish Python 2.7 Test Results'
