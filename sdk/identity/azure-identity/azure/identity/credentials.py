@@ -41,14 +41,12 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_id: the service principal's client ID
     :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, client_id, secret, tenant_id, config=None, **kwargs):
-        # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
+    def __init__(self, client_id, secret, tenant_id, **kwargs):
+        # type: (str, str, str, Mapping[str, Any]) -> None
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -73,13 +71,11 @@ class CertificateCredential(CertificateCredentialBase):
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, client_id, tenant_id, certificate_path, config=None, **kwargs):
-        # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
-        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
+        # type: (str, str, str, Mapping[str, Any]) -> None
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
     def get_token(self, *scopes):
@@ -166,8 +162,6 @@ class ManagedIdentityCredential(object):
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
     def __new__(cls, *args, **kwargs):
@@ -177,19 +171,9 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id=None, config=None, **kwargs):
-        # type: (Optional[str], Optional[Configuration], Any) -> None
+    def __init__(self, client_id=None, **kwargs):
+        # type: (Optional[str], Any) -> None
         pass
-
-    @staticmethod
-    def create_config(**kwargs):
-        # type: (Dict[str, str]) -> Configuration
-        """
-        Build a default configuration for the credential's HTTP pipeline.
-
-        :rtype: :class:`azure.core.configuration`
-        """
-        return Configuration(**kwargs)
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
