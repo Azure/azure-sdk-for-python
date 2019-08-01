@@ -26,7 +26,11 @@ try:
     from ._models_py3 import AmazonS3Location
     from ._models_py3 import AmazonS3ReadSettings
     from ._models_py3 import AppendVariableActivity
+    from ._models_py3 import AvroDataset
     from ._models_py3 import AvroFormat
+    from ._models_py3 import AvroSink
+    from ._models_py3 import AvroSource
+    from ._models_py3 import AvroWriteSettings
     from ._models_py3 import AzureBatchLinkedService
     from ._models_py3 import AzureBlobDataset
     from ._models_py3 import AzureBlobFSDataset
@@ -58,6 +62,9 @@ try:
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
     from ._models_py3 import AzureKeyVaultSecretReference
+    from ._models_py3 import AzureMariaDBLinkedService
+    from ._models_py3 import AzureMariaDBSource
+    from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMLBatchExecutionActivity
     from ._models_py3 import AzureMLLinkedService
     from ._models_py3 import AzureMLUpdateResourceActivity
@@ -527,7 +534,11 @@ except (SyntaxError, ImportError):
     from ._models import AmazonS3Location
     from ._models import AmazonS3ReadSettings
     from ._models import AppendVariableActivity
+    from ._models import AvroDataset
     from ._models import AvroFormat
+    from ._models import AvroSink
+    from ._models import AvroSource
+    from ._models import AvroWriteSettings
     from ._models import AzureBatchLinkedService
     from ._models import AzureBlobDataset
     from ._models import AzureBlobFSDataset
@@ -559,6 +570,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
     from ._models import AzureKeyVaultSecretReference
+    from ._models import AzureMariaDBLinkedService
+    from ._models import AzureMariaDBSource
+    from ._models import AzureMariaDBTableDataset
     from ._models import AzureMLBatchExecutionActivity
     from ._models import AzureMLLinkedService
     from ._models import AzureMLUpdateResourceActivity
@@ -1062,6 +1076,7 @@ from ._data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DynamicsDeploymentType,
     DynamicsAuthenticationType,
+    AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
     NetezzaPartitionOption,
@@ -1108,7 +1123,11 @@ __all__ = [
     'AmazonS3Location',
     'AmazonS3ReadSettings',
     'AppendVariableActivity',
+    'AvroDataset',
     'AvroFormat',
+    'AvroSink',
+    'AvroSource',
+    'AvroWriteSettings',
     'AzureBatchLinkedService',
     'AzureBlobDataset',
     'AzureBlobFSDataset',
@@ -1140,6 +1159,9 @@ __all__ = [
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
     'AzureKeyVaultSecretReference',
+    'AzureMariaDBLinkedService',
+    'AzureMariaDBSource',
+    'AzureMariaDBTableDataset',
     'AzureMLBatchExecutionActivity',
     'AzureMLLinkedService',
     'AzureMLUpdateResourceActivity',
@@ -1642,6 +1664,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsAuthenticationType',
+    'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'NetezzaPartitionOption',
