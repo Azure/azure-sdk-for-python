@@ -26,7 +26,6 @@ ALLOWED_RETURN_CODES = []
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
-<<<<<<< HEAD
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
