@@ -43,10 +43,10 @@ ResponseType = TypeVar("ResponseType")
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
-        self, # pylint: disable=bad-continuation
-        get_next,  # type: Callable[[Optional[str]], ResponseType] # pylint: disable=bad-continuation
-        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]] # pylint: disable=bad-continuation
-        continuation_token=None,  # type: Optional[str] # pylint: disable=bad-continuation
+        self,
+        get_next,  # type: Callable[[Optional[str]], ResponseType]
+        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
+        continuation_token=None,  # type: Optional[str]
     ):
         """Return an iterator of pages.
 
