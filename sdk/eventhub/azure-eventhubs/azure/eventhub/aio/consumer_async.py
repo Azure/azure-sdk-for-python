@@ -147,7 +147,6 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open(timeout_time)
 
-    @_retry_decorator
     async def _receive(self, **kwargs):
         timeout_time = kwargs.get("timeout_time")
         last_exception = kwargs.get("last_exception")
@@ -218,7 +217,8 @@ class EventHubConsumer(ConsumerProducerMixin):
         max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
 
-        return await self._receive(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
+        return await _retry_decorator(self._receive)(self, timeout=timeout,
+                                                     max_batch_size=max_batch_size, data_batch=data_batch)
 
     async def close(self, exception=None):
         # type: (Exception) -> None

@@ -110,7 +110,6 @@ class EventHubProducer(ConsumerProducerMixin):
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 
-    @_retry_decorator
     async def _send_event_data(self, **kwargs):
         timeout_time = kwargs.get("timeout_time")
         last_exception = kwargs.get("last_exception")
@@ -161,12 +160,8 @@ class EventHubProducer(ConsumerProducerMixin):
         :rtype: ~azure.eventhub.EventDataBatch
         """
 
-        @_retry_decorator
-        async def _wrapped_open(*args, **kwargs):
-            await self._open(**kwargs)
-
         if not self._max_message_size_on_link:
-            await _wrapped_open(self, timeout=self.client.config.send_timeout)
+            await _retry_decorator(self._open)(self, timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -220,7 +215,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await self._send_event_data(timeout)
+        await _retry_decorator(self._send_event_data)(self, timeout=timeout)
 
     async def close(self,  exception=None):
         # type: (Exception) -> None
