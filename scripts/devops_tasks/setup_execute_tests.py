@@ -118,7 +118,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '-w'.
+        '-w',
         '--wheel_dir',
         dest='wheel_dir',
         help='Location for prebuilt artifacts (if any)'    
