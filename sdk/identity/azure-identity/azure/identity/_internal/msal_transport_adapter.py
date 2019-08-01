@@ -50,7 +50,7 @@ class MsalTransportAdapter(object):
         self._pipeline = self._build_pipeline(**kwargs)
 
     @staticmethod
-    def create_config(**kwargs):
+    def _create_config(**kwargs):
         # type: (Any) -> Configuration
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
@@ -58,7 +58,7 @@ class MsalTransportAdapter(object):
         return config
 
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
-        config = config or self.create_config(**kwargs)
+        config = config or self._create_config(**kwargs)
         policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy]
         if not transport:
             transport = RequestsTransport(**kwargs)
