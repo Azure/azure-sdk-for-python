@@ -3,6 +3,28 @@
 Release History
 ===============
 
+0.3.0 (2019-08-01)
+++++++++++++++++++
+
+**Features**
+
+- Model JitNetworkAccessPolicyVirtualMachine has a new parameter public_ip_address
+- Model JitNetworkAccessRequestPort has a new parameter mapped_port
+- Added operation group RegulatoryComplianceControlsOperations
+- Added operation group ComplianceResultsOperations
+- Added operation group ServerVulnerabilityAssessmentOperations
+- Added operation group IoTSecuritySolutionsResourceGroupOperations
+- Added operation group AdaptiveApplicationControlsOperations
+- Added operation group IoTSecuritySolutionsOperations
+- Added operation group IotSecuritySolutionOperations
+- Added operation group RegulatoryComplianceStandardsOperations
+- Added operation group IoTSecuritySolutionsAnalyticsOperations
+- Added operation group IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+- Added operation group IoTSecuritySolutionsAnalyticsRecommendationsOperations
+- Added operation group RegulatoryComplianceAssessmentsOperations
+- Added operation group IoTSecuritySolutionsAnalyticsRecommendationOperations
+- Added operation group IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+
 0.2.0 (2019-04-16)
 ++++++++++++++++++
 
