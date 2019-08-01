@@ -38,7 +38,7 @@ class TestCommonBlobSamples(StorageTestCase):
 
     def tearDown(self):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-        for container in ['containerformyblobs', 'containerforblobs', 'leasemyblobscontainer']:
+        for container in ['containerformyblobs', 'containerfordeletedblobs', 'leasemyblobscontainer']:
             try:
                 blob_service_client.delete_container(container)
             except HttpResponseError:

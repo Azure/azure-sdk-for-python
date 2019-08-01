@@ -10,13 +10,14 @@ import sys
 try:
     from urllib.parse import urlparse, unquote
     from yarl import URL
+    from azure.core.pipeline.transport import AioHttpTransport
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import unquote # type: ignore
+    AioHttpTransport = None
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import AioHttpTransport
 
 from . import sign_string
 
