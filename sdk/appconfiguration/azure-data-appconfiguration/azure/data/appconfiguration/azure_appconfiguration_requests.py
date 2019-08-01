@@ -8,7 +8,7 @@ import hashlib
 import base64
 import hmac
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.appconfiguration.utils import parse_connection_string, get_current_utc_time
+from .utils import parse_connection_string, get_current_utc_time
 
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):

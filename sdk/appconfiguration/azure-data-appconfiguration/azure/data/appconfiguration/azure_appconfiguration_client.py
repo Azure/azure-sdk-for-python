@@ -79,7 +79,7 @@ class AzureAppConfigurationClient():
 
     .. code-block:: python
 
-        from azure.appconfiguration import AzureAppConfigurationClient
+        from azure.data.appconfiguration import AzureAppConfigurationClient
         connection_str = "<my connection string>"
         client = AzureAppConfigurationClient(connection_str)
     """
@@ -212,7 +212,7 @@ class AzureAppConfigurationClient():
         """Add a ConfigurationSetting into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
-        :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
+        :type configuration_setting: :class:`ConfigurationSetting<azure.data.appconfiguration.ConfigurationSetting>`
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`
