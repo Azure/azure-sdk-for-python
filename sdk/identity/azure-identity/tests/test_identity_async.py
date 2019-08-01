@@ -122,12 +122,6 @@ async def test_client_secret_environment_credential(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        await EnvironmentCredential().get_token("scope")
-
-
-@pytest.mark.asyncio
 async def test_credential_chain_error_message():
     def raise_authn_error(message):
         raise ClientAuthenticationError(message)
