@@ -29,6 +29,7 @@
 """
 
 from collections import namedtuple
+from enum import Enum
 import logging
 import os
 import six
@@ -53,8 +54,10 @@ from azure.core.tracing import AbstractSpan
 __all__ = ("settings",)
 
 
-class _Unset(AbstractSpan):
-    pass
+# https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
+class _Unset(Enum):
+    token = 0
+_unset = _Unset.token
 
 
 def convert_bool(value):
@@ -166,15 +169,16 @@ def convert_tracing_impl(value):
 
     value = cast(str, value)  # mypy clarity
     value = value.lower()
-    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
-    wrapper_class = get_wrapper_class()
-    if wrapper_class is _Unset:
+    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
+    wrapper_class = get_wrapper_class()  # type: Union[None, _Unset, Type[AbstractSpan]]
+    if wrapper_class is _unset:
         raise ValueError(
             "Cannot convert {} to AbstractSpan, valid values are: {}".format(
                 value, ", ".join(_tracing_implementation_dict)
             )
         )
-    return wrapper_class
+    # type ignored until https://github.com/python/mypy/issues/7279
+    return wrapper_class  # type: ignore
 
 
 class PrioritizedSetting(object):
