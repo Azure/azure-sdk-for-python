@@ -27,6 +27,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
+    sender.close()
 
 
 @pytest.mark.liveTest
@@ -46,6 +47,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
     sender.close()
+
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
@@ -96,13 +98,13 @@ def test_non_existing_entity_sender(connection_str):
     sender = client.create_producer(partition_id="1")
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
+    sender.close()
 
 
 @pytest.mark.liveTest
 def test_non_existing_entity_receiver(connection_str):
     client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
-
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
     receiver.close()
