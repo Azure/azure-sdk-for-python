@@ -761,6 +761,8 @@ class ReservationProperties(Model):
     :param renew_properties:
     :type renew_properties:
      ~azure.mgmt.reservations.models.RenewPropertiesResponse
+    :param term: Possible values include: 'P1Y', 'P3Y'
+    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
     """
 
     _validation = {
@@ -787,9 +789,10 @@ class ReservationProperties(Model):
         'renew_source': {'key': 'renewSource', 'type': 'str'},
         'renew_destination': {'key': 'renewDestination', 'type': 'str'},
         'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
+        'term': {'key': 'term', 'type': 'str'},
     }
 
-    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, billing_scope_id: str=None, renew: bool=None, renew_source: str=None, renew_destination: str=None, renew_properties=None, **kwargs) -> None:
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, billing_scope_id: str=None, renew: bool=None, renew_source: str=None, renew_destination: str=None, renew_properties=None, term=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
         self.instance_flexibility = instance_flexibility
@@ -810,6 +813,7 @@ class ReservationProperties(Model):
         self.renew_source = renew_source
         self.renew_destination = renew_destination
         self.renew_properties = renew_properties
+        self.term = term
 
 
 class ReservationResponse(Model):

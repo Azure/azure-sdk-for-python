@@ -761,6 +761,8 @@ class ReservationProperties(Model):
     :param renew_properties:
     :type renew_properties:
      ~azure.mgmt.reservations.models.RenewPropertiesResponse
+    :param term: Possible values include: 'P1Y', 'P3Y'
+    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
     """
 
     _validation = {
@@ -787,6 +789,7 @@ class ReservationProperties(Model):
         'renew_source': {'key': 'renewSource', 'type': 'str'},
         'renew_destination': {'key': 'renewDestination', 'type': 'str'},
         'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
+        'term': {'key': 'term', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -810,6 +813,7 @@ class ReservationProperties(Model):
         self.renew_source = kwargs.get('renew_source', None)
         self.renew_destination = kwargs.get('renew_destination', None)
         self.renew_properties = kwargs.get('renew_properties', None)
+        self.term = kwargs.get('term', None)
 
 
 class ReservationResponse(Model):
