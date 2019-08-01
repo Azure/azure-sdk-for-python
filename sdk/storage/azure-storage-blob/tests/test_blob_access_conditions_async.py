@@ -13,6 +13,8 @@ import os
 import unittest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -34,6 +36,15 @@ from testcase import (
 # ------------------------------------------------------------------------------
 LARGE_APPEND_BLOB_SIZE = 64 * 1024
 # ------------------------------------------------------------------------------
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 class StorageBlobAccessConditionsTestAsync(StorageTestCase):
@@ -45,7 +56,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.bsc = BlobServiceClient(
             url,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
-            connection_data_block_size = 4 * 1024
+            connection_data_block_size = 4 * 1024,
+            transport=AiohttpTestTransport()
         )
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -100,9 +112,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         md = (await container.get_container_properties()).metadata
         self.assertDictEqual(metadata, md)
 
+    @record
     def test_set_container_metadata_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_if_modified_async())
 
@@ -120,9 +131,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_container_metadata_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_if_modified_fail_async())
 
@@ -138,9 +148,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         acl = await container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_if_modified_async())
 
@@ -156,9 +165,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_container_acl_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_if_modified_fail_async())
 
@@ -174,9 +182,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         acl = await container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_if_unmodified_async())
 
@@ -192,9 +199,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_container_acl_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_if_unmodified_fail_async())
 
@@ -210,9 +216,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_acquire_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_with_if_modified_async())
 
@@ -229,9 +234,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_container_acquire_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_with_if_modified_fail_async())
 
@@ -247,9 +251,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_acquire_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_with_if_unmodified_async())
 
@@ -266,9 +269,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_container_acquire_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_with_if_unmodified_fail_async())
 
@@ -285,9 +287,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await container.get_container_properties()
 
+    @record
     def test_delete_container_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_if_modified_async())
 
@@ -303,9 +304,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_container_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_if_modified_fail_async())
 
@@ -321,9 +321,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await container.get_container_properties()
 
+    @record
     def test_delete_container_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_if_unmodified_async())
 
@@ -338,9 +337,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_container_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_if_unmodified_fail_async())
 
@@ -358,9 +356,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_put_blob_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_modified_async())
 
@@ -379,9 +376,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_blob_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_modified_fail_async())
 
@@ -399,9 +395,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_put_blob_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_unmodified_async())
 
@@ -420,9 +415,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_blob_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_unmodified_fail_async())
 
@@ -439,9 +433,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_put_blob_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_match_async())
 
@@ -458,9 +451,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_blob_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_match_fail_async())
 
@@ -476,9 +468,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_put_blob_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_none_match_async())
 
@@ -496,9 +487,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_blob_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_blob_with_if_none_match_fail_async())
 
@@ -516,9 +506,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_get_blob_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_modified_async())
 
@@ -536,9 +525,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_modified_fail_async())
 
@@ -556,9 +544,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_get_blob_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_unmodified_async())
 
@@ -576,9 +563,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_unmodified_fail_async())
 
@@ -595,9 +581,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_get_blob_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_match_async())
 
@@ -613,9 +598,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_match_fail_async())
 
@@ -631,9 +615,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_get_blob_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_none_match_async())
 
@@ -650,9 +633,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_if_none_match_fail_async())
 
@@ -674,9 +656,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
+    @record
     def test_set_blob_properties_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_modified_async())
 
@@ -697,9 +678,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_properties_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_modified_fail_async())
 
@@ -721,9 +701,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
+    @record
     def test_set_blob_properties_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_unmodified_async())
 
@@ -744,9 +723,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_properties_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_unmodified_fail_async())
 
@@ -768,9 +746,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
+    @record
     def test_set_blob_properties_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_match_async())
 
@@ -790,9 +767,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_properties_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_match_fail_async())
 
@@ -813,9 +789,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
+    @record
     def test_set_blob_properties_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_none_match_async())
 
@@ -836,9 +811,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_properties_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_if_none_match_fail_async())
 
@@ -858,9 +832,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
+    @record
     def test_get_blob_properties_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_modified_async())
 
@@ -878,9 +851,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_properties_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_modified_fail_async())
 
@@ -900,9 +872,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
+    @record
     def test_get_blob_properties_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_unmodified_async())
 
@@ -920,9 +891,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_properties_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_unmodified_fail_async())
 
@@ -942,9 +912,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
+    @record
     def test_get_blob_properties_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_match_async())
 
@@ -961,9 +930,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_properties_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_match_fail_async())
 
@@ -982,9 +950,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
+    @record
     def test_get_blob_properties_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_none_match_async())
 
@@ -1002,9 +969,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_properties_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_if_none_match_fail_async())
 
@@ -1022,9 +988,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_get_blob_metadata_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_modified_async())
 
@@ -1043,9 +1008,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_metadata_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_modified_fail_async())
 
@@ -1063,9 +1027,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_get_blob_metadata_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_unmodified_async())
 
@@ -1084,9 +1047,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_metadata_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_unmodified_fail_async())
 
@@ -1103,9 +1065,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_get_blob_metadata_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_match_async())
 
@@ -1122,9 +1083,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_metadata_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_match_fail_async())
 
@@ -1140,9 +1100,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_get_blob_metadata_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_none_match_async())
 
@@ -1160,9 +1119,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_blob_metadata_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_with_if_none_match_fail_async())
 
@@ -1182,9 +1140,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(metadata, md)
 
+    @record
     def test_set_blob_metadata_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_modified_async())
 
@@ -1204,9 +1161,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_metadata_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_modified_fail_async())
 
@@ -1226,9 +1182,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(metadata, md)
 
+    @record
     def test_set_blob_metadata_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_unmodified_async())
 
@@ -1248,9 +1203,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_metadata_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_unmodified_fail_async())
 
@@ -1269,9 +1223,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(metadata, md)
 
+    @record
     def test_set_blob_metadata_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_match_async())
 
@@ -1289,9 +1242,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_metadata_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_match_fail_async())
 
@@ -1309,9 +1261,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(metadata, md)
 
+    @record
     def test_set_blob_metadata_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_none_match_async())
 
@@ -1330,9 +1281,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_set_blob_metadata_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_if_none_match_fail_async())
 
@@ -1350,9 +1300,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_modified_async())
 
@@ -1371,9 +1320,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_blob_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_modified_fail_async())
 
@@ -1391,9 +1339,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_unmodified_async())
 
@@ -1412,9 +1359,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_blob_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_unmodified_fail_async())
 
@@ -1432,9 +1378,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_match_async())
 
@@ -1451,9 +1396,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_blob_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_match_fail_async())
 
@@ -1469,9 +1413,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_none_match_async())
 
@@ -1489,9 +1432,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_delete_blob_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_if_none_match_fail_async())
 
@@ -1510,9 +1452,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
+    @record
     def test_snapshot_blob_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_modified_async())
 
@@ -1531,9 +1472,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_snapshot_blob_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_modified_fail_async())
 
@@ -1552,9 +1492,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
+    @record
     def test_snapshot_blob_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_unmodified_async())
 
@@ -1573,9 +1512,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_snapshot_blob_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_unmodified_fail_async())
 
@@ -1593,9 +1531,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
+    @record
     def test_snapshot_blob_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_match_async())
 
@@ -1612,9 +1549,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_snapshot_blob_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_match_fail_async())
 
@@ -1631,9 +1567,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
+    @record
     def test_snapshot_blob_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_none_match_async())
 
@@ -1651,9 +1586,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_snapshot_blob_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob_with_if_none_match_fail_async())
 
@@ -1677,9 +1611,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
+    @record
     def test_lease_blob_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_modified_async())
 
@@ -1698,9 +1631,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_blob_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_modified_fail_async())
 
@@ -1724,9 +1656,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
+    @record
     def test_lease_blob_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_unmodified_async())
 
@@ -1745,9 +1676,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_blob_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_unmodified_fail_async())
 
@@ -1770,9 +1700,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
+    @record
     def test_lease_blob_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_match_async())
 
@@ -1789,9 +1718,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_blob_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_match_fail_async())
 
@@ -1813,9 +1741,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
+    @record
     def test_lease_blob_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_none_match_async())
 
@@ -1833,9 +1760,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_lease_blob_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_if_none_match_fail_async())
 
@@ -1859,9 +1785,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(content, b'AAABBBCCC')
 
+    @record
     def test_put_block_list_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_modified_async())
 
@@ -1885,9 +1810,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_block_list_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_modified_fail_async())
 
@@ -1911,9 +1835,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(content, b'AAABBBCCC')
 
+    @record
     def test_put_block_list_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_unmodified_async())
 
@@ -1937,9 +1860,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_block_list_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_unmodified_fail_async())
 
@@ -1962,9 +1884,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(content, b'AAABBBCCC')
 
+    @record
     def test_put_block_list_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_match_async())
 
@@ -1986,9 +1907,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_block_list_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_match_fail_async())
 
@@ -2010,9 +1930,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(content, b'AAABBBCCC')
 
+    @record
     def test_put_block_list_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_none_match_async())
 
@@ -2034,9 +1953,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_put_block_list_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_if_none_match_fail_async())
 
@@ -2054,9 +1972,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_modified_async())
 
@@ -2076,9 +1993,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_update_page_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_modified_fail_async())
 
@@ -2096,9 +2012,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_unmodified_async())
 
@@ -2118,9 +2033,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_update_page_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_unmodified_fail_async())
 
@@ -2137,9 +2051,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_match_async())
 
@@ -2157,9 +2070,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_update_page_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_match_fail_async())
 
@@ -2175,9 +2087,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_none_match_async())
 
@@ -2196,9 +2107,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_update_page_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_if_none_match_fail_async())
 
@@ -2219,9 +2129,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
+    @record
     def test_get_page_ranges_iter_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_modified_async())
 
@@ -2241,9 +2150,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_page_ranges_iter_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_modified_fail_async())
 
@@ -2264,9 +2172,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
+    @record
     def test_get_page_ranges_iter_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_unmodified_async())
 
@@ -2286,9 +2193,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_page_ranges_iter_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_unmodified_fail_async())
 
@@ -2308,9 +2214,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
+    @record
     def test_get_page_ranges_iter_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_match_async())
 
@@ -2328,9 +2233,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_page_ranges_iter_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_match_fail_async())
 
@@ -2349,9 +2253,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
+    @record
     def test_get_page_ranges_iter_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_none_match_async())
 
@@ -2371,9 +2274,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_get_page_ranges_iter_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_iter_with_if_none_match_fail_async())
 
@@ -2392,9 +2294,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
+    @record
     def test_append_block_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_modified_async())
 
@@ -2411,9 +2312,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_block_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_modified_fail_async())
 
@@ -2432,9 +2332,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
+    @record
     def test_append_block_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_unmodified_async())
 
@@ -2451,9 +2350,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_block_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_unmodified_fail_async())
 
@@ -2472,9 +2370,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
+    @record
     def test_append_block_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_match_async())
 
@@ -2490,9 +2387,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         #self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_block_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_match_fail_async())
 
@@ -2510,9 +2406,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
+    @record
     def test_append_block_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_none_match_async())
 
@@ -2529,9 +2424,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_block_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_block_with_if_none_match_fail_async())
 
@@ -2550,9 +2444,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_append_blob_from_bytes_with_if_modified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_modified_async())
 
@@ -2569,9 +2462,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_blob_from_bytes_with_if_modified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_modified_fail_async())
 
@@ -2590,9 +2482,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_append_blob_from_bytes_with_if_unmodified_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_unmodified_async())
 
@@ -2609,9 +2500,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_blob_from_bytes_with_if_unmodified_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_unmodified_fail_async())
 
@@ -2630,9 +2520,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_append_blob_from_bytes_with_if_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_match_async())
 
@@ -2649,9 +2538,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_blob_from_bytes_with_if_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_match_fail_async())
 
@@ -2670,9 +2558,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_append_blob_from_bytes_with_if_none_match_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_none_match_async())
 
@@ -2689,9 +2576,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @record
     def test_append_blob_from_bytes_with_if_none_match_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_append_blob_from_bytes_with_if_none_match_fail_async())
 

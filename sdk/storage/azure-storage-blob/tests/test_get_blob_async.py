@@ -12,6 +12,8 @@ import unittest
 import asyncio
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -33,6 +35,17 @@ FILE_PATH = 'blob_output.temp.dat'
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageGetBlobTestAsync(StorageTestCase):
     def setUp(self):
         super(StorageGetBlobTestAsync, self).setUp()
@@ -47,7 +60,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             url,
             credential=credential,
             max_single_get_size=32 * 1024,
-            max_chunk_get_size=4 * 1024)
+            max_chunk_get_size=4 * 1024,
+            transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_blob = self.get_resource_name('byteblob')
@@ -113,9 +127,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertIsInstance(content.properties, BlobProperties)
         self.assertEqual(await content.content_as_bytes(), blob_data)
 
+    @record
     def test_unicode_get_blob_unicode_data_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_unicode_data_async())
 
@@ -136,9 +149,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertIsInstance(content.properties, BlobProperties)
         self.assertEqual(await content.content_as_bytes(), binary_data)
 
+    @record
     def test_unicode_get_blob_binary_data_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_binary_data_async())
 
@@ -157,9 +169,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_data, await content.content_as_bytes())
         self.assertEqual(0, content.properties.size)
 
+    @record
     def test_get_blob_no_content_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_no_content_async())
 
@@ -178,9 +189,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @record
     def test_get_blob_to_bytes_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_async())
 
@@ -207,9 +217,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertEqual(1, len(content))
         self.assertEqual(self.byte_data[5], content[0])
 
+    @record
     def test_ranged_get_blob_to_bytes_with_single_byte_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_bytes_with_single_byte_async())
 
@@ -230,9 +239,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             await blob.download_blob(offset=3, length=5)
         self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
+    @record
     def test_ranged_get_blob_to_bytes_with_zero_byte_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_bytes_with_zero_byte_async())
 
@@ -248,9 +256,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         with self.assertRaises(ValueError):
             await blob.download_blob(length=3)
 
+    @record
     def test_ranged_get_blob_with_missing_start_range_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_with_missing_start_range_async())
 
@@ -273,9 +280,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @record
     def test_get_blob_to_bytes_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_snapshot_async())
 
@@ -305,9 +311,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_bytes_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_with_progress_async())
 
@@ -333,9 +338,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_bytes_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_non_parallel_async())
 
@@ -365,9 +369,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_bytes_small_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_small_async())
 
@@ -391,9 +394,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
 
+    @record
     def test_get_blob_to_stream_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_async())
 
@@ -427,9 +429,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_stream_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_with_progress_async())
 
@@ -460,9 +461,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_stream_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_non_parallel_async())
 
@@ -498,9 +498,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_stream_small_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_small_async())
 
@@ -525,9 +524,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
 
+    @record
     def test_ranged_get_blob_to_path_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_async())
 
@@ -564,9 +562,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_ranged_get_blob_to_path_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_with_progress_async())
 
@@ -586,9 +583,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
 
+    @record
     def test_ranged_get_blob_to_path_small_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_small_async())
 
@@ -608,9 +604,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
 
+    @record
     def test_ranged_get_blob_to_path_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_non_parallel_async())
 
@@ -639,9 +634,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(blob_data[1:blob_size], actual)
 
+    @record
     def test_ranged_get_blob_to_path_invalid_range_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_invalid_range_parallel_async())
 
@@ -672,9 +666,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
             # Assert
 
+    @record
     def test_ranged_get_blob_to_path_invalid_range_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_invalid_range_non_parallel_async())
 
@@ -696,9 +689,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(text_data, content)
 
+    @record
     def test_get_blob_to_text_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_async())
 
@@ -732,9 +724,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_text_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_progress_async())
 
@@ -764,9 +755,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_text_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_non_parallel_async())
 
@@ -796,9 +786,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_text_small_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_small_async())
 
@@ -816,9 +805,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(text, content)
 
+    @record
     def test_get_blob_to_text_with_encoding_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_encoding_async())
 
@@ -848,9 +836,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_text_with_encoding_and_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_encoding_and_progress_async())
 
@@ -871,9 +858,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
 
+    @record
     def test_get_blob_non_seekable_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_non_seekable_async())
 
@@ -894,9 +880,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
                 downloader = await blob.download_blob()
                 properties = await downloader.download_to_stream(non_seekable_stream, max_connections=2)
 
+    @record
     def test_get_blob_non_seekable_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_non_seekable_parallel_async())
 
@@ -930,9 +915,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_to_stream_exact_get_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_exact_get_size_async())
 
@@ -962,9 +946,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_exact_get_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_exact_get_size_async())
 
@@ -1000,9 +983,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @record
     def test_get_blob_exact_chunk_size_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_exact_chunk_size_async())
 
@@ -1026,9 +1008,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
 
+    @record
     def test_get_blob_to_stream_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_with_md5_async())
 
@@ -1047,9 +1028,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @record
     def test_get_blob_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_md5_async())
 
@@ -1074,9 +1054,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertIsInstance(properties, BlobProperties)
         self.assertEqual(b'MDAwMDAwMDA=', properties.content_settings.content_md5)
 
+    @record
     def test_get_blob_range_to_stream_with_overall_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_to_stream_with_overall_md5_async())
 
@@ -1100,9 +1079,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
 
+    @record
     def test_get_blob_range_with_overall_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_with_overall_md5_async())
 
@@ -1127,9 +1105,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
+    @record
     def test_get_blob_range_with_range_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_with_range_md5_async())
 

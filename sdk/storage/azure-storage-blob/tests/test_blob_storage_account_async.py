@@ -9,6 +9,9 @@ import pytest
 import asyncio
 import unittest
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -21,7 +24,8 @@ from azure.storage.blob.models import (
 
 from testcase import (
     StorageTestCase,
-    TestMode
+    TestMode,
+    record
 )
 
 # ------------------------------------------------------------------------------
@@ -31,13 +35,24 @@ TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
 
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class BlobStorageAccountTestAsync(StorageTestCase):
     def setUp(self):
         super(BlobStorageAccountTestAsync, self).setUp()
 
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential)
+        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.container_name = self.get_resource_name('utcontainer')
 
         # if not self.is_playback():
@@ -127,9 +142,8 @@ class BlobStorageAccountTestAsync(StorageTestCase):
 
             await blob.delete_blob()
 
+    @record
     def test_standard_blob_tier_set_tier_api(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_standard_blob_tier_set_tier_api())
 
@@ -186,9 +200,8 @@ class BlobStorageAccountTestAsync(StorageTestCase):
         self.assertEqual("rehydrate-pending-to-hot", blobs[0].archive_status)
         self.assertFalse(blobs[0].blob_tier_inferred)
 
+    @record
     def test_rehydration_status(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_rehydration_status())
 

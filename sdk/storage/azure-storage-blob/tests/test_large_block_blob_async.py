@@ -12,6 +12,9 @@ import asyncio
 import os
 import unittest
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -38,6 +41,16 @@ LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
 
 class StorageLargeBlockBlobTestAsync(StorageTestCase):
     def setUp(self):
@@ -54,7 +67,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
             credential=credential,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
-            min_large_block_upload_threshold=1 * 1024 * 1024)
+            min_large_block_upload_threshold=1 * 1024 * 1024,
+            transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -120,9 +134,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
 
             # Assert
 
+    @record
     def test_put_block_bytes_large_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_bytes_large_async())
 
@@ -142,9 +155,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
                 validate_content=True)
             self.assertIsNone(resp)
 
+    @record
     def test_put_block_bytes_large_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_bytes_large_with_md5_async())
 
@@ -167,9 +179,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
 
             # Assert
 
+    @record
     def test_put_block_stream_large_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_stream_large_async())
 
@@ -193,9 +204,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_put_block_stream_large_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_stream_large_with_md5_async())
 
@@ -219,9 +229,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_create_large_blob_from_path_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_async())
 
@@ -245,9 +254,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_create_large_blob_from_path_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_md5_async())
 
@@ -270,9 +278,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_create_large_blob_from_path_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_non_parallel_async())
 
@@ -304,9 +311,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_create_large_blob_from_path_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_progress_async())
 
@@ -336,9 +342,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
+    @record
     def test_create_large_blob_from_path_with_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_properties_async())
 
@@ -362,9 +367,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_create_large_blob_from_stream_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_async())
 
@@ -396,9 +400,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @record
     def test_create_large_blob_from_stream_with_progress_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_with_progress_chunked_upload_async())
 
@@ -423,9 +426,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    @record
     def test_create_large_blob_from_stream_chunked_upload_with_count_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_with_count_async())
 
@@ -457,9 +459,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
+    @record
     def test_create_large_blob_from_stream_chunked_upload_with_count_and_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_with_count_and_properties_async())
 
@@ -489,9 +490,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
+    @record
     def test_create_large_blob_from_stream_chunked_upload_with_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_with_properties_async())
 

@@ -13,6 +13,10 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
+
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from testcase import (
     StorageTestCase,
     record,
@@ -30,6 +34,17 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'blob': 'BlobEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'blob': 'BlobSecondaryEndpoint'}
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 class StorageClientTestAsync(StorageTestCase):
@@ -355,7 +370,7 @@ class StorageClientTestAsync(StorageTestCase):
 
     async def _test_request_callback_signed_header_async(self):
         # Arrange
-        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
 
         # Act
@@ -371,15 +386,14 @@ class StorageClientTestAsync(StorageTestCase):
         finally:
             await service.delete_container(name)
 
+    @record
     def test_request_callback_signed_header_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_request_callback_signed_header_async())
 
     async def _test_response_callback_async(self):
         # Arrange
-        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
         container = service.get_container_client(name)
 
@@ -392,14 +406,13 @@ class StorageClientTestAsync(StorageTestCase):
         exists = await container.get_container_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
+    @record
     def test_response_callback_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_response_callback_async())
 
     async def _test_user_agent_default_async(self):
-        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -411,16 +424,15 @@ class StorageClientTestAsync(StorageTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
+    @record
     def test_user_agent_default_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_default_async())
 
     async def _test_user_agent_custom_async(self):
         custom_app = "TestApp/v1.0"
         service = BlobServiceClient(
-            self._get_account_url(), credential=self.account_key, user_agent=custom_app)
+            self._get_account_url(), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -442,14 +454,13 @@ class StorageClientTestAsync(StorageTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
+    @record
     def test_user_agent_custom_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_custom_async())
 
     async def _test_user_agent_append_async(self):
-        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -462,9 +473,8 @@ class StorageClientTestAsync(StorageTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @record
     def test_user_agent_append_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append_async())
 

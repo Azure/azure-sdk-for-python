@@ -8,6 +8,9 @@ import asyncio
 
 from datetime import datetime, timedelta
 from azure.core import HttpResponseError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -28,6 +31,17 @@ SOURCE_BLOB_SIZE = 8 * 1024
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageBlockBlobTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -42,7 +56,8 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             credential=credential,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
-            max_block_size=4 * 1024)
+            max_block_size=4 * 1024,
+            transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -120,9 +135,8 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         content = await (await dest_blob.download_blob()).content_as_bytes()
         self.assertEqual(content, self.source_blob_data)
 
+    @record
     def test_put_block_from_url_and_commit_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_commit_async())
 
@@ -162,9 +176,8 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(len(uncommitted), 1)
         self.assertEqual(len(committed), 0)
 
+    @record
     def test_put_block_from_url_and_validate_content_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_validate_content_md5_async())
 
@@ -186,8 +199,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         content = await (await dest_blob.download_blob()).content_as_bytes()
         self.assertEqual(self.source_blob_data, content)
 
+    @record
     def test_copy_blob_sync_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_sync_async())

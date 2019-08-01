@@ -6,14 +6,17 @@
 
 import logging
 import sys
+
 try:
     from urllib.parse import urlparse, unquote
+    from yarl import URL
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import unquote # type: ignore
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.transport import AioHttpTransport
 
 from . import sign_string
 
@@ -64,6 +67,9 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
+        if isinstance(request.context.transport, AioHttpTransport):
+            uri_path = URL(uri_path)
+            return '/' + self.account_name + str(uri_path)
         return '/' + self.account_name + uri_path
 
     def _get_canonicalized_headers(self, request):

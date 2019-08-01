@@ -8,15 +8,29 @@ import pytest
 import asyncio
 
 from azure.storage.blob.aio import BlobServiceClient
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from testcase import (
     StorageTestCase,
+    record,
     TestMode
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 # --Test Class -----------------------------------------------------------------
@@ -46,16 +60,15 @@ class ServiceStatsTestAsync(StorageTestCase):
         # Arrange
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential)
+        bs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         # Act
         stats = await bs.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
+    @record
     def test_blob_service_stats_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_stats_async())
 
@@ -63,7 +76,7 @@ class ServiceStatsTestAsync(StorageTestCase):
         # Arrange
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential)
+        bs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         # Act
         stats = await bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
@@ -71,9 +84,8 @@ class ServiceStatsTestAsync(StorageTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
+    @record
     def test_blob_service_stats_when_unavailable_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_stats_when_unavailable_async())
 

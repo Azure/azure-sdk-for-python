@@ -14,6 +14,9 @@ import requests
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -35,13 +38,24 @@ from testcase import StorageTestCase, TestMode, record, LogCaptured
 TEST_CONTAINER_PREFIX = 'container'
 #------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageContainerTestAsync(StorageTestCase):
 
     def setUp(self):
         super(StorageContainerTestAsync, self).setUp()
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential)
+        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.test_containers = []
 
     def tearDown(self):
@@ -90,9 +104,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container())
 
@@ -109,9 +122,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container_with_already_existing_container_fail_on_exist(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_already_existing_container_fail_on_exist())
 
@@ -126,9 +138,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container_with_public_access_container(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_public_access_container())
 
@@ -142,7 +153,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
         blob = container.get_blob_client("blob1")
         await blob.upload_blob(u'xyz')
-        
+
         anonymous_service = BlobClient(
             self._get_account_url(),
             container=container_name,
@@ -152,9 +163,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertTrue(created)
         await anonymous_service.download_blob()
 
+    @record
     def test_create_container_with_public_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_public_access_blob())
 
@@ -173,9 +183,8 @@ class StorageContainerTestAsync(StorageTestCase):
         md = md_cr.metadata
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_create_container_with_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_metadata())
 
@@ -190,9 +199,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_container_exists_with_lease(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_container_exists_with_lease())
 
@@ -208,9 +216,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_unicode_create_container_unicode_name(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_create_container_unicode_name())
 
@@ -232,9 +239,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
 
+    @record
     def test_list_containers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers())
 
@@ -254,9 +260,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(containers[0].name, container.container_name)
         self.assertIsNone(containers[0].metadata)
 
+    @record
     def test_list_containers_with_prefix(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_prefix())
 
@@ -280,12 +285,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertDictEqual(containers[0].metadata, metadata)
 
+    @record
     def test_list_containers_with_include_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_include_metadata())
-    
+
     async def _test_list_containers_with_public_access(self):
         # Arrange
         container = await self._create_container()
@@ -303,12 +307,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertEqual(containers[0].public_access, PublicAccess.Blob)
 
+    @record
     def test_list_containers_with_public_access(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_public_access())
-    
+
     async def _test_list_containers_with_num_results_and_marker(self):
         # Arrange
         prefix = 'listcontainer'
@@ -320,15 +323,16 @@ class StorageContainerTestAsync(StorageTestCase):
         container_names.sort()
 
         # Act
-        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2)
-        next(generator1)
+        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2).by_page()
+        containers1 = []
+        async for c in await generator1.__anext__():
+            containers1.append(c)
 
         generator2 = self.bsc.list_containers(
-            name_starts_with=prefix, marker=generator1.next_marker, results_per_page=2)
-        next(generator2)
-
-        containers1 = list(generator1.current_page)
-        containers2 = list(generator2.current_page)
+            name_starts_with=prefix, results_per_page=2).by_page(generator1.continuation_token)
+        containers2 = []
+        async for c in await generator2.__anext__():
+            containers2.append(c)
 
         # Assert
         self.assertIsNotNone(containers1)
@@ -340,10 +344,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(containers2, container_names[2])
         self.assertNamedItemInContainer(containers2, container_names[3])
 
-    @pytest.mark.skip
+    @record
     def test_list_containers_with_num_results_and_marker(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_num_results_and_marker())
 
@@ -359,9 +361,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
+    @record
     def test_set_container_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata())
 
@@ -379,9 +380,8 @@ class StorageContainerTestAsync(StorageTestCase):
         md = md.metadata
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_set_container_metadata_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_lease_id())
 
@@ -396,9 +396,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_set_container_metadata_with_non_existing_container(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_non_existing_container())
 
@@ -415,9 +414,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_get_container_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_metadata())
 
@@ -435,9 +433,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_get_container_metadata_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_metadata_with_lease_id())
 
@@ -460,9 +457,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(props.has_immutability_policy)
         self.assertIsNotNone(props.has_legal_hold)
 
+    @record
     def test_get_container_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_properties())
 
@@ -484,9 +480,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(props.lease.state, 'leased')
         self.assertEqual(props.lease.status, 'locked')
 
+    @record
     def test_get_container_properties_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_properties_with_lease_id())
 
@@ -502,9 +497,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNone(acl.get('public_access'))
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
 
+    @record
     def test_get_container_acl(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_acl())
 
@@ -520,9 +514,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_get_container_acl_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_acl_with_lease_id())
 
@@ -542,9 +535,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_set_container_acl(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl())
 
@@ -564,13 +556,12 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
-    
+
+    @record
     def test_set_container_acl_with_one_signed_identifier(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_one_signed_identifier())
-    
+
     async def _test_set_container_acl_with_lease_id(self):
         # Arrange
         container = await self._create_container()
@@ -584,9 +575,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_set_container_acl_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_lease_id())
 
@@ -602,9 +592,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual('container', acl.get('public_access'))
 
+    @record
     def test_set_container_acl_with_public_access(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_public_access())
 
@@ -621,9 +610,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_set_container_acl_with_empty_signed_identifiers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_empty_signed_identifiers())
 
@@ -644,9 +632,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual('testid', acl.get('signed_identifiers')[0].id)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_set_container_acl_with_signed_identifiers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_signed_identifiers())
 
@@ -669,9 +656,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertIsNotNone(acl.get('signed_identifiers')[0].access_policy)
         self.assertIsNone(acl.get('public_access'))
 
+    @record
     def test_set_container_acl_with_three_identifiers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_three_identifiers())
 
@@ -692,9 +678,8 @@ class StorageContainerTestAsync(StorageTestCase):
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
 
+    @record
     def test_set_container_acl_too_many_ids(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_too_many_ids())
 
@@ -708,9 +693,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_acquire_and_release(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_and_release())
 
@@ -732,9 +716,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.sleep(10)
         await container.delete_container()
 
+    @record
     def test_lease_container_renew(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_renew())
 
@@ -751,9 +734,8 @@ class StorageContainerTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await container.delete_container(lease=lease)
 
+    @record
     def test_lease_container_break_period(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_break_period())
 
@@ -769,12 +751,11 @@ class StorageContainerTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_break_released_lease_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_break_released_lease_fails())
-    
+
     async def _test_lease_container_with_duration(self):
         # Arrange
         container = await self._create_container()
@@ -788,9 +769,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.sleep(15)
         await container.acquire_lease()
 
+    @record
     def test_lease_container_with_duration(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_with_duration())
 
@@ -805,9 +785,8 @@ class StorageContainerTestAsync(StorageTestCase):
         lease2 = await container.acquire_lease(lease_id=lease.id)
         self.assertEqual(lease.id, lease2.id)
 
+    @record
     def test_lease_container_twice(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_twice())
 
@@ -822,9 +801,8 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(proposed_lease_id, lease.id)
 
+    @record
     def test_lease_container_with_proposed_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_with_proposed_lease_id())
 
@@ -846,9 +824,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNotEqual(lease_id1, lease_id)
         self.assertEqual(lease_id2, lease_id)
 
+    @record
     def test_lease_container_change_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_change_lease_id())
 
@@ -862,12 +839,11 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(deleted)
 
+    @record
     def test_delete_container_with_existing_container(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_existing_container())
-    
+
     async def _test_delete_container_with_non_existing_container_fail_not_exist(self):
         # Arrange
         container_name = self._get_container_reference()
@@ -881,12 +857,11 @@ class StorageContainerTestAsync(StorageTestCase):
             log_as_str = log_captured.getvalue()
             #self.assertTrue('ERROR' in log_as_str)
 
+    @record
     def test_delete_container_with_non_existing_container_fail_not_exist(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_non_existing_container_fail_not_exist())
-    
+
     async def _test_delete_container_with_lease_id(self):
         # Arrange
         container = await self._create_container()
@@ -900,12 +875,11 @@ class StorageContainerTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await container.get_container_properties()
 
+    @record
     def test_delete_container_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_lease_id())
-    
+
     async def _test_list_names(self):
         # Arrange
         container = await self._create_container()
@@ -922,9 +896,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
+    @record
     def test_list_names(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_names())
 
@@ -953,9 +926,8 @@ class StorageContainerTestAsync(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
+    @record
     def test_list_blobs(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs())
 
@@ -981,9 +953,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(resp[0].lease.status, 'locked')
         self.assertEqual(resp[0].lease.state, 'leased')
 
+    @record
     def test_list_blobs_leased_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_leased_blob())
 
@@ -1009,12 +980,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'blob_a1')
         self.assertNamedItemInContainer(resp, 'blob_a2')
 
+    @record
     def test_list_blobs_with_prefix(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_prefix())
-    
+
     async def _test_list_blobs_with_num_results(self):
         # Arrange
         container = await self._create_container()
@@ -1028,26 +998,23 @@ class StorageContainerTestAsync(StorageTestCase):
         c3 = container.get_blob_client('blob_b1')
         await c3.upload_blob(data)
 
-
         # Act
+        generator = container.list_blobs(results_per_page=2).by_page()
         blobs = []
-        async for b in container.list_blobs(results_per_page=2):
+        async for b in await generator.__anext__():
             blobs.append(b)
 
         # Assert
         self.assertIsNotNone(blobs)
-        self.assertEqual(len(blobs), 4)
-        blobs = blobs[0]
-        self.assertNamedItemInContainer(blobs.current_page, 'blob_a1')
-        self.assertNamedItemInContainer(blobs.current_page, 'blob_a2')
+        self.assertEqual(len(blobs), 2)
+        self.assertNamedItemInContainer(generator.current_page, 'blob_a1')
+        self.assertNamedItemInContainer(generator.current_page, 'blob_a2')
 
-    @pytest.mark.skip
+    @record
     def test_list_blobs_with_num_results(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_num_results())
-    
+
     async def _test_list_blobs_with_include_snapshots(self):
         # Arrange
         container = await self._create_container()
@@ -1071,12 +1038,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(blobs[2].name, 'blob2')
         self.assertIsNone(blobs[2].snapshot)
 
+    @record
     def test_list_blobs_with_include_snapshots(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_snapshots())
-    
+
     async def _test_list_blobs_with_include_metadata(self):
         # Arrange
         container = await self._create_container()
@@ -1101,12 +1067,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
 
+    @record
     def test_list_blobs_with_include_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_metadata())
-    
+
     async def _test_list_blobs_with_include_uncommittedblobs(self):
         # Arrange
         container = await self._create_container()
@@ -1129,12 +1094,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob2')
 
+    @record
     def test_list_blobs_with_include_uncommittedblobs(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_uncommittedblobs())
-    
+
     async def _test_list_blobs_with_include_copy(self):
         # Arrange
         container = await self._create_container()
@@ -1173,12 +1137,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(blobs[1].copy.progress, '11/11')
         self.assertNotEqual(blobs[1].copy.completion_time, None)
 
+    @record
     def test_list_blobs_with_include_copy(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_copy())
-    
+
     async def _test_list_blobs_with_delimiter(self):
         # Arrange
         container = await self._create_container()
@@ -1205,12 +1168,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    @record
     def test_list_blobs_with_delimiter(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_delimiter())
-    
+
     async def _test_walk_blobs_with_delimiter(self):
         # Arrange
         container = await self._create_container()
@@ -1246,7 +1208,7 @@ class StorageContainerTestAsync(StorageTestCase):
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_walk_blobs_with_delimiter())
-    
+
     async def _test_list_blobs_with_include_multiple(self):
         # Arrange
         container = await self._create_container()
@@ -1278,12 +1240,11 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertEqual(blobs[2].metadata['number'], '2')
         self.assertEqual(blobs[2].metadata['name'], 'car')
 
+    @record
     def test_list_blobs_with_include_multiple(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_multiple())
-    
+
     async def _test_shared_access_container(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1310,9 +1271,8 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_shared_access_container(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_access_container())
 
@@ -1346,10 +1306,9 @@ class StorageContainerTestAsync(StorageTestCase):
         finally:
             # delete container
             await container.delete_container()
-    
+
+    @record
     def test_web_container_normal_operations_working(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_web_container_normal_operations_working())
 

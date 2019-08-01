@@ -19,6 +19,9 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ClientAuthenticationError)
 
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -43,6 +46,7 @@ from azure.storage.blob import (
 from testcase import (
     StorageTestCase,
     TestMode,
+    record
 )
 
 # ------------------------------------------------------------------------------
@@ -53,6 +57,17 @@ FILE_PATH = 'blob_data.temp.dat'
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageCommonBlobTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -60,14 +75,14 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential)
+        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
 
         remote_url = self._get_remote_account_url()
         remote_credential = self._get_remote_shared_key_credential()
-        self.bsc2 = BlobServiceClient(remote_url, credential=remote_credential)
+        self.bsc2 = BlobServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
         self.remote_container_name = None
 
     def tearDown(self):
@@ -177,9 +192,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_blob_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_exists())
 
@@ -193,9 +207,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
 
+    @record
     def test_blob_not_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_not_exists())
 
@@ -213,9 +226,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_blob_snapshot_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_snapshot_exists())
 
@@ -229,9 +241,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
 
+    @record
     def test_blob_snapshot_not_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_snapshot_not_exists())
 
@@ -246,9 +257,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
 
+    @record
     def test_blob_container_not_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_container_not_exists())
 
@@ -269,9 +279,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = data.decode('utf-8')
         self.assertEqual(content, blob_data)
 
+    @record
     def test_create_blob_with_question_mark(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_question_mark())
 
@@ -290,10 +299,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             self.assertEqual(content, blob_data)
 
         # Assert
-
+    @record
     def test_create_blob_with_special_chars(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_special_chars())
 
@@ -314,9 +321,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await stream.content_as_bytes()
         self.assertEqual(content, data)
 
+    @record
     def test_create_blob_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_lease_id())
 
@@ -336,9 +342,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_create_blob_with_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_metadata())
 
@@ -355,9 +360,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.byte_data)
 
+    @record
     def test_get_blob_with_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_existing_blob())
 
@@ -377,9 +381,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.byte_data)
 
+    @record
     def test_get_blob_with_snapshot(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_snapshot())
 
@@ -405,9 +408,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(blob_previous_bytes, self.byte_data)
         self.assertEqual(blob_latest_bytes, b'hello world again')
 
+    @record
     def test_get_blob_with_snapshot_previous(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_snapshot_previous())
 
@@ -424,9 +426,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.byte_data[:6])
 
+    @record
     def test_get_blob_with_range(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_range())
 
@@ -445,9 +446,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.byte_data)
 
+    @record
     def test_get_blob_with_lease(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_lease())
 
@@ -462,10 +462,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             await blob.download_blob()
 
         # Assert
-
+    @record
     def test_get_blob_with_non_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_non_existing_blob())
 
@@ -487,9 +485,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
+    @record
     def test_set_blob_properties_with_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_existing_blob())
 
@@ -510,9 +507,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
+    @record
     def test_set_blob_properties_with_blob_settings_param(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_blob_settings_param())
 
@@ -532,9 +528,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
 
+    @record
     def test_get_blob_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties())
 
@@ -555,9 +550,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # TODO: No error code returned
         # self.assertEqual(StorageErrorCode.invalid_query_parameter_value, e.exception.error_code)
 
+    @record
     def test_get_blob_properties_fail(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_fail())
 
@@ -577,9 +571,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # TODO: No error code returned
         # self.assertEqual(StorageErrorCode.invalid_query_parameter_value, e.exception.error_code)
 
+    @record
     def test_get_blob_metadata_fail(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_fail())
 
@@ -595,9 +588,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(data.properties.server_encrypted)
 
+    @record
     def test_get_blob_server_encryption(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_server_encryption())
 
@@ -613,13 +605,15 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(props.server_encrypted)
 
+    @record
     def test_get_blob_properties_server_encryption(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_server_encryption())
 
     async def _test_list_blobs_server_encryption(self):
+        # test can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         await self._setup()
         await self._create_block_blob()
@@ -635,14 +629,15 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         for blob in blob_list:
             self.assertTrue(blob.server_encrypted)
 
+    @record
     def test_list_blobs_server_encryption(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_server_encryption())
 
     async def _test_no_server_encryption(self):
         pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -657,9 +652,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertFalse(props.server_encrypted)
 
+    @record
     def test_no_server_encryption(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_server_encryption())
 
@@ -685,9 +679,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.size, len(self.byte_data))
 
+    @record
     def test_get_blob_properties_with_snapshot(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_snapshot())
 
@@ -709,9 +702,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.lease.state, 'leased')
         self.assertEqual(props.lease.duration, 'infinite')
 
+    @record
     def test_get_blob_properties_with_leased_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_leased_blob())
 
@@ -727,9 +719,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_get_blob_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata())
 
@@ -751,9 +742,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @record
     def test_set_blob_metadata_with_upper_case(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_upper_case())
 
@@ -769,9 +759,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_existing_blob())
 
@@ -787,9 +776,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_delete_blob_with_non_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_non_existing_blob())
 
@@ -814,9 +802,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(blobs[0].name, blob_name)
         self.assertIsNone(blobs[0].snapshot)
 
+    @record
     def test_delete_blob_snapshot(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_snapshot())
 
@@ -838,9 +825,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
 
+    @record
     def test_delete_blob_snapshots(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_snapshots())
 
@@ -864,9 +850,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             blobs.append(b)
         self.assertEqual(len(blobs), 0)
 
+    @record
     def test_delete_blob_with_snapshots(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_snapshots())
 
@@ -911,9 +896,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @record
     def test_soft_delete_blob_without_snapshots(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_blob_without_snapshots())
 
@@ -969,9 +953,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @record
     def test_soft_delete_single_blob_snapshot(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_single_blob_snapshot())
 
@@ -1024,9 +1007,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @record
     def test_soft_delete_only_snapshots_of_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_only_snapshots_of_blob())
 
@@ -1074,9 +1056,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @record
     def test_soft_delete_blob_including_all_snapshots(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_blob_including_all_snapshots())
 
@@ -1125,9 +1106,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @record
     def test_soft_delete_with_leased_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_with_leased_blob())
 
@@ -1152,9 +1132,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         copy_content = await (await copyblob.download_blob()).content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
 
+    @record
     def test_copy_blob_with_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_existing_blob())
 
@@ -1174,9 +1153,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(props.copy.status, 'failed')
         self.assertIsNotNone(props.copy.id)
 
+    @record
     def test_copy_blob_with_external_blob_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
@@ -1194,9 +1172,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await target_blob.start_copy_from_url(source_blob.url)
 
+    @record
     def test_copy_blob_async_private_blob_no_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_async_private_blob_no_sas())
 
@@ -1223,9 +1200,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         actual_data = await (await target_blob.download_blob()).content_as_bytes()
         self.assertEqual(actual_data, data)
 
+    @record
     def test_copy_blob_async_private_blob_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_async_private_blob_with_sas())
 
@@ -1249,9 +1225,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(bytes_data, b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
+    @record
     def test_abort_copy_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_blob())
 
@@ -1272,9 +1247,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(copy_resp['copy_status'], 'success')
 
+    @record
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_blob_with_synchronous_copy_fails())
 
@@ -1291,9 +1265,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
+    @record
     def test_snapshot_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob())
 
@@ -1312,9 +1285,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(lease)
         self.assertIsNotNone(lease2)
 
+    @record
     def test_lease_blob_acquire_and_release(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_and_release())
 
@@ -1333,9 +1305,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await blob.upload_blob(b'hello 3', length=7, lease=lease)
 
+    @record
     def test_lease_blob_with_duration(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_duration())
 
@@ -1352,9 +1323,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(lease.id, lease_id)
 
+    @record
     def test_lease_blob_with_proposed_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_proposed_lease_id())
 
@@ -1375,9 +1345,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertNotEqual(first_lease_id, lease.id)
         self.assertEqual(lease.id, lease_id)
 
+    @record
     def test_lease_blob_change_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_change_lease_id())
 
@@ -1402,9 +1371,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(lease_time)
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_lease_blob_break_period(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_break_period())
 
@@ -1422,9 +1390,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(first_id, lease.id)
 
+    @record
     def test_lease_blob_acquire_and_renew(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_and_renew())
 
@@ -1442,9 +1409,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(lease.id)
 
+    @record
     def test_lease_blob_acquire_twice_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_twice_fails())
 
@@ -1462,9 +1428,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_unicode_get_blob_unicode_name(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_unicode_name())
 
@@ -1481,9 +1446,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+    @record
     def test_create_blob_blob_unicode_data(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_blob_unicode_data())
 
@@ -1500,9 +1464,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertFalse(response.ok)
         self.assertNotEqual(-1, response.text.find('ResourceNotFound'))
 
+    @record
     def test_no_sas_private_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_sas_private_blob())
 
@@ -1525,9 +1488,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_no_sas_public_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_sas_public_blob())
 
@@ -1551,9 +1513,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(data, content)
 
+    @record
     def test_public_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_public_access_blob())
 
@@ -1580,9 +1541,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @record
     def test_sas_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_access_blob())
 
@@ -1615,9 +1575,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, result)
 
+    @record
     def test_sas_signed_identifier(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_signed_identifier())
 
@@ -1650,37 +1609,38 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
 
+    @record
     def test_account_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
 
     async def _test_token_credential(self):
         pytest.skip("")
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         await self._setup()
         token_credential = self.generate_oauth_token()
         get_token = token_credential.get_token
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential, transport=AiohttpTestTransport())
         with self.assertRaises(ClientAuthenticationError):
             await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
+    @record
     def test_token_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 
@@ -1708,9 +1668,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.byte_data, response.content)
 
+    @record
     def test_shared_read_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_blob())
 
@@ -1747,9 +1706,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
+    @record
     def test_shared_read_access_blob_with_content_query_params(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_blob_with_content_query_params())
 
@@ -1780,9 +1738,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         data = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(updated_data, data)
 
+    @record
     def test_shared_write_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_write_access_blob())
 
@@ -1811,9 +1768,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await sas_blob.download_blob()
 
+    @record
     def test_shared_delete_access_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_delete_access_blob())
 
@@ -1826,9 +1782,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
+    @record
     def test_get_account_information(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information())
 
@@ -1843,9 +1798,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
+    @record
     def test_get_account_information_with_container_name(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_container_name())
 
@@ -1860,9 +1814,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
+    @record
     def test_get_account_information_with_blob_name(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_blob_name())
 
@@ -1887,9 +1840,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
+    @record
     def test_get_account_information_with_container_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_container_sas())
 
@@ -1916,9 +1868,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
+    @record
     def test_get_account_information_with_blob_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_blob_sas())
 
@@ -1944,9 +1895,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_download_to_file_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_sas())
 
@@ -1970,9 +1920,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_download_to_file_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_credential())
 
@@ -1997,9 +1946,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_download_to_stream_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_stream_with_credential())
 
@@ -2025,9 +1973,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_download_to_file_with_existing_file(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_existing_file())
 
@@ -2056,9 +2003,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             actual = stream.read()
             self.assertEqual(data2, actual)
 
+    @record
     def test_download_to_file_with_existing_file_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_existing_file_overwrite())
 
@@ -2087,9 +2033,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_upload_to_url_bytes_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_sas())
 
@@ -2113,9 +2058,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_upload_to_url_bytes_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_credential())
 
@@ -2140,9 +2084,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(b"existing_data", content)
 
+    @record
     def test_upload_to_url_bytes_with_existing_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_existing_blob())
 
@@ -2169,9 +2112,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_upload_to_url_bytes_with_existing_blob_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_existing_blob_overwrite())
 
@@ -2195,9 +2137,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_text()
         self.assertEqual(data, content)
 
+    @record
     def test_upload_to_url_text_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_text_with_credential())
 
@@ -2224,9 +2165,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
 
+    @record
     def test_upload_to_url_file_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_file_with_credential())
 

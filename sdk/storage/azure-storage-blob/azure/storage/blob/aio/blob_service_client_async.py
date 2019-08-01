@@ -292,7 +292,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.core.blob.aio.models.ContainerProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.ContainerProperties]
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service.py
