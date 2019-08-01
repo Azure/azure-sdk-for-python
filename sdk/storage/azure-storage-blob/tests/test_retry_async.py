@@ -76,9 +76,8 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_retry_on_server_error_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_on_server_error_async())
 
@@ -102,9 +101,8 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_retry_on_timeout_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_on_timeout_async())
 
@@ -134,9 +132,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_retry_callback_and_retry_context_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_callback_and_retry_context_async())
 
@@ -196,9 +193,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_no_retry_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_retry_async())
 
@@ -223,9 +219,8 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_linear_retry_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_linear_retry_async())
 
@@ -252,12 +247,12 @@ class StorageRetryTestAsync(StorageTestCase):
             # Clean up
             await service.delete_container(container_name)
 
+    @record
     def test_exponential_retry_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_exponential_retry_async())
 
+    @record
     def test_exponential_retry_interval_async(self):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
@@ -292,6 +287,7 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
+    @record
     def test_linear_retry_interval_async(self):
         # Arrange
         context_stub = {}
@@ -337,9 +333,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_invalid_retry_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_retry_async())
 
@@ -348,7 +343,7 @@ class StorageRetryTestAsync(StorageTestCase):
         container_name = self.get_resource_name(prefix='retry')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry)
+            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             created = await service.create_container(container_name)
@@ -365,9 +360,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_retry_with_deserialization_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_with_deserialization_async())
 
@@ -399,9 +393,8 @@ class StorageRetryTestAsync(StorageTestCase):
             # Delete will go to primary, so disable the request validation
             await service.delete_container(container_name)
 
+    @record
     def test_secondary_location_mode_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_secondary_location_mode_async())
 
@@ -431,9 +424,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_retry_to_secondary_with_put_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_to_secondary_with_put_async())
 
@@ -461,9 +453,8 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @record
     def test_retry_to_secondary_with_get_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_to_secondary_with_get_async())
 
@@ -484,8 +475,8 @@ class StorageRetryTestAsync(StorageTestCase):
         def retry_callback(retry_count=None, location_mode=None, **kwargs):
             self.assertEqual(LocationMode.SECONDARY, location_mode)
 
-        # Confirm that the second list request done with the same context sticks 
-        # to the final location of the first list request (aka secondary) despite 
+        # Confirm that the second list request done with the same context sticks
+        # to the final location of the first list request (aka secondary) despite
         # the client normally trying primary first
         requests = []
         def request_callback(request):
@@ -499,9 +490,8 @@ class StorageRetryTestAsync(StorageTestCase):
         await containers.__anext__()
         await containers.__anext__()
 
+    @record
     def test_location_lock_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_location_lock_async())
 
@@ -526,9 +516,8 @@ class StorageRetryTestAsync(StorageTestCase):
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
 
+    @record
     def test_invalid_account_key_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_account_key_async())
 

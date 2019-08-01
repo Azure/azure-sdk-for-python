@@ -1616,7 +1616,6 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     async def _test_token_credential(self):
         pytest.skip("")
-        # test can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1625,18 +1624,18 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         get_token = token_credential.get_token
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential, transport=AiohttpTestTransport())
         with self.assertRaises(ClientAuthenticationError):
             await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 

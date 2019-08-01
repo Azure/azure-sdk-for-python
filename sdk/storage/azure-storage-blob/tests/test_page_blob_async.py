@@ -11,7 +11,10 @@ import asyncio
 import os
 import unittest
 from datetime import datetime, timedelta
+
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -37,6 +40,17 @@ LARGE_BLOB_SIZE = 64 * 1024 + 512
 EIGHT_TB = 8 * 1024 * 1024 * 1024 * 1024
 #------------------------------------------------------------------------------s
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StoragePageBlobTestAsync(StorageTestCase):
 
     def setUp(self):
@@ -52,7 +66,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
             url,
             credential=credential,
             connection_data_block_size=4 * 1024,
-            max_page_size=4 * 1024)
+            max_page_size=4 * 1024,
+            transport=AiohttpTestTransport())
         self.config = self.bs._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -122,7 +137,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for page blobs --------------------------------------------
-    
+
     async def _test_create_blob(self):
         # Arrange
         await self._setup()
@@ -134,20 +149,19 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
-        self.assertTrue(blob.get_blob_properties())
+        self.assertTrue(await blob.get_blob_properties())
 
+    @record
     def test_create_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob())
-    
+
     async def _test_create_blob_with_metadata(self):
         # Arrange
         await self._setup()
         blob = self._get_blob_reference()
         metadata = {'hello': 'world', 'number': '42'}
-        
+
         # Act
         resp = await blob.create_page_blob(512, metadata=metadata)
 
@@ -155,9 +169,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         md = await blob.get_blob_properties()
         self.assertDictEqual(md.metadata, metadata)
 
+    @record
     def test_create_blob_with_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_metadata())
 
@@ -167,7 +180,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         blob = await self._create_blob()
         lease = await blob.acquire_lease()
 
-        # Act        
+        # Act
         data = self.get_random_bytes(512)
         await blob.upload_page(data, 0, 511, lease=lease)
 
@@ -176,9 +189,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         actual = await content.content_as_bytes()
         self.assertEqual(actual, data)
 
+    @record
     def test_put_page_with_lease_id(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_page_with_lease_id())
 
@@ -197,9 +209,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
+    @record
     def test_update_page(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page())
 
@@ -220,9 +231,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(0, len(page_ranges))
 
+    @record
     def test_create_8tb_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_8tb_blob())
 
@@ -235,9 +245,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await blob.create_page_blob(EIGHT_TB + 1)
 
+    @record
     def test_create_larger_than_8tb_blob_fail(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_larger_than_8tb_blob_fail())
 
@@ -254,7 +263,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         resp = await blob.upload_page(data, start_range, end_range)
         props = await blob.get_blob_properties()
         page_ranges, cleared = await blob.get_page_ranges()
-        
+
         # Assert
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -265,9 +274,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(page_ranges[0]['start'], start_range)
         self.assertEqual(page_ranges[0]['end'], end_range)
 
+    @record
     def test_update_8tb_blob_page(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_8tb_blob_page())
 
@@ -282,9 +290,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_with_md5(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_with_md5())
 
@@ -302,16 +309,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         await self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512)
 
+    @record
     def test_clear_page(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_clear_page())
 
     async def _test_put_page_if_sequence_number_lt_success(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
 
         start_sequence = 10
@@ -323,16 +329,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
+    @record
     def test_put_page_if_sequence_number_lt_success(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_page_if_sequence_number_lt_success())
 
     async def _test_update_page_if_sequence_number_lt_failure(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
         start_sequence = 10
         await blob.create_page_blob(512, sequence_number=start_sequence)
@@ -343,16 +348,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_if_sequence_number_lt_failure(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_if_sequence_number_lt_failure())
 
     async def _test_update_page_if_sequence_number_lte_success(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
         start_sequence = 10
         await blob.create_page_blob(512, sequence_number=start_sequence)
@@ -363,16 +367,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
+    @record
     def test_update_page_if_sequence_number_lte_success(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_if_sequence_number_lte_success())
 
     async def _test_update_page_if_sequence_number_lte_failure(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
         start_sequence = 10
         await blob.create_page_blob(512, sequence_number=start_sequence)
@@ -383,16 +386,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_if_sequence_number_lte_failure(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_if_sequence_number_lte_failure())
 
     async def _test_update_page_if_sequence_number_eq_success(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
         start_sequence = 10
         await blob.create_page_blob(512, sequence_number=start_sequence)
@@ -403,16 +405,15 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
+    @record
     def test_update_page_if_sequence_number_eq_success(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_if_sequence_number_eq_success())
 
     async def _test_update_page_if_sequence_number_eq_failure(self):
         # Arrange
         await self._setup()
-        blob = self._get_blob_reference() 
+        blob = self._get_blob_reference()
         data = self.get_random_bytes(512)
         start_sequence = 10
         await blob.create_page_blob(512, sequence_number=start_sequence)
@@ -423,9 +424,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_update_page_if_sequence_number_eq_failure(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_if_sequence_number_eq_failure())
 
@@ -442,9 +442,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
+    @record
     def test_update_page_unicode(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_unicode())
 
@@ -461,9 +460,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsInstance(ranges, list)
         self.assertEqual(len(ranges), 0)
 
+    @record
     def test_get_page_ranges_no_pages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_no_pages())
 
@@ -487,10 +485,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-
+    @record
     def test_get_page_ranges_2_pages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_2_pages())
 
@@ -529,12 +525,11 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
+    @record
     def test_get_page_ranges_diff(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_page_ranges_diff())
-    
+
     async def _test_update_page_fail(self):
         # Arrange
         await self._setup()
@@ -552,10 +547,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         raise Exception('Page range validation failed to throw on failure case')
 
-
+    @record
     def test_update_page_fail(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_page_fail())
 
@@ -563,7 +556,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         blob = await self._create_blob(1024)
-        
+
         # Act
         resp = await blob.resize_blob(512)
 
@@ -575,9 +568,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.size, 512)
 
+    @record
     def test_resize_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_resize_blob())
 
@@ -585,9 +577,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         blob = await self._create_blob()
-        
+
         # Act
-        resp = await blob.set_sequence_number(SequenceNumberAction.Update, 6)     
+        resp = await blob.set_sequence_number(SequenceNumberAction.Update, 6)
 
         #Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -597,9 +589,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.page_blob_sequence_number, 6)
 
+    @record
     def test_set_sequence_number_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_sequence_number_blob())
 
@@ -634,9 +625,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
+    @record
     def test_create_page_blob_with_no_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_page_blob_with_no_overwrite())
 
@@ -669,9 +659,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
+    @record
     def test_create_page_blob_with_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_page_blob_with_overwrite())
 
@@ -694,9 +683,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_bytes(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes())
 
@@ -719,9 +707,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_0_bytes(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_0_bytes())
 
@@ -753,9 +740,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
+    @record
     def test_create_blob_from_bytes_with_progress_first(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_progress_first())
 
@@ -776,12 +762,11 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:])
 
+    @record
     def test_create_blob_from_bytes_with_index(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_index())
-    
+
     async def _test_create_blob_from_bytes_with_index_and_count(self):
         # Arrange
         await self._setup()
@@ -799,9 +784,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_bytes_with_index_and_count(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_index_and_count())
 
@@ -810,8 +794,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
 
-        # Arrange 
-        await self._setup()       
+        # Arrange
+        await self._setup()
         blob = self._get_blob_reference()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'blob_input.temp.dat'
@@ -828,9 +812,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_path(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path())
 
@@ -839,8 +822,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
 
-        # Arrange   
-        await self._setup()     
+        # Arrange
+        await self._setup()
         blob = self._get_blob_reference()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
@@ -861,9 +844,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
+    @record
     def test_create_blob_from_path_with_progress(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path_with_progress())
 
@@ -873,7 +855,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
             return
 
         # Arrange
-        await self._setup()        
+        await self._setup()
         blob = self._get_blob_reference()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
@@ -890,9 +872,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_stream(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream())
 
@@ -930,9 +911,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @record
     def test_create_blob_from_stream_with_empty_pages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_with_empty_pages())
 
@@ -961,9 +941,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
 
+    @record
     def test_create_blob_from_stream_non_seekable(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_non_seekable())
 
@@ -996,9 +975,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
+    @record
     def test_create_blob_from_stream_with_progress(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_with_progress())
 
@@ -1022,9 +1000,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
 
+    @record
     def test_create_blob_from_stream_truncated(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_truncated())
 
@@ -1057,9 +1034,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
         self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
 
+    @record
     def test_create_blob_from_stream_with_progress_truncated(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_with_progress_truncated())
 
@@ -1074,9 +1050,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_create_blob_with_md5_small(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_md5_small())
 
@@ -1095,9 +1070,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert
 
+    @record
     def test_create_blob_with_md5_large(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_md5_large())
 
@@ -1139,27 +1113,31 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
+    @record
     def test_incremental_copy_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_incremental_copy_blob())
 
     async def _test_blob_tier_on_create(self):
+        # Test can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         await self._setup()
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
-        pbs = BlobServiceClient(url, credential=credential)
+        pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
             container = pbs.get_container_client(container_name)
+
             if not self.is_playback():
                 await container.create_container()
 
             # test create_blob API
             blob = self._get_blob_reference()
-            pblob = await pbs.get_blob_client(container_name, blob.blob_name)
+            pblob = pbs.get_blob_client(container_name, blob.blob_name)
             await pblob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P4)
 
             props = await pblob.get_blob_properties()
@@ -1168,14 +1146,14 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
             # test create_blob_from_bytes API
             blob2 = self._get_blob_reference()
-            pblob2 = await pbs.get_blob_client(container_name, blob2.blob_name)
+            pblob2 = pbs.get_blob_client(container_name, blob2.blob_name)
             byte_data = self.get_random_bytes(1024)
             await pblob2.upload_blob(
                 byte_data,
                 premium_page_blob_tier=PremiumPageBlobTier.P6,
                 blob_type=BlobType.PageBlob)
 
-            props2 = pblob2.get_blob_properties()
+            props2 = await pblob2.get_blob_properties()
             self.assertEqual(props2.blob_tier, PremiumPageBlobTier.P6)
             self.assertFalse(props2.blob_tier_inferred)
 
@@ -1197,10 +1175,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         finally:
             await container.delete_container()
 
-    @pytest.mark.skip
+    @record
     def test_blob_tier_on_create(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_tier_on_create())
 
@@ -1208,7 +1184,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
-        pbs = BlobServiceClient(url, credential=credential)
+        pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
@@ -1229,7 +1205,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
             self.assertTrue(blob_ref.blob_tier_inferred)
 
             pcontainer = pbs.get_container_client(container_name)
-            blobs = list(pcontainer.list_blobs())
+            blobs = []
+            async for b in pcontainer.list_blobs():
+                blobs.append(b)
 
             # Assert
             self.assertIsNotNone(blobs)
@@ -1243,7 +1221,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
             self.assertEqual(PremiumPageBlobTier.P50, blob_ref2.blob_tier)
             self.assertFalse(blob_ref2.blob_tier_inferred)
 
-            blobs = list(pcontainer.list_blobs())
+            blobs = []
+            async for b in pcontainer.list_blobs():
+                blobs.append(b)
 
             # Assert
             self.assertIsNotNone(blobs)
@@ -1254,10 +1234,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
             self.assertFalse(blobs[0].blob_tier_inferred)
         finally:
             await container.delete_container()
-    @pytest.mark.skip
+
+    @record
     def test_blob_tier_set_tier_api(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_tier_set_tier_api())
 
@@ -1265,7 +1244,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
-        pbs = BlobServiceClient(url, credential=credential)
+        pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
@@ -1273,7 +1252,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
             if not self.is_playback():
                 try:
-                    container.create_container()
+                    await container.create_container()
                 except ResourceExistsError:
                     pass
 
@@ -1281,57 +1260,55 @@ class StoragePageBlobTestAsync(StorageTestCase):
             source_blob = pbs.get_blob_client(
                 container_name,
                 self.get_resource_name(TEST_BLOB_PREFIX))
-            source_blob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
+            await source_blob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
 
             # Act
             source_blob_url = '{0}/{1}/{2}'.format(
                 self._get_premium_account_url(), container_name, source_blob.blob_name)
 
             copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
-            copy = copy_blob.start_copy_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
+            copy = await copy_blob.start_copy_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
 
             # Assert
             self.assertIsNotNone(copy)
             self.assertEqual(copy['copy_status'], 'success')
             self.assertIsNotNone(copy['copy_id'])
 
-            copy_ref = copy_blob.get_blob_properties()
+            copy_ref = await copy_blob.get_blob_properties()
             self.assertEqual(copy_ref.blob_tier, PremiumPageBlobTier.P30)
 
             source_blob2 = pbs.get_blob_client(
                container_name,
                self.get_resource_name(TEST_BLOB_PREFIX))
 
-            source_blob2.create_page_blob(1024)
+            await source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
                 self._get_premium_account_url(), source_blob2.container_name, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
-            copy2 = copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
+            copy2 = await copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
             self.assertIsNotNone(copy2)
             self.assertEqual(copy2['copy_status'], 'success')
             self.assertIsNotNone(copy2['copy_id'])
 
-            copy_ref2 = copy_blob2.get_blob_properties()
+            copy_ref2 = await copy_blob2.get_blob_properties()
             self.assertEqual(copy_ref2.blob_tier, PremiumPageBlobTier.P60)
             self.assertFalse(copy_ref2.blob_tier_inferred)
 
             copy_blob3 = pbs.get_blob_client(container_name, 'blob3copy')
-            copy3 = copy_blob3.start_copy_from_url(source_blob2_url)
+            copy3 = await copy_blob3.start_copy_from_url(source_blob2_url)
             self.assertIsNotNone(copy3)
             self.assertEqual(copy3['copy_status'], 'success')
             self.assertIsNotNone(copy3['copy_id'])
 
-            copy_ref3 = copy_blob3.get_blob_properties()
+            copy_ref3 = await copy_blob3.get_blob_properties()
             self.assertEqual(copy_ref3.blob_tier, PremiumPageBlobTier.P10)
             self.assertTrue(copy_ref3.blob_tier_inferred)
         finally:
-            container.delete_container()
+            await container.delete_container()
 
-    @pytest.mark.skip
+    @record
     def test_blob_tier_copy_blob(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_tier_copy_blob())
 

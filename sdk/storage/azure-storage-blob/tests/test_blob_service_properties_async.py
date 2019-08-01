@@ -153,8 +153,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_blob_service_properties_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_properties_async())
 
@@ -171,8 +169,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_default_service_version_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_default_service_version_async())
 
@@ -189,8 +185,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_delete_retention_policy_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_delete_retention_policy_async())
 
@@ -233,8 +227,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_delete_retention_policy_edge_cases_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_delete_retention_policy_edge_cases_async())
 
@@ -251,8 +243,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_disabled_delete_retention_policy_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_disabled_delete_retention_policy_async())
 
@@ -272,8 +262,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_static_website_properties_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_async())
 
@@ -310,8 +298,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_static_website_properties_missing_field_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_missing_field_async())
 
@@ -329,8 +315,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_disabled_static_website_properties_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_disabled_static_website_properties_async())
 
@@ -373,8 +357,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_static_website_properties_does_not_impact_other_properties_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_static_website_properties_does_not_impact_other_properties_async())
 
@@ -391,8 +373,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_logging_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_logging_async())
 
@@ -409,8 +389,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_hour_metrics_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_hour_metrics_async())
 
@@ -428,8 +406,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_minute_metrics_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_minute_metrics_async())
 
@@ -460,8 +436,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_set_cors_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_cors_async())
 
@@ -474,8 +448,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_retention_no_days_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_no_days_async())
 
@@ -491,8 +463,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_too_many_cors_rules_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_too_many_cors_rules_async())
 
@@ -507,8 +477,6 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     @record
     def test_retention_too_long_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_too_long_async())
 

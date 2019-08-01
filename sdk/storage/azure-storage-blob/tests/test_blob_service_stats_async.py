@@ -69,8 +69,6 @@ class ServiceStatsTestAsync(StorageTestCase):
 
     @record
     def test_blob_service_stats_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_stats_async())
 
@@ -88,8 +86,6 @@ class ServiceStatsTestAsync(StorageTestCase):
 
     @record
     def test_blob_service_stats_when_unavailable_async(self):
-        # if TestMode.need_recording_file(self.test_mode):
-        #     return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_service_stats_when_unavailable_async())
 
