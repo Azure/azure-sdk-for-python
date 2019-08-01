@@ -24,17 +24,18 @@ ALLOWED_RETURN_CODES = []
 
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
-def prep_and_run_tests(targeted_packages, python_version, test_res):
+def prep_tests(targeted_packages, python_version):
     print('running test setup for {}'.format(targeted_packages))
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(p) for p in targeted_packages])], root_dir)
 
+def run_tests(targeted_packages, python_version, test_res):
     # if we are targeting only packages that are management plane, it is a possibility 
     # that no tests running is an acceptable situation
     # we explicitly handle this here.
     if all(map(lambda x : any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]), targeted_packages)):
         ALLOWED_RETURN_CODES.append(5)
 
-    print('Setup complete. Running pytest for {}'.format(targeted_packages))
+    print('Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(test_res)
     command_array.extend(targeted_packages)
@@ -77,6 +78,13 @@ if __name__ == '__main__':
         help=('Name of service directory (under sdk/) to test.'
               'Example: --service applicationinsights'))
 
+    parser.add_argument(
+        '-r',
+        '--runtype',
+        choices = ['setup', 'execute', 'all'],
+        default = 'all'
+        )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -94,8 +102,16 @@ if __name__ == '__main__':
 
     if args.disablecov:
         test_results_arg.append('--no-cov')
+    else:
+        test_results_arg.extend(['--durations=10', '--cov', '--cov-report='])
 
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
-    prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+    print(targeted_packages)
+
+    if args.runtype == 'setup' or args.runtype == 'all':
+        prep_tests(targeted_packages, args.python_version)
+    
+    if args.runtype == 'execute' or args.runtype == 'all':
+        run_tests(targeted_packages, args.python_version, test_results_arg)

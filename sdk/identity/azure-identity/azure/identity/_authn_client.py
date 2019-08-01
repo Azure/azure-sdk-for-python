@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from msal import TokenCache
 
@@ -118,10 +119,10 @@ class AuthnClient(AuthnClientBase):
 
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
-        config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
+        config = config or self._create_config(**kwargs)
+        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
         if not transport:
-            transport = RequestsTransport(configuration=config)
+            transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
@@ -134,7 +135,7 @@ class AuthnClient(AuthnClientBase):
         return token
 
     @staticmethod
-    def create_config(**kwargs):
+    def _create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)

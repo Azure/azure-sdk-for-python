@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.0.0rc4 (2019-07-10)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix incorrect default API version from 2019-05-01 to 2017-10-01
+
 3.0.0rc3 (2019-07-01)
 +++++++++++++++++++++
 

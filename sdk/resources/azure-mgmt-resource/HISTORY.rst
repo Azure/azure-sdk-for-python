@@ -3,6 +3,14 @@
 Release History
 ===============
 
+3.1.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model TenantIdDescription has a new parameter domains
+- Model TenantIdDescription has a new parameter display_name
+
 3.0.0 (2019-06-13)
 ++++++++++++++++++
 

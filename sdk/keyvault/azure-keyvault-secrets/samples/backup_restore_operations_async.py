@@ -42,7 +42,7 @@ async def run_sample():
         # Let's create a secret holding storage account credentials.
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n1. Create Secret")
-        secret = await client.set_secret("secretName", "secretValue")
+        secret = await client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
         # Backups are good to have, if in case secrets gets deleted accidentally.

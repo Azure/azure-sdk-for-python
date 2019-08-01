@@ -122,7 +122,6 @@ The following section provides several code snippets using the above created `se
     updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
     print(updated_secret.name)
-    print(updated_secret.value)
     print(updated_secret.version)
     print(updated_secret.updated)
     print(updated_secret.content_type)
@@ -133,7 +132,7 @@ The following section provides several code snippets using the above created `se
 ### Delete a Secret
 `delete_secret` deletes a secret previously stored in the Key Vault. When [soft-delete][soft_delete] is not enabled for the Key Vault, this operation permanently deletes the secret.
 ```python
-    secret = secret_client.delete_secret("secret-name")
+    deleted_secret = secret_client.delete_secret("secret-name")
 
     print(deleted_secret.name)
     print(deleted_secret.deleted_date)
@@ -149,10 +148,11 @@ This example lists all the secrets in the specified Key Vault.
 ```
 
 ### Async operations
-Python’s [asyncio package][asyncio_package] and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
-The package supports async API on Python 3.5+ and is identical to synchronous API.
-
-The following examples provide code snippets for performing async operations in the Secret Client library:
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
 
 ### Async create a secret
 This example creates a secret in the Key Vault with the specified optional arguments.
@@ -248,7 +248,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-[asyncio_package]: https://docs.python.org/3/library/asyncio.html
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity

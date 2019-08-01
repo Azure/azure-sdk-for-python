@@ -1,110 +1,133 @@
 interactions:
 - request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault5416109f.vault.azure.net/keys/crud-ec-key/create?api-version=7.0
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Tue, 30 Jul 2019 22:50:26 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-ec-key/create
+        - api-version=7.0
+        - ''
+- request:
     body: '{"kty": "EC-HSM", "attributes": {"enabled": true}, "tags": {"purpose":
       "unit test", "test name": "CreateECKeyTest"}}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '116'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vault5416109f.vault.azure.net/keys/crud-ec-key/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-ec-key/062ff30e156c42b697b31031ca6fb8c5","kty":"EC-HSM","key_ops":["sign","verify"],"crv":"P-256","x":"9NhK52fVYuGoADz6b2JEdOP3Z9FhV-6n-9gOkWdWSWk","y":"1yGY4pWRTg-SuiteM_lOHgFi5eIe-UvDH35LcB4tN9A"},"attributes":{"enabled":true,"created":1560985558,"updated":1560985558,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-ec-key/3f38336e9de04e7ea3a3ba86094fe0c0","kty":"EC-HSM","key_ops":["sign","verify"],"crv":"P-256","x":"KPH8P9UF3zj4Mb-E16WdJk2yE1v4RYMbbI3eraGUS0Y","y":"wXamLF3U4ekD8lKEixbJ1JNaveo_aWkvD6fllRvCAz8"},"attributes":{"enabled":true,"created":1564527027,"updated":1564527027,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name":"CreateECKeyTest"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '435'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '435'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-ec-key/create
+        - api-version=7.0
+        - ''
 - request:
     body: '{"kty": "EC", "crv": "P-256"}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '29'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vault5416109f.vault.azure.net/keys/crud-P-256-ec-key/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-P-256-ec-key/8a4ceaa313fb4a2db02e1a33fbf5045f","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"3d7a4C3yzBJs4yxqfbyx0EHo38WeZ7_bSK3b4Z-Nxd4","y":"KBgQOJFuEL9nE2hBQgHhuQ_ZitqfqN4LJtsvnHUKG6c"},"attributes":{"enabled":true,"created":1560985558,"updated":1560985558,"recoveryLevel":"Recoverable+Purgeable"}}'
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-P-256-ec-key/1085fdf8d174406bb92d1c4dc73559f0","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"29pQuyVmhkbuizq-9M-ngz-H59dPnQ07GpzXpWolEVE","y":"b3owWVWqXekjdSKuf5RnuJqyGAtUQr8J5DxP1CQhG4o"},"attributes":{"enabled":true,"created":1564527027,"updated":1564527027,"recoveryLevel":"Recoverable+Purgeable"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '376'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '376'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-P-256-ec-key/create
+        - api-version=7.0
+        - ''
 - request:
     body: '{"key": {"kty": "RSA", "key_ops": ["encrypt", "decrypt", "sign", "verify",
       "wrapKey", "unwrapKey"], "n": "AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU",
@@ -117,53 +140,43 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '1724'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: PUT
     uri: https://vault5416109f.vault.azure.net/keys/import-test-key?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/import-test-key/24085293365e475491d115cf4b9ddd10","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1560985559,"updated":1560985559,"recoveryLevel":"Recoverable+Purgeable"}}'
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/import-test-key/42143a5692c24ebb9e9b3a5e951aead6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1564527027,"updated":1564527027,"recoveryLevel":"Recoverable+Purgeable"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '664'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '664'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/import-test-key
+        - api-version=7.0
+        - ''
 - request:
     body: '{"kty": "RSA", "key_size": 2048, "key_ops": ["encrypt", "decrypt", "sign",
       "verify", "wrapKey", "unwrapKey"], "tags": {"purpose": "unit test", "test name
@@ -171,544 +184,470 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '177'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1560985559,"updated":1560985559,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"created":1564527028,"updated":1564527028,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '723'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '723'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-rsa-key/create
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4?api-version=7.0
+    uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1560985559,"updated":1560985559,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"created":1564527028,"updated":1564527028,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '723'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '723'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1560985559,"updated":1560985559,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"created":1564527028,"updated":1564527028,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '723'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '723'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:27 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-rsa-key/
+        - api-version=7.0
+        - ''
 - request:
     body: '{"attributes": {"exp": 2524723200}, "tags": {"foo": "updated tag"}}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '67'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: PATCH
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1560985559,"updated":1560985560,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1564527028,"updated":1564527029,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
         tag"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '706'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:05:59 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '706'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:28 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-rsa-key/
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1560985560,"scheduledPurgeDate":1568761560,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1560985559,"updated":1560985560,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1564527029,"scheduledPurgeDate":1572303029,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1564527028,"updated":1564527029,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
         tag"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '841'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:00 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '841'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:29 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /keys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: crud-rsa-key"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '80'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:00 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '80'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:29 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: crud-rsa-key"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '80'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:03 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '80'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:32 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: crud-rsa-key"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '80'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:07 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '80'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:35 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: crud-rsa-key"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '80'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:10 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '80'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:38 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1560985560,"scheduledPurgeDate":1568761560,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1560985559,"updated":1560985560,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: crud-rsa-key"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '80'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:41 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
+    method: GET
+    uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
+  response:
+    body:
+      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1564527029,"scheduledPurgeDate":1572303029,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1564527028,"updated":1564527029,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
         tag"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '841'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:13 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '841'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:44 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+      - python/3.6.3 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1560985560,"scheduledPurgeDate":1568761560,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/cb9cc760cdeb4438b9b0dedabec800d4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1ahTmNNGiKjh_vTYEuD36Kis8YJeAeFqfBVJgygl5R9O9pq3OSxnqumJ4Gli_j2i_AcmG_fuco5fNB_AA4Jopf8yPo2jIfmNCMT4Hs3b_3hI9gW2LryM1R5WgFu2dIZNyb9X4gKXlDWiQxAJccBFvSPuc7yrhF7W8mFU8NMsW8_XU_7A7ddw57il1-82o55xvpnT3Wz1HJMIOzbSlFSFyZvfXWhB9QRHmete8gFyhsdhjR1pihkQ0ao4gv9ChKLidyq-XOcBATqkw1329xshzfVqZJ1qmXck36Wo_54Y_Skvvm-I1PR5anHuvnp79FRHllYAjO8p03gczEHXzRUyXQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1560985559,"updated":1560985560,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1564527029,"scheduledPurgeDate":1572303029,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/db6917bdbdf14eb9ad0a236d48fe20a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tk_5ujXBbz600xcv5YO_2aeb8t61DHk5Kqkkkd5PA3QHf4CRIkeEllZtU2kXM6cqqO7_Z7VnTm4jOF1kIfcbtWbwKj_ZZ9rEDvhJJXJj74DX-YhcJ5F1Y5dpBd4LF4Z7Pv3kNZzscwu7Ci4-JtrirU_pD69HhiEzr3k0JpVJPXdg_K9tmyVjTBnxi9fIqWSRC4nNhDFxvzHH6B7P4qaolwKGTMTdjx5QaY9hxAZJZlhYUBesAvX644ISvS9OY0iwyz9gL-yghTaSOMEKJXv8dFRBXgCDbFYRktxxkx2BpBG5tIjTAbUkLLRbEXMi1Gf1KSePTBpsoakhu8PMeN1J7w","e":"AQAB"},"attributes":{"enabled":true,"exp":2524723200,"created":1564527028,"updated":1564527029,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
         tag"}}'
     headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '841'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 19 Jun 2019 23:06:13 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - addr=131.107.147.26;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.0.866
-      x-powered-by:
-      - ASP.NET
+      cache-control: no-cache
+      content-length: '841'
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Jul 2019 22:50:44 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=24.16.158.132;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.872
+      x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault5416109f.vault.azure.net
+        - /deletedkeys/crud-rsa-key
+        - api-version=7.0
+        - ''
 version: 1

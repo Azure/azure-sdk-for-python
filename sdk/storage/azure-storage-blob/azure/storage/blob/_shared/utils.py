@@ -471,8 +471,6 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    if 'connection_timeout' not in kwargs:
-        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
@@ -498,8 +496,10 @@ def create_pipeline(credential, **kwargs):
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
+    if 'connection_timeout' not in kwargs:
+        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     if not transport:
-        transport = RequestsTransport(config)
+        transport = RequestsTransport(**kwargs)
     policies = [
         QueueMessagePolicy(),
         config.headers_policy,

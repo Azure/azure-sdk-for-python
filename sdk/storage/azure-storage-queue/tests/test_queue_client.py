@@ -167,8 +167,8 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
-            self.assertEqual(service._config.connection.timeout, 22)
-            self.assertTrue(default_service._config.connection.timeout in [20, (20, 2000)])
+            self.assertEqual(service._client._client._pipeline._transport.connection_config.timeout, 22)
+            self.assertTrue(default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)])
 
     # --Connection String Test Cases --------------------------------------------
 

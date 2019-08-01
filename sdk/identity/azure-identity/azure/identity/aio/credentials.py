@@ -14,7 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ._internal import ImdsCredential, MsiCredential
+from ._managed_identity import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import ChainedTokenCredential
@@ -29,20 +29,11 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_id: the service principal's client ID
     :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(
-        self,
-        client_id: str,
-        secret: str,
-        tenant_id: str,
-        config: Optional[Configuration] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> None:
+    def __init__(self, client_id: str, secret: str, tenant_id: str, **kwargs: Mapping[str, Any]) -> None:
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """
@@ -66,20 +57,11 @@ class CertificateCredential(CertificateCredentialBase):
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(
-        self,
-        client_id: str,
-        tenant_id: str,
-        certificate_path: str,
-        config: Optional[Configuration] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> None:
+    def __init__(self, client_id: str, tenant_id: str, certificate_path: str, **kwargs: Mapping[str, Any]) -> None:
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """
@@ -151,8 +133,6 @@ class ManagedIdentityCredential(object):
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
     def __new__(cls, *args, **kwargs):
@@ -162,17 +142,8 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id: Optional[str] = None, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+    def __init__(self, client_id: Optional[str] = None, **kwargs: Any) -> None:
         pass
-
-    @staticmethod
-    def create_config(**kwargs: Dict[str, Any]) -> Configuration:
-        """
-        Build a default configuration for the credential's HTTP pipeline.
-
-        :rtype: :class:`azure.core.configuration`
-        """
-        return Configuration(**kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """

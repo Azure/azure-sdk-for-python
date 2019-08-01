@@ -86,8 +86,8 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """
         self._headers[key] = value
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Updates with the given headers before sending the request to the next policy.
 
         :param request: The PipelineRequest object
@@ -152,8 +152,8 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Modifies the User-Agent header before the request is sent.
 
         :param request: The PipelineRequest object
@@ -191,8 +191,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Logs HTTP request to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -223,8 +223,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
         """Logs HTTP response to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -266,10 +266,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
     """
-    JSON_MIMETYPES = [
-        'application/json',
-        'text/json' # Because we're open minded people...
-    ]
+    # Accept "text" because we're open minded people...
+    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
+
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
@@ -301,7 +300,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if content_type is None:
             return data
 
-        if content_type in cls.JSON_MIMETYPES:
+        if cls.JSON_REGEXP.match(content_type):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
@@ -350,7 +349,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # Try to use content-type from headers if available
         content_type = None
         if response.content_type: # type: ignore
-            content_type = response.content_type[0].strip().lower() # type: ignore
+            content_type = response.content_type.split(";")[0].strip().lower() # type: ignore
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
@@ -361,8 +360,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(response, content_type)
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
@@ -394,10 +393,6 @@ class ProxyPolicy(SansIOHTTPPolicy):
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
 
-    **Keyword argument:**
-
-    *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
-
     Example:
         .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START proxy_policy]
@@ -406,6 +401,11 @@ class ProxyPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a proxy policy.
     """
-    def __init__(self, proxies=None, **kwargs):
+    def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument
         self.proxies = proxies
-        self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        ctxt = request.context.options
+        if self.proxies and "proxies" not in ctxt:
+            ctxt["proxies"] = self.proxies

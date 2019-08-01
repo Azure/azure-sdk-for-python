@@ -14,9 +14,6 @@ try:
     from ._models_py3 import ApplicationGateway
     from ._models_py3 import ApplicationGatewayAuthenticationCertificate
     from ._models_py3 import ApplicationGatewayAutoscaleConfiguration
-    from ._models_py3 import ApplicationGatewayAvailableRequestHeadersResult
-    from ._models_py3 import ApplicationGatewayAvailableResponseHeadersResult
-    from ._models_py3 import ApplicationGatewayAvailableServerVariablesResult
     from ._models_py3 import ApplicationGatewayAvailableSslOptions
     from ._models_py3 import ApplicationGatewayAvailableWafRuleSetsResult
     from ._models_py3 import ApplicationGatewayBackendAddress
@@ -300,9 +297,6 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGateway
     from ._models import ApplicationGatewayAuthenticationCertificate
     from ._models import ApplicationGatewayAutoscaleConfiguration
-    from ._models import ApplicationGatewayAvailableRequestHeadersResult
-    from ._models import ApplicationGatewayAvailableResponseHeadersResult
-    from ._models import ApplicationGatewayAvailableServerVariablesResult
     from ._models import ApplicationGatewayAvailableSslOptions
     from ._models import ApplicationGatewayAvailableWafRuleSetsResult
     from ._models import ApplicationGatewayBackendAddress
@@ -745,9 +739,6 @@ __all__ = [
     'ApplicationGateway',
     'ApplicationGatewayAuthenticationCertificate',
     'ApplicationGatewayAutoscaleConfiguration',
-    'ApplicationGatewayAvailableRequestHeadersResult',
-    'ApplicationGatewayAvailableResponseHeadersResult',
-    'ApplicationGatewayAvailableServerVariablesResult',
     'ApplicationGatewayAvailableSslOptions',
     'ApplicationGatewayAvailableWafRuleSetsResult',
     'ApplicationGatewayBackendAddress',

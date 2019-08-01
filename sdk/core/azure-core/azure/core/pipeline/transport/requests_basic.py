@@ -31,12 +31,11 @@ import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 import requests
 
-from azure.core.configuration import Configuration
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
-from azure.core.pipeline import Pipeline
 from . import HttpRequest # pylint: disable=unused-import
 
 from .base import (
@@ -66,9 +65,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
-        content_type = requests_response.headers.get('content-type')
-        if content_type:
-            self.content_type = content_type.split(";")
+        self.content_type = requests_response.headers.get('content-type')
 
     def body(self):
         return self.internal_response.content
@@ -83,18 +80,16 @@ class StreamDownloadGenerator(object):
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
-    :param request: The request object
     :param response: The response object.
-    :param int block_size: Number of bytes to read into memory.
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline, request, response, block_size):
+    def __init__(self, pipeline, response):
         self.pipeline = pipeline
-        self.request = request
+        self.request = response.request
         self.response = response
-        self.block_size = block_size
-        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.block_size = response.block_size
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
@@ -116,7 +111,7 @@ class StreamDownloadGenerator(object):
                 self.downloaded += self.block_size
                 return chunk
             except StopIteration:
-                self.response.close()
+                self.response.internal_response.close()
                 raise StopIteration()
             except (requests.exceptions.ChunkedEncodingError,
                     requests.exceptions.ConnectionError):
@@ -139,7 +134,7 @@ class StreamDownloadGenerator(object):
                 raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.close()
+                self.response.internal_response.close()
                 raise
     next = __next__  # Python 2 compatibility.
 
@@ -150,7 +145,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     def stream_download(self, pipeline):
         # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
+        return StreamDownloadGenerator(pipeline, self)
 
 
 class RequestsTransport(HttpTransport):
@@ -164,11 +159,11 @@ class RequestsTransport(HttpTransport):
     - You provide the configured session if you want to, or a basic session is created.
     - All kwargs received by "send" are sent to session.request directly
 
-    :param configuration: The service configuration.
-    :type configuration: ~azure.core.Configuration
-    :param session: The session.
-    :type session: requests.Session
-    :param bool session_owner: Defaults to True.
+    **Keyword argument:**
+
+    *session (requests.Session)* - Request session to use instead of the default one.
+    *session_owner (bool)* - Decide if the session provided by user is owned by this transport. Default to True.
+    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
         .. literalinclude:: ../examples/test_example_sync.py
@@ -181,11 +176,12 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ['http://', 'https://']
 
-    def __init__(self, configuration=None, session=None, session_owner=True):
-        # type: (Optional[Configuration], Optional[requests.Session], bool) -> None
-        self._session_owner = session_owner
-        self.config = configuration or Configuration()
-        self.session = session
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.session = kwargs.get('session', None)
+        self._session_owner = kwargs.get('session_owner', True)
+        self.connection_config = ConnectionConfiguration(**kwargs)
+        self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     def __enter__(self):
         # type: () -> RequestsTransport
@@ -201,8 +197,7 @@ class RequestsTransport(HttpTransport):
 
         This is initialization I want to do once only on a session.
         """
-        if self.config.proxy_policy:
-            session.trust_env = self.config.proxy_policy.use_env_settings
+        session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
         adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
@@ -232,12 +227,11 @@ class RequestsTransport(HttpTransport):
 
         *session* - will override the driver session and use yours. Should NOT be done unless really required.
         Anything else is sent straight to requests.
+        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if self.config.proxy_policy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy_policy.proxies
 
         try:
             response = self.session.request(  # type: ignore
@@ -246,9 +240,9 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
                 **kwargs)
 
@@ -266,4 +260,4 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)

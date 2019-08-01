@@ -10,42 +10,42 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .disk_sku_py3 import DiskSku
-    from .image_disk_reference_py3 import ImageDiskReference
-    from .creation_data_py3 import CreationData
-    from .source_vault_py3 import SourceVault
-    from .key_vault_and_secret_reference_py3 import KeyVaultAndSecretReference
-    from .key_vault_and_key_reference_py3 import KeyVaultAndKeyReference
-    from .encryption_settings_element_py3 import EncryptionSettingsElement
-    from .encryption_settings_collection_py3 import EncryptionSettingsCollection
-    from .disk_py3 import Disk
-    from .disk_update_py3 import DiskUpdate
-    from .snapshot_sku_py3 import SnapshotSku
-    from .grant_access_data_py3 import GrantAccessData
-    from .access_uri_py3 import AccessUri
-    from .snapshot_py3 import Snapshot
-    from .snapshot_update_py3 import SnapshotUpdate
+    from ._models_py3 import AccessUri
+    from ._models_py3 import CreationData
+    from ._models_py3 import Disk
+    from ._models_py3 import DiskSku
+    from ._models_py3 import DiskUpdate
+    from ._models_py3 import EncryptionSettingsCollection
+    from ._models_py3 import EncryptionSettingsElement
+    from ._models_py3 import GrantAccessData
+    from ._models_py3 import ImageDiskReference
+    from ._models_py3 import KeyVaultAndKeyReference
+    from ._models_py3 import KeyVaultAndSecretReference
+    from ._models_py3 import Resource
+    from ._models_py3 import Snapshot
+    from ._models_py3 import SnapshotSku
+    from ._models_py3 import SnapshotUpdate
+    from ._models_py3 import SourceVault
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .disk_sku import DiskSku
-    from .image_disk_reference import ImageDiskReference
-    from .creation_data import CreationData
-    from .source_vault import SourceVault
-    from .key_vault_and_secret_reference import KeyVaultAndSecretReference
-    from .key_vault_and_key_reference import KeyVaultAndKeyReference
-    from .encryption_settings_element import EncryptionSettingsElement
-    from .encryption_settings_collection import EncryptionSettingsCollection
-    from .disk import Disk
-    from .disk_update import DiskUpdate
-    from .snapshot_sku import SnapshotSku
-    from .grant_access_data import GrantAccessData
-    from .access_uri import AccessUri
-    from .snapshot import Snapshot
-    from .snapshot_update import SnapshotUpdate
-from .disk_paged import DiskPaged
-from .snapshot_paged import SnapshotPaged
-from .compute_management_client_enums import (
+    from ._models import AccessUri
+    from ._models import CreationData
+    from ._models import Disk
+    from ._models import DiskSku
+    from ._models import DiskUpdate
+    from ._models import EncryptionSettingsCollection
+    from ._models import EncryptionSettingsElement
+    from ._models import GrantAccessData
+    from ._models import ImageDiskReference
+    from ._models import KeyVaultAndKeyReference
+    from ._models import KeyVaultAndSecretReference
+    from ._models import Resource
+    from ._models import Snapshot
+    from ._models import SnapshotSku
+    from ._models import SnapshotUpdate
+    from ._models import SourceVault
+from ._paged_models import DiskPaged
+from ._paged_models import SnapshotPaged
+from ._compute_management_client_enums import (
     DiskStorageAccountTypes,
     OperatingSystemTypes,
     HyperVGeneration,
@@ -56,22 +56,22 @@ from .compute_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'DiskSku',
-    'ImageDiskReference',
-    'CreationData',
-    'SourceVault',
-    'KeyVaultAndSecretReference',
-    'KeyVaultAndKeyReference',
-    'EncryptionSettingsElement',
-    'EncryptionSettingsCollection',
-    'Disk',
-    'DiskUpdate',
-    'SnapshotSku',
-    'GrantAccessData',
     'AccessUri',
+    'CreationData',
+    'Disk',
+    'DiskSku',
+    'DiskUpdate',
+    'EncryptionSettingsCollection',
+    'EncryptionSettingsElement',
+    'GrantAccessData',
+    'ImageDiskReference',
+    'KeyVaultAndKeyReference',
+    'KeyVaultAndSecretReference',
+    'Resource',
     'Snapshot',
+    'SnapshotSku',
     'SnapshotUpdate',
+    'SourceVault',
     'DiskPaged',
     'SnapshotPaged',
     'DiskStorageAccountTypes',

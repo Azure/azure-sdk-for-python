@@ -74,16 +74,16 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     and can act either before the request is done, or after.
     """
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
         """Is executed after the request comes back from the policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -93,8 +93,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     #pylint: disable=no-self-use
-    def on_exception(self, _request, **kwargs):  #pylint: disable=unused-argument
-        # type: (PipelineRequest, Any) -> bool
+    def on_exception(self, _request):  #pylint: disable=unused-argument
+        # type: (PipelineRequest) -> bool
         """Is executed if an exception is raised while executing the next policy.
 
         Developer can optionally implement this method to return True

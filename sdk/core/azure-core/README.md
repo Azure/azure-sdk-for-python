@@ -106,8 +106,8 @@ response = client.get_foo_properties()
 
 ### Configuration
 
-The Configuration object is the home of all the configurable policies in the pipeline. It is also used
-to provide configuration parameters for the Transport. A new Configuration object provides *no default policies*.
+The Configuration object is the home of all the configurable policies in the pipeline.
+A new Configuration object provides *no default policies*.
 It is up to the SDK developer to specify each of the policy defaults as required by the service.
 
 This can be seen in the above code sample as implemented in a staticmethod on the client class.
@@ -115,10 +115,10 @@ The Configuration object does not specify in what order the policies will be add
 It is up to the SDK developer to use the policies in the Configuration to construct the pipeline correctly, as well
 as inserting any unexposed/non-configurable policies.
 ```python
-config = config or FooServiceClient.create_config(**kwargs)
-transport = RequestsTransport(config)
+transport = RequestsTransport(**kwargs)
 
 # SDK developer needs to build the policy order for the pipeline.
+config = config or FooServiceClient.create_config(**kwargs)
 policies = [
     config.headers_policy,
     config.user_agent_policy,
@@ -143,7 +143,7 @@ The policies that should currently be defined on the Configuration object are as
 
 ```
 
-### Transport 
+### Transport
 
 Various combinations of sync/async HTTP libraries as well as alternative event loop implementations are available. Therefore to support the widest range of customer scenarios, we must allow a customer to easily swap out the HTTP transport layer to one of those supported.
 
@@ -202,7 +202,7 @@ The HttpRequest and HttpResponse objects represent a generic concept of HTTP req
 The HttpRequest has the following API. It does not vary between transports:
 ```python
 class HttpRequest(object):
-    
+
     def __init__(self, method, url, headers=None, files=None, data=None):
         self.method = method
         self.url = url
@@ -265,7 +265,7 @@ class HttpResponse(object):
         self.internal_response = internal_response  # The object returned by the HTTP library
         self.status_code = None
         self.headers = {}
-        self.reason = None 
+        self.reason = None
 
     def body(self):
         """Return the whole body as bytes in memory."""
