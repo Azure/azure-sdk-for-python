@@ -191,7 +191,7 @@ class AlertsOperations(object):
                 # Construct URL
                 url = self.get_all.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -292,7 +292,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -352,7 +352,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.change_state.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -412,7 +412,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_history.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -522,7 +522,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_summary.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
