@@ -20,6 +20,8 @@ try:
     from ._models_py3 import AutoStorageBaseProperties
     from ._models_py3 import AutoStorageProperties
     from ._models_py3 import AutoUserSpecification
+    from ._models_py3 import AzureBlobFileSystemConfiguration
+    from ._models_py3 import AzureFileShareConfiguration
     from ._models_py3 import BatchAccount
     from ._models_py3 import BatchAccountCreateParameters
     from ._models_py3 import BatchAccountKeys
@@ -32,6 +34,7 @@ try:
     from ._models_py3 import CertificateReference
     from ._models_py3 import CheckNameAvailabilityParameters
     from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CIFSMountConfiguration
     from ._models_py3 import CloudServiceConfiguration
     from ._models_py3 import ContainerConfiguration
     from ._models_py3 import ContainerRegistry
@@ -45,8 +48,10 @@ try:
     from ._models_py3 import KeyVaultReference
     from ._models_py3 import LinuxUserConfiguration
     from ._models_py3 import MetadataItem
+    from ._models_py3 import MountConfiguration
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import NFSMountConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Pool
@@ -77,6 +82,8 @@ except (SyntaxError, ImportError):
     from ._models import AutoStorageBaseProperties
     from ._models import AutoStorageProperties
     from ._models import AutoUserSpecification
+    from ._models import AzureBlobFileSystemConfiguration
+    from ._models import AzureFileShareConfiguration
     from ._models import BatchAccount
     from ._models import BatchAccountCreateParameters
     from ._models import BatchAccountKeys
@@ -89,6 +96,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateReference
     from ._models import CheckNameAvailabilityParameters
     from ._models import CheckNameAvailabilityResult
+    from ._models import CIFSMountConfiguration
     from ._models import CloudServiceConfiguration
     from ._models import ContainerConfiguration
     from ._models import ContainerRegistry
@@ -102,8 +110,10 @@ except (SyntaxError, ImportError):
     from ._models import KeyVaultReference
     from ._models import LinuxUserConfiguration
     from ._models import MetadataItem
+    from ._models import MountConfiguration
     from ._models import NetworkConfiguration
     from ._models import NetworkSecurityGroupRule
+    from ._models import NFSMountConfiguration
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Pool
@@ -148,6 +158,7 @@ from ._batch_management_client_enums import (
     ElevationLevel,
     LoginMode,
     AutoUserScope,
+    ContainerWorkingDirectory,
     CertificateStoreLocation,
     CertificateVisibility,
     NameAvailabilityReason,
@@ -164,6 +175,8 @@ __all__ = [
     'AutoStorageBaseProperties',
     'AutoStorageProperties',
     'AutoUserSpecification',
+    'AzureBlobFileSystemConfiguration',
+    'AzureFileShareConfiguration',
     'BatchAccount',
     'BatchAccountCreateParameters',
     'BatchAccountKeys',
@@ -176,6 +189,7 @@ __all__ = [
     'CertificateReference',
     'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
+    'CIFSMountConfiguration',
     'CloudServiceConfiguration',
     'ContainerConfiguration',
     'ContainerRegistry',
@@ -189,8 +203,10 @@ __all__ = [
     'KeyVaultReference',
     'LinuxUserConfiguration',
     'MetadataItem',
+    'MountConfiguration',
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
+    'NFSMountConfiguration',
     'Operation',
     'OperationDisplay',
     'Pool',
@@ -234,6 +250,7 @@ __all__ = [
     'ElevationLevel',
     'LoginMode',
     'AutoUserScope',
+    'ContainerWorkingDirectory',
     'CertificateStoreLocation',
     'CertificateVisibility',
     'NameAvailabilityReason',
