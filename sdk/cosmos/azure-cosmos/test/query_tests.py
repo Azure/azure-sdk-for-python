@@ -1,7 +1,7 @@
 import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.retry_utility as retry_utility
+import azure.cosmos._retry_utility as retry_utility
 import pytest
 import test_config
 
@@ -197,16 +197,16 @@ class QueryTest(unittest.TestCase):
         )
 
         # 1 call to get query plan 1 calls to one partition with the documents, 1 call each to other 4 partitions
-        self.validate_query_requests_count(query_iterable, 12)
+        self.validate_query_requests_count(query_iterable, 6 * 2)
 
     def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
+        retry_utility.ExecuteFunction = self._MockExecuteFunction
         block = query_iterable.fetch_next_block()
         while block:
             block = query_iterable.fetch_next_block()
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.count, expected_count)
         self.count = 0
 

@@ -142,7 +142,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         else:
             query = self._query            
 
-        return document_producer._DocumentProducer(partition_key_target_range, self._client, self._resource_link, query, self._document_producer_comparator)
+        return document_producer._DocumentProducer(partition_key_target_range, self._client, self._resource_link, query, self._document_producer_comparator, self._options)
     
     def _get_target_parition_key_range(self):
 
