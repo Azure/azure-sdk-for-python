@@ -22,12 +22,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print('Build')
-
     check_call(['python', os.path.join(args.target_setup, 'setup.py'), 'bdist_wheel', '--universal', '-d', args.distribution_directory])
 
     discovered_wheels = [f for f in os.listdir(args.distribution_directory) if os.path.isfile(os.path.join(args.distribution_directory, f))]
 
     for wheel in discovered_wheels:
-        print('Installing {w}.'.format(w=wheel))
-        check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
+        if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
+            check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
+            print('Installed {w} from wheel directory'.format(w=wheel))
+        else:
+            check_call(['pip', 'install', os.path.join(args.distribution_directory, wheel)])
+            print('Installed {w} from fresh wheel.'.format(w=wheel))
+
+    exit(1)
+        

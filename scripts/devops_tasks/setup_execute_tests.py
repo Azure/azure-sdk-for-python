@@ -26,7 +26,7 @@ ALLOWED_RETURN_CODES = []
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
-def prep_and_run_tox(targeted_packages, tox_env, optional_argument_array=[]):
+def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
         tox_execution_array = ['tox']
@@ -117,6 +117,12 @@ if __name__ == '__main__':
         help='Specific set of named environments to execute'
     )
 
+    parser.add_argument(
+        '--wheel_dir',
+        dest='wheel_dir',
+        help='Location for prebuilt artifacts (if any)'    
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -137,6 +143,9 @@ if __name__ == '__main__':
 
     if args.mark_arg:
         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
+
+    if args.wheel_dir:
+        os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
 
     prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
     collect_coverage_files(targeted_packages)

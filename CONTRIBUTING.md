@@ -80,7 +80,7 @@ Used to execute pylint on python 2.7 and python 3.7.
 
 ```
 
-#### `dev` environment
+#### `sdist` environment
 Used for the local dev loop.
 
 * Installs package in editable mode
