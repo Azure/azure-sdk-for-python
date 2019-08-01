@@ -631,7 +631,7 @@ class ProtectedItem(Model):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -727,7 +727,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -1320,7 +1320,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -1453,7 +1453,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -1666,7 +1666,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -2480,7 +2480,7 @@ class AzureSqlProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -3292,7 +3292,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -3582,7 +3582,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -3960,7 +3960,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -4408,7 +4408,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -6904,7 +6904,7 @@ class DPMProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -7264,7 +7264,7 @@ class GenericProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
@@ -8302,7 +8302,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
      deferred deleted DS is to be purged soon
     :type is_deferred_delete_schedule_upcoming: bool
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
-     rehydrated into Pause state
+     moved into Pause state
     :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
