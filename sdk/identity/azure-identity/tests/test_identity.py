@@ -222,7 +222,7 @@ def test_imds_credential_retries():
     )
     mock_send = Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential.create_config().retry_policy.total_retries
+    total_retries = ImdsCredential._create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
