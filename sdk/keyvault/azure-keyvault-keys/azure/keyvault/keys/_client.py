@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Generator, Mapping, Optional
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
@@ -32,6 +33,7 @@ class KeyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
 
+    @distributed_trace
     def create_key(
         self,
         name,
@@ -107,6 +109,7 @@ class KeyClient(KeyVaultClientBase):
         )
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def create_rsa_key(
         self,
         name,
@@ -171,6 +174,7 @@ class KeyClient(KeyVaultClientBase):
             **kwargs
         )
 
+    @distributed_trace
     def create_ec_key(
         self,
         name,
@@ -238,6 +242,7 @@ class KeyClient(KeyVaultClientBase):
             **kwargs
         )
 
+    @distributed_trace
     def delete_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
         """Deletes a key from the Key Vault.
@@ -265,6 +270,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
+    @distributed_trace
     def get_key(self, name, version=None, **kwargs):
         # type: (str, Optional[str], Mapping[str, Any]) -> Key
         """Gets the public part of a stored key.
@@ -295,6 +301,7 @@ class KeyClient(KeyVaultClientBase):
         )
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def get_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
         """Gets a deleted key from the Key Vault
@@ -320,6 +327,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
+    @distributed_trace
     def list_deleted_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[DeletedKey]
         """Lists the deleted keys in the Key Vault
@@ -345,9 +353,14 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_deleted_keys(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (DeletedKey._from_deleted_key_item(item) for item in pages)
+        return self._client.get_deleted_keys(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            **kwargs
+        )
 
+    @distributed_trace
     def list_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[KeyBase]
         """List the keys in the Key Vault
@@ -372,9 +385,14 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_keys(self._vault_url, maxresults=max_page_size, **kwargs)
-        return (KeyBase._from_key_item(item) for item in pages)
+        return self._client.get_keys(
+            self._vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
+    @distributed_trace
     def list_key_versions(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Generator[KeyBase]
         """Retrieves a list of individual key versions with the same key name.
@@ -397,9 +415,15 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_key_versions(self._vault_url, name, maxresults=max_page_size, **kwargs)
-        return (KeyBase._from_key_item(item) for item in pages)
+        return self._client.get_key_versions(
+            self._vault_url,
+            name,
+            maxresults=max_page_size,
+            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            **kwargs
+        )
 
+    @distributed_trace
     def purge_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
         """Permanently deletes the specified key.
@@ -424,6 +448,7 @@ class KeyClient(KeyVaultClientBase):
         """
         self._client.purge_deleted_key(self.vault_url, name, kwargs)
 
+    @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Key
         """Recovers the deleted key to its latest version.
@@ -451,6 +476,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.recover_deleted_key(self.vault_url, name, kwargs)
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def update_key(
         self, name, version=None, key_operations=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
@@ -508,6 +534,7 @@ class KeyClient(KeyVaultClientBase):
         )
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def backup_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> bytes
         """Backs up the specified key.
@@ -545,6 +572,7 @@ class KeyClient(KeyVaultClientBase):
         backup_result = self._client.backup_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
         return backup_result.value
 
+    @distributed_trace
     def restore_key(self, backup, **kwargs):
         # type: (bytes, Mapping[str, Any]) -> Key
         """Restores a backed up key to the Key Vault
@@ -581,6 +609,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def import_key(self, name, key, hsm=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, List[str], Optional[bool], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Imports an externally created key, stores it, and returns the key to the client.
@@ -618,6 +647,7 @@ class KeyClient(KeyVaultClientBase):
         )
         return Key._from_key_bundle(bundle)
 
+    @distributed_trace
     def wrap_key(self, name, algorithm, value, version=None, **kwargs):
         # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> KeyOperationResult
         """Wraps a symmetric key using a specified key.
@@ -653,6 +683,7 @@ class KeyClient(KeyVaultClientBase):
         )
         return KeyOperationResult(id=bundle.kid, value=bundle.result)
 
+    @distributed_trace
     def unwrap_key(self, name, algorithm, value, version=None, **kwargs):
         # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> KeyOperationResult
         """Unwraps a symmetric key using the specified key that was initially used

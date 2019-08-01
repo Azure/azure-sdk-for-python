@@ -40,7 +40,7 @@ steps:
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
-    displayName: 'Setup and Run Tests'
+    displayName: 'Install Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-

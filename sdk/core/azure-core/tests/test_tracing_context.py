@@ -22,6 +22,7 @@ class ContextHelper(object):
 
     def __enter__(self):
         self.orig_sdk_context_span = tracing_context.current_span.get()
+        tracing_context.current_span.clear()
         settings.tracing_implementation.set_value(self.tracer_to_use)
         self.os_env.start()
         return self
@@ -33,19 +34,14 @@ class ContextHelper(object):
 
 
 class TestContext(unittest.TestCase):
-    def test_get_context_class(self):
-        with ContextHelper():
-            slot = tracing_context._get_context_class("temp", 1)
-            assert slot.get() == 1
-            slot.set(2)
-            assert slot.get() == 2
-
     def test_current_span(self):
         with ContextHelper():
-            assert tracing_context.current_span.get() is None
+            assert not tracing_context.current_span.get()
             val = mock.Mock(spec=AbstractSpan)
             tracing_context.current_span.set(val)
             assert tracing_context.current_span.get() == val
+            tracing_context.current_span.clear()
+            assert not tracing_context.current_span.get()
 
     def test_with_current_context(self):
         with ContextHelper(tracer_to_use=mock.Mock(AbstractSpan)):

@@ -14,8 +14,6 @@ from subprocess import check_call, CalledProcessError
 import os
 import sys
 
-DEFAULT_BUILD_PACKAGES = ['azure-eventhubs', 'azure-storage-blob']
-
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
         file_path = os.path.join(target_folder, file)
@@ -24,6 +22,9 @@ def cleanup_folder(target_folder):
                 os.remove(file_path)
         except Exception as e:
             print(e)
+
+DEFAULT_BUILD_PACKAGES = ['azure-keyvault', 'azure-servicebus']
+OMITTED_CI_PACKAGES = ['azure-mgmt-documentdb']
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
@@ -40,7 +41,20 @@ def process_glob_string(glob_string, target_root_dir):
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    return list(set(collected_top_level_directories))
+    collected_directories = list(set(collected_top_level_directories))
+
+    # if we have individually queued this specific package, it's obvious that we want to build it specifically
+    # in this case, do not honor the omission list
+    if len(collected_directories) == 1:
+        return collected_directories
+    # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
+    # packages
+    else :
+        return remove_omitted_packages(collected_directories)
+
+def remove_omitted_packages(collected_directories):
+    return [package_dir for package_dir in collected_directories if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES]
+    
 
 def run_check_call(command_array, working_directory, acceptable_return_codes = [], run_as_shell = False):
     try:

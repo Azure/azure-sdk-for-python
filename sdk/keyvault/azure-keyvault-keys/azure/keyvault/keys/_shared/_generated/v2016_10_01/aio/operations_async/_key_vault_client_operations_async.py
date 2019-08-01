@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.core.exceptions import map_error
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from ... import models
 import uuid
 
@@ -78,8 +79,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyCreateParameters')
@@ -154,8 +153,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyImportParameters')
@@ -218,8 +215,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -294,8 +289,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyUpdateParameters')
@@ -360,8 +353,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -399,11 +390,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of KeyItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.KeyItemPaged[~azure.keyvault.v2016_10_01.models.KeyItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_key_versions.metadata['url']
@@ -412,60 +404,46 @@ class KeyVaultClientOperationsMixin:
                     'key-name': self._serialize.url("key_name", key_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('KeyListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.KeyItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_key_versions.metadata = {'url': '/keys/{key-name}/versions'}
 
     def get_keys(
@@ -487,11 +465,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of KeyItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.KeyItemPaged[~azure.keyvault.v2016_10_01.models.KeyItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_keys.metadata['url']
@@ -499,60 +478,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('KeyListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.KeyItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_keys.metadata = {'url': '/keys'}
 
     async def backup_key(self, vault_base_url, key_name, *, cls=None, **kwargs):
@@ -604,8 +569,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -677,8 +640,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyRestoreParameters')
@@ -759,8 +720,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
@@ -838,8 +797,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
@@ -915,8 +872,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeySignParameters')
@@ -998,8 +953,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyVerifyParameters')
@@ -1077,8 +1030,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
@@ -1154,8 +1105,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
@@ -1199,11 +1148,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of DeletedKeyItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.DeletedKeyItemPaged[~azure.keyvault.v2016_10_01.models.DeletedKeyItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedKeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_deleted_keys.metadata['url']
@@ -1211,60 +1161,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('DeletedKeyListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.DeletedKeyItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_deleted_keys.metadata = {'url': '/deletedkeys'}
 
     async def get_deleted_key(self, vault_base_url, key_name, *, cls=None, **kwargs):
@@ -1305,8 +1241,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1364,8 +1298,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters = {}
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -1421,8 +1353,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -1493,8 +1423,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'SecretSetParameters')
@@ -1555,8 +1483,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -1630,8 +1556,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'SecretUpdateParameters')
@@ -1694,8 +1618,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1733,11 +1655,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of SecretItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.SecretItemPaged[~azure.keyvault.v2016_10_01.models.SecretItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_secrets.metadata['url']
@@ -1745,60 +1668,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('SecretListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.SecretItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_secrets.metadata = {'url': '/secrets'}
 
     def get_secret_versions(
@@ -1819,11 +1728,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of SecretItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.SecretItemPaged[~azure.keyvault.v2016_10_01.models.SecretItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_secret_versions.metadata['url']
@@ -1832,60 +1742,46 @@ class KeyVaultClientOperationsMixin:
                     'secret-name': self._serialize.url("secret_name", secret_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('SecretListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.SecretItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_secret_versions.metadata = {'url': '/secrets/{secret-name}/versions'}
 
     def get_deleted_secrets(
@@ -1904,11 +1800,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of DeletedSecretItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.DeletedSecretItemPaged[~azure.keyvault.v2016_10_01.models.DeletedSecretItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedSecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_deleted_secrets.metadata['url']
@@ -1916,60 +1813,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('DeletedSecretListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.DeletedSecretItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_deleted_secrets.metadata = {'url': '/deletedsecrets'}
 
     async def get_deleted_secret(self, vault_base_url, secret_name, *, cls=None, **kwargs):
@@ -2009,8 +1892,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2068,8 +1949,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters = {}
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2122,8 +2001,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -2181,8 +2058,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -2242,8 +2117,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'SecretRestoreParameters')
@@ -2283,11 +2156,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of CertificateItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.CertificateItemPaged[~azure.keyvault.v2016_10_01.models.CertificateItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_certificates.metadata['url']
@@ -2295,60 +2169,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('CertificateListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.CertificateItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_certificates.metadata = {'url': '/certificates'}
 
     async def delete_certificate(self, vault_base_url, certificate_name, *, cls=None, **kwargs):
@@ -2389,8 +2249,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2449,8 +2307,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(contacts, 'Contacts')
@@ -2508,8 +2364,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2563,8 +2417,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2601,11 +2453,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of CertificateIssuerItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.CertificateIssuerItemPaged[~azure.keyvault.v2016_10_01.models.CertificateIssuerItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateIssuerItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_certificate_issuers.metadata['url']
@@ -2613,60 +2466,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('CertificateIssuerListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.CertificateIssuerItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_certificate_issuers.metadata = {'url': '/certificates/issuers'}
 
     async def set_certificate_issuer(self, vault_base_url, issuer_name, provider, credentials=None, organization_details=None, attributes=None, *, cls=None, **kwargs):
@@ -2720,8 +2559,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameter, 'CertificateIssuerSetParameters')
@@ -2796,8 +2633,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameter, 'CertificateIssuerUpdateParameters')
@@ -2858,8 +2693,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2917,8 +2750,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2988,8 +2819,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'CertificateCreateParameters')
@@ -3072,8 +2901,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'CertificateImportParameters')
@@ -3115,11 +2942,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of CertificateItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.CertificateItemPaged[~azure.keyvault.v2016_10_01.models.CertificateItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_certificate_versions.metadata['url']
@@ -3128,60 +2956,46 @@ class KeyVaultClientOperationsMixin:
                     'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('CertificateListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.CertificateItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_certificate_versions.metadata = {'url': '/certificates/{certificate-name}/versions'}
 
     async def get_certificate_policy(self, vault_base_url, certificate_name, *, cls=None, **kwargs):
@@ -3222,8 +3036,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3285,8 +3097,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(certificate_policy, 'CertificatePolicy')
@@ -3364,8 +3174,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'CertificateUpdateParameters')
@@ -3429,8 +3237,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3493,8 +3299,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(certificate_operation, 'CertificateOperationUpdateParameter')
@@ -3554,8 +3358,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3613,8 +3415,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -3686,8 +3486,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'CertificateMergeParameters')
@@ -3730,11 +3528,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of DeletedCertificateItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.DeletedCertificateItemPaged[~azure.keyvault.v2016_10_01.models.DeletedCertificateItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedCertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_deleted_certificates.metadata['url']
@@ -3742,60 +3541,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('DeletedCertificateListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.DeletedCertificateItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_deleted_certificates.metadata = {'url': '/deletedcertificates'}
 
     async def get_deleted_certificate(self, vault_base_url, certificate_name, *, cls=None, **kwargs):
@@ -3836,8 +3621,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3895,8 +3678,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters = {}
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -3952,8 +3733,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -3987,11 +3766,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of StorageAccountItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.StorageAccountItemPaged[~azure.keyvault.v2016_10_01.models.StorageAccountItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.StorageAccountItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_storage_accounts.metadata['url']
@@ -3999,60 +3779,46 @@ class KeyVaultClientOperationsMixin:
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('StorageListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.StorageAccountItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_storage_accounts.metadata = {'url': '/storage'}
 
     async def delete_storage_account(self, vault_base_url, storage_account_name, *, cls=None, **kwargs):
@@ -4089,8 +3855,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -4145,8 +3909,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4221,8 +3983,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'StorageAccountCreateParameters')
@@ -4298,8 +4058,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'StorageAccountUpdateParameters')
@@ -4362,8 +4120,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'StorageAccountRegenerteKeyParameters')
@@ -4402,11 +4158,12 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :return: An iterator like instance of SasDefinitionItem
         :rtype:
-         ~azure.keyvault.v2016_10_01.models.SasDefinitionItemPaged[~azure.keyvault.v2016_10_01.models.SasDefinitionItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SasDefinitionItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v2016_10_01.models.KeyVaultErrorException>`
         """
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_sas_definitions.metadata['url']
@@ -4415,60 +4172,46 @@ class KeyVaultClientOperationsMixin:
                     'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if self._config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
-            error_map = kwargs.pop('error_map', None)
-            request = prepare_request(next_link)
+        async def extract_data_async(response):
+            deserialized = self._deserialize('SasDefinitionListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-            pipeline_response = self._client._pipeline.run(request)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.KeyVaultErrorException(response, self._deserialize)
-
-            return response
-
-        async def internal_paging_async(next_link=None):
-            error_map = kwargs.pop('error_map', None)
+        async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(request)
             response = pipeline_response.http_response
 
+            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.KeyVaultErrorException(response, self._deserialize)
-
             return response
 
         # Deserialize response
-        deserialized = models.SasDefinitionItemPaged(
-            internal_paging, self._deserialize, async_command=internal_paging_async)
-
-        return deserialized
+        return AsyncItemPaged(
+            get_next_async, extract_data_async
+        )
     get_sas_definitions.metadata = {'url': '/storage/{storage-account-name}/sas'}
 
     async def delete_sas_definition(self, vault_base_url, storage_account_name, sas_definition_name, *, cls=None, **kwargs):
@@ -4508,8 +4251,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -4567,8 +4308,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4639,8 +4378,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters1, 'SasDefinitionCreateParameters')
@@ -4714,8 +4451,6 @@ class KeyVaultClientOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if self._config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters1, 'SasDefinitionUpdateParameters')

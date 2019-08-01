@@ -72,13 +72,15 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
         assert network_span.span_data.attributes.get("http.status_code") == 504
 
 
-def test_distributed_tracing_policy_with_user_agent():
+@pytest.mark.parametrize("should_set_sdk_context", [True, False])
+def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
     """Test policy working with user agent."""
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
+            if should_set_sdk_context:
+                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1")
