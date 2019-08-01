@@ -6,7 +6,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import sys
 import re
 import os.path
 from io import open
@@ -14,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-data-appconfiguration"
-PACKAGE_PPRINT_NAME = "App Configuration Data"
+PACKAGE_PPRINT_NAME = "MyService Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -37,42 +36,30 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.md', encoding='utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.md', encoding='utf-8') as f:
+with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
-
-exclude_packages = [
-        'tests',
-        'examples',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-    ]
-if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
-    exclude_packages.extend([
-        '*.aio',
-        '*.aio.*'
-    ])
 
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description='Microsoft {} Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-data-appconfiguration',
+    url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -83,17 +70,18 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=exclude_packages),
+    packages=find_packages(exclude=[
+        'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.data',
+    ]),
     install_requires=[
-        "azure-core>=1.0.0b2",
+        'msrest>=0.5.0',
+        'msrestazure>=0.4.32,<2.0.0',
+        'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ['typing'],
-        "async:python_version>='3.5'": [
-            'aiohttp>=3.0',
-            'aiodns>=2.0'
-        ],
+        ":python_version<'3.0'": ['azure-data-nspkg'],
     }
 )
