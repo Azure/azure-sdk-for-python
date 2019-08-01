@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .personalizer_client import PersonalizerClient
-from .version import VERSION
+from ._configuration import PersonalizerClientConfiguration
+from ._personalizer_client import PersonalizerClient
+__all__ = ['PersonalizerClient', 'PersonalizerClientConfiguration']
 
-__all__ = ['PersonalizerClient']
+from .version import VERSION
 
 __version__ = VERSION
 

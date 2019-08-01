@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .events_operations import EventsOperations
+from ._events_operations import EventsOperations
+from ._personalizer_client_operations import PersonalizerClientOperationsMixin
 
 __all__ = [
     'EventsOperations',
+    'PersonalizerClientOperationsMixin',
 ]
