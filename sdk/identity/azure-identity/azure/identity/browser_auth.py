@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential
+from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
 
 
 class InteractiveBrowserCredential(ConfidentialClientCredential):
@@ -48,6 +48,7 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
             client_id=client_id, client_credential=client_secret, authority=authority, **kwargs
         )
 
+    @wrap_exceptions
     def get_token(self, *scopes):
         # type: (str) -> AccessToken
         """
