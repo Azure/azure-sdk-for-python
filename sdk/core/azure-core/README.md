@@ -27,7 +27,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy
 )
 
-class FooServiceClient():
+class FooServiceClient:
 
     @staticmethod
     def _create_config(credential, scopes, **kwargs):
@@ -43,7 +43,7 @@ class FooServiceClient():
         config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
 
     def __init__(self, **kwargs):
-        transport = kwargs.get('transport', RequestsTransport(**kwargs)
+        transport = kwargs.get('transport', RequestsTransport(**kwargs))
         config = FooServiceClient._create_config(**kwargs)
         policies = [
             config.user_agent_policy,
@@ -109,7 +109,7 @@ The Configuration object is the home of all the configurable policies in the pip
 A new Configuration object provides *no default policies*.
 It is up to the SDK developer to specify each of the policy defaults as required by the service.
 
-*Configuration* should not be exposed part of the public API of the resulting SDK.
+*Configuration should not be exposed part of the public API of the resulting SDK.*
 
 This can be seen in the above code sample as implemented in a staticmethod on the client class.
 The Configuration object does not specify in what order the policies will be added to the pipeline.
@@ -183,11 +183,13 @@ transport = AioHttpTransport(
         connection_timeout=100,
 
         # SSL certificate verification. Enabled by default. Set to False to disable,
-        # alternatively can be set to the path to a CA_BUNDLE file or directory with # certificates of trusted CAs.
+        # alternatively can be set to the path to a CA_BUNDLE file or directory with
+        # certificates of trusted CAs.
         connection_verify=True,
 
         # Client-side certificates. You can specify a local cert to use as client side
-        # certificate, as a single file (containing the private key and the certificate) or as a # tuple of both files' paths.
+        # certificate, as a single file (containing the private key and the certificate)
+        # or as a # tuple of both files' paths.
         connection_cert=None,
 
         # The block size of data sent over the connection. Defaults to 4096 bytes.
@@ -264,8 +266,9 @@ class HttpResponse(object):
         self.request = request
         self.internal_response = internal_response  # The object returned by the HTTP library
         self.status_code = None
-        self.headers = {}
+        self.headers = CaseInsensitiveDict()
         self.reason = None
+        self.content_type = None
 
     def body(self):
         """Return the whole body as bytes in memory."""
