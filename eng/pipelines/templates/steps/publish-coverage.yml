@@ -13,6 +13,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
+    condition: ne(variables['Build.Reason'], 'PullRequest')
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
