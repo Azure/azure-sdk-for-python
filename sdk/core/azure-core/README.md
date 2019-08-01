@@ -109,7 +109,7 @@ The Configuration object is the home of all the configurable policies in the pip
 A new Configuration object provides *no default policies*.
 It is up to the SDK developer to specify each of the policy defaults as required by the service.
 
-*Configuration should not be exposed part of the public API of the resulting SDK.*
+*Configuration should not be exposed as part of the public API of the resulting SDK.*
 
 This can be seen in the above code sample as implemented in a staticmethod on the client class.
 The Configuration object does not specify in what order the policies will be added to the pipeline.
