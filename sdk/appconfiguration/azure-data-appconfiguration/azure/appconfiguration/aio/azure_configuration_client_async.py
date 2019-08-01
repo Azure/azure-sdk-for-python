@@ -9,6 +9,9 @@ import platform
 import re
 from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from requests.structures import CaseInsensitiveDict
@@ -105,6 +108,7 @@ class AzureAppConfigurationClient():
             self.config.user_agent_policy,
             self.config.logging_policy,  # HTTP request/response log
             AppConfigRequestsCredentialsPolicy(self.config.credentials),
+            DistributedTracingPolicy()
         ]
 
         return AsyncPipeline(
@@ -112,6 +116,7 @@ class AzureAppConfigurationClient():
             policies,
         )
 
+    @distributed_trace
     def list_configuration_settings(
             self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
@@ -162,6 +167,7 @@ class AzureAppConfigurationClient():
             headers=kwargs.get("headers"),
         )
 
+    @distributed_trace_async
     async def get_configuration_setting(
             self, key, label=None, accept_date_time=None, **kwargs
     ):
@@ -198,6 +204,7 @@ class AzureAppConfigurationClient():
             error_map=error_map,
         )
 
+    @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
@@ -234,6 +241,7 @@ class AzureAppConfigurationClient():
             error_map={412: ResourceExistsError},
         )
 
+    @distributed_trace_async
     async def update_configuration_setting(
             self,
             key,
@@ -289,6 +297,7 @@ class AzureAppConfigurationClient():
             error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
 
+    @distributed_trace_async
     async def set_configuration_setting(
             self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
@@ -334,6 +343,7 @@ class AzureAppConfigurationClient():
             error_map={412: ResourceModifiedError},
         )
 
+    @distributed_trace_async
     async def delete_configuration_setting(
             self, key, label=None, etag=None, **kwargs
     ):  # type: (str, str, str, dict) -> ConfigurationSetting
@@ -376,6 +386,7 @@ class AzureAppConfigurationClient():
             },
         )
 
+    @distributed_trace
     def list_revisions(
             self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
