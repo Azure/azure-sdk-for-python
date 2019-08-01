@@ -10,68 +10,68 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .raw_certificate_data_py3 import RawCertificateData
-    from .certificate_request_py3 import CertificateRequest
-    from .resource_certificate_and_aad_details_py3 import ResourceCertificateAndAadDetails
-    from .resource_certificate_and_acs_details_py3 import ResourceCertificateAndAcsDetails
-    from .resource_certificate_details_py3 import ResourceCertificateDetails
-    from .vault_certificate_response_py3 import VaultCertificateResponse
-    from .jobs_summary_py3 import JobsSummary
-    from .monitoring_summary_py3 import MonitoringSummary
-    from .replication_usage_py3 import ReplicationUsage
-    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .check_name_availability_result_resource_py3 import CheckNameAvailabilityResultResource
-    from .client_discovery_display_py3 import ClientDiscoveryDisplay
-    from .client_discovery_for_log_specification_py3 import ClientDiscoveryForLogSpecification
-    from .client_discovery_for_service_specification_py3 import ClientDiscoveryForServiceSpecification
-    from .client_discovery_for_properties_py3 import ClientDiscoveryForProperties
-    from .client_discovery_value_for_single_api_py3 import ClientDiscoveryValueForSingleApi
-    from .resource_py3 import Resource
-    from .sku_py3 import Sku
-    from .tracked_resource_py3 import TrackedResource
-    from .patch_tracked_resource_py3 import PatchTrackedResource
-    from .upgrade_details_py3 import UpgradeDetails
-    from .vault_properties_py3 import VaultProperties
-    from .vault_py3 import Vault
-    from .patch_vault_py3 import PatchVault
-    from .vault_extended_info_resource_py3 import VaultExtendedInfoResource
-    from .name_info_py3 import NameInfo
-    from .vault_usage_py3 import VaultUsage
+    from ._models_py3 import CertificateRequest
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CheckNameAvailabilityResultResource
+    from ._models_py3 import ClientDiscoveryDisplay
+    from ._models_py3 import ClientDiscoveryForLogSpecification
+    from ._models_py3 import ClientDiscoveryForProperties
+    from ._models_py3 import ClientDiscoveryForServiceSpecification
+    from ._models_py3 import ClientDiscoveryValueForSingleApi
+    from ._models_py3 import JobsSummary
+    from ._models_py3 import MonitoringSummary
+    from ._models_py3 import NameInfo
+    from ._models_py3 import PatchTrackedResource
+    from ._models_py3 import PatchVault
+    from ._models_py3 import RawCertificateData
+    from ._models_py3 import ReplicationUsage
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceCertificateAndAadDetails
+    from ._models_py3 import ResourceCertificateAndAcsDetails
+    from ._models_py3 import ResourceCertificateDetails
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UpgradeDetails
+    from ._models_py3 import Vault
+    from ._models_py3 import VaultCertificateResponse
+    from ._models_py3 import VaultExtendedInfoResource
+    from ._models_py3 import VaultProperties
+    from ._models_py3 import VaultUsage
 except (SyntaxError, ImportError):
-    from .raw_certificate_data import RawCertificateData
-    from .certificate_request import CertificateRequest
-    from .resource_certificate_and_aad_details import ResourceCertificateAndAadDetails
-    from .resource_certificate_and_acs_details import ResourceCertificateAndAcsDetails
-    from .resource_certificate_details import ResourceCertificateDetails
-    from .vault_certificate_response import VaultCertificateResponse
-    from .jobs_summary import JobsSummary
-    from .monitoring_summary import MonitoringSummary
-    from .replication_usage import ReplicationUsage
-    from .check_name_availability_parameters import CheckNameAvailabilityParameters
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .check_name_availability_result_resource import CheckNameAvailabilityResultResource
-    from .client_discovery_display import ClientDiscoveryDisplay
-    from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecification
-    from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
-    from .client_discovery_for_properties import ClientDiscoveryForProperties
-    from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
-    from .resource import Resource
-    from .sku import Sku
-    from .tracked_resource import TrackedResource
-    from .patch_tracked_resource import PatchTrackedResource
-    from .upgrade_details import UpgradeDetails
-    from .vault_properties import VaultProperties
-    from .vault import Vault
-    from .patch_vault import PatchVault
-    from .vault_extended_info_resource import VaultExtendedInfoResource
-    from .name_info import NameInfo
-    from .vault_usage import VaultUsage
-from .replication_usage_paged import ReplicationUsagePaged
-from .vault_paged import VaultPaged
-from .client_discovery_value_for_single_api_paged import ClientDiscoveryValueForSingleApiPaged
-from .vault_usage_paged import VaultUsagePaged
-from .recovery_services_client_enums import (
+    from ._models import CertificateRequest
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CheckNameAvailabilityResultResource
+    from ._models import ClientDiscoveryDisplay
+    from ._models import ClientDiscoveryForLogSpecification
+    from ._models import ClientDiscoveryForProperties
+    from ._models import ClientDiscoveryForServiceSpecification
+    from ._models import ClientDiscoveryValueForSingleApi
+    from ._models import JobsSummary
+    from ._models import MonitoringSummary
+    from ._models import NameInfo
+    from ._models import PatchTrackedResource
+    from ._models import PatchVault
+    from ._models import RawCertificateData
+    from ._models import ReplicationUsage
+    from ._models import Resource
+    from ._models import ResourceCertificateAndAadDetails
+    from ._models import ResourceCertificateAndAcsDetails
+    from ._models import ResourceCertificateDetails
+    from ._models import Sku
+    from ._models import TrackedResource
+    from ._models import UpgradeDetails
+    from ._models import Vault
+    from ._models import VaultCertificateResponse
+    from ._models import VaultExtendedInfoResource
+    from ._models import VaultProperties
+    from ._models import VaultUsage
+from ._paged_models import ClientDiscoveryValueForSingleApiPaged
+from ._paged_models import ReplicationUsagePaged
+from ._paged_models import VaultPaged
+from ._paged_models import VaultUsagePaged
+from ._recovery_services_client_enums import (
     AuthType,
     SkuName,
     VaultUpgradeState,
@@ -80,33 +80,33 @@ from .recovery_services_client_enums import (
 )
 
 __all__ = [
-    'RawCertificateData',
     'CertificateRequest',
-    'ResourceCertificateAndAadDetails',
-    'ResourceCertificateAndAcsDetails',
-    'ResourceCertificateDetails',
-    'VaultCertificateResponse',
-    'JobsSummary',
-    'MonitoringSummary',
-    'ReplicationUsage',
     'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
     'CheckNameAvailabilityResultResource',
     'ClientDiscoveryDisplay',
     'ClientDiscoveryForLogSpecification',
-    'ClientDiscoveryForServiceSpecification',
     'ClientDiscoveryForProperties',
+    'ClientDiscoveryForServiceSpecification',
     'ClientDiscoveryValueForSingleApi',
+    'JobsSummary',
+    'MonitoringSummary',
+    'NameInfo',
+    'PatchTrackedResource',
+    'PatchVault',
+    'RawCertificateData',
+    'ReplicationUsage',
     'Resource',
+    'ResourceCertificateAndAadDetails',
+    'ResourceCertificateAndAcsDetails',
+    'ResourceCertificateDetails',
     'Sku',
     'TrackedResource',
-    'PatchTrackedResource',
     'UpgradeDetails',
-    'VaultProperties',
     'Vault',
-    'PatchVault',
+    'VaultCertificateResponse',
     'VaultExtendedInfoResource',
-    'NameInfo',
+    'VaultProperties',
     'VaultUsage',
     'ReplicationUsagePaged',
     'VaultPaged',

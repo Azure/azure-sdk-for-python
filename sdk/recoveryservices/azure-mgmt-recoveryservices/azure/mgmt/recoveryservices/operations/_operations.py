@@ -16,8 +16,10 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ReplicationUsagesOperations(object):
-    """ReplicationUsagesOperations operations.
+class Operations(object):
+    """Operations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,35 +40,23 @@ class ReplicationUsagesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, vault_name, custom_headers=None, raw=False, **operation_config):
-        """Fetches the replication usages of the vault.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Returns the list of available operations.
 
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReplicationUsage
+        :return: An iterator like instance of ClientDiscoveryValueForSingleApi
         :rtype:
-         ~azure.mgmt.recoveryservices.models.ReplicationUsagePaged[~azure.mgmt.recoveryservices.models.ReplicationUsage]
+         ~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApiPaged[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'vaultName': self._serialize.url("vault_name", vault_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -88,6 +78,11 @@ class ReplicationUsagesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -98,12 +93,10 @@ class ReplicationUsagesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReplicationUsagePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ReplicationUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ClientDiscoveryValueForSingleApiPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/replicationUsages'}
+    list.metadata = {'url': '/providers/Microsoft.RecoveryServices/operations'}

@@ -16,8 +16,10 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class VaultCertificatesOperations(object):
-    """VaultCertificatesOperations operations.
+class RecoveryServicesOperations(object):
+    """RecoveryServicesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,39 +39,44 @@ class VaultCertificatesOperations(object):
 
         self.config = config
 
-    def create(
-            self, resource_group_name, vault_name, certificate_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Uploads a certificate for a resource.
+    def check_name_availability(
+            self, resource_group_name, location, type=None, name=None, custom_headers=None, raw=False, **operation_config):
+        """API to check for resource name availability.
+        A name is available if no other resource exists that has the same
+        SubscriptionId, Resource Name and Type
+        or if one or more such resources exist, each of these must be GC'd and
+        their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param certificate_name: Certificate friendly name.
-        :type certificate_name: str
-        :param properties:
-        :type properties:
-         ~azure.mgmt.recoveryservices.models.RawCertificateData
+        :param location: Location of the resource
+        :type location: str
+        :param type: Describes the Resource type:
+         Microsoft.RecoveryServices/Vaults
+        :type type: str
+        :param name: Resource name for which availability needs to be checked
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VaultCertificateResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
+        :return: CheckNameAvailabilityResultResource or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResultResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        certificate_request = models.CertificateRequest(properties=properties)
+        input = models.CheckNameAvailabilityParameters(type=type, name=name)
 
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str')
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,10 +96,10 @@ class VaultCertificatesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(certificate_request, 'CertificateRequest')
+        body_content = self._serialize.body(input, 'CheckNameAvailabilityParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -101,13 +108,12 @@ class VaultCertificatesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('VaultCertificateResponse', response)
+            deserialized = self._deserialize('CheckNameAvailabilityResultResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/certificates/{certificateName}'}
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/locations/{location}/checkNameAvailability'}

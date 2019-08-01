@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .vault_certificates_operations import VaultCertificatesOperations
-from .registered_identities_operations import RegisteredIdentitiesOperations
-from .replication_usages_operations import ReplicationUsagesOperations
-from .recovery_services_operations import RecoveryServicesOperations
-from .vaults_operations import VaultsOperations
-from .operations import Operations
-from .vault_extended_info_operations import VaultExtendedInfoOperations
-from .usages_operations import UsagesOperations
+from ._vault_certificates_operations import VaultCertificatesOperations
+from ._registered_identities_operations import RegisteredIdentitiesOperations
+from ._replication_usages_operations import ReplicationUsagesOperations
+from ._recovery_services_operations import RecoveryServicesOperations
+from ._vaults_operations import VaultsOperations
+from ._operations import Operations
+from ._vault_extended_info_operations import VaultExtendedInfoOperations
+from ._usages_operations import UsagesOperations
 
 __all__ = [
     'VaultCertificatesOperations',

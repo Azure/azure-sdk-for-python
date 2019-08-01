@@ -16,8 +16,10 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class ReplicationUsagesOperations(object):
+    """ReplicationUsagesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,9 +39,9 @@ class UsagesOperations(object):
 
         self.config = config
 
-    def list_by_vaults(
+    def list(
             self, resource_group_name, vault_name, custom_headers=None, raw=False, **operation_config):
-        """Fetches the usages of the vault.
+        """Fetches the replication usages of the vault.
 
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
@@ -51,16 +53,15 @@ class UsagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VaultUsage
+        :return: An iterator like instance of ReplicationUsage
         :rtype:
-         ~azure.mgmt.recoveryservices.models.VaultUsagePaged[~azure.mgmt.recoveryservices.models.VaultUsage]
+         ~azure.mgmt.recoveryservices.models.ReplicationUsagePaged[~azure.mgmt.recoveryservices.models.ReplicationUsage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_vaults.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -88,6 +89,11 @@ class UsagesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -98,12 +104,10 @@ class UsagesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VaultUsagePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VaultUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ReplicationUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_vaults.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/usages'}
+    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/replicationUsages'}

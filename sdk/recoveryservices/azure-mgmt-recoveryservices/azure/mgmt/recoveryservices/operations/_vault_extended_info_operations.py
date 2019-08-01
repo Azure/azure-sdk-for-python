@@ -19,6 +19,8 @@ from .. import models
 class VaultExtendedInfoOperations(object):
     """VaultExtendedInfoOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -89,7 +91,6 @@ class VaultExtendedInfoOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VaultExtendedInfoResource', response)
 
@@ -160,7 +161,6 @@ class VaultExtendedInfoOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VaultExtendedInfoResource', response)
 
@@ -231,7 +231,6 @@ class VaultExtendedInfoOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VaultExtendedInfoResource', response)
 
