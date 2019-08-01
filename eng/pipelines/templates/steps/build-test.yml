@@ -50,7 +50,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnvString }}"
-        --
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
