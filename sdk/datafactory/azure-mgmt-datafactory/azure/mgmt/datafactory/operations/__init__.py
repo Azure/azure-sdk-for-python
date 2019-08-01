@@ -21,8 +21,8 @@ from ._pipelines_operations import PipelinesOperations
 from ._pipeline_runs_operations import PipelineRunsOperations
 from ._activity_runs_operations import ActivityRunsOperations
 from ._triggers_operations import TriggersOperations
-from ._rerun_triggers_operations import RerunTriggersOperations
 from ._trigger_runs_operations import TriggerRunsOperations
+from ._rerun_triggers_operations import RerunTriggersOperations
 
 __all__ = [
     'Operations',
@@ -37,6 +37,6 @@ __all__ = [
     'PipelineRunsOperations',
     'ActivityRunsOperations',
     'TriggersOperations',
-    'RerunTriggersOperations',
     'TriggerRunsOperations',
+    'RerunTriggersOperations',
 ]

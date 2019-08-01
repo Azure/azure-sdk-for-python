@@ -25,8 +25,8 @@ from .operations import PipelinesOperations
 from .operations import PipelineRunsOperations
 from .operations import ActivityRunsOperations
 from .operations import TriggersOperations
-from .operations import RerunTriggersOperations
 from .operations import TriggerRunsOperations
+from .operations import RerunTriggersOperations
 from . import models
 
 
@@ -60,10 +60,10 @@ class DataFactoryManagementClient(SDKClient):
     :vartype activity_runs: azure.mgmt.datafactory.operations.ActivityRunsOperations
     :ivar triggers: Triggers operations
     :vartype triggers: azure.mgmt.datafactory.operations.TriggersOperations
-    :ivar rerun_triggers: RerunTriggers operations
-    :vartype rerun_triggers: azure.mgmt.datafactory.operations.RerunTriggersOperations
     :ivar trigger_runs: TriggerRuns operations
     :vartype trigger_runs: azure.mgmt.datafactory.operations.TriggerRunsOperations
+    :ivar rerun_triggers: RerunTriggers operations
+    :vartype rerun_triggers: azure.mgmt.datafactory.operations.RerunTriggersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -108,7 +108,7 @@ class DataFactoryManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.triggers = TriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.rerun_triggers = RerunTriggersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.trigger_runs = TriggerRunsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rerun_triggers = RerunTriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
