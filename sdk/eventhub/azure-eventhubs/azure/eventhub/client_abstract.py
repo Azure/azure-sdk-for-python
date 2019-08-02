@@ -282,11 +282,9 @@ class EventHubClientAbstract(object):
             return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @abstractmethod
-    def create_consumer(
-            self, consumer_group, partition_id, event_position, **kwargs
-    ):
+    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         pass
 
     @abstractmethod
-    def create_producer(self, **kwargs):
+    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
         pass

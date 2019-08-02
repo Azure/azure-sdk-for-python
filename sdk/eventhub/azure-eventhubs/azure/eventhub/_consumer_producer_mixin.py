@@ -7,26 +7,27 @@ from __future__ import unicode_literals
 import logging
 import time
 
-from uamqp import errors, constants
+from uamqp import errors, constants, compat
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
 
 
 def _retry_decorator(to_be_wrapped_func):
-    def wrapped_func(*args, **kwargs):
+    def wrapped_func(self, *args, **kwargs):
         timeout = kwargs.get("timeout", None)
         if not timeout:
             timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
         timeout_time = time.time() + timeout
-        max_retries = args[0].client.config.max_retries
+        max_retries = self.client.config.max_retries
         retry_count = 0
         last_exception = None
+        kwargs.pop("timeout", None)
         while True:
             try:
-                return to_be_wrapped_func(args[0], timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                return to_be_wrapped_func(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
             except Exception as exception:
-                last_exception = args[0]._handle_exception(exception, retry_count, max_retries, timeout_time)
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
     return wrapped_func
 
@@ -90,6 +91,10 @@ class ConsumerProducerMixin(object):
         self.client._conn_manager.reset_connection_if_broken()
 
     def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
+        if not self.running and isinstance(exception, compat.TimeoutException):
+            exception = errors.AuthenticationException("Authorization timeout.")
+            return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+
         return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
 
     def close(self, exception=None):

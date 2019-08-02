@@ -57,7 +57,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, to_device=None, message=None):
+    def __init__(self, body=None, to_device=None):
         """
         Initialize EventData.
 
@@ -67,8 +67,6 @@ class EventData(object):
         :type batch: Generator
         :param to_device: An IoT device to route to.
         :type to_device: str
-        :param message: The received message.
-        :type message: ~uamqp.message.Message
         """
 
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
@@ -77,20 +75,14 @@ class EventData(object):
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if message:
-            self.message = message
-            self.msg_properties = message.properties
-            self._annotations = message.annotations
-            self._app_properties = message.application_properties
+        if body and isinstance(body, list):
+            self.message = Message(body[0], properties=self.msg_properties)
+            for more in body[1:]:
+                self.message._body.append(more)  # pylint: disable=protected-access
+        elif body is None:
+            raise ValueError("EventData cannot be None.")
         else:
-            if body and isinstance(body, list):
-                self.message = Message(body[0], properties=self.msg_properties)
-                for more in body[1:]:
-                    self.message._body.append(more)  # pylint: disable=protected-access
-            elif body is None:
-                raise ValueError("EventData cannot be None.")
-            else:
-                self.message = Message(body, properties=self.msg_properties)
+            self.message = Message(body, properties=self.msg_properties)
 
     def __str__(self):
         dic = {
@@ -124,6 +116,15 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
+    @staticmethod
+    def _from_message(message):
+        event_data = EventData(body='')
+        event_data.message = message
+        event_data.msg_properties = message.properties
+        event_data._annotations = message.annotations
+        event_data._app_properties = message.application_properties
+        return event_data
 
     @property
     def sequence_number(self):
