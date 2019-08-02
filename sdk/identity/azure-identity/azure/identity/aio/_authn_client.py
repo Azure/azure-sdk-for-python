@@ -27,7 +27,7 @@ class AsyncAuthnClient(AuthnClientBase):
         transport: Optional[AsyncHttpTransport] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        config = config or self.create_config(**kwargs)
+        config = config or self._create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
             config.retry_policy,
@@ -55,7 +55,7 @@ class AsyncAuthnClient(AuthnClientBase):
         return token
 
     @staticmethod
-    def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
+    def _create_config(**kwargs: Mapping[str, Any]) -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)

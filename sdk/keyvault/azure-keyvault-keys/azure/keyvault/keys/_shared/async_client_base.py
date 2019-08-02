@@ -6,7 +6,7 @@ from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
+from azure.core.pipeline.transport import AsyncHttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
@@ -19,25 +19,6 @@ if TYPE_CHECKING:
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
-
-
-class AsyncPagingAdapter:
-    """For each item in an AsyncIterator, returns the result of applying fn to that item.
-    Python 3.6 added syntax that could replace this (yield within async for)."""
-
-    def __init__(self, pages: AsyncIterator, fn: Callable[[Model], Any]) -> None:
-        self._pages = pages
-        self._fn = fn
-
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self) -> Any:
-        item = await self._pages.__anext__()
-        if not item:
-            raise StopAsyncIteration
-        return self._fn(item)
-        # TODO: expected type Model got Coroutine instead?
 
 
 class AsyncKeyVaultClientBase:
@@ -64,7 +45,7 @@ class AsyncKeyVaultClientBase:
         self,
         vault_url: str,
         credential: "TokenCredential",
-        transport: HttpTransport = None,
+        transport: AsyncHttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
@@ -91,7 +72,7 @@ class AsyncKeyVaultClientBase:
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport, **kwargs: Any) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: Any) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -100,11 +81,12 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy()
+            DistributedTracingPolicy(),
         ]
 
         if transport is None:
-            transport = AsyncioRequestsTransport(**kwargs)
+            from azure.core.pipeline.transport import AioHttpTransport
+            transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)
 
