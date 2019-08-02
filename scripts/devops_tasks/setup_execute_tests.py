@@ -140,10 +140,12 @@ if __name__ == '__main__':
         test_results_arg.extend(['--durations=10', '--cov', '--cov-report='])
 
     if args.mark_arg:
-        test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
+        test_results_arg.extend(['-m', "'{}'".format(args.mark_arg)])
 
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
 
     prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
-    collect_coverage_files(targeted_packages)
+
+    if not args.tox_env:
+        collect_coverage_files(targeted_packages)
