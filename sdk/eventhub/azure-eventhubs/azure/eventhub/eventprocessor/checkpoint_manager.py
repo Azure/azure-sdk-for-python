@@ -25,6 +25,7 @@ class CheckpointManager(object):
         :param sequence_number: sequence_number of the processed EventData
         :return: None
         """
-        await self._partition_manager.\
-            update_checkpoint(self._eventhub_name, self._consumer_group_name, self._partition_id, self._instance_id,
-            offset, sequence_number)
+        await self._partition_manager.update_checkpoint(
+            self._eventhub_name, self._consumer_group_name, self._partition_id, self._instance_id, offset,
+            sequence_number
+        )

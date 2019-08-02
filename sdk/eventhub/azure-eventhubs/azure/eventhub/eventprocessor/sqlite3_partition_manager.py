@@ -15,7 +15,7 @@ class Sqlite3PartitionManager(PartitionManager):
 
 
     """
-    def __init__(self, db_filename, ownership_table="ownership"):
+    def __init__(self, db_filename=":memory:", ownership_table="ownership"):
         """
 
         :param db_filename: name of file that saves the sql data.
@@ -46,31 +46,17 @@ class Sqlite3PartitionManager(PartitionManager):
     async def list_ownership(self, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()
         try:
-            cursor.execute("select "
-                                "eventhub_name, "
-                                "consumer_group_name,"
-                                "instance_id,"
-                                "partition_id,"
-                                "owner_level,"
-                                "sequence_number,"
-                                "offset,"
-                                "last_modified_time,"
-                                "etag "
-                                "from "+self.ownership_table+" where eventhub_name=? "
+            fields = ["eventhub_name", "consumer_group_name", "instance_id", "partition_id", "owner_level",
+                      "sequence_number",
+                      "offset", "last_modified_time", "etag"]
+            cursor.execute("select " + ",".join(fields) +
+                                " from "+self.ownership_table+" where eventhub_name=? "
                                 "and consumer_group_name=?",
                                 (eventhub_name, consumer_group_name))
             result_list = []
+
             for row in cursor.fetchall():
-                d = dict()
-                d["eventhub_name"] = row[0]
-                d["consumer_group_name"] = row[1]
-                d["instance_id"] = row[2]
-                d["partition_id"] = row[3]
-                d["owner_level"] = row[4]
-                d["sequence_number"] = row[5]
-                d["offset"] = row[6]
-                d["last_modified_time"] = row[7]
-                d["etag"] = row[8]
+                d = dict(zip(fields, row))
                 result_list.append(d)
             return result_list
         finally:

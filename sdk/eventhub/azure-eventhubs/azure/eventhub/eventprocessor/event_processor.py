@@ -17,6 +17,8 @@ from .utils import get_running_loop
 
 log = logging.getLogger(__name__)
 
+OWNER_LEVEL = 0
+
 
 class EventProcessor(object):
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
@@ -64,7 +66,7 @@ class EventProcessor(object):
     async def stop(self):
         """Stop all the partition consumer
 
-        This method cancels tasks that are running EventHubConsumer.receive() for the owned partitions of this EventProcessor.
+        This method cancels tasks that are running EventHubConsumer.receive() for the partitions owned by this EventProcessor.
         """
         for task in self._tasks:
             task.cancel()
@@ -84,12 +86,8 @@ class EventProcessor(object):
             if p_ownership:
                 to_claim_list.append(p_ownership)
             else:
-                new_ownership = dict()
-                new_ownership["eventhub_name"] = self._eventhub_name
-                new_ownership["consumer_group_name"] = self._consumer_group_name
-                new_ownership["instance_id"] = self._instance_id
-                new_ownership["partition_id"] = pid
-                new_ownership["owner_level"] = 1  # will increment in preview 3
+                new_ownership = {"eventhub_name": self._eventhub_name, "consumer_group_name": self._consumer_group_name,
+                                 "instance_id": self._instance_id, "partition_id": pid, "owner_level": OWNER_LEVEL}
                 to_claim_list.append(new_ownership)
         claimed_list = await self._partition_manager.claim_ownership(to_claim_list)
         return claimed_list
