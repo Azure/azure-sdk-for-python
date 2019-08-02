@@ -267,15 +267,13 @@ class TransactionsOperations(object):
     list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transactions'}
 
     def get(
-            self, billing_account_name, billing_profile_name, invoice_section_name, transaction_name, start_date, end_date, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, transaction_name, start_date, end_date, custom_headers=None, raw=False, **operation_config):
         """Get the transaction.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param invoice_section_name: InvoiceSection Id.
-        :type invoice_section_name: str
         :param transaction_name: Transaction name.
         :type transaction_name: str
         :param start_date: Start date
@@ -298,7 +296,6 @@ class TransactionsOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'transactionName': self._serialize.url("transaction_name", transaction_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
