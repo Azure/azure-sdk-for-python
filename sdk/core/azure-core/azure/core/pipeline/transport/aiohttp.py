@@ -31,7 +31,7 @@ import asyncio
 import aiohttp
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
 from azure.core.pipeline import Pipeline
 
 from requests.exceptions import (
@@ -159,7 +159,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config['proxy'] = proxies[protocol]
                     break
 
-        error = None
+        error = None  # type: Optional[AzureError]
         response = None
         config['ssl'] = self._build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
