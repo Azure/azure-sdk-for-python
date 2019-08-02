@@ -12,7 +12,6 @@
 from .azure_appconfiguration_client import AzureAppConfigurationClient
 from ._generated.models import ConfigurationSetting
 
-__version__ = "0.1"
 __all__ = [
     'AzureAppConfigurationClient',
     'ConfigurationSetting',
