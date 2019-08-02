@@ -25,14 +25,7 @@ KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
 
 class KeyVaultClientBase(object):
-    """
-    :param credential:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credential: azure.core.credentials.TokenCredential
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the KeyClient
-    """
+    """Base class for Key Vault clients"""
 
     @staticmethod
     def _create_config(credential, api_version=None, **kwargs):

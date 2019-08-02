@@ -24,14 +24,7 @@ if TYPE_CHECKING:
 
 
 class AsyncKeyVaultClientBase:
-    """
-    :param credential:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credential: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
-    """
+    """Base class for async Key Vault clients"""
 
     @staticmethod
     def _create_config(
