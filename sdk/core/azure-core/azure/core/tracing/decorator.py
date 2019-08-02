@@ -31,15 +31,23 @@ import azure.core.tracing.common as common
 from azure.core.settings import settings
 from azure.core.tracing.context import tracing_context
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Callable, Any
+
 
 def distributed_trace(func=None, name_of_span=None):
-    # type: (Callable[[Any], Any], str) -> Callable[[Any], Any]
+    # type: (Callable, str) -> Callable[[Any], Any]
     if func is None:
         return functools.partial(distributed_trace, name_of_span=name_of_span)
 
     @functools.wraps(func)
-    def wrapper_use_tracer(self, *args, **kwargs):
-        # type: (Any) -> Any
+    def wrapper_use_tracer(*args, **kwargs):
+        # type: (Any, Any) -> Any
         passed_in_parent = kwargs.pop("parent_span", None)
         orig_wrapped_span = tracing_context.current_span.get()
         wrapper_class = settings.tracing_implementation()
@@ -50,18 +58,18 @@ def distributed_trace(func=None, name_of_span=None):
         ans = None
         if parent_span is not None and orig_wrapped_span is None:
             common.set_span_contexts(parent_span)
-            name = name_of_span or self.__class__.__name__ + "." + func.__name__
+            name = name_of_span or common.get_function_and_class_name(func, *args)
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)
-            ans = func(self, *args, **kwargs)
+            ans = func(*args, **kwargs)
             child.finish()
             common.set_span_contexts(parent_span)
             if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
                 parent_span.finish()
             common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
         else:
-            ans = func(self, *args, **kwargs)
+            ans = func(*args, **kwargs)
         return ans
 
     return wrapper_use_tracer

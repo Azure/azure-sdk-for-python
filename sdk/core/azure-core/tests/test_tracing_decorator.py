@@ -68,7 +68,17 @@ class MockClient:
         time.sleep(0.001)
 
 
+def random_function():
+    pass
+
+
 class TestCommon(object):
+    def test_get_function_and_class_name(self):
+        with ContextHelper():
+            client = MockClient()
+            assert common.get_function_and_class_name(client.get_foo, client) == "MockClient.get_foo"
+            assert common.get_function_and_class_name(random_function) == "random_function"
+
     def test_set_span_context(self):
         with ContextHelper(environ={"AZURE_SDK_TRACING_IMPLEMENTATION": "opencensus"}):
             wrapper = settings.tracing_implementation()
