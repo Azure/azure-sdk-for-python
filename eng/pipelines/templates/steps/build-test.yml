@@ -41,7 +41,7 @@ steps:
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
-    displayName: 'Execute Tox'
+    displayName: 'Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
