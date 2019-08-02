@@ -3,14 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
+
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
-from . import AsyncChallengeAuthPolicy
+from . import AsyncChallengeAuthPolicy, USER_AGENT
 
 
 if TYPE_CHECKING:
@@ -22,14 +24,7 @@ if TYPE_CHECKING:
 
 
 class AsyncKeyVaultClientBase:
-    """
-    :param credential:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credential: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
-    """
+    """Base class for async Key Vault clients"""
 
     @staticmethod
     def _create_config(
@@ -39,6 +34,11 @@ class AsyncKeyVaultClientBase:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
         config.authentication_policy = AsyncChallengeAuthPolicy(credential)
+
+        # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
+        # https://github.com/Azure/azure-sdk-for-python/issues/6637
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+
         return config
 
     def __init__(
@@ -86,6 +86,7 @@ class AsyncKeyVaultClientBase:
 
         if transport is None:
             from azure.core.pipeline.transport import AioHttpTransport
+
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)

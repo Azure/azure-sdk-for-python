@@ -14,7 +14,11 @@ from .._shared import AsyncKeyVaultClientBase
 
 
 class SecretClient(AsyncKeyVaultClientBase):
-    """A high-level interface for managing a vault's secrets.
+    """A high-level asynchronous interface for managing a vault's secrets.
+
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity.aio`
+    :param str vault_url: URL of the vault the client will access
 
     Example:
         .. literalinclude:: ../tests/test_samples_secrets_async.py
