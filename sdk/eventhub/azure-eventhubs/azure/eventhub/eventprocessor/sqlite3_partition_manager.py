@@ -30,7 +30,7 @@ class Sqlite3PartitionManager(PartitionManager):
             c.execute("create table " + ownership_table +
                       "(eventhub_name text,"
                       "consumer_group_name text,"
-                      "instance_id text,"
+                      "owner_id text,"
                       "partition_id text,"
                       "owner_level integer,"
                       "sequence_number integer,"
@@ -46,7 +46,7 @@ class Sqlite3PartitionManager(PartitionManager):
     async def list_ownership(self, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()
         try:
-            fields = ["eventhub_name", "consumer_group_name", "instance_id", "partition_id", "owner_level",
+            fields = ["eventhub_name", "consumer_group_name", "owner_id", "partition_id", "owner_level",
                       "sequence_number",
                       "offset", "last_modified_time", "etag"]
             cursor.execute("select " + ",".join(fields) +
@@ -74,22 +74,22 @@ class Sqlite3PartitionManager(PartitionManager):
                                      p["partition_id"]))
                 if not cursor.fetchall():
                     cursor.execute("insert into " + self.ownership_table +
-                                   " (eventhub_name,consumer_group_name,partition_id,instance_id,owner_level,last_modified_time,etag) "
+                                   " (eventhub_name,consumer_group_name,partition_id,owner_id,owner_level,last_modified_time,etag) "
                                    "values (?,?,?,?,?,?,?)",
-                                   (p["eventhub_name"], p["consumer_group_name"], p["partition_id"], p["instance_id"], p["owner_level"],
+                                   (p["eventhub_name"], p["consumer_group_name"], p["partition_id"], p["owner_id"], p["owner_level"],
                                     time.time(), str(uuid.uuid4())
                                     ))
                 else:
-                    cursor.execute("update "+self.ownership_table+" set instance_id=?, owner_level=?, last_modified_time=?, etag=? "
+                    cursor.execute("update "+self.ownership_table+" set owner_id=?, owner_level=?, last_modified_time=?, etag=? "
                                    "where eventhub_name=? and consumer_group_name=? and partition_id=?",
-                                   (p["instance_id"], p["owner_level"], time.time(), str(uuid.uuid4()),
+                                   (p["owner_id"], p["owner_level"], time.time(), str(uuid.uuid4()),
                                     p["eventhub_name"], p["consumer_group_name"], p["partition_id"]))
             self.conn.commit()
             return partitions
         finally:
             cursor.close()
 
-    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, instance_id,
+    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
             offset, sequence_number):
         cursor = self.conn.cursor()
         try:

@@ -11,11 +11,11 @@ class CheckpointManager(object):
     """Every PartitionProcessor has a CheckpointManager to save the partition's checkpoint.
 
     """
-    def __init__(self, partition_id, eventhub_name, consumer_group_name, instance_id, partition_manager: PartitionManager):
+    def __init__(self, partition_id, eventhub_name, consumer_group_name, owner_id, partition_manager: PartitionManager):
         self._partition_id = partition_id
         self._eventhub_name = eventhub_name
         self._consumer_group_name = consumer_group_name
-        self._instance_id = instance_id
+        self._owner_id = owner_id
         self._partition_manager = partition_manager
 
     async def update_checkpoint(self, offset, sequence_number):
@@ -26,6 +26,6 @@ class CheckpointManager(object):
         :return: None
         """
         await self._partition_manager.update_checkpoint(
-            self._eventhub_name, self._consumer_group_name, self._partition_id, self._instance_id, offset,
+            self._eventhub_name, self._consumer_group_name, self._partition_id, self._owner_id, offset,
             sequence_number
         )

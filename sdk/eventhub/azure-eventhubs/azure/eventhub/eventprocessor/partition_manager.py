@@ -21,7 +21,7 @@ class PartitionManager(ABC):
         :return: Iterable of dictionaries containing the following partition ownership information:
                 eventhub_name
                 consumer_group_name
-                instance_id
+                owner_id
                 partition_id
                 owner_level
                 offset
@@ -36,7 +36,7 @@ class PartitionManager(ABC):
         pass
 
     @abstractmethod
-    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, instance_id,
+    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
                                 offset, sequence_number) -> None:
         pass
 
