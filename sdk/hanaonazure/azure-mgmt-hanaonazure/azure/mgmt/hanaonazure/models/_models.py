@@ -534,7 +534,7 @@ class SapMonitor(Resource):
         'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
-        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmID', 'type': 'str'},
+        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
