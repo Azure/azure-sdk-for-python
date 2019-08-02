@@ -41,6 +41,7 @@ class AsyncKeyVaultClientBase:
         config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
         # Override config policies if found in kwargs
+        # TODO: should be unnecessary after next regeneration (written 2019-08-02)
         if "user_agent_policy" in kwargs:
             config.user_agent_policy = kwargs["user_agent_policy"]
         if "headers_policy" in kwargs:
