@@ -488,17 +488,17 @@ class DateAfterCreation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_creation_greater_than: Required. Integer value
-     indicating the age in days after creation
-    :type days_after_creation_greater_than: int
+    :param days_after_creation_greater_than: Required. Value indicating the
+     age in days after creation
+    :type days_after_creation_greater_than: float
     """
 
     _validation = {
-        'days_after_creation_greater_than': {'required': True, 'minimum': 0},
+        'days_after_creation_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'int'},
+        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -511,17 +511,17 @@ class DateAfterModification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_modification_greater_than: Required. Integer value
-     indicating the age in days after last modification
-    :type days_after_modification_greater_than: int
+    :param days_after_modification_greater_than: Required. Value indicating
+     the age in days after last modification
+    :type days_after_modification_greater_than: float
     """
 
     _validation = {
-        'days_after_modification_greater_than': {'required': True, 'minimum': 0},
+        'days_after_modification_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'int'},
+        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
