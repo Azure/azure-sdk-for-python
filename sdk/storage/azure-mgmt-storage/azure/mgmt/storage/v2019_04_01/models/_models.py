@@ -2226,9 +2226,8 @@ class StorageAccountCreateParameters(Model):
      at this time. To clear the existing custom domain, use an empty string for
      the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
-    :param encryption: Provides the encryption settings on the account. If
-     left unspecified the account encryption settings will remain the same. The
-     default setting is unencrypted.
+    :param encryption: Not applicable. Azure Storage encryption is enabled for
+     all storage accounts and cannot be disabled.
     :type encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
     :param network_rule_set: Network rule set
     :type network_rule_set:
