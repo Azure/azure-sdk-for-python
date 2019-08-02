@@ -148,10 +148,10 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
     with receiver:
         all_received = []
-        received = receiver.receive(timeout=5)
+        received = receiver.receive(timeout=1)
         while received:
             all_received.extend(received)
-            received = receiver.receive(timeout=5)
+            received = receiver.receive(timeout=1)
 
         assert len(all_received) == 5
         for received_event in all_received:

@@ -30,7 +30,6 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
-    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -40,7 +39,6 @@ async def test_receive_with_invalid_hostname_async(invalid_hostname):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
-    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -51,7 +49,6 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
-    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -61,7 +58,6 @@ async def test_receive_with_invalid_key_async(invalid_key):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
-    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -72,7 +68,6 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
-    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -82,7 +77,6 @@ async def test_receive_with_invalid_policy_async(invalid_policy):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
-    await receiver.close()
 
 
 @pytest.mark.liveTest
