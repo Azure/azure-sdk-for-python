@@ -30,10 +30,7 @@ from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 
-try:
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse  # type: ignore
+from six.moves import urllib
 
 try:
     from typing import TYPE_CHECKING
@@ -41,10 +38,10 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from azure.core.tracing.abstract_span import AbstractSpan
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
     from typing import Any, Optional, Dict, List, Union
 
 
@@ -78,7 +75,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         if parent_span is None:
             return
 
-        path = urlparse(request.http_request.url).path  # type: ignore
+        path = urllib.parse.urlparse(request.http_request.url).path  # type: ignore
         if not path:
             path = "/"
         child = parent_span.span(name=path)
@@ -100,9 +97,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             if response and self._response_id in response.headers:
                 span.add_attribute(self._response_id, response.headers[self._response_id])
             span.finish()
-            og_context = self.parent_span_dict.pop(span, None)
-            if og_context:
-                set_span_contexts(og_context[0], og_context[1])
+            original_context = self.parent_span_dict.pop(span, None)
+            if original_context:
+                set_span_contexts(original_context[0], original_context[1])
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
