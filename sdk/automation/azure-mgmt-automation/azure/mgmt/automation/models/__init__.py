@@ -10,306 +10,306 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sku_py3 import Sku
-    from .automation_account_py3 import AutomationAccount
-    from .automation_account_create_or_update_parameters_py3 import AutomationAccountCreateOrUpdateParameters
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .statistics_py3 import Statistics
-    from .usage_counter_name_py3 import UsageCounterName
-    from .usage_py3 import Usage
-    from .key_py3 import Key
-    from .key_list_result_py3 import KeyListResult
-    from .automation_account_update_parameters_py3 import AutomationAccountUpdateParameters
-    from .proxy_resource_py3 import ProxyResource
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .certificate_create_or_update_parameters_py3 import CertificateCreateOrUpdateParameters
-    from .certificate_py3 import Certificate
-    from .certificate_update_parameters_py3 import CertificateUpdateParameters
-    from .connection_type_association_property_py3 import ConnectionTypeAssociationProperty
-    from .connection_create_or_update_parameters_py3 import ConnectionCreateOrUpdateParameters
-    from .connection_py3 import Connection
-    from .connection_update_parameters_py3 import ConnectionUpdateParameters
-    from .field_definition_py3 import FieldDefinition
-    from .connection_type_py3 import ConnectionType
-    from .connection_type_create_or_update_parameters_py3 import ConnectionTypeCreateOrUpdateParameters
-    from .credential_create_or_update_parameters_py3 import CredentialCreateOrUpdateParameters
-    from .credential_py3 import Credential
-    from .credential_update_parameters_py3 import CredentialUpdateParameters
-    from .content_hash_py3 import ContentHash
-    from .content_source_py3 import ContentSource
-    from .dsc_configuration_parameter_py3 import DscConfigurationParameter
-    from .dsc_configuration_create_or_update_parameters_py3 import DscConfigurationCreateOrUpdateParameters
-    from .dsc_configuration_py3 import DscConfiguration
-    from .dsc_configuration_update_parameters_py3 import DscConfigurationUpdateParameters
-    from .run_as_credential_association_property_py3 import RunAsCredentialAssociationProperty
-    from .hybrid_runbook_worker_py3 import HybridRunbookWorker
-    from .hybrid_runbook_worker_group_py3 import HybridRunbookWorkerGroup
-    from .hybrid_runbook_worker_group_update_parameters_py3 import HybridRunbookWorkerGroupUpdateParameters
-    from .schedule_association_property_py3 import ScheduleAssociationProperty
-    from .runbook_association_property_py3 import RunbookAssociationProperty
-    from .job_schedule_py3 import JobSchedule
-    from .job_schedule_create_parameters_py3 import JobScheduleCreateParameters
-    from .linked_workspace_py3 import LinkedWorkspace
-    from .activity_parameter_validation_set_py3 import ActivityParameterValidationSet
-    from .activity_parameter_py3 import ActivityParameter
-    from .activity_parameter_set_py3 import ActivityParameterSet
-    from .activity_output_type_py3 import ActivityOutputType
-    from .activity_py3 import Activity
-    from .module_error_info_py3 import ModuleErrorInfo
-    from .content_link_py3 import ContentLink
-    from .module_py3 import Module
-    from .module_create_or_update_parameters_py3 import ModuleCreateOrUpdateParameters
-    from .module_update_parameters_py3 import ModuleUpdateParameters
-    from .type_field_py3 import TypeField
-    from .advanced_schedule_monthly_occurrence_py3 import AdvancedScheduleMonthlyOccurrence
-    from .advanced_schedule_py3 import AdvancedSchedule
-    from .schedule_create_or_update_parameters_py3 import ScheduleCreateOrUpdateParameters
-    from .schedule_properties_py3 import ScheduleProperties
-    from .schedule_py3 import Schedule
-    from .schedule_update_parameters_py3 import ScheduleUpdateParameters
-    from .variable_create_or_update_parameters_py3 import VariableCreateOrUpdateParameters
-    from .variable_py3 import Variable
-    from .variable_update_parameters_py3 import VariableUpdateParameters
-    from .webhook_py3 import Webhook
-    from .webhook_update_parameters_py3 import WebhookUpdateParameters
-    from .webhook_create_or_update_parameters_py3 import WebhookCreateOrUpdateParameters
-    from .watcher_py3 import Watcher
-    from .watcher_update_parameters_py3 import WatcherUpdateParameters
-    from .windows_properties_py3 import WindowsProperties
-    from .linux_properties_py3 import LinuxProperties
-    from .tag_settings_properties_py3 import TagSettingsProperties
-    from .azure_query_properties_py3 import AzureQueryProperties
-    from .non_azure_query_properties_py3 import NonAzureQueryProperties
-    from .target_properties_py3 import TargetProperties
-    from .update_configuration_py3 import UpdateConfiguration
-    from .task_properties_py3 import TaskProperties
-    from .software_update_configuration_tasks_py3 import SoftwareUpdateConfigurationTasks
-    from .software_update_configuration_py3 import SoftwareUpdateConfiguration
-    from .collection_item_update_configuration_py3 import CollectionItemUpdateConfiguration
-    from .software_update_configuration_collection_item_py3 import SoftwareUpdateConfigurationCollectionItem
-    from .software_update_configuration_list_result_py3 import SoftwareUpdateConfigurationListResult
-    from .update_configuration_navigation_py3 import UpdateConfigurationNavigation
-    from .softare_update_configuration_run_task_properties_py3 import SoftareUpdateConfigurationRunTaskProperties
-    from .softare_update_configuration_run_tasks_py3 import SoftareUpdateConfigurationRunTasks
-    from .software_update_configuration_run_py3 import SoftwareUpdateConfigurationRun
-    from .software_update_configuration_run_list_result_py3 import SoftwareUpdateConfigurationRunListResult
-    from .job_navigation_py3 import JobNavigation
-    from .software_update_configuration_machine_run_py3 import SoftwareUpdateConfigurationMachineRun
-    from .software_update_configuration_machine_run_list_result_py3 import SoftwareUpdateConfigurationMachineRunListResult
-    from .source_control_py3 import SourceControl
-    from .source_control_security_token_properties_py3 import SourceControlSecurityTokenProperties
-    from .source_control_update_parameters_py3 import SourceControlUpdateParameters
-    from .source_control_create_or_update_parameters_py3 import SourceControlCreateOrUpdateParameters
-    from .source_control_sync_job_py3 import SourceControlSyncJob
-    from .source_control_sync_job_create_parameters_py3 import SourceControlSyncJobCreateParameters
-    from .source_control_sync_job_by_id_py3 import SourceControlSyncJobById
-    from .source_control_sync_job_stream_py3 import SourceControlSyncJobStream
-    from .source_control_sync_job_stream_by_id_py3 import SourceControlSyncJobStreamById
-    from .job_stream_py3 import JobStream
-    from .job_stream_list_result_py3 import JobStreamListResult
-    from .job_py3 import Job
-    from .job_collection_item_py3 import JobCollectionItem
-    from .job_create_parameters_py3 import JobCreateParameters
-    from .dsc_report_error_py3 import DscReportError
-    from .dsc_report_resource_navigation_py3 import DscReportResourceNavigation
-    from .dsc_report_resource_py3 import DscReportResource
-    from .dsc_meta_configuration_py3 import DscMetaConfiguration
-    from .dsc_node_report_py3 import DscNodeReport
-    from .agent_registration_keys_py3 import AgentRegistrationKeys
-    from .agent_registration_py3 import AgentRegistration
-    from .dsc_node_extension_handler_association_property_py3 import DscNodeExtensionHandlerAssociationProperty
-    from .dsc_node_py3 import DscNode
-    from .agent_registration_regenerate_key_parameter_py3 import AgentRegistrationRegenerateKeyParameter
-    from .dsc_node_update_parameters_properties_py3 import DscNodeUpdateParametersProperties
-    from .dsc_node_update_parameters_py3 import DscNodeUpdateParameters
-    from .dsc_configuration_association_property_py3 import DscConfigurationAssociationProperty
-    from .dsc_compilation_job_py3 import DscCompilationJob
-    from .dsc_compilation_job_create_parameters_py3 import DscCompilationJobCreateParameters
-    from .dsc_node_configuration_py3 import DscNodeConfiguration
-    from .dsc_node_configuration_create_or_update_parameters_py3 import DscNodeConfigurationCreateOrUpdateParameters
-    from .node_count_properties_py3 import NodeCountProperties
-    from .node_count_py3 import NodeCount
-    from .node_counts_py3 import NodeCounts
-    from .runbook_parameter_py3 import RunbookParameter
-    from .runbook_draft_py3 import RunbookDraft
-    from .runbook_py3 import Runbook
-    from .runbook_create_or_update_parameters_py3 import RunbookCreateOrUpdateParameters
-    from .runbook_update_parameters_py3 import RunbookUpdateParameters
-    from .runbook_draft_undo_edit_result_py3 import RunbookDraftUndoEditResult
-    from .test_job_create_parameters_py3 import TestJobCreateParameters
-    from .test_job_py3 import TestJob
-    from .runbook_create_or_update_draft_properties_py3 import RunbookCreateOrUpdateDraftProperties
-    from .runbook_create_or_update_draft_parameters_py3 import RunbookCreateOrUpdateDraftParameters
-    from .python_package_create_parameters_py3 import PythonPackageCreateParameters
-    from .python_package_update_parameters_py3 import PythonPackageUpdateParameters
+    from ._models_py3 import Activity
+    from ._models_py3 import ActivityOutputType
+    from ._models_py3 import ActivityParameter
+    from ._models_py3 import ActivityParameterSet
+    from ._models_py3 import ActivityParameterValidationSet
+    from ._models_py3 import AdvancedSchedule
+    from ._models_py3 import AdvancedScheduleMonthlyOccurrence
+    from ._models_py3 import AgentRegistration
+    from ._models_py3 import AgentRegistrationKeys
+    from ._models_py3 import AgentRegistrationRegenerateKeyParameter
+    from ._models_py3 import AutomationAccount
+    from ._models_py3 import AutomationAccountCreateOrUpdateParameters
+    from ._models_py3 import AutomationAccountUpdateParameters
+    from ._models_py3 import AzureQueryProperties
+    from ._models_py3 import Certificate
+    from ._models_py3 import CertificateCreateOrUpdateParameters
+    from ._models_py3 import CertificateUpdateParameters
+    from ._models_py3 import CollectionItemUpdateConfiguration
+    from ._models_py3 import Connection
+    from ._models_py3 import ConnectionCreateOrUpdateParameters
+    from ._models_py3 import ConnectionType
+    from ._models_py3 import ConnectionTypeAssociationProperty
+    from ._models_py3 import ConnectionTypeCreateOrUpdateParameters
+    from ._models_py3 import ConnectionUpdateParameters
+    from ._models_py3 import ContentHash
+    from ._models_py3 import ContentLink
+    from ._models_py3 import ContentSource
+    from ._models_py3 import Credential
+    from ._models_py3 import CredentialCreateOrUpdateParameters
+    from ._models_py3 import CredentialUpdateParameters
+    from ._models_py3 import DscCompilationJob
+    from ._models_py3 import DscCompilationJobCreateParameters
+    from ._models_py3 import DscConfiguration
+    from ._models_py3 import DscConfigurationAssociationProperty
+    from ._models_py3 import DscConfigurationCreateOrUpdateParameters
+    from ._models_py3 import DscConfigurationParameter
+    from ._models_py3 import DscConfigurationUpdateParameters
+    from ._models_py3 import DscMetaConfiguration
+    from ._models_py3 import DscNode
+    from ._models_py3 import DscNodeConfiguration
+    from ._models_py3 import DscNodeConfigurationCreateOrUpdateParameters
+    from ._models_py3 import DscNodeExtensionHandlerAssociationProperty
+    from ._models_py3 import DscNodeReport
+    from ._models_py3 import DscNodeUpdateParameters
+    from ._models_py3 import DscNodeUpdateParametersProperties
+    from ._models_py3 import DscReportError
+    from ._models_py3 import DscReportResource
+    from ._models_py3 import DscReportResourceNavigation
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import FieldDefinition
+    from ._models_py3 import HybridRunbookWorker
+    from ._models_py3 import HybridRunbookWorkerGroup
+    from ._models_py3 import HybridRunbookWorkerGroupUpdateParameters
+    from ._models_py3 import Job
+    from ._models_py3 import JobCollectionItem
+    from ._models_py3 import JobCreateParameters
+    from ._models_py3 import JobNavigation
+    from ._models_py3 import JobSchedule
+    from ._models_py3 import JobScheduleCreateParameters
+    from ._models_py3 import JobStream
+    from ._models_py3 import JobStreamListResult
+    from ._models_py3 import Key
+    from ._models_py3 import KeyListResult
+    from ._models_py3 import LinkedWorkspace
+    from ._models_py3 import LinuxProperties
+    from ._models_py3 import Module
+    from ._models_py3 import ModuleCreateOrUpdateParameters
+    from ._models_py3 import ModuleErrorInfo
+    from ._models_py3 import ModuleUpdateParameters
+    from ._models_py3 import NodeCount
+    from ._models_py3 import NodeCountProperties
+    from ._models_py3 import NodeCounts
+    from ._models_py3 import NonAzureQueryProperties
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import PythonPackageCreateParameters
+    from ._models_py3 import PythonPackageUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import RunAsCredentialAssociationProperty
+    from ._models_py3 import Runbook
+    from ._models_py3 import RunbookAssociationProperty
+    from ._models_py3 import RunbookCreateOrUpdateDraftParameters
+    from ._models_py3 import RunbookCreateOrUpdateDraftProperties
+    from ._models_py3 import RunbookCreateOrUpdateParameters
+    from ._models_py3 import RunbookDraft
+    from ._models_py3 import RunbookDraftUndoEditResult
+    from ._models_py3 import RunbookParameter
+    from ._models_py3 import RunbookUpdateParameters
+    from ._models_py3 import Schedule
+    from ._models_py3 import ScheduleAssociationProperty
+    from ._models_py3 import ScheduleCreateOrUpdateParameters
+    from ._models_py3 import ScheduleProperties
+    from ._models_py3 import ScheduleUpdateParameters
+    from ._models_py3 import Sku
+    from ._models_py3 import SoftareUpdateConfigurationRunTaskProperties
+    from ._models_py3 import SoftareUpdateConfigurationRunTasks
+    from ._models_py3 import SoftwareUpdateConfiguration
+    from ._models_py3 import SoftwareUpdateConfigurationCollectionItem
+    from ._models_py3 import SoftwareUpdateConfigurationListResult
+    from ._models_py3 import SoftwareUpdateConfigurationMachineRun
+    from ._models_py3 import SoftwareUpdateConfigurationMachineRunListResult
+    from ._models_py3 import SoftwareUpdateConfigurationRun
+    from ._models_py3 import SoftwareUpdateConfigurationRunListResult
+    from ._models_py3 import SoftwareUpdateConfigurationTasks
+    from ._models_py3 import SourceControl
+    from ._models_py3 import SourceControlCreateOrUpdateParameters
+    from ._models_py3 import SourceControlSecurityTokenProperties
+    from ._models_py3 import SourceControlSyncJob
+    from ._models_py3 import SourceControlSyncJobById
+    from ._models_py3 import SourceControlSyncJobCreateParameters
+    from ._models_py3 import SourceControlSyncJobStream
+    from ._models_py3 import SourceControlSyncJobStreamById
+    from ._models_py3 import SourceControlUpdateParameters
+    from ._models_py3 import Statistics
+    from ._models_py3 import TagSettingsProperties
+    from ._models_py3 import TargetProperties
+    from ._models_py3 import TaskProperties
+    from ._models_py3 import TestJob
+    from ._models_py3 import TestJobCreateParameters
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TypeField
+    from ._models_py3 import UpdateConfiguration
+    from ._models_py3 import UpdateConfigurationNavigation
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageCounterName
+    from ._models_py3 import Variable
+    from ._models_py3 import VariableCreateOrUpdateParameters
+    from ._models_py3 import VariableUpdateParameters
+    from ._models_py3 import Watcher
+    from ._models_py3 import WatcherUpdateParameters
+    from ._models_py3 import Webhook
+    from ._models_py3 import WebhookCreateOrUpdateParameters
+    from ._models_py3 import WebhookUpdateParameters
+    from ._models_py3 import WindowsProperties
 except (SyntaxError, ImportError):
-    from .sku import Sku
-    from .automation_account import AutomationAccount
-    from .automation_account_create_or_update_parameters import AutomationAccountCreateOrUpdateParameters
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .statistics import Statistics
-    from .usage_counter_name import UsageCounterName
-    from .usage import Usage
-    from .key import Key
-    from .key_list_result import KeyListResult
-    from .automation_account_update_parameters import AutomationAccountUpdateParameters
-    from .proxy_resource import ProxyResource
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
-    from .certificate import Certificate
-    from .certificate_update_parameters import CertificateUpdateParameters
-    from .connection_type_association_property import ConnectionTypeAssociationProperty
-    from .connection_create_or_update_parameters import ConnectionCreateOrUpdateParameters
-    from .connection import Connection
-    from .connection_update_parameters import ConnectionUpdateParameters
-    from .field_definition import FieldDefinition
-    from .connection_type import ConnectionType
-    from .connection_type_create_or_update_parameters import ConnectionTypeCreateOrUpdateParameters
-    from .credential_create_or_update_parameters import CredentialCreateOrUpdateParameters
-    from .credential import Credential
-    from .credential_update_parameters import CredentialUpdateParameters
-    from .content_hash import ContentHash
-    from .content_source import ContentSource
-    from .dsc_configuration_parameter import DscConfigurationParameter
-    from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
-    from .dsc_configuration import DscConfiguration
-    from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
-    from .run_as_credential_association_property import RunAsCredentialAssociationProperty
-    from .hybrid_runbook_worker import HybridRunbookWorker
-    from .hybrid_runbook_worker_group import HybridRunbookWorkerGroup
-    from .hybrid_runbook_worker_group_update_parameters import HybridRunbookWorkerGroupUpdateParameters
-    from .schedule_association_property import ScheduleAssociationProperty
-    from .runbook_association_property import RunbookAssociationProperty
-    from .job_schedule import JobSchedule
-    from .job_schedule_create_parameters import JobScheduleCreateParameters
-    from .linked_workspace import LinkedWorkspace
-    from .activity_parameter_validation_set import ActivityParameterValidationSet
-    from .activity_parameter import ActivityParameter
-    from .activity_parameter_set import ActivityParameterSet
-    from .activity_output_type import ActivityOutputType
-    from .activity import Activity
-    from .module_error_info import ModuleErrorInfo
-    from .content_link import ContentLink
-    from .module import Module
-    from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
-    from .module_update_parameters import ModuleUpdateParameters
-    from .type_field import TypeField
-    from .advanced_schedule_monthly_occurrence import AdvancedScheduleMonthlyOccurrence
-    from .advanced_schedule import AdvancedSchedule
-    from .schedule_create_or_update_parameters import ScheduleCreateOrUpdateParameters
-    from .schedule_properties import ScheduleProperties
-    from .schedule import Schedule
-    from .schedule_update_parameters import ScheduleUpdateParameters
-    from .variable_create_or_update_parameters import VariableCreateOrUpdateParameters
-    from .variable import Variable
-    from .variable_update_parameters import VariableUpdateParameters
-    from .webhook import Webhook
-    from .webhook_update_parameters import WebhookUpdateParameters
-    from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
-    from .watcher import Watcher
-    from .watcher_update_parameters import WatcherUpdateParameters
-    from .windows_properties import WindowsProperties
-    from .linux_properties import LinuxProperties
-    from .tag_settings_properties import TagSettingsProperties
-    from .azure_query_properties import AzureQueryProperties
-    from .non_azure_query_properties import NonAzureQueryProperties
-    from .target_properties import TargetProperties
-    from .update_configuration import UpdateConfiguration
-    from .task_properties import TaskProperties
-    from .software_update_configuration_tasks import SoftwareUpdateConfigurationTasks
-    from .software_update_configuration import SoftwareUpdateConfiguration
-    from .collection_item_update_configuration import CollectionItemUpdateConfiguration
-    from .software_update_configuration_collection_item import SoftwareUpdateConfigurationCollectionItem
-    from .software_update_configuration_list_result import SoftwareUpdateConfigurationListResult
-    from .update_configuration_navigation import UpdateConfigurationNavigation
-    from .softare_update_configuration_run_task_properties import SoftareUpdateConfigurationRunTaskProperties
-    from .softare_update_configuration_run_tasks import SoftareUpdateConfigurationRunTasks
-    from .software_update_configuration_run import SoftwareUpdateConfigurationRun
-    from .software_update_configuration_run_list_result import SoftwareUpdateConfigurationRunListResult
-    from .job_navigation import JobNavigation
-    from .software_update_configuration_machine_run import SoftwareUpdateConfigurationMachineRun
-    from .software_update_configuration_machine_run_list_result import SoftwareUpdateConfigurationMachineRunListResult
-    from .source_control import SourceControl
-    from .source_control_security_token_properties import SourceControlSecurityTokenProperties
-    from .source_control_update_parameters import SourceControlUpdateParameters
-    from .source_control_create_or_update_parameters import SourceControlCreateOrUpdateParameters
-    from .source_control_sync_job import SourceControlSyncJob
-    from .source_control_sync_job_create_parameters import SourceControlSyncJobCreateParameters
-    from .source_control_sync_job_by_id import SourceControlSyncJobById
-    from .source_control_sync_job_stream import SourceControlSyncJobStream
-    from .source_control_sync_job_stream_by_id import SourceControlSyncJobStreamById
-    from .job_stream import JobStream
-    from .job_stream_list_result import JobStreamListResult
-    from .job import Job
-    from .job_collection_item import JobCollectionItem
-    from .job_create_parameters import JobCreateParameters
-    from .dsc_report_error import DscReportError
-    from .dsc_report_resource_navigation import DscReportResourceNavigation
-    from .dsc_report_resource import DscReportResource
-    from .dsc_meta_configuration import DscMetaConfiguration
-    from .dsc_node_report import DscNodeReport
-    from .agent_registration_keys import AgentRegistrationKeys
-    from .agent_registration import AgentRegistration
-    from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
-    from .dsc_node import DscNode
-    from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
-    from .dsc_node_update_parameters_properties import DscNodeUpdateParametersProperties
-    from .dsc_node_update_parameters import DscNodeUpdateParameters
-    from .dsc_configuration_association_property import DscConfigurationAssociationProperty
-    from .dsc_compilation_job import DscCompilationJob
-    from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
-    from .dsc_node_configuration import DscNodeConfiguration
-    from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
-    from .node_count_properties import NodeCountProperties
-    from .node_count import NodeCount
-    from .node_counts import NodeCounts
-    from .runbook_parameter import RunbookParameter
-    from .runbook_draft import RunbookDraft
-    from .runbook import Runbook
-    from .runbook_create_or_update_parameters import RunbookCreateOrUpdateParameters
-    from .runbook_update_parameters import RunbookUpdateParameters
-    from .runbook_draft_undo_edit_result import RunbookDraftUndoEditResult
-    from .test_job_create_parameters import TestJobCreateParameters
-    from .test_job import TestJob
-    from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
-    from .runbook_create_or_update_draft_parameters import RunbookCreateOrUpdateDraftParameters
-    from .python_package_create_parameters import PythonPackageCreateParameters
-    from .python_package_update_parameters import PythonPackageUpdateParameters
-from .automation_account_paged import AutomationAccountPaged
-from .operation_paged import OperationPaged
-from .statistics_paged import StatisticsPaged
-from .usage_paged import UsagePaged
-from .certificate_paged import CertificatePaged
-from .connection_paged import ConnectionPaged
-from .connection_type_paged import ConnectionTypePaged
-from .credential_paged import CredentialPaged
-from .dsc_configuration_paged import DscConfigurationPaged
-from .hybrid_runbook_worker_group_paged import HybridRunbookWorkerGroupPaged
-from .job_schedule_paged import JobSchedulePaged
-from .activity_paged import ActivityPaged
-from .module_paged import ModulePaged
-from .type_field_paged import TypeFieldPaged
-from .schedule_paged import SchedulePaged
-from .variable_paged import VariablePaged
-from .webhook_paged import WebhookPaged
-from .watcher_paged import WatcherPaged
-from .source_control_paged import SourceControlPaged
-from .source_control_sync_job_paged import SourceControlSyncJobPaged
-from .source_control_sync_job_stream_paged import SourceControlSyncJobStreamPaged
-from .job_collection_item_paged import JobCollectionItemPaged
-from .job_stream_paged import JobStreamPaged
-from .dsc_node_paged import DscNodePaged
-from .dsc_node_report_paged import DscNodeReportPaged
-from .dsc_compilation_job_paged import DscCompilationJobPaged
-from .dsc_node_configuration_paged import DscNodeConfigurationPaged
-from .runbook_paged import RunbookPaged
-from .automation_client_enums import (
+    from ._models import Activity
+    from ._models import ActivityOutputType
+    from ._models import ActivityParameter
+    from ._models import ActivityParameterSet
+    from ._models import ActivityParameterValidationSet
+    from ._models import AdvancedSchedule
+    from ._models import AdvancedScheduleMonthlyOccurrence
+    from ._models import AgentRegistration
+    from ._models import AgentRegistrationKeys
+    from ._models import AgentRegistrationRegenerateKeyParameter
+    from ._models import AutomationAccount
+    from ._models import AutomationAccountCreateOrUpdateParameters
+    from ._models import AutomationAccountUpdateParameters
+    from ._models import AzureQueryProperties
+    from ._models import Certificate
+    from ._models import CertificateCreateOrUpdateParameters
+    from ._models import CertificateUpdateParameters
+    from ._models import CollectionItemUpdateConfiguration
+    from ._models import Connection
+    from ._models import ConnectionCreateOrUpdateParameters
+    from ._models import ConnectionType
+    from ._models import ConnectionTypeAssociationProperty
+    from ._models import ConnectionTypeCreateOrUpdateParameters
+    from ._models import ConnectionUpdateParameters
+    from ._models import ContentHash
+    from ._models import ContentLink
+    from ._models import ContentSource
+    from ._models import Credential
+    from ._models import CredentialCreateOrUpdateParameters
+    from ._models import CredentialUpdateParameters
+    from ._models import DscCompilationJob
+    from ._models import DscCompilationJobCreateParameters
+    from ._models import DscConfiguration
+    from ._models import DscConfigurationAssociationProperty
+    from ._models import DscConfigurationCreateOrUpdateParameters
+    from ._models import DscConfigurationParameter
+    from ._models import DscConfigurationUpdateParameters
+    from ._models import DscMetaConfiguration
+    from ._models import DscNode
+    from ._models import DscNodeConfiguration
+    from ._models import DscNodeConfigurationCreateOrUpdateParameters
+    from ._models import DscNodeExtensionHandlerAssociationProperty
+    from ._models import DscNodeReport
+    from ._models import DscNodeUpdateParameters
+    from ._models import DscNodeUpdateParametersProperties
+    from ._models import DscReportError
+    from ._models import DscReportResource
+    from ._models import DscReportResourceNavigation
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import FieldDefinition
+    from ._models import HybridRunbookWorker
+    from ._models import HybridRunbookWorkerGroup
+    from ._models import HybridRunbookWorkerGroupUpdateParameters
+    from ._models import Job
+    from ._models import JobCollectionItem
+    from ._models import JobCreateParameters
+    from ._models import JobNavigation
+    from ._models import JobSchedule
+    from ._models import JobScheduleCreateParameters
+    from ._models import JobStream
+    from ._models import JobStreamListResult
+    from ._models import Key
+    from ._models import KeyListResult
+    from ._models import LinkedWorkspace
+    from ._models import LinuxProperties
+    from ._models import Module
+    from ._models import ModuleCreateOrUpdateParameters
+    from ._models import ModuleErrorInfo
+    from ._models import ModuleUpdateParameters
+    from ._models import NodeCount
+    from ._models import NodeCountProperties
+    from ._models import NodeCounts
+    from ._models import NonAzureQueryProperties
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import ProxyResource
+    from ._models import PythonPackageCreateParameters
+    from ._models import PythonPackageUpdateParameters
+    from ._models import Resource
+    from ._models import RunAsCredentialAssociationProperty
+    from ._models import Runbook
+    from ._models import RunbookAssociationProperty
+    from ._models import RunbookCreateOrUpdateDraftParameters
+    from ._models import RunbookCreateOrUpdateDraftProperties
+    from ._models import RunbookCreateOrUpdateParameters
+    from ._models import RunbookDraft
+    from ._models import RunbookDraftUndoEditResult
+    from ._models import RunbookParameter
+    from ._models import RunbookUpdateParameters
+    from ._models import Schedule
+    from ._models import ScheduleAssociationProperty
+    from ._models import ScheduleCreateOrUpdateParameters
+    from ._models import ScheduleProperties
+    from ._models import ScheduleUpdateParameters
+    from ._models import Sku
+    from ._models import SoftareUpdateConfigurationRunTaskProperties
+    from ._models import SoftareUpdateConfigurationRunTasks
+    from ._models import SoftwareUpdateConfiguration
+    from ._models import SoftwareUpdateConfigurationCollectionItem
+    from ._models import SoftwareUpdateConfigurationListResult
+    from ._models import SoftwareUpdateConfigurationMachineRun
+    from ._models import SoftwareUpdateConfigurationMachineRunListResult
+    from ._models import SoftwareUpdateConfigurationRun
+    from ._models import SoftwareUpdateConfigurationRunListResult
+    from ._models import SoftwareUpdateConfigurationTasks
+    from ._models import SourceControl
+    from ._models import SourceControlCreateOrUpdateParameters
+    from ._models import SourceControlSecurityTokenProperties
+    from ._models import SourceControlSyncJob
+    from ._models import SourceControlSyncJobById
+    from ._models import SourceControlSyncJobCreateParameters
+    from ._models import SourceControlSyncJobStream
+    from ._models import SourceControlSyncJobStreamById
+    from ._models import SourceControlUpdateParameters
+    from ._models import Statistics
+    from ._models import TagSettingsProperties
+    from ._models import TargetProperties
+    from ._models import TaskProperties
+    from ._models import TestJob
+    from ._models import TestJobCreateParameters
+    from ._models import TrackedResource
+    from ._models import TypeField
+    from ._models import UpdateConfiguration
+    from ._models import UpdateConfigurationNavigation
+    from ._models import Usage
+    from ._models import UsageCounterName
+    from ._models import Variable
+    from ._models import VariableCreateOrUpdateParameters
+    from ._models import VariableUpdateParameters
+    from ._models import Watcher
+    from ._models import WatcherUpdateParameters
+    from ._models import Webhook
+    from ._models import WebhookCreateOrUpdateParameters
+    from ._models import WebhookUpdateParameters
+    from ._models import WindowsProperties
+from ._paged_models import ActivityPaged
+from ._paged_models import AutomationAccountPaged
+from ._paged_models import CertificatePaged
+from ._paged_models import ConnectionPaged
+from ._paged_models import ConnectionTypePaged
+from ._paged_models import CredentialPaged
+from ._paged_models import DscCompilationJobPaged
+from ._paged_models import DscConfigurationPaged
+from ._paged_models import DscNodeConfigurationPaged
+from ._paged_models import DscNodePaged
+from ._paged_models import DscNodeReportPaged
+from ._paged_models import HybridRunbookWorkerGroupPaged
+from ._paged_models import JobCollectionItemPaged
+from ._paged_models import JobSchedulePaged
+from ._paged_models import JobStreamPaged
+from ._paged_models import ModulePaged
+from ._paged_models import OperationPaged
+from ._paged_models import RunbookPaged
+from ._paged_models import SchedulePaged
+from ._paged_models import SourceControlPaged
+from ._paged_models import SourceControlSyncJobPaged
+from ._paged_models import SourceControlSyncJobStreamPaged
+from ._paged_models import StatisticsPaged
+from ._paged_models import TypeFieldPaged
+from ._paged_models import UsagePaged
+from ._paged_models import VariablePaged
+from ._paged_models import WatcherPaged
+from ._paged_models import WebhookPaged
+from ._automation_client_enums import (
     SkuNameEnum,
     AutomationAccountState,
     AutomationKeyName,
@@ -342,141 +342,141 @@ from .automation_client_enums import (
 )
 
 __all__ = [
-    'Sku',
+    'Activity',
+    'ActivityOutputType',
+    'ActivityParameter',
+    'ActivityParameterSet',
+    'ActivityParameterValidationSet',
+    'AdvancedSchedule',
+    'AdvancedScheduleMonthlyOccurrence',
+    'AgentRegistration',
+    'AgentRegistrationKeys',
+    'AgentRegistrationRegenerateKeyParameter',
     'AutomationAccount',
     'AutomationAccountCreateOrUpdateParameters',
-    'OperationDisplay',
-    'Operation',
-    'Statistics',
-    'UsageCounterName',
-    'Usage',
-    'Key',
-    'KeyListResult',
     'AutomationAccountUpdateParameters',
-    'ProxyResource',
-    'Resource',
-    'TrackedResource',
-    'ErrorResponse', 'ErrorResponseException',
-    'CertificateCreateOrUpdateParameters',
+    'AzureQueryProperties',
     'Certificate',
+    'CertificateCreateOrUpdateParameters',
     'CertificateUpdateParameters',
-    'ConnectionTypeAssociationProperty',
-    'ConnectionCreateOrUpdateParameters',
+    'CollectionItemUpdateConfiguration',
     'Connection',
-    'ConnectionUpdateParameters',
-    'FieldDefinition',
+    'ConnectionCreateOrUpdateParameters',
     'ConnectionType',
+    'ConnectionTypeAssociationProperty',
     'ConnectionTypeCreateOrUpdateParameters',
-    'CredentialCreateOrUpdateParameters',
-    'Credential',
-    'CredentialUpdateParameters',
+    'ConnectionUpdateParameters',
     'ContentHash',
+    'ContentLink',
     'ContentSource',
-    'DscConfigurationParameter',
-    'DscConfigurationCreateOrUpdateParameters',
+    'Credential',
+    'CredentialCreateOrUpdateParameters',
+    'CredentialUpdateParameters',
+    'DscCompilationJob',
+    'DscCompilationJobCreateParameters',
     'DscConfiguration',
+    'DscConfigurationAssociationProperty',
+    'DscConfigurationCreateOrUpdateParameters',
+    'DscConfigurationParameter',
     'DscConfigurationUpdateParameters',
-    'RunAsCredentialAssociationProperty',
+    'DscMetaConfiguration',
+    'DscNode',
+    'DscNodeConfiguration',
+    'DscNodeConfigurationCreateOrUpdateParameters',
+    'DscNodeExtensionHandlerAssociationProperty',
+    'DscNodeReport',
+    'DscNodeUpdateParameters',
+    'DscNodeUpdateParametersProperties',
+    'DscReportError',
+    'DscReportResource',
+    'DscReportResourceNavigation',
+    'ErrorResponse', 'ErrorResponseException',
+    'FieldDefinition',
     'HybridRunbookWorker',
     'HybridRunbookWorkerGroup',
     'HybridRunbookWorkerGroupUpdateParameters',
-    'ScheduleAssociationProperty',
-    'RunbookAssociationProperty',
-    'JobSchedule',
-    'JobScheduleCreateParameters',
-    'LinkedWorkspace',
-    'ActivityParameterValidationSet',
-    'ActivityParameter',
-    'ActivityParameterSet',
-    'ActivityOutputType',
-    'Activity',
-    'ModuleErrorInfo',
-    'ContentLink',
-    'Module',
-    'ModuleCreateOrUpdateParameters',
-    'ModuleUpdateParameters',
-    'TypeField',
-    'AdvancedScheduleMonthlyOccurrence',
-    'AdvancedSchedule',
-    'ScheduleCreateOrUpdateParameters',
-    'ScheduleProperties',
-    'Schedule',
-    'ScheduleUpdateParameters',
-    'VariableCreateOrUpdateParameters',
-    'Variable',
-    'VariableUpdateParameters',
-    'Webhook',
-    'WebhookUpdateParameters',
-    'WebhookCreateOrUpdateParameters',
-    'Watcher',
-    'WatcherUpdateParameters',
-    'WindowsProperties',
-    'LinuxProperties',
-    'TagSettingsProperties',
-    'AzureQueryProperties',
-    'NonAzureQueryProperties',
-    'TargetProperties',
-    'UpdateConfiguration',
-    'TaskProperties',
-    'SoftwareUpdateConfigurationTasks',
-    'SoftwareUpdateConfiguration',
-    'CollectionItemUpdateConfiguration',
-    'SoftwareUpdateConfigurationCollectionItem',
-    'SoftwareUpdateConfigurationListResult',
-    'UpdateConfigurationNavigation',
-    'SoftareUpdateConfigurationRunTaskProperties',
-    'SoftareUpdateConfigurationRunTasks',
-    'SoftwareUpdateConfigurationRun',
-    'SoftwareUpdateConfigurationRunListResult',
-    'JobNavigation',
-    'SoftwareUpdateConfigurationMachineRun',
-    'SoftwareUpdateConfigurationMachineRunListResult',
-    'SourceControl',
-    'SourceControlSecurityTokenProperties',
-    'SourceControlUpdateParameters',
-    'SourceControlCreateOrUpdateParameters',
-    'SourceControlSyncJob',
-    'SourceControlSyncJobCreateParameters',
-    'SourceControlSyncJobById',
-    'SourceControlSyncJobStream',
-    'SourceControlSyncJobStreamById',
-    'JobStream',
-    'JobStreamListResult',
     'Job',
     'JobCollectionItem',
     'JobCreateParameters',
-    'DscReportError',
-    'DscReportResourceNavigation',
-    'DscReportResource',
-    'DscMetaConfiguration',
-    'DscNodeReport',
-    'AgentRegistrationKeys',
-    'AgentRegistration',
-    'DscNodeExtensionHandlerAssociationProperty',
-    'DscNode',
-    'AgentRegistrationRegenerateKeyParameter',
-    'DscNodeUpdateParametersProperties',
-    'DscNodeUpdateParameters',
-    'DscConfigurationAssociationProperty',
-    'DscCompilationJob',
-    'DscCompilationJobCreateParameters',
-    'DscNodeConfiguration',
-    'DscNodeConfigurationCreateOrUpdateParameters',
-    'NodeCountProperties',
+    'JobNavigation',
+    'JobSchedule',
+    'JobScheduleCreateParameters',
+    'JobStream',
+    'JobStreamListResult',
+    'Key',
+    'KeyListResult',
+    'LinkedWorkspace',
+    'LinuxProperties',
+    'Module',
+    'ModuleCreateOrUpdateParameters',
+    'ModuleErrorInfo',
+    'ModuleUpdateParameters',
     'NodeCount',
+    'NodeCountProperties',
     'NodeCounts',
-    'RunbookParameter',
-    'RunbookDraft',
-    'Runbook',
-    'RunbookCreateOrUpdateParameters',
-    'RunbookUpdateParameters',
-    'RunbookDraftUndoEditResult',
-    'TestJobCreateParameters',
-    'TestJob',
-    'RunbookCreateOrUpdateDraftProperties',
-    'RunbookCreateOrUpdateDraftParameters',
+    'NonAzureQueryProperties',
+    'Operation',
+    'OperationDisplay',
+    'ProxyResource',
     'PythonPackageCreateParameters',
     'PythonPackageUpdateParameters',
+    'Resource',
+    'RunAsCredentialAssociationProperty',
+    'Runbook',
+    'RunbookAssociationProperty',
+    'RunbookCreateOrUpdateDraftParameters',
+    'RunbookCreateOrUpdateDraftProperties',
+    'RunbookCreateOrUpdateParameters',
+    'RunbookDraft',
+    'RunbookDraftUndoEditResult',
+    'RunbookParameter',
+    'RunbookUpdateParameters',
+    'Schedule',
+    'ScheduleAssociationProperty',
+    'ScheduleCreateOrUpdateParameters',
+    'ScheduleProperties',
+    'ScheduleUpdateParameters',
+    'Sku',
+    'SoftareUpdateConfigurationRunTaskProperties',
+    'SoftareUpdateConfigurationRunTasks',
+    'SoftwareUpdateConfiguration',
+    'SoftwareUpdateConfigurationCollectionItem',
+    'SoftwareUpdateConfigurationListResult',
+    'SoftwareUpdateConfigurationMachineRun',
+    'SoftwareUpdateConfigurationMachineRunListResult',
+    'SoftwareUpdateConfigurationRun',
+    'SoftwareUpdateConfigurationRunListResult',
+    'SoftwareUpdateConfigurationTasks',
+    'SourceControl',
+    'SourceControlCreateOrUpdateParameters',
+    'SourceControlSecurityTokenProperties',
+    'SourceControlSyncJob',
+    'SourceControlSyncJobById',
+    'SourceControlSyncJobCreateParameters',
+    'SourceControlSyncJobStream',
+    'SourceControlSyncJobStreamById',
+    'SourceControlUpdateParameters',
+    'Statistics',
+    'TagSettingsProperties',
+    'TargetProperties',
+    'TaskProperties',
+    'TestJob',
+    'TestJobCreateParameters',
+    'TrackedResource',
+    'TypeField',
+    'UpdateConfiguration',
+    'UpdateConfigurationNavigation',
+    'Usage',
+    'UsageCounterName',
+    'Variable',
+    'VariableCreateOrUpdateParameters',
+    'VariableUpdateParameters',
+    'Watcher',
+    'WatcherUpdateParameters',
+    'Webhook',
+    'WebhookCreateOrUpdateParameters',
+    'WebhookUpdateParameters',
+    'WindowsProperties',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
