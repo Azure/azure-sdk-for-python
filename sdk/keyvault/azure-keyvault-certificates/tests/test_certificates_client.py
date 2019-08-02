@@ -1,4 +1,7 @@
-import base64
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import itertools
 import time
 

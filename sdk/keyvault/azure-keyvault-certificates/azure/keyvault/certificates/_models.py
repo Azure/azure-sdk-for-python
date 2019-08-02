@@ -7,7 +7,6 @@
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
 
-from azure.keyvault.certificates._shared._generated.v2016_10_01.models import ActionType
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
 
@@ -456,35 +455,34 @@ class CertificatePolicy(object):
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
 
-    @classmethod
-    def _to_certificate_policy_bundle(cls, policy):
+    def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
 
         """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
-        if policy.issuer_name or policy.certificate_type or policy.certificate_transparency:
+        if self.issuer_name or self.certificate_type or self.certificate_transparency:
             issuer_parameters = models.IssuerParameters(
-                name=policy.issuer_name,
-                certificate_type=policy.certificate_type,
-                certificate_transparency=policy.certificate_transparency
+                name=self.issuer_name,
+                certificate_type=self.certificate_type,
+                certificate_transparency=self.certificate_transparency
             )
         else:
             issuer_parameters = None
 
-        if policy.enabled is not None or policy.not_before is not None or policy.expires is not None or policy.created is not None or policy.updated is not None or policy.recovery_level:
+        if self.enabled is not None or self.not_before is not None or self.expires is not None or self.created is not None or self.updated is not None or self.recovery_level:
             attributes = models.CertificateAttributes(
-                enabled=policy.enabled,
-                not_before=policy.not_before,
-                expires=policy.expires,
-                created=policy.enabled,
-                updated=policy.updated,
-                recovery_level=policy.recovery_level
+                enabled=self.enabled,
+                not_before=self.not_before,
+                expires=self.expires,
+                created=self.enabled,
+                updated=self.updated,
+                recovery_level=self.recovery_level
             )
         else:
             attributes = None
 
-        if policy.lifetime_actions:
+        if self.lifetime_actions:
             lifetime_actions = []
-            for lifetime_action in policy.lifetime_actions:
+            for lifetime_action in self.lifetime_actions:
                 lifetime_actions.append(
                     models.LifetimeAction(
                         trigger=models.Trigger(
@@ -497,39 +495,39 @@ class CertificatePolicy(object):
         else:
             lifetime_actions = None
 
-        if policy.subject_name or policy.key_properties.ekus or policy.key_properties.key_usage or policy.san_emails or policy.san_upns or policy.san_dns_names or policy.validity_in_months:
+        if self.subject_name or self.key_properties.ekus or self.key_properties.key_usage or self.san_emails or self.san_upns or self.san_dns_names or self.validity_in_months:
             x509_certificate_properties=models.X509CertificateProperties(
-                subject=policy.subject_name,
-                ekus=policy.key_properties.ekus,
+                subject=self.subject_name,
+                ekus=self.key_properties.ekus,
                 subject_alternative_names=models.SubjectAlternativeNames(
-                    emails=policy.san_emails,
-                    upns=policy.san_upns,
-                    dns_names=policy.san_dns_names
+                    emails=self.san_emails,
+                    upns=self.san_upns,
+                    dns_names=self.san_dns_names
                 ),
-                key_usage=policy.key_properties.key_usage,
-                validity_in_months=policy.validity_in_months
+                key_usage=self.key_properties.key_usage,
+                validity_in_months=self.validity_in_months
             )
         else:
             x509_certificate_properties = None
 
-        if policy.key_properties.exportable or policy.key_properties.key_type or policy.key_properties.key_size or policy.key_properties.reuse_key or policy.key_properties.curbe:
+        if self.key_properties.exportable or self.key_properties.key_type or self.key_properties.key_size or self.key_properties.reuse_key or self.key_properties.curbe:
             key_properties = models.KeyProperties(
-                exportable=policy.key_properties.exportable,
-                key_type=policy.key_properties.key_type,
-                key_size=policy.key_properties.key_size,
-                reuse_key=policy.key_properties.reuse_key,
-                curve=policy.key_properties.curve
+                exportable=self.key_properties.exportable,
+                key_type=self.key_properties.key_type,
+                key_size=self.key_properties.key_size,
+                reuse_key=self.key_properties.reuse_key,
+                curve=self.key_properties.curve
             )
         else:
             key_properties = None
 
-        if policy.content_type:
-            secret_properties = models.SecretProperties(content_type=policy.content_type)
+        if self.content_type:
+            secret_properties = models.SecretProperties(content_type=self.content_type)
         else:
             secret_properties = None
 
         policy_bundle = models.CertificatePolicy(
-            id=policy.id,
+            id=self.id,
             key_properties=key_properties,
             secret_properties=secret_properties,
             x509_certificate_properties=x509_certificate_properties,
