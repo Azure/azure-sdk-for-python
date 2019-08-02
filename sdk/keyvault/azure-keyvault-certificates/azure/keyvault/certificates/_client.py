@@ -421,13 +421,13 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_deleted_certificates(
+        return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
+            cls=lambda objs: [DeletedCertificate._from_deleted_certificate_item(deleted_certificate_item=x) for x in objs],
             **kwargs
         )
-        return (DeletedCertificate._from_deleted_certificate_item(deleted_certificate_item=item) for item in pages)
 
     @distributed_trace
     def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> Iterable[CertificateBase]:
@@ -447,13 +447,13 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_certificates(
+        return self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
+            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs
         )
-        return (CertificateBase._from_certificate_item(certificate_item=item) for item in pages)
 
     @distributed_trace
     def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> Iterable[CertificateBase]:
@@ -472,12 +472,12 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_certificate_versions(
+        return self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
+            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs)
-        return (CertificateBase._from_certificate_item(certificate_item=item) for item in pages)
 
     @distributed_trace
     def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
@@ -873,5 +873,9 @@ class CertificateClient(KeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
-        return (IssuerBase._from_issuer_item(issuer_item=item) for item in paged_certificate_issuer_items)
+        return self._client.get_certificate_issuers(
+            vault_base_url=self.vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [IssuerBase._from_issuer_item(issuer_item=x) for x in objs],
+            **kwargs
+        )

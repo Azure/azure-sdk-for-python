@@ -111,8 +111,8 @@ class CertificateBase(object):
 
     @classmethod
     def _from_certificate_item(cls, certificate_item):
-        # type: (models.CertificateItem) -> Certificate
-        """Construct a Certificate from an autorest-generated CertificateItem"""
+        # type: (models.CertificateItem) -> CertificateBase
+        """Construct a CertificateBase from an autorest-generated CertificateItem"""
         return cls(
             attributes=certificate_item.attributes,
             cert_id=certificate_item.id,
