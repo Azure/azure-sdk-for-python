@@ -54,7 +54,7 @@ steps:
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
-    displayName: 'Run Linters'
+    displayName: 'Run Pylint'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
