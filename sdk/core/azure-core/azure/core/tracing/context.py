@@ -13,7 +13,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Callable
+    from typing import Any, Callable, Optional, Type, Union
     from typing_extensions import Protocol
 else:
     Protocol = object
@@ -21,7 +21,7 @@ else:
 try:
     import contextvars
 except ImportError:
-    contextvars = None
+    pass
 
 
 class ContextProtocol(Protocol):
@@ -117,8 +117,10 @@ class _ThreadLocalContext(object):
 class TracingContext(object):
     def __init__(self):
         # type: () -> None
-        context_class = _AsyncContext if contextvars else _ThreadLocalContext  # type: ContextProtocol
-        self.current_span = context_class("current_span", None)
+        try:
+            self.current_span = _AsyncContext("current_span", None)  # type: Union[_AsyncContext, _ThreadLocalContext]
+        except NameError:
+            self.current_span = _ThreadLocalContext("current_span", None)
 
     def with_current_context(self, func):
         # type: (Callable[[Any], Any]) -> Any

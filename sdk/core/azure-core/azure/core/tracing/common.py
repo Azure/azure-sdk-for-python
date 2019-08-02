@@ -36,7 +36,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable
+    from typing import Any, Optional, Union, Callable, List
 
 
 def get_function_and_class_name(func, *args):
@@ -77,7 +77,7 @@ def set_span_contexts(wrapped_span, span_instance=None):
 
 
 def get_parent_span(parent_span):
-    # type: (Any) -> Tuple(AbstractSpan, AbstractSpan, Any)
+    # type: (Any) -> Optional[AbstractSpan]
     """
     Returns the current span so that the function's span will be its child. It will create a new span if there is
     no current span in any of the context.
