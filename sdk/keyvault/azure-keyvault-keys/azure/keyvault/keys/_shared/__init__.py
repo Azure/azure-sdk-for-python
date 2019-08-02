@@ -3,12 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from collections import namedtuple
+import platform
+from .._version import VERSION
 
 try:
     import urllib.parse as parse
 except ImportError:
     # pylint:disable=import-error
     import urlparse as parse  # type: ignore
+
+USER_AGENT = "azsdk-python-keyvault-keys/{} Python/{} ({})".format(
+    VERSION, platform.python_version(), platform.platform()
+)
 
 from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
 from .client_base import KeyVaultClientBase

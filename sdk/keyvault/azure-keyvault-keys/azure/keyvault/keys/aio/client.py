@@ -13,7 +13,11 @@ from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 
 class KeyClient(AsyncKeyVaultClientBase):
-    """A high-level interface for managing a vault's keys.
+    """A high-level asynchronous interface for managing a vault's keys.
+
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity.aio`
+    :param str vault_url: URL of the vault the client will access
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
