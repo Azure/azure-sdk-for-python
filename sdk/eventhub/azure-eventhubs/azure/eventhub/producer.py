@@ -215,7 +215,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 wrapper_event_data = event_data
             else:
                 if partition_key:
-                    event_data = self._set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]

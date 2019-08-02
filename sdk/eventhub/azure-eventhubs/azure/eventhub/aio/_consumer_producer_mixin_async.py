@@ -66,6 +66,8 @@ class ConsumerProducerMixin(object):
         """
         # pylint: disable=protected-access
         if not self.running:
+            if self._handler:
+                await self._handler.close_async()
             if self.redirected:
                 alt_creds = {
                     "username": self.client._auth_config.get("iot_username"),
