@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c2f27ef8-b3c6-11e9-a6e0-b831b58100e8
+      - bef6875a-b4d3-11e9-b8c6-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:46 GMT
+      - Fri, 02 Aug 2019 03:15:14 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:46 GMT
+      : Fri, 02 Aug 2019 03:15:13 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA749D5A2"'
+      : '"0x8D716F7A346FB7E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:46 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 56ff9f36-f01e-009c-2ed3-471fbd000000
+      x-ms-request-id: 6f4ecf10-601e-00bb-5fe0-4885f4000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -54,11 +54,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c31d10e6-b3c6-11e9-a6c0-b831b58100e8
+      - bf1b9b64-b4d3-11e9-8933-b831b58100e8
       x-ms-copy-source:
       - http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:46 GMT
+      - Fri, 02 Aug 2019 03:15:14 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -72,19 +72,19 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA76902C5"'
+      : '"0x8D716F7A3772300"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id: 22f6d7cf-a3d9-492f-a986-8960e85ad743
+      x-ms-copy-id: b7db6d27-2656-4c5b-808e-922a705fb485
       x-ms-copy-status: pending
-      x-ms-request-id: 56ff9f55-f01e-009c-49d3-471fbd000000
+      x-ms-request-id: 6f4ecf33-601e-00bb-7ee0-4885f4000000
       x-ms-version: '2018-03-28'
     status:
       code: 202
@@ -105,15 +105,15 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c3396198-b3c6-11e9-9bf8-b831b58100e8
+      - bf49648c-b4d3-11e9-8525-b831b58100e8
       x-ms-copy-action:
       - abort
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt?copyid=22f6d7cf-a3d9-492f-a986-8960e85ad743&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt?copyid=b7db6d27-2656-4c5b-808e-922a705fb485&comp=copy
   response:
     body:
       string: ''
@@ -123,11 +123,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 56ff9fa3-f01e-009c-10d3-471fbd000000
+      x-ms-request-id: 6f4ecfa4-601e-00bb-66e0-4885f4000000
       x-ms-version: '2018-03-28'
     status:
       code: 204
@@ -138,7 +138,7 @@ interactions:
         - https
         - amqptest.blob.core.windows.net
         - /utcontainer853e11a1/59466-0.txt
-        - copyid=22f6d7cf-a3d9-492f-a986-8960e85ad743&comp=copy
+        - copyid=b7db6d27-2656-4c5b-808e-922a705fb485&comp=copy
         - ''
 - request:
     body: null
@@ -148,9 +148,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c346f758-b3c6-11e9-843e-b831b58100e8
+      - bf52b358-b4d3-11e9-82dd-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: HEAD
@@ -170,13 +170,13 @@ interactions:
       : text/plain; charset=UTF-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA7722C19"'
+      : '"0x8D716F7A3804C60"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -186,15 +186,15 @@ interactions:
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-copy-completion-time: Wed, 31 Jul 2019 19:09:47 GMT
-      x-ms-copy-id: 22f6d7cf-a3d9-492f-a986-8960e85ad743
+      x-ms-copy-completion-time: Fri, 02 Aug 2019 03:15:15 GMT
+      x-ms-copy-id: b7db6d27-2656-4c5b-808e-922a705fb485
       x-ms-copy-progress: 0/439274
       x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status: aborted
-      x-ms-creation-time: Wed, 31 Jul 2019 19:09:47 GMT
+      x-ms-creation-time: Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 56ff9fcb-f01e-009c-34d3-471fbd000000
+      x-ms-request-id: 6f4ecfb7-601e-00bb-79e0-4885f4000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -218,9 +218,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c34e4b86-b3c6-11e9-ba1c-b831b58100e8
+      - bf5858a4-b4d3-11e9-a327-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -230,7 +230,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:56ff9fe0-f01e-009c-46d3-471fbd000000\nTime:2019-07-31T19:09:47.3231697Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:6f4ecfc1-601e-00bb-02e0-4885f4000000\nTime:2019-08-02T03:15:15.2799036Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -243,7 +243,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -251,7 +251,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: InvalidRange
-      x-ms-request-id: 56ff9fe0-f01e-009c-46d3-471fbd000000
+      x-ms-request-id: 6f4ecfc1-601e-00bb-02e0-4885f4000000
       x-ms-version: '2018-03-28'
     status:
       code: 416
@@ -274,9 +274,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c35529a8-b3c6-11e9-8a0e-b831b58100e8
+      - bf5dd6e2-b4d3-11e9-9e14-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -296,13 +296,13 @@ interactions:
       : text/plain; charset=UTF-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA7722C19"'
+      : '"0x8D716F7A3804C60"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -310,15 +310,15 @@ interactions:
       - Vary
       : Origin
       x-ms-blob-type: BlockBlob
-      x-ms-copy-completion-time: Wed, 31 Jul 2019 19:09:47 GMT
-      x-ms-copy-id: 22f6d7cf-a3d9-492f-a986-8960e85ad743
+      x-ms-copy-completion-time: Fri, 02 Aug 2019 03:15:15 GMT
+      x-ms-copy-id: b7db6d27-2656-4c5b-808e-922a705fb485
       x-ms-copy-progress: 0/439274
       x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status: aborted
-      x-ms-creation-time: Wed, 31 Jul 2019 19:09:47 GMT
+      x-ms-creation-time: Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 56ff9ff9-f01e-009c-5cd3-471fbd000000
+      x-ms-request-id: 6f4ecfc8-601e-00bb-07e0-4885f4000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -342,9 +342,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c35ca35c-b3c6-11e9-b412-b831b58100e8
+      - bf635acc-b4d3-11e9-b256-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -354,7 +354,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:56ffa00a-f01e-009c-6ad3-471fbd000000\nTime:2019-07-31T19:09:47.4172360Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:6f4ecfd1-601e-00bb-10e0-4885f4000000\nTime:2019-08-02T03:15:15.3519544Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -367,7 +367,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -375,7 +375,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: InvalidRange
-      x-ms-request-id: 56ffa00a-f01e-009c-6ad3-471fbd000000
+      x-ms-request-id: 6f4ecfd1-601e-00bb-10e0-4885f4000000
       x-ms-version: '2018-03-28'
     status:
       code: 416
@@ -398,9 +398,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c363a642-b3c6-11e9-afbe-b831b58100e8
+      - bf68d910-b4d3-11e9-9ac6-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:47 GMT
+      - Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -420,13 +420,13 @@ interactions:
       : text/plain; charset=UTF-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:14 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA7722C19"'
+      : '"0x8D716F7A3804C60"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:47 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -434,15 +434,15 @@ interactions:
       - Vary
       : Origin
       x-ms-blob-type: BlockBlob
-      x-ms-copy-completion-time: Wed, 31 Jul 2019 19:09:47 GMT
-      x-ms-copy-id: 22f6d7cf-a3d9-492f-a986-8960e85ad743
+      x-ms-copy-completion-time: Fri, 02 Aug 2019 03:15:15 GMT
+      x-ms-copy-id: b7db6d27-2656-4c5b-808e-922a705fb485
       x-ms-copy-progress: 0/439274
       x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status: aborted
-      x-ms-creation-time: Wed, 31 Jul 2019 19:09:47 GMT
+      x-ms-creation-time: Fri, 02 Aug 2019 03:15:15 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 56ffa01b-f01e-009c-7ad3-471fbd000000
+      x-ms-request-id: 6f4ecfd9-601e-00bb-17e0-4885f4000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:

@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - f3d5a0a2-b3c6-11e9-9141-b831b58100e8
+      - f8038466-b4d3-11e9-9588-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:11:08 GMT
+      - Fri, 02 Aug 2019 03:16:50 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAD81CAD60"'
+      : '"0x8D716F7DC490ACA"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:50 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 769b7748-801e-005f-44d3-4796fe000000
+      x-ms-request-id: e92c20b8-501e-00b3-05e0-489e87000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -78,9 +78,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-client-request-id:
-      - f3f358f4-b3c6-11e9-832d-b831b58100e8
+      - f81d757a-b4d3-11e9-acfe-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:11:08 GMT
+      - Fri, 02 Aug 2019 03:16:50 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -97,17 +97,17 @@ interactions:
       : wSm6AE0NostabHQkXtLQ8A==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAD8291CA8"'
+      : '"0x8D716F7DC518B7B"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:50 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 769b7777-801e-005f-6dd3-4796fe000000
+      x-ms-request-id: e92c20ce-501e-00b3-16e0-489e87000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -129,9 +129,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - f3fbe40c-b3c6-11e9-8d4f-b831b58100e8
+      - f8258bf4-b4d3-11e9-9bb4-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:11:08 GMT
+      - Fri, 02 Aug 2019 03:16:50 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -145,18 +145,18 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAD8291CA8"'
+      : '"0x8D716F7DC518B7B"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:11:08 GMT
+      : Fri, 02 Aug 2019 03:16:50 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 769b7798-801e-005f-08d3-4796fe000000
-      x-ms-snapshot: '2019-07-31T19:11:08.9878449Z'
+      x-ms-request-id: e92c20d5-501e-00b3-1de0-489e87000000
+      x-ms-snapshot: '2019-08-02T03:16:50.5799715Z'
       x-ms-version: '2018-03-28'
     status:
       code: 201

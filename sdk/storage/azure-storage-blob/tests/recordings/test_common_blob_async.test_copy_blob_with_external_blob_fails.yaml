@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d4b4fc64-b3c6-11e9-9ac2-b831b58100e8
+      - d6b8a8f4-b4d3-11e9-94f9-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:10:16 GMT
+      - Fri, 02 Aug 2019 03:15:54 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:10:15 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAB8FC01E5"'
+      : '"0x8D716F7BAFC0D34"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:10:16 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: af9b4832-901e-002d-2ed3-47e7c0000000
+      x-ms-request-id: ddac466f-c01e-0071-74e0-481639000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -54,11 +54,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d4ddf39c-b3c6-11e9-891c-b831b58100e8
+      - d6d09db4-b4d3-11e9-903a-b831b58100e8
       x-ms-copy-source:
       - http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-date:
-      - Wed, 31 Jul 2019 19:10:16 GMT
+      - Fri, 02 Aug 2019 03:15:54 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -72,19 +72,19 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:10:16 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAB931C6DC"'
+      : '"0x8D716F7BB3303C0"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:10:16 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id: c83be3d9-10ed-49e3-b2a2-de7159c4b394
+      x-ms-copy-id: 2a9442fc-d552-4521-a80d-ec6dc739c6e3
       x-ms-copy-status: pending
-      x-ms-request-id: af9b4866-901e-002d-5dd3-47e7c0000000
+      x-ms-request-id: ddac4687-c01e-0071-07e0-481639000000
       x-ms-version: '2018-03-28'
     status:
       code: 202
@@ -105,9 +105,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d5021e92-b3c6-11e9-b8d0-b831b58100e8
+      - d7054250-b4d3-11e9-a8c4-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:10:17 GMT
+      - Fri, 02 Aug 2019 03:15:55 GMT
       x-ms-version:
       - '2018-03-28'
     method: HEAD
@@ -127,13 +127,13 @@ interactions:
       : text/plain; charset=UTF-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:10:16 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAB931C6DC"'
+      : '"0x8D716F7BB3303C0"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:10:16 GMT
+      : Fri, 02 Aug 2019 03:15:54 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -143,14 +143,14 @@ interactions:
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-copy-id: c83be3d9-10ed-49e3-b2a2-de7159c4b394
+      x-ms-copy-id: 2a9442fc-d552-4521-a80d-ec6dc739c6e3
       x-ms-copy-progress: 0/439274
       x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status: pending
-      x-ms-creation-time: Wed, 31 Jul 2019 19:10:16 GMT
+      x-ms-creation-time: Fri, 02 Aug 2019 03:15:54 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: af9b48e1-901e-002d-4ad3-47e7c0000000
+      x-ms-request-id: ddac4710-c01e-0071-79e0-481639000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -172,9 +172,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d89b6cc0-b3c6-11e9-9412-b831b58100e8
+      - da9e9786-b4d3-11e9-8f2d-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:10:23 GMT
+      - Fri, 02 Aug 2019 03:16:01 GMT
       x-ms-version:
       - '2018-03-28'
     method: HEAD
@@ -194,13 +194,13 @@ interactions:
       : text/plain; charset=UTF-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:10:22 GMT
+      : Fri, 02 Aug 2019 03:16:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAB97FA7A3"'
+      : '"0x8D716F7BB92C114"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:10:17 GMT
+      : Fri, 02 Aug 2019 03:15:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -210,16 +210,16 @@ interactions:
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-copy-completion-time: Wed, 31 Jul 2019 19:10:17 GMT
-      x-ms-copy-id: c83be3d9-10ed-49e3-b2a2-de7159c4b394
+      x-ms-copy-completion-time: Fri, 02 Aug 2019 03:15:55 GMT
+      x-ms-copy-id: 2a9442fc-d552-4521-a80d-ec6dc739c6e3
       x-ms-copy-progress: 0/439274
       x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status: failed
       x-ms-copy-status-description: 500 InternalServerError "Copy failed."
-      x-ms-creation-time: Wed, 31 Jul 2019 19:10:16 GMT
+      x-ms-creation-time: Fri, 02 Aug 2019 03:15:54 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: af9b5110-901e-002d-2bd3-47e7c0000000
+      x-ms-request-id: ddac4d4d-c01e-0071-7ce0-481639000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:

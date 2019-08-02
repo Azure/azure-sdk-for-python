@@ -11,213 +11,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 06a1c770-b324-11e9-b918-b831b58100e8
+      - a23149a8-b4d2-11e9-bd30-b831b58100e8
       x-ms-date:
-      - Tue, 30 Jul 2019 23:44:52 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:91fd34a7-501e-0056-0930-478c70000000\nTime:2019-07-30T23:44:52.4088569Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
-        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '376'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Tue, 30 Jul 2019 23:44:52 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 91fd34a7-501e-0056-0930-478c70000000
-      x-ms-version: '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest.blob.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 0be99e6c-b325-11e9-957c-b831b58100e8
-      x-ms-date:
-      - Tue, 30 Jul 2019 23:52:10 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:56984630-701e-00c9-4531-47f4ca000000\nTime:2019-07-30T23:52:10.7821877Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
-        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '376'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Tue, 30 Jul 2019 23:52:10 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 56984630-701e-00c9-4531-47f4ca000000
-      x-ms-version: '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest.blob.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 49d7547a-b328-11e9-9aa6-b831b58100e8
-      x-ms-date:
-      - Wed, 31 Jul 2019 00:15:23 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:290ef193-101e-00bf-4835-477076000000\nTime:2019-07-31T00:15:23.1440131Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
-        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '376'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Wed, 31 Jul 2019 00:15:22 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 290ef193-101e-00bf-4835-477076000000
-      x-ms-version: '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest.blob.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 3431acdc-b32c-11e9-a5d5-b831b58100e8
-      x-ms-date:
-      - Wed, 31 Jul 2019 00:43:24 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:9212277c-501e-0056-5e38-478c70000000\nTime:2019-07-31T00:43:24.8040278Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
-        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '376'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Wed, 31 Jul 2019 00:43:23 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 9212277c-501e-0056-5e38-478c70000000
-      x-ms-version: '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest.blob.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 85150790-b342-11e9-bfe6-b831b58100e8
-      x-ms-date:
-      - Wed, 31 Jul 2019 03:23:09 GMT
+      - Fri, 02 Aug 2019 03:07:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -225,7 +21,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:1cd55e12-001e-00c6-0d4f-47193c000000\nTime:2019-07-31T03:23:09.4142168Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        specified is not syntactically valid.\nRequestId:512a17e9-601e-0077-7bdf-48e141000000\nTime:2019-08-02T03:07:16.9741458Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
         days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -236,12 +32,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:23:08 GMT
+      : Fri, 02 Aug 2019 03:07:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 1cd55e12-001e-00c6-0d4f-47193c000000
+      x-ms-request-id: 512a17e9-601e-0077-7bdf-48e141000000
       x-ms-version: '2018-03-28'
     status:
       code: 400

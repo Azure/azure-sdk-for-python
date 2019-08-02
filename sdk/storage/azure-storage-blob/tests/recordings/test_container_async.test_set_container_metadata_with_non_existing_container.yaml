@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 969d13d4-b3ea-11e9-b576-b831b58100e8
+      - 66ff3300-b4d5-11e9-bf19-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 23:26:14 GMT
+      - Fri, 02 Aug 2019 03:27:06 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -21,7 +21,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:e4aed728-401e-0024-64f7-47fd4e000000\nTime:2019-07-31T23:26:14.3131299Z</Message></Error>"
+        specified container does not exist.\nRequestId:51fb34ae-a01e-0061-1ae2-4820df000000\nTime:2019-08-02T03:27:06.1516756Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -31,12 +31,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 23:26:13 GMT
+      : Fri, 02 Aug 2019 03:27:05 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ContainerNotFound
-      x-ms-request-id: e4aed728-401e-0024-64f7-47fd4e000000
+      x-ms-request-id: 51fb34ae-a01e-0061-1ae2-4820df000000
       x-ms-version: '2018-03-28'
     status:
       code: 404

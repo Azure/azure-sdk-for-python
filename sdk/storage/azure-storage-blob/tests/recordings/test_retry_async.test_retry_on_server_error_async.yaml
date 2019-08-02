@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 97ed4678-b3d9-11e9-994a-b831b58100e8
+      - 156fc450-b4d6-11e9-b372-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 21:24:34 GMT
+      - Fri, 02 Aug 2019 03:31:58 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 21:24:34 GMT
+      : Fri, 02 Aug 2019 03:31:58 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715FD7C3390DC"'
+      : '"0x8D716F9F9B2CD45"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 21:24:35 GMT
+      : Fri, 02 Aug 2019 03:31:58 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e78e511c-e01e-00ee-22e6-476e83000000
+      x-ms-request-id: a8e380f7-f01e-0097-31e2-4807c9000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -54,9 +54,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 97ed4678-b3d9-11e9-994a-b831b58100e8
+      - 156fc450-b4d6-11e9-b372-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 21:24:34 GMT
+      - Fri, 02 Aug 2019 03:31:58 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -64,7 +64,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:af617de9-401e-00ac-1ee6-474597000000\nTime:2019-07-31T21:24:51.6113478Z</Message></Error>"
+        specified container already exists.\nRequestId:ca97ce91-201e-003f-41e2-48d3dc000000\nTime:2019-08-02T03:32:16.8897530Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -74,12 +74,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 21:24:50 GMT
+      : Fri, 02 Aug 2019 03:32:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ContainerAlreadyExists
-      x-ms-request-id: af617de9-401e-00ac-1ee6-474597000000
+      x-ms-request-id: ca97ce91-201e-003f-41e2-48d3dc000000
       x-ms-version: '2018-03-28'
     status:
       code: 409
@@ -100,9 +100,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a1e37a5c-b3d9-11e9-b0aa-b831b58100e8
+      - 204dc1f8-b4d6-11e9-b0ee-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 21:24:51 GMT
+      - Fri, 02 Aug 2019 03:32:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -116,11 +116,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 21:24:50 GMT
+      : Fri, 02 Aug 2019 03:32:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: af617e12-401e-00ac-44e6-474597000000
+      x-ms-request-id: ca97cea0-201e-003f-4ce2-48d3dc000000
       x-ms-version: '2018-03-28'
     status:
       code: 202

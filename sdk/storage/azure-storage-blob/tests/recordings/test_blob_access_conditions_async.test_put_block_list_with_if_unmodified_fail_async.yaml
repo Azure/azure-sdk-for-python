@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 56f20210-b345-11e9-8a54-b831b58100e8
+      - a4cc16e4-b4d1-11e9-b78d-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:20 GMT
+      - Fri, 02 Aug 2019 03:00:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715693B3C0A72"'
+      : '"0x8D716F5890ED54A"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9783ed28-a01e-00cb-5f52-47f630000000
+      x-ms-request-id: 69b10c1d-a01e-008f-6bde-482a5c000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -60,9 +60,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-client-request-id:
-      - 57245ca2-b345-11e9-ad1a-b831b58100e8
+      - a4e3e492-b4d1-11e9-8105-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:20 GMT
+      - Fri, 02 Aug 2019 03:00:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -79,17 +79,17 @@ interactions:
       : 1B2M2Y8AsgTpgAmY7PhCfg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715693B47671D"'
+      : '"0x8D716F5891732F5"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9783ed43-a01e-00cb-7352-47f630000000
+      x-ms-request-id: 69b10c39-a01e-008f-80de-482a5c000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -113,9 +113,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 572df876-b345-11e9-baba-b831b58100e8
+      - a4e9fee6-b4d1-11e9-b46b-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:20 GMT
+      - Fri, 02 Aug 2019 03:00:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -132,11 +132,11 @@ interactions:
       : 4fr/s+YU5sL7p0KWliOGtw==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9783ed59-a01e-00cb-0852-47f630000000
+      x-ms-request-id: 69b10c3e-a01e-008f-05de-482a5c000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -151,53 +151,6 @@ interactions:
         - blockid=MQ%3D%3D&comp=block
         - ''
 - request:
-    body: BBB
-    headers:
-      Content-Length:
-      - '3'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 572f33e8-b345-11e9-88e0-b831b58100e8
-      x-ms-date:
-      - Wed, 31 Jul 2019 03:43:20 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer98dd2215/blob1?blockid=Mg%3D%3D&comp=block
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Md5
-      : K7Il8LqaWJMHV6ho7VfZow==
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 148ad510-c01e-0058-6f52-47607b000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-03-28'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest.blob.core.windows.net
-        - /utcontainer98dd2215/blob1
-        - blockid=Mg%3D%3D&comp=block
-        - ''
-- request:
     body: CCC
     headers:
       Content-Length:
@@ -207,9 +160,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 57306b7a-b345-11e9-a75e-b831b58100e8
+      - a4eac246-b4d1-11e9-b812-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:20 GMT
+      - Fri, 02 Aug 2019 03:00:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -226,11 +179,11 @@ interactions:
       : 3vuZ5pqfH24G8VAGsfFmrg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: b5325423-b01e-00d4-0e52-472d20000000
+      x-ms-request-id: 15e984c8-701e-008d-19de-4828a6000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -245,6 +198,53 @@ interactions:
         - blockid=Mw%3D%3D&comp=block
         - ''
 - request:
+    body: BBB
+    headers:
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - a4ea7426-b4d1-11e9-90d9-b831b58100e8
+      x-ms-date:
+      - Fri, 02 Aug 2019 03:00:11 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer98dd2215/blob1?blockid=Mg%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Md5
+      : K7Il8LqaWJMHV6ho7VfZow==
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 03:00:11 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: a5ad97ce-801e-0032-2ade-483cd0000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer98dd2215/blob1
+        - blockid=Mg%3D%3D&comp=block
+        - ''
+- request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <BlockList><Latest>MQ==</Latest><Latest>Mg==</Latest><Latest>Mw==</Latest></BlockList>'
@@ -254,13 +254,13 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       If-Unmodified-Since:
-      - Wed, 31 Jul 2019 03:28:21 GMT
+      - Fri, 02 Aug 2019 02:45:12 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 57575dba-b345-11e9-9f22-b831b58100e8
+      - a5015794-b4d1-11e9-8316-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:21 GMT
+      - Fri, 02 Aug 2019 03:00:12 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -268,7 +268,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:b5325448-b01e-00d4-3052-472d20000000\nTime:2019-07-31T03:43:20.9895716Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:a5ad97e7-801e-0032-3fde-483cd0000000\nTime:2019-08-02T03:00:12.0938010Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -278,12 +278,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:20 GMT
+      : Fri, 02 Aug 2019 03:00:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ConditionNotMet
-      x-ms-request-id: b5325448-b01e-00d4-3052-472d20000000
+      x-ms-request-id: a5ad97e7-801e-0032-3fde-483cd0000000
       x-ms-version: '2018-03-28'
     status:
       code: 412

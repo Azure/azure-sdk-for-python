@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3a0e6f5e-b345-11e9-afb4-b831b58100e8
+      - 94e5672e-b4d1-11e9-b4c0-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:42:31 GMT
+      - Fri, 02 Aug 2019 02:59:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:42:31 GMT
+      : Fri, 02 Aug 2019 02:59:45 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715691E4BD62C"'
+      : '"0x8D716F579290ECC"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 03:42:32 GMT
+      : Fri, 02 Aug 2019 02:59:45 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: c459d524-b01e-0057-0851-478d8d000000
+      x-ms-request-id: d83f4b62-b01e-0013-23de-4851e1000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -50,15 +50,15 @@ interactions:
     body: null
     headers:
       If-Unmodified-Since:
-      - Wed, 31 Jul 2019 03:57:32 GMT
+      - Fri, 02 Aug 2019 03:14:45 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3a324c42-b345-11e9-9d44-b831b58100e8
+      - 94fc2378-b4d1-11e9-b716-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:42:32 GMT
+      - Fri, 02 Aug 2019 02:59:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -72,11 +72,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:42:31 GMT
+      : Fri, 02 Aug 2019 02:59:45 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: c459d555-b01e-0057-3551-478d8d000000
+      x-ms-request-id: d83f4b72-b01e-0013-30de-4851e1000000
       x-ms-version: '2018-03-28'
     status:
       code: 202
@@ -97,9 +97,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3a430ca8-b345-11e9-b06c-b831b58100e8
+      - 95023e00-b4d1-11e9-bafc-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:42:32 GMT
+      - Fri, 02 Aug 2019 02:59:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -107,7 +107,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:c459d59c-b01e-0057-7651-478d8d000000\nTime:2019-07-31T03:42:32.2121758Z</Message></Error>"
+        specified container does not exist.\nRequestId:d83f4b7e-b01e-0013-3cde-4851e1000000\nTime:2019-08-02T02:59:45.2557596Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -117,7 +117,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:42:31 GMT
+      : Fri, 02 Aug 2019 02:59:45 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -125,7 +125,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: ContainerNotFound
-      x-ms-request-id: c459d59c-b01e-0057-7651-478d8d000000
+      x-ms-request-id: d83f4b7e-b01e-0013-3cde-4851e1000000
       x-ms-version: '2018-03-28'
     status:
       code: 404

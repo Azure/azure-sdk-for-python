@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c3ea1af4-b3c6-11e9-9d02-b831b58100e8
+      - bfedcbee-b4d3-11e9-ac91-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:48 GMT
+      - Fri, 02 Aug 2019 03:15:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:48 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715EAA830D9A5"'
+      : '"0x8D716F7A43156B6"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 19:09:48 GMT
+      : Fri, 02 Aug 2019 03:15:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 26804c98-601e-0011-15d3-47531b000000
+      x-ms-request-id: 841cd04c-b01e-00df-61e0-483554000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -54,9 +54,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c4071a1c-b3c6-11e9-b59a-b831b58100e8
+      - c005c0dc-b4d3-11e9-a3a5-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 19:09:48 GMT
+      - Fri, 02 Aug 2019 03:15:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: HEAD
@@ -67,7 +67,7 @@ interactions:
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 19:09:48 GMT
+      : Fri, 02 Aug 2019 03:15:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -78,7 +78,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: ContainerNotFound
-      x-ms-request-id: 26804cc3-601e-0011-3bd3-47531b000000
+      x-ms-request-id: 841cd061-b01e-00df-72e0-483554000000
       x-ms-version: '2018-03-28'
     status:
       code: 404

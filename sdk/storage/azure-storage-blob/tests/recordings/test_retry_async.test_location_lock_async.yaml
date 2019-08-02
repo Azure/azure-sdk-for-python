@@ -9,9 +9,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 9585ebac-b3d9-11e9-adf7-b831b58100e8
+      - 13b9dfba-b4d6-11e9-be59-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 21:24:30 GMT
+      - Fri, 02 Aug 2019 03:31:55 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -27,7 +27,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 21:24:30 GMT
+      : Fri, 02 Aug 2019 03:31:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -37,7 +37,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 7b968745-b01e-007e-74e6-47fbcf000000
+      x-ms-request-id: 93123afc-f01e-0072-58e2-48153e000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -60,9 +60,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 959d6c2e-b3d9-11e9-9675-b831b58100e8
+      - 13d1d482-b4d6-11e9-8925-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 21:24:31 GMT
+      - Fri, 02 Aug 2019 03:31:56 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -78,7 +78,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 21:24:30 GMT
+      : Fri, 02 Aug 2019 03:31:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -88,7 +88,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 7b96876a-b01e-007e-14e6-47fbcf000000
+      x-ms-request-id: 93123b13-f01e-0072-6ae2-48153e000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
