@@ -20,7 +20,7 @@ from .downloads import process_range_and_offset
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body
+    content = data.response.body()
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(

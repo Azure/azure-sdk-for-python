@@ -95,9 +95,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
+    @record
     def test_create_queue(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_queue())
 
@@ -111,9 +110,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
+    @record
     def test_create_queue_fail_on_exist(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_queue_fail_on_exist())
 
@@ -127,9 +125,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
+    @record
     def test_create_queue_fail_on_exist_different_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_queue_fail_on_exist_different_metadata())
 
@@ -146,9 +143,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual('test', props.metadata['val1'])
         self.assertEqual('blah', props.metadata['val2'])
 
+    @record
     def test_create_queue_with_options(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_queue_with_options())
 
@@ -160,9 +156,8 @@ class StorageQueueTestAsync(QueueTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await queue_client.delete_queue()
 
+    @record
     def test_delete_non_existing_queue(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_non_existing_queue())
 
@@ -176,9 +171,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertIsNone(deleted)
 
+    @record
     def test_delete_existing_queue_fail_not_exist(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_existing_queue_fail_not_exist())
 
@@ -230,9 +224,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
+    @record
     def test_list_queues_with_options_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_queues_with_options())
 
@@ -256,9 +249,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
+    @record
     def test_list_queues_with_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_queues_with_metadata())
 
@@ -274,9 +266,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_set_queue_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_metadata())
 
@@ -290,9 +281,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertTrue(props.approximate_message_count >= 1)
         self.assertEqual(0, len(props.metadata))
 
+    @record
     def test_get_queue_metadata_message_count(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_queue_metadata_message_count())
 
@@ -306,9 +296,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_queue_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_exists())
 
@@ -321,9 +310,8 @@ class StorageQueueTestAsync(QueueTestCase):
 
         # Assert
 
+    @record
     def test_queue_not_exists(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_not_exists())
 
@@ -343,9 +331,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
+    @record
     def test_put_message(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_message())
 
@@ -363,9 +350,8 @@ class StorageQueueTestAsync(QueueTestCase):
             messages[0].expiration_time,
             messages[0].insertion_time + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
+    @record
     def test_put_message_large_time_to_live(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_message_large_time_to_live())
 
@@ -380,9 +366,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Assert
         self.assertEqual(messages[0].expiration_time.year, date.max.year)
 
+    @record
     def test_put_message_infinite_time_to_live(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_message_infinite_time_to_live())
 
@@ -411,9 +396,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsInstance(message.expiration_time, datetime)
         self.assertIsInstance(message.time_next_visible, datetime)
 
+    @record
     def test_get_messages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_messages())
 
@@ -443,9 +427,8 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertNotEqual('', message.time_next_visible)
 
+    @record
     def test_get_messages_with_options(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_messages_with_options())
 
@@ -471,9 +454,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.expiration_time)
         self.assertIsNone(message.time_next_visible)
 
+    @record
     def test_peek_messages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_peek_messages())
 
@@ -499,9 +481,8 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertIsNone(message.time_next_visible)
 
+    @record
     def test_peek_messages_with_options(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_peek_messages_with_options())
 
@@ -519,9 +500,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(0, len(result))
 
+    @record
     def test_clear_messages(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_clear_messages())
 
@@ -542,9 +522,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(messages)
         self.assertEqual(3, len(messages)-1)
 
+    @record
     def test_delete_message(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_message())
 
@@ -584,9 +563,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(message.expiration_time)
         self.assertIsNotNone(message.time_next_visible)
 
+    @record
     def test_update_message(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_message())
 
@@ -628,9 +606,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(message.expiration_time)
         self.assertIsNotNone(message.time_next_visible)
 
+    @record
     def test_update_message_content(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_message_content())
 
@@ -665,9 +642,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @record
     def test_account_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
 
@@ -693,9 +669,8 @@ class StorageQueueTestAsync(QueueTestCase):
         queues = list(queue_li)
         self.assertIsNotNone(queues)
 
+    @record
     def test_token_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 
@@ -728,9 +703,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @record
     def test_sas_read(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_read())
 
@@ -760,9 +734,8 @@ class StorageQueueTestAsync(QueueTestCase):
         result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
+    @record
     def test_sas_add(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_add())
 
@@ -802,9 +775,8 @@ class StorageQueueTestAsync(QueueTestCase):
         result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
+    @record
     def test_sas_update(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_update())
 
@@ -836,9 +808,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @record
     def test_sas_process(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_process())
 
@@ -879,9 +850,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @record
     def test_sas_signed_identifier(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_signed_identifier())
 
@@ -896,9 +866,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_get_queue_acl(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_queue_acl())
 
@@ -915,9 +884,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_get_queue_acl_iter(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_queue_acl_iter())
 
@@ -931,9 +899,8 @@ class StorageQueueTestAsync(QueueTestCase):
 
             # Assert
 
+    @record
     def test_get_queue_acl_with_non_existing_queue(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_queue_acl_with_non_existing_queue())
 
@@ -949,9 +916,8 @@ class StorageQueueTestAsync(QueueTestCase):
         acl = await queue_client.get_queue_access_policy()
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_queue_acl(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl())
 
@@ -967,9 +933,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_set_queue_acl_with_empty_signed_identifiers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl_with_empty_signed_identifiers())
 
@@ -989,9 +954,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNone(acl['empty'].expiry)
         self.assertIsNone(acl['empty'].start)
 
+    @record
     def test_set_queue_acl_with_empty_signed_identifier(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl_with_empty_signed_identifier())
 
@@ -1014,9 +978,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(len(acl), 1)
         self.assertTrue('testid' in acl)
 
+    @record
     def test_set_queue_acl_with_signed_identifiers(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl_with_signed_identifiers())
 
@@ -1033,9 +996,8 @@ class StorageQueueTestAsync(QueueTestCase):
         with self.assertRaises(ValueError):
             await queue_client.set_queue_access_policy(identifiers)
 
+    @record
     def test_set_queue_acl_too_many_ids(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl_too_many_ids())
 
@@ -1047,11 +1009,8 @@ class StorageQueueTestAsync(QueueTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await queue_client.set_queue_access_policy()
 
-            # Assert
-
+    @record
     def test_set_queue_acl_with_non_existing_queue(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_queue_acl_with_non_existing_queue())
 
@@ -1066,9 +1025,8 @@ class StorageQueueTestAsync(QueueTestCase):
 
             # Asserts
 
+    @record
     def test_unicode_create_queue_unicode_name(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_create_queue_unicode_name())
 
@@ -1089,9 +1047,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsInstance(message.expiration_time, datetime)
         self.assertIsInstance(message.time_next_visible, datetime)
 
+    @record
     def test_unicode_get_messages_unicode_data(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_messages_unicode_data())
 
@@ -1120,9 +1077,8 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsInstance(message.expiration_time, datetime)
         self.assertIsInstance(message.time_next_visible, datetime)
 
+    @record
     def test_unicode_update_message_unicode_data(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_update_message_unicode_data())
 
