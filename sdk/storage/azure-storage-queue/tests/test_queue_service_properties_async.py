@@ -8,7 +8,8 @@
 import unittest
 import pytest
 import asyncio
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.queue.aio import (
@@ -29,7 +30,15 @@ from queuetestcase import (
 
 
 # ------------------------------------------------------------------------------
-
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 class QueueServicePropertiesTest(QueueTestCase):
     def setUp(self):
@@ -37,7 +46,7 @@ class QueueServicePropertiesTest(QueueTestCase):
 
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(url, credential=credential)
+        self.qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
@@ -131,9 +140,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         props = await self.qsc.get_service_properties()
         self._assert_properties_default(props)
 
+    @record
     def test_queue_service_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_service_properties())
 
@@ -150,9 +158,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_logging_equal(received_props.logging, logging)
 
+    @record
     def test_set_logging(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_logging())
 
@@ -167,9 +174,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
+    @record
     def test_set_hour_metrics(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_hour_metrics())
 
@@ -185,9 +191,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
+    @record
     def test_set_minute_metrics(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_minute_metrics())
 
@@ -217,9 +222,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         received_props = await self.qsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
+    @record
     def test_set_cors(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_cors())
 
@@ -230,9 +234,8 @@ class QueueServicePropertiesTest(QueueTestCase):
                           RetentionPolicy,
                           True, None)
 
+    @record
     def test_retention_no_days(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_no_days())
 
@@ -246,9 +249,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         with self.assertRaises(HttpResponseError):
             await self.qsc.set_service_properties()
     
+    @record
     def test_too_many_cors_rules(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_too_many_cors_rules())
 
@@ -261,9 +263,8 @@ class QueueServicePropertiesTest(QueueTestCase):
         with self.assertRaises(HttpResponseError):
             await self.qsc.set_service_properties()
 
+    @record
     def test_retention_too_long(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retention_too_long())
 

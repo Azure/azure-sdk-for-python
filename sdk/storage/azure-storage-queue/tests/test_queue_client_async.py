@@ -7,7 +7,8 @@ import unittest
 import pytest
 import platform
 import asyncio
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient
@@ -27,6 +28,18 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
 
 class StorageQueueClientTestAsync(QueueTestCase):
     def setUp(self):
@@ -52,7 +65,7 @@ class StorageQueueClientTestAsync(QueueTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self._get_queue_url(), credential=self.account_key, queue='foo')
+                self._get_queue_url(), credential=self.account_key, queue='foo', transport=AiohttpTestTransport())
 
             # Assert
             self.validate_standard_account_endpoints(service, url)
@@ -327,17 +340,16 @@ class StorageQueueClientTestAsync(QueueTestCase):
             metadata = metadata_cr.metadata
             self.assertEqual(metadata, {'hello': 'world'})
         finally:
-            service.delete_queue(name)
+            await service.delete_queue(name)
 
+    @record
     def test_request_callback_signed_header(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_request_callback_signed_header())
 
     async def _test_response_callback(self):
         # Arrange
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
         queue = service.get_queue_client(name)
 
@@ -350,14 +362,13 @@ class StorageQueueClientTestAsync(QueueTestCase):
         exists = await queue.get_queue_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
+    @record
     def test_response_callback(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_response_callback())
 
     async def _test_user_agent_default(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -369,16 +380,15 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
+    @record
     def test_user_agent_default(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_default())
 
     async def _test_user_agent_custom(self):
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self._get_queue_url(), credential=self.account_key, user_agent=custom_app)
+            self._get_queue_url(), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -400,14 +410,13 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
+    @record
     def test_user_agent_custom(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_custom())
 
     async def _test_user_agent_append(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -420,9 +429,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @record
     def test_user_agent_append(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append())
 # ------------------------------------------------------------------------------

@@ -10,6 +10,8 @@ import pytest
 import asyncio
 
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue import (
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
@@ -38,13 +40,24 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageQueueEncodingTestAsync(QueueTestCase):
     def setUp(self):
         super(StorageQueueEncodingTestAsync, self).setUp()
 
         queue_url = self._get_queue_url()
         credentials = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials)
+        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_queues = []
 
     def tearDown(self):
@@ -98,9 +111,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
+    @record
     def test_message_text_xml(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_text_xml())
 
@@ -112,9 +124,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
+    @record
     def test_message_text_xml_whitespace(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_text_xml_whitespace())
 
@@ -127,9 +138,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         with self.assertRaises(HttpResponseError):
             await queue.enqueue_message(message)
 
+    @record
     def test_message_text_xml_invalid_chars(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_text_xml_invalid_chars())
 
@@ -149,9 +159,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
+    @record
     def test_message_text_base64(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_text_base64())
 
@@ -171,9 +180,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
+    @record
     def test_message_bytes_base64(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_bytes_base64())
 
@@ -189,9 +197,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
+    @record
     def test_message_bytes_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_bytes_fails())
 
@@ -214,9 +221,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
+    @record
     def test_message_text_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_text_fails())
 
@@ -244,9 +250,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
 
+    @record
     def test_message_base64_decode_fails(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_message_base64_decode_fails())
 

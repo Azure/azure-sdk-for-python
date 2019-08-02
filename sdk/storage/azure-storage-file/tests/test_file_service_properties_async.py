@@ -9,7 +9,8 @@ import unittest
 import asyncio
 
 from azure.core.exceptions import HttpResponseError
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.file.aio import (
     FileServiceClient,
     Metrics,
@@ -26,6 +27,15 @@ from filetestcase import (
 
 
 # ------------------------------------------------------------------------------
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 class FileServicePropertiesTest(FileTestCase):
@@ -34,7 +44,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential)
+        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
@@ -82,9 +92,8 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(props.minute_metrics, Metrics())
         self._assert_cors_equal(props.cors, list())
 
+    @record
     def test_file_service_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_service_properties_async())
 
@@ -100,9 +109,8 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
+    @record
     def test_set_hour_metrics_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_hour_metrics_async())
 
@@ -118,9 +126,8 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
+    @record
     def test_set_minute_metrics_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_minute_metrics_async())
 
@@ -149,9 +156,8 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
+    @record
     def test_set_cors_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_cors_async())
 
@@ -168,9 +174,8 @@ class FileServicePropertiesTest(FileTestCase):
         with self.assertRaises(HttpResponseError):
             await self.fsc.set_service_properties(None, None, cors)       
 
+    @record
     def test_too_many_cors_rules_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_too_many_cors_rules_async())
 

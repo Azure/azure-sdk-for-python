@@ -9,7 +9,8 @@
 from datetime import datetime, timedelta
 import pytest
 import asyncio
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 try:
     import settings_real as settings
 except ImportError:
@@ -21,6 +22,16 @@ from queuetestcase import (
     record
 )
 
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 class TestQueueAuthSamplesAsync(QueueTestCase):
     url = "{}://{}.queue.core.windows.net".format(
@@ -46,9 +57,8 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
 
         assert properties is not None
     
+    @record
     def test_auth_connection_string(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_auth_connection_string())
 
@@ -57,16 +67,15 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
         # Instantiate a QueueServiceClient using a shared access key
         # [START create_queue_service_client]
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.url, credential=self.shared_access_key)
+        queue_service = QueueServiceClient(account_url=self.url, credential=self.shared_access_key, transport=AiohttpTestTransport())
         # [END create_queue_service_client]
         # Get information for the Queue Service
         properties = await queue_service.get_service_properties()
 
         assert properties is not None
 
+    @record
     def test_auth_shared_key(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_auth_shared_key())
 
@@ -90,9 +99,8 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
 
         assert properties is not None
 
+    @record
     def test_auth_active_directory(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_auth_active_directory())
 
@@ -103,7 +111,7 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
 
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string, transport=AiohttpTestTransport())
 
         # Create a SAS token to use for authentication of a client
         sas_token = queue_service.generate_shared_access_signature(
@@ -114,8 +122,7 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
 
         assert sas_token is not None
     
+    @record
     def test_auth_shared_access_signature(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_auth_shared_access_signature())

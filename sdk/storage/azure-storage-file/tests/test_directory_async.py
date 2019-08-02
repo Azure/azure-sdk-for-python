@@ -9,7 +9,8 @@ import unittest
 import asyncio
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.file.aio import (
     FileServiceClient,
     StorageErrorCode,
@@ -24,6 +25,16 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
 
 class StorageDirectoryTest(FileTestCase):
     def setUp(self):
@@ -31,7 +42,7 @@ class StorageDirectoryTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential)
+        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
 
     def tearDown(self):
@@ -64,9 +75,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_directories_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_directories_async())
 
@@ -83,9 +93,8 @@ class StorageDirectoryTest(FileTestCase):
         props = await directory.get_directory_properties()
         self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_create_directories_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_directories_with_metadata_async())
 
@@ -102,9 +111,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_directories_fail_on_exist_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_directories_fail_on_exist_async())
 
@@ -121,9 +129,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(created)
         self.assertEqual(created.directory_path, 'dir1/dir2')
 
+    @record
     def test_create_subdirectories_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_subdirectories_async())
 
@@ -143,9 +150,8 @@ class StorageDirectoryTest(FileTestCase):
         properties = await created.get_directory_properties()
         self.assertEqual(properties.metadata, metadata)
 
+    @record
     def test_create_subdirectories_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_subdirectories_with_metadata_async())
 
@@ -187,9 +193,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await new_file.get_file_properties()
 
+    @record
     def test_delete_file_in_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_file_in_directory_async())
 
@@ -209,9 +214,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await subdir.get_directory_properties()
 
+    @record
     def test_delete_subdirectories_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_subdirectories_async())
 
@@ -229,9 +233,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
 
+    @record
     def test_get_directory_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_directory_properties_async())
 
@@ -256,9 +259,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.last_modified)
         self.assertDictEqual(metadata, props.metadata)
 
+    @record
     def test_get_directory_properties_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_directory_properties_with_snapshot_async())
 
@@ -281,9 +283,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(snapshot_props.metadata)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
+    @record
     def test_get_directory_metadata_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_directory_metadata_with_snapshot_async())
 
@@ -299,9 +300,8 @@ class StorageDirectoryTest(FileTestCase):
 
             # Assert
 
+    @record
     def test_get_directory_properties_with_non_existing_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_directory_properties_with_non_existing_directory_async())
 
@@ -317,9 +317,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_directory_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_directory_exists_async())
 
@@ -335,9 +334,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
+    @record
     def test_directory_not_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_directory_not_exists_async())
 
@@ -354,9 +352,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
 
+    @record
     def test_directory_parent_not_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_directory_parent_not_exists_async())
 
@@ -376,9 +373,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_directory_exists_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_directory_exists_with_snapshot_async())
 
@@ -398,9 +394,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
+    @record
     def test_directory_not_exists_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_directory_not_exists_with_snapshot_async())
 
@@ -418,9 +413,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_get_set_directory_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_set_directory_metadata_async())
 
@@ -454,9 +448,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 6)
         self.assertEqual(list_dir, expected)
 
+    @record
     def test_list_subdirectories_and_files_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_subdirectories_and_files_async())
 
@@ -487,9 +480,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
+    @record
     def test_list_subdirectories_and_files_with_prefix_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_subdirectories_and_files_with_prefix_async())
 
@@ -526,9 +518,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
+    @record
     def test_list_subdirectories_and_files_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_subdirectories_and_files_with_snapshot_async())
 
@@ -558,9 +549,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 2)
         self.assertEqual(list_dir, expected)
 
+    @record
     def test_list_nested_subdirectories_and_files_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_nested_subdirectories_and_files_async())
 
@@ -578,9 +568,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await directory.get_directory_properties()
 
+    @record
     def test_delete_directory_with_existing_share_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_directory_with_existing_share_async())
 
@@ -596,9 +585,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
+    @record
     def test_delete_directory_with_non_existing_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_directory_with_non_existing_directory_async())
 
@@ -621,9 +609,8 @@ class StorageDirectoryTest(FileTestCase):
         else:
             self.assertFalse(props.server_encrypted)
 
+    @record
     def test_get_directory_properties_server_encryption_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_directory_properties_server_encryption_async())
 
