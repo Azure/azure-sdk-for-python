@@ -57,6 +57,8 @@ class StorageShareTest(FileTestCase):
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
         self.fsc = FileServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.fsc.__aenter__())
         self.test_shares = []
 
     def tearDown(self):
@@ -65,6 +67,7 @@ class StorageShareTest(FileTestCase):
             try:
                 for s in self.test_shares:
                     loop.run_until_complete(self.fsc.delete_share(s.share_name, delete_snapshots=True))
+                loop.run_until_complete(self.fsc.__aexit__())
             except:
                 pass
         return super(StorageShareTest, self).tearDown()
