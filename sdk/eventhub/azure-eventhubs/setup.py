@@ -77,9 +77,6 @@ setup(
     install_requires=[
         'uamqp~=1.2.0',
         'azure-common~=1.1',
-        'python-dateutil>=2.8.0',
-        'cryptography>=2.1.4',
-        'requests>=2.18.4',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
