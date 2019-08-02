@@ -15,13 +15,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 1bb374a8-b565-11e9-a85b-2816a845e8c6
+      - 77acfc12-b575-11e9-a369-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:47 GMT
+      - Fri, 02 Aug 2019 22:32:53 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueuea8d70bb6
+    uri: https://storagename.queue.core.windows.net/pythonqueuea8d70bb6
   response:
     body:
       string: ''
@@ -29,11 +29,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:47 GMT
+      - Fri, 02 Aug 2019 22:32:53 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - cb4faa77-d003-002a-0471-491145000000
+      - 52e561eb-8003-0054-5082-498e8a000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -53,13 +53,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 1be0597e-b565-11e9-8a66-2816a845e8c6
+      - 77d79edc-b575-11e9-9573-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:47 GMT
+      - Fri, 02 Aug 2019 22:32:53 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueuea8d70bb6?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pythonqueuea8d70bb6?comp=metadata
   response:
     body:
       string: ''
@@ -69,7 +69,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:47 GMT
+      - Fri, 02 Aug 2019 22:32:53 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -77,7 +77,7 @@ interactions:
       x-ms-approximate-messages-count:
       - '0'
       x-ms-request-id:
-      - cb4faa86-d003-002a-1171-491145000000
+      - 52e56205-8003-0054-6782-498e8a000000
       x-ms-version:
       - '2018-03-28'
     status:

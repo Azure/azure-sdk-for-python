@@ -15,13 +15,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 1e6f922e-b565-11e9-9529-2816a845e8c6
+      - 7a47f0dc-b575-11e9-bab2-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:51 GMT
+      - Fri, 02 Aug 2019 22:32:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueue4ea015da
+    uri: https://storagename.queue.core.windows.net/pythonqueue4ea015da
   response:
     body:
       string: ''
@@ -29,11 +29,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:51 GMT
+      - Fri, 02 Aug 2019 22:32:57 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - da2968dc-f003-00d8-2271-49c3d1000000
+      - 680cb65e-8003-00ba-6682-498409000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -42,7 +42,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-02T20:30:52Z</Start><Expiry>2019-08-02T21:35:52Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-02T22:27:58Z</Start><Expiry>2019-08-02T23:32:58Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - '*/*'
@@ -57,13 +57,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 1ea32914-b565-11e9-8ef5-2816a845e8c6
+      - 7a78561c-b575-11e9-ae68-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:52 GMT
+      - Fri, 02 Aug 2019 22:32:58 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueue4ea015da?comp=acl
+    uri: https://storagename.queue.core.windows.net/pythonqueue4ea015da?comp=acl
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:51 GMT
+      - Fri, 02 Aug 2019 22:32:57 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - da2968e1-f003-00d8-2471-49c3d1000000
+      - 680cb664-8003-00ba-6a82-498409000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -95,23 +95,23 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 1eb43592-b565-11e9-9fb6-2816a845e8c6
+      - 7a8cba80-b575-11e9-8385-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:52 GMT
+      - Fri, 02 Aug 2019 22:32:58 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueue4ea015da?comp=acl
+    uri: https://storagename.queue.core.windows.net/pythonqueue4ea015da?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-02T20:30:52.0000000Z</Start><Expiry>2019-08-02T21:35:52.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-02T22:27:58.0000000Z</Start><Expiry>2019-08-02T23:32:58.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       Cache-Control:
       - no-cache
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 20:35:51 GMT
+      - Fri, 02 Aug 2019 22:32:57 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -119,7 +119,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - da2968e3-f003-00d8-2671-49c3d1000000
+      - 680cb670-8003-00ba-7482-498409000000
       x-ms-version:
       - '2018-03-28'
     status:

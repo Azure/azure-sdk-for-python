@@ -15,15 +15,15 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2c27c02e-b565-11e9-959f-2816a845e8c6
+      - 8732dab6-b575-11e9-9bc4-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:14 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/cont4db115a6
+    uri: https://storagename.queue.core.windows.net/cont4db115a6
   response:
     body:
       string: ''
@@ -31,11 +31,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:36:14 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 68038756-8003-00ba-1471-498409000000
+      - 2a2dc306-0003-0023-7c82-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -55,13 +55,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2c6478ac-b565-11e9-8056-2816a845e8c6
+      - 87638fc0-b575-11e9-9366-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:15 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/cont4db115a6?comp=metadata
+    uri: https://storagename.queue.core.windows.net/cont4db115a6?comp=metadata
   response:
     body:
       string: ''
@@ -71,7 +71,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:36:14 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -81,7 +81,7 @@ interactions:
       x-ms-meta-hello:
       - world
       x-ms-request-id:
-      - 68038763-8003-00ba-1e71-498409000000
+      - 2a2dc30e-0003-0023-0182-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -103,13 +103,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2c7203e8-b565-11e9-ba06-2816a845e8c6
+      - 8776e1e6-b575-11e9-bbce-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:15 GMT
+      - Fri, 02 Aug 2019 22:33:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://blobstoragename.queue.core.windows.net/cont4db115a6
+    uri: https://storagename.queue.core.windows.net/cont4db115a6
   response:
     body:
       string: ''
@@ -117,11 +117,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:36:14 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 68038777-8003-00ba-2771-498409000000
+      - 2a2dc310-0003-0023-0382-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:

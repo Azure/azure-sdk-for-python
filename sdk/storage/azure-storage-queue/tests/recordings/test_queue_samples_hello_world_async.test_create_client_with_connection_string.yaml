@@ -9,13 +9,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3bd03aba-b565-11e9-abd8-2816a845e8c6
+      - 97182e52-b575-11e9-9dd7-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:41 GMT
+      - Fri, 02 Aug 2019 22:33:46 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
@@ -29,7 +29,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:40 GMT
+      : Fri, 02 Aug 2019 22:33:45 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -39,7 +39,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: f5cad8fe-5003-0030-4671-493e2a000000
+      x-ms-request-id: 98803171-a003-0043-4182-494ee9000000
       x-ms-version: '2018-03-28'
     status:
       code: 200

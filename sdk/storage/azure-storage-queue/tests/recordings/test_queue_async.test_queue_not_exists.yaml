@@ -7,17 +7,17 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 27b40014-b565-11e9-b974-2816a845e8c6
+      - 83ab5752-b575-11e9-ae16-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:07 GMT
+      - Fri, 02 Aug 2019 22:33:13 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/missing349b0fe3?comp=metadata
+    uri: https://storagename.queue.core.windows.net/missing349b0fe3?comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:352d1666-9003-008c-6f71-49295b000000\nTime:2019-08-02T20:36:07.3041134Z</Message></Error>"
+        specified queue does not exist.\nRequestId:b5e04d04-6003-0011-0582-49531b000000\nTime:2019-08-02T22:33:13.4843847Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -27,7 +27,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:06 GMT
+      : Fri, 02 Aug 2019 22:33:12 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -35,7 +35,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: QueueNotFound
-      x-ms-request-id: 352d1666-9003-008c-6f71-49295b000000
+      x-ms-request-id: b5e04d04-6003-0011-0582-49531b000000
       x-ms-version: '2018-03-28'
     status:
       code: 404

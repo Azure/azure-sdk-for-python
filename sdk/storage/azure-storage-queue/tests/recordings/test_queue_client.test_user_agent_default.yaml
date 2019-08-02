@@ -13,13 +13,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2d4ed580-b565-11e9-af0f-2816a845e8c6
+      - 884ce494-b575-11e9-8434-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:16 GMT
+      - Fri, 02 Aug 2019 22:33:21 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
@@ -30,7 +30,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 20:36:16 GMT
+      - Fri, 02 Aug 2019 22:33:21 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -38,7 +38,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - efd71747-4003-002f-3a71-49e53a000000
+      - f9d9cfeb-d003-0080-7182-49c7aa000000
       x-ms-version:
       - '2018-03-28'
     status:

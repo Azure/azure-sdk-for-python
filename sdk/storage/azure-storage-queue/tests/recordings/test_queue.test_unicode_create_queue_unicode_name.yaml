@@ -15,30 +15,30 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 1f7be1e4-b565-11e9-beb8-2816a845e8c6
+      - 7b3c5a26-b575-11e9-b9b1-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:53 GMT
+      - Fri, 02 Aug 2019 22:32:59 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:8691b72c-f003-0036-7571-49c952000000\nTime:2019-08-02T20:35:53.6626709Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:3d44cf1d-1003-0073-4b82-4914c3000000\nTime:2019-08-02T22:32:59.4737874Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 20:35:53 GMT
+      - Fri, 02 Aug 2019 22:32:58 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidResourceName
       x-ms-request-id:
-      - 8691b72c-f003-0036-7571-49c952000000
+      - 3d44cf1d-1003-0073-4b82-4914c3000000
       x-ms-version:
       - '2018-03-28'
     status:

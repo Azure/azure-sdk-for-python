@@ -7,13 +7,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3148419e-b565-11e9-bd39-2816a845e8c6
+      - 8c7feab0-b575-11e9-8374-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:23 GMT
+      - Fri, 02 Aug 2019 22:33:28 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/mytestqueued22317a2
+    uri: https://storagename.queue.core.windows.net/mytestqueued22317a2
   response:
     body:
       string: ''
@@ -23,11 +23,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:22 GMT
+      : Fri, 02 Aug 2019 22:33:28 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: f002bc78-2003-0095-0271-490533000000
+      x-ms-request-id: 4c16ee30-c003-00bd-6e82-49728c000000
       x-ms-version: '2018-03-28'
     status:
       code: 204
@@ -54,33 +54,33 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 31609af8-b565-11e9-8829-2816a845e8c6
+      - 8ca206f6-b575-11e9-ab1f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:23 GMT
+      - Fri, 02 Aug 2019 22:33:28 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/mytestqueued22317a2/messages
+    uri: https://storagename.queue.core.windows.net/mytestqueued22317a2/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0c1f8d5b-3ea4-4c60-a8f0-345f0c2b51b3</MessageId><InsertionTime>Fri,
-        02 Aug 2019 20:36:23 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 20:36:23
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAxKL+8nFJ1QE=</PopReceipt><TimeNextVisible>Fri,
-        02 Aug 2019 20:36:23 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>42938ccd-352b-4bc1-bb29-5b438d9fa60d</MessageId><InsertionTime>Fri,
+        02 Aug 2019 22:33:28 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 22:33:28
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAfXU2ToJJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 22:33:28 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Type
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:22 GMT
+      : Fri, 02 Aug 2019 22:33:28 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       ? !!python/object/new:multidict._istr.istr
       - Transfer-Encoding
       : chunked
-      x-ms-request-id: f002bc8a-2003-0095-1271-490533000000
+      x-ms-request-id: 4c16ee54-c003-00bd-0c82-49728c000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -103,13 +103,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 31663c80-b565-11e9-bddf-2816a845e8c6
+      - 8ca7a74c-b575-11e9-9b2c-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:23 GMT
+      - Fri, 02 Aug 2019 22:33:28 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/mytestqueued22317a2/messages?peekonly=true
+    uri: https://storagename.queue.core.windows.net/mytestqueued22317a2/messages?peekonly=true
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>6afa642d-e57a-45f1-84ed-b86e84935d3f</MessageId><InsertionTime>Fri,
@@ -124,7 +124,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:22 GMT
+      : Fri, 02 Aug 2019 22:33:28 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -134,7 +134,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: f002bc9c-2003-0095-2271-490533000000
+      x-ms-request-id: 4c16ee64-c003-00bd-1b82-49728c000000
       x-ms-version: '2018-03-28'
     status:
       code: 200

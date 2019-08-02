@@ -15,13 +15,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 185396f0-b565-11e9-bcd6-2816a845e8c6
+      - 749d4192-b575-11e9-8bc3-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:48 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/listqueue0560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue0560410cb
   response:
     body:
       string: ''
@@ -29,11 +29,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:40 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 13a6678d-2003-0059-0171-496186000000
+      - 46024894-2003-003f-2682-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -55,13 +55,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 18802dbe-b565-11e9-83fe-2816a845e8c6
+      - 74cbaa66-b575-11e9-8fe1-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:48 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/listqueue1560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue1560410cb
   response:
     body:
       string: ''
@@ -69,11 +69,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 13a667aa-2003-0059-1571-496186000000
+      - 460248a4-2003-003f-3482-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -95,13 +95,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 188e54de-b565-11e9-8986-2816a845e8c6
+      - 74d90eb8-b575-11e9-a724-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:48 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/listqueue2560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue2560410cb
   response:
     body:
       string: ''
@@ -109,11 +109,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 13a667bf-2003-0059-2571-496186000000
+      - 460248b1-2003-003f-4082-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -135,13 +135,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 189e019a-b565-11e9-a9bc-2816a845e8c6
+      - 74e5fe2e-b575-11e9-bedc-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:42 GMT
+      - Fri, 02 Aug 2019 22:32:48 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/listqueue3560410cb
+    uri: https://storagename.queue.core.windows.net/listqueue3560410cb
   response:
     body:
       string: ''
@@ -149,11 +149,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 13a667d2-2003-0059-3571-496186000000
+      - 460248c0-2003-003f-4e82-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -173,24 +173,24 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 18aa5538-b565-11e9-8e68-2816a845e8c6
+      - 74f2edac-b575-11e9-838d-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:42 GMT
+      - Fri, 02 Aug 2019 22:32:48 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&maxresults=3&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/blobstoragename/listqueue3560410cb</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue0560410cb</Name></Queue><Queue><Name>listqueue1560410cb</Name></Queue><Queue><Name>listqueue2560410cb</Name></Queue></Queues><NextMarker>/storagename/listqueue3560410cb</NextMarker></EnumerationResults>"
     headers:
       Cache-Control:
       - no-cache
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -198,7 +198,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 13a667e5-2003-0059-4671-496186000000
+      - 460248d2-2003-003f-5e82-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -218,17 +218,17 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 18b63524-b565-11e9-ab92-2816a845e8c6
+      - 74fe308a-b575-11e9-8f42-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:42 GMT
+      - Fri, 02 Aug 2019 22:32:49 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?prefix=listqueue&marker=%2Fblobstoragename%2Flistqueue3560410cb&include=metadata&comp=list
+    uri: https://storagename.queue.core.windows.net/?prefix=listqueue&marker=%2Fstoragename%2Flistqueue3560410cb&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/blobstoragename/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/storagename/listqueue3560410cb</Marker><Queues><Queue><Name>listqueue3560410cb</Name><Metadata
         /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       Cache-Control:
@@ -236,7 +236,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 20:35:41 GMT
+      - Fri, 02 Aug 2019 22:32:47 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -244,7 +244,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 13a667eb-2003-0059-4b71-496186000000
+      - 460248e0-2003-003f-6c82-49d3dc000000
       x-ms-version:
       - '2018-03-28'
     status:

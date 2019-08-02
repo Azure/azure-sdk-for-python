@@ -15,9 +15,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 126cd5e8-b565-11e9-9f22-2816a845e8c6
+      - 6f55e2be-b575-11e9-bc95-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:31 GMT
+      - Fri, 02 Aug 2019 22:32:39 GMT
       x-ms-meta:
       - '{''val1'': ''test'', ''val2'': ''blah''}'
       x-ms-meta-val1:
@@ -27,7 +27,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueue63ff1110
+    uri: https://storagename.queue.core.windows.net/pythonqueue63ff1110
   response:
     body:
       string: ''
@@ -35,11 +35,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:31 GMT
+      - Fri, 02 Aug 2019 22:32:38 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - d4dbf5cb-b003-00df-4d71-493554000000
+      - 0e63a336-c003-0053-7082-49780f000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -59,13 +59,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 129d887e-b565-11e9-9d15-2816a845e8c6
+      - 6f81432c-b575-11e9-94da-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:35:32 GMT
+      - Fri, 02 Aug 2019 22:32:39 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/pythonqueue63ff1110?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pythonqueue63ff1110?comp=metadata
   response:
     body:
       string: ''
@@ -75,7 +75,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 20:35:31 GMT
+      - Fri, 02 Aug 2019 22:32:38 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -87,7 +87,7 @@ interactions:
       x-ms-meta-val2:
       - blah
       x-ms-request-id:
-      - d4dbf5eb-b003-00df-6871-493554000000
+      - 0e63a37d-c003-0053-3382-49780f000000
       x-ms-version:
       - '2018-03-28'
     status:

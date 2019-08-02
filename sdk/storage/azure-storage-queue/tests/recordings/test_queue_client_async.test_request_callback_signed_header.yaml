@@ -7,15 +7,15 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2e01cb5a-b565-11e9-b2c1-2816a845e8c6
+      - 88e5e4ae-b575-11e9-a199-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:17 GMT
+      - Fri, 02 Aug 2019 22:33:22 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/contdaac1823
+    uri: https://storagename.queue.core.windows.net/contdaac1823
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:17 GMT
+      : Fri, 02 Aug 2019 22:33:21 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e861e403-3003-00a8-3471-49b015000000
+      x-ms-request-id: 52e58a19-8003-0054-1b82-498e8a000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -50,13 +50,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2e2714e8-b565-11e9-a0b5-2816a845e8c6
+      - 88fda236-b575-11e9-8bc5-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:18 GMT
+      - Fri, 02 Aug 2019 22:33:22 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/contdaac1823?comp=metadata
+    uri: https://storagename.queue.core.windows.net/contdaac1823?comp=metadata
   response:
     body:
       string: ''
@@ -69,7 +69,7 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:17 GMT
+      : Fri, 02 Aug 2019 22:33:21 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -78,7 +78,7 @@ interactions:
       : Origin
       x-ms-approximate-messages-count: '0'
       x-ms-meta-hello: world
-      x-ms-request-id: e861e41d-3003-00a8-4c71-49b015000000
+      x-ms-request-id: 52e58a24-8003-0054-2282-498e8a000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -99,13 +99,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2e2f250a-b565-11e9-a7f5-2816a845e8c6
+      - 89058c02-b575-11e9-9dbf-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:18 GMT
+      - Fri, 02 Aug 2019 22:33:22 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://blobstoragename.queue.core.windows.net/contdaac1823
+    uri: https://storagename.queue.core.windows.net/contdaac1823
   response:
     body:
       string: ''
@@ -115,11 +115,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:17 GMT
+      : Fri, 02 Aug 2019 22:33:21 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e861e425-3003-00a8-5471-49b015000000
+      x-ms-request-id: 52e58a2f-8003-0054-2c82-498e8a000000
       x-ms-version: '2018-03-28'
     status:
       code: 204

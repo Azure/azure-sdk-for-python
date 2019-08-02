@@ -11,13 +11,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 437fd018-b565-11e9-9cf7-2816a845e8c6
+      - 9f43e624-b575-11e9-adcc-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:54 GMT
+      - Fri, 02 Aug 2019 22:33:59 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
@@ -27,11 +27,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:53 GMT
+      : Fri, 02 Aug 2019 22:33:59 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: edf96ec8-0003-0028-8072-4913bf000000
+      x-ms-request-id: 465a4a7b-1003-003c-1c82-49d0db000000
       x-ms-version: '2018-03-28'
     status:
       code: 202
@@ -54,13 +54,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 439a3812-b565-11e9-91b0-2816a845e8c6
+      - 9f5cca70-b575-11e9-bb4b-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 20:36:54 GMT
+      - Fri, 02 Aug 2019 22:34:00 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
@@ -74,7 +74,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 20:36:53 GMT
+      : Fri, 02 Aug 2019 22:33:59 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -84,7 +84,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: edf96ed7-0003-0028-0772-4913bf000000
+      x-ms-request-id: 465a4a8c-1003-003c-2382-49d0db000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
