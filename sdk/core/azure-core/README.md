@@ -41,6 +41,7 @@ class FooServiceClient:
         config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
         config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
         config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
+        return config
 
     def __init__(self, **kwargs):
         transport = kwargs.get('transport', RequestsTransport(**kwargs))
