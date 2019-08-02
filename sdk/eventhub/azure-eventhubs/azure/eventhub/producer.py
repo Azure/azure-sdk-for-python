@@ -104,7 +104,7 @@ class EventHubProducer(ConsumerProducerMixin):
             link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
-    def _open(self, timeout_time=None, **kwargs):
+    def _open(self, timeout_time=None):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
