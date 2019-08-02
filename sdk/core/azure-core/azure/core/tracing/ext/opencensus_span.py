@@ -5,6 +5,7 @@
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
 
 from opencensus.trace import Span, execution_context
+from opencensus.trace.tracer import Tracer
 from opencensus.trace.span import SpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
@@ -34,10 +35,8 @@ class OpenCensusSpan(object):
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
         """
-        if not span:
-            tracer = self.get_current_tracer()
-            span = tracer.start_span(name=name) # type: Span
-        self._span_instance = span
+        tracer = self.get_current_tracer()
+        self._span_instance = span or tracer.start_span(name=name)
         self._span_component = "component"
         self._http_user_agent = "http.user_agent"
         self._http_method = "http.method"
@@ -80,7 +79,7 @@ class OpenCensusSpan(object):
         :return: A key value pair dictionary
         """
         tracer_from_context = self.get_current_tracer()
-        temp_headers = {}
+        temp_headers = {} # type: Dict[str, str]
         if tracer_from_context is not None:
             ctx = tracer_from_context.span_context
             try:
@@ -146,7 +145,7 @@ class OpenCensusSpan(object):
 
     @classmethod
     def get_current_tracer(cls):
-        # type: () -> tracer_module.Tracer
+        # type: () -> Tracer
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
@@ -165,7 +164,7 @@ class OpenCensusSpan(object):
 
     @classmethod
     def set_current_tracer(cls, tracer):
-        # type: (tracer_module.Tracer) -> None
+        # type: (Tracer) -> None
         """
         Set the given tracer as the current tracer in the execution context.
         :param tracer: The tracer to set the current tracer as
