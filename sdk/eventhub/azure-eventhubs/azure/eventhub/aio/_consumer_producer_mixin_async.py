@@ -22,6 +22,7 @@ def _retry_decorator(to_be_wrapped_func):
         max_retries = self.client.config.max_retries
         retry_count = 0
         last_exception = None
+        kwargs.pop("timeout", None)
         while True:
             try:
                 return await to_be_wrapped_func(timeout_time=timeout_time, last_exception=last_exception, **kwargs)

@@ -191,7 +191,7 @@ class EventHubClient(EventHubClientAbstract):
         return output
 
     def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, EventPosition, int, str, int, asyncio.AbstractEventLoop) -> EventHubConsumer
+        # type: (str, str, EventPosition) -> EventHubConsumer
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
@@ -236,7 +236,7 @@ class EventHubClient(EventHubClientAbstract):
             prefetch=prefetch, loop=loop)
         return handler
 
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None, loop=None):
+    def create_producer(self, *, partition_id=None, operation=None, send_timeout=None, loop=None):
         # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
         """
         Create an async producer to send EventData object to an EventHub.

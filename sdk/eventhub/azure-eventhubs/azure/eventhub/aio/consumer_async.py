@@ -100,7 +100,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 if not self.messages_iter:
                     self.messages_iter = self._handler.receive_messages_iter_async()
                 message = await self.messages_iter.__anext__()
-                event_data = EventData(message=message)
+                event_data = EventData._from_message(message)
                 self.offset = EventPosition(event_data.offset, inclusive=False)
                 retry_count = 0
                 return event_data
@@ -166,7 +166,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             max_batch_size=max_batch_size,
             timeout=remaining_time_ms)
         for message in message_batch:
-            event_data = EventData(message=message)
+            event_data = EventData._from_message(message)
             self.offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
         return data_batch
@@ -184,7 +184,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             return self._handler._received_messages.qsize()
         return 0
 
-    async def receive(self, max_batch_size=None, timeout=None):
+    async def receive(self, *, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[EventData]
         """
         Receive events asynchronously from the EventHub.

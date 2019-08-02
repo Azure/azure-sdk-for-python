@@ -96,7 +96,7 @@ class EventHubConsumer(ConsumerProducerMixin):
                 if not self.messages_iter:
                     self.messages_iter = self._handler.receive_messages_iter()
                 message = next(self.messages_iter)
-                event_data = EventData(message=message)
+                event_data = EventData._from_message(message)
                 self.offset = EventPosition(event_data.offset, inclusive=False)
                 retry_count = 0
                 return event_data
@@ -160,7 +160,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
             timeout=remaining_time_ms)
         for message in message_batch:
-            event_data = EventData(message=message)
+            event_data = EventData._from_message(message)
             self.offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
         return data_batch

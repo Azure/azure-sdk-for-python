@@ -104,7 +104,7 @@ class EventHubProducer(ConsumerProducerMixin):
             link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
-    def _open(self, timeout_time=None, **kwargs):
+    def _open(self, timeout_time=None):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -117,10 +117,7 @@ class EventHubProducer(ConsumerProducerMixin):
             self.target = self.redirected.address
         super(EventHubProducer, self)._open(timeout_time)
 
-    def _send_event_data(self, **kwargs):
-        timeout_time = kwargs.get("timeout_time")
-        last_exception = kwargs.get("last_exception")
-
+    def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
             self._open(timeout_time)
             remaining_time = timeout_time - time.time()
@@ -168,7 +165,7 @@ class EventHubProducer(ConsumerProducerMixin):
         """
 
         if not self._max_message_size_on_link:
-            _retry_decorator(self._send_event_data)(self, timeout=self.client.config.send_timeout)
+            _retry_decorator(self._open)(self, timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
