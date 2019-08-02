@@ -9,15 +9,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b814b9b4-9924-11e9-bb3f-b831b58100e8
+      - 416b903a-b4b8-11e9-b019-2816a845e8c6
       x-ms-date:
-      - Thu, 27 Jun 2019 21:44:19 GMT
+      - Thu, 01 Aug 2019 23:58:27 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://storagename.file.core.windows.net/?restype=service&comp=properties
+    uri: https://remotestoragename.file.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
@@ -26,7 +28,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 27 Jun 2019 21:44:19 GMT
+      - Thu, 01 Aug 2019 23:58:24 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -34,7 +36,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - e0978288-801a-00bf-7931-2d6451000000
+      - 2a005557-001a-0049-6cc5-480b09000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -50,11 +52,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8ff3e8e8-992d-11e9-9ae7-b831b58100e8
+      - ed9f4fc6-b4b9-11e9-ac60-2816a845e8c6
       x-ms-date:
-      - Thu, 27 Jun 2019 22:47:37 GMT
+      - Fri, 02 Aug 2019 00:10:26 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -67,7 +71,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 27 Jun 2019 22:47:37 GMT
+      - Fri, 02 Aug 2019 00:10:22 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -75,7 +79,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 10c4725d-e01a-00e4-5a3a-2d5d6a000000
+      - 17ef84c3-b01a-0079-78c6-485123000000
       x-ms-version:
       - '2018-11-09'
     status:

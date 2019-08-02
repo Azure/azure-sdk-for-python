@@ -11,15 +11,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 01c0b5fa-9814-11e9-84aa-f45c89a7d159
+      - 825e12e4-b4b8-11e9-b192-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:12:10 GMT
+      - Fri, 02 Aug 2019 00:00:16 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/share62ad1111?restype=share
+    uri: https://remoteremotestoragename.file.core.windows.net/share62ad1111?restype=share
   response:
     body:
       string: ''
@@ -27,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:12:11 GMT
+      - Fri, 02 Aug 2019 00:00:13 GMT
       ETag:
-      - '"0x8D6FA37E6CDD42A"'
+      - '"0x8D716DC650D2E48"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:12:12 GMT
+      - Fri, 02 Aug 2019 00:00:14 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - fe63529b-d01a-0065-4720-2cd55d000000
+      - e969eb4f-d01a-0087-03c5-486d46000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -51,27 +53,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 01f39274-9814-11e9-b0d0-f45c89a7d159
+      - 829a2f6e-b4b8-11e9-a581-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:12:11 GMT
+      - Fri, 02 Aug 2019 00:00:16 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://blobstoragename.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
+    uri: https://remoteremotestoragename.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:fe63529e-d01a-0065-4820-2cd55d000000\n\
-        Time:2019-06-26T13:12:12.2878696Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:e969eb52-d01a-0087-04c5-486d46000000\nTime:2019-08-02T00:00:14.1364186Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:12:12 GMT
+      - Fri, 02 Aug 2019 00:00:13 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -79,7 +82,7 @@ interactions:
       x-ms-error-code:
       - ShareNotFound
       x-ms-request-id:
-      - fe63529e-d01a-0065-4820-2cd55d000000
+      - e969eb52-d01a-0087-04c5-486d46000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -97,15 +100,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e2af945a-9814-11e9-9af2-f45c89a7d159
+      - 12c18136-b4b9-11e9-b395-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:18:28 GMT
+      - Fri, 02 Aug 2019 00:04:18 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/share62ad1111?restype=share
+    uri: https://remotestoragename.file.core.windows.net/share62ad1111?restype=share
   response:
     body:
       string: ''
@@ -113,15 +118,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:18:29 GMT
+      - Fri, 02 Aug 2019 00:04:15 GMT
       ETag:
-      - '"0x8D6FA38C7BE4277"'
+      - '"0x8D716DCF55EA409"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:18:29 GMT
+      - Fri, 02 Aug 2019 00:04:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 7a67ff79-001a-0089-4b21-2cdd24000000
+      - 3ca14a65-001a-00a7-6fc5-48018a000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -137,27 +142,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e2e2f82c-9814-11e9-a153-f45c89a7d159
+      - 12eb3452-b4b9-11e9-9ad7-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:18:28 GMT
+      - Fri, 02 Aug 2019 00:04:19 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://blobstoragename.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
+    uri: https://remotestoragename.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:7a67ff7c-001a-0089-4c21-2cdd24000000\n\
-        Time:2019-06-26T13:18:29.6701966Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:3ca14a69-001a-00a7-70c5-48018a000000\nTime:2019-08-02T00:04:16.2531790Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:18:29 GMT
+      - Fri, 02 Aug 2019 00:04:15 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -165,7 +171,7 @@ interactions:
       x-ms-error-code:
       - ShareNotFound
       x-ms-request-id:
-      - 7a67ff7c-001a-0089-4c21-2cdd24000000
+      - 3ca14a69-001a-00a7-70c5-48018a000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -183,11 +189,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b1c58242-9818-11e9-b080-f45c89a7d159
+      - 316ce73a-b4ba-11e9-a0a8-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:45:44 GMT
+      - Fri, 02 Aug 2019 00:12:19 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -199,15 +207,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:45:43 GMT
+      - Fri, 02 Aug 2019 00:12:16 GMT
       ETag:
-      - '"0x8D6FA3C9660EB6E"'
+      - '"0x8D716DE140CF587"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:45:44 GMT
+      - Fri, 02 Aug 2019 00:12:17 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - fe635ee2-d01a-0065-0d25-2cd55d000000
+      - cf74e464-401a-00a0-48c6-48f70f000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -223,27 +231,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b237d862-9818-11e9-a4f0-f45c89a7d159
+      - 319a2988-b4ba-11e9-a770-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:45:44 GMT
+      - Fri, 02 Aug 2019 00:12:20 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
     uri: https://storagename.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:fe635ee5-d01a-0065-0e25-2cd55d000000\n\
-        Time:2019-06-26T13:45:44.8580563Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:cf74e466-401a-00a0-49c6-48f70f000000\nTime:2019-08-02T00:12:17.2029526Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:45:44 GMT
+      - Fri, 02 Aug 2019 00:12:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -251,7 +260,7 @@ interactions:
       x-ms-error-code:
       - ShareNotFound
       x-ms-request-id:
-      - fe635ee5-d01a-0065-0e25-2cd55d000000
+      - cf74e466-401a-00a0-49c6-48f70f000000
       x-ms-version:
       - '2018-11-09'
     status:

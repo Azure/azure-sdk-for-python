@@ -11,19 +11,21 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7e8faca4-9813-11e9-ada9-f45c89a7d159
+      - 5924a89e-b4b8-11e9-882a-2816a845e8c6
       x-ms-content-length:
       - '0'
       x-ms-date:
-      - Wed, 26 Jun 2019 13:08:30 GMT
+      - Thu, 01 Aug 2019 23:59:07 GMT
       x-ms-type:
       - file
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
+    uri: https://remotestoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
   response:
     body:
       string: ''
@@ -31,15 +33,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:08:31 GMT
+      - Thu, 01 Aug 2019 23:59:04 GMT
       ETag:
-      - '"0x8D6FA37639DA3CD"'
+      - '"0x8D716DC3BC47665"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:08:32 GMT
+      - Thu, 01 Aug 2019 23:59:04 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - ed580434-d01a-006e-0e20-2ccd29000000
+      - 1fd2aeff-101a-007f-66c5-48a65b000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -57,22 +59,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7ec2474a-9813-11e9-8f37-f45c89a7d159
+      - 594f4606-b4b8-11e9-b620-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:08:30 GMT
+      - Thu, 01 Aug 2019 23:59:07 GMT
       x-ms-range:
       - bytes=0-5
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://blobstoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
+    uri: https://remotestoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:ed580436-d01a-006e-0f20-2ccd29000000\n\
-        Time:2019-06-26T13:08:32.1830192Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:1fd2af01-101a-007f-67c5-48a65b000000\nTime:2019-08-01T23:59:04.8392412Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -81,7 +84,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:08:31 GMT
+      - Thu, 01 Aug 2019 23:59:04 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -89,7 +92,7 @@ interactions:
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - ed580436-d01a-006e-0f20-2ccd29000000
+      - 1fd2af01-101a-007f-67c5-48a65b000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -105,22 +108,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7ecead46-9813-11e9-9e96-f45c89a7d159
+      - 595b72b0-b4b8-11e9-aed3-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:08:31 GMT
+      - Thu, 01 Aug 2019 23:59:07 GMT
       x-ms-range:
       - bytes=3-5
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://blobstoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
+    uri: https://remotestoragename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:ed580437-d01a-006e-1020-2ccd29000000\n\
-        Time:2019-06-26T13:08:32.2650770Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:1fd2af02-101a-007f-68c5-48a65b000000\nTime:2019-08-01T23:59:04.9142947Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -129,7 +133,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:08:31 GMT
+      - Thu, 01 Aug 2019 23:59:04 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -137,7 +141,7 @@ interactions:
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - ed580437-d01a-006e-1020-2ccd29000000
+      - 1fd2af02-101a-007f-68c5-48a65b000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -155,13 +159,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b231ae02-981a-11e9-b58f-f45c89a7d159
+      - 0902e980-b4ba-11e9-ad5c-2816a845e8c6
       x-ms-content-length:
       - '0'
       x-ms-date:
-      - Wed, 26 Jun 2019 14:00:03 GMT
+      - Fri, 02 Aug 2019 00:11:11 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -175,15 +181,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 14:00:03 GMT
+      - Fri, 02 Aug 2019 00:11:09 GMT
       ETag:
-      - '"0x8D6FA3E9691A80D"'
+      - '"0x8D716DDEBA5634D"'
       Last-Modified:
-      - Wed, 26 Jun 2019 14:00:04 GMT
+      - Fri, 02 Aug 2019 00:11:09 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 87dbca8f-f01a-0079-7127-2c0d4a000000
+      - 6418fd20-901a-0008-3ec6-48231a000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -201,11 +207,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b265eae6-981a-11e9-9219-f45c89a7d159
+      - 0930ed34-b4ba-11e9-883f-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 14:00:04 GMT
+      - Fri, 02 Aug 2019 00:11:12 GMT
       x-ms-range:
       - bytes=0-5
       x-ms-version:
@@ -214,9 +222,8 @@ interactions:
     uri: https://storagename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:87dbca91-f01a-0079-7227-2c0d4a000000\n\
-        Time:2019-06-26T14:00:07.3656605Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:6418fd22-901a-0008-3fc6-48231a000000\nTime:2019-08-02T00:11:09.4046681Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -225,7 +232,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 14:00:06 GMT
+      - Fri, 02 Aug 2019 00:11:09 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -233,7 +240,7 @@ interactions:
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - 87dbca91-f01a-0079-7227-2c0d4a000000
+      - 6418fd22-901a-0008-3fc6-48231a000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -249,11 +256,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - b4608676-981a-11e9-9a19-f45c89a7d159
+      - 093c5714-b4ba-11e9-bd45-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 14:00:07 GMT
+      - Fri, 02 Aug 2019 00:11:12 GMT
       x-ms-range:
       - bytes=3-5
       x-ms-version:
@@ -262,9 +271,8 @@ interactions:
     uri: https://storagename.file.core.windows.net/utshareb8d917d0/utdirb8d917d0/fileb8d917d0
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:87dbca93-f01a-0079-7327-2c0d4a000000\n\
-        Time:2019-06-26T14:00:07.4777397Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:6418fd23-901a-0008-40c6-48231a000000\nTime:2019-08-02T00:11:09.4857260Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -273,7 +281,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 14:00:06 GMT
+      - Fri, 02 Aug 2019 00:11:09 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -281,7 +289,7 @@ interactions:
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - 87dbca93-f01a-0079-7327-2c0d4a000000
+      - 6418fd23-901a-0008-40c6-48231a000000
       x-ms-version:
       - '2018-11-09'
     status:

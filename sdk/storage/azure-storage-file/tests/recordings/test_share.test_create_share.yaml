@@ -11,15 +11,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a0d1e70a-9813-11e9-a8ff-f45c89a7d159
+      - 6f2c4b5c-b4b8-11e9-b2e9-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:09:28 GMT
+      - Thu, 01 Aug 2019 23:59:44 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/sharea5f30b66?restype=share
+    uri: https://remoteremotestoragename.file.core.windows.net/sharea5f30b66?restype=share
   response:
     body:
       string: ''
@@ -27,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:09:37 GMT
+      - Thu, 01 Aug 2019 23:59:41 GMT
       ETag:
-      - '"0x8D6FA3789B186ED"'
+      - '"0x8D716DC51EC8B16"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:09:35 GMT
+      - Thu, 01 Aug 2019 23:59:41 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - fa112a5c-e01a-0083-6020-2cc4ad000000
+      - 501bda9f-e01a-008f-3ec5-487635000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -53,15 +55,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - aca6adf8-9814-11e9-9db5-f45c89a7d159
+      - ffc13af8-b4b8-11e9-a6c1-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:16:57 GMT
+      - Fri, 02 Aug 2019 00:03:46 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/sharea5f30b66?restype=share
+    uri: https://remotestoragename.file.core.windows.net/sharea5f30b66?restype=share
   response:
     body:
       string: ''
@@ -69,15 +73,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:16:58 GMT
+      - Fri, 02 Aug 2019 00:03:43 GMT
       ETag:
-      - '"0x8D6FA3891D1D156"'
+      - '"0x8D716DCE26E671B"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:16:59 GMT
+      - Fri, 02 Aug 2019 00:03:44 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - b1ee133b-a01a-0061-4e21-2c20df000000
+      - eaced7c0-a01a-0044-69c5-48e405000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -95,11 +99,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 79b06cb4-9818-11e9-b02f-f45c89a7d159
+      - 20b4f964-b4ba-11e9-b9f8-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:44:09 GMT
+      - Fri, 02 Aug 2019 00:11:51 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -111,15 +117,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 13:44:09 GMT
+      - Fri, 02 Aug 2019 00:11:48 GMT
       ETag:
-      - '"0x8D6FA3C5E2DCFBF"'
+      - '"0x8D716DE03558933"'
       Last-Modified:
-      - Wed, 26 Jun 2019 13:44:10 GMT
+      - Fri, 02 Aug 2019 00:11:49 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 0315e388-301a-0064-6b25-2cd4a0000000
+      - b5da1865-901a-008b-7cc6-4883b7000000
       x-ms-version:
       - '2018-11-09'
     status:

@@ -9,27 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 0c09d5fe-97cf-11e9-babd-f45c89a7d159
+      - 02689812-b4b8-11e9-b917-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 04:58:32 GMT
+      - Thu, 01 Aug 2019 23:56:41 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://blobstoragename.file.core.windows.net/utshared53f13af/missing1%2Fmissing2?restype=directory
+    uri: https://remotestoragename.file.core.windows.net/utshared53f13af/missing1%2Fmissing2?restype=directory
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The\
-        \ specified parent path does not exist.\nRequestId:2a875058-501a-0030-67db-2b3e2a000000\n\
-        Time:2019-06-26T04:58:33.6982898Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
+        specified parent path does not exist.\nRequestId:e412fe30-801a-00bd-74c4-482ee5000000\nTime:2019-08-01T23:56:39.3795114Z</Message></Error>"
     headers:
       Content-Length:
       - '224'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 04:58:33 GMT
+      - Thu, 01 Aug 2019 23:56:39 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -37,7 +38,7 @@ interactions:
       x-ms-error-code:
       - ParentNotFound
       x-ms-request-id:
-      - 2a875058-501a-0030-67db-2b3e2a000000
+      - e412fe30-801a-00bd-74c4-482ee5000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -53,27 +54,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - aad764ca-981b-11e9-9ca8-f45c89a7d159
+      - a6c694d2-b4b9-11e9-8b12-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 14:07:00 GMT
+      - Fri, 02 Aug 2019 00:08:27 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
     uri: https://storagename.file.core.windows.net/utshared53f13af/missing1%2Fmissing2?restype=directory
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The\
-        \ specified parent path does not exist.\nRequestId:881cad80-f01a-005b-0e28-2c637c000000\n\
-        Time:2019-06-26T14:07:01.1916288Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
+        specified parent path does not exist.\nRequestId:0194bdc2-001a-00ca-61c6-48aba4000000\nTime:2019-08-02T00:08:24.6512678Z</Message></Error>"
     headers:
       Content-Length:
       - '224'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 14:07:00 GMT
+      - Fri, 02 Aug 2019 00:08:23 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -81,7 +83,7 @@ interactions:
       x-ms-error-code:
       - ParentNotFound
       x-ms-request-id:
-      - 881cad80-f01a-005b-0e28-2c637c000000
+      - 0194bdc2-001a-00ca-61c6-48aba4000000
       x-ms-version:
       - '2018-11-09'
     status:

@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 2a94ab82-b4b8-11e9-9e97-2816a845e8c6
+      x-ms-date:
+      - Thu, 01 Aug 2019 23:57:49 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://remoteremotestoragename.file.core.windows.net/remoteshare71b41138?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:374ee144-a01a-002b-67c4-482179000000\nTime:2019-08-01T23:57:46.5168556Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'W3mWCyuXQT/n0n7vXArEcPoRpibUr58IaqThm61/HDg='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:2a94ab82-b4b8-11e9-9e97-2816a845e8c6\nx-ms-date:Thu,
+        01 Aug 2019 23:57:49 GMT\nx-ms-version:2018-11-09\n/remoteremotestoragename/remoteshare71b41138\nrestype:share'.</AuthenticationErrorDetail></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '765'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Thu, 01 Aug 2019 23:57:45 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
+      x-ms-request-id: 374ee144-a01a-002b-67c4-482179000000
+    status:
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - storagename.file.core.windows.net
+        - /remoteshare71b41138
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d3aba2ca-b4b9-11e9-8911-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 00:09:42 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://remotestoragename.file.core.windows.net/remoteshare71b41138?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:607cd6e3-601a-0139-21c6-485330000000\nTime:2019-08-02T00:09:39.6958243Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'HMtbQQtjHJh1eSvflY8PVCbQIX8Pu9172/pDtmMF5Kc='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:d3aba2ca-b4b9-11e9-8911-2816a845e8c6\nx-ms-date:Fri,
+        02 Aug 2019 00:09:42 GMT\nx-ms-version:2018-11-09\n/remotestoragename/remoteshare71b41138\nrestype:share'.</AuthenticationErrorDetail></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '765'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 00:09:39 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
+      x-ms-request-id: 607cd6e3-601a-0139-21c6-485330000000
+    status:
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - storagename.file.core.windows.net
+        - /remoteshare71b41138
+        - restype=share
+        - ''
+version: 1

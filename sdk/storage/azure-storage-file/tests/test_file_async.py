@@ -11,7 +11,8 @@ import unittest
 import time
 from datetime import datetime, timedelta
 import asyncio
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 import requests
 import pytest
 
@@ -44,6 +45,17 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 
 # ------------------------------------------------------------------------------
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageFileTestAsync(FileTestCase):
     def setUp(self):
         super(StorageFileTestAsync, self).setUp()
@@ -54,13 +66,13 @@ class StorageFileTestAsync(FileTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024)
+        self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
 
         remote_url = self.get_remote_file_url()
         remote_credential = self.get_remote_shared_key_credential()
-        self.fsc2 = FileServiceClient(remote_url, credential=remote_credential)
+        self.fsc2 = FileServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
         self.remote_share_name = None
 
     def tearDown(self):
@@ -172,9 +184,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
     
+    @record
     def test_make_file_url_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_async())
 
@@ -190,9 +201,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/my.vhd')
 
+    @record
     def test_make_file_url_no_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_no_directory_async())
 
@@ -210,9 +220,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
+    @record
     def test_make_file_url_with_protocol(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_with_protocol())
 
@@ -233,9 +242,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME +
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
+    @record
     def test_make_file_url_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_make_file_url_with_sas())
 
@@ -258,9 +266,8 @@ class StorageFileTestAsync(FileTestCase):
             self.assertEqual(props.etag, resp['etag'])
             self.assertEqual(props.last_modified, resp['last_modified'])
 
+    @record
     def test_create_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_async())
 
@@ -285,9 +292,8 @@ class StorageFileTestAsync(FileTestCase):
             self.assertEqual(props.last_modified, resp['last_modified'])
             self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_create_file_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_metadata_async())
 
@@ -301,9 +307,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_file_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_exists_async())
 
@@ -322,9 +327,8 @@ class StorageFileTestAsync(FileTestCase):
 
         # Assert
 
+    @record
     def test_file_not_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_not_exists_async())
 
@@ -347,9 +351,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertTrue(props)
 
+    @record
     def test_file_exists_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_exists_with_snapshot_async())
 
@@ -373,9 +376,8 @@ class StorageFileTestAsync(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await snapshot_client.get_file_properties()
 
+    @record
     def test_file_not_exists_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_not_exists_with_snapshot_async())
 
@@ -390,9 +392,8 @@ class StorageFileTestAsync(FileTestCase):
         props = await file_client.get_file_properties()
         self.assertEqual(props.size, 5)
 
+    @record
     def test_resize_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_resize_file_async())
 
@@ -411,9 +412,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
 
+    @record
     def test_set_file_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_file_properties_async())
 
@@ -428,9 +428,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertIsNotNone(properties)
         self.assertEqual(properties.size, len(self.short_byte_data))
     
+    @record
     def test_get_file_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_properties_async())
 
@@ -463,9 +462,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(file_props.size, snapshot_props.size)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
+    @record
     def test_get_file_properties_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_properties_with_snapshot_async())
 
@@ -495,9 +493,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertDictEqual(metadata2, file_metadata.metadata)
         self.assertDictEqual(metadata, file_snapshot_metadata.metadata)
 
+    @record
     def test_get_file_metadata_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_metadata_with_snapshot_async())
 
@@ -516,9 +513,8 @@ class StorageFileTestAsync(FileTestCase):
 
             # Assert
 
+    @record
     def test_get_file_properties_with_non_existing_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_properties_with_non_existing_file_async())
 
@@ -533,9 +529,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertIsNotNone(md.metadata)
         self.assertEqual(0, len(md.metadata))
 
+    @record
     def test_get_file_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_metadata_async())
 
@@ -556,9 +551,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @record
     def test_set_file_metadata_with_upper_case_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_file_metadata_with_upper_case_async())
 
@@ -573,9 +567,8 @@ class StorageFileTestAsync(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await file_client.get_file_properties()
 
+    @record
     def test_delete_file_with_existing_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_file_with_existing_file_async())
 
@@ -594,9 +587,8 @@ class StorageFileTestAsync(FileTestCase):
 
             # Assert
 
+    @record
     def test_delete_file_with_non_existing_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_file_with_non_existing_file_async())
 
@@ -614,9 +606,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
+    @record
     def test_update_range_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_range_async())
 
@@ -630,9 +621,8 @@ class StorageFileTestAsync(FileTestCase):
 
         # Assert
 
+    @record
     def test_update_range_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_range_with_md5_async())
 
@@ -649,9 +639,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(b'\x00' * 512, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
+    @record
     def test_clear_range_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_clear_range_async())
 
@@ -673,9 +662,8 @@ class StorageFileTestAsync(FileTestCase):
 
         # Assert
 
+    @record
     def test_update_file_unicode_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_file_unicode_async())
 
@@ -697,9 +685,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
+    @record
     def test_list_ranges_none_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_ranges_none_async())
 
@@ -729,9 +716,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
+    @record
     def test_list_ranges_2_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_ranges_2_async())
 
@@ -764,9 +750,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
+    @record
     def test_list_ranges_none_from_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_ranges_none_from_snapshot_async())
 
@@ -806,9 +791,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
+    @record
     def test_list_ranges_2_from_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_ranges_2_from_snapshot_async())
 
@@ -833,9 +817,8 @@ class StorageFileTestAsync(FileTestCase):
         content = await copy_file.content_as_bytes()
         self.assertEqual(content, self.short_byte_data)
 
+    @record
     def test_copy_file_with_existing_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_file_with_existing_file_async())
 
@@ -857,9 +840,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
+    @record
     def test_copy_file_async_private_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_file_async_private_file_async())
 
@@ -892,9 +874,8 @@ class StorageFileTestAsync(FileTestCase):
         actual_data = await content.content_as_bytes()
         self.assertEqual(actual_data, data)
 
+    @record
     def test_copy_file_async_private_file_with_sas_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_file_async_private_file_with_sas_async())
 
@@ -927,9 +908,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(content, b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
+    @record
     def test_abort_copy_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_file_async())
 
@@ -952,9 +932,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(copy_resp['copy_status'], 'success')
 
+    @record
     def test_abort_copy_file_with_synchronous_copy_fails_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_file_with_synchronous_copy_fails_async())
 
@@ -976,9 +955,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
+    @record
     def test_unicode_get_file_unicode_name_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_file_unicode_name_async())
 
@@ -1001,9 +979,8 @@ class StorageFileTestAsync(FileTestCase):
         content = await content.content_as_bytes()
         self.assertEqual(content, data)
 
+    @record
     def test_file_unicode_data_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_unicode_data_async())
 
@@ -1028,9 +1005,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(content, binary_data)
 
+    @record
     def test_unicode_get_file_binary_data_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_file_binary_data_async())
 
@@ -1062,9 +1038,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data)
 
+    @record
     def test_create_file_from_bytes_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_bytes_with_progress_async())
 
@@ -1090,9 +1065,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[1024:])
 
+    @record
     def test_create_file_from_bytes_with_index_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_bytes_with_index_async())
 
@@ -1119,9 +1093,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[index:index + count])
 
+    @record
     def test_create_file_from_bytes_with_index_and_count_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_bytes_with_index_and_count_async())
 
@@ -1149,9 +1122,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data)
 
+    @record
     def test_create_file_from_path_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_path_async())
 
@@ -1191,9 +1163,8 @@ class StorageFileTestAsync(FileTestCase):
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
+    @record
     def test_create_file_from_path_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_path_with_progress_async())
 
@@ -1222,9 +1193,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
 
+    @record
     def test_create_file_from_stream_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_stream_async())
 
@@ -1254,9 +1224,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
 
+    @record
     def test_create_file_from_stream_non_seekable_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_stream_non_seekable_async())
 
@@ -1297,9 +1266,8 @@ class StorageFileTestAsync(FileTestCase):
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
+    @record
     def test_create_file_from_stream_with_progress_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_stream_with_progress_async())
 
@@ -1329,9 +1297,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
 
+    @record
     def test_create_file_from_stream_truncated_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_stream_truncated_async())
 
@@ -1373,9 +1340,8 @@ class StorageFileTestAsync(FileTestCase):
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
+    @record
     def test_create_file_from_stream_with_progress_truncated_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_stream_with_progress_truncated_async())
 
@@ -1398,9 +1364,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data)
 
+    @record
     def test_create_file_from_text_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_text_async())
 
@@ -1423,9 +1388,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, data)
 
+    @record
     def test_create_file_from_text_with_encoding_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_text_with_encoding_async())
 
@@ -1452,9 +1416,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         await self.assertFileEqual(file_client, encoded_data)
 
+    @record
     def test_create_file_from_text_chunked_upload_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_text_chunked_upload_async())
 
@@ -1475,9 +1438,8 @@ class StorageFileTestAsync(FileTestCase):
 
         # Assert
 
+    @record
     def test_create_file_with_md5_small_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_md5_small_async())
 
@@ -1502,9 +1464,8 @@ class StorageFileTestAsync(FileTestCase):
 
         # Assert
 
+    @record
     def test_create_file_with_md5_large_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_md5_large_async())
 
@@ -1533,9 +1494,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
+    @record
     def test_sas_access_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_access_file_async())
 
@@ -1568,9 +1528,8 @@ class StorageFileTestAsync(FileTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
+    @record
     def test_sas_signed_identifier_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_signed_identifier_async())
 
@@ -1600,9 +1559,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
+    @record
     def test_account_sas_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas_async())
 
@@ -1630,9 +1588,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
+    @record
     def test_shared_read_access_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_file_async())
 
@@ -1669,9 +1626,8 @@ class StorageFileTestAsync(FileTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
+    @record
     def test_shared_read_access_file_with_content_query_params_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_file_with_content_query_params_async())
 
@@ -1703,9 +1659,8 @@ class StorageFileTestAsync(FileTestCase):
         file_content = await file_content.content_as_bytes()
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
+    @record
     def test_shared_write_access_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_write_access_file_async())
 
@@ -1734,9 +1689,8 @@ class StorageFileTestAsync(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await file_client_admin.download_file()
 
+    @record
     def test_shared_delete_access_file_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_delete_access_file_async())
 
