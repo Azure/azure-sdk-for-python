@@ -1,0 +1,360 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c38d90a4-b50b-11e9-8062-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 25f27957-a003-000c-4918-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230
+        - ''
+        - ''
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - c3ae4446-b50b-11e9-94bd-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>146d78f7-9014-4d8f-a31c-1dc79b20ff2b</MessageId><InsertionTime>Fri,
+        02 Aug 2019 09:56:14 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 09:56:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAXiqIhRhJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 09:56:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      x-ms-request-id: 25f2796a-a003-000c-5818-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c3b8134a-b50b-11e9-9450-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>146d78f7-9014-4d8f-a31c-1dc79b20ff2b</MessageId><InsertionTime>Fri,
+        02 Aug 2019 09:56:14 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 09:56:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAnlZ0lxhJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 09:56:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Cache-Control
+      : no-cache
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      ? !!python/object/new:multidict._istr.istr
+      - Vary
+      : Origin
+      x-ms-request-id: 25f27984-a003-000c-7118-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c3c2e5cc-b50b-11e9-bb52-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
+        />"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Cache-Control
+      : no-cache
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      ? !!python/object/new:multidict._istr.istr
+      - Vary
+      : Origin
+      x-ms-request-id: 25f279a1-a003-000c-0b18-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages
+        - ''
+        - ''
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>new text</MessageText></QueueMessage>'
+    headers:
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - c3cc31e2-b50b-11e9-a4d9-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages/146d78f7-9014-4d8f-a31c-1dc79b20ff2b?popreceipt=AgAAAAMAAAAAAAAAnlZ0lxhJ1QE%3D&visibilitytimeout=0
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-popreceipt: AwAAAAMAAAAAAAAAXWamhRhJ1QEBAAAA
+      x-ms-request-id: 25f279b8-a003-000c-2018-498af1000000
+      x-ms-time-next-visible: Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version: '2018-03-28'
+    status:
+      code: 204
+      message: No Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages/146d78f7-9014-4d8f-a31c-1dc79b20ff2b
+        - popreceipt=AgAAAAMAAAAAAAAAnlZ0lxhJ1QE%3D&visibilitytimeout=0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c3d6535e-b50b-11e9-88b6-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>146d78f7-9014-4d8f-a31c-1dc79b20ff2b</MessageId><InsertionTime>Fri,
+        02 Aug 2019 09:56:14 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 09:56:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAJC+TlxhJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 09:56:44 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>new
+        text</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Cache-Control
+      : no-cache
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      ? !!python/object/new:multidict._istr.istr
+      - Vary
+      : Origin
+      x-ms-request-id: 25f279d5-a003-000c-3b18-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c3e1cd9c-b50b-11e9-a166-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://blobstoragename.queue.core.windows.net/pythonqueue99f41230/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
+        />"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Cache-Control
+      : no-cache
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 09:56:14 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      ? !!python/object/new:multidict._istr.istr
+      - Vary
+      : Origin
+      x-ms-request-id: 25f279ef-a003-000c-5518-498af1000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /pythonqueue99f41230/messages
+        - ''
+        - ''
+version: 1

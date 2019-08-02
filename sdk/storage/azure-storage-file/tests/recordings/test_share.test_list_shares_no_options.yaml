@@ -62,11 +62,11 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/?include=&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://blobstoragename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,\
-        \ 26 Jun 2019 13:10:48 GMT</Last-Modified><Etag>\"0x8D6FA37B53694DF\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharea52e1263</Name><Properties><Last-Modified>Wed,\
-        \ 26 Jun 2019 05:03:04 GMT</Last-Modified><Etag>\"0x8D6F9F3923BEEEF\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,
+        26 Jun 2019 13:10:48 GMT</Last-Modified><Etag>\"0x8D6FA37B53694DF\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharea52e1263</Name><Properties><Last-Modified>Wed,
+        26 Jun 2019 05:03:04 GMT</Last-Modified><Etag>\"0x8D6F9F3923BEEEF\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -148,10 +148,10 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/?include=&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://blobstoragename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,\
-        \ 26 Jun 2019 13:17:52 GMT</Last-Modified><Etag>\"0x8D6FA38B17933A9\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,
+        26 Jun 2019 13:17:52 GMT</Last-Modified><Etag>\"0x8D6FA38B17933A9\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -233,10 +233,10 @@ interactions:
     uri: https://storagename.file.core.windows.net/?include=&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,\
-        \ 26 Jun 2019 13:45:17 GMT</Last-Modified><Etag>\"0x8D6FA3C85DC5340\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share31600fc8</Name><Properties><Last-Modified>Wed,
+        26 Jun 2019 13:45:17 GMT</Last-Modified><Etag>\"0x8D6FA3C85DC5340\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -250,6 +250,206 @@ interactions:
       - Origin
       x-ms-request-id:
       - b5428714-701a-0086-0f25-2c30d2000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 6bcb9512-b50c-11e9-b403-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 10:00:56 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share31600fc8?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 02 Aug 2019 10:00:56 GMT
+      ETag:
+      - '"0x8D71730504AC002"'
+      Last-Modified:
+      - Fri, 02 Aug 2019 10:00:56 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 71c9d80e-501a-0074-1d19-49e246000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 6c034976-b50c-11e9-8381-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 10:00:56 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>listshare056f54b25e35240a0baf7b6f33d0b62aa</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:21 GMT</Last-Modified><Etag>\"0x8D7171CAC334936\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare08732583c6d794ea28c1bb40f2ccbcb6d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:15 GMT</Last-Modified><Etag>\"0x8D7171C852A851A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare0ce2def810cbb4b3d8ea4c21807a703b3</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:54 GMT</Last-Modified><Etag>\"0x8D7171CBFCED5AB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare17ccbd9ee0a06421fbdba50d26d985930</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:21 GMT</Last-Modified><Etag>\"0x8D7171CAC52BDC5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare1bb8d0c0bbb054c31a67a30c9ead04ecc</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:54 GMT</Last-Modified><Etag>\"0x8D7171CBFDD0917\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare1d4c4cb27f75a4320aa560bb41a7bb0fa</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:15 GMT</Last-Modified><Etag>\"0x8D7171C8535F8D6\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare255e079ff5c4446fd988b048d61ee1587</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:21 GMT</Last-Modified><Etag>\"0x8D7171CAC7343F6\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare25da3e10f5490463f954822b05887c2e0</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:54 GMT</Last-Modified><Etag>\"0x8D7171CBFFC7DBF\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare27dfe08614a8841f29c581f62828b1880</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:15 GMT</Last-Modified><Etag>\"0x8D7171C854341A6\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare344908604a9424ce596288aa03e0de517</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:54 GMT</Last-Modified><Etag>\"0x8D7171CC01AE0C0\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare37b4c364f81fb4ca2a816dc5ad6eef701</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:15 GMT</Last-Modified><Etag>\"0x8D7171C854E1906\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare3b5e12f64212a4ae88484e2487c2b61aa</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:21 GMT</Last-Modified><Etag>\"0x8D7171CAC948D9E\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare048453b489a94fe09fa3e68a6f155181</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:46:22 GMT</Last-Modified><Etag>\"0x8D716FBFCA0388B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare3416155e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:59:53 GMT</Last-Modified><Etag>\"0x8D716FDE00EDA8F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare3936fb8dcc1642e8be4fe2f19ae3b066</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:46:23 GMT</Last-Modified><Etag>\"0x8D716FBFD15BE81\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare82ca119d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:59:52 GMT</Last-Modified><Etag>\"0x8D716FDDF2ECFF7\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare847a65d80ac74ce89ef323b6363775b1</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:51:25 GMT</Last-Modified><Etag>\"0x8D716FCB138845E\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare8c473cee388a47a89a39ce8177cd0bae</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:51:30 GMT</Last-Modified><Etag>\"0x8D716FCB42821FA\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remoteshare99bd86d5b43947efa174e230bfce8bf2</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:51:29 GMT</Last-Modified><Etag>\"0x8D716FCB3ADBAF8\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remotesharebd580c3e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:59:46 GMT</Last-Modified><Etag>\"0x8D716FDDC038905\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>remotesharecb99022f00f34a51b6ce575c884bcb8e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 03:46:17 GMT</Last-Modified><Etag>\"0x8D716FBF9B799CC\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share04dce2949fbd44198675b11ca2a0a19e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:04 GMT</Last-Modified><Etag>\"0x8D7171CA27A4709\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>share0834f65cb4b745f6b5f05d4930220984</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:10 GMT</Last-Modified><Etag>\"0x8D7171CA61E1088\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share0a5afd2f617e4790bf2773ed2e463e5f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:31 GMT</Last-Modified><Etag>\"0x8D7171CB28D08DD\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share0d4b3358f9bf46ca87331a431a07b847</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:17 GMT</Last-Modified><Etag>\"0x8D7171CAA3DF0A7\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share0f44330b7bca4e11828ca79f7ab1c9b4</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:26 GMT</Last-Modified><Etag>\"0x8D7171CAF9F221D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share13a805f7dbc6419fa71b01b62ef16ed6</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:04 GMT</Last-Modified><Etag>\"0x8D7171C7E71FBA4\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share13afc83ce2ea4911bbd3554652e1399a</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:46 GMT</Last-Modified><Etag>\"0x8D7171CBB44562D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share19ff4ce88cef43dd889065987865dff1</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:14 GMT</Last-Modified><Etag>\"0x8D7171CA8334ECA\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share1a1bd411f4c74f17b214403366edbf34</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:03 GMT</Last-Modified><Etag>\"0x8D7171CC59E2533\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share1d0162a8521e451f904bdb08b4b3d747</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:22 GMT</Last-Modified><Etag>\"0x8D7171C897FFF19\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share1d98b4ba7ffc4de7abf64470afd4133f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:16 GMT</Last-Modified><Etag>\"0x8D7171CA92086E4\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share1fdd18d585014c22ae06be721c52931b</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:58 GMT</Last-Modified><Etag>\"0x8D7171C7B294203\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share28721af3165046a191ea5dea0f3e3ded</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:41 GMT</Last-Modified><Etag>\"0x8D7171CB88F34A9\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share294bd0bdb08a4b56ab5f6a0cc0eaa073</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:43 GMT</Last-Modified><Etag>\"0x8D7171CB96C4E00\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share31600fc8</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 10:00:56 GMT</Last-Modified><Etag>\"0x8D71730504AC002\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share32ada766aca7460680aa375047530b79</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:02 GMT</Last-Modified><Etag>\"0x8D7171CA154825F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share3402065bae064b1585e473bd70942928</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:22 GMT</Last-Modified><Etag>\"0x8D7171C8919D109\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share3d22d1c3eac8438a85789fc5f9d7851f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:32 GMT</Last-Modified><Etag>\"0x8D7171CB30AA882\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share3eb03ad668a84f8d9700158cbbeb2d5c</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:24 GMT</Last-Modified><Etag>\"0x8D7171CAE511B30\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share4daa5e12a5b1448bb30f3ea591598fa3</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:03 GMT</Last-Modified><Etag>\"0x8D7171CC540D0C5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share4dcc48e682d940448b211030012719a3</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:48 GMT</Last-Modified><Etag>\"0x8D7171CBC9AB846\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share513103e58b8441ff8dd07d4fc4c750c5</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:33 GMT</Last-Modified><Etag>\"0x8D7171CB3AD4579\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share5cf6f3dd7d394946a5d4916e013f0495</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:23 GMT</Last-Modified><Etag>\"0x8D7171C89D964C4\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share5dd356f11d484be08b36893577e2af3a</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:24 GMT</Last-Modified><Etag>\"0x8D7171CAE072021\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share61e3140224de4377a341475d0a135a7e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:16 GMT</Last-Modified><Etag>\"0x8D7171C85C67B0B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share649aa70220a140a1b535bb70be6e20a5</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:20 GMT</Last-Modified><Etag>\"0x8D7171C881F59A9\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share6c77eadb0ccf46a3ac0292011e1a991f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:42 GMT</Last-Modified><Etag>\"0x8D7171CB9075D2B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share6e6991c6ed684f5ba99ee11cf9dc5605</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:52 GMT</Last-Modified><Etag>\"0x8D7171CBF027845\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share71512e838f964dcc9d17144cd91e861e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:07 GMT</Last-Modified><Etag>\"0x8D7171C801797AB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share74f2113966fc425f8938624e6533e01f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:08 GMT</Last-Modified><Etag>\"0x8D7171C811F0ED1\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share77b9fd3b04ba46dba4810e91b84daa97</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:05 GMT</Last-Modified><Etag>\"0x8D7171CA2BE7071\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share789a7f03cb6c47c79d3377d071c0d5f4</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:57 GMT</Last-Modified><Etag>\"0x8D7171C7A870087\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share7c17be14058a4473b4b5d924cde74e31</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:04 GMT</Last-Modified><Etag>\"0x8D7171CA1F6FD04\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share834dfe5e7b2f402189426e1c462f98c2</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:08 GMT</Last-Modified><Etag>\"0x8D7171CA4E06A8A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share8488da59b5d84a1a918ec6d341792a9f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:41 GMT</Last-Modified><Etag>\"0x8D7171CB8529590\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share868b7461e5fe41e78c372369a8943e72</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:55 GMT</Last-Modified><Etag>\"0x8D7171CC0A35545\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share8830dc8c54c3443088435861efbfa944</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:03 GMT</Last-Modified><Etag>\"0x8D7171CA199B5F0\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share883bbcc746f94fc48866abf9889944d6</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:21 GMT</Last-Modified><Etag>\"0x8D7171C888DC025\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share88c0a7ebd4d3469ca2d29193d656b414</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:22 GMT</Last-Modified><Etag>\"0x8D7171CACF84CCB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share89ced0fe9c6c4657a8c2a8fe79e3759d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:10 GMT</Last-Modified><Etag>\"0x8D7171CA5A152BB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share8b7160084c784747ae957f3d28c8f2ab</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:00 GMT</Last-Modified><Etag>\"0x8D7171CC3A297C8\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share8e183b34b471475d839d426b126cffe3</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:24 GMT</Last-Modified><Etag>\"0x8D7171C8A35B6E3\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share9231be24d4f44e6e8b566ba4b99eb8c9</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:05 GMT</Last-Modified><Etag>\"0x8D7171C7ED472AC\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share94f814fe1c04434ba981519f5260f6c5</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:19 GMT</Last-Modified><Etag>\"0x8D7171CAB5A16E1\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share950573e3e9514fa3bfe193f25c40a59d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:12 GMT</Last-Modified><Etag>\"0x8D7171C832F80B2\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share95d28667d5994092a66d30e670fc0be6</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:13 GMT</Last-Modified><Etag>\"0x8D7171CA7595443\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share970df2a8dc134c8db5d57663680f0c9a</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:33 GMT</Last-Modified><Etag>\"0x8D7171CB36CC268\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share973c04876a814919bb470a7ea8c9f683</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:10 GMT</Last-Modified><Etag>\"0x8D7171CA5DE79FC\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share97992165792e4e8c88cbb5cc10953076</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:57 GMT</Last-Modified><Etag>\"0x8D7171C7A508832\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share9c8a1ebc7d204e03addf2f237f8710f6</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:01 GMT</Last-Modified><Etag>\"0x8D7171CC45FA3D3\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea33ff7b9da8f4368b3797692889f357f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:05 GMT</Last-Modified><Etag>\"0x8D7171C7F38DD39\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea44bf10580804209bd39ef43fe6f9dfd</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:15 GMT</Last-Modified><Etag>\"0x8D7171C84CF4C6F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea60f3d577fd9496ab752a9df898441a5</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:56 GMT</Last-Modified><Etag>\"0x8D7171C79EFA0B0\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea922566fabb34bbdba746673bc980ba5</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:04 GMT</Last-Modified><Etag>\"0x8D7171CA23DD7E1\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea9a60a72d71046b4a4144f4fc6ca422c</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:59 GMT</Last-Modified><Etag>\"0x8D7171CC3264C14\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareaa3d7f180e8444d8ba0b72063a679573</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:03 GMT</Last-Modified><Etag>\"0x8D7171C7E30F943\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareab2d664562d942e0ad64263368df908e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:56 GMT</Last-Modified><Etag>\"0x8D7171C79AD8F27\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareaeda0556269b4830a42ddd0e1e866913</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:25 GMT</Last-Modified><Etag>\"0x8D7171CAEC22E17\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb29d2c16734d4da8ab2e64609db3a94f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:10 GMT</Last-Modified><Etag>\"0x8D7171C82566803\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb6619f794fa4481d80a06057780ee90e</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:57 GMT</Last-Modified><Etag>\"0x8D7171C7A226531\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb710375b03eb4dcd8d728785aa9be86d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:19 GMT</Last-Modified><Etag>\"0x8D7171C87686866\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb7f372fe15c84851a4fd39e8a7249005</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:18 GMT</Last-Modified><Etag>\"0x8D7171C871028D9\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb84831629d784558858c28e3bcbf9042</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:17 GMT</Last-Modified><Etag>\"0x8D7171C8647E5FA\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb950bb9c726249a091a2f6e7eee17793</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:50 GMT</Last-Modified><Etag>\"0x8D7171CBDE801E3\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareb96ef46c74214928b095aab3e438493d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:20 GMT</Last-Modified><Etag>\"0x8D7171C87BD0359\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareba7ad41db53947d9bdf959da6ec63736</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:57 GMT</Last-Modified><Etag>\"0x8D7171CC2093606\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharebc08166040964df8ac118fdf7f58be1c</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:02 GMT</Last-Modified><Etag>\"0x8D7171CA1165979\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharec4cb0d00c177445e93e2ca85ea91556d</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 05:24:08 GMT</Last-Modified><Etag>\"0x8D71709A4D7C58C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharecc0cab228f3b41d28bf5ef2074f91cc9</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:00 GMT</Last-Modified><Etag>\"0x8D7171CC3EE2D9B\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>sharece8d812934eb49e5b5961a957941f494</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:45 GMT</Last-Modified><Etag>\"0x8D7171CBA66BE8D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharecf3403c72ec54f6f8e5d7b7392751efd</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:23 GMT</Last-Modified><Etag>\"0x8D7171CAD603116\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shared8cf6e2208f54cb5ad2578d82fc55bb0</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:38:58 GMT</Last-Modified><Etag>\"0x8D7171C7AE1AF55\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>shared995c54d1f3444f1ac2991807045f078</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:26 GMT</Last-Modified><Etag>\"0x8D7171CAF217698\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareda00d3a8773245e48a52bf03ecba4eb8</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:34 GMT</Last-Modified><Etag>\"0x8D7171CB3F63FFB\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>sharede92e5ae44bf4b6c8c382a721787c282</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:02 GMT</Last-Modified><Etag>\"0x8D7171C7D5CB093\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharedeff7da6c45545c5bbcaa7efe31cbb1b</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:34 GMT</Last-Modified><Etag>\"0x8D7171CB4628DD8\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharedfa49e2839ec47eeab65c1af993d8284</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:53 GMT</Last-Modified><Etag>\"0x8D7171CBF4D3828\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharedfa4c0a993344502b7b62e1ba0c395f2</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:41:02 GMT</Last-Modified><Etag>\"0x8D7171CC4C8B594\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharee116b260e2ad450498126297e0f8183f</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:11 GMT</Last-Modified><Etag>\"0x8D7171CA656F424\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharee886faac60ba44c6bb5e5162511ebbe3</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:32 GMT</Last-Modified><Etag>\"0x8D7171CB2CAA57C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef0dfabf101124c90857fd863e7f585e2</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:58 GMT</Last-Modified><Etag>\"0x8D7171CC2ABAE5E\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef2f737034bcc4c2c948c68a1ad0a6ce6</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:20 GMT</Last-Modified><Etag>\"0x8D7171CABE4C1F3\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef862b5b28f8b44c094be5dc0785819a7</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:39:21 GMT</Last-Modified><Etag>\"0x8D7171C88D07AB2\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>sharef921004095ba4e758a60b17d972d8d20</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:38 GMT</Last-Modified><Etag>\"0x8D7171CB69DCD1B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharefcceeb87c68e4f7ebf337891735cb953</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:55 GMT</Last-Modified><Etag>\"0x8D7171CC0F258D7\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharefee829963bf54aafa4517779b289e45b</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 07:40:58 GMT</Last-Modified><Etag>\"0x8D7171CC25A480D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare530933cc0e5b49f887e6f7be53123d3c</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 09:21:04 GMT</Last-Modified><Etag>\"0x8D7172ABE6A6056\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare5cee2394853a4683be0de20330cea2aa</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 06:02:22 GMT</Last-Modified><Etag>\"0x8D7170EFC737AF7\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare6e421109</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 08:31:29 GMT</Last-Modified><Etag>\"0x8D71723D0CCA6FE\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare6f3b645ab76c452c9924bedfb283e298</Name><Properties><Last-Modified>Fri,
+        26 Jul 2019 20:48:29 GMT</Last-Modified><Etag>\"0x8D7120A9D74CE37\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare7218d5eb2eac4d9ea8ef8d0062f50fd9</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 09:20:47 GMT</Last-Modified><Etag>\"0x8D7172AB473F64E\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 02 Aug 2019 10:00:56 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 71c9d811-501a-0074-1e19-49e246000000
       x-ms-version:
       - '2018-11-09'
     status:

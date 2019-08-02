@@ -22,9 +22,8 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/sharea6511b9d?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:00741b4f-401a-006b-6d20-2c3956000000\n\
-        Time:2019-06-26T13:10:11.3214287Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:00741b4f-401a-006b-6d20-2c3956000000\nTime:2019-06-26T13:10:11.3214287Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
@@ -66,9 +65,8 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/sharea6511b9d?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:2b3c80f8-e01a-00e5-3c21-2c76f7000000\n\
-        Time:2019-06-26T13:17:20.4436291Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:2b3c80f8-e01a-00e5-3c21-2c76f7000000\nTime:2019-06-26T13:17:20.4436291Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
@@ -110,9 +108,8 @@ interactions:
     uri: https://storagename.file.core.windows.net/sharea6511b9d?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:e292cc97-901a-002d-3a25-2ce7c0000000\n\
-        Time:2019-06-26T13:44:34.7965303Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:e292cc97-901a-002d-3a25-2ce7c0000000\nTime:2019-06-26T13:44:34.7965303Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
@@ -126,6 +123,51 @@ interactions:
       - ShareNotFound
       x-ms-request-id:
       - e292cc97-901a-002d-3a25-2ce7c0000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 404
+      message: The specified share does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5ee1c81c-b50c-11e9-885f-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 10:00:34 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/sharea6511b9d?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:a04f9820-001a-00e4-7119-49770a000000\nTime:2019-08-02T10:00:35.2743272Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 02 Aug 2019 10:00:34 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareNotFound
+      x-ms-request-id:
+      - a04f9820-001a-00e4-7119-49770a000000
       x-ms-version:
       - '2018-11-09'
     status:

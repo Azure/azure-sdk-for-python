@@ -22,9 +22,8 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:96754b44-b003-009b-2636-29e938000000\n\
-        Time:2019-06-22T20:13:14.4920008Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:96754b44-b003-009b-2636-29e938000000\nTime:2019-06-22T20:13:14.4920008Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -66,9 +65,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:c545f0c5-9003-00ae-3d37-29476d000000\n\
-        Time:2019-06-22T20:18:32.8886233Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:c545f0c5-9003-00ae-3d37-29476d000000\nTime:2019-06-22T20:18:32.8886233Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -110,9 +108,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:f0ca0c73-b003-00d4-2d38-292d20000000\n\
-        Time:2019-06-22T20:22:53.3439399Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:f0ca0c73-b003-00d4-2d38-292d20000000\nTime:2019-06-22T20:22:53.3439399Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -154,9 +151,8 @@ interactions:
     uri: https://storagename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:5204ae80-d003-006e-453a-29cd29000000\n\
-        Time:2019-06-22T20:39:04.9889844Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:5204ae80-d003-006e-453a-29cd29000000\nTime:2019-06-22T20:39:04.9889844Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -170,6 +166,51 @@ interactions:
       - InvalidResourceName
       x-ms-request-id:
       - 5204ae80-d003-006e-453a-29cd29000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 400
+      message: The specifed resource name contains invalid characters.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - b24b334a-b50b-11e9-8631-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:55:45 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://blobstoragename.queue.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:643aba19-c003-001c-6318-49bc17000000\nTime:2019-08-02T09:55:45.7519275Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '243'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 02 Aug 2019 09:55:45 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidResourceName
+      x-ms-request-id:
+      - 643aba19-c003-001c-6318-49bc17000000
       x-ms-version:
       - '2018-03-28'
     status:

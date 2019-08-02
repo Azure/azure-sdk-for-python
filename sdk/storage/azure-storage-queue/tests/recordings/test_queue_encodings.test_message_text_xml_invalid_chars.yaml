@@ -1,7 +1,6 @@
 interactions:
 - request:
-    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01\
-      </MessageText></QueueMessage>"
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
     headers:
       Accept:
       - application/xml
@@ -25,10 +24,9 @@ interactions:
     uri: https://remotestoragename.queue.core.windows.net/mytestqueue93de171a/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:76204e57-a003-0025-0936-29fcb3000000\n\
-        Time:2019-06-22T20:13:24.5657796Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error\
-        \ parsing Xml content</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:76204e57-a003-0025-0936-29fcb3000000\nTime:2019-06-22T20:13:24.5657796Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
     headers:
       Content-Length:
       - '327'
@@ -48,8 +46,7 @@ interactions:
       code: 400
       message: XML specified is not syntactically valid.
 - request:
-    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01\
-      </MessageText></QueueMessage>"
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
     headers:
       Accept:
       - application/xml
@@ -73,10 +70,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/mytestqueue93de171a/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:ad53ca4f-d003-0008-1f37-297f73000000\n\
-        Time:2019-06-22T20:18:41.0960581Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error\
-        \ parsing Xml content</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:ad53ca4f-d003-0008-1f37-297f73000000\nTime:2019-06-22T20:18:41.0960581Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
     headers:
       Content-Length:
       - '327'
@@ -96,8 +92,7 @@ interactions:
       code: 400
       message: XML specified is not syntactically valid.
 - request:
-    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01\
-      </MessageText></QueueMessage>"
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
     headers:
       Accept:
       - application/xml
@@ -121,10 +116,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/mytestqueue93de171a/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:b1c82729-0003-0023-6138-290bcb000000\n\
-        Time:2019-06-22T20:23:01.2841285Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error\
-        \ parsing Xml content</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:b1c82729-0003-0023-6138-290bcb000000\nTime:2019-06-22T20:23:01.2841285Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
     headers:
       Content-Length:
       - '327'
@@ -144,8 +138,7 @@ interactions:
       code: 400
       message: XML specified is not syntactically valid.
 - request:
-    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01\
-      </MessageText></QueueMessage>"
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
     headers:
       Accept:
       - application/xml
@@ -169,10 +162,9 @@ interactions:
     uri: https://storagename.queue.core.windows.net/mytestqueue93de171a/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:e4d223e5-3003-0081-163a-29c657000000\n\
-        Time:2019-06-22T20:39:16.7647126Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error\
-        \ parsing Xml content</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:e4d223e5-3003-0081-163a-29c657000000\nTime:2019-06-22T20:39:16.7647126Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
     headers:
       Content-Length:
       - '327'
@@ -186,6 +178,52 @@ interactions:
       - InvalidXmlDocument
       x-ms-request-id:
       - e4d223e5-3003-0081-163a-29c657000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+- request:
+    body: "<?xml version='1.0' encoding='utf-8'?>\n<QueueMessage><MessageText>\x01</MessageText></QueueMessage>"
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '96'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - ca3de236-b50b-11e9-af27-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 09:56:25 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://blobstoragename.queue.core.windows.net/mytestqueue93de171a/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:a3250b07-4003-0060-7318-492122000000\nTime:2019-08-02T09:56:26.0767972Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        parsing Xml content</Reason></Error>"
+    headers:
+      Content-Length:
+      - '327'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 02 Aug 2019 09:56:25 GMT
+      Server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-request-id:
+      - a3250b07-4003-0060-7318-492122000000
       x-ms-version:
       - '2018-03-28'
     status:
