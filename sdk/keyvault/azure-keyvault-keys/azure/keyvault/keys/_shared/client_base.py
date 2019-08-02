@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
 
 from .challenge_auth_policy import ChallengeAuthPolicy
-from . import USER_AGENT
+from .._user_agent import USER_AGENT
 
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"

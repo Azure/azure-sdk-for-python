@@ -12,7 +12,8 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
-from . import AsyncChallengeAuthPolicy, USER_AGENT
+from . import AsyncChallengeAuthPolicy
+from .._user_agent import USER_AGENT
 
 
 if TYPE_CHECKING:
