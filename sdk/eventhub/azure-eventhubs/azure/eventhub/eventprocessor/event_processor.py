@@ -72,9 +72,9 @@ class EventProcessor(object):
 
         This method cancels tasks that are running EventHubConsumer.receive() for the partitions owned by this EventProcessor.
         """
-        for task in self._tasks:
+        for i in range(len(self._tasks)):
+            task = self._tasks.pop()
             task.cancel()
-            # It's not agreed whether a partition manager has method close().
         log.info("EventProcessor %r has been cancelled", self._id)
         await asyncio.sleep(2)  # give some time to finish after cancelled
 
@@ -97,15 +97,11 @@ class EventProcessor(object):
         return claimed_list
 
     async def _start_claimed_partitions(self, claimed_partitions):
-        consumers = []
         for partition in claimed_partitions:
             partition_id = partition["partition_id"]
-            offset = partition.get("offset")
-            offset = offset or self._initial_event_position
+            offset = partition.get("offset", self._initial_event_position)
             consumer = self._eventhub_client.create_consumer(self._consumer_group_name, partition_id,
                                                             EventPosition(str(offset)))
-            consumers.append(consumer)
-
             partition_processor = self._partition_processor_factory(
                 eventhub_name=self._eventhub_name,
                 consumer_group_name=self._consumer_group_name,
@@ -118,8 +114,9 @@ class EventProcessor(object):
                 _receive(consumer, partition_processor, self._receive_timeout))
             self._tasks.append(task)
         try:
-            await asyncio.gather(*self._tasks, return_exceptions=True)
+            await asyncio.gather(*self._tasks)
         finally:
+            # TODO: It's not agreed whether a partition manager has method close().
             await self._partition_manager.close()
             log.info("EventProcessor %r partition manager is closed", self._id)
             log.info("EventProcessor %r has stopped", self._id)
@@ -134,7 +131,7 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.info(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "is cancelled",
-                    partition_processor._checkpoint_manager._id,
+                    partition_processor._checkpoint_manager._owner_id,
                     partition_processor._eventhub_name,
                     partition_processor._partition_id,
                     partition_processor._consumer_group_name
@@ -147,7 +144,7 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.warning(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "has met an exception receiving events. It's being closed. The exception is %r.",
-                    partition_processor._checkpoint_manager._id,
+                    partition_processor._checkpoint_manager._owner_id,
                     partition_processor._eventhub_name,
                     partition_processor._partition_id,
                     partition_processor._consumer_group_name,
@@ -162,7 +159,7 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.info(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "is cancelled.",
-                    partition_processor._checkpoint_manager.owner_id,
+                    partition_processor._checkpoint_manager._owner_id,
                     partition_processor._eventhub_name,
                     partition_processor._partition_id,
                     partition_processor._consumer_group_name
