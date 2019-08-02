@@ -11,6 +11,9 @@ env*/
 # PTVS analysis
 .ptvs/
 
+tox.ini
+!eng/tox/tox.ini
+
 # Coverage report
 **/.coverage
 

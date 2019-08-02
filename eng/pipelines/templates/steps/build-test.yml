@@ -7,8 +7,6 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-  ToxTestEnvString: ''
-  ToxLintEnvString: 'lint'
 
 steps:
   - task: DownloadPipelineArtifact@0
@@ -48,11 +46,10 @@ steps:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
-        --junitxml="junit/test-results.xml" 
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="${{ parameters.ToxTestEnvString }}"
+        --toxenv=""
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
 
@@ -62,58 +59,28 @@ steps:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
-        --junitxml="junit/test-results.xml" 
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="${{ parameters.ToxLintEnvString }}"
+        --toxenv="lint"
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
+    env: ${{ parameters.EnvVars }}
+
+  - task: PythonScript@0
+    displayName: 'Run MyPy'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.AdditionalTestArgs }} 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
-    displayName: 'Publish Python 2.7 Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '**/*python2.7*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 2.7'
-      mergeTestResults: true
-
-  # - task: PublishTestResults@2
-  #   displayName: 'Publish Python 3.4 Test Results'
-  #   condition: succeededOrFailed()
-  #   inputs:
-  #     testResultsFiles: '**/test-junit-python3.4-*.xml'
-  #     testRunTitle: '${{ parameters.OSName }} Python 3.4'
-  #     mergeTestResults: true
-
-  # - task: PublishTestResults@2
-  #   displayName: 'Publish Python 3.5 Test Results'
-  #   condition: succeededOrFailed()
-  #   inputs:
-  #     testResultsFiles: '**/test-junit-python3.5-*.xml'
-  #     testRunTitle: '${{ parameters.OSName }} Python 3.5'
-  #     mergeTestResults: true
-
-  # - task: PublishTestResults@2
-  #   displayName: 'Publish Python 3.6 Test Results'
-  #   condition: succeededOrFailed()
-  #   inputs:
-  #     testResultsFiles: '**/test-junit-python3.6-*.xml'
-  #     testRunTitle: '${{ parameters.OSName }} Python 3.6'
-  #     mergeTestResults: true
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Python 3.7 Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/*python3.7*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.7'
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Python 3.6 Dev Install Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/*sdist*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python 3.6 Develop Installation Tests'
-      mergeTestResults: true
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'

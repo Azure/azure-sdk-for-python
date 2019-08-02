@@ -99,18 +99,34 @@ jobs:
 
     strategy:
       matrix:
-        Linux:
+        Linux_Python27:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '2.7'
+        Linux_Python34:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.4'
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
-        Windows:
+        Linux_Python37:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.7'
+        Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
-          PythonVersion: '3.6'
-        MacOS:
+          PythonVersion: '3.5'
+        MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
-          PythonVersion: '3.6'
+          PythonVersion: '2.7'
 
     pool:
       vmImage: '$(OSVmImage)'

@@ -39,6 +39,9 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         if tox_env:
             tox_execution_array.extend(['-e', tox_env])
 
+        if options_array:
+            tox_execution_array.extend(['--'] + options_array)
+
         run_check_call(tox_execution_array, package_dir)
 
 def collect_coverage_files(targeted_packages):
@@ -89,12 +92,6 @@ if __name__ == '__main__':
                 'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'))
 
     parser.add_argument(
-        '--junitxml',
-        dest='test_results',
-        help=('The folder where the test results will be stored in xml format.'
-              'Example: --junitxml="junit/test-results.xml"'))
-
-    parser.add_argument(
         '--mark_arg',
         dest='mark_arg',
         help=('The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
@@ -136,8 +133,6 @@ if __name__ == '__main__':
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
-    if args.test_results:
-        test_results_arg.extend(['--junitxml', args.test_results])
 
     if args.disablecov:
         test_results_arg.append('--no-cov')
