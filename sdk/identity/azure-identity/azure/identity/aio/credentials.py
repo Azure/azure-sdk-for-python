@@ -17,7 +17,7 @@ from ._authn_client import AsyncAuthnClient
 from ._managed_identity import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ..constants import Endpoints, EnvironmentVariables
-from ..credentials import ChainedTokenCredential
+from ..credentials import ChainedTokenCredential as SyncChainedTokenCredential
 
 # pylint:disable=too-few-public-methods
 
@@ -156,7 +156,7 @@ class ManagedIdentityCredential(object):
         return AccessToken()
 
 
-class ChainedTokenCredential(ChainedTokenCredential):
+class ChainedTokenCredential(SyncChainedTokenCredential):
     """
     A sequence of credentials that is itself a credential. Its ``get_token`` method calls ``get_token`` on each
     credential in the sequence, in order, returning the first valid token received.
@@ -165,7 +165,7 @@ class ChainedTokenCredential(ChainedTokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    async def get_token(self, *scopes: str) -> AccessToken:  # type: ignore
+    async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request a token from each credential, in order, returning the first token
         received. If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
