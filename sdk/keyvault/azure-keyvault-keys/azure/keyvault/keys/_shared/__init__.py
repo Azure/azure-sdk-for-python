@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from collections import namedtuple
+import platform
+from .._version import VERSION
 
 try:
     import urllib.parse as parse
@@ -24,6 +26,10 @@ __all__ = [
 ]
 
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
+
+USER_AGENT = "azsdk-python-keyvault-keys/{} Python/{} ({})".format(
+    VERSION, platform.python_version(), platform.platform()
+)
 
 
 def parse_vault_id(url):

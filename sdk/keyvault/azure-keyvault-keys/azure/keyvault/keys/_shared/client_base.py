@@ -3,8 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
+
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from ._generated import KeyVaultClient
@@ -16,6 +18,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
 
 from .challenge_auth_policy import ChallengeAuthPolicy
+from . import USER_AGENT
 
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
@@ -38,6 +41,11 @@ class KeyVaultClientBase(object):
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
         config.authentication_policy = ChallengeAuthPolicy(credential)
+
+        # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
+        # https://github.com/Azure/azure-sdk-for-python/issues/6637
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+
         return config
 
     def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
