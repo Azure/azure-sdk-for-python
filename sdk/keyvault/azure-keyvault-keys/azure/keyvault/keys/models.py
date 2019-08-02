@@ -20,6 +20,51 @@ from ._shared import parse_vault_id
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 
+class JsonWebKey(object):
+    """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
+
+    :param str kid: Key identifier.
+    :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
+    :type kty: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+    :param key_ops: Allowed operations for the key
+    :type key_ops: list(~azure.keyvault.keys.enums.JsonWebKeyOperation)
+    :param bytes n: RSA modulus.
+    :param bytes e: RSA public exponent.
+    :param bytes d: RSA private exponent, or the D component of an EC private key.
+    :param bytes dp: RSA private key parameter.
+    :param bytes dq: RSA private key parameter.
+    :param bytes qi: RSA private key parameter.
+    :param bytes p: RSA secret prime.
+    :param bytes q: RSA secret prime, with p < q.
+    :param bytes k: Symmetric key.
+    :param bytes t: HSM Token, used with 'Bring Your Own Key'.
+    :param crv: Elliptic curve name.
+    :type crv: str or ~azure.keyvault.keys.enums.JsonWebKeyCurveName
+    :param bytes x: X component of an EC public key.
+    :param bytes y: Y component of an EC public key.
+    """
+
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        super(JsonWebKey, self).__init__(**kwargs)
+        self.kid = kwargs.get("kid", None)
+        self.kty = kwargs.get("kty", None)
+        self.key_ops = kwargs.get("key_ops", None)
+        self.n = kwargs.get("n", None)
+        self.e = kwargs.get("e", None)
+        self.d = kwargs.get("d", None)
+        self.dp = kwargs.get("dp", None)
+        self.dq = kwargs.get("dq", None)
+        self.qi = kwargs.get("qi", None)
+        self.p = kwargs.get("p", None)
+        self.q = kwargs.get("q", None)
+        self.k = kwargs.get("k", None)
+        self.t = kwargs.get("t", None)
+        self.crv = kwargs.get("crv", None)
+        self.x = kwargs.get("x", None)
+        self.y = kwargs.get("y", None)
+
+
 class KeyBase(object):
     """A key's id and attributes."""
 

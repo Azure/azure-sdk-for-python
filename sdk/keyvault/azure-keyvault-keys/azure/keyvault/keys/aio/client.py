@@ -8,7 +8,7 @@ from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import Key, DeletedKey, KeyBase, KeyOperationResult
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase, KeyOperationResult
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 
@@ -474,7 +474,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def import_key(
         self,
         name: str,
-        key: List[str],
+        key: JsonWebKey,
         hsm: Optional[bool] = None,
         enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
@@ -486,8 +486,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         the keys/import permission.
 
         :param str name: Name for the imported key
-        :param key: The Json web key
-        :type key: ~azure.security.keyvault.v7_0.models.JsonWebKey
+        :param key: The JSON web key to import
+        :type key: ~azure.keyvault.keys.models.JsonWebKey
         :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
@@ -528,7 +528,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
         :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :returns: The wrapped symmetric key.
@@ -563,7 +563,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
         :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :returns: The unwrapped symmetric key.

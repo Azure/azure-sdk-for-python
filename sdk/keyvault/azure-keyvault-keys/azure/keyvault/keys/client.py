@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
     from azure.core.paging import ItemPaged
+    from .models import JsonWebKey
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -486,8 +487,8 @@ class KeyClient(KeyVaultClientBase):
         the keys/import permission.
 
         :param str name: Name for the imported key
-        :param key: The Json web key
-        :type key: ~azure.security.keyvault.v7_0.models.JsonWebKey
+        :param key: The JSON web key to import
+        :type key: ~azure.keyvault.keys.models.JsonWebKey
         :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
