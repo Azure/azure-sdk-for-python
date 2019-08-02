@@ -58,18 +58,18 @@ def distributed_trace_async(func=None, name_of_span=None):
         ans = None
         if parent_span is not None and orig_wrapped_span is None:
             common.set_span_contexts(parent_span)
-            name = name_of_span or common.get_function_and_class_name(func, *args)
+            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)
-            ans = await func(*args, **kwargs)
+            ans = await func(*args, **kwargs)   # type: ignore
             child.finish()
             common.set_span_contexts(parent_span)
             if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
                 parent_span.finish()
             common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
         else:
-            ans = await func(*args, **kwargs)
+            ans = await func(*args, **kwargs)   # type: ignore
         return ans
 
     return wrapper_use_tracer
