@@ -20,7 +20,7 @@ class Document(Model):
 
     :ivar kind: Document type. Possible values include: 'Invoice', 'VoidNote',
      'Receipt', 'CreditNote'
-    :vartype kind: str or ~azure.mgmt.billing.models.enum
+    :vartype kind: str or ~azure.mgmt.billing.models.DocumentType
     :ivar url: Document URL.
     :vartype url: str
     """

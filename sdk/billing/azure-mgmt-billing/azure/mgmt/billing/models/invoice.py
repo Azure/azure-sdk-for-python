@@ -30,7 +30,7 @@ class Invoice(Resource):
     :vartype invoice_date: datetime
     :ivar status: Invoice status. Possible values include: 'PastDue', 'Due',
      'Paid', 'Void'
-    :vartype status: str or ~azure.mgmt.billing.models.enum
+    :vartype status: str or ~azure.mgmt.billing.models.InvoiceStatus
     :ivar amount_due: Amount due.
     :vartype amount_due: ~azure.mgmt.billing.models.Amount
     :ivar billed_amount: Amount billed.

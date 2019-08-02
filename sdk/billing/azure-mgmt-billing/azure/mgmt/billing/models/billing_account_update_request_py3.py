@@ -25,10 +25,10 @@ class BillingAccountUpdateRequest(Model):
     :ivar agreement_type: The type of agreement. Possible values include:
      'MicrosoftCustomerAgreement', 'EnterpriseAgreement',
      'MicrosoftOnlineServicesProgram'
-    :vartype agreement_type: str or ~azure.mgmt.billing.models.enum
+    :vartype agreement_type: str or ~azure.mgmt.billing.models.AgreementType
     :ivar customer_type: The type of customer. Possible values include:
      'Enterprise', 'Individual', 'Partner'
-    :vartype customer_type: str or ~azure.mgmt.billing.models.enum
+    :vartype customer_type: str or ~azure.mgmt.billing.models.CustomerType
     :param billing_profiles: The billing profiles associated to the billing
      account. By default this is not populated, unless it's specified in
      $expand.
