@@ -7,101 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8d658dc8-b4b8-11e9-95bb-2816a845e8c6
+      - c095208c-b4c7-11e9-9aeb-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:00:35 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remoteremotestoragename.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:04da2bb9-b01a-0132-43c5-4826ec000000\nTime:2019-08-02T00:00:32.3046432Z</Message></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '243'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:00:31 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidResourceName
-      x-ms-request-id: 04da2bb9-b01a-0132-43c5-4826ec000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
-        - restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - c8655b18-b4b8-11e9-8294-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:02:14 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:2f962864-401a-0089-79c5-48814d000000\nTime:2019-08-02T00:02:11.2526141Z</Message></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '243'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:02:10 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidResourceName
-      x-ms-request-id: 2f962864-401a-0089-79c5-48814d000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
-        - restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 3bd10046-b4ba-11e9-a536-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:12:37 GMT
+      - Fri, 02 Aug 2019 01:49:23 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -109,7 +17,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:7cd449c2-001a-0024-6ac6-48a127000000\nTime:2019-08-02T00:12:34.3961600Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:3ca1722f-001a-00a7-1ad4-48018a000000\nTime:2019-08-02T01:49:23.7733332Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -119,12 +27,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:33 GMT
+      : Fri, 02 Aug 2019 01:49:23 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
-      x-ms-request-id: 7cd449c2-001a-0024-6ac6-48a127000000
+      x-ms-request-id: 3ca1722f-001a-00a7-1ad4-48018a000000
       x-ms-version: '2018-11-09'
     status:
       code: 400

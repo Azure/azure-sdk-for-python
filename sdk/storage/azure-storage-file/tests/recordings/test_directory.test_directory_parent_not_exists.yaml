@@ -13,54 +13,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 02689812-b4b8-11e9-b917-2816a845e8c6
+      - 2b64de5c-b4c7-11e9-8e4e-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:56:41 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://remotestoragename.file.core.windows.net/utshared53f13af/missing1%2Fmissing2?restype=directory
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:e412fe30-801a-00bd-74c4-482ee5000000\nTime:2019-08-01T23:56:39.3795114Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '224'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 01 Aug 2019 23:56:39 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ParentNotFound
-      x-ms-request-id:
-      - e412fe30-801a-00bd-74c4-482ee5000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified parent path does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - a6c694d2-b4b9-11e9-8b12-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:08:27 GMT
+      - Fri, 02 Aug 2019 01:45:13 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -68,14 +23,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:0194bdc2-001a-00ca-61c6-48aba4000000\nTime:2019-08-02T00:08:24.6512678Z</Message></Error>"
+        specified parent path does not exist.\nRequestId:ee0c48dc-f01a-00b2-54d3-48c313000000\nTime:2019-08-02T01:45:13.5978145Z</Message></Error>"
     headers:
       Content-Length:
       - '224'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:08:23 GMT
+      - Fri, 02 Aug 2019 01:45:12 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -83,7 +38,7 @@ interactions:
       x-ms-error-code:
       - ParentNotFound
       x-ms-request-id:
-      - 0194bdc2-001a-00ca-61c6-48aba4000000
+      - ee0c48dc-f01a-00b2-54d3-48c313000000
       x-ms-version:
       - '2018-11-09'
     status:

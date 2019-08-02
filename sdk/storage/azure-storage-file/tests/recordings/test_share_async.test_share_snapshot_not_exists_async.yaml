@@ -7,201 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8d1fff58-b4b8-11e9-83e0-2816a845e8c6
+      - c042b2c6-b4c7-11e9-9212-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:00:34 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remoteremotestoragename.file.core.windows.net/share4f8f160b?restype=share
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:00:31 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC6FAD0989"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 00:00:31 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 5b9291d2-101a-00b8-20c5-48da9a000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /share4f8f160b
-        - restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 8d3ebd9c-b4b8-11e9-b323-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:00:34 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://remoteremotestoragename.file.core.windows.net/share4f8f160b?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:5b9291d5-101a-00b8-21c5-48da9a000000\nTime:2019-08-02T00:00:31.9292469Z</Message></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '217'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:00:31 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
-      x-ms-error-code: ShareNotFound
-      x-ms-request-id: 5b9291d5-101a-00b8-21c5-48da9a000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 404
-      message: The specified share does not exist.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /share4f8f160b
-        - sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - c82cdb38-b4b8-11e9-82ec-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:02:13 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/share4f8f160b?restype=share
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:02:10 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DCAAB4BBF9"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 00:02:10 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 09463d5d-101a-0074-33c5-48be2f000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /share4f8f160b
-        - restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - c8420876-b4b8-11e9-b7ca-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:02:13 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://remotestoragename.file.core.windows.net/share4f8f160b?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:09463d5f-101a-0074-34c5-48be2f000000\nTime:2019-08-02T00:02:10.9302408Z</Message></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '217'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 00:02:10 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
-      x-ms-error-code: ShareNotFound
-      x-ms-request-id: 09463d5f-101a-0074-34c5-48be2f000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 404
-      message: The specified share does not exist.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /share4f8f160b
-        - sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 3b94bc66-b4ba-11e9-a6cd-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:12:36 GMT
+      - Fri, 02 Aug 2019 01:49:22 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -215,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:33 GMT
+      : Fri, 02 Aug 2019 01:49:22 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DE1E1C0548"'
+      : '"0x8D716EBA4B22E0B"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:12:33 GMT
+      : Fri, 02 Aug 2019 01:49:23 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: f9714e14-d01a-00e1-10c6-48df1c000000
+      x-ms-request-id: 7d8fbf97-801a-00f9-5cd4-48f289000000
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -246,9 +54,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3bab441a-b4ba-11e9-8c11-2816a845e8c6
+      - c05edbf6-b4c7-11e9-8340-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:36 GMT
+      - Fri, 02 Aug 2019 01:49:23 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -256,7 +64,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:f9714e16-d01a-00e1-11c6-48df1c000000\nTime:2019-08-02T00:12:34.0498564Z</Message></Error>"
+        specified share does not exist.\nRequestId:7d8fbf9a-801a-00f9-5dd4-48f289000000\nTime:2019-08-02T01:49:23.3341387Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -266,7 +74,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:33 GMT
+      : Fri, 02 Aug 2019 01:49:22 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -274,7 +82,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: ShareNotFound
-      x-ms-request-id: f9714e16-d01a-00e1-11c6-48df1c000000
+      x-ms-request-id: 7d8fbf9a-801a-00f9-5dd4-48f289000000
       x-ms-version: '2018-11-09'
     status:
       code: 404

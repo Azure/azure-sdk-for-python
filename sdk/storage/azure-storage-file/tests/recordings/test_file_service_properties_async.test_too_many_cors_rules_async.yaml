@@ -17,66 +17,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 4706f6a2-b4b8-11e9-9561-2816a845e8c6
+      - 74352086-b4c7-11e9-ae77-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:37 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:ce0ed5b4-f01a-011c-40c5-48a62b000000\nTime:2019-08-01T23:58:34.2405222Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
-        /></Error>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '294'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:33 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: ce0ed5b4-f01a-011c-40c5-48a62b000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Content-Length:
-      - '1143'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - f4960312-b4b9-11e9-8c5e-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:37 GMT
+      - Fri, 02 Aug 2019 01:47:15 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -84,7 +27,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:c7fba289-101a-00fc-15c6-4806f6000000\nTime:2019-08-02T00:10:34.8912501Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:641930f9-901a-0008-2dd4-48231a000000\nTime:2019-08-02T01:47:15.6660666Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -95,12 +38,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:34 GMT
+      : Fri, 02 Aug 2019 01:47:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: c7fba289-101a-00fc-15c6-4806f6000000
+      x-ms-request-id: 641930f9-901a-0008-2dd4-48231a000000
       x-ms-version: '2018-11-09'
     status:
       code: 400

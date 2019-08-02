@@ -15,99 +15,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 82ea1488-b4b8-11e9-b3a6-2816a845e8c6
+      - b5b4ed94-b4c7-11e9-a35b-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:00:17 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remoteremotestoragename.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:3076b689-001a-0120-60c5-4812f0000000\nTime:2019-08-02T00:00:14.9261285Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '243'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 00:00:14 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidResourceName
-      x-ms-request-id:
-      - 3076b689-001a-0120-60c5-4812f0000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 133a3464-b4b9-11e9-8225-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:04:19 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:93d375c6-a01a-00a1-13c5-48f6f2000000\nTime:2019-08-02T00:04:16.9782158Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '243'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 00:04:16 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidResourceName
-      x-ms-request-id:
-      - 93d375c6-a01a-00a1-13c5-48f6f2000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 31d16c18-b4ba-11e9-aa3b-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:12:20 GMT
+      - Fri, 02 Aug 2019 01:49:05 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -115,20 +25,20 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:9b91e151-701a-00c5-1dc6-484652000000\nTime:2019-08-02T00:12:17.7603174Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:bcf0597c-d01a-0062-18d4-487fb1000000\nTime:2019-08-02T01:49:05.7040849Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:12:16 GMT
+      - Fri, 02 Aug 2019 01:49:05 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidResourceName
       x-ms-request-id:
-      - 9b91e151-701a-00c5-1dc6-484652000000
+      - bcf0597c-d01a-0062-18d4-487fb1000000
       x-ms-version:
       - '2018-11-09'
     status:

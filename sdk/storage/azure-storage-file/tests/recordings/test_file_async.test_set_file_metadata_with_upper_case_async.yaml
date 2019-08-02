@@ -7,297 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 383f98ae-b4b8-11e9-ae27-2816a845e8c6
+      - 648451de-b4c7-11e9-ae23-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:12 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/utshareec4f1893?restype=share
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC1AC840B6"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1fd2ae59-101a-007f-0ec4-48a65b000000
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /utshareec4f1893
-        - restype=share
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 38566db0-b4b8-11e9-82c5-2816a845e8c6
-      x-ms-content-length:
-      - '1024'
-      x-ms-date:
-      - Thu, 01 Aug 2019 23:58:12 GMT
-      x-ms-type:
-      - file
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/utshareec4f1893/fileec4f1893
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC1AE04864"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: d472a20f-301a-010a-1ac4-4867b5000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /utshareec4f1893/fileec4f1893
-        - ''
-        - ''
-- request:
-    body: !!binary |
-      Yid3XamsZ85NBKgCmI6Z52UehnfU3Y8XsIHNuXfcIBgOBvdZ6efclwl0RzOc00Zab1eGXfud9pBh
-      cnyuR8sqsZwFywJK63hLGl2/hYQfw0otNGiMli+RrdKTqI8h1DSTsMgEM2MbI0su2jvnl+Kc116c
-      YmSzVDZaKeNDB++Lvr9aSDrIcIYHmWkbXc5ha6PdyfeDZ8zMFWBhjriJ9MPVUUKHf17aoNSjK3VF
-      PX/PnE3lVO40Nh4gPHaKovs3dQYtvMBGrrjg1cQdl7XJFnafH2boFdg/NH4RLMbVNCG8dJtcYJeK
-      S3mJF+6wyQlMcwMkAvQa1l/F0hUUXBpQiIzwKzGWAIbE1PPpEsQfAVE8sAE+PNm4TlmmirW20y03
-      ami1LQNtkIDiQUYkx4g0DYhP/BZiu5MbHRDVHjoj6cmygRlRubOblb84EnuaqYMdXEifHXdEA2zY
-      KMwGBXbLc7yREnDHmtSNKGfEn+CQm1CJgIOlpK5Q4A3BvQmItldjqoIaLrcQ2xvlUgEozVbMlRVG
-      A37x+QVP9rUBC9gHGrB4wf0JmNUoCog9kY7IGEiTz+Ku4dOZLI5ojANqZoiPQiKQKcC4lD6qOXyt
-      dbCGntkFuvXgbgUEYrUiuIXAqFLnvsVrOPxX4krOBi+J5Fy+6bJQ0gtE6N2Wl140NSrsHTy0z30E
-      zcXHILZMCtImFp7QlJDlwQjbKC7HrLDTEbvGCNLCd3kbgblo/e3GuafsF7N5w9dXpEg0wbbvqm8B
-      m2x3pEppCXeLF4ctcyJxFEt9NDkiAXyq6gOYSjjz0FTBHdAHDas0aXv9BCSDokLdt1U5uNqLy0qH
-      ELkW+/JemYFhXYv48yT2JR3PLdehlfCpSyXlLJBdrwzlPCDIQstgbDnN8jdqG6AexBxjfVBoYoix
-      PsRs6Ga4qnXzP4AtluSAoPazbjrwAVmyB3l6g2+/66DOkMzGdmbjuG+6eOElnmaC+taVmEIwxyjU
-      9RYfBeH8qSx2zTe4+s5iqyt45+Cv2dM5zGwpC0yAtbqYd2bYFlUY1QL3aK5Zj2mbw/C6r1LdOPYv
-      jE4JG2HXr9LQbi8d+6hhjKDCGcuoS829+pjbg3qTMKQ/TSxwu6sFlZ3mJnlDjC18migdcdR2+J82
-      giksbyVMqVg4ZGJNd1LxZqF0c0+uO7my60+BEVjFrdZy2lv83LyVTp0dkSLBK7oMsneriRV1FO+Q
-      Z7MVYkAjQqf+V99PF/x1R3/DBzslX8+sbWDt6Ue+CCwCuvCIA8caAy9QS/npu9XNBsoAY1WSJeQz
-      ONLw+b4m8CVIHLVwSbYJz+r8uMDHtY7mZOZ1MOFnEEodPx+bSUW6aKjl66Qwq1DwWw6wjF7+iA==
-    headers:
-      Content-Length:
-      - '1024'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 386b1d00-b4b8-11e9-aabf-2816a845e8c6
-      x-ms-date:
-      - Thu, 01 Aug 2019 23:58:12 GMT
-      x-ms-range:
-      - bytes=0-1023
-      x-ms-version:
-      - '2018-11-09'
-      x-ms-write:
-      - update
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/utshareec4f1893/fileec4f1893?comp=range
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Md5
-      : 379W/ujj+k7Ut8jdQMoYdg==
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC1AE5EEC0"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: d472a211-301a-010a-1bc4-4867b5000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /utshareec4f1893/fileec4f1893
-        - comp=range
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 38707070-b4b8-11e9-9ad9-2816a845e8c6
-      x-ms-date:
-      - Thu, 01 Aug 2019 23:58:12 GMT
-      x-ms-meta:
-      - '{''hello'': ''world'', ''number'': ''42'', ''UP'': ''UPval''}'
-      x-ms-meta-UP:
-      - UPval
-      x-ms-meta-hello:
-      - world
-      x-ms-meta-number:
-      - '42'
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/utshareec4f1893/fileec4f1893?comp=metadata
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC1AEAD1A5"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: d472a212-301a-010a-1cc4-4867b5000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
-    status:
-      code: 200
-      message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /utshareec4f1893/fileec4f1893
-        - comp=metadata
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 38759d0c-b4b8-11e9-9a8d-2816a845e8c6
-      x-ms-date:
-      - Thu, 01 Aug 2019 23:58:12 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: HEAD
-    uri: https://remotestoragename.file.core.windows.net/utshareec4f1893/fileec4f1893
-  response:
-    body:
-      string: ''
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '1024'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml; charset=utf-8
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716DC1AEAD1A5"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Thu, 01 Aug 2019 23:58:09 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
-      x-ms-meta-UP: UPval
-      x-ms-meta-hello: world
-      x-ms-meta-number: '42'
-      x-ms-request-id: d472a213-301a-010a-1dc4-4867b5000000
-      x-ms-server-encrypted: 'true'
-      x-ms-type: File
-      x-ms-version: '2018-11-09'
-    status:
-      code: 200
-      message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - rakshithqueueasynctest.file.core.windows.net
-        - /utshareec4f1893/fileec4f1893
-        - ''
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e3ba544c-b4b9-11e9-9c5f-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:09 GMT
+      - Fri, 02 Aug 2019 01:46:48 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -311,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:05 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DDC642BF46"'
+      : '"0x8D716EB48F319A8"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: dcac8194-d01a-010b-54c6-486648000000
+      x-ms-request-id: 0dbf6400-b01a-00d3-13d4-4887cc000000
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -342,11 +54,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e3d46de8-b4b9-11e9-a24b-2816a845e8c6
+      - 64a30fc0-b4c7-11e9-990a-2816a845e8c6
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 02 Aug 2019 00:10:09 GMT
+      - Fri, 02 Aug 2019 01:46:49 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -362,17 +74,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DDC65C7BBE"'
+      : '"0x8D716EB4912CF16"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1a2dd5d5-c01a-00d7-54c6-48724e000000
+      x-ms-request-id: dab1e8f0-801a-003e-5cd4-488e48000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -414,9 +126,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - e3e8f96c-b4b9-11e9-818e-2816a845e8c6
+      - 64b995f8-b4c7-11e9-8d98-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:10:09 GMT
+      - Fri, 02 Aug 2019 01:46:49 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -437,17 +149,17 @@ interactions:
       : 379W/ujj+k7Ut8jdQMoYdg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DDC6629758"'
+      : '"0x8D716EB491A4A84"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1a2dd5d7-c01a-00d7-55c6-48724e000000
+      x-ms-request-id: dab1e8f2-801a-003e-5dd4-488e48000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -469,9 +181,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e3edff10-b4b9-11e9-906a-2816a845e8c6
+      - 64bfd312-b4c7-11e9-a74a-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:10:09 GMT
+      - Fri, 02 Aug 2019 01:46:49 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42'', ''UP'': ''UPval''}'
       x-ms-meta-UP:
@@ -493,17 +205,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DDC667C871"'
+      : '"0x8D716EB49208D38"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1a2dd5d8-c01a-00d7-56c6-48724e000000
+      x-ms-request-id: dab1e8f3-801a-003e-5ed4-488e48000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -525,9 +237,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e3f304ac-b4b9-11e9-8c78-2816a845e8c6
+      - 64c5e95c-b4c7-11e9-8d8b-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:10:09 GMT
+      - Fri, 02 Aug 2019 01:46:49 GMT
       x-ms-version:
       - '2018-11-09'
     method: HEAD
@@ -544,13 +256,13 @@ interactions:
       : application/xml; charset=utf-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DDC667C871"'
+      : '"0x8D716EB49208D38"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:10:06 GMT
+      : Fri, 02 Aug 2019 01:46:49 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -560,7 +272,7 @@ interactions:
       x-ms-meta-UP: UPval
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
-      x-ms-request-id: 1a2dd5d9-c01a-00d7-57c6-48724e000000
+      x-ms-request-id: dab1e8f4-801a-003e-5fd4-488e48000000
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2018-11-09'

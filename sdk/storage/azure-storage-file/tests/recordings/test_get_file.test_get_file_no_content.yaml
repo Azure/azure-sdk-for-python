@@ -15,17 +15,17 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 48703f14-b4b8-11e9-8f19-2816a845e8c6
+      - 75c55cf8-b4c7-11e9-96b8-2816a845e8c6
       x-ms-content-length:
       - '0'
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:39 GMT
+      - Fri, 02 Aug 2019 01:47:17 GMT
       x-ms-type:
       - file
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://remotestoragename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
+    uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
   response:
     body:
       string: ''
@@ -33,15 +33,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Aug 2019 23:58:36 GMT
+      - Fri, 02 Aug 2019 01:47:17 GMT
       ETag:
-      - '"0x8D716DC2B113F45"'
+      - '"0x8D716EB5A4F736A"'
       Last-Modified:
-      - Thu, 01 Aug 2019 23:58:36 GMT
+      - Fri, 02 Aug 2019 01:47:18 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 8468fe4e-501a-0073-3ec5-4848aa000000
+      - dd98a93d-f01a-0075-0dd4-48bfd2000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -63,19 +63,19 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 489bedc6-b4b8-11e9-8c4b-2816a845e8c6
+      - 75f4d812-b4c7-11e9-98a5-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:39 GMT
+      - Fri, 02 Aug 2019 01:47:18 GMT
       x-ms-range:
       - bytes=0-32767
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://remotestoragename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
+    uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:8468fe50-501a-0073-3fc5-4848aa000000\nTime:2019-08-01T23:58:36.8129838Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:dd98a93f-f01a-0075-0ed4-48bfd2000000\nTime:2019-08-02T01:47:18.5294886Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -84,7 +84,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 01 Aug 2019 23:58:36 GMT
+      - Fri, 02 Aug 2019 01:47:17 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -92,7 +92,7 @@ interactions:
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - 8468fe50-501a-0073-3fc5-4848aa000000
+      - dd98a93f-f01a-0075-0ed4-48bfd2000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -112,160 +112,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 48a70a0a-b4b8-11e9-a8df-2816a845e8c6
+      - 7600de9c-b4c7-11e9-a72e-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:39 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://remotestoragename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - application/xml; charset=utf-8
-      Date:
-      - Thu, 01 Aug 2019 23:58:36 GMT
-      ETag:
-      - '"0x8D716DC2B113F45"'
-      Last-Modified:
-      - Thu, 01 Aug 2019 23:58:36 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 8468fe51-501a-0073-40c5-4848aa000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-type:
-      - File
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - f6432c58-b4b9-11e9-a680-2816a845e8c6
-      x-ms-content-length:
-      - '0'
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:40 GMT
-      x-ms-type:
-      - file
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 02 Aug 2019 00:10:37 GMT
-      ETag:
-      - '"0x8D716DDD8E1DDB9"'
-      Last-Modified:
-      - Fri, 02 Aug 2019 00:10:37 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 1fd2b704-101a-007f-14c6-48a65b000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - f66d90ec-b4b9-11e9-93a5-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:40 GMT
-      x-ms-range:
-      - bytes=0-32767
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:1fd2b706-101a-007f-15c6-48a65b000000\nTime:2019-08-02T00:10:37.9214103Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 00:10:37 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - 1fd2b706-101a-007f-15c6-48a65b000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - f678379e-b4b9-11e9-8d7a-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:40 GMT
+      - Fri, 02 Aug 2019 01:47:18 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -281,17 +130,17 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Fri, 02 Aug 2019 00:10:37 GMT
+      - Fri, 02 Aug 2019 01:47:17 GMT
       ETag:
-      - '"0x8D716DDD8E1DDB9"'
+      - '"0x8D716EB5A4F736A"'
       Last-Modified:
-      - Fri, 02 Aug 2019 00:10:37 GMT
+      - Fri, 02 Aug 2019 01:47:18 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
       - Origin
       x-ms-request-id:
-      - 1fd2b707-101a-007f-16c6-48a65b000000
+      - dd98a941-f01a-0075-0fd4-48bfd2000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:

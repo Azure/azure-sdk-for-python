@@ -15,9 +15,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2cc5c822-b4ba-11e9-885b-2816a845e8c6
+      - affe3ada-b4c7-11e9-829c-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:11 GMT
+      - Fri, 02 Aug 2019 01:48:55 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -29,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 00:12:08 GMT
+      - Fri, 02 Aug 2019 01:48:55 GMT
       ETag:
-      - '"0x8D716DE0F64FA14"'
+      - '"0x8D716EB9484B353"'
       Last-Modified:
-      - Fri, 02 Aug 2019 00:12:09 GMT
+      - Fri, 02 Aug 2019 01:48:56 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 2c52fe30-c01a-00ba-20c6-48d860000000
+      - 7c797aa9-901a-0107-28d4-4888b9000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -57,9 +57,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2cf0d958-b4ba-11e9-a4da-2816a845e8c6
+      - b02a3700-b4c7-11e9-8c29-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:12 GMT
+      - Fri, 02 Aug 2019 01:48:55 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -68,14 +68,16 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share41961029</Name><Properties><Last-Modified>Fri,
-        02 Aug 2019 00:12:09 GMT</Last-Modified><Etag>\"0x8D716DE0F64FA14\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef82c7b02680b4157bf0842ca890ff18e</Name><Properties><Last-Modified>Thu,
+        02 Aug 2019 01:48:56 GMT</Last-Modified><Etag>\"0x8D716EB9484B353\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare1f959397749748d28547b12abbab575b</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:31:55 GMT</Last-Modified><Etag>\"0x8D716E934011551\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef3cb3a4c16624e9d85715290486dccf4</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:31:29 GMT</Last-Modified><Etag>\"0x8D716E92470285E\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef82c7b02680b4157bf0842ca890ff18e</Name><Properties><Last-Modified>Thu,
         01 Aug 2019 20:44:45 GMT</Last-Modified><Etag>\"0x8D716C116342B2F\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:12:08 GMT
+      - Fri, 02 Aug 2019 01:48:55 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -83,7 +85,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 2c52fe33-c01a-00ba-21c6-48d860000000
+      - 7c797aad-901a-0107-29d4-4888b9000000
       x-ms-version:
       - '2018-11-09'
     status:

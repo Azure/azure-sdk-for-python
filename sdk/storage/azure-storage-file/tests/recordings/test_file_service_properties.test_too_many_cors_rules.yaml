@@ -23,63 +23,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 45fa3aee-b4b8-11e9-bfeb-2816a845e8c6
+      - 72f90b02-b4c7-11e9-ad76-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:58:35 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remotestoragename.file.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:97cdbe81-f01a-013e-0dc5-48c81d000000\nTime:2019-08-01T23:58:32.6854499Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
-        /></Error>"
-    headers:
-      Content-Length:
-      - '294'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 01 Aug 2019 23:58:32 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidXmlDocument
-      x-ms-request-id:
-      - 97cdbe81-f01a-013e-0dc5-48c81d000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1143'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - f2e2d9b4-b4b9-11e9-8127-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:10:34 GMT
+      - Fri, 02 Aug 2019 01:47:13 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -87,7 +33,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:2c52fdac-c01a-00ba-03c6-48d860000000\nTime:2019-08-02T00:10:32.2706159Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:9a78dc2f-401a-0067-5ed4-488bce000000\nTime:2019-08-02T01:47:13.8064561Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       Content-Length:
@@ -95,13 +41,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:10:31 GMT
+      - Fri, 02 Aug 2019 01:47:13 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
       x-ms-request-id:
-      - 2c52fdac-c01a-00ba-03c6-48d860000000
+      - 9a78dc2f-401a-0067-5ed4-488bce000000
       x-ms-version:
       - '2018-11-09'
     status:

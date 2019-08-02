@@ -13,54 +13,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 04b24bae-b4b8-11e9-8177-2816a845e8c6
+      - 2d12dcd2-b4c7-11e9-bcce-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:56:45 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://remotestoragename.file.core.windows.net/utshare47651e25/dir1?restype=directory
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:cf9c1de8-d01a-000f-0fc4-48d59f000000\nTime:2019-08-01T23:56:43.0735705Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '223'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 01 Aug 2019 23:56:42 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ResourceNotFound
-      x-ms-request-id:
-      - cf9c1de8-d01a-000f-0fc4-48d59f000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified resource does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - a9283128-b4b9-11e9-9ba3-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:08:31 GMT
+      - Fri, 02 Aug 2019 01:45:15 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -68,14 +23,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:5355877d-b01a-009c-6ec6-4843d4000000\nTime:2019-08-02T00:08:28.5040739Z</Message></Error>"
+        specified resource does not exist.\nRequestId:f97182b5-d01a-00e1-74d3-48df1c000000\nTime:2019-08-02T01:45:16.4076270Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:08:28 GMT
+      - Fri, 02 Aug 2019 01:45:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -83,7 +38,7 @@ interactions:
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - 5355877d-b01a-009c-6ec6-4843d4000000
+      - f97182b5-d01a-00e1-74d3-48df1c000000
       x-ms-version:
       - '2018-11-09'
     status:

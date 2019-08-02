@@ -15,107 +15,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 16c71c74-b4b8-11e9-8880-2816a845e8c6
+      - 3a5d4fc0-b4c7-11e9-98df-2816a845e8c6
       x-ms-date:
-      - Thu, 01 Aug 2019 23:57:16 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remoteremoteremotestoragename.file.core.windows.net/remoteshare3416155e?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:f2759185-f01a-00f4-21c4-48702d000000\nTime:2019-08-01T23:57:13.9194967Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'KTpJEIDxcQI8SF+965s/EbGQrV1mESAJ/pp7Y1mtGG0='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:16c71c74-b4b8-11e9-8880-2816a845e8c6\nx-ms-date:Thu,
-        01 Aug 2019 23:57:16 GMT\nx-ms-version:2018-11-09\n/remoteremoteremotestoragename/remoteshare3416155e\nrestype:share'.</AuthenticationErrorDetail></Error>"
-    headers:
-      Content-Length:
-      - '765'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 01 Aug 2019 23:57:13 GMT
-      Server:
-      - Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - AuthenticationFailed
-      x-ms-request-id:
-      - f2759185-f01a-00f4-21c4-48702d000000
-    status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bbfb1af6-b4b9-11e9-9583-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:09:02 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://remoteremotestoragename.file.core.windows.net/remoteshare3416155e?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:b243be84-201a-0057-48c6-48bc4c000000\nTime:2019-08-02T00:09:00.2431696Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'EvK44tS/ngcopUZaQeN0Yvb3VbkE3ZlUEyifJg72tqM='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:bbfb1af6-b4b9-11e9-9583-2816a845e8c6\nx-ms-date:Fri,
-        02 Aug 2019 00:09:02 GMT\nx-ms-version:2018-11-09\n/remoteremotestoragename/remoteshare3416155e\nrestype:share'.</AuthenticationErrorDetail></Error>"
-    headers:
-      Content-Length:
-      - '765'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 00:09:00 GMT
-      Server:
-      - Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - AuthenticationFailed
-      x-ms-request-id:
-      - b243be84-201a-0057-48c6-48bc4c000000
-    status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 67d01564-b4ba-11e9-9b75-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 00:13:51 GMT
+      - Fri, 02 Aug 2019 01:45:38 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -124,24 +26,24 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
         failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:2093d1ab-f01a-00ff-4cc7-486859000000\nTime:2019-08-02T00:13:48.5593766Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'WrUJhhQATIJC4rxb/8Q5q9MiNhDFo5LLb9Ab+VLGO0I='
+        is formed correctly including the signature.\nRequestId:24b274e3-d01a-0060-17d3-4810e3000000\nTime:2019-08-02T01:45:38.7864559Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'gADhDrpLTaE9JW092EG8gRLdQDBUL468E8mpbqouluo='
         is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:67d01564-b4ba-11e9-9b75-2816a845e8c6\nx-ms-date:Fri,
-        02 Aug 2019 00:13:51 GMT\nx-ms-version:2018-11-09\n/remotestoragename/remoteshare3416155e\nrestype:share'.</AuthenticationErrorDetail></Error>"
+        sign: 'PUT\n\n\n\n\napplication/xml; charset=utf-8\n\n\n\n\n\n\nx-ms-client-request-id:3a5d4fc0-b4c7-11e9-98df-2816a845e8c6\nx-ms-date:Fri,
+        02 Aug 2019 01:45:38 GMT\nx-ms-version:2018-11-09\n/remotestoragename/remoteshare3416155e\nrestype:share'.</AuthenticationErrorDetail></Error>"
     headers:
       Content-Length:
       - '765'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 00:13:47 GMT
+      - Fri, 02 Aug 2019 01:45:37 GMT
       Server:
       - Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - AuthenticationFailed
       x-ms-request-id:
-      - 2093d1ab-f01a-00ff-4cc7-486859000000
+      - 24b274e3-d01a-0060-17d3-4810e3000000
     status:
       code: 403
       message: Server failed to authenticate the request. Make sure the value of Authorization

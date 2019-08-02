@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 390b6eb4-b4ba-11e9-83c7-2816a845e8c6
+      - bde9d838-b4c7-11e9-a9c0-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:32 GMT
+      - Fri, 02 Aug 2019 01:49:18 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:18 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DE1B93E42A"'
+      : '"0x8D716EBA2586D37"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:19 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9a78a3e4-401a-0067-62c6-488bce000000
+      x-ms-request-id: 2058530b-c01a-0093-25d4-48ae22000000
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -54,9 +54,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 391fd2fe-b4ba-11e9-a68f-2816a845e8c6
+      - bdfe8c80-b4c7-11e9-88c3-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:32 GMT
+      - Fri, 02 Aug 2019 01:49:19 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -70,18 +70,18 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:18 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DE1B93E42A"'
+      : '"0x8D716EBA2586D37"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:19 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9a78a3e7-401a-0067-63c6-488bce000000
-      x-ms-snapshot: '2019-08-02T00:12:29.0000000Z'
+      x-ms-request-id: 2058530e-c01a-0093-26d4-48ae22000000
+      x-ms-snapshot: '2019-08-02T01:49:19.0000000Z'
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -102,9 +102,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3925e962-b4ba-11e9-9d50-2816a845e8c6
+      - be060186-b4c7-11e9-bfd4-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:32 GMT
+      - Fri, 02 Aug 2019 01:49:19 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -118,18 +118,18 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:18 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D716DE1B93E42A"'
+      : '"0x8D716EBA2586D37"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:19 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 9a78a3e8-401a-0067-64c6-488bce000000
-      x-ms-snapshot: '2019-08-02T00:12:30.0000000Z'
+      x-ms-request-id: 2058530f-c01a-0093-27d4-48ae22000000
+      x-ms-snapshot: '2019-08-02T01:49:20.0000000Z'
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -152,9 +152,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 392c4d9a-b4ba-11e9-9bb3-2816a845e8c6
+      - be0d26ae-b4c7-11e9-a86a-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 00:12:32 GMT
+      - Fri, 02 Aug 2019 01:49:19 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -162,10 +162,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share50061605</Name><Snapshot>2019-08-02T00:12:29.0000000Z</Snapshot><Properties><Last-Modified>Fri,
-        02 Aug 2019 00:12:29 GMT</Last-Modified><Etag>\"0x8D716DE1B93E42A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Snapshot>2019-08-02T00:12:30.0000000Z</Snapshot><Properties><Last-Modified>Fri,
-        02 Aug 2019 00:12:29 GMT</Last-Modified><Etag>\"0x8D716DE1B93E42A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Properties><Last-Modified>Fri,
-        02 Aug 2019 00:12:29 GMT</Last-Modified><Etag>\"0x8D716DE1B93E42A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef82c7b02680b4157bf0842ca890ff18e</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share50061605</Name><Snapshot>2019-08-02T01:49:19.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:49:19 GMT</Last-Modified><Etag>\"0x8D716EBA2586D37\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Snapshot>2019-08-02T01:49:20.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:49:19 GMT</Last-Modified><Etag>\"0x8D716EBA2586D37\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:49:19 GMT</Last-Modified><Etag>\"0x8D716EBA2586D37\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utshare1f959397749748d28547b12abbab575b</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:31:55 GMT</Last-Modified><Etag>\"0x8D716E934011551\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef3cb3a4c16624e9d85715290486dccf4</Name><Properties><Last-Modified>Fri,
+        02 Aug 2019 01:31:29 GMT</Last-Modified><Etag>\"0x8D716E92470285E\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>utsharef82c7b02680b4157bf0842ca890ff18e</Name><Properties><Last-Modified>Thu,
         01 Aug 2019 20:44:45 GMT</Last-Modified><Etag>\"0x8D716C116342B2F\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
@@ -174,7 +176,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 00:12:29 GMT
+      : Fri, 02 Aug 2019 01:49:18 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -184,7 +186,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 9a78a3e9-401a-0067-65c6-488bce000000
+      x-ms-request-id: 20585310-c01a-0093-28d4-48ae22000000
       x-ms-version: '2018-11-09'
     status:
       code: 200
