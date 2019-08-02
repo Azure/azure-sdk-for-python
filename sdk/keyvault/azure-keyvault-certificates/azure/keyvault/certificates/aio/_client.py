@@ -150,7 +150,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
-            certificate_nae=name,
+            certificate_name=name,
             error_map={404: ResourceNotFoundError},
             **kwargs
         )
@@ -729,7 +729,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :type password: str
         :param organization_id: Id of the organization.
         :type organization_id: str
-        :param admin_details:
+        :param admin_details: Details of the organization administrators of the certificate issuer.
+        :type admin_details: ~azure.security.keyvault.certificates._models.AdministratorDetails
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :returns: The created Issuer
@@ -796,14 +797,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :type password: str
         :param organization_id: Id of the organization
         :type organization_id: str
-        :param first_name: First name of the certificate issuer.
-        :type first_name: str
-        :param last_name: Last name of the certificate issuer.
-        :type last_name: str
-        :param email: Email address of the certificate issuer.
-        :type email: str
-        :param phone: Phone number of the certificate issuer.
-        :type phone: str
+        :param admin_details: Details of the organization administrators of the certificate issuer.
+        :type admin_details: ~azure.security.keyvault.certificates._models.AdministratorDetails
         :param enabled: Determines whether the issuer is enabled.
         :type enabled: bool
         :return: The updated issuer
