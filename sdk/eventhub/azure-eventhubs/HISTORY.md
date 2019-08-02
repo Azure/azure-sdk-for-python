@@ -1,5 +1,20 @@
 # Release History
 
+## 5.0.0b2 (2019-08-06)
+
+**New features**
+
+- Added ability to create and send EventDataBatch object with limited data size.
+- Added new configuration parameters for exponential delay among each retry operation.
+    - `retry_total`: The total number of attempts to redo the failed operation.
+    - `backoff_factor`: The delay time factor.
+    - `backoff_max`: The maximum delay time in total.
+
+**Breaking changes**
+
+- New `EventProcessor` design
+    - The `EventProcessorHost` was waived.
+
 ## 5.0.0b1 (2019-06-25)
 
 Version 5.0.0b1 is a preview of our efforts to create a client library that is user friendly and idiomatic to the Python ecosystem. The reasons for most of the changes in this update can be found in the [Azure SDK Design Guidelines for Python](https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html). For more information, please visit https://aka.ms/azure-sdk-preview1-python.
