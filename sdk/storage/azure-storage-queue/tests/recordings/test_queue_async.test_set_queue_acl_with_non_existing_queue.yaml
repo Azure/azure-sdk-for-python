@@ -7,9 +7,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - c0a4da62-b50b-11e9-a447-2816a845e8c6
+      - 290f6de8-b565-11e9-bc7f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:09 GMT
+      - Fri, 02 Aug 2019 20:36:09 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:e6682c0d-7003-004a-4b18-495467000000\nTime:2019-08-02T09:56:09.6436512Z</Message></Error>"
+        specified queue does not exist.\nRequestId:5f366090-4003-0049-6e71-495760000000\nTime:2019-08-02T20:36:09.5910704Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -27,12 +27,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:09 GMT
+      : Fri, 02 Aug 2019 20:36:09 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: QueueNotFound
-      x-ms-request-id: e6682c0d-7003-004a-4b18-495467000000
+      x-ms-request-id: 5f366090-4003-0049-6e71-495760000000
       x-ms-version: '2018-03-28'
     status:
       code: 404

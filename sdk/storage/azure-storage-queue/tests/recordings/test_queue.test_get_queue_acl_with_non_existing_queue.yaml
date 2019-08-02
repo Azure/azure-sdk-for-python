@@ -9,183 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 1dc9d2b4-952a-11e9-96e7-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:12:53 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.queue.core.windows.net/pythonqueue4ef515f8?comp=acl
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:c4a12d48-2003-0034-7a36-29cba8000000\nTime:2019-06-22T20:12:53.4599960Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:12:53 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - c4a12d48-2003-0034-7a36-29cba8000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - df89fd98-952a-11e9-9ffa-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:18:18 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/pythonqueue4ef515f8?comp=acl
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:27cafb48-c003-0017-5037-29a463000000\nTime:2019-06-22T20:18:18.5209871Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:18:18 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - 27cafb48-c003-0017-5037-29a463000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 770d5818-952b-11e9-b0ef-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:22:32 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/pythonqueue4ef515f8?comp=acl
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:bcf50137-6003-0055-7838-298f77000000\nTime:2019-06-22T20:22:32.7276664Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:22:32 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - bcf50137-6003-0055-7838-298f77000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b3920868-952d-11e9-ac57-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:38:33 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/pythonqueue4ef515f8?comp=acl
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:0169bc96-b003-003a-673a-2927a3000000\nTime:2019-06-22T20:38:33.2564089Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:38:32 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - 0169bc96-b003-003a-673a-2927a3000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a6a35188-b50b-11e9-b118-2816a845e8c6
+      - 16b0a158-b565-11e9-b9b3-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:55:25 GMT
+      - Fri, 02 Aug 2019 20:35:38 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -193,14 +23,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:a6ce42a5-3003-00ec-4a18-496c79000000\nTime:2019-08-02T09:55:26.1621462Z</Message></Error>"
+        specified queue does not exist.\nRequestId:b7ed37d2-e003-00e5-6471-4976f7000000\nTime:2019-08-02T20:35:38.9090213Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 09:55:25 GMT
+      - Fri, 02 Aug 2019 20:35:38 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -208,7 +38,7 @@ interactions:
       x-ms-error-code:
       - QueueNotFound
       x-ms-request-id:
-      - a6ce42a5-3003-00ec-4a18-496c79000000
+      - b7ed37d2-e003-00e5-6471-4976f7000000
       x-ms-version:
       - '2018-03-28'
     status:

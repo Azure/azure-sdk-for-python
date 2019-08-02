@@ -9,99 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - TestApp/v1.0 azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ce4e82b8-99a5-11e9-9f58-f45c89a7d159
-      x-ms-date:
-      - Fri, 28 Jun 2019 13:08:22 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
-        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 28 Jun 2019 13:08:22 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 1ff1041d-a003-00e9-16b2-2d9806000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - TestApp/v2.0 azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ce7b7162-99a5-11e9-956c-f45c89a7d159
-      x-ms-date:
-      - Fri, 28 Jun 2019 13:08:22 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
-        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 28 Jun 2019 13:08:22 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 1ff10426-a003-00e9-1db2-2d9806000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
       - TestApp/v1.0 azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c5735012-b50b-11e9-8221-2816a845e8c6
+      - 2d04b79e-b565-11e9-b449-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:17 GMT
+      - Fri, 02 Aug 2019 20:36:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -116,7 +30,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 09:56:17 GMT
+      - Fri, 02 Aug 2019 20:36:15 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -124,7 +38,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 4174e40f-b003-00b9-2018-49870e000000
+      - 87b538a5-1003-00d9-1d71-49c22c000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -144,9 +58,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c5b7398a-b50b-11e9-9398-2816a845e8c6
+      - 2d37b3d0-b565-11e9-9d7f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:17 GMT
+      - Fri, 02 Aug 2019 20:36:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -161,7 +75,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 02 Aug 2019 09:56:17 GMT
+      - Fri, 02 Aug 2019 20:36:15 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -169,7 +83,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - 4174e415-b003-00b9-2518-49870e000000
+      - 87b538ac-1003-00d9-2371-49c22c000000
       x-ms-version:
       - '2018-03-28'
     status:

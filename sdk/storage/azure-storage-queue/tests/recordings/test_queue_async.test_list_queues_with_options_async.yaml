@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bbe0ac42-b50b-11e9-8a68-2816a845e8c6
+      - 25d7d25c-b565-11e9-8c80-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,11 +23,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 61d168b0-a003-00c0-2618-49ee44000000
+      x-ms-request-id: efd70d22-4003-002f-4d71-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -48,9 +48,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bc05f7f6-b50b-11e9-96fe-2816a845e8c6
+      - 25f22734-b565-11e9-a057-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -64,11 +64,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 61d168b5-a003-00c0-2918-49ee44000000
+      x-ms-request-id: efd70d36-4003-002f-5f71-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -89,9 +89,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bc12aa5a-b50b-11e9-81f8-2816a845e8c6
+      - 25fa5ef6-b565-11e9-a660-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -105,11 +105,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 61d168b8-a003-00c0-2b18-49ee44000000
+      x-ms-request-id: efd70d46-4003-002f-6b71-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -130,9 +130,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bc1e90ba-b50b-11e9-97c4-2816a845e8c6
+      - 2604422e-b565-11e9-8f14-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -146,11 +146,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 61d168bc-a003-00c0-2e18-49ee44000000
+      x-ms-request-id: efd70d56-4003-002f-7a71-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -173,9 +173,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bc2797c2-b50b-11e9-a8ab-2816a845e8c6
+      - 260a3190-b565-11e9-9c8e-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -183,7 +183,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue03f3115c5</Name></Queue><Queue><Name>listqueue13f3115c5</Name></Queue><Queue><Name>listqueue23f3115c5</Name></Queue></Queues><NextMarker>/blobstoragename/listqueue33f3115c5</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><MaxResults>3</MaxResults><Queues><Queue><Name>listqueue03f3115c5</Name></Queue><Queue><Name>listqueue13f3115c5</Name></Queue><Queue><Name>listqueue23f3115c5</Name></Queue></Queues><NextMarker>/blobstoragename/listqueue2560410cb</NextMarker></EnumerationResults>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Cache-Control
@@ -193,7 +193,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -203,7 +203,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 61d168c0-a003-00c0-3118-49ee44000000
+      x-ms-request-id: efd70d64-4003-002f-0571-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -226,17 +226,17 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - bc319466-b50b-11e9-84f1-2816a845e8c6
+      - 260ff9e2-b565-11e9-ba63-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:01 GMT
+      - Fri, 02 Aug 2019 20:36:04 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/?prefix=listqueue&marker=/blobstoragename/listqueue33f3115c5&include=metadata&comp=list
+    uri: https://blobstoragename.queue.core.windows.net/?prefix=listqueue&marker=/blobstoragename/listqueue2560410cb&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/blobstoragename/listqueue33f3115c5</Marker><Queues><Queue><Name>listqueue33f3115c5</Name><Metadata
+        ServiceEndpoint=\"https://blobstoragename.queue.core.windows.net/\"><Prefix>listqueue</Prefix><Marker>/blobstoragename/listqueue2560410cb</Marker><Queues><Queue><Name>listqueue33f3115c5</Name><Metadata
         /></Queue></Queues><NextMarker /></EnumerationResults>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -247,7 +247,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:01 GMT
+      : Fri, 02 Aug 2019 20:36:03 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -257,7 +257,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 61d168c8-a003-00c0-3718-49ee44000000
+      x-ms-request-id: efd70d6c-4003-002f-0c71-49e53a000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -268,6 +268,6 @@ interactions:
         - https
         - amqptest.queue.core.windows.net
         - /
-        - prefix=listqueue&marker=/amqptest/listqueue33f3115c5&include=metadata&comp=list
+        - prefix=listqueue&marker=/amqptest/listqueue2560410cb&include=metadata&comp=list
         - ''
 version: 1

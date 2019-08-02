@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c1dd30f4-b50b-11e9-b4b6-2816a845e8c6
+      - 29eff6ca-b565-11e9-ad64-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:11 GMT
+      - Fri, 02 Aug 2019 20:36:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,11 +23,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:10 GMT
+      : Fri, 02 Aug 2019 20:36:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 75c85470-1003-0078-6a18-490cb7000000
+      x-ms-request-id: 06bcd195-8003-00b1-4a71-499c7d000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -52,33 +52,33 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - c207c24a-b50b-11e9-9aa2-2816a845e8c6
+      - 2a082926-b565-11e9-91a8-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:11 GMT
+      - Fri, 02 Aug 2019 20:36:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://blobstoragename.queue.core.windows.net/pythonqueue7ba0168b/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>60bd8836-97f6-48a4-ac28-d84411a5cedf</MessageId><InsertionTime>Fri,
-        02 Aug 2019 09:56:11 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 09:56:11
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAcBjkgxhJ1QE=</PopReceipt><TimeNextVisible>Fri,
-        02 Aug 2019 09:56:11 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>5ef08883-872d-4ac6-9a13-012fa49a7b7b</MessageId><InsertionTime>Fri,
+        02 Aug 2019 20:36:11 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 20:36:11
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA3lSm63FJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 20:36:11 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Type
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:11 GMT
+      : Fri, 02 Aug 2019 20:36:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       ? !!python/object/new:multidict._istr.istr
       - Transfer-Encoding
       : chunked
-      x-ms-request-id: 75c85486-1003-0078-7d18-490cb7000000
+      x-ms-request-id: 06bcd1ad-8003-00b1-5f71-499c7d000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -101,19 +101,19 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c214476c-b50b-11e9-bf5a-2816a845e8c6
+      - 2a0df1ae-b565-11e9-be15-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:11 GMT
+      - Fri, 02 Aug 2019 20:36:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://blobstoragename.queue.core.windows.net/pythonqueue7ba0168b/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>60bd8836-97f6-48a4-ac28-d84411a5cedf</MessageId><InsertionTime>Fri,
-        02 Aug 2019 09:56:11 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 09:56:11
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAjM/PlRhJ1QE=</PopReceipt><TimeNextVisible>Fri,
-        02 Aug 2019 09:56:41 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1\u3688</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>5ef08883-872d-4ac6-9a13-012fa49a7b7b</MessageId><InsertionTime>Fri,
+        02 Aug 2019 20:36:11 GMT</InsertionTime><ExpirationTime>Fri, 09 Aug 2019 20:36:11
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAANp6N/XFJ1QE=</PopReceipt><TimeNextVisible>Fri,
+        02 Aug 2019 20:36:41 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1\u3688</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Cache-Control
@@ -123,7 +123,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:11 GMT
+      : Fri, 02 Aug 2019 20:36:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -133,7 +133,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 75c854a4-1003-0078-1918-490cb7000000
+      x-ms-request-id: 06bcd1b3-8003-00b1-6571-499c7d000000
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -156,9 +156,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c23a7eca-b50b-11e9-98a4-2816a845e8c6
+      - 2a13ba00-b565-11e9-b43f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:11 GMT
+      - Fri, 02 Aug 2019 20:36:11 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -176,7 +176,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:11 GMT
+      : Fri, 02 Aug 2019 20:36:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -186,7 +186,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 75c854f7-1003-0078-6a18-490cb7000000
+      x-ms-request-id: 06bcd1bf-8003-00b1-7071-499c7d000000
       x-ms-version: '2018-03-28'
     status:
       code: 200

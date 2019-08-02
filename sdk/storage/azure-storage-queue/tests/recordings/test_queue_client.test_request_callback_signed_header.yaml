@@ -11,135 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - 5b117e4a-9ccf-11e9-80b2-f45c89a7d159
-      x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      x-ms-meta-hello:
-      - world
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/cont4db115a6
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - a5397aaf-2003-00da-68dc-30c12b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - 5b393f48-9ccf-11e9-acd3-f45c89a7d159
-      x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.queue.core.windows.net/cont4db115a6?comp=metadata
-  response:
-    body:
-      string: ''
-    headers:
-      Cache-Control:
-      - no-cache
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-approximate-messages-count:
-      - '0'
-      x-ms-meta-hello:
-      - world
-      x-ms-request-id:
-      - a5397acd-2003-00da-02dc-30c12b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - 5b438aa2-9ccf-11e9-b647-f45c89a7d159
-      x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.queue.core.windows.net/cont4db115a6
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - a5397aec-2003-00da-1fdc-30c12b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 204
-      message: No Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
       - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c451891e-b50b-11e9-bcc7-2816a845e8c6
+      - 2c27c02e-b565-11e9-959f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:15 GMT
+      - Fri, 02 Aug 2019 20:36:14 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
@@ -153,11 +31,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 09:56:15 GMT
+      - Fri, 02 Aug 2019 20:36:14 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - abaa10b1-b003-003a-6a18-4927a3000000
+      - 68038756-8003-00ba-1471-498409000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -177,9 +55,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c4ad4350-b50b-11e9-93f5-2816a845e8c6
+      - 2c6478ac-b565-11e9-8056-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:16 GMT
+      - Fri, 02 Aug 2019 20:36:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -193,7 +71,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 09:56:15 GMT
+      - Fri, 02 Aug 2019 20:36:14 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -203,7 +81,7 @@ interactions:
       x-ms-meta-hello:
       - world
       x-ms-request-id:
-      - abaa10bb-b003-003a-7018-4927a3000000
+      - 68038763-8003-00ba-1e71-498409000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -225,9 +103,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c4bdbd4a-b50b-11e9-8fb0-2816a845e8c6
+      - 2c7203e8-b565-11e9-ba06-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:16 GMT
+      - Fri, 02 Aug 2019 20:36:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -239,11 +117,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 02 Aug 2019 09:56:15 GMT
+      - Fri, 02 Aug 2019 20:36:14 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - abaa10bc-b003-003a-7118-4927a3000000
+      - 68038777-8003-00ba-2771-498409000000
       x-ms-version:
       - '2018-03-28'
     status:

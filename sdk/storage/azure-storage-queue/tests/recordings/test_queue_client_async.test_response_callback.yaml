@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c71fc70a-b50b-11e9-a6b5-2816a845e8c6
+      - 2e444c12-b565-11e9-91e1-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:20 GMT
+      - Fri, 02 Aug 2019 20:36:18 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -17,7 +17,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:d236fa80-9003-0004-1918-499182000000\nTime:2019-08-02T09:56:20.5153530Z</Message></Error>"
+        specified queue does not exist.\nRequestId:a6255c28-6003-00dd-4371-4937ae000000\nTime:2019-08-02T20:36:18.3143821Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -27,7 +27,7 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:20 GMT
+      : Fri, 02 Aug 2019 20:36:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
@@ -35,7 +35,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: QueueNotFound
-      x-ms-request-id: d236fa80-9003-0004-1918-499182000000
+      x-ms-request-id: a6255c28-6003-00dd-4371-4937ae000000
       x-ms-version: '2018-03-28'
     status:
       code: 404
