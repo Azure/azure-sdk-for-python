@@ -39,6 +39,22 @@ class KeyVaultClientBase(object):
         # https://github.com/Azure/azure-sdk-for-python/issues/6637
         config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
+        # Override config policies if found in kwargs
+        if "user_agent_policy" in kwargs:
+            config.user_agent_policy = kwargs["user_agent_policy"]
+        if "headers_policy" in kwargs:
+            config.headers_policy = kwargs["headers_policy"]
+        if "proxy_policy" in kwargs:
+            config.proxy_policy = kwargs["proxy_policy"]
+        if "logging_policy" in kwargs:
+            config.logging_policy = kwargs["logging_policy"]
+        if "retry_policy" in kwargs:
+            config.retry_policy = kwargs["retry_policy"]
+        if "custom_hook_policy" in kwargs:
+            config.custom_hook_policy = kwargs["custom_hook_policy"]
+        if "redirect_policy" in kwargs:
+            config.redirect_policy = kwargs["redirect_policy"]
+
         return config
 
     def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
