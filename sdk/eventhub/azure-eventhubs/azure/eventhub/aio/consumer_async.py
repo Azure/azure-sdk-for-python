@@ -147,10 +147,8 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open(timeout_time)
 
-    async def _receive(self, **kwargs):
-        timeout_time = kwargs.get("timeout_time")
+    async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
-        max_batch_size = kwargs.get("max_batch_size")
         data_batch = kwargs.get("data_batch")
 
         await self._open(timeout_time)
@@ -170,6 +168,10 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
         return data_batch
+
+    @_retry_decorator
+    async def _receive_with_try(self, timeout_time=None, max_batch_size=None, **kwargs):
+        return await self._receive(timeout_time=timeout_time, max_batch_size=max_batch_size, **kwargs)
 
     @property
     def queue_size(self):
@@ -217,8 +219,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
 
-        return await _retry_decorator(self._receive)(self, timeout=timeout,
-                                                     max_batch_size=max_batch_size, data_batch=data_batch)
+        return await self._receive_with_try(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
 
     async def close(self, exception=None):
         # type: (Exception) -> None

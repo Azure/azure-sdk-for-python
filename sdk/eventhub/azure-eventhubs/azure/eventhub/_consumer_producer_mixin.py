@@ -25,7 +25,7 @@ def _retry_decorator(to_be_wrapped_func):
         kwargs.pop("timeout", None)
         while True:
             try:
-                return to_be_wrapped_func(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
             except Exception as exception:
                 last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
