@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .portal_client import PortalClient
+from .portal_client import portalClient
 from .version import VERSION
 
-__all__ = ['PortalClient']
+__all__ = ['portalClient']
 
 __version__ = VERSION
 

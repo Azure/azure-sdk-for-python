@@ -22,7 +22,7 @@ class DashboardsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2015-08-01-preview".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2019-01-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DashboardsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-01-preview"
+        self.api_version = "2019-01-01-preview"
 
         self.config = config
 
