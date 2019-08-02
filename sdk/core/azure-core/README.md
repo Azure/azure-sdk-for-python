@@ -27,30 +27,30 @@ from azure.core.pipeline.policies import (
     ProxyPolicy
 )
 
-class FooServiceClient():
+class FooServiceClient:
 
     @staticmethod
-    def create_config(credential, scopes, **kwargs):
+    def _create_config(credential, scopes, **kwargs):
         # Here the SDK developer would define the default
         # config to interact with the service
         config = Configuration(**kwargs)
-        config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
-        config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, scopes, **kwargs)
-        config.retry_policy = RetryPolicy(**kwargs)
-        config.redirect_policy = RedirectPolicy(**kwargs)
-        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.proxy_policy = ProxyPolicy(**kwargs)
-        config.transport = kwargs.get('transport', RequestsTransport)
+        config.headers_policy = kwargs.get('headers_policy', HeadersPolicy({"CustomHeader": "Value"}, **kwargs))
+        config.user_agent_policy = kwargs.get('user_agent_policy', UserAgentPolicy("ServiceUserAgentValue", **kwargs))
+        config.authentication_policy = kwargs.get('authentication_policy', BearerTokenCredentialPolicy(credential, scopes, **kwargs))
+        config.retry_policy = kwargs.get('retry_policy', RetryPolicy(**kwargs))
+        config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
+        config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
+        config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
 
-    def __init__(self, transport=None, configuration=None, **kwargs):
-        config = configuration or FooServiceClient.create_config(**kwargs)
-        transport = config.get_transport(**kwargs)
+    def __init__(self, **kwargs):
+        transport = kwargs.get('transport', RequestsTransport(**kwargs))
+        config = FooServiceClient._create_config(**kwargs)
         policies = [
             config.user_agent_policy,
             config.headers_policy,
             config.authentication_policy,
             ContentDecodePolicy(),
+            config.proxy_policy,
             config.redirect_policy,
             config.retry_policy,
             config.logging_policy,
@@ -92,15 +92,14 @@ client = FooServiceClient(endpoint, creds)
 response = client.get_foo_properties(redirects_max=0)
 
 # Scenario where user wishes to fully customize the policies.
-# We expose the SDK-developer defined configuration to allow it to be tweaked
-# or entire policies replaced or patched.
-foo_config = FooServiceClient.create_config()
-
-foo_config.retry_policy = CustomRetryPolicy()
-foo_config.redirect_policy.max_redirects = 5
-foo_config.logging_policy.enable_http_logger = True
-
-client = FooServiceClient(endpoint, creds, config=config)
+# All configuration options are passed through kwargs
+client = FooServiceClient(
+    endpoint,
+    creds,
+    retry_policy=CustomRetryPolicy()
+    redirect_max=5,
+    logging_enable=True
+)
 response = client.get_foo_properties()
 ```
 
@@ -110,6 +109,8 @@ The Configuration object is the home of all the configurable policies in the pip
 A new Configuration object provides *no default policies*.
 It is up to the SDK developer to specify each of the policy defaults as required by the service.
 
+*Configuration should not be exposed as part of the public API of the resulting SDK.*
+
 This can be seen in the above code sample as implemented in a staticmethod on the client class.
 The Configuration object does not specify in what order the policies will be added to the pipeline.
 It is up to the SDK developer to use the policies in the Configuration to construct the pipeline correctly, as well
@@ -118,7 +119,7 @@ as inserting any unexposed/non-configurable policies.
 transport = RequestsTransport(**kwargs)
 
 # SDK developer needs to build the policy order for the pipeline.
-config = config or FooServiceClient.create_config(**kwargs)
+config = FooServiceClient._create_config(**kwargs)
 policies = [
     config.headers_policy,
     config.user_agent_policy,
@@ -137,7 +138,6 @@ The policies that should currently be defined on the Configuration object are as
 - Configuration.redirect_policy  # RedirectPolicy
 - Configuration.logging_policy  # NetworkTraceLoggingPolicy
 - Configuration.user_agent_policy  # UserAgentPolicy
-- Configuration.connection  # The is a ConnectionConfiguration, used to provide common transport parameters.
 - Configuration.proxy_policy  # While this is a ProxyPolicy object, current implementation is transport configuration.
 - Configuration.authentication_policy  # BearerTokenCredentialPolicy
 
@@ -149,14 +149,14 @@ Various combinations of sync/async HTTP libraries as well as alternative event l
 
 The transport is the last node in the pipeline, and adheres to the same basic API as any policy within the pipeline.
 The only currently available transport for synchronous pipelines uses the `Requests` library:
-```
+```python
 from azure.core.pipeline.transport import RequestsTransport
 synchronous_transport = RequestsTransport()
 ```
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
 should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
-```
+```python
 from azure.foo.aio import FooServiceClient
 from azure.core.pipeline.transport import (
     # Identical implementation as the synchronous RequestsTransport wrapped in an asynchronous using the
@@ -171,28 +171,30 @@ from azure.core.pipeline.transport import (
     AioHttpTransport,
 )
 
-client = FooServiceClient(endpoint, creds, transport=AioHttpTransport)
+client = FooServiceClient(endpoint, creds, transport=AioHttpTransport())
 response = await client.get_foo_properties()
 ```
 
-Some common properties can be configured on all transports, and can be set on the ConnectionConfiguration, found in the Configuration object described above. These include the following properties:
+Some common properties can be configured on all transports. They must be passed
+as kwargs arguments while building the transport instance. These include the following properties:
 ```python
-class ConnectionConfiguration(object):
-    """Configuration of HTTP transport.
+transport = AioHttpTransport(
+        # The connect and read timeout value. Defaults to 100 seconds.
+        connection_timeout=100,
 
-    :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
-    :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
-     alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
-    :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
-     certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
-    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
-    """
+        # SSL certificate verification. Enabled by default. Set to False to disable,
+        # alternatively can be set to the path to a CA_BUNDLE file or directory with
+        # certificates of trusted CAs.
+        connection_verify=True,
 
-    def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 100)
-        self.verify = kwargs.pop('connection_verify', True)
-        self.cert = kwargs.pop('connection_cert', None)
-        self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
+        # Client-side certificates. You can specify a local cert to use as client side
+        # certificate, as a single file (containing the private key and the certificate)
+        # or as a # tuple of both files' paths.
+        connection_cert=None,
+
+        # The block size of data sent over the connection. Defaults to 4096 bytes.
+        connection_data_block_size=4096
+)
 ```
 
 ### HttpRequest and HttpResponse
@@ -264,8 +266,9 @@ class HttpResponse(object):
         self.request = request
         self.internal_response = internal_response  # The object returned by the HTTP library
         self.status_code = None
-        self.headers = {}
+        self.headers = CaseInsensitiveDict()
         self.reason = None
+        self.content_type = None
 
     def body(self):
         """Return the whole body as bytes in memory."""
@@ -314,7 +317,7 @@ class PipelineResponse(object):
 
 ### Policies
 
-The Python pipeline implementation provides two flavors of policy. These are referred to as an HttpPolicy and a SansIOPolicy.
+The Python pipeline implementation provides two flavors of policy. These are referred to as an HttpPolicy and a SansIOHTTPPolicy.
 
 #### SansIOHTTPPolicy
 
@@ -326,13 +329,13 @@ This is a simple abstract class, that can act before the request is done, or aft
 
 A SansIOHTTPPolicy should implement one or more of the following methods:
 ```python
-def on_request(self, request, **kwargs):
+def on_request(self, request):
     """Is executed before sending the request to next policy."""
 
-def on_response(self, request, response, **kwargs):
+def on_response(self, request, response):
     """Is executed after the request comes back from the policy."""
 
-def on_exception(self, request, **kwargs):
+def on_exception(self, request):
     """Is executed if an exception is raised while executing this policy.
 
     Return True if the exception has been handled and should not
@@ -362,17 +365,17 @@ class CustomPolicy(HTTPPolicy):
     def __init__(self):
         self.next = None  # Will be set when pipeline is instantiated and all the policies chained.
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         """Mutate the request."""
 
-        return self.next.send(request, **kwargs)
+        return self.next.send(request)
 
 class CustomAsyncPolicy(AsyncHTTPPolicy):
 
-    async def send(self, request, **kwargs):
+    async def send(self, request):
         """Mutate the request."""
 
-        return await self.next.send(request, **kwargs)
+        return await self.next.send(request)
 ```
 
 Currently provided HTTP policies include:

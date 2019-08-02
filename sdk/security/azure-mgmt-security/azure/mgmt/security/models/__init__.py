@@ -10,134 +10,209 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .pricing_py3 import Pricing
-    from .pricing_list_py3 import PricingList
-    from .asc_location_py3 import AscLocation
-    from .resource_py3 import Resource
-    from .alert_entity_py3 import AlertEntity
-    from .alert_confidence_reason_py3 import AlertConfidenceReason
-    from .alert_py3 import Alert
-    from .setting_py3 import Setting
-    from .data_export_setting_py3 import DataExportSetting
-    from .setting_resource_py3 import SettingResource
-    from .connected_resource_py3 import ConnectedResource
-    from .connectable_resource_py3 import ConnectableResource
-    from .allowed_connections_resource_py3 import AllowedConnectionsResource
-    from .location_py3 import Location
-    from .discovered_security_solution_py3 import DiscoveredSecuritySolution
-    from .external_security_solution_py3 import ExternalSecuritySolution
-    from .cef_solution_properties_py3 import CefSolutionProperties
-    from .cef_external_security_solution_py3 import CefExternalSecuritySolution
-    from .ata_solution_properties_py3 import AtaSolutionProperties
-    from .ata_external_security_solution_py3 import AtaExternalSecuritySolution
-    from .connected_workspace_py3 import ConnectedWorkspace
-    from .aad_solution_properties_py3 import AadSolutionProperties
-    from .aad_external_security_solution_py3 import AadExternalSecuritySolution
-    from .external_security_solution_kind1_py3 import ExternalSecuritySolutionKind1
-    from .external_security_solution_properties_py3 import ExternalSecuritySolutionProperties
-    from .aad_connectivity_state1_py3 import AadConnectivityState1
-    from .jit_network_access_port_rule_py3 import JitNetworkAccessPortRule
-    from .jit_network_access_policy_virtual_machine_py3 import JitNetworkAccessPolicyVirtualMachine
-    from .jit_network_access_request_port_py3 import JitNetworkAccessRequestPort
-    from .jit_network_access_request_virtual_machine_py3 import JitNetworkAccessRequestVirtualMachine
-    from .jit_network_access_request_py3 import JitNetworkAccessRequest
-    from .jit_network_access_policy_py3 import JitNetworkAccessPolicy
-    from .jit_network_access_policy_initiate_port_py3 import JitNetworkAccessPolicyInitiatePort
-    from .jit_network_access_policy_initiate_virtual_machine_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
-    from .jit_network_access_policy_initiate_request_py3 import JitNetworkAccessPolicyInitiateRequest
-    from .kind_py3 import Kind
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .security_task_parameters_py3 import SecurityTaskParameters
-    from .security_task_py3 import SecurityTask
-    from .topology_single_resource_parent_py3 import TopologySingleResourceParent
-    from .topology_single_resource_child_py3 import TopologySingleResourceChild
-    from .topology_single_resource_py3 import TopologySingleResource
-    from .topology_resource_py3 import TopologyResource
-    from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
-    from .auto_provisioning_setting_py3 import AutoProvisioningSetting
-    from .compliance_segment_py3 import ComplianceSegment
-    from .compliance_py3 import Compliance
-    from .sensitivity_label_py3 import SensitivityLabel
-    from .information_protection_keyword_py3 import InformationProtectionKeyword
-    from .information_type_py3 import InformationType
-    from .information_protection_policy_py3 import InformationProtectionPolicy
-    from .security_contact_py3 import SecurityContact
-    from .workspace_setting_py3 import WorkspaceSetting
+    from ._models_py3 import AadConnectivityState1
+    from ._models_py3 import AadExternalSecuritySolution
+    from ._models_py3 import AadSolutionProperties
+    from ._models_py3 import AdvancedThreatProtectionSetting
+    from ._models_py3 import Alert
+    from ._models_py3 import AlertConfidenceReason
+    from ._models_py3 import AlertEntity
+    from ._models_py3 import AllowedConnectionsResource
+    from ._models_py3 import AppWhitelistingGroup
+    from ._models_py3 import AppWhitelistingGroups
+    from ._models_py3 import AppWhitelistingIssueSummary
+    from ._models_py3 import AppWhitelistingPutGroupData
+    from ._models_py3 import AscLocation
+    from ._models_py3 import AtaExternalSecuritySolution
+    from ._models_py3 import AtaSolutionProperties
+    from ._models_py3 import AutoProvisioningSetting
+    from ._models_py3 import CefExternalSecuritySolution
+    from ._models_py3 import CefSolutionProperties
+    from ._models_py3 import Compliance
+    from ._models_py3 import ComplianceResult
+    from ._models_py3 import ComplianceSegment
+    from ._models_py3 import ConnectableResource
+    from ._models_py3 import ConnectedResource
+    from ._models_py3 import ConnectedWorkspace
+    from ._models_py3 import DataExportSetting
+    from ._models_py3 import DiscoveredSecuritySolution
+    from ._models_py3 import ExternalSecuritySolution
+    from ._models_py3 import ExternalSecuritySolutionKind1
+    from ._models_py3 import ExternalSecuritySolutionProperties
+    from ._models_py3 import InformationProtectionKeyword
+    from ._models_py3 import InformationProtectionPolicy
+    from ._models_py3 import InformationType
+    from ._models_py3 import IoTSecurityAggregatedAlert
+    from ._models_py3 import IoTSecurityAggregatedRecommendation
+    from ._models_py3 import IoTSecurityAlertedDevice
+    from ._models_py3 import IoTSecurityAlertedDevicesList
+    from ._models_py3 import IoTSecurityDeviceAlert
+    from ._models_py3 import IoTSecurityDeviceAlertsList
+    from ._models_py3 import IoTSecurityDeviceRecommendation
+    from ._models_py3 import IoTSecurityDeviceRecommendationsList
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModel
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from ._models_py3 import IoTSecuritySolutionModel
+    from ._models_py3 import IoTSeverityMetrics
+    from ._models_py3 import JitNetworkAccessPolicy
+    from ._models_py3 import JitNetworkAccessPolicyInitiatePort
+    from ._models_py3 import JitNetworkAccessPolicyInitiateRequest
+    from ._models_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
+    from ._models_py3 import JitNetworkAccessPolicyVirtualMachine
+    from ._models_py3 import JitNetworkAccessPortRule
+    from ._models_py3 import JitNetworkAccessRequest
+    from ._models_py3 import JitNetworkAccessRequestPort
+    from ._models_py3 import JitNetworkAccessRequestVirtualMachine
+    from ._models_py3 import Kind
+    from ._models_py3 import Location
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PathRecommendation
+    from ._models_py3 import Pricing
+    from ._models_py3 import PricingList
+    from ._models_py3 import PublisherInfo
+    from ._models_py3 import RecommendationConfigurationProperties
+    from ._models_py3 import RegulatoryComplianceAssessment
+    from ._models_py3 import RegulatoryComplianceControl
+    from ._models_py3 import RegulatoryComplianceStandard
+    from ._models_py3 import Resource
+    from ._models_py3 import SecurityContact
+    from ._models_py3 import SecurityTask
+    from ._models_py3 import SecurityTaskParameters
+    from ._models_py3 import SensitivityLabel
+    from ._models_py3 import ServerVulnerabilityAssessment
+    from ._models_py3 import ServerVulnerabilityAssessmentsList
+    from ._models_py3 import Setting
+    from ._models_py3 import SettingResource
+    from ._models_py3 import TagsResource
+    from ._models_py3 import TopologyResource
+    from ._models_py3 import TopologySingleResource
+    from ._models_py3 import TopologySingleResourceChild
+    from ._models_py3 import TopologySingleResourceParent
+    from ._models_py3 import UpdateIotSecuritySolutionData
+    from ._models_py3 import UserDefinedResourcesProperties
+    from ._models_py3 import UserRecommendation
+    from ._models_py3 import VmRecommendation
+    from ._models_py3 import WorkspaceSetting
 except (SyntaxError, ImportError):
-    from .pricing import Pricing
-    from .pricing_list import PricingList
-    from .asc_location import AscLocation
-    from .resource import Resource
-    from .alert_entity import AlertEntity
-    from .alert_confidence_reason import AlertConfidenceReason
-    from .alert import Alert
-    from .setting import Setting
-    from .data_export_setting import DataExportSetting
-    from .setting_resource import SettingResource
-    from .connected_resource import ConnectedResource
-    from .connectable_resource import ConnectableResource
-    from .allowed_connections_resource import AllowedConnectionsResource
-    from .location import Location
-    from .discovered_security_solution import DiscoveredSecuritySolution
-    from .external_security_solution import ExternalSecuritySolution
-    from .cef_solution_properties import CefSolutionProperties
-    from .cef_external_security_solution import CefExternalSecuritySolution
-    from .ata_solution_properties import AtaSolutionProperties
-    from .ata_external_security_solution import AtaExternalSecuritySolution
-    from .connected_workspace import ConnectedWorkspace
-    from .aad_solution_properties import AadSolutionProperties
-    from .aad_external_security_solution import AadExternalSecuritySolution
-    from .external_security_solution_kind1 import ExternalSecuritySolutionKind1
-    from .external_security_solution_properties import ExternalSecuritySolutionProperties
-    from .aad_connectivity_state1 import AadConnectivityState1
-    from .jit_network_access_port_rule import JitNetworkAccessPortRule
-    from .jit_network_access_policy_virtual_machine import JitNetworkAccessPolicyVirtualMachine
-    from .jit_network_access_request_port import JitNetworkAccessRequestPort
-    from .jit_network_access_request_virtual_machine import JitNetworkAccessRequestVirtualMachine
-    from .jit_network_access_request import JitNetworkAccessRequest
-    from .jit_network_access_policy import JitNetworkAccessPolicy
-    from .jit_network_access_policy_initiate_port import JitNetworkAccessPolicyInitiatePort
-    from .jit_network_access_policy_initiate_virtual_machine import JitNetworkAccessPolicyInitiateVirtualMachine
-    from .jit_network_access_policy_initiate_request import JitNetworkAccessPolicyInitiateRequest
-    from .kind import Kind
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .security_task_parameters import SecurityTaskParameters
-    from .security_task import SecurityTask
-    from .topology_single_resource_parent import TopologySingleResourceParent
-    from .topology_single_resource_child import TopologySingleResourceChild
-    from .topology_single_resource import TopologySingleResource
-    from .topology_resource import TopologyResource
-    from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
-    from .auto_provisioning_setting import AutoProvisioningSetting
-    from .compliance_segment import ComplianceSegment
-    from .compliance import Compliance
-    from .sensitivity_label import SensitivityLabel
-    from .information_protection_keyword import InformationProtectionKeyword
-    from .information_type import InformationType
-    from .information_protection_policy import InformationProtectionPolicy
-    from .security_contact import SecurityContact
-    from .workspace_setting import WorkspaceSetting
-from .alert_paged import AlertPaged
-from .setting_paged import SettingPaged
-from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
-from .discovered_security_solution_paged import DiscoveredSecuritySolutionPaged
-from .external_security_solution_paged import ExternalSecuritySolutionPaged
-from .jit_network_access_policy_paged import JitNetworkAccessPolicyPaged
-from .asc_location_paged import AscLocationPaged
-from .operation_paged import OperationPaged
-from .security_task_paged import SecurityTaskPaged
-from .topology_resource_paged import TopologyResourcePaged
-from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
-from .compliance_paged import CompliancePaged
-from .information_protection_policy_paged import InformationProtectionPolicyPaged
-from .security_contact_paged import SecurityContactPaged
-from .workspace_setting_paged import WorkspaceSettingPaged
-from .security_center_enums import (
+    from ._models import AadConnectivityState1
+    from ._models import AadExternalSecuritySolution
+    from ._models import AadSolutionProperties
+    from ._models import AdvancedThreatProtectionSetting
+    from ._models import Alert
+    from ._models import AlertConfidenceReason
+    from ._models import AlertEntity
+    from ._models import AllowedConnectionsResource
+    from ._models import AppWhitelistingGroup
+    from ._models import AppWhitelistingGroups
+    from ._models import AppWhitelistingIssueSummary
+    from ._models import AppWhitelistingPutGroupData
+    from ._models import AscLocation
+    from ._models import AtaExternalSecuritySolution
+    from ._models import AtaSolutionProperties
+    from ._models import AutoProvisioningSetting
+    from ._models import CefExternalSecuritySolution
+    from ._models import CefSolutionProperties
+    from ._models import Compliance
+    from ._models import ComplianceResult
+    from ._models import ComplianceSegment
+    from ._models import ConnectableResource
+    from ._models import ConnectedResource
+    from ._models import ConnectedWorkspace
+    from ._models import DataExportSetting
+    from ._models import DiscoveredSecuritySolution
+    from ._models import ExternalSecuritySolution
+    from ._models import ExternalSecuritySolutionKind1
+    from ._models import ExternalSecuritySolutionProperties
+    from ._models import InformationProtectionKeyword
+    from ._models import InformationProtectionPolicy
+    from ._models import InformationType
+    from ._models import IoTSecurityAggregatedAlert
+    from ._models import IoTSecurityAggregatedRecommendation
+    from ._models import IoTSecurityAlertedDevice
+    from ._models import IoTSecurityAlertedDevicesList
+    from ._models import IoTSecurityDeviceAlert
+    from ._models import IoTSecurityDeviceAlertsList
+    from ._models import IoTSecurityDeviceRecommendation
+    from ._models import IoTSecurityDeviceRecommendationsList
+    from ._models import IoTSecuritySolutionAnalyticsModel
+    from ._models import IoTSecuritySolutionAnalyticsModelList
+    from ._models import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from ._models import IoTSecuritySolutionModel
+    from ._models import IoTSeverityMetrics
+    from ._models import JitNetworkAccessPolicy
+    from ._models import JitNetworkAccessPolicyInitiatePort
+    from ._models import JitNetworkAccessPolicyInitiateRequest
+    from ._models import JitNetworkAccessPolicyInitiateVirtualMachine
+    from ._models import JitNetworkAccessPolicyVirtualMachine
+    from ._models import JitNetworkAccessPortRule
+    from ._models import JitNetworkAccessRequest
+    from ._models import JitNetworkAccessRequestPort
+    from ._models import JitNetworkAccessRequestVirtualMachine
+    from ._models import Kind
+    from ._models import Location
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PathRecommendation
+    from ._models import Pricing
+    from ._models import PricingList
+    from ._models import PublisherInfo
+    from ._models import RecommendationConfigurationProperties
+    from ._models import RegulatoryComplianceAssessment
+    from ._models import RegulatoryComplianceControl
+    from ._models import RegulatoryComplianceStandard
+    from ._models import Resource
+    from ._models import SecurityContact
+    from ._models import SecurityTask
+    from ._models import SecurityTaskParameters
+    from ._models import SensitivityLabel
+    from ._models import ServerVulnerabilityAssessment
+    from ._models import ServerVulnerabilityAssessmentsList
+    from ._models import Setting
+    from ._models import SettingResource
+    from ._models import TagsResource
+    from ._models import TopologyResource
+    from ._models import TopologySingleResource
+    from ._models import TopologySingleResourceChild
+    from ._models import TopologySingleResourceParent
+    from ._models import UpdateIotSecuritySolutionData
+    from ._models import UserDefinedResourcesProperties
+    from ._models import UserRecommendation
+    from ._models import VmRecommendation
+    from ._models import WorkspaceSetting
+from ._paged_models import AlertPaged
+from ._paged_models import AllowedConnectionsResourcePaged
+from ._paged_models import AscLocationPaged
+from ._paged_models import AutoProvisioningSettingPaged
+from ._paged_models import CompliancePaged
+from ._paged_models import ComplianceResultPaged
+from ._paged_models import DiscoveredSecuritySolutionPaged
+from ._paged_models import ExternalSecuritySolutionPaged
+from ._paged_models import InformationProtectionPolicyPaged
+from ._paged_models import IoTSecurityAggregatedAlertPaged
+from ._paged_models import IoTSecurityAggregatedRecommendationPaged
+from ._paged_models import IoTSecuritySolutionModelPaged
+from ._paged_models import JitNetworkAccessPolicyPaged
+from ._paged_models import OperationPaged
+from ._paged_models import RegulatoryComplianceAssessmentPaged
+from ._paged_models import RegulatoryComplianceControlPaged
+from ._paged_models import RegulatoryComplianceStandardPaged
+from ._paged_models import SecurityContactPaged
+from ._paged_models import SecurityTaskPaged
+from ._paged_models import SettingPaged
+from ._paged_models import TopologyResourcePaged
+from ._paged_models import WorkspaceSettingPaged
+from ._security_center_enums import (
+    ResourceStatus,
     PricingTier,
     ReportedSeverity,
     SettingKind,
+    SecuritySolutionStatus,
+    ExportData,
+    DataSource,
+    RecommendationType,
+    RecommendationConfigStatus,
     SecurityFamily,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
@@ -147,66 +222,102 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    State,
     ConnectionType,
 )
 
 __all__ = [
-    'Pricing',
-    'PricingList',
-    'AscLocation',
-    'Resource',
-    'AlertEntity',
-    'AlertConfidenceReason',
+    'AadConnectivityState1',
+    'AadExternalSecuritySolution',
+    'AadSolutionProperties',
+    'AdvancedThreatProtectionSetting',
     'Alert',
-    'Setting',
-    'DataExportSetting',
-    'SettingResource',
-    'ConnectedResource',
-    'ConnectableResource',
+    'AlertConfidenceReason',
+    'AlertEntity',
     'AllowedConnectionsResource',
-    'Location',
+    'AppWhitelistingGroup',
+    'AppWhitelistingGroups',
+    'AppWhitelistingIssueSummary',
+    'AppWhitelistingPutGroupData',
+    'AscLocation',
+    'AtaExternalSecuritySolution',
+    'AtaSolutionProperties',
+    'AutoProvisioningSetting',
+    'CefExternalSecuritySolution',
+    'CefSolutionProperties',
+    'Compliance',
+    'ComplianceResult',
+    'ComplianceSegment',
+    'ConnectableResource',
+    'ConnectedResource',
+    'ConnectedWorkspace',
+    'DataExportSetting',
     'DiscoveredSecuritySolution',
     'ExternalSecuritySolution',
-    'CefSolutionProperties',
-    'CefExternalSecuritySolution',
-    'AtaSolutionProperties',
-    'AtaExternalSecuritySolution',
-    'ConnectedWorkspace',
-    'AadSolutionProperties',
-    'AadExternalSecuritySolution',
     'ExternalSecuritySolutionKind1',
     'ExternalSecuritySolutionProperties',
-    'AadConnectivityState1',
-    'JitNetworkAccessPortRule',
-    'JitNetworkAccessPolicyVirtualMachine',
-    'JitNetworkAccessRequestPort',
-    'JitNetworkAccessRequestVirtualMachine',
-    'JitNetworkAccessRequest',
+    'InformationProtectionKeyword',
+    'InformationProtectionPolicy',
+    'InformationType',
+    'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedRecommendation',
+    'IoTSecurityAlertedDevice',
+    'IoTSecurityAlertedDevicesList',
+    'IoTSecurityDeviceAlert',
+    'IoTSecurityDeviceAlertsList',
+    'IoTSecurityDeviceRecommendation',
+    'IoTSecurityDeviceRecommendationsList',
+    'IoTSecuritySolutionAnalyticsModel',
+    'IoTSecuritySolutionAnalyticsModelList',
+    'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',
+    'IoTSecuritySolutionModel',
+    'IoTSeverityMetrics',
     'JitNetworkAccessPolicy',
     'JitNetworkAccessPolicyInitiatePort',
-    'JitNetworkAccessPolicyInitiateVirtualMachine',
     'JitNetworkAccessPolicyInitiateRequest',
+    'JitNetworkAccessPolicyInitiateVirtualMachine',
+    'JitNetworkAccessPolicyVirtualMachine',
+    'JitNetworkAccessPortRule',
+    'JitNetworkAccessRequest',
+    'JitNetworkAccessRequestPort',
+    'JitNetworkAccessRequestVirtualMachine',
     'Kind',
-    'OperationDisplay',
+    'Location',
     'Operation',
-    'SecurityTaskParameters',
-    'SecurityTask',
-    'TopologySingleResourceParent',
-    'TopologySingleResourceChild',
-    'TopologySingleResource',
-    'TopologyResource',
-    'AdvancedThreatProtectionSetting',
-    'AutoProvisioningSetting',
-    'ComplianceSegment',
-    'Compliance',
-    'SensitivityLabel',
-    'InformationProtectionKeyword',
-    'InformationType',
-    'InformationProtectionPolicy',
+    'OperationDisplay',
+    'PathRecommendation',
+    'Pricing',
+    'PricingList',
+    'PublisherInfo',
+    'RecommendationConfigurationProperties',
+    'RegulatoryComplianceAssessment',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceStandard',
+    'Resource',
     'SecurityContact',
+    'SecurityTask',
+    'SecurityTaskParameters',
+    'SensitivityLabel',
+    'ServerVulnerabilityAssessment',
+    'ServerVulnerabilityAssessmentsList',
+    'Setting',
+    'SettingResource',
+    'TagsResource',
+    'TopologyResource',
+    'TopologySingleResource',
+    'TopologySingleResourceChild',
+    'TopologySingleResourceParent',
+    'UpdateIotSecuritySolutionData',
+    'UserDefinedResourcesProperties',
+    'UserRecommendation',
+    'VmRecommendation',
     'WorkspaceSetting',
+    'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',
+    'IoTSecuritySolutionModelPaged',
+    'IoTSecurityAggregatedAlertPaged',
+    'IoTSecurityAggregatedRecommendationPaged',
     'AllowedConnectionsResourcePaged',
     'DiscoveredSecuritySolutionPaged',
     'ExternalSecuritySolutionPaged',
@@ -220,9 +331,18 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
+    'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
+    'SecuritySolutionStatus',
+    'ExportData',
+    'DataSource',
+    'RecommendationType',
+    'RecommendationConfigStatus',
     'SecurityFamily',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
@@ -232,5 +352,6 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'State',
     'ConnectionType',
 ]

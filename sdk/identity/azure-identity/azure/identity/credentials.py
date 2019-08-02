@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ._internal import PublicClientCredential
+from ._internal import PublicClientCredential, wrap_exceptions
 from ._managed_identity import ImdsCredential, MsiCredential
 from .constants import Endpoints, EnvironmentVariables
 
@@ -26,8 +26,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional, Union
+    from typing import Any, Callable, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 # pylint:disable=too-few-public-methods
@@ -40,14 +41,12 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_id: the service principal's client ID
     :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, client_id, secret, tenant_id, config=None, **kwargs):
-        # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
+    def __init__(self, client_id, secret, tenant_id, **kwargs):
+        # type: (str, str, str, Mapping[str, Any]) -> None
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -72,13 +71,11 @@ class CertificateCredential(CertificateCredentialBase):
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, client_id, tenant_id, certificate_path, config=None, **kwargs):
-        # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
-        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
+        # type: (str, str, str, Mapping[str, Any]) -> None
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
     def get_token(self, *scopes):
@@ -165,8 +162,6 @@ class ManagedIdentityCredential(object):
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
     def __new__(cls, *args, **kwargs):
@@ -176,19 +171,9 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id=None, config=None, **kwargs):
-        # type: (Optional[str], Optional[Configuration], Any) -> None
+    def __init__(self, client_id=None, **kwargs):
+        # type: (Optional[str], Any) -> None
         pass
-
-    @staticmethod
-    def create_config(**kwargs):
-        # type: (Dict[str, str]) -> Configuration
-        """
-        Build a default configuration for the credential's HTTP pipeline.
-
-        :rtype: :class:`azure.core.configuration`
-        """
-        return Configuration(**kwargs)
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -249,6 +234,86 @@ class ChainedTokenCredential(object):
         return "No valid token received. {}".format(". ".join(attempts))
 
 
+class DeviceCodeCredential(PublicClientCredential):
+    """
+    Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
+    verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
+    authenticate with Directory. If the user authenticates successfully, the credential receives an access token.
+
+    This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
+
+    For more information about the device code flow, see Azure Active Directory documentation:
+    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
+
+    :param str client_id: the application's ID
+    :param prompt_callback: (optional) A callback enabling control of how authentication instructions are presented.
+        If not provided, the credential will print instructions to stdout.
+    :type prompt_callback: A callable accepting arguments (``verification_uri``, ``user_code``, ``expires_in``):
+        - ``verification_uri`` (str) the URL the user must visit
+        - ``user_code`` (str) the code the user must enter there
+        - ``expires_in`` (int) the number of seconds the code will be valid
+
+    **Keyword arguments:**
+
+    - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
+      'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+
+    - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
+      as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+
+    """
+
+    def __init__(self, client_id, prompt_callback=None, **kwargs):
+        # type: (str, Optional[Callable[[str, str], None]], Any) -> None
+        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
+        self._prompt_callback = prompt_callback
+        super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
+
+    @wrap_exceptions
+    def get_token(self, *scopes):
+        # type (*str) -> AccessToken
+        """
+        Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
+        authentication flow.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+
+        # MSAL requires scopes be a list
+        scopes = list(scopes)  # type: ignore
+        now = int(time.time())
+
+        app = self._get_app()
+        flow = app.initiate_device_flow(scopes)
+        if "error" in flow:
+            raise ClientAuthenticationError(
+                message="Couldn't begin authentication: {}".format(flow.get("error_description") or flow.get("error"))
+            )
+
+        if self._prompt_callback:
+            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
+        else:
+            print(flow["message"])
+
+        if self._timeout is not None and self._timeout < flow["expires_in"]:
+            deadline = now + self._timeout
+            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+        else:
+            result = app.acquire_token_by_device_flow(flow)
+
+        if "access_token" not in result:
+            if result.get("error") == "authorization_pending":
+                message = "Timed out waiting for user to authenticate"
+            else:
+                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
+            raise ClientAuthenticationError(message=message)
+
+        token = AccessToken(result["access_token"], now + int(result["expires_in"]))
+        return token
+
+
 class UsernamePasswordCredential(PublicClientCredential):
     """
     Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
@@ -267,8 +332,9 @@ class UsernamePasswordCredential(PublicClientCredential):
 
     **Keyword arguments:**
 
-    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-        'organizations' tenant.
+    - **tenant (str)** - a tenant ID or a domain associated with a tenant. If not provided, defaults to the
+      'organizations' tenant.
+
     """
 
     def __init__(self, client_id, username, password, **kwargs):
@@ -277,6 +343,7 @@ class UsernamePasswordCredential(PublicClientCredential):
         self._username = username
         self._password = password
 
+    @wrap_exceptions
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
         """

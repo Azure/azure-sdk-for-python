@@ -122,12 +122,6 @@ async def test_client_secret_environment_credential(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        await EnvironmentCredential().get_token("scope")
-
-
-@pytest.mark.asyncio
 async def test_credential_chain_error_message():
     def raise_authn_error(message):
         raise ClientAuthenticationError(message)
@@ -229,7 +223,7 @@ async def test_imds_credential_retries():
     )
     mock_send = Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential.create_config().retry_policy.total_retries
+    total_retries = ImdsCredential._create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()

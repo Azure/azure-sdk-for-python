@@ -24,14 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import itertools
-from typing import (
+from typing import (  # pylint: disable=unused-import
     Callable,
     Optional,
     TypeVar,
     Iterator,
     Iterable,
     Tuple,
-)  # pylint: disable=unused-import
+)
 import logging
 
 
