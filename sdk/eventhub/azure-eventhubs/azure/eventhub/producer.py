@@ -170,6 +170,15 @@ class EventHubProducer(ConsumerProducerMixin):
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_create_batch]
+                :end-before: [END eventhub_client_sync_create_batch]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
         """
 
         if not self._max_message_size_on_link:
