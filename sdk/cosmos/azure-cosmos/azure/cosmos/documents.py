@@ -22,7 +22,7 @@
 """AzureDocument classes and enums for the Azure Cosmos database service.
 """
 
-from . import retry_options
+from . import _retry_options
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
@@ -368,7 +368,7 @@ class ConnectionPolicy(object):
         self.ProxyConfiguration = None
         self.EnableEndpointDiscovery = True
         self.PreferredLocations = []
-        self.RetryOptions = retry_options.RetryOptions()
+        self.RetryOptions = _retry_options.RetryOptions()
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
 
