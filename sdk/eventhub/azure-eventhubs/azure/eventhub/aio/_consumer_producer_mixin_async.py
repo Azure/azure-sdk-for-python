@@ -47,7 +47,7 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("{} has been closed. Please create a new consumer to receive event data.".format(self.name))
+            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self.name))
 
     def _create_handler(self):
         pass
