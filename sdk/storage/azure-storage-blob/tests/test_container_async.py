@@ -56,6 +56,8 @@ class StorageContainerTestAsync(StorageTestCase):
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
         self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.bsc.__aenter__())
         self.test_containers = []
 
     def tearDown(self):
@@ -74,6 +76,7 @@ class StorageContainerTestAsync(StorageTestCase):
                         pass
                 except:
                     pass
+            loop.run_until_complete(self.bsc.__aexit__())
         return super(StorageContainerTestAsync, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
