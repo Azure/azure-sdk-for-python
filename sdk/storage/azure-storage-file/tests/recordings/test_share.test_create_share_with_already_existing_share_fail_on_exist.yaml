@@ -64,8 +64,9 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:183721e0-f01a-00b5-4f20-2c69ff000000\nTime:2019-06-26T13:09:44.8389214Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The\
+        \ specified share already exists.\nRequestId:183721e0-f01a-00b5-4f20-2c69ff000000\n\
+        Time:2019-06-26T13:09:44.8389214Z</Message></Error>"
     headers:
       Content-Length:
       - '222'
@@ -149,8 +150,9 @@ interactions:
     uri: https://blobstoragename.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:c7d91b13-e01a-006d-6b21-2cce2e000000\nTime:2019-06-26T13:17:13.3122430Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The\
+        \ specified share already exists.\nRequestId:c7d91b13-e01a-006d-6b21-2cce2e000000\n\
+        Time:2019-06-26T13:17:13.3122430Z</Message></Error>"
     headers:
       Content-Length:
       - '222'
@@ -234,8 +236,9 @@ interactions:
     uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:596325a8-e01a-00cc-6925-2c00b5000000\nTime:2019-06-26T13:44:15.2154017Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The\
+        \ specified share already exists.\nRequestId:596325a8-e01a-00cc-6925-2c00b5000000\n\
+        Time:2019-06-26T13:44:15.2154017Z</Message></Error>"
     headers:
       Content-Length:
       - '222'
@@ -249,184 +252,6 @@ interactions:
       - ShareAlreadyExists
       x-ms-request-id:
       - 596325a8-e01a-00cc-6925-2c00b5000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 409
-      message: The specified share already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 5a219ddc-b50c-11e9-a61d-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 10:00:26 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 02 Aug 2019 10:00:26 GMT
-      ETag:
-      - '"0x8D717303EA4B9A2"'
-      Last-Modified:
-      - Fri, 02 Aug 2019 10:00:27 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - e8f94d76-a01a-0061-1519-4920df000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 5a5ca750-b50c-11e9-8f35-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 10:00:27 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:e8f94d79-a01a-0061-1619-4920df000000\nTime:2019-08-02T10:00:27.4137157Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '222'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 10:00:27 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ShareAlreadyExists
-      x-ms-request-id:
-      - e8f94d79-a01a-0061-1619-4920df000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 409
-      message: The specified share already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 3b8531ba-b54e-11e9-ac2f-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 17:52:02 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 02 Aug 2019 17:52:01 GMT
-      ETag:
-      - '"0x8D717721FD5FF4E"'
-      Last-Modified:
-      - Fri, 02 Aug 2019 17:52:02 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4b4b2785-301a-006f-7d5a-49ccd4000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 3bba3dd0-b54e-11e9-bbf3-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 17:52:02 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:4b4b2788-301a-006f-7e5a-49ccd4000000\nTime:2019-08-02T17:52:02.5064074Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '222'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 02 Aug 2019 17:52:01 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ShareAlreadyExists
-      x-ms-request-id:
-      - 4b4b2788-301a-006f-7e5a-49ccd4000000
       x-ms-version:
       - '2018-11-09'
     status:

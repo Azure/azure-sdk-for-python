@@ -17,9 +17,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 0811dbba-b50c-11e9-b2a8-2816a845e8c6
+      - c9a98588-b569-11e9-a23f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:58:09 GMT
+      - Fri, 02 Aug 2019 21:09:17 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:07704501-801a-00b1-5918-499c7d000000\nTime:2019-08-02T09:58:09.5532804Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:15d917da-d01a-0008-3976-497f73000000\nTime:2019-08-02T21:09:17.0444544Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -38,12 +38,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:58:09 GMT
+      : Fri, 02 Aug 2019 21:09:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 07704501-801a-00b1-5918-499c7d000000
+      x-ms-request-id: 15d917da-d01a-0008-3976-497f73000000
       x-ms-version: '2018-11-09'
     status:
       code: 400

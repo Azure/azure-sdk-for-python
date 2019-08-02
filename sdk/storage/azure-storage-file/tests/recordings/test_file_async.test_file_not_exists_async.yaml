@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - e2a309ba-b50b-11e9-bbf5-2816a845e8c6
+      - aaec8f40-b569-11e9-a959-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:06 GMT
+      - Fri, 02 Aug 2019 21:08:25 GMT
       x-ms-version:
       - '2018-11-09'
     method: HEAD
@@ -20,7 +20,7 @@ interactions:
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:06 GMT
+      : Fri, 02 Aug 2019 21:08:25 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -31,7 +31,7 @@ interactions:
       - Vary
       : Origin
       x-ms-error-code: ShareNotFound
-      x-ms-request-id: c65129c1-b01a-003a-5818-4927a3000000
+      x-ms-request-id: fb0d9e16-201a-0059-4a76-496186000000
       x-ms-version: '2018-11-09'
     status:
       code: 404

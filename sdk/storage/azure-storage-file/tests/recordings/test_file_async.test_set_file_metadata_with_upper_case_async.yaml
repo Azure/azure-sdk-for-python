@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - eefc9150-b50b-11e9-a8a8-2816a845e8c6
+      - b4267f6e-b569-11e9-998e-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:27 GMT
+      - Fri, 02 Aug 2019 21:08:41 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:26 GMT
+      : Fri, 02 Aug 2019 21:08:40 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7172FD3807A5E"'
+      : '"0x8D7178D984C9BCE"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:40 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e50caa9c-e01a-0022-3718-490a36000000
+      x-ms-request-id: 74081ff1-f01a-0079-6876-490d4a000000
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -54,11 +54,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ef4b1be6-b50b-11e9-9d22-2816a845e8c6
+      - b44c3454-b569-11e9-9dfa-2816a845e8c6
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:27 GMT
+      - Fri, 02 Aug 2019 21:08:41 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -74,17 +74,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:40 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7172FD3BFF37D"'
+      : '"0x8D7178D98730F1D"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 18a66256-801a-0054-2e18-498e8a000000
+      x-ms-request-id: 74081ff4-f01a-0079-6976-490d4a000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -126,9 +126,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - ef7847d8-b50b-11e9-bbeb-2816a845e8c6
+      - b4673dcc-b569-11e9-8654-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:27 GMT
+      - Fri, 02 Aug 2019 21:08:41 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -149,17 +149,17 @@ interactions:
       : 379W/ujj+k7Ut8jdQMoYdg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:40 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7172FD3C91CEC"'
+      : '"0x8D7178D987AD8B5"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 09:57:28 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 18a66258-801a-0054-2f18-498e8a000000
+      x-ms-request-id: 74081ff5-f01a-0079-6a76-490d4a000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -181,9 +181,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ef814cbe-b50b-11e9-9064-2816a845e8c6
+      - b46f1dec-b569-11e9-8fe0-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:27 GMT
+      - Fri, 02 Aug 2019 21:08:41 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42'', ''UP'': ''UPval''}'
       x-ms-meta-UP:
@@ -205,17 +205,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7172FD3D24653"'
+      : '"0x8D7178D98827B32"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 09:57:28 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 18a66259-801a-0054-3018-498e8a000000
+      x-ms-request-id: 74081ff6-f01a-0079-6b76-490d4a000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
     status:
@@ -237,9 +237,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - efa38a0c-b50b-11e9-8005-2816a845e8c6
+      - b476706c-b569-11e9-a39b-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:57:28 GMT
+      - Fri, 02 Aug 2019 21:08:41 GMT
       x-ms-version:
       - '2018-11-09'
     method: HEAD
@@ -256,13 +256,13 @@ interactions:
       : application/xml; charset=utf-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:57:27 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7172FD3D24653"'
+      : '"0x8D7178D98827B32"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 09:57:28 GMT
+      : Fri, 02 Aug 2019 21:08:41 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -272,7 +272,7 @@ interactions:
       x-ms-meta-UP: UPval
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
-      x-ms-request-id: 18a6625a-801a-0054-3118-498e8a000000
+      x-ms-request-id: 74081ff7-f01a-0079-6c76-490d4a000000
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2018-11-09'

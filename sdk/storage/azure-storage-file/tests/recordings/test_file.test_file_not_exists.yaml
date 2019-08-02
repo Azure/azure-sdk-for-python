@@ -79,46 +79,4 @@ interactions:
     status:
       code: 404
       message: The specified parent path does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bd65bcda-b50b-11e9-be29-2816a845e8c6
-      x-ms-date:
-      - Fri, 02 Aug 2019 09:56:03 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: HEAD
-    uri: https://storagename.file.core.windows.net/utsharebd5b0c5c/missingdir/filebd5b0c5c
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Fri, 02 Aug 2019 09:56:04 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ParentNotFound
-      x-ms-request-id:
-      - 893afc14-501a-007f-5a18-49fa32000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified parent path does not exist.
 version: 1

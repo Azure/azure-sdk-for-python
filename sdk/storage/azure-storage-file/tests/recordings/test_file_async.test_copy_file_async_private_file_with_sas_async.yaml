@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d8a39080-b50b-11e9-8fd8-2816a845e8c6
+      - a2a7beee-b569-11e9-ac0b-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 09:56:49 GMT
+      - Fri, 02 Aug 2019 21:08:11 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:4eff899f-701a-00ef-8018-493a1d000000\nTime:2019-08-02T09:56:49.9021840Z</Message></Error>"
+        specified share already exists.\nRequestId:bf8afa05-501a-0119-4676-495b5e000000\nTime:2019-08-02T21:08:11.5364358Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -27,12 +27,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 09:56:48 GMT
+      : Fri, 02 Aug 2019 21:08:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
-      x-ms-request-id: 4eff899f-701a-00ef-8018-493a1d000000
+      x-ms-request-id: bf8afa05-501a-0119-4676-495b5e000000
       x-ms-version: '2018-11-09'
     status:
       code: 409

@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8dc8fb9a-b50c-11e9-91b7-2816a845e8c6
+      - 2810705a-b56a-11e9-adc2-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 10:01:53 GMT
+      - Fri, 02 Aug 2019 21:11:55 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 10:01:53 GMT
+      : Fri, 02 Aug 2019 21:11:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D717307250C347"'
+      : '"0x8D7178E0C3611E8"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 10:01:53 GMT
+      : Fri, 02 Aug 2019 21:11:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: b3e9065a-401a-0060-2e19-492122000000
+      x-ms-request-id: c78853f1-f01a-001f-4a76-49bf10000000
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -54,9 +54,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8e095f26-b50c-11e9-88bb-2816a845e8c6
+      - 282c7390-b56a-11e9-9526-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 10:01:53 GMT
+      - Fri, 02 Aug 2019 21:11:55 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -70,13 +70,13 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 10:01:53 GMT
+      : Fri, 02 Aug 2019 21:11:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D717307250C347"'
+      : '"0x8D7178E0C3611E8"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 02 Aug 2019 10:01:53 GMT
+      : Fri, 02 Aug 2019 21:11:55 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -85,7 +85,7 @@ interactions:
       : Origin
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
-      x-ms-request-id: b3e9065d-401a-0060-2f19-492122000000
+      x-ms-request-id: c78853f4-f01a-001f-4b76-49bf10000000
       x-ms-share-quota: '5120'
       x-ms-version: '2018-11-09'
     status:

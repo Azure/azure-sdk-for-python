@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8f829a9c-b50c-11e9-a69e-2816a845e8c6
+      - 2938515c-b56a-11e9-b52f-2816a845e8c6
       x-ms-date:
-      - Fri, 02 Aug 2019 10:01:56 GMT
+      - Fri, 02 Aug 2019 21:11:57 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:8f8c3fba-a01a-00ad-7b19-49446a000000\nTime:2019-08-02T10:01:56.8053117Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:6660986e-801a-005f-4f76-4996fe000000\nTime:2019-08-02T21:11:57.3289054Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -27,12 +27,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 02 Aug 2019 10:01:56 GMT
+      : Fri, 02 Aug 2019 21:11:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
-      x-ms-request-id: 8f8c3fba-a01a-00ad-7b19-49446a000000
+      x-ms-request-id: 6660986e-801a-005f-4f76-4996fe000000
       x-ms-version: '2018-11-09'
     status:
       code: 400
