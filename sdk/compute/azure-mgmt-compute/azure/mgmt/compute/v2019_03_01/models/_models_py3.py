@@ -1561,8 +1561,9 @@ class GalleryImage(Resource):
      **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemTypes
-    :param os_state: Required. The allowed values for OS State are
-     'Generalized'. Possible values include: 'Generalized', 'Specialized'
+    :param os_state: Required. This property allows the user to specify
+     whether the virtual machines created under this image are 'Generalized' or
+     'Specialized'. Possible values include: 'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemStateTypes
     :param end_of_life_date: The end of life date of the gallery Image
@@ -1791,7 +1792,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
 
 
 class GalleryImageVersionStorageProfile(Model):
-    """This is the storage profile of a gallery Image Version.
+    """This is the storage profile of a Gallery Image Version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3633,6 +3634,24 @@ class RunCommandResult(Model):
         self.value = value
 
 
+class ScheduledEventsProfile(Model):
+    """ScheduledEventsProfile.
+
+    :param terminate_notification_profile: Specifies Terminate Scheduled Event
+     related configurations.
+    :type terminate_notification_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.TerminateNotificationProfile
+    """
+
+    _attribute_map = {
+        'terminate_notification_profile': {'key': 'terminateNotificationProfile', 'type': 'TerminateNotificationProfile'},
+    }
+
+    def __init__(self, *, terminate_notification_profile=None, **kwargs) -> None:
+        super(ScheduledEventsProfile, self).__init__(**kwargs)
+        self.terminate_notification_profile = terminate_notification_profile
+
+
 class Sku(Model):
     """Describes a virtual machine scale set sku.
 
@@ -3794,6 +3813,31 @@ class TargetRegion(Model):
         self.name = name
         self.regional_replica_count = regional_replica_count
         self.storage_account_type = storage_account_type
+
+
+class TerminateNotificationProfile(Model):
+    """TerminateNotificationProfile.
+
+    :param not_before_timeout: Configurable length of time a Virtual Machine
+     being deleted will have to potentially approve the Terminate Scheduled
+     Event before the event is auto approved (timed out). The configuration
+     must be specified in ISO 8601 format, the default value is 5 minutes
+     (PT5M)
+    :type not_before_timeout: str
+    :param enable: Specifies whether the Terminate Scheduled event is enabled
+     or disabled.
+    :type enable: bool
+    """
+
+    _attribute_map = {
+        'not_before_timeout': {'key': 'notBeforeTimeout', 'type': 'str'},
+        'enable': {'key': 'enable', 'type': 'bool'},
+    }
+
+    def __init__(self, *, not_before_timeout: str=None, enable: bool=None, **kwargs) -> None:
+        super(TerminateNotificationProfile, self).__init__(**kwargs)
+        self.not_before_timeout = not_before_timeout
+        self.enable = enable
 
 
 class ThrottledRequestsInput(LogAnalyticsInputBase):
@@ -6336,6 +6380,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
+    :param scheduled_events_profile: Specifies Scheduled Event related
+     configurations.
+    :type scheduled_events_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -6345,9 +6393,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -6355,6 +6404,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile
         self.license_type = license_type
+        self.scheduled_events_profile = scheduled_events_profile
 
 
 class VirtualMachineScaleSetVM(Resource):
@@ -6736,6 +6786,10 @@ class VirtualMachineScaleSetVMProfile(Model):
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param scheduled_events_profile: Specifies Scheduled Event related
+     configurations.
+    :type scheduled_events_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -6747,9 +6801,10 @@ class VirtualMachineScaleSetVMProfile(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
         'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
+        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -6759,6 +6814,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.license_type = license_type
         self.priority = priority
         self.eviction_policy = eviction_policy
+        self.scheduled_events_profile = scheduled_events_profile
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(Model):
