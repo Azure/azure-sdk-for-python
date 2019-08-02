@@ -7,9 +7,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 4b2c540c-b345-11e9-9772-b831b58100e8
+      - 9e543292-b4d1-11e9-a6bf-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:00 GMT
+      - Fri, 02 Aug 2019 03:00:00 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:00 GMT
+      : Fri, 02 Aug 2019 03:00:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715692F7602AC"'
+      : '"0x8D716F582975866"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 03:43:00 GMT
+      : Fri, 02 Aug 2019 03:00:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: ee80eeec-d01e-00cf-3452-4703b2000000
+      x-ms-request-id: 45f0e53f-201e-001d-33de-48bdea000000
       x-ms-version: '2018-03-28'
     status:
       code: 201
@@ -60,9 +60,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-client-request-id:
-      - 4b625862-b345-11e9-be16-b831b58100e8
+      - 9e6dadc2-b4d1-11e9-9edf-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:01 GMT
+      - Fri, 02 Aug 2019 03:00:01 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -79,17 +79,17 @@ interactions:
       : XrY7u+Ae7tCTyyK7j1rNww==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:00 GMT
+      : Fri, 02 Aug 2019 03:00:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D715692F85F0F9"'
+      : '"0x8D716F582A10E6C"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Wed, 31 Jul 2019 03:43:00 GMT
+      : Fri, 02 Aug 2019 03:00:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: ee80ef14-d01e-00cf-5952-4703b2000000
+      x-ms-request-id: 45f0e557-201e-001d-45de-48bdea000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-03-28'
     status:
@@ -113,15 +113,15 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 4b712752-b345-11e9-b30a-b831b58100e8
+      - 9e75c448-b4d1-11e9-bf0d-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 03:43:01 GMT
+      - Fri, 02 Aug 2019 03:00:01 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 50d784ea-aab6-4dc9-ac4f-9c9edb38b7f7
+      - 86af5fcd-1332-40bd-8159-acab22dd961d
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -129,7 +129,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:ee80ef58-d01e-00cf-0f52-4703b2000000\nTime:2019-07-31T03:43:01.0338496Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:45f0e571-201e-001d-57de-48bdea000000\nTime:2019-08-02T03:00:01.1120564Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -139,12 +139,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 03:43:00 GMT
+      : Fri, 02 Aug 2019 03:00:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ConditionNotMet
-      x-ms-request-id: ee80ef58-d01e-00cf-0f52-4703b2000000
+      x-ms-request-id: 45f0e571-201e-001d-57de-48bdea000000
       x-ms-version: '2018-03-28'
     status:
       code: 412

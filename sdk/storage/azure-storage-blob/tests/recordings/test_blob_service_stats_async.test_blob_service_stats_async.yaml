@@ -9,24 +9,24 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c0100edc-b32e-11e9-a787-b831b58100e8
+      - ba4fac94-b4d2-11e9-beda-b831b58100e8
       x-ms-date:
-      - Wed, 31 Jul 2019 01:01:38 GMT
+      - Fri, 02 Aug 2019 03:07:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Wed,
-        31 Jul 2019 00:57:53 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Fri,
+        02 Aug 2019 03:03:54 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Type
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Wed, 31 Jul 2019 01:01:38 GMT
+      : Fri, 02 Aug 2019 03:07:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -36,57 +36,7 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Vary
       : Origin
-      x-ms-request-id: 0d790851-701e-0001-183b-47bd12000000
-      x-ms-version: '2018-03-28'
-    status:
-      code: 200
-      message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - amqptest-secondary.blob.core.windows.net
-        - /
-        - restype=service&comp=stats
-        - ''
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 601753f4-b342-11e9-b6cf-b831b58100e8
-      x-ms-date:
-      - Wed, 31 Jul 2019 03:22:07 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Wed,
-        31 Jul 2019 03:17:59 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
-    headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Wed, 31 Jul 2019 03:22:07 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Transfer-Encoding
-      : chunked
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
-      x-ms-request-id: 729c08a3-b01e-00d5-304f-470d43000000
+      x-ms-request-id: f45f59cb-501e-0074-07df-48d63e000000
       x-ms-version: '2018-03-28'
     status:
       code: 200

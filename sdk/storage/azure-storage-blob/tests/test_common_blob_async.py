@@ -1470,6 +1470,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_no_sas_private_blob())
 
     async def _test_no_sas_public_blob(self):
+        # test is live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         await self._setup()
         data = b'a public blob can be read without a shared access signature'
@@ -1494,6 +1497,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_no_sas_public_blob())
 
     async def _test_public_access_blob(self):
+        # test is live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         await self._setup()
         data = b'public access blob'
