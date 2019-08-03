@@ -188,7 +188,8 @@ class StorageGetFileTest(FileTestCase):
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+                transport=AiohttpTestTransport())
         await file_client.upload_file(file_data)
 
         # Act
@@ -804,7 +805,8 @@ class StorageGetFileTest(FileTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+            transport=AiohttpTestTransport())
         await file_client.upload_file(file_data)
 
         # Act
