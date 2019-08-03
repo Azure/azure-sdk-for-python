@@ -18,10 +18,7 @@ class CloseReason(Enum):
 
 
 class PartitionProcessor(ABC):
-    def __init__(self, eventhub_name, consumer_group_name, partition_id, checkpoint_manager: CheckpointManager):
-        self._partition_id = partition_id
-        self._eventhub_name = eventhub_name
-        self._consumer_group_name = consumer_group_name
+    def __init__(self, checkpoint_manager: CheckpointManager):
         self._checkpoint_manager = checkpoint_manager
 
     async def close(self, reason):

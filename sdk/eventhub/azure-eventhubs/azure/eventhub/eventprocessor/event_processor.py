@@ -22,18 +22,19 @@ OWNER_LEVEL = 0
 
 class EventProcessor(object):
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
-                 partition_processor_factory: Callable[[str, str, str, CheckpointManager], PartitionProcessor],
+                 partition_processor_factory: Callable[[CheckpointManager], PartitionProcessor],
                  partition_manager: PartitionManager, **kwargs):
         """An EventProcessor automatically creates and runs consumers for all partitions of the eventhub.
 
         It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
         If multiple EventProcessors are running for an event hub, they will automatically balance loading. This feature
-        won't be availabe until preview 3.
+        won't be available until preview 3.
 
         :param eventhub_client: an instance of azure.eventhub.aio.EventClient object
         :param consumer_group_name: the consumer group that is used to receive events
         from the event hub that the eventhub_client is going to receive events from
-        :param partition_processor_factory: a callable (constructor, function, etc) that is called to return a PartitionProcessor
+        :param partition_processor_factory: a callable (type or function) that is called to return a PartitionProcessor
+        TODO: elaborate an example
         :param partition_manager: an instance of a PartitionManager implementation
         :param initial_event_position: the offset to start a partition consumer if the partition has no checkpoint yet
         :type initial_event_position: int or str
@@ -48,29 +49,31 @@ class EventProcessor(object):
         self._receive_timeout = eventhub_client.config.receive_timeout
         self._tasks: List[asyncio.Task] = []
         self._id = str(uuid.uuid4())
-        self._partition_ids = None
 
-    @property
-    def id(self):
-        return self._id
+    def __repr__(self):
+        return f'EventProcessor: id {self._id}'
 
     async def start(self):
         """Start the EventProcessor.
+
             1. retrieve the partition ids from eventhubs
             2. claim partition ownership of these partitions.
             3. repeatedly call EvenHubConsumer.receive() to retrieve events and
             call user defined PartitionProcessor.process_events()
+
+            :return None
         """
         log.info("EventProcessor %r is being started", self._id)
         partition_ids = await self._eventhub_client.get_partition_ids()
-        self._partition_ids = partition_ids
-        claimed_list = await self._claim_partitions()
+        claimed_list = await self._claim_partitions(partition_ids)
         await self._start_claimed_partitions(claimed_list)
 
     async def stop(self):
         """Stop all the partition consumer
 
         This method cancels tasks that are running EventHubConsumer.receive() for the partitions owned by this EventProcessor.
+
+        :return None
         """
         for i in range(len(self._tasks)):
             task = self._tasks.pop()
@@ -78,14 +81,14 @@ class EventProcessor(object):
         log.info("EventProcessor %r has been cancelled", self._id)
         await asyncio.sleep(2)  # give some time to finish after cancelled
 
-    async def _claim_partitions(self):
+    async def _claim_partitions(self, partition_ids):
         partitions_ownership = await self._partition_manager.list_ownership(self._eventhub_name, self._consumer_group_name)
         partitions_ownership_dict = dict()
         for ownership in partitions_ownership:
             partitions_ownership_dict[ownership["partition_id"]] = ownership
 
         to_claim_list = []
-        for pid in self._partition_ids:
+        for pid in partition_ids:
             p_ownership = partitions_ownership_dict.get(pid)
             if p_ownership:
                 to_claim_list.append(p_ownership)
@@ -103,9 +106,6 @@ class EventProcessor(object):
             consumer = self._eventhub_client.create_consumer(self._consumer_group_name, partition_id,
                                                             EventPosition(str(offset)))
             partition_processor = self._partition_processor_factory(
-                eventhub_name=self._eventhub_name,
-                consumer_group_name=self._consumer_group_name,
-                partition_id=partition_id,
                 checkpoint_manager=CheckpointManager(partition_id, self._eventhub_name, self._consumer_group_name,
                                                      self._id, self._partition_manager)
             )
@@ -131,10 +131,10 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.info(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "is cancelled",
-                    partition_processor._checkpoint_manager._owner_id,
-                    partition_processor._eventhub_name,
-                    partition_processor._partition_id,
-                    partition_processor._consumer_group_name
+                    partition_processor._checkpoint_manager.owner_id,
+                    partition_processor._checkpoint_manager.eventhub_name,
+                    partition_processor._checkpoint_manager.partition_id,
+                    partition_processor._checkpoint_manager.consumer_group_name
                 )
                 await partition_processor.process_error(cancelled_error)
                 await partition_processor.close(reason=CloseReason.SHUTDOWN)
@@ -144,10 +144,10 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.warning(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "has met an exception receiving events. It's being closed. The exception is %r.",
-                    partition_processor._checkpoint_manager._owner_id,
-                    partition_processor._eventhub_name,
-                    partition_processor._partition_id,
-                    partition_processor._consumer_group_name,
+                    partition_processor._checkpoint_manager.owner_id,
+                    partition_processor._checkpoint_manager.eventhub_name,
+                    partition_processor._checkpoint_manager.partition_id,
+                    partition_processor._checkpoint_manager.consumer_group_name,
                     eh_err
                 )
                 await partition_processor.process_error(eh_err)
@@ -159,10 +159,10 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.info(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "is cancelled.",
-                    partition_processor._checkpoint_manager._owner_id,
-                    partition_processor._eventhub_name,
-                    partition_processor._partition_id,
-                    partition_processor._consumer_group_name
+                    partition_processor._checkpoint_manager.owner_id,
+                    partition_processor._checkpoint_manager.eventhub_name,
+                    partition_processor._checkpoint_manager.partition_id,
+                    partition_processor._checkpoint_manager.consumer_group_name
                 )
                 await partition_processor.process_error(cancelled_error)
                 await partition_processor.close(reason=CloseReason.SHUTDOWN)
@@ -171,10 +171,10 @@ async def _receive(partition_consumer, partition_processor, receive_timeout):
                 log.warning(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                     "has met an exception from user code process_events. It's being closed. The exception is %r.",
-                    partition_processor._checkpoint_manager._owner_id,
-                    partition_processor._eventhub_name,
-                    partition_processor._partition_id,
-                    partition_processor._consumer_group_name,
+                    partition_processor._checkpoint_manager.owner_id,
+                    partition_processor._checkpoint_manager.eventhub_name,
+                    partition_processor._checkpoint_manager.partition_id,
+                    partition_processor._checkpoint_manager.consumer_group_name,
                     exp
                 )
                 await partition_processor.process_error(exp)
