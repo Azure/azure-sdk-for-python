@@ -11,7 +11,7 @@
 
 try:
     from .initiate_transfer_request_py3 import InitiateTransferRequest
-    from .address_py3 import Address
+    from .address_details_py3 import AddressDetails
     from .validate_address_response_py3 import ValidateAddressResponse
     from .product_details_py3 import ProductDetails
     from .accept_transfer_request_py3 import AcceptTransferRequest
@@ -80,7 +80,7 @@ try:
     from .line_of_credit_py3 import LineOfCredit
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
-    from .address import Address
+    from .address_details import AddressDetails
     from .validate_address_response import ValidateAddressResponse
     from .product_details import ProductDetails
     from .accept_transfer_request import AcceptTransferRequest
@@ -181,7 +181,7 @@ from .billing_management_client_enums import (
 
 __all__ = [
     'InitiateTransferRequest',
-    'Address',
+    'AddressDetails',
     'ValidateAddressResponse',
     'ProductDetails',
     'AcceptTransferRequest',

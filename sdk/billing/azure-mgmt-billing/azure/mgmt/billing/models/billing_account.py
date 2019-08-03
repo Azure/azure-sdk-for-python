@@ -27,7 +27,7 @@ class BillingAccount(Resource):
     :ivar display_name: The billing account name.
     :vartype display_name: str
     :param address: The address associated with billing account.
-    :type address: ~azure.mgmt.billing.models.Address
+    :type address: ~azure.mgmt.billing.models.AddressDetails
     :ivar agreement_type: The type of agreement. Possible values include:
      'MicrosoftCustomerAgreement', 'EnterpriseAgreement',
      'MicrosoftOnlineServicesProgram'
@@ -68,7 +68,7 @@ class BillingAccount(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'address': {'key': 'properties.address', 'type': 'Address'},
+        'address': {'key': 'properties.address', 'type': 'AddressDetails'},
         'agreement_type': {'key': 'properties.agreementType', 'type': 'str'},
         'customer_type': {'key': 'properties.customerType', 'type': 'str'},
         'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},

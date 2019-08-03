@@ -29,7 +29,7 @@ class BillingProfile(Resource):
     :param po_number: Purchase order number.
     :type po_number: str
     :param address: Billing address.
-    :type address: ~azure.mgmt.billing.models.Address
+    :type address: ~azure.mgmt.billing.models.AddressDetails
     :ivar invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :vartype invoice_email_opt_in: bool
@@ -59,7 +59,7 @@ class BillingProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'po_number': {'key': 'properties.poNumber', 'type': 'str'},
-        'address': {'key': 'properties.address', 'type': 'Address'},
+        'address': {'key': 'properties.address', 'type': 'AddressDetails'},
         'invoice_email_opt_in': {'key': 'properties.invoiceEmailOptIn', 'type': 'bool'},
         'invoice_day': {'key': 'properties.invoiceDay', 'type': 'int'},
         'currency': {'key': 'properties.currency', 'type': 'str'},

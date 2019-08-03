@@ -20,7 +20,7 @@ class BillingProfileCreationRequest(Model):
     :param po_number: Purchase order number.
     :type po_number: str
     :param address: Billing address.
-    :type address: ~azure.mgmt.billing.models.Address
+    :type address: ~azure.mgmt.billing.models.AddressDetails
     :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :type invoice_email_opt_in: bool
@@ -31,7 +31,7 @@ class BillingProfileCreationRequest(Model):
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
         'po_number': {'key': 'poNumber', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'Address'},
+        'address': {'key': 'address', 'type': 'AddressDetails'},
         'invoice_email_opt_in': {'key': 'invoiceEmailOptIn', 'type': 'bool'},
         'enabled_azure_plans': {'key': 'enabledAzurePlans', 'type': '[AzurePlan]'},
     }

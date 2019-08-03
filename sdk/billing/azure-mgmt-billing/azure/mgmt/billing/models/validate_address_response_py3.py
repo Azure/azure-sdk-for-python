@@ -19,14 +19,14 @@ class ValidateAddressResponse(Model):
      'Valid', 'Invalid'
     :type status: str or ~azure.mgmt.billing.models.AddressValidationStatus
     :param suggested_addresses: list of suggested addresses.
-    :type suggested_addresses: list[~azure.mgmt.billing.models.Address]
+    :type suggested_addresses: list[~azure.mgmt.billing.models.AddressDetails]
     :param validation_message: Validation error message.
     :type validation_message: str
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
-        'suggested_addresses': {'key': 'suggestedAddresses', 'type': '[Address]'},
+        'suggested_addresses': {'key': 'suggestedAddresses', 'type': '[AddressDetails]'},
         'validation_message': {'key': 'validationMessage', 'type': 'str'},
     }
 
