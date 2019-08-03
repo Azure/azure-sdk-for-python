@@ -49,7 +49,7 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
         # Instantiate a QueueServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string, transport=AiohttpTestTransport())
         # [END auth_from_connection_string]
 
         # Get information for the Queue Service
@@ -74,7 +74,6 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
 
         assert properties is not None
 
-    @record
     @pytest.mark.skip
     def test_auth_shared_key(self):
         loop = asyncio.get_event_loop()

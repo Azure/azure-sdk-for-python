@@ -40,14 +40,13 @@ class TestQueueHelloWorldSamplesAsync(QueueTestCase):
     async def _test_create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string, transport=AiohttpTestTransport())
 
         # Get queue service properties
         properties = await queue_service.get_service_properties()
 
         assert properties is not None
 
-    @record
     @pytest.mark.skip
     def test_create_client_with_connection_string(self):
         loop = asyncio.get_event_loop()
