@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TransfersOperations(object):
-    """TransfersOperations operations.
+class PartnerTransfersOperations(object):
+    """PartnerTransfersOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,15 +35,15 @@ class TransfersOperations(object):
         self.config = config
 
     def initiate(
-            self, billing_account_name, billing_profile_name, invoice_section_name, recipient_email_id=None, reseller_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, customer_name, recipient_email_id=None, reseller_id=None, custom_headers=None, raw=False, **operation_config):
         """Initiates the request to transfer the legacy subscriptions or RIs.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param invoice_section_name: InvoiceSection Id.
-        :type invoice_section_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
         :param recipient_email_id: Email Id of recipient for transfer.
         :type recipient_email_id: str
         :param reseller_id: Optional reseller Id for transfer.
@@ -66,7 +66,7 @@ class TransfersOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
+            'customerName': self._serialize.url("customer_name", customer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -104,18 +104,18 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/initiateTransfer'}
+    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/initiateTransfer'}
 
     def get(
-            self, billing_account_name, billing_profile_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Gets the transfer details for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param invoice_section_name: InvoiceSection Id.
-        :type invoice_section_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
         :param transfer_name: Transfer Name.
         :type transfer_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -134,7 +134,7 @@ class TransfersOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
+            'customerName': self._serialize.url("customer_name", customer_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -169,18 +169,18 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers/{transferName}'}
 
     def cancel(
-            self, billing_account_name, billing_profile_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Cancels the transfer for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param invoice_section_name: InvoiceSection Id.
-        :type invoice_section_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
         :param transfer_name: Transfer Name.
         :type transfer_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -199,7 +199,7 @@ class TransfersOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
+            'customerName': self._serialize.url("customer_name", customer_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -234,74 +234,4 @@ class TransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers/{transferName}'}
-
-    def list(
-            self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all transfer's details initiated from given invoice section.
-
-        :param billing_account_name: billing Account Id.
-        :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
-        :param invoice_section_name: InvoiceSection Id.
-        :type invoice_section_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TransferDetails
-        :rtype:
-         ~azure.mgmt.billing.models.TransferDetailsPaged[~azure.mgmt.billing.models.TransferDetails]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-                    'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.TransferDetailsPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.TransferDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transfers'}
+    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers/{transferName}'}

@@ -33,6 +33,12 @@ class RecipientTransferDetails(Model):
     :vartype recipient_email_id: str
     :ivar initiator_email_id: Email Id of initiator of transfer.
     :vartype initiator_email_id: str
+    :ivar reseller_id: Reseller Id for transfer.
+    :vartype reseller_id: str
+    :ivar reseller_name: Reseller name for transfer.
+    :vartype reseller_name: str
+    :ivar initiator_customer_type: Customer type of the initiator.
+    :vartype initiator_customer_type: str
     :ivar canceled_by: Email Id who user canceled the transfer.
     :vartype canceled_by: str
     :ivar last_modified_time: Transfer last modification time.
@@ -49,6 +55,9 @@ class RecipientTransferDetails(Model):
         'transfer_status': {'readonly': True},
         'recipient_email_id': {'readonly': True},
         'initiator_email_id': {'readonly': True},
+        'reseller_id': {'readonly': True},
+        'reseller_name': {'readonly': True},
+        'initiator_customer_type': {'readonly': True},
         'canceled_by': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'detailed_transfer_status': {'readonly': True},
@@ -61,6 +70,9 @@ class RecipientTransferDetails(Model):
         'transfer_status': {'key': 'properties.transferStatus', 'type': 'str'},
         'recipient_email_id': {'key': 'properties.recipientEmailId', 'type': 'str'},
         'initiator_email_id': {'key': 'properties.initiatorEmailId', 'type': 'str'},
+        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
+        'reseller_name': {'key': 'properties.resellerName', 'type': 'str'},
+        'initiator_customer_type': {'key': 'properties.initiatorCustomerType', 'type': 'str'},
         'canceled_by': {'key': 'properties.canceledBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'detailed_transfer_status': {'key': 'properties.detailedTransferStatus', 'type': '[DetailedTransferStatus]'},
@@ -74,6 +86,9 @@ class RecipientTransferDetails(Model):
         self.transfer_status = None
         self.recipient_email_id = None
         self.initiator_email_id = None
+        self.reseller_id = None
+        self.reseller_name = None
+        self.initiator_customer_type = None
         self.canceled_by = None
         self.last_modified_time = None
         self.detailed_transfer_status = None

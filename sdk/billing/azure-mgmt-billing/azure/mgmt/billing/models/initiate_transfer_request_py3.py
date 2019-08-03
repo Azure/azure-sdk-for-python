@@ -17,12 +17,16 @@ class InitiateTransferRequest(Model):
 
     :param recipient_email_id: Email Id of recipient for transfer.
     :type recipient_email_id: str
+    :param reseller_id: Optional reseller Id for transfer.
+    :type reseller_id: str
     """
 
     _attribute_map = {
         'recipient_email_id': {'key': 'properties.recipientEmailId', 'type': 'str'},
+        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
     }
 
-    def __init__(self, *, recipient_email_id: str=None, **kwargs) -> None:
+    def __init__(self, *, recipient_email_id: str=None, reseller_id: str=None, **kwargs) -> None:
         super(InitiateTransferRequest, self).__init__(**kwargs)
         self.recipient_email_id = recipient_email_id
+        self.reseller_id = reseller_id

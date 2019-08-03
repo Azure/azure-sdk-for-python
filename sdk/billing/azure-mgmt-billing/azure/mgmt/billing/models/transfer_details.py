@@ -26,6 +26,12 @@ class TransferDetails(Model):
     :vartype invoice_section_id: str
     :ivar billing_account_id: Target billing account Id.
     :vartype billing_account_id: str
+    :ivar reseller_id: Reseller Id for transfer.
+    :vartype reseller_id: str
+    :ivar reseller_name: Reseller name for transfer.
+    :vartype reseller_name: str
+    :ivar initiator_customer_type: Customer type of the initiator.
+    :vartype initiator_customer_type: str
     :ivar billing_profile_id: Target billing profile Id.
     :vartype billing_profile_id: str
     :ivar transfer_status: Overall transfer status. Possible values include:
@@ -50,6 +56,9 @@ class TransferDetails(Model):
         'expiration_time': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'billing_account_id': {'readonly': True},
+        'reseller_id': {'readonly': True},
+        'reseller_name': {'readonly': True},
+        'initiator_customer_type': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'transfer_status': {'readonly': True},
         'recipient_email_id': {'readonly': True},
@@ -64,6 +73,9 @@ class TransferDetails(Model):
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
+        'reseller_name': {'key': 'properties.resellerName', 'type': 'str'},
+        'initiator_customer_type': {'key': 'properties.initiatorCustomerType', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'transfer_status': {'key': 'properties.transferStatus', 'type': 'str'},
         'recipient_email_id': {'key': 'properties.recipientEmailId', 'type': 'str'},
@@ -79,6 +91,9 @@ class TransferDetails(Model):
         self.expiration_time = None
         self.invoice_section_id = None
         self.billing_account_id = None
+        self.reseller_id = None
+        self.reseller_name = None
+        self.initiator_customer_type = None
         self.billing_profile_id = None
         self.transfer_status = None
         self.recipient_email_id = None
