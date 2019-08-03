@@ -47,8 +47,8 @@ if sys.version_info < (3, 5, 3):
     exclude_packages.extend([
         '*.aio',
         '*.aio.*',
-        '*.eventprocessorhost',
-        '*.eventprocessorhost.*'
+        '*.eventprocessor',
+        '*.eventprocessor.*'
     ])
 
 setup(
