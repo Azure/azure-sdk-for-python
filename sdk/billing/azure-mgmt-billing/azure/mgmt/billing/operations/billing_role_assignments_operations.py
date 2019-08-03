@@ -539,7 +539,7 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleAssignments'}
+    add_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/createBillingRoleAssignment'}
 
     def list_by_invoice_section_name(
             self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
@@ -678,7 +678,7 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleAssignments'}
+    add_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/createBillingRoleAssignment'}
 
     def list_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
@@ -811,4 +811,4 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleAssignments'}
+    add_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/createBillingRoleAssignment'}
