@@ -12,8 +12,8 @@ from itertools import islice
 from math import ceil
 
 import six
-from azure.core.tracing.context import tracing_context
 
+from azure.core.tracing.context import tracing_context
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length
@@ -36,7 +36,7 @@ def _parallel_uploads(executor, uploader, pending, running):
         except StopIteration:
             break
         else:
-            running.add(executor.submit(tracing_context.with_current_context(uploader.process_chunk), next_chunk))
+            running.add(executor.submit(tracing_context.with_current_context(uploader), next_chunk))
 
     # Wait for the remaining uploads to finish
     done, _running = futures.wait(running)
@@ -57,7 +57,7 @@ def upload_data_chunks(
 
     if encryption_options:
         encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('key'),
+            encryption_options.get('cek'),
             encryption_options.get('vector'),
             uploader_class is not PageBlobChunkUploader)
         kwargs['encryptor'] = encryptor
@@ -76,7 +76,6 @@ def upload_data_chunks(
         parallel=parallel,
         validate_content=validate_content,
         **kwargs)
-
     if parallel:
         executor = futures.ThreadPoolExecutor(max_connections)
         upload_tasks = uploader.get_chunk_streams()
@@ -84,12 +83,11 @@ def upload_data_chunks(
             executor.submit(tracing_context.with_current_context(uploader.process_chunk), u)
             for u in islice(upload_tasks, 0, max_connections)
         ]
-        range_ids = _parallel_uploads(executor, uploader, upload_tasks, running_futures)
+        range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
-
     if any(range_ids):
-        return range_ids
+        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
     return uploader.response_headers
 
 
@@ -120,8 +118,10 @@ def upload_substream_blocks(
             executor.submit(tracing_context.with_current_context(uploader.process_substream_block), u)
             for u in islice(upload_tasks, 0, max_connections)
         ]
-        return _parallel_uploads(executor, uploader, upload_tasks, running_futures)
-    return [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
+        range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
+    else:
+        range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
+    return sorted(range_ids)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -231,6 +231,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def _upload_substream_block_with_progress(self, block_id, block_stream):
         range_id = self._upload_substream_block(block_id, block_stream)
+        self._update_progress(len(block_stream))
         return range_id
 
     def set_response_properties(self, resp):
@@ -240,9 +241,15 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
 class BlockBlobChunkUploader(_ChunkUploader):
 
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("modified_access_conditions", None)
+        super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
+        self.current_length = None
+
     def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        block_id = encode_base64(url_quote(encode_base64('{0:032d}'.format(chunk_offset))))
+        index = '{0:032d}'.format(chunk_offset)
+        block_id = encode_base64(url_quote(encode_base64(index)))
         self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -251,7 +258,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return block_id
+        return index, block_id
 
     def _upload_substream_block(self, block_id, block_stream):
         try:

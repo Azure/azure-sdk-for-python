@@ -15,6 +15,7 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
@@ -25,7 +26,6 @@ from ._generated.models import StorageErrorException, StorageServiceProperties
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, ContainerPropertiesPaged
-from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -470,10 +470,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -527,10 +523,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         container = self.get_container_client(container) # type: ignore
         container.delete_container( # type: ignore
             lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
             **kwargs)
 

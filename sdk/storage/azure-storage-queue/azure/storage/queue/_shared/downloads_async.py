@@ -20,7 +20,7 @@ from .downloads import process_range_and_offset
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body
+    content = data.response.body()
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
@@ -151,6 +151,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
+
     The stream downloader can iterated, or download to open file or stream
     over multiple threads.
     """
@@ -329,7 +330,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     async def content_as_bytes(self, max_connections=1):
         """Download the contents of this file.
+
         This operation is blocking until all data is downloaded.
+
         :param int max_connections:
             The number of parallel connections with which to download.
         :rtype: bytes
@@ -340,7 +343,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     async def content_as_text(self, max_connections=1, encoding='UTF-8'):
         """Download the contents of this file, and decode as text.
+
         This operation is blocking until all data is downloaded.
+
         :param int max_connections:
             The number of parallel connections with which to download.
         :rtype: str
@@ -350,6 +355,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     async def download_to_stream(self, stream, max_connections=1):
         """Download the contents of this file to a stream.
+
         :param stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download

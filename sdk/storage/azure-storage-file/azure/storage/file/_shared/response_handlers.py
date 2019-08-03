@@ -97,6 +97,7 @@ def process_storage_error(storage_error):
                               StorageErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
             if error_code in [StorageErrorCode.resource_not_found,
+                              StorageErrorCode.cannot_verify_copy_source,
                               StorageErrorCode.blob_not_found,
                               StorageErrorCode.queue_not_found,
                               StorageErrorCode.container_not_found,

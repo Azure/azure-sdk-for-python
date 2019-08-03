@@ -14,7 +14,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy)
 
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
@@ -52,7 +52,7 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         credential_policy = None
         if hasattr(credential, 'get_token'):
-            credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             credential_policy = credential
         elif credential is not None:

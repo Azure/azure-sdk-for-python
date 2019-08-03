@@ -126,7 +126,7 @@ class StorageLoggingTest(StorageTestCase):
 
         # Act
         with LogCaptured(self) as log_captured:
-            dest_blob.copy_blob_from_url(
+            dest_blob.start_copy_from_url(
                 self.source_blob_url, requires_sync=True, logging_enable=True)
             log_as_str = log_captured.getvalue()
 

@@ -6,11 +6,22 @@
 
 import logging
 import sys
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import unquote # type: ignore
+
+try:
+    from yarl import URL
+except ImportError:
+    pass
+
+try:
+    from azure.core.pipeline.transport import AioHttpTransport
+except ImportError:
+    AioHttpTransport = None
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -64,6 +75,12 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
+        try:
+            if isinstance(request.context.transport, AioHttpTransport):
+                uri_path = URL(uri_path)
+                return '/' + self.account_name + str(uri_path)
+        except TypeError:
+            pass
         return '/' + self.account_name + uri_path
 
     def _get_canonicalized_headers(self, request):
@@ -99,7 +116,10 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
+        if not 'content-type' in request.http_request.headers:
+            request.http_request.headers['content-type'] = 'application/xml; charset=utf-8'
+
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(

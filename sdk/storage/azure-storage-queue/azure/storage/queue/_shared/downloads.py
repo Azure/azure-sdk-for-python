@@ -129,7 +129,9 @@ class _ChunkDownloader(object):
         pass
 
     def _download_chunk(self, chunk_start, chunk_end):
-        download_range, offset = process_range_and_offset(chunk_start, chunk_end, chunk_end, self.encryption_options)
+        download_range, offset = process_range_and_offset(
+            chunk_start, chunk_end, chunk_end, self.encryption_options
+        )
         range_header, range_validation = validate_and_format_range_headers(
             download_range[0], download_range[1] - 1, check_content_md5=self.validate_content
         )
@@ -152,7 +154,6 @@ class _ChunkDownloader(object):
         # that subsequent downloads are to an unmodified blob
         if self.request_options.get("modified_access_conditions"):
             self.request_options["modified_access_conditions"].if_match = response.properties.etag
-
         return chunk_data
 
 
@@ -321,7 +322,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             self.initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self.validate_content,
+            check_content_md5=self.validate_content
         )
 
         try:
@@ -463,9 +464,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         if max_connections > 1:
             import concurrent.futures
-
             executor = concurrent.futures.ThreadPoolExecutor(max_connections)
-            list(executor.map(tracing_context(downloader.process_chunk), downloader.get_chunk_offsets()))
+            list(executor.map(tracing_context.with_current_context(downloader.process_chunk), downloader.get_chunk_offsets()))
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)

@@ -1,5 +1,13 @@
 # Change Log azure-storage-blob
 
+
+## Version 12.0.0b2:
+
+- Added async APIs to subnamespace `azure.storage.blob.aio`.
+- Renamed `copy_blob_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_blob_properties` operation.
+
+
+
 ## Version 12.0.0b1:
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Blobs. For more information about this, and preview releases of other Azure SDK libraries, please visit

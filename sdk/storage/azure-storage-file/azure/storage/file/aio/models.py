@@ -71,7 +71,7 @@ class SharePropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
-        return self._response.continuation_token or None, self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class HandlesPaged(AsyncPageIterator):

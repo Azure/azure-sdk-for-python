@@ -302,7 +302,7 @@ def encrypt_blob(blob, key_encryption_key):
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
-    is done as a part of the upload_blob_chunks method.
+    is done as a part of the upload_data_chunks method.
 
     :param bytes blob:
         The blob to be encrypted.
@@ -366,7 +366,7 @@ def generate_blob_encryption_data(key_encryption_key):
 
 
 def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
-                  response, start_offset, end_offset):
+                 content, start_offset, end_offset, response_headers):
     '''
     Decrypts the given blob contents and returns only the requested range.
 
@@ -383,14 +383,8 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     :return: The decrypted blob content.
     :rtype: bytes
     '''
-    if response is None:
-        raise ValueError("Response cannot be None.")
-    content = b"".join(list(response))
-    if not content:
-        return content
-
     try:
-        encryption_data = _dict_to_encryption_data(loads(response.response.headers['x-ms-meta-encryptiondata']))
+        encryption_data = _dict_to_encryption_data(loads(response_headers['x-ms-meta-encryptiondata']))
     except:  # pylint: disable=bare-except
         if require_encryption:
             raise ValueError(
@@ -402,12 +396,12 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     if encryption_data.encryption_agent.encryption_algorithm != _EncryptionAlgorithm.AES_CBC_256:
         raise ValueError('Specified encryption algorithm is not supported.')
 
-    blob_type = response.response.headers['x-ms-blob-type']
+    blob_type = response_headers['x-ms-blob-type']
 
     iv = None
     unpad = False
-    if 'content-range' in response.response.headers:
-        content_range = response.response.headers['content-range']
+    if 'content-range' in response_headers:
+        content_range = response_headers['content-range']
         # Format: 'bytes x-y/size'
 
         # Ignore the word 'bytes'

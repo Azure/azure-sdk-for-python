@@ -128,6 +128,7 @@ class _EncryptionData:
 def _generate_encryption_data_dict(kek, cek, iv):
     '''
     Generates and returns the encryption metadata as a dict.
+
     :param object kek: The key encryption key. See calling functions for more information.
     :param bytes cek: The content encryption key.
     :param bytes iv: The initialization vector.
@@ -161,6 +162,7 @@ def _dict_to_encryption_data(encryption_data_dict):
     '''
     Converts the specified dictionary to an EncryptionData object for
     eventual use in decryption.
+
     :param dict encryption_data_dict:
         The dictionary containing the encryption data.
     :return: an _EncryptionData object built from the dictionary.
@@ -196,6 +198,7 @@ def _dict_to_encryption_data(encryption_data_dict):
 def _generate_AES_CBC_cipher(cek, iv):
     '''
     Generates and returns an encryption cipher for AES CBC using the given cek and iv.
+
     :param bytes[] cek: The content encryption key for the cipher.
     :param bytes[] iv: The initialization vector for the cipher.
     :return: A cipher for encrypting in AES256 CBC.
@@ -256,6 +259,7 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
     Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
     Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
     Returns the original plaintex.
+
     :param str message:
         The ciphertext to be decrypted.
     :param _EncryptionData encryption_data:
@@ -298,7 +302,8 @@ def encrypt_blob(blob, key_encryption_key):
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
-    is done as a part of the upload_blob_chunks method.
+    is done as a part of the upload_data_chunks method.
+
     :param bytes blob:
         The blob to be encrypted.
     :param object key_encryption_key:
@@ -337,6 +342,7 @@ def encrypt_blob(blob, key_encryption_key):
 def generate_blob_encryption_data(key_encryption_key):
     '''
     Generates the encryption_metadata for the blob.
+
     :param bytes key_encryption_key:
         The key-encryption-key used to wrap the cek associate with this blob.
     :return: A tuple containing the cek and iv for this blob as well as the
@@ -363,6 +369,7 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
                  content, start_offset, end_offset, response_headers):
     '''
     Decrypts the given blob contents and returns only the requested range.
+
     :param bool require_encryption:
         Whether or not the calling blob service requires objects to be decrypted.
     :param object key_encryption_key:
@@ -450,6 +457,7 @@ def encrypt_queue_message(message, key_encryption_key):
     Encrypts the given plain text message using AES256 in CBC mode with 128 bit padding.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
+
     :param object message:
         The plain text messge to be encrypted.
     :param object key_encryption_key:
