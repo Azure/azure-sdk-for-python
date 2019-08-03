@@ -9,13 +9,20 @@ import sqlite3
 from .partition_manager import PartitionManager
 
 
+def _check_table_name(table_name: str):
+    for c in table_name:
+        if not (c.isalnum() or c == "_"):
+            raise ValueError("Table name \"{}\" is not in correct format".format(table_name))
+    return table_name
+
+
 class Sqlite3PartitionManager(PartitionManager):
     """An implementation of PartitionManager by using the sqlite3 in Python standard library.
     Sqlite3 is a mini sql database that runs in memory or files.
 
 
     """
-    def __init__(self, db_filename=":memory:", ownership_table="ownership"):
+    def __init__(self, db_filename: str = ":memory:", ownership_table: str = "ownership"):
         """
 
         :param db_filename: name of file that saves the sql data.
@@ -23,7 +30,7 @@ class Sqlite3PartitionManager(PartitionManager):
         :param ownership_table: The table name of the sqlite3 database.
         """
         super(Sqlite3PartitionManager, self).__init__()
-        self.ownership_table = ownership_table
+        self.ownership_table = _check_table_name(ownership_table)
         conn = sqlite3.connect(db_filename)
         c = conn.cursor()
         try:
@@ -50,7 +57,7 @@ class Sqlite3PartitionManager(PartitionManager):
                       "sequence_number",
                       "offset", "last_modified_time", "etag"]
             cursor.execute("select " + ",".join(fields) +
-                                " from "+self.ownership_table+" where eventhub_name=? "
+                                " from "+_check_table_name(self.ownership_table)+" where eventhub_name=? "
                                 "and consumer_group_name=?",
                                 (eventhub_name, consumer_group_name))
             result_list = []
@@ -66,21 +73,21 @@ class Sqlite3PartitionManager(PartitionManager):
         cursor = self.conn.cursor()
         try:
             for p in partitions:
-                cursor.execute("select * from " + self.ownership_table +
+                cursor.execute("select * from " + _check_table_name(self.ownership_table) +
                                     " where eventhub_name=? "
                                     "and consumer_group_name=? "
                                     "and partition_id =?",
                                     (p["eventhub_name"], p["consumer_group_name"],
                                      p["partition_id"]))
                 if not cursor.fetchall():
-                    cursor.execute("insert into " + self.ownership_table +
+                    cursor.execute("insert into " + _check_table_name(self.ownership_table) +
                                    " (eventhub_name,consumer_group_name,partition_id,owner_id,owner_level,last_modified_time,etag) "
                                    "values (?,?,?,?,?,?,?)",
                                    (p["eventhub_name"], p["consumer_group_name"], p["partition_id"], p["owner_id"], p["owner_level"],
                                     time.time(), str(uuid.uuid4())
                                     ))
                 else:
-                    cursor.execute("update "+self.ownership_table+" set owner_id=?, owner_level=?, last_modified_time=?, etag=? "
+                    cursor.execute("update " + _check_table_name(self.ownership_table) + " set owner_id=?, owner_level=?, last_modified_time=?, etag=? "
                                    "where eventhub_name=? and consumer_group_name=? and partition_id=?",
                                    (p["owner_id"], p["owner_level"], time.time(), str(uuid.uuid4()),
                                     p["eventhub_name"], p["consumer_group_name"], p["partition_id"]))
@@ -93,7 +100,7 @@ class Sqlite3PartitionManager(PartitionManager):
             offset, sequence_number):
         cursor = self.conn.cursor()
         try:
-            cursor.execute("update "+self.ownership_table+" set offset=?, sequence_number=? where eventhub_name=? and consumer_group_name=? and partition_id=?",
+            cursor.execute("update " + _check_table_name(self.ownership_table) + " set offset=?, sequence_number=? where eventhub_name=? and consumer_group_name=? and partition_id=?",
                            (offset, sequence_number, eventhub_name, consumer_group_name, partition_id))
             self.conn.commit()
         finally:
