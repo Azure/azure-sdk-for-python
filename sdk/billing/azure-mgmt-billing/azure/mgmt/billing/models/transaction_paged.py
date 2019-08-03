@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class UpdateAutoRenewOperationSummary(Model):
-    """Summary of cancel product operation.
-
-    :param end_date: The end date of this asset
-    :type end_date: datetime
+class TransactionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Transaction <azure.mgmt.billing.models.Transaction>` object
     """
 
     _attribute_map = {
-        'end_date': {'key': 'properties.endDate', 'type': 'iso-8601'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Transaction]'}
     }
 
-    def __init__(self, **kwargs):
-        super(UpdateAutoRenewOperationSummary, self).__init__(**kwargs)
-        self.end_date = kwargs.get('end_date', None)
+    def __init__(self, *args, **kwargs):
+
+        super(TransactionPaged, self).__init__(*args, **kwargs)

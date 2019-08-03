@@ -11,7 +11,7 @@
 
 try:
     from .initiate_transfer_request_py3 import InitiateTransferRequest
-    from .address_py3 import Address
+    from .address_details_py3 import AddressDetails
     from .validate_address_response_py3 import ValidateAddressResponse
     from .product_details_py3 import ProductDetails
     from .accept_transfer_request_py3 import AcceptTransferRequest
@@ -25,43 +25,42 @@ try:
     from .transfer_billing_subscription_request_py3 import TransferBillingSubscriptionRequest
     from .validate_subscription_transfer_eligibility_error_py3 import ValidateSubscriptionTransferEligibilityError
     from .validate_subscription_transfer_eligibility_result_py3 import ValidateSubscriptionTransferEligibilityResult
-    from .update_auto_renew_operation_summary_py3 import UpdateAutoRenewOperationSummary
-    from .enabled_azure_sk_us_py3 import EnabledAzureSKUs
-    from .billing_profile_py3 import BillingProfile
+    from .update_auto_renew_operation_py3 import UpdateAutoRenewOperation
+    from .azure_plan_py3 import AzurePlan
     from .invoice_section_py3 import InvoiceSection
+    from .billing_profile_py3 import BillingProfile
     from .enrollment_policies_py3 import EnrollmentPolicies
     from .enrollment_py3 import Enrollment
     from .enrollment_account_py3 import EnrollmentAccount
     from .department_py3 import Department
     from .billing_account_py3 import BillingAccount
     from .billing_account_list_result_py3 import BillingAccountListResult
-    from .billing_account_update_properties_py3 import BillingAccountUpdateProperties
+    from .billing_account_update_request_py3 import BillingAccountUpdateRequest
     from .billing_property_py3 import BillingProperty
     from .department_list_result_py3 import DepartmentListResult
     from .enrollment_account_list_result_py3 import EnrollmentAccountListResult
     from .billing_profile_list_result_py3 import BillingProfileListResult
-    from .billing_profile_creation_parameters_py3 import BillingProfileCreationParameters
+    from .billing_profile_creation_request_py3 import BillingProfileCreationRequest
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
-    from .operation_status_py3 import OperationStatus
     from .download_url_py3 import DownloadUrl
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .resource_py3 import Resource
     from .amount_py3 import Amount
-    from .download_properties_py3 import DownloadProperties
+    from .document_py3 import Document
     from .payment_properties_py3 import PaymentProperties
-    from .invoice_summary_py3 import InvoiceSummary
+    from .invoice_py3 import Invoice
     from .invoice_list_result_py3 import InvoiceListResult
-    from .product_summary_py3 import ProductSummary
+    from .product_py3 import Product
     from .products_list_result_py3 import ProductsListResult
     from .validate_product_transfer_eligibility_error_py3 import ValidateProductTransferEligibilityError
     from .validate_product_transfer_eligibility_result_py3 import ValidateProductTransferEligibilityResult
-    from .billing_subscription_summary_py3 import BillingSubscriptionSummary
+    from .billing_subscription_py3 import BillingSubscription
     from .billing_subscriptions_list_result_py3 import BillingSubscriptionsListResult
     from .enrollment_account_context_py3 import EnrollmentAccountContext
-    from .transactions_summary_py3 import TransactionsSummary
-    from .transactions_list_result_py3 import TransactionsListResult
+    from .transaction_py3 import Transaction
+    from .transaction_list_result_py3 import TransactionListResult
     from .policy_py3 import Policy
     from .available_balance_py3 import AvailableBalance
     from .payment_method_py3 import PaymentMethod
@@ -81,7 +80,7 @@ try:
     from .line_of_credit_py3 import LineOfCredit
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
-    from .address import Address
+    from .address_details import AddressDetails
     from .validate_address_response import ValidateAddressResponse
     from .product_details import ProductDetails
     from .accept_transfer_request import AcceptTransferRequest
@@ -95,43 +94,42 @@ except (SyntaxError, ImportError):
     from .transfer_billing_subscription_request import TransferBillingSubscriptionRequest
     from .validate_subscription_transfer_eligibility_error import ValidateSubscriptionTransferEligibilityError
     from .validate_subscription_transfer_eligibility_result import ValidateSubscriptionTransferEligibilityResult
-    from .update_auto_renew_operation_summary import UpdateAutoRenewOperationSummary
-    from .enabled_azure_sk_us import EnabledAzureSKUs
-    from .billing_profile import BillingProfile
+    from .update_auto_renew_operation import UpdateAutoRenewOperation
+    from .azure_plan import AzurePlan
     from .invoice_section import InvoiceSection
+    from .billing_profile import BillingProfile
     from .enrollment_policies import EnrollmentPolicies
     from .enrollment import Enrollment
     from .enrollment_account import EnrollmentAccount
     from .department import Department
     from .billing_account import BillingAccount
     from .billing_account_list_result import BillingAccountListResult
-    from .billing_account_update_properties import BillingAccountUpdateProperties
+    from .billing_account_update_request import BillingAccountUpdateRequest
     from .billing_property import BillingProperty
     from .department_list_result import DepartmentListResult
     from .enrollment_account_list_result import EnrollmentAccountListResult
     from .billing_profile_list_result import BillingProfileListResult
-    from .billing_profile_creation_parameters import BillingProfileCreationParameters
+    from .billing_profile_creation_request import BillingProfileCreationRequest
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
-    from .operation_status import OperationStatus
     from .download_url import DownloadUrl
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
     from .resource import Resource
     from .amount import Amount
-    from .download_properties import DownloadProperties
+    from .document import Document
     from .payment_properties import PaymentProperties
-    from .invoice_summary import InvoiceSummary
+    from .invoice import Invoice
     from .invoice_list_result import InvoiceListResult
-    from .product_summary import ProductSummary
+    from .product import Product
     from .products_list_result import ProductsListResult
     from .validate_product_transfer_eligibility_error import ValidateProductTransferEligibilityError
     from .validate_product_transfer_eligibility_result import ValidateProductTransferEligibilityResult
-    from .billing_subscription_summary import BillingSubscriptionSummary
+    from .billing_subscription import BillingSubscription
     from .billing_subscriptions_list_result import BillingSubscriptionsListResult
     from .enrollment_account_context import EnrollmentAccountContext
-    from .transactions_summary import TransactionsSummary
-    from .transactions_list_result import TransactionsListResult
+    from .transaction import Transaction
+    from .transaction_list_result import TransactionListResult
     from .policy import Policy
     from .available_balance import AvailableBalance
     from .payment_method import PaymentMethod
@@ -150,9 +148,9 @@ except (SyntaxError, ImportError):
     from .agreement_list_result import AgreementListResult
     from .line_of_credit import LineOfCredit
 from .payment_method_paged import PaymentMethodPaged
-from .billing_subscription_summary_paged import BillingSubscriptionSummaryPaged
-from .product_summary_paged import ProductSummaryPaged
-from .transactions_summary_paged import TransactionsSummaryPaged
+from .billing_subscription_paged import BillingSubscriptionPaged
+from .product_paged import ProductPaged
+from .transaction_paged import TransactionPaged
 from .transfer_details_paged import TransferDetailsPaged
 from .recipient_transfer_details_paged import RecipientTransferDetailsPaged
 from .operation_paged import OperationPaged
@@ -163,12 +161,19 @@ from .billing_management_client_enums import (
     ProductTransferStatus,
     EligibleProductType,
     SubscriptionTransferValidationErrorCode,
+    AgreementType,
+    CustomerType,
+    InvoiceStatus,
+    DocumentType,
     ProductStatusType,
     BillingFrequency,
     ProductTransferValidationErrorCode,
     BillingSubscriptionStatusType,
     TransactionTypeKind,
     ReservationType,
+    MarketplacePurchasesPolicy,
+    ReservationPurchasesPolicy,
+    ViewChargesPolicy,
     PaymentMethodType,
     UpdateAutoRenew,
     Status,
@@ -176,7 +181,7 @@ from .billing_management_client_enums import (
 
 __all__ = [
     'InitiateTransferRequest',
-    'Address',
+    'AddressDetails',
     'ValidateAddressResponse',
     'ProductDetails',
     'AcceptTransferRequest',
@@ -190,43 +195,42 @@ __all__ = [
     'TransferBillingSubscriptionRequest',
     'ValidateSubscriptionTransferEligibilityError',
     'ValidateSubscriptionTransferEligibilityResult',
-    'UpdateAutoRenewOperationSummary',
-    'EnabledAzureSKUs',
-    'BillingProfile',
+    'UpdateAutoRenewOperation',
+    'AzurePlan',
     'InvoiceSection',
+    'BillingProfile',
     'EnrollmentPolicies',
     'Enrollment',
     'EnrollmentAccount',
     'Department',
     'BillingAccount',
     'BillingAccountListResult',
-    'BillingAccountUpdateProperties',
+    'BillingAccountUpdateRequest',
     'BillingProperty',
     'DepartmentListResult',
     'EnrollmentAccountListResult',
     'BillingProfileListResult',
-    'BillingProfileCreationParameters',
+    'BillingProfileCreationRequest',
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
-    'OperationStatus',
     'DownloadUrl',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'Resource',
     'Amount',
-    'DownloadProperties',
+    'Document',
     'PaymentProperties',
-    'InvoiceSummary',
+    'Invoice',
     'InvoiceListResult',
-    'ProductSummary',
+    'Product',
     'ProductsListResult',
     'ValidateProductTransferEligibilityError',
     'ValidateProductTransferEligibilityResult',
-    'BillingSubscriptionSummary',
+    'BillingSubscription',
     'BillingSubscriptionsListResult',
     'EnrollmentAccountContext',
-    'TransactionsSummary',
-    'TransactionsListResult',
+    'Transaction',
+    'TransactionListResult',
     'Policy',
     'AvailableBalance',
     'PaymentMethod',
@@ -245,9 +249,9 @@ __all__ = [
     'AgreementListResult',
     'LineOfCredit',
     'PaymentMethodPaged',
-    'BillingSubscriptionSummaryPaged',
-    'ProductSummaryPaged',
-    'TransactionsSummaryPaged',
+    'BillingSubscriptionPaged',
+    'ProductPaged',
+    'TransactionPaged',
     'TransferDetailsPaged',
     'RecipientTransferDetailsPaged',
     'OperationPaged',
@@ -257,12 +261,19 @@ __all__ = [
     'ProductTransferStatus',
     'EligibleProductType',
     'SubscriptionTransferValidationErrorCode',
+    'AgreementType',
+    'CustomerType',
+    'InvoiceStatus',
+    'DocumentType',
     'ProductStatusType',
     'BillingFrequency',
     'ProductTransferValidationErrorCode',
     'BillingSubscriptionStatusType',
     'TransactionTypeKind',
     'ReservationType',
+    'MarketplacePurchasesPolicy',
+    'ReservationPurchasesPolicy',
+    'ViewChargesPolicy',
     'PaymentMethodType',
     'UpdateAutoRenew',
     'Status',

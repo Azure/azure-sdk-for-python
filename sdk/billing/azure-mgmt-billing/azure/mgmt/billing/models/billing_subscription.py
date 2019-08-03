@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class BillingSubscriptionSummary(Resource):
-    """A billing Subscription summary resource.
+class BillingSubscription(Resource):
+    """A billing Subscription resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,15 +39,15 @@ class BillingSubscriptionSummary(Resource):
     :ivar billing_profile_id: Billing Profile id to which this product
      belongs.
     :vartype billing_profile_id: str
-    :ivar billing_profile_name: Billing Profile name to which this product
-     belongs.
-    :vartype billing_profile_name: str
+    :ivar billing_profile_display_name: Billing Profile display name to which
+     this product belongs.
+    :vartype billing_profile_display_name: str
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
-    :ivar invoice_section_name: Invoice section name to which this product
-     belongs.
-    :vartype invoice_section_name: str
+    :ivar invoice_section_display_name: Invoice section display name to which
+     this product belongs.
+    :vartype invoice_section_display_name: str
     :param sku_id: The sku id.
     :type sku_id: str
     :ivar sku_description: The sku description.
@@ -63,9 +63,9 @@ class BillingSubscriptionSummary(Resource):
         'last_month_charges': {'readonly': True},
         'month_to_date_charges': {'readonly': True},
         'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
+        'billing_profile_display_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
-        'invoice_section_name': {'readonly': True},
+        'invoice_section_display_name': {'readonly': True},
         'sku_description': {'readonly': True},
     }
 
@@ -79,23 +79,23 @@ class BillingSubscriptionSummary(Resource):
         'last_month_charges': {'key': 'properties.lastMonthCharges', 'type': 'Amount'},
         'month_to_date_charges': {'key': 'properties.monthToDateCharges', 'type': 'Amount'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
     }
 
-    def __init__(self, *, subscription_billing_status=None, sku_id: str=None, **kwargs) -> None:
-        super(BillingSubscriptionSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(BillingSubscription, self).__init__(**kwargs)
         self.display_name = None
         self.subscription_id = None
-        self.subscription_billing_status = subscription_billing_status
+        self.subscription_billing_status = kwargs.get('subscription_billing_status', None)
         self.last_month_charges = None
         self.month_to_date_charges = None
         self.billing_profile_id = None
-        self.billing_profile_name = None
+        self.billing_profile_display_name = None
         self.invoice_section_id = None
-        self.invoice_section_name = None
-        self.sku_id = sku_id
+        self.invoice_section_display_name = None
+        self.sku_id = kwargs.get('sku_id', None)
         self.sku_description = None

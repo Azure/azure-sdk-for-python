@@ -22,7 +22,7 @@ class ProductsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ProductsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -52,9 +52,9 @@ class ProductsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ProductSummary
+        :return: An iterator like instance of Product
         :rtype:
-         ~azure.mgmt.billing.models.ProductSummaryPaged[~azure.mgmt.billing.models.ProductSummary]
+         ~azure.mgmt.billing.models.ProductPaged[~azure.mgmt.billing.models.Product]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -98,22 +98,24 @@ class ProductsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ProductSummaryPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ProductPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ProductSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ProductPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
     list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/products'}
 
     def list_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists products by invoice section name.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param filter: May be used to filter by product type. The filter
@@ -136,6 +138,7 @@ class ProductsOperations(object):
         url = self.list_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -173,14 +176,16 @@ class ProductsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products'}
+    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/products'}
 
     def get(
-            self, billing_account_name, invoice_section_name, product_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, product_name, custom_headers=None, raw=False, **operation_config):
         """Get a single product by name.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param product_name: Invoice Id.
@@ -190,8 +195,8 @@ class ProductsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ProductSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.ProductSummary or
+        :return: Product or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Product or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -200,6 +205,7 @@ class ProductsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
@@ -229,21 +235,23 @@ class ProductsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ProductSummary', response)
+            deserialized = self._deserialize('Product', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/products/{productName}'}
 
     def transfer(
-            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to transfer a Product to another invoice section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param product_name: Invoice Id.
@@ -259,8 +267,8 @@ class ProductsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ProductSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.ProductSummary or
+        :return: Product or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Product or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -271,6 +279,7 @@ class ProductsOperations(object):
         url = self.transfer.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
@@ -305,11 +314,10 @@ class ProductsOperations(object):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ProductSummary', response)
+            deserialized = self._deserialize('Product', response)
             header_dict = {
                 'Location': 'str',
                 'Retry-After': 'int',
-                'Azure-AsyncOperation': 'str',
             }
 
         if raw:
@@ -318,14 +326,16 @@ class ProductsOperations(object):
             return client_raw_response
 
         return deserialized
-    transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/transfer'}
+    transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/products/{productName}/transfer'}
 
     def validate_transfer(
-            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """Validates the transfer of products across invoice sections.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param product_name: Invoice Id.
@@ -355,6 +365,7 @@ class ProductsOperations(object):
         url = self.validate_transfer.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
@@ -394,7 +405,7 @@ class ProductsOperations(object):
             return client_raw_response
 
         return deserialized
-    validate_transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/validateTransferEligibility'}
+    validate_transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/products/{productName}/validateTransferEligibility'}
 
     def update_auto_renew_by_billing_account_name(
             self, billing_account_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
@@ -412,9 +423,8 @@ class ProductsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: UpdateAutoRenewOperationSummary or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.billing.models.UpdateAutoRenewOperationSummary or
+        :return: UpdateAutoRenewOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.UpdateAutoRenewOperation or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -457,7 +467,7 @@ class ProductsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UpdateAutoRenewOperationSummary', response)
+            deserialized = self._deserialize('UpdateAutoRenewOperation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -467,11 +477,13 @@ class ProductsOperations(object):
     update_auto_renew_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/products/{productName}/updateAutoRenew'}
 
     def update_auto_renew_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
         """Cancel auto renew for product by product id and invoice section name.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param product_name: Invoice Id.
@@ -484,9 +496,8 @@ class ProductsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: UpdateAutoRenewOperationSummary or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.billing.models.UpdateAutoRenewOperationSummary or
+        :return: UpdateAutoRenewOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.UpdateAutoRenewOperation or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -497,6 +508,7 @@ class ProductsOperations(object):
         url = self.update_auto_renew_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
@@ -530,11 +542,11 @@ class ProductsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UpdateAutoRenewOperationSummary', response)
+            deserialized = self._deserialize('UpdateAutoRenewOperation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_auto_renew_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/updateAutoRenew'}
+    update_auto_renew_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/products/{productName}/updateAutoRenew'}

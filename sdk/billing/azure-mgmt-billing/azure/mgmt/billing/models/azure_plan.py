@@ -12,29 +12,28 @@
 from msrest.serialization import Model
 
 
-class TransactionsListResult(Model):
-    """Result of listing reservation transactions summary.
+class AzurePlan(Model):
+    """Details about the azure plan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of reservation transactions summary.
-    :vartype value: list[~azure.mgmt.billing.models.TransactionsSummary]
-    :ivar next_link: The link (url) to the next page of results.
-    :vartype next_link: str
+    :param sku_id: The sku id.
+    :type sku_id: str
+    :ivar sku_description: The sku description.
+    :vartype sku_description: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        'sku_description': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TransactionsSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
+        'sku_description': {'key': 'skuDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(TransactionsListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        super(AzurePlan, self).__init__(**kwargs)
+        self.sku_id = kwargs.get('sku_id', None)
+        self.sku_description = None

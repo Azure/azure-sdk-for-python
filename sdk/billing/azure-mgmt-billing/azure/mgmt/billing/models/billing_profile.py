@@ -29,19 +29,16 @@ class BillingProfile(Resource):
     :param po_number: Purchase order number.
     :type po_number: str
     :param address: Billing address.
-    :type address: ~azure.mgmt.billing.models.Address
+    :type address: ~azure.mgmt.billing.models.AddressDetails
     :ivar invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :vartype invoice_email_opt_in: bool
-    :ivar is_classic: Is OMS bootstrapped billing profile.
-    :vartype is_classic: bool
     :ivar invoice_day: Invoice day.
     :vartype invoice_day: int
     :ivar currency: The currency associated with the billing profile.
     :vartype currency: str
-    :param enabled_azure_sk_us: Information about the product.
-    :type enabled_azure_sk_us:
-     list[~azure.mgmt.billing.models.EnabledAzureSKUs]
+    :param enabled_azure_plans: Information about the enabled azure plans.
+    :type enabled_azure_plans: list[~azure.mgmt.billing.models.AzurePlan]
     :param invoice_sections: The invoice sections associated to the billing
      profile.
     :type invoice_sections: list[~azure.mgmt.billing.models.InvoiceSection]
@@ -52,7 +49,6 @@ class BillingProfile(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'invoice_email_opt_in': {'readonly': True},
-        'is_classic': {'readonly': True},
         'invoice_day': {'readonly': True},
         'currency': {'readonly': True},
     }
@@ -63,12 +59,11 @@ class BillingProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'po_number': {'key': 'properties.poNumber', 'type': 'str'},
-        'address': {'key': 'properties.address', 'type': 'Address'},
+        'address': {'key': 'properties.address', 'type': 'AddressDetails'},
         'invoice_email_opt_in': {'key': 'properties.invoiceEmailOptIn', 'type': 'bool'},
-        'is_classic': {'key': 'properties.isClassic', 'type': 'bool'},
         'invoice_day': {'key': 'properties.invoiceDay', 'type': 'int'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
-        'enabled_azure_sk_us': {'key': 'properties.enabledAzureSKUs', 'type': '[EnabledAzureSKUs]'},
+        'enabled_azure_plans': {'key': 'properties.enabledAzurePlans', 'type': '[AzurePlan]'},
         'invoice_sections': {'key': 'properties.invoiceSections', 'type': '[InvoiceSection]'},
     }
 
@@ -78,8 +73,7 @@ class BillingProfile(Resource):
         self.po_number = kwargs.get('po_number', None)
         self.address = kwargs.get('address', None)
         self.invoice_email_opt_in = None
-        self.is_classic = None
         self.invoice_day = None
         self.currency = None
-        self.enabled_azure_sk_us = kwargs.get('enabled_azure_sk_us', None)
+        self.enabled_azure_plans = kwargs.get('enabled_azure_plans', None)
         self.invoice_sections = kwargs.get('invoice_sections', None)

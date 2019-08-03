@@ -24,15 +24,18 @@ class Policy(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param marketplace_purchases_allowed: The marketplacePurchasesAllowed
-     flag.
-    :type marketplace_purchases_allowed: bool
-    :param reservation_purchases_allowed: The reservationPurchasesAllowed
-     flag.
-    :type reservation_purchases_allowed: bool
-    :param subscription_owner_can_view_charges: The
-     subscriptionOwnerCanViewCharges flag.
-    :type subscription_owner_can_view_charges: bool
+    :param marketplace_purchases: The marketplace purchases are free, allowed
+     or not allowed. Possible values include: 'AllAllowed', 'FreeAllowed',
+     'NotAllowed'
+    :type marketplace_purchases: str or
+     ~azure.mgmt.billing.models.MarketplacePurchasesPolicy
+    :param reservation_purchases: The reservation purchases allowed or not.
+     Possible values include: 'Allowed', 'NotAllowed'
+    :type reservation_purchases: str or
+     ~azure.mgmt.billing.models.ReservationPurchasesPolicy
+    :param view_charges: Who can view charges. Possible values include:
+     'None', 'SubscriptionOwner'
+    :type view_charges: str or ~azure.mgmt.billing.models.ViewChargesPolicy
     """
 
     _validation = {
@@ -45,13 +48,13 @@ class Policy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'marketplace_purchases_allowed': {'key': 'properties.marketplacePurchasesAllowed', 'type': 'bool'},
-        'reservation_purchases_allowed': {'key': 'properties.reservationPurchasesAllowed', 'type': 'bool'},
-        'subscription_owner_can_view_charges': {'key': 'properties.subscriptionOwnerCanViewCharges', 'type': 'bool'},
+        'marketplace_purchases': {'key': 'properties.marketplacePurchases', 'type': 'str'},
+        'reservation_purchases': {'key': 'properties.reservationPurchases', 'type': 'str'},
+        'view_charges': {'key': 'properties.viewCharges', 'type': 'str'},
     }
 
-    def __init__(self, *, marketplace_purchases_allowed: bool=None, reservation_purchases_allowed: bool=None, subscription_owner_can_view_charges: bool=None, **kwargs) -> None:
+    def __init__(self, *, marketplace_purchases=None, reservation_purchases=None, view_charges=None, **kwargs) -> None:
         super(Policy, self).__init__(**kwargs)
-        self.marketplace_purchases_allowed = marketplace_purchases_allowed
-        self.reservation_purchases_allowed = reservation_purchases_allowed
-        self.subscription_owner_can_view_charges = subscription_owner_can_view_charges
+        self.marketplace_purchases = marketplace_purchases
+        self.reservation_purchases = reservation_purchases
+        self.view_charges = view_charges
