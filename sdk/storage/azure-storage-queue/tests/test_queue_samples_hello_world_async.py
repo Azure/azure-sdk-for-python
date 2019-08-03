@@ -48,6 +48,7 @@ class TestQueueHelloWorldSamplesAsync(QueueTestCase):
         assert properties is not None
 
     @record
+    @pytest.mark.skip
     def test_create_client_with_connection_string(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_client_with_connection_string())

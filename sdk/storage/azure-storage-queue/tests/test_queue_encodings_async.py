@@ -152,9 +152,10 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=credentials,
             message_encode_policy=TextBase64EncodePolicy(),
-            message_decode_policy=TextBase64DecodePolicy())
+            message_decode_policy=TextBase64DecodePolicy(),
+            transport=AiohttpTestTransport())
 
-        message = u'\u0001'
+        message = '\u0001'
 
         # Asserts
         await self._validate_encoding(queue, message)
@@ -173,7 +174,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=credentials,
             message_encode_policy=BinaryBase64EncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+            transport=AiohttpTestTransport())
 
         message = b'xyz'
 
@@ -211,7 +213,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=credentials,
             message_encode_policy=BinaryBase64EncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+            transport=AiohttpTestTransport())
 
         # Action.
         with self.assertRaises(TypeError) as e:
@@ -235,7 +238,8 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=credentials,
             message_encode_policy=TextXMLEncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+            transport=AiohttpTestTransport())
         try:
             await queue.create_queue()
         except ResourceExistsError:

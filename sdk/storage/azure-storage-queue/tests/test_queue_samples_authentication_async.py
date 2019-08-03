@@ -75,6 +75,7 @@ class TestQueueAuthSamplesAsync(QueueTestCase):
         assert properties is not None
 
     @record
+    @pytest.mark.skip
     def test_auth_shared_key(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_auth_shared_key())
