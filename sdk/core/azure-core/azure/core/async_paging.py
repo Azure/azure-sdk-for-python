@@ -64,7 +64,9 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        get_next: Callable[[Optional[str]], Awaitable[ResponseType]],
+        get_next: Callable[
+            [Optional[str]], Awaitable[ResponseType]
+        ],
         extract_data: Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
         ],
@@ -120,7 +122,8 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         )
 
     def by_page(
-        self, continuation_token: Optional[str] = None
+        self,
+        continuation_token: Optional[str] = None,
     ) -> AsyncIterator[AsyncIterator[ReturnType]]:
         """Get an async iterator of pages of objects, instead of an async iterator of objects.
 
