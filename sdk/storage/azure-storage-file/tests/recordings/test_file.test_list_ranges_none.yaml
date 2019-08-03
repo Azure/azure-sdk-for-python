@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 73cce412-b636-11e9-9110-2816a845e8c6
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:34:19 GMT
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharecace0cb7/filecace0cb7
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Sat, 03 Aug 2019 21:34:19 GMT
+      ETag:
+      - '"0x8D7185A578E5AEE"'
+      Last-Modified:
+      - Sat, 03 Aug 2019 21:34:19 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 5184a482-e01a-00ee-6643-4a6e83000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 7420e468-b636-11e9-895a-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:34:20 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharecace0cb7/filecace0cb7?comp=rangelist
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges />"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Sat, 03 Aug 2019 21:34:19 GMT
+      ETag:
+      - '"0x8D7185A578E5AEE"'
+      Last-Modified:
+      - Sat, 03 Aug 2019 21:34:19 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-content-length:
+      - '1024'
+      x-ms-request-id:
+      - 5184a484-e01a-00ee-6743-4a6e83000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 200
+      message: OK
+version: 1

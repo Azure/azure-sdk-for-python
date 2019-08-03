@@ -1,0 +1,162 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5f8ab524-b636-11e9-b61e-2816a845e8c6
+      x-ms-content-length:
+      - '36'
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:33:45 GMT
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare7791478/file7791478
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Sat, 03 Aug 2019 21:33:44 GMT
+      ETag:
+      - '"0x8D7185A43454D62"'
+      Last-Modified:
+      - Sat, 03 Aug 2019 21:33:45 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9654ebc9-f01a-003d-2043-4ad126000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      //5oAGUAbABsAG8AIABKVUSfAk7bctxyIAB3AG8AcgBsAGQA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '36'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 5fdc041c-b636-11e9-b4ab-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:33:46 GMT
+      x-ms-range:
+      - bytes=0-35
+      x-ms-version:
+      - '2018-11-09'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare7791478/file7791478?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - O7c5HRnUhbM5yD4T1wnm/w==
+      Date:
+      - Sat, 03 Aug 2019 21:33:44 GMT
+      ETag:
+      - '"0x8D7185A436B04B1"'
+      Last-Modified:
+      - Sat, 03 Aug 2019 21:33:45 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9654ebcb-f01a-003d-2143-4ad126000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5fee91e4-b636-11e9-9e6d-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:33:46 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-11-09'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare7791478/file7791478
+  response:
+    body:
+      string: !!binary |
+        //5oAGUAbABsAG8AIABKVUSfAk7bctxyIAB3AG8AcgBsAGQA
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '36'
+      Content-Range:
+      - bytes 0-35/36
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Sat, 03 Aug 2019 21:33:45 GMT
+      ETag:
+      - '"0x8D7185A436B04B1"'
+      Last-Modified:
+      - Sat, 03 Aug 2019 21:33:45 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 9654ebcd-f01a-003d-2243-4ad126000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-type:
+      - File
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 206
+      message: Partial Content
+version: 1

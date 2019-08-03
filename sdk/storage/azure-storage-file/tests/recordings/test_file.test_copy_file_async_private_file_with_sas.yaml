@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 58161792-b636-11e9-84ba-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:33:33 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://remotestoragename.file.core.windows.net/remoteshare3416155e?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
+        specified share already exists.\nRequestId:a5a7cad9-f01a-007d-2543-4aadab000000\nTime:2019-08-03T21:33:32.5005199Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '222'
+      Content-Type:
+      - application/xml
+      Date:
+      - Sat, 03 Aug 2019 21:33:32 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareAlreadyExists
+      x-ms-request-id:
+      - a5a7cad9-f01a-007d-2543-4aadab000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 409
+      message: The specified share already exists.
+version: 1

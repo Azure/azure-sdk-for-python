@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 264c8524-b637-11e9-ba96-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:39:19 GMT
+      x-ms-recursive:
+      - 'true'
+      x-ms-version:
+      - '2018-11-09'
+    method: GET
+    uri: https://storagename.file.core.windows.net/test?maxresults=1&comp=listhandles
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:8b9cbbbd-501a-00de-1c43-4a34a9000000\nTime:2019-08-03T21:39:18.5963813Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Sat, 03 Aug 2019 21:39:18 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-error-code:
+      - ShareNotFound
+      x-ms-request-id:
+      - 8b9cbbbd-501a-00de-1c43-4a34a9000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 404
+      message: The specified share does not exist.
+version: 1
