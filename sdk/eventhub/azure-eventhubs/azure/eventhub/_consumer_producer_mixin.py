@@ -15,14 +15,13 @@ log = logging.getLogger(__name__)
 
 def _retry_decorator(to_be_wrapped_func):
     def wrapped_func(self, *args, **kwargs):
-        timeout = kwargs.get("timeout", None)
+        timeout = kwargs.pop("timeout", None)
         if not timeout:
             timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
         timeout_time = time.time() + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
         last_exception = None
-        kwargs.pop("timeout", None)
         while True:
             try:
                 return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
