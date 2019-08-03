@@ -585,7 +585,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -681,7 +682,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         await file_client.create_file(1024)
 
         # Act
@@ -704,7 +706,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         await file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
@@ -745,7 +748,8 @@ class StorageFileTestAsync(FileTestCase):
             share=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
 
         await file_client.delete_file()
 
@@ -769,7 +773,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         await file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
         resp1 = await file_client.upload_range(data, 0, 511)
@@ -782,7 +787,8 @@ class StorageFileTestAsync(FileTestCase):
             share=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
 
         await file_client.delete_file()
 
@@ -809,7 +815,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path='file1copy',
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
 
         # Act
         copy = await file_client.start_copy_from_url(source_client.url)
@@ -839,7 +846,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         with self.assertRaises(HttpResponseError) as e:
             await file_client.start_copy_from_url(source_file.url)
 
@@ -869,7 +877,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_url)
 
         # Assert
@@ -903,7 +912,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_url)
         self.assertEqual(copy_resp['copy_status'], 'pending')
         await file_client.abort_copy(copy_resp)
@@ -929,7 +939,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_file.url)
 
         with self.assertRaises(HttpResponseError):
@@ -951,7 +962,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
         await file_client.upload_file(b'hello world')
 
         # Act
