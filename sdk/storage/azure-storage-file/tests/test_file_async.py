@@ -67,6 +67,8 @@ class StorageFileTestAsync(FileTestCase):
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.fsc.__aenter__())
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
 
@@ -74,6 +76,8 @@ class StorageFileTestAsync(FileTestCase):
         remote_credential = self.get_remote_shared_key_credential()
         self.fsc2 = FileServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
         self.remote_share_name = None
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.fsc.__aenter__())
 
     def tearDown(self):
         if not self.is_playback():
@@ -88,6 +92,8 @@ class StorageFileTestAsync(FileTestCase):
                     loop.run_until_complete(self.fs2.delete_share(self.remote_share_name, delete_snapshots=True))
                 except:
                     pass
+            loop.run_until_complete(self.fsc.__aexit__())
+            loop.run_until_complete(self.fsc2.__aexit__())
 
         if os.path.isfile(INPUT_FILE_PATH):
             try:
