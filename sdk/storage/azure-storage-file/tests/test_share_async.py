@@ -775,17 +775,10 @@ class StorageShareTest(FileTestCase):
         await root.upload_file('fileb1', '1024')
 
         # Act
-<<<<<<< HEAD
         result = share_name.list_directories_and_files(results_per_page=2).by_page()
         results = []
         async for r in await result.__anext__():
             results.append(r)
-=======
-        results = share_name.list_directories_and_files(results_per_page=2).by_page()
-        result = []
-        async for el in await results.__anext__():
-            result.append(el)
->>>>>>> initial commit
 
         # Assert
         self.assertIsNotNone(result)
@@ -812,24 +805,14 @@ class StorageShareTest(FileTestCase):
         generator1 = share_name.list_directories_and_files(
             'dir1', results_per_page=2).by_page()
         result1 = []
-<<<<<<< HEAD
         async for r in await generator1.__anext__():
             result1.append(r)
-=======
-        async for l in await generator1.__anext__():
-            result1.append(l)
->>>>>>> initial commit
 
         generator2 = share_name.list_directories_and_files(
             'dir1', results_per_page=2).by_page(continuation_token=generator1.continuation_token)
         result2 = []
-<<<<<<< HEAD
         async for r in await generator2.__anext__():
             result2.append(r)
-=======
-        async for l in await generator2.__anext__():
-            result2.append(l)
->>>>>>> initial commit
 
         # Assert
         self.assertEqual(len(result1), 2)
