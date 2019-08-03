@@ -429,7 +429,7 @@ class ProductsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = models.UpdateAutoRenewRequest(auto_renew=auto_renew)
+        body = models.UpdateAutoRenewRequest(auto_renew=auto_renew)
 
         # Construct URL
         url = self.update_auto_renew_by_billing_account_name.metadata['url']
@@ -455,7 +455,7 @@ class ProductsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'UpdateAutoRenewRequest')
+        body_content = self._serialize.body(body, 'UpdateAutoRenewRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -502,7 +502,7 @@ class ProductsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = models.UpdateAutoRenewRequest(auto_renew=auto_renew)
+        body = models.UpdateAutoRenewRequest(auto_renew=auto_renew)
 
         # Construct URL
         url = self.update_auto_renew_by_invoice_section_name.metadata['url']
@@ -530,7 +530,7 @@ class ProductsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'UpdateAutoRenewRequest')
+        body_content = self._serialize.body(body, 'UpdateAutoRenewRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
