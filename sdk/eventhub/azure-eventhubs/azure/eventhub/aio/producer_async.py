@@ -110,6 +110,10 @@ class EventHubProducer(ConsumerProducerMixin):
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 
+    @_retry_decorator
+    async def _open_with_retry(self, timeout_time=None, **kwargs):
+        return await self._open(timeout_time=timeout_time, **kwargs)
+
     async def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
             await self._open(timeout_time)
@@ -130,6 +134,10 @@ class EventHubProducer(ConsumerProducerMixin):
                     self._condition = OperationTimeoutError("send operation timed out")
                 _error(self._outcome, self._condition)
         return
+
+    @_retry_decorator
+    async def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
+        return await self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -155,10 +163,19 @@ class EventHubProducer(ConsumerProducerMixin):
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_client_async_create_batch]
+                :end-before: [END eventhub_client_async_create_batch]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
         """
 
         if not self._max_message_size_on_link:
-            await _retry_decorator(self._open)(self, timeout=self.client.config.send_timeout)
+            await self._open_with_retry(timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -187,7 +204,7 @@ class EventHubProducer(ConsumerProducerMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
                 :start-after: [START eventhub_client_async_send]
                 :end-before: [END eventhub_client_async_send]
                 :language: python
@@ -212,7 +229,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await _retry_decorator(self._send_event_data)(self, timeout=timeout)
+        await self._send_event_data_with_retry(timeout=timeout)
 
     async def close(self,  exception=None):
         # type: (Exception) -> None

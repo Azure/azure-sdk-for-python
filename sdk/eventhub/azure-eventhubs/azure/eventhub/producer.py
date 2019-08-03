@@ -117,6 +117,10 @@ class EventHubProducer(ConsumerProducerMixin):
             self.target = self.redirected.address
         super(EventHubProducer, self)._open(timeout_time)
 
+    @_retry_decorator
+    def _open_with_retry(self, timeout_time=None, **kwargs):
+        return self._open(timeout_time=timeout_time, **kwargs)
+
     def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
             self._open(timeout_time)
@@ -137,6 +141,10 @@ class EventHubProducer(ConsumerProducerMixin):
                     self._condition = OperationTimeoutError("send operation timed out")
                 _error(self._outcome, self._condition)
         return
+
+    @_retry_decorator
+    def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
+        return self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -162,10 +170,19 @@ class EventHubProducer(ConsumerProducerMixin):
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_create_batch]
+                :end-before: [END eventhub_client_sync_create_batch]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
         """
 
         if not self._max_message_size_on_link:
-            _retry_decorator(self._open)(self, timeout=self.client.config.send_timeout)
+            self._open_with_retry(timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -219,7 +236,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        _retry_decorator(self._send_event_data)(self, timeout=timeout)
+        self._send_event_data_with_retry(timeout=timeout)
 
     def close(self, exception=None):
         # type:(Exception) -> None

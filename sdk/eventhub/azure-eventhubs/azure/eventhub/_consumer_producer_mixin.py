@@ -15,17 +15,16 @@ log = logging.getLogger(__name__)
 
 def _retry_decorator(to_be_wrapped_func):
     def wrapped_func(self, *args, **kwargs):
-        timeout = kwargs.get("timeout", None)
+        timeout = kwargs.pop("timeout", None)
         if not timeout:
             timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
         timeout_time = time.time() + timeout
         max_retries = self.client.config.max_retries
         retry_count = 0
         last_exception = None
-        kwargs.pop("timeout", None)
         while True:
             try:
-                return to_be_wrapped_func(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
             except Exception as exception:
                 last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
@@ -46,7 +45,7 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("{} has been closed. Please create a new consumer to receive event data.".format(self.name))
+            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self.name))
 
     def _create_handler(self):
         pass
