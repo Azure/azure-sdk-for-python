@@ -19,6 +19,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from .crypto import CryptographyClient
 from .models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
@@ -39,6 +40,14 @@ class KeyClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
+
+    def get_cryptography_client(self, key, **kwargs):
+        # type: (Union[Key, str], Any) -> CryptographyClient
+
+        # the initializer requires a credential but won't actually use it in this case because we pass in this
+        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
+        credential = object()
+        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
 
     @distributed_trace
     def create_key(
