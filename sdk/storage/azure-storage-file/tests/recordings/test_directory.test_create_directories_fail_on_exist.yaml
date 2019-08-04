@@ -11,15 +11,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - af6f02a6-97ce-11e9-8e51-f45c89a7d159
+      - 20c9aa00-b636-11e9-b629-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 04:55:57 GMT
+      - Sat, 03 Aug 2019 21:32:00 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/utshare38121575/dir1?restype=directory
+    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
   response:
     body:
       string: ''
@@ -27,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 26 Jun 2019 04:55:58 GMT
+      - Sat, 03 Aug 2019 21:31:59 GMT
       ETag:
-      - '"0x8D6F9F29421D087"'
+      - '"0x8D7185A04846AA5"'
       Last-Modified:
-      - Wed, 26 Jun 2019 04:55:58 GMT
+      - Sat, 03 Aug 2019 21:31:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 471bdbd4-b01a-0018-07db-2b4995000000
+      - 7639a43b-401a-00e8-7e42-4a99fb000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -55,209 +57,34 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - afa2e59e-97ce-11e9-8dc0-f45c89a7d159
+      - 212011fe-b636-11e9-9c8d-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 04:55:57 GMT
+      - Sat, 03 Aug 2019 21:32:01 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
-    uri: https://blobstoragename.file.core.windows.net/utshare38121575/dir1?restype=directory
+    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The\
-        \ specified resource already exists.\nRequestId:471bdbd6-b01a-0018-08db-2b4995000000\n\
-        Time:2019-06-26T04:55:58.3345171Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The
+        specified resource already exists.\nRequestId:7639a43d-401a-00e8-7f42-4a99fb000000\nTime:2019-08-03T21:32:00.0773915Z</Message></Error>"
     headers:
       Content-Length:
       - '228'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 04:55:58 GMT
+      - Sat, 03 Aug 2019 21:31:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ResourceAlreadyExists
       x-ms-request-id:
-      - 471bdbd6-b01a-0018-08db-2b4995000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 409
-      message: The specified resource already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 04c1003a-981b-11e9-984c-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 14:02:22 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Wed, 26 Jun 2019 14:02:22 GMT
-      ETag:
-      - '"0x8D6FA3EE9312219"'
-      Last-Modified:
-      - Wed, 26 Jun 2019 14:02:22 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - e09ac0a2-301a-006f-5e27-2cccd4000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 050b363e-981b-11e9-8d7c-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 14:02:22 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The\
-        \ specified resource already exists.\nRequestId:e09ac0a4-301a-006f-5f27-2cccd4000000\n\
-        Time:2019-06-26T14:02:22.8112992Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '228'
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 26 Jun 2019 14:02:22 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ResourceAlreadyExists
-      x-ms-request-id:
-      - e09ac0a4-301a-006f-5f27-2cccd4000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 409
-      message: The specified resource already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9fbf21f4-981b-11e9-bc3c-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 14:06:42 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Wed, 26 Jun 2019 14:06:42 GMT
-      ETag:
-      - '"0x8D6FA3F84223883"'
-      Last-Modified:
-      - Wed, 26 Jun 2019 14:06:42 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 183734ed-f01a-00b5-7328-2c69ff000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9ff85122-981b-11e9-bf77-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 14:06:42 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare38121575/dir1?restype=directory
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The\
-        \ specified resource already exists.\nRequestId:183734ef-f01a-00b5-7428-2c69ff000000\n\
-        Time:2019-06-26T14:06:42.7324059Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '228'
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 26 Jun 2019 14:06:42 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ResourceAlreadyExists
-      x-ms-request-id:
-      - 183734ef-f01a-00b5-7428-2c69ff000000
+      - 7639a43d-401a-00e8-7f42-4a99fb000000
       x-ms-version:
       - '2018-11-09'
     status:

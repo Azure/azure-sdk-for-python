@@ -7,6 +7,8 @@ import unittest
 import asyncio
 
 from azure.storage.queue.aio import QueueServiceClient
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from queuetestcase import (
     QueueTestCase,
@@ -17,6 +19,17 @@ from queuetestcase import (
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 # --Test Class -----------------------------------------------------------------
@@ -46,7 +59,7 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Arrange
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential)
+        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         # Act
         stats = await qsc.get_service_stats()
@@ -54,9 +67,8 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Assert
         self._assert_stats_default(stats)
 
+    @record
     def test_queue_service_stats_f(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_service_stats_f())
 
@@ -64,7 +76,7 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Arrange
         url = self._get_queue_url()
         credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential)
+        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
         # Act
         stats = await qsc.get_service_stats(
@@ -73,9 +85,8 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
+    @record
     def test_queue_service_stats_when_unavailable(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_queue_service_stats_when_unavailable())
 # ------------------------------------------------------------------------------

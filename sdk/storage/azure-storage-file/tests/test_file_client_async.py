@@ -6,7 +6,8 @@
 import unittest
 import platform
 import asyncio
-
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.file.aio import (
     FileServiceClient,
     ShareClient,
@@ -32,6 +33,18 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageFileClientTest(FileTestCase):
     def setUp(self):
         super(StorageFileClientTest, self).setUp()
@@ -51,6 +64,7 @@ class StorageFileClientTest(FileTestCase):
             protocol, self.account_name, service_type)))
 
     # --Direct Parameters Test Cases --------------------------------------------
+    @record
     def test_create_service_with_key_async(self):
         # Arrange
 
@@ -64,6 +78,7 @@ class StorageFileClientTest(FileTestCase):
             self.validate_standard_account_endpoints(service, url)
             self.assertEqual(service.scheme, 'https')
 
+    @record
     def test_create_service_with_sas_async(self):
         # Arrange
 
@@ -78,6 +93,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertIsNone(service.credential)
             self.assertTrue(service.url.endswith(self.sas_token))
 
+    @record
     def test_create_service_with_token_async(self):
         for service_type in SERVICES:
             # Act
@@ -86,6 +102,7 @@ class StorageFileClientTest(FileTestCase):
                 service_type(self.get_file_url(), credential=self.token_credential,
                              share='foo', directory_path='bar', file_path='baz')
 
+    @record
     def test_create_service_china_async(self):
         # Arrange
         url = self.get_file_url().replace('core.windows.net', 'core.chinacloudapi.cn')
@@ -103,7 +120,7 @@ class StorageFileClientTest(FileTestCase):
                 self.account_name, service_type[1]))
             self.assertEqual(service.secondary_hostname,
                              '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
-
+    @record
     def test_create_service_protocol_async(self):
         # Arrange
         url = self.get_file_url().replace('https', 'http')
@@ -116,7 +133,7 @@ class StorageFileClientTest(FileTestCase):
             self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
             self.assertEqual(service.scheme, 'http')
 
-
+    @record
     def test_create_service_empty_key_async(self):
         # Arrange
         for service_type in SERVICES:
@@ -130,6 +147,7 @@ class StorageFileClientTest(FileTestCase):
                 str(e.exception),
                 'You need to provide either an account key or SAS token when creating a storage service.')
 
+    @record
     def test_create_service_missing_arguments_async(self):
         # Arrange
 
@@ -138,6 +156,7 @@ class StorageFileClientTest(FileTestCase):
             with self.assertRaises(ValueError):
                 service = service_type(None)
 
+    @record
     def test_create_service_with_socket_timeout_async(self):
         # Arrange
 
@@ -157,6 +176,7 @@ class StorageFileClientTest(FileTestCase):
 
     # --Connection String Test Cases --------------------------------------------
 
+    @record
     def test_create_service_with_connection_string_key_async(self):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
@@ -170,6 +190,7 @@ class StorageFileClientTest(FileTestCase):
             self.validate_standard_account_endpoints(service, service_type[1])
             self.assertEqual(service.scheme, 'https')
 
+    @record
     def test_create_service_with_connection_string_sas_async(self):
         # Arrange
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
@@ -177,13 +198,14 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
 
             # Assert
             self.assertIsNotNone(service)
             self.assertIsNone(service.credential)
             self.assertTrue(service.url.endswith(self.sas_token))
 
+    @record
     def test_create_service_with_connection_string_endpoint_protocol_async(self):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
@@ -192,7 +214,7 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
 
             # Assert
             self.assertIsNotNone(service)
@@ -203,6 +225,7 @@ class StorageFileClientTest(FileTestCase):
                              '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
             self.assertEqual(service.scheme, 'http')
 
+    @record
     def test_create_service_with_connection_string_emulated_async(self):
         # Arrange
         for service_type in SERVICES.items():
@@ -211,8 +234,9 @@ class StorageFileClientTest(FileTestCase):
             # Act
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(
-                    conn_string, share='foo', directory_path='bar', file_path='baz')
+                    conn_string, share='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
 
+    @record
     def test_create_service_with_connection_string_fails_if_secondary_without_primary_async(self):
         for service_type in SERVICES.items():
             # Arrange
@@ -226,6 +250,7 @@ class StorageFileClientTest(FileTestCase):
                 service = service_type[0].from_connection_string(
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
+    @record
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary_async(self):
         for service_type in SERVICES.items():
             # Arrange
@@ -246,7 +271,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
     async def _test_user_agent_default_async(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+        service = FileServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -258,16 +283,15 @@ class StorageFileClientTest(FileTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
+    @record
     def test_user_agent_default_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_default_async())
 
     async def _test_user_agent_custom_async(self):
         custom_app = "TestApp/v1.0"
         service = FileServiceClient(
-            self.get_file_url(), credential=self.account_key, user_agent=custom_app)
+            self.get_file_url(), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -289,14 +313,13 @@ class StorageFileClientTest(FileTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
+    @record
     def test_user_agent_custom_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_custom_async())
 
     async def _test_user_agent_append_async(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+        service = FileServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -309,9 +332,8 @@ class StorageFileClientTest(FileTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @record
     def test_user_agent_append_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append_async())
 

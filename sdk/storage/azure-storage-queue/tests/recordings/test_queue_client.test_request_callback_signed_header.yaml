@@ -11,11 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5b117e4a-9ccf-11e9-80b2-f45c89a7d159
+      - 8732dab6-b575-11e9-9bc4-2816a845e8c6
       x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
@@ -29,11 +31,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - a5397aaf-2003-00da-68dc-30c12b000000
+      - 2a2dc306-0003-0023-7c82-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -49,11 +51,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5b393f48-9ccf-11e9-acd3-f45c89a7d159
+      - 87638fc0-b575-11e9-9366-2816a845e8c6
       x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -67,7 +71,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -77,7 +81,7 @@ interactions:
       x-ms-meta-hello:
       - world
       x-ms-request-id:
-      - a5397acd-2003-00da-02dc-30c12b000000
+      - 2a2dc30e-0003-0023-0182-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -95,11 +99,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5b438aa2-9ccf-11e9-b647-f45c89a7d159
+      - 8776e1e6-b575-11e9-bbce-2816a845e8c6
       x-ms-date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -111,11 +117,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 02 Jul 2019 13:43:21 GMT
+      - Fri, 02 Aug 2019 22:33:19 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - a5397aec-2003-00da-1fdc-30c12b000000
+      - 2a2dc310-0003-0023-0382-490bcb000000
       x-ms-version:
       - '2018-03-28'
     status:

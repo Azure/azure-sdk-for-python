@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import requests
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 
 from azure.storage.file import (
     FileClient,
@@ -106,7 +106,10 @@ class StorageFileTest(FileTestCase):
     def _create_remote_share(self):
         self.remote_share_name = self.get_resource_name('remoteshare')
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
-        remote_share.create_share()
+        try:
+            remote_share.create_share()
+        except ResourceExistsError:
+            pass
         return remote_share
 
     def _create_remote_file(self, file_data=None):

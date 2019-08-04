@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 import asyncio
 import pytest
 import requests
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -36,13 +38,27 @@ TEST_SHARE_PREFIX = 'share'
 
 # ------------------------------------------------------------------------------
 
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
+
+
 class StorageShareTest(FileTestCase):
     def setUp(self):
         super(StorageShareTest, self).setUp()
 
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = FileServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.fsc.__aenter__())
         self.test_shares = []
 
     def tearDown(self):
@@ -51,6 +67,7 @@ class StorageShareTest(FileTestCase):
             try:
                 for s in self.test_shares:
                     loop.run_until_complete(self.fsc.delete_share(s.share_name, delete_snapshots=True))
+                loop.run_until_complete(self.fsc.__aexit__())
             except:
                 pass
         return super(StorageShareTest, self).tearDown()
@@ -78,9 +95,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_share_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_async())
 
@@ -98,9 +114,8 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(snapshot['etag'])
         self.assertIsNotNone(snapshot['last_modified'])
 
+    @record
     def test_create_share_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_snapshot_async())
 
@@ -130,9 +145,8 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(share_props.metadata, metadata)
         self.assertEqual(snapshot_props.metadata, metadata2)
 
+    @record
     def test_create_snapshot_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_snapshot_with_metadata_async())
 
@@ -149,9 +163,8 @@ class StorageShareTest(FileTestCase):
         deleted = await share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
 
+    @record
     def test_delete_share_with_snapshots_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_share_with_snapshots_async())
 
@@ -175,9 +188,8 @@ class StorageShareTest(FileTestCase):
         deleted = await snapshot_client.delete_share()
         self.assertIsNone(deleted)
 
+    @record
     def test_delete_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_snapshot_async())
 
@@ -191,9 +203,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_share_fail_on_exist(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_fail_on_exist())
 
@@ -209,9 +220,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_share_with_already_existing_share_fail_on_exist_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_with_already_existing_share_fail_on_exist_async())
 
@@ -228,9 +238,8 @@ class StorageShareTest(FileTestCase):
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_create_share_with_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_with_metadata_async())
 
@@ -246,9 +255,8 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         self.assertEqual(props.quota, 1)
 
+    @record
     def test_create_share_with_quota_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_share_with_quota_async())
 
@@ -262,9 +270,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_share_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_share_exists_async())
 
@@ -278,9 +285,8 @@ class StorageShareTest(FileTestCase):
 
         # Assert
 
+    @record
     def test_share_not_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_share_not_exists_async())
 
@@ -296,9 +302,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @record
     def test_share_snapshot_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_share_snapshot_exists_async())
 
@@ -314,9 +319,8 @@ class StorageShareTest(FileTestCase):
 
         # Assert
 
+    @record
     def test_share_snapshot_not_exists_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_share_snapshot_not_exists_async())
 
@@ -332,9 +336,8 @@ class StorageShareTest(FileTestCase):
 
             # Assert
 
+    @record
     def test_unicode_create_share_unicode_name_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_create_share_unicode_name_async())
 
@@ -352,9 +355,8 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(shares[0])
         self.assertNamedItemInContainer(shares, share.share_name)
 
+    @record
     def test_list_shares_no_options_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_no_options_async())
 
@@ -378,9 +380,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot1['snapshot'])
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
 
+    @record
     def test_list_shares_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_with_snapshot_async())
 
@@ -400,9 +401,8 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(shares[0].name, share.share_name)
         self.assertIsNone(shares[0].metadata)
 
+    @record
     def test_list_shares_with_prefix_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_with_prefix_async())
 
@@ -424,9 +424,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(shares, share.share_name)
         self.assertDictEqual(shares[0].metadata, metadata)
 
+    @record
     def test_list_shares_with_include_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_with_include_metadata_async())
 
@@ -461,9 +460,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(shares2, share_names[2])
         self.assertNamedItemInContainer(shares2, share_names[3])
 
+    @record
     def test_list_shares_with_num_results_and_marker_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_with_num_results_and_marker_async())
 
@@ -480,9 +478,8 @@ class StorageShareTest(FileTestCase):
         md = props.metadata
         self.assertDictEqual(md, metadata)
 
+    @record
     def test_set_share_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_metadata_async())
 
@@ -499,9 +496,8 @@ class StorageShareTest(FileTestCase):
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_get_share_metadata_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_share_metadata_async())
 
@@ -520,9 +516,8 @@ class StorageShareTest(FileTestCase):
         props = await snapshot_client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
 
+    @record
     def test_get_share_metadata_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_share_metadata_with_snapshot_async())
 
@@ -538,9 +533,8 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
 
+    @record
     def test_set_share_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_properties_async())
 
@@ -555,9 +549,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertIsNone(deleted)
 
+    @record
     def test_delete_share_with_existing_share_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_share_with_existing_share_async())
 
@@ -572,9 +565,8 @@ class StorageShareTest(FileTestCase):
 
             log_as_str = log_captured.getvalue()
 
+    @record
     def test_delete_share_with_existing_share_fail_not_exist_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_share_with_existing_share_fail_not_exist_async())
 
@@ -590,9 +582,8 @@ class StorageShareTest(FileTestCase):
             log_as_str = log_captured.getvalue()
             self.assertTrue('ERROR' not in log_as_str)
 
+    @record
     def test_delete_share_with_non_existing_share_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_share_with_non_existing_share_async())
 
@@ -607,9 +598,8 @@ class StorageShareTest(FileTestCase):
 
             log_as_str = log_captured.getvalue()
 
+    @record
     def test_delete_share_with_non_existing_share_fail_not_exist_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_share_with_non_existing_share_fail_not_exist_async())
 
@@ -624,9 +614,8 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertEqual(share_usage, 0)
 
+    @record
     def test_get_share_stats_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_share_stats_async())
 
@@ -642,9 +631,8 @@ class StorageShareTest(FileTestCase):
         acl = await share.get_share_access_policy()
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_share_acl_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_acl_async())
 
@@ -661,9 +649,8 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
 
+    @record
     def test_set_share_acl_with_empty_signed_identifiers_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_acl_with_empty_signed_identifiers_async())
 
@@ -688,9 +675,8 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(len(acl['signed_identifiers']), 1)
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
 
+    @record
     def test_set_share_acl_with_signed_identifiers_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_acl_with_signed_identifiers_async())
 
@@ -712,9 +698,8 @@ class StorageShareTest(FileTestCase):
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
 
+    @record
     def test_set_share_acl_too_many_ids_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_acl_too_many_ids_async())
 
@@ -742,9 +727,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'dir2')
         self.assertNamedItemInContainer(resp, 'file1')
 
+    @record
     def test_list_directories_and_files_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_directories_and_files_async())
 
@@ -775,9 +759,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'dir1')
         self.assertNamedItemInContainer(resp, 'dir2')
 
+    @record
     def test_list_directories_and_files_with_snapshot_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_directories_and_files_with_snapshot_async())
 
@@ -803,9 +786,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(results, 'dir1')
         self.assertNamedItemInContainer(results, 'filea1')
 
+    @record
     def test_list_directories_and_files_with_num_results_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_directories_and_files_with_num_results_async())
 
@@ -841,9 +823,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(result2, 'fileb1')
         self.assertEqual(generator2.continuation_token, None)
 
+    @record
     def test_list_directories_and_files_with_num_results_and_marker_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_directories_and_files_with_num_results_and_marker_async())
 
@@ -871,9 +852,8 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'pref_file2')
         self.assertNamedItemInContainer(resp, 'pref_dir3')
 
+    @record
     def test_list_directories_and_files_with_prefix_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_directories_and_files_with_prefix_async())
 
@@ -909,9 +889,8 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_shared_access_share_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_access_share_async())
 
