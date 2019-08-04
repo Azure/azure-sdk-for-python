@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .api_management_client import ApiManagementClient
-from .version import VERSION
+from ._configuration import ApiManagementClientConfiguration
+from ._api_management_client import ApiManagementClient
+__all__ = ['ApiManagementClient', 'ApiManagementClientConfiguration']
 
-__all__ = ['ApiManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
