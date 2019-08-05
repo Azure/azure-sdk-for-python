@@ -602,6 +602,10 @@ class StorageAppendBlobTest(StorageTestCase):
         blob.append_block(data, validate_content=True)
 
         # Assert
+    
+    def test_env_variables(self):
+        print("PLEASE FIND ME :(", os.getenv("TEST_MODE"))
+        self.assertEqual(0, 1)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

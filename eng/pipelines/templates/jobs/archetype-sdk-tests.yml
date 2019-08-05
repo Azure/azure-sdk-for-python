@@ -35,7 +35,7 @@ jobs:
       - template: ../steps/build-test.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          AdditionalTestArgs: '--disablecov'
+          AdditionalTestArgs: '--disablecov -s'
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
