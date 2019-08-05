@@ -123,7 +123,7 @@ class TracingContext(object):
             self.current_span = _ThreadLocalContext("current_span", None)
 
     def with_current_context(self, func):
-        # type: (Callable[[Any], Any]) -> Any
+        # type: (Callable) -> Any
         """
         Passes the current spans to the new context the function will be run in.
         :param func: The function that will be run in the new context
