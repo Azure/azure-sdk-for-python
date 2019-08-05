@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._client import CertificateClient
+from .client import CertificateClient
 
 __all__ = ["CertificateClient"]
