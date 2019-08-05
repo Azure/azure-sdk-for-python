@@ -91,6 +91,7 @@ from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensi
 from .instance_pools_operations import InstancePoolsOperations
 from .usages_operations import UsagesOperations
 from .managed_instances_operations import ManagedInstancesOperations
+from .private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -175,4 +176,5 @@ __all__ = [
     'InstancePoolsOperations',
     'UsagesOperations',
     'ManagedInstancesOperations',
+    'PrivateLinkResourcesOperations',
 ]
