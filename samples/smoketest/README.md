@@ -68,9 +68,10 @@ python .\Program.py
 #### Important: To run the async tests
 In order to run the samples with the asynchronous clients, **python 3.5 or greater** is needed.
 
-Install the async libraries using pip:
+Install both requirements.txt and requirements_async.txt:
 ```
-pip install requiriments_async.txt
+pip install -r requiriments.txt
+pip install -r requiriments_async.txt
 ```
 
 If a python version below 3.5 is being used, it is still possible to run the samples. When it gets to the async tests a message `'Async not suported'` will be displayed.
