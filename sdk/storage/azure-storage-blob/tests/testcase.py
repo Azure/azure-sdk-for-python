@@ -79,11 +79,11 @@ class StorageTestCase(unittest.TestCase):
         self.fake_settings = fake_settings
 
         if settings is None:
-            self.test_mode = TestMode.playback
+            self.test_mode = os.getenv('TEST_MODE') or TestMode.playback
         else:
             self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
 
-        if self.test_mode == TestMode.playback:
+        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
             self.settings = self.fake_settings
 
         # example of qualified test name:
