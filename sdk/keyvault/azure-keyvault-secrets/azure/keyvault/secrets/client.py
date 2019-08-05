@@ -24,6 +24,10 @@ from .models import Secret, DeletedSecret, SecretAttributes
 class SecretClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's secrets.
 
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity`
+    :param str vault_url: URL of the vault the client will access
+
     Example:
         .. literalinclude:: ../tests/test_samples_secrets.py
             :start-after: [START create_secret_client]

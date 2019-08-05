@@ -25,6 +25,10 @@ from .models import Key, KeyBase, DeletedKey, KeyOperationResult
 class KeyClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's keys.
 
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity`
+    :param str vault_url: URL of the vault the client will access
+
     Example:
         .. literalinclude:: ../tests/test_samples_keys.py
             :start-after: [START create_key_client]
