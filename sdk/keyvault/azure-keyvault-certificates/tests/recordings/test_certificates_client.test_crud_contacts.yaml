@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -15,7 +15,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Fri, 02 Aug 2019 22:38:05 GMT']
+      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -39,7 +39,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['166']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -49,7 +49,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Aug 2019 22:38:05 GMT']
+      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -67,7 +67,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -77,7 +77,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Aug 2019 22:38:05 GMT']
+      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -96,7 +96,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -106,7 +106,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Aug 2019 22:38:05 GMT']
+      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -124,7 +124,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.6 (Windows-10-10.0.18362-SP0) azure-core/1.0.0b2 azsdk-python-azure-keyvault/7.0]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -133,7 +133,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['68']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Aug 2019 22:38:06 GMT']
+      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
