@@ -118,9 +118,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
@@ -239,9 +239,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType

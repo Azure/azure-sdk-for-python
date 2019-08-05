@@ -14,8 +14,8 @@
 
 **Breaking changes**
 
-- Introduced new `EventProcessor` design to replace the previous `EventProcessorHost`.
-    - This early preview is intended to allow consumers to test the new design using a single instance that does not persist checkpoints to any durable store.
+- Replaced `max_retries` configuration parameter of the EventHubClient with `retry_total`.
+- Introduced the initial concept of a new version of the `EventProcessor`, intended as a neutral framework for processing events across all partitions for a given Event Hub and in the context of a specific Consumer Group. This early preview is intended to allow consumers to test the new design using a single instance that does not persist checkpoints to any durable store.
     - `EventProcessor`: EventProcessor creates and runs consumers for all partitions of the eventhub.
     - `PartitionManager`: PartitionManager defines the interface for getting/claiming ownerships of partitions and updating checkpoints.
     - `PartitionProcessor`: PartitionProcessor defines the interface for processing events.
