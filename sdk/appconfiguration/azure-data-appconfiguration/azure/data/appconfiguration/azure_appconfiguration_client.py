@@ -87,14 +87,15 @@ class AzureAppConfigurationClient():
     @classmethod
     def from_connection_string(
             cls, connection_string,  # type: str
+            **kwargs
     ):
-        return cls(connection_string=connection_string)
+        return cls(connection_string, **kwargs)
 
-    def __init__(self, connection_string):
+    def __init__(self, connection_string, **kwargs):
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         program_name = os.path.basename(sys.argv[0]) or "noprogram"
         self.config = ConfigurationClientConfiguration(
-            connection_string, base_user_agent=program_name, logging_enable=True
+            connection_string, **kwargs
         )
         self.config.user_agent_policy.add_user_agent(
             "{}{}".format(platform.python_implementation(), platform.python_version())
