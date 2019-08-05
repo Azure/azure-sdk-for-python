@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest.exceptions import DeserializationError
 
 from ._shared import KeyVaultClientBase
-from ._models import (
+from .models import (
     Certificate,
     CertificateBase,
     CertificatePolicy,
