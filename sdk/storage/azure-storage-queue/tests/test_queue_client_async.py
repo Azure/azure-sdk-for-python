@@ -9,6 +9,7 @@ import platform
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from azure.storage.queue import VERSION
 from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient
@@ -374,7 +375,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                "azsdk-python-storage-queue/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -394,7 +396,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -404,7 +407,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-queue/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -422,7 +426,8 @@ class StorageQueueClientTestAsync(QueueTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-queue/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-queue/{} Python/{} ({}) customer_user_agent".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 

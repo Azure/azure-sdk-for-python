@@ -77,7 +77,7 @@ class StorageFileTestAsync(FileTestCase):
         self.fsc2 = FileServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
         self.remote_share_name = None
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.fsc.__aenter__())
+        loop.run_until_complete(self.fsc2.__aenter__())
 
     def tearDown(self):
         if not self.is_playback():

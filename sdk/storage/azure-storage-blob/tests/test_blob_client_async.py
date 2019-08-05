@@ -8,6 +8,7 @@ import pytest
 import platform
 import asyncio
 
+from azure.storage.blob import VERSION
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -418,7 +419,8 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
+                "azsdk-python-storage-blob/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -438,7 +440,8 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -448,7 +451,8 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-blob/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -466,7 +470,8 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-blob/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-blob/{} Python/{} ({}) customer_user_agent".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
