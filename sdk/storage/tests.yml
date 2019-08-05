@@ -39,4 +39,4 @@ jobs:
         CONNECTION_STRING: $(python-storage-blob-connection-string)
         BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
-        TEST_MODE: RunLiveNoRecord
+        TEST_MODE: 'RunLiveNoRecord'
