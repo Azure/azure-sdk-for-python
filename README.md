@@ -23,7 +23,7 @@ Each service might have a number of libraries available from each of the followi
 
 
 ### Client: July 2019 Preview
-New wave of packages that we are currently releasing in **Preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](./sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html).
+New wave of packages that we are currently releasing in **Preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](./sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azure.github.io/azure-sdk/python/guidelines/).
 
 The libraries released in July preview:
 
