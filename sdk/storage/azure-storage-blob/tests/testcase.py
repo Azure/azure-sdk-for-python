@@ -83,7 +83,7 @@ class StorageTestCase(unittest.TestCase):
         else:
             self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
 
-        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode is TestMode.run_live_no_record):
+        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
             self.settings = self.fake_settings
 
         # example of qualified test name:
