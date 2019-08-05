@@ -116,9 +116,6 @@ class EventProcessor(object):
         try:
             await asyncio.gather(*self._tasks)
         finally:
-            # TODO: It's not agreed whether a partition manager has method close().
-            await self._partition_manager.close()
-            log.info("EventProcessor %r partition manager is closed", self._id)
             log.info("EventProcessor %r has stopped", self._id)
 
 
