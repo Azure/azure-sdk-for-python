@@ -163,8 +163,8 @@ class InvoiceSectionsOperations(object):
 
 
     def _create_initial(
-            self, billing_account_name, billing_profile_name, invoice_section_name, display_name=None, billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.InvoiceSectionCreationRequest(display_name=display_name, billing_profile_id=billing_profile_id)
+            self, billing_account_name, billing_profile_name, invoice_section_name, display_name=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.InvoiceSectionCreationRequest(display_name=display_name)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -218,7 +218,7 @@ class InvoiceSectionsOperations(object):
         return deserialized
 
     def create(
-            self, billing_account_name, billing_profile_name, invoice_section_name, display_name=None, billing_profile_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, display_name=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to create an invoice section.
 
         :param billing_account_name: billing Account Id.
@@ -229,8 +229,6 @@ class InvoiceSectionsOperations(object):
         :type invoice_section_name: str
         :param display_name: The name of the InvoiceSection.
         :type display_name: str
-        :param billing_profile_id: The billing profile id.
-        :type billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -250,7 +248,6 @@ class InvoiceSectionsOperations(object):
             billing_profile_name=billing_profile_name,
             invoice_section_name=invoice_section_name,
             display_name=display_name,
-            billing_profile_id=billing_profile_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
