@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0b2 (2019-08-05)
+### Breaking changes:
+- Removed `azure.core.Configuration` from the public API in preparation for a
+revamped configuration API. Static `create_config` methods have been renamed
+`_create_config`, and will be removed in a future release.
+
+### Dependency changes:
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-identity 1.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you'll need to `pip uninstall azure-core`
+- Adopted [MSAL](https://pypi.org/project/msal/) 0.4.1
+- New dependency for Python 2.7: [mock](https://pypi.org/project/mock/)
+
+### New features:
+- Added credentials for authenticating users:
+[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.DeviceCodeCredential),
+[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential),
+[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.UsernamePasswordCredential)
+  - async versions of these credentials will be added in a future release
+
 ## 1.0.0b1 (2019-06-28)
 Version 1.0.0b1 is the first preview of our efforts to create a user-friendly
 and Pythonic authentication API for Azure SDK client libraries. For more

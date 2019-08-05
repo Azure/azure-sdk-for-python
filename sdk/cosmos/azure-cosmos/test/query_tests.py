@@ -1,5 +1,7 @@
 import unittest
+import uuid
 import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos._retry_utility as retry_utility
 import pytest
 import test_config
 
@@ -171,6 +173,46 @@ class QueryTest(unittest.TestCase):
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
+
+    def test_max_item_count_honored_in_order_by_query(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        docs = []
+        for i in range(10):
+            document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
+            docs.append(created_collection.create_item(body=document_definition))
+
+        query = 'SELECT * from c ORDER BY c._ts'
+        query_iterable = created_collection.query_items(
+            query=query,
+            max_item_count=1,
+            enable_cross_partition_query=True
+        )
+        # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
+        self.validate_query_requests_count(query_iterable, 16 * 2)
+
+        query_iterable = created_collection.query_items(
+            query=query,
+            max_item_count=100,
+            enable_cross_partition_query=True
+        )
+
+        # 1 call to get query plan 1 calls to one partition with the documents, 1 call each to other 4 partitions
+        self.validate_query_requests_count(query_iterable, 6 * 2)
+
+    def validate_query_requests_count(self, query_iterable, expected_count):
+        self.count = 0
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
+        retry_utility.ExecuteFunction = self._MockExecuteFunction
+        block = query_iterable.fetch_next_block()
+        while block:
+            block = query_iterable.fetch_next_block()
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.count, expected_count)
+        self.count = 0
+
+    def _MockExecuteFunction(self, function, *args, **kwargs):
+        self.count += 1
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 
 if __name__ == "__main__":

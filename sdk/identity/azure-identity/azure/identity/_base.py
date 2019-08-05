@@ -9,7 +9,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
 
-from .constants import Endpoints
+from ._constants import Endpoints
 
 try:
     from typing import TYPE_CHECKING
