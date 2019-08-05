@@ -22,12 +22,6 @@ from testcase import (
     record,
 )
 
-import blob_settings_fake as fake_settings
-try:
-    import settings_real as settings
-except ImportError:
-    settings = None
-
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 FILE_PATH = 'blob_input.temp.dat'
@@ -608,16 +602,6 @@ class StorageAppendBlobTest(StorageTestCase):
         blob.append_block(data, validate_content=True)
 
         # Assert
-    
-    def test_env_variables(self):
-        print("PLEASE FIND ME :(", os.getenv("TEST_MODE"))
-        print("all prints in setup")
-        print(fake_settings.TEST_MODE, "fake test mode")
-        try:
-            print(settings.TEST_MODE, "real test mode")
-        except:
-            pass
-        self.assertEqual(0, 1)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
