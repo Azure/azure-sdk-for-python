@@ -1,5 +1,32 @@
 # Change Log azure-storage-file
 
+
+## Version 12.0.0b2:
+
+**Breaking changes**
+- Renamed `copy_file_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_file_properties` operation.
+- Added `abort_copy` operation to the `FileClient` class. This replaces the previous abort operation on the copy status polling operation.
+- The behavior of listing operations has been modified:
+    - The previous `marker` parameter has been removed.
+    - The iterable response object now supports a `by_page` function that will return a secondary iterator of batches of results. This function supports a `continuation_token` parameter to replace the previous `marker` parameter.
+- The new listing behaviour is also adopted by the `receive_messages` operation:
+    - The receive operation returns a message iterator as before.
+    - The returned iterator supports a `by_page` operation to receive messages in batches.
+
+**New features**
+- Added async APIs to subnamespace `azure.storage.file.aio`.
+- Distributed tracing framework OpenCensus is now supported.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-storage-file 12.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you'll need to `pip uninstall azure-core`
+
+**Fixes and improvements**
+- Fix for closing file handles - continuation token was not being passed to subsequent calls.
+- General refactor of duplicate and shared code.
+
+
 ## Version 12.0.0b1:
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Files. For more information about this, and preview releases of other Azure SDK libraries, please visit

@@ -20,23 +20,23 @@ class CloseHandlesAsync(AsyncPollingMethod):
 
     def __init__(self, interval):
         self._command = None
-        self._status = None
+        self._continuation_token = None
         self._exception = None
         self.handles_closed = 0
         self.polling_interval = interval
 
     async def _update_status(self):
         try:
-            status = await self._command()  # pylint: disable=protected-access
+            status = await self._command(marker=self._continuation_token)
         except StorageErrorException as error:
             process_storage_error(error)
-        self._status = status.get('marker')
-        self.handles_closed += status['number_of_handles_closed']
+        self._continuation_token = status.get('marker')
+        self.handles_closed += status.get('number_of_handles_closed') or 0
 
     def initialize(self, command, initial_status, _):  # pylint: disable=arguments-differ
         # type: (Any, Any, Callable) -> None
         self._command = command
-        self._status = initial_status['marker']
+        self._continuation_token = initial_status['marker']
         self.handles_closed = initial_status['number_of_handles_closed']
 
     async def run(self):
@@ -57,7 +57,7 @@ class CloseHandlesAsync(AsyncPollingMethod):
         """Is this polling finished?
         :rtype: bool
         """
-        return self._status is None
+        return self._continuation_token is None
 
     def resource(self):
         # type: () -> Any
