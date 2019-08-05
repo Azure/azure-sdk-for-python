@@ -34,6 +34,7 @@ try:
     from ._models_py3 import ConnectableResource
     from ._models_py3 import ConnectedResource
     from ._models_py3 import ConnectedWorkspace
+    from ._models_py3 import ConnectionDetails
     from ._models_py3 import DataExportSetting
     from ._models_py3 import DiscoveredSecuritySolution
     from ._models_py3 import ExternalSecuritySolution
@@ -66,6 +67,17 @@ try:
     from ._models_py3 import JitNetworkAccessRequestVirtualMachine
     from ._models_py3 import Kind
     from ._models_py3 import Location
+    from ._models_py3 import NetworkData
+    from ._models_py3 import NetworkDataConnectableResource
+    from ._models_py3 import NetworkDataConnectableResourceActualTraffic
+    from ._models_py3 import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceAllowedTraffic
+    from ._models_py3 import NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceUnusedPorts
+    from ._models_py3 import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PathRecommendation
@@ -120,6 +132,7 @@ except (SyntaxError, ImportError):
     from ._models import ConnectableResource
     from ._models import ConnectedResource
     from ._models import ConnectedWorkspace
+    from ._models import ConnectionDetails
     from ._models import DataExportSetting
     from ._models import DiscoveredSecuritySolution
     from ._models import ExternalSecuritySolution
@@ -152,6 +165,17 @@ except (SyntaxError, ImportError):
     from ._models import JitNetworkAccessRequestVirtualMachine
     from ._models import Kind
     from ._models import Location
+    from ._models import NetworkData
+    from ._models import NetworkDataConnectableResource
+    from ._models import NetworkDataConnectableResourceActualTraffic
+    from ._models import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
+    from ._models import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
+    from ._models import NetworkDataConnectableResourceAllowedTraffic
+    from ._models import NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
+    from ._models import NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+    from ._models import NetworkDataConnectableResourceUnusedPorts
+    from ._models import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
+    from ._models import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PathRecommendation
@@ -194,6 +218,7 @@ from ._paged_models import IoTSecurityAggregatedAlertPaged
 from ._paged_models import IoTSecurityAggregatedRecommendationPaged
 from ._paged_models import IoTSecuritySolutionModelPaged
 from ._paged_models import JitNetworkAccessPolicyPaged
+from ._paged_models import NetworkDataPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RegulatoryComplianceAssessmentPaged
 from ._paged_models import RegulatoryComplianceControlPaged
@@ -251,6 +276,7 @@ __all__ = [
     'ConnectableResource',
     'ConnectedResource',
     'ConnectedWorkspace',
+    'ConnectionDetails',
     'DataExportSetting',
     'DiscoveredSecuritySolution',
     'ExternalSecuritySolution',
@@ -283,6 +309,17 @@ __all__ = [
     'JitNetworkAccessRequestVirtualMachine',
     'Kind',
     'Location',
+    'NetworkData',
+    'NetworkDataConnectableResource',
+    'NetworkDataConnectableResourceActualTraffic',
+    'NetworkDataConnectableResourceActualTrafficInboundConnectedResources',
+    'NetworkDataConnectableResourceActualTrafficOutboundConnectedResources',
+    'NetworkDataConnectableResourceAllowedTraffic',
+    'NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources',
+    'NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources',
+    'NetworkDataConnectableResourceUnusedPorts',
+    'NetworkDataConnectableResourceUnusedPortsInboundConnectedResources',
+    'NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources',
     'Operation',
     'OperationDisplay',
     'PathRecommendation',
@@ -312,6 +349,7 @@ __all__ = [
     'UserRecommendation',
     'VmRecommendation',
     'WorkspaceSetting',
+    'NetworkDataPaged',
     'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',

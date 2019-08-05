@@ -1134,6 +1134,34 @@ class ConnectedWorkspace(Model):
         self.id = id
 
 
+class ConnectionDetails(Model):
+    """Details of the actual traffic connections.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar port_and_protocol: The port and the protocol of the traffic
+    :vartype port_and_protocol: str
+    :ivar volume: The volume of the traffic
+    :vartype volume: str
+    """
+
+    _validation = {
+        'port_and_protocol': {'readonly': True},
+        'volume': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'port_and_protocol': {'key': 'portAndProtocol', 'type': 'str'},
+        'volume': {'key': 'volume', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ConnectionDetails, self).__init__(**kwargs)
+        self.port_and_protocol = None
+        self.volume = None
+
+
 class SettingResource(Resource):
     """The kind of the security setting.
 
@@ -2424,6 +2452,401 @@ class Location(Model):
     def __init__(self, **kwargs) -> None:
         super(Location, self).__init__(**kwargs)
         self.location = None
+
+
+class NetworkData(Resource):
+    """Network data on a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param connectable_resources:
+    :type connectable_resources:
+     list[~azure.mgmt.security.models.NetworkDataConnectableResource]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connectable_resources': {'key': 'properties.connectableResources', 'type': '[NetworkDataConnectableResource]'},
+    }
+
+    def __init__(self, *, connectable_resources=None, **kwargs) -> None:
+        super(NetworkData, self).__init__(**kwargs)
+        self.connectable_resources = connectable_resources
+
+
+class NetworkDataConnectableResource(Model):
+    """Describes the allowed inbound and outbound traffic of an Azure resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar connected_resource_id: The connectable resource id
+    :vartype connected_resource_id: str
+    :ivar connection_type: The connection type
+    :vartype connection_type: str
+    :ivar allowed_traffic: The allowed traffic details
+    :vartype allowed_traffic:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTraffic
+    :ivar actual_traffic: The actual traffic details
+    :vartype actual_traffic:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceActualTraffic
+    :ivar unused_ports: The unused ports details
+    :vartype unused_ports:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceUnusedPorts
+    """
+
+    _validation = {
+        'connected_resource_id': {'readonly': True},
+        'connection_type': {'readonly': True},
+        'allowed_traffic': {'readonly': True},
+        'actual_traffic': {'readonly': True},
+        'unused_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'connected_resource_id': {'key': 'connectedResourceId', 'type': 'str'},
+        'connection_type': {'key': 'connectionType', 'type': 'str'},
+        'allowed_traffic': {'key': 'allowedTraffic', 'type': 'NetworkDataConnectableResourceAllowedTraffic'},
+        'actual_traffic': {'key': 'actualTraffic', 'type': 'NetworkDataConnectableResourceActualTraffic'},
+        'unused_ports': {'key': 'unusedPorts', 'type': 'NetworkDataConnectableResourceUnusedPorts'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResource, self).__init__(**kwargs)
+        self.connected_resource_id = None
+        self.connection_type = None
+        self.allowed_traffic = None
+        self.actual_traffic = None
+        self.unused_ports = None
+
+
+class NetworkDataConnectableResourceActualTraffic(Model):
+    """The actual traffic details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar time_range: The actual traffic time range
+    :vartype time_range: str
+    :ivar traffic_data_state: The actual traffic state
+    :vartype traffic_data_state: str
+    :ivar inbound_connected_resources: The actual traffic inbound details
+    :vartype inbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceActualTrafficInboundConnectedResources
+    :ivar outbound_connected_resources: The actual traffic outbound details
+    :vartype outbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
+    """
+
+    _validation = {
+        'time_range': {'readonly': True},
+        'traffic_data_state': {'readonly': True},
+        'inbound_connected_resources': {'readonly': True},
+        'outbound_connected_resources': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'time_range': {'key': 'timeRange', 'type': 'str'},
+        'traffic_data_state': {'key': 'TrafficDataState', 'type': 'str'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'NetworkDataConnectableResourceActualTrafficInboundConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'NetworkDataConnectableResourceActualTrafficOutboundConnectedResources'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceActualTraffic, self).__init__(**kwargs)
+        self.time_range = None
+        self.traffic_data_state = None
+        self.inbound_connected_resources = None
+        self.outbound_connected_resources = None
+
+
+class NetworkDataConnectableResourceActualTrafficInboundConnectedResources(Model):
+    """The actual traffic inbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar actual_traffic_volume: The actual traffic inbound volume
+    :vartype actual_traffic_volume: str
+    :param connections_details:
+    :type connections_details:
+     list[~azure.mgmt.security.models.ConnectionDetails]
+    """
+
+    _validation = {
+        'actual_traffic_volume': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'actual_traffic_volume': {'key': 'actualTrafficVolume', 'type': 'str'},
+        'connections_details': {'key': 'connectionsDetails', 'type': '[ConnectionDetails]'},
+    }
+
+    def __init__(self, *, connections_details=None, **kwargs) -> None:
+        super(NetworkDataConnectableResourceActualTrafficInboundConnectedResources, self).__init__(**kwargs)
+        self.actual_traffic_volume = None
+        self.connections_details = connections_details
+
+
+class NetworkDataConnectableResourceActualTrafficOutboundConnectedResources(Model):
+    """The actual traffic outbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar actual_traffic_volume: The actual traffic outbound volume
+    :vartype actual_traffic_volume: str
+    :param connections_details:
+    :type connections_details:
+     list[~azure.mgmt.security.models.ConnectionDetails]
+    """
+
+    _validation = {
+        'actual_traffic_volume': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'actual_traffic_volume': {'key': 'actualTrafficVolume', 'type': 'str'},
+        'connections_details': {'key': 'connectionsDetails', 'type': '[ConnectionDetails]'},
+    }
+
+    def __init__(self, *, connections_details=None, **kwargs) -> None:
+        super(NetworkDataConnectableResourceActualTrafficOutboundConnectedResources, self).__init__(**kwargs)
+        self.actual_traffic_volume = None
+        self.connections_details = connections_details
+
+
+class NetworkDataConnectableResourceAllowedTraffic(Model):
+    """The allowed traffic details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar calculated_date_time: The UTC time on which the allowed traffic was
+     calculated
+    :vartype calculated_date_time: datetime
+    :ivar inbound_connected_resources: The allowed traffic inbound details
+    :vartype inbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
+    :ivar outbound_connected_resources: The allowed traffic outbound details
+    :vartype outbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+    """
+
+    _validation = {
+        'calculated_date_time': {'readonly': True},
+        'inbound_connected_resources': {'readonly': True},
+        'outbound_connected_resources': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'calculated_date_time': {'key': 'calculatedDateTime', 'type': 'iso-8601'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceAllowedTraffic, self).__init__(**kwargs)
+        self.calculated_date_time = None
+        self.inbound_connected_resources = None
+        self.outbound_connected_resources = None
+
+
+class NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources(Model):
+    """The allowed traffic inbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar tcp_ports_summary: The allowed traffic inbound tcp ports summary
+    :vartype tcp_ports_summary: int
+    :ivar udp_ports_summary: The allowed traffic inbound udp ports summary
+    :vartype udp_ports_summary: int
+    :ivar tcp_ports: The allowed traffic inbound tcp ports
+    :vartype tcp_ports: str
+    :ivar udp_ports: The allowed traffic inbound udp ports
+    :vartype udp_ports: str
+    """
+
+    _validation = {
+        'tcp_ports_summary': {'readonly': True},
+        'udp_ports_summary': {'readonly': True},
+        'tcp_ports': {'readonly': True},
+        'udp_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tcp_ports_summary': {'key': 'tcpPortsSummary', 'type': 'int'},
+        'udp_ports_summary': {'key': 'udpPortsSummary', 'type': 'int'},
+        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
+        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources, self).__init__(**kwargs)
+        self.tcp_ports_summary = None
+        self.udp_ports_summary = None
+        self.tcp_ports = None
+        self.udp_ports = None
+
+
+class NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources(Model):
+    """The allowed traffic outbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar tcp_ports_summary: The allowed traffic outbound tcp ports summary
+    :vartype tcp_ports_summary: int
+    :ivar udp_ports_summary: The allowed traffic outbound udp ports summary
+    :vartype udp_ports_summary: int
+    :ivar tcp_ports: The allowed traffic outbound tcp ports
+    :vartype tcp_ports: str
+    :ivar udp_ports: The allowed traffic outbound udp ports
+    :vartype udp_ports: str
+    """
+
+    _validation = {
+        'tcp_ports_summary': {'readonly': True},
+        'udp_ports_summary': {'readonly': True},
+        'tcp_ports': {'readonly': True},
+        'udp_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tcp_ports_summary': {'key': 'tcpPortsSummary', 'type': 'int'},
+        'udp_ports_summary': {'key': 'udpPortsSummary', 'type': 'int'},
+        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
+        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources, self).__init__(**kwargs)
+        self.tcp_ports_summary = None
+        self.udp_ports_summary = None
+        self.tcp_ports = None
+        self.udp_ports = None
+
+
+class NetworkDataConnectableResourceUnusedPorts(Model):
+    """The unused ports details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar inbound_connected_resources: The unused ports inbound details
+    :vartype inbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
+    :ivar outbound_connected_resources: The unused ports outbound details
+    :vartype outbound_connected_resources:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
+    """
+
+    _validation = {
+        'inbound_connected_resources': {'readonly': True},
+        'outbound_connected_resources': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'NetworkDataConnectableResourceUnusedPortsInboundConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceUnusedPorts, self).__init__(**kwargs)
+        self.inbound_connected_resources = None
+        self.outbound_connected_resources = None
+
+
+class NetworkDataConnectableResourceUnusedPortsInboundConnectedResources(Model):
+    """The unused ports inbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar unused_tcp_ports_summary: The unused inbound tcp ports summary
+    :vartype unused_tcp_ports_summary: int
+    :ivar unused_udp_ports_summary: The unused inbound udp ports summary
+    :vartype unused_udp_ports_summary: int
+    :ivar tcp_ports: The unused inbound tcp ports
+    :vartype tcp_ports: str
+    :ivar udp_ports: The unused inbound udp ports
+    :vartype udp_ports: str
+    """
+
+    _validation = {
+        'unused_tcp_ports_summary': {'readonly': True},
+        'unused_udp_ports_summary': {'readonly': True},
+        'tcp_ports': {'readonly': True},
+        'udp_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'unused_tcp_ports_summary': {'key': 'unusedTcpPortsSummary', 'type': 'int'},
+        'unused_udp_ports_summary': {'key': 'unusedUdpPortsSummary', 'type': 'int'},
+        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
+        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceUnusedPortsInboundConnectedResources, self).__init__(**kwargs)
+        self.unused_tcp_ports_summary = None
+        self.unused_udp_ports_summary = None
+        self.tcp_ports = None
+        self.udp_ports = None
+
+
+class NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources(Model):
+    """The unused ports outbound details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar unused_tcp_ports_summary: The unused outbound tcp ports summary
+    :vartype unused_tcp_ports_summary: int
+    :ivar unused_udp_ports_summary: The unused outbound udp ports summary
+    :vartype unused_udp_ports_summary: int
+    :ivar tcp_ports: The unused outbound tcp ports
+    :vartype tcp_ports: str
+    :ivar udp_ports: The unused outbound udp ports
+    :vartype udp_ports: str
+    """
+
+    _validation = {
+        'unused_tcp_ports_summary': {'readonly': True},
+        'unused_udp_ports_summary': {'readonly': True},
+        'tcp_ports': {'readonly': True},
+        'udp_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'unused_tcp_ports_summary': {'key': 'unusedTcpPortsSummary', 'type': 'int'},
+        'unused_udp_ports_summary': {'key': 'unusedUdpPortsSummary', 'type': 'int'},
+        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
+        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources, self).__init__(**kwargs)
+        self.unused_tcp_ports_summary = None
+        self.unused_udp_ports_summary = None
+        self.tcp_ports = None
+        self.udp_ports = None
 
 
 class Operation(Model):

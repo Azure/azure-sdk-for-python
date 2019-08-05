@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._network_data_operations import NetworkDataOperations
 from ._compliance_results_operations import ComplianceResultsOperations
 from ._pricings_operations import PricingsOperations
 from ._alerts_operations import AlertsOperations
@@ -42,6 +43,7 @@ from ._regulatory_compliance_assessments_operations import RegulatoryComplianceA
 from ._server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 
 __all__ = [
+    'NetworkDataOperations',
     'ComplianceResultsOperations',
     'PricingsOperations',
     'AlertsOperations',

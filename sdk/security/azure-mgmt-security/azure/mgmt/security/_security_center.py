@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import SecurityCenterConfiguration
+from .operations import NetworkDataOperations
 from .operations import ComplianceResultsOperations
 from .operations import PricingsOperations
 from .operations import AlertsOperations
@@ -53,6 +54,8 @@ class SecurityCenter(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SecurityCenterConfiguration
 
+    :ivar network_data: NetworkData operations
+    :vartype network_data: azure.mgmt.security.operations.NetworkDataOperations
     :ivar compliance_results: ComplianceResults operations
     :vartype compliance_results: azure.mgmt.security.operations.ComplianceResultsOperations
     :ivar pricings: Pricings operations
@@ -137,6 +140,8 @@ class SecurityCenter(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.network_data = NetworkDataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.compliance_results = ComplianceResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.pricings = PricingsOperations(

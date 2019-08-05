@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class NetworkDataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NetworkData <azure.mgmt.security.models.NetworkData>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkData]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkDataPaged, self).__init__(*args, **kwargs)
 class ComplianceResultPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ComplianceResult <azure.mgmt.security.models.ComplianceResult>` object
