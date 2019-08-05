@@ -33,6 +33,7 @@ from azure.core.credentials import AccessToken
 import blob_settings_fake as fake_settings
 try:
     import settings_real as settings
+    print("settings real imported")
 except ImportError:
     settings = None
 
@@ -73,6 +74,9 @@ class FakeTokenCredential(object):
 class StorageTestCase(unittest.TestCase):
 
     def setUp(self):
+        print("all prints in setup")
+        print(fake_settings.TEST_MODE, "fake")
+        print(settings, "real")
         self.working_folder = os.path.dirname(__file__)
 
         self.settings = settings
