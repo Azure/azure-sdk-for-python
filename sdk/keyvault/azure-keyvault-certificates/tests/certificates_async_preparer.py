@@ -6,11 +6,25 @@ import asyncio
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.identity.aio import EnvironmentCredential
+
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from certificates_preparer import VaultClientPreparer
 
 from certificates_vault_client_async import VaultClient
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
 
 class AsyncVaultClientPreparer(VaultClientPreparer):
@@ -19,4 +33,4 @@ class AsyncVaultClientPreparer(VaultClientPreparer):
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
-        return VaultClient(vault_uri, credential)
+        return VaultClient(vault_uri, credential, transport=AiohttpTestTransport())

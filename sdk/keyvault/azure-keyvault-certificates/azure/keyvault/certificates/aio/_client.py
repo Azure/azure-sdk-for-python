@@ -14,7 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.certificates import CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
     CertificateBase, Contact, Issuer
 from azure.keyvault.certificates._models import AdministratorDetails, IssuerBase
-from .._shared import AsyncKeyVaultClientBase, AsyncPagingAdapter
+from .._shared import AsyncKeyVaultClientBase
 
 
 class CertificateClient(AsyncKeyVaultClientBase):
@@ -77,7 +77,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
             tags=tags,
             **kwargs
@@ -293,7 +293,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy=policy),
+            certificate_policy=policy._to_certificate_policy_bundle(),
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -415,14 +415,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_deleted_certificates(
+        return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
+            cls=lambda objs: [DeletedCertificate._from_deleted_certificate_item(x) for x in objs],
             **kwargs
         )
-        iterable = AsyncPagingAdapter(pages, DeletedCertificate._from_deleted_certificate_item)
-        return iterable
 
     @distributed_trace
     def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
@@ -442,14 +441,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_certificates(
+        return self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
+            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
             **kwargs
         )
-        iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
-        return iterable
 
     @distributed_trace
     def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
@@ -468,13 +466,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        pages = self._client.get_certificate_versions(
+        return self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
+            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
             **kwargs)
-        iterable = AsyncPagingAdapter(pages, CertificateBase._from_certificate_item)
-        return iterable
 
     @distributed_trace_async
     async def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
@@ -869,6 +866,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        paged_certificate_issuer_items = self._client.get_certificate_issuers(vault_base_url=self.vault_url, maxresults=max_page_size, **kwargs)
-        iterable = AsyncPagingAdapter(paged_certificate_issuer_items, IssuerBase._from_issuer_item)
-        return iterable
+        return self._client.get_certificate_issuers(
+            vault_base_url=self.vault_url,
+            maxresults=max_page_size,
+            cls=lambda objs: [IssuerBase._from_issuer_item(x) for x in objs],
+            **kwargs
+        )
