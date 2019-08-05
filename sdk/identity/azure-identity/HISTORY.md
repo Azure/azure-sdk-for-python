@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.0b2
+## 1.0.0b2 (2019-08-05)
 Breaking changes:
 - Removed `Configuration` from the public API in prepration for entirely
 kwargs-based configuration. Static `create_config` methods have been renamed
 `_create_config`, and will be removed entirely in a future release.
 
 Dependency changes:
-- Updated [`azure-core`](https://pypi.org/project/azure-core/) to 1.0.0b2
-- Updated [MSAL](https://pypi.org/project/msal/) 0.4.1
+- Adopted [`azure-core`](https://pypi.org/project/azure-core/) 1.0.0b2
+- Adopted [MSAL](https://pypi.org/project/msal/) 0.4.1
 - New dependency for Python 2.7: [mock](https://pypi.org/project/mock/)
 
 New credentials:
