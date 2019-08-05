@@ -12,7 +12,7 @@
     - The returned iterator supports a `by_page` operation to receive messages in batches.
 
 **New features**
-- Added async APIs to subnamespace `azure.storage.file.aio`.
+- Added async APIs to subnamespace `azure.storage.queue.aio`.
 - Distributed tracing framework OpenCensus is now supported.
 
 **Fixes and improvements**
