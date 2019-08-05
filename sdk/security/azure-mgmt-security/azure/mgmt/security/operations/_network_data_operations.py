@@ -40,9 +40,13 @@ class NetworkDataOperations(object):
         self.config = config
 
     def list(
-            self, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the network data on all your scanned resources inside a scope.
 
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management
+         group (/providers/Microsoft.Management/managementGroups/mgName).
+        :type scope: str
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'true', 'false'
         :type expand: str
@@ -61,7 +65,7 @@ class NetworkDataOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+                    'scope': self._serialize.url("scope", scope, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -108,21 +112,18 @@ class NetworkDataOperations(object):
         deserialized = models.NetworkDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/NetworkData'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Security/NetworkData'}
 
     def get(
-            self, resource_group_name, resource_namespace, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, resource_type, custom_headers=None, raw=False, **operation_config):
         """Get the network data on your scanned resource.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_namespace: The Namespace of the resource.
-        :type resource_namespace: str
-        :param resource_type: The type of the resource.
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management
+         group (/providers/Microsoft.Management/managementGroups/mgName).
+        :type scope: str
+        :param resource_type: The resource type
         :type resource_type: str
-        :param resource_name: Name of the resource.
-        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -136,11 +137,8 @@ class NetworkDataOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceNamespace': self._serialize.url("resource_namespace", resource_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+            'scope': self._serialize.url("scope", scope, 'str'),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -176,4 +174,4 @@ class NetworkDataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Security/NetworkData'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Security/NetworkData/{resourceType}'}
