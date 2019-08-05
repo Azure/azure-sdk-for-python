@@ -9,7 +9,7 @@ class _Configuration(object):
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")
         self.retry_total = kwargs.pop('retry_total', 3)
-        self.max_retries = kwargs.get("max_retries")
+        self.max_retries = self.retry_total
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', 120)
 
