@@ -11,7 +11,7 @@ import six
 import logging
 
 from azure.eventhub.error import EventDataError
-from uamqp import BatchMessage, Message, types, constants, errors
+from uamqp import BatchMessage, Message, types, constants
 from uamqp.message import MessageHeader, MessageProperties
 
 log = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, **kwargs):
+    def __init__(self, body=None, to_device=None):
         """
         Initialize EventData.
 
@@ -67,11 +67,7 @@ class EventData(object):
         :type batch: Generator
         :param to_device: An IoT device to route to.
         :type to_device: str
-        :param message: The received message.
-        :type message: ~uamqp.message.Message
         """
-        to_device = kwargs.get("to_device", None)
-        message = kwargs.get("message", None)
 
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
@@ -79,20 +75,14 @@ class EventData(object):
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if message:
-            self.message = message
-            self.msg_properties = message.properties
-            self._annotations = message.annotations
-            self._app_properties = message.application_properties
+        if body and isinstance(body, list):
+            self.message = Message(body[0], properties=self.msg_properties)
+            for more in body[1:]:
+                self.message._body.append(more)  # pylint: disable=protected-access
+        elif body is None:
+            raise ValueError("EventData cannot be None.")
         else:
-            if body and isinstance(body, list):
-                self.message = Message(body[0], properties=self.msg_properties)
-                for more in body[1:]:
-                    self.message._body.append(more)  # pylint: disable=protected-access
-            elif body is None:
-                raise ValueError("EventData cannot be None.")
-            else:
-                self.message = Message(body, properties=self.msg_properties)
+            self.message = Message(body, properties=self.msg_properties)
 
     def __str__(self):
         dic = {
@@ -126,6 +116,15 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
+    @staticmethod
+    def _from_message(message):
+        event_data = EventData(body='')
+        event_data.message = message
+        event_data.msg_properties = message.properties
+        event_data._annotations = message.annotations
+        event_data._app_properties = message.application_properties
+        return event_data
 
     @property
     def sequence_number(self):
@@ -215,7 +214,7 @@ class EventData(object):
         except TypeError:
             raise ValueError("Message data empty.")
 
-    def body_as_str(self, **kwargs):
+    def body_as_str(self, encoding='UTF-8'):
         """
         The body of the event data as a string if the data is of a
         compatible type.
@@ -224,7 +223,6 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: str or unicode
         """
-        encoding = kwargs.get("encoding", 'UTF-8')
         data = self.body
         try:
             return "".join(b.decode(encoding) for b in data)
@@ -237,7 +235,7 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
-    def body_as_json(self, **kwargs):
+    def body_as_json(self, encoding='UTF-8'):
         """
         The body of the event loaded as a JSON object is the data is compatible.
 
@@ -245,7 +243,6 @@ class EventData(object):
          Default is 'UTF-8'
         :rtype: dict
         """
-        encoding = kwargs.get("encoding", 'UTF-8')
         data_str = self.body_as_str(encoding=encoding)
         try:
             return json.loads(data_str)
@@ -263,9 +260,7 @@ class EventDataBatch(object):
     Do not instantiate an EventDataBatch object directly.
     """
 
-    def __init__(self, **kwargs):
-        max_size = kwargs.get("max_size", None)
-        partition_key = kwargs.get("partition_key", None)
+    def __init__(self, max_size=None, partition_key=None):
         self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
         self._partition_key = partition_key
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)

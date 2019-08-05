@@ -18,17 +18,15 @@ import uamqp
 from uamqp import Message
 from uamqp import authentication
 from uamqp import constants
-from uamqp import errors
-from uamqp import compat
 
 from azure.eventhub.producer import EventHubProducer
 from azure.eventhub.consumer import EventHubConsumer
 from azure.eventhub.common import parse_sas_token, EventPosition
-from azure.eventhub.error import ConnectError, EventHubError
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
 from .error import _handle_exception
+
 
 log = logging.getLogger(__name__)
 
@@ -199,10 +197,8 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(
-            self, consumer_group, partition_id, event_position, **kwargs
-    ):
-        # type: (str, str, EventPosition, int, str, int) -> EventHubConsumer
+    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+        # type: (str, str, EventPosition, ...) -> EventHubConsumer
         """
         Create a consumer to the client for a particular consumer group and partition.
 
@@ -245,8 +241,8 @@ class EventHubClient(EventHubClientAbstract):
             prefetch=prefetch)
         return handler
 
-    def create_producer(self, **kwargs):
-        # type: (str, str, float) -> EventHubProducer
+    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
+        # type: (str, str, float, ...) -> EventHubProducer
         """
         Create an producer to send EventData object to an EventHub.
 
@@ -271,9 +267,6 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add a producer to the client to send EventData.
 
         """
-        partition_id = kwargs.get("partition_id", None)
-        operation = kwargs.get("operation", None)
-        send_timeout = kwargs.get("send_timeout", None)
 
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:

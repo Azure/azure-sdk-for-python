@@ -12,11 +12,8 @@ from uamqp import authentication, constants
 from uamqp import (
     Message,
     AMQPClientAsync,
-    errors,
 )
-from uamqp import compat
 
-from azure.eventhub.error import ConnectError
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
@@ -193,9 +190,8 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(
-            self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, EventPosition, int, str, int, asyncio.AbstractEventLoop) -> EventHubConsumer
+    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+        # type: (str, str, EventPosition) -> EventHubConsumer
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
@@ -240,8 +236,7 @@ class EventHubClient(EventHubClientAbstract):
             prefetch=prefetch, loop=loop)
         return handler
 
-    def create_producer(
-            self, **kwargs):
+    def create_producer(self, *, partition_id=None, operation=None, send_timeout=None, loop=None):
         # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
         """
         Create an async producer to send EventData object to an EventHub.
@@ -268,10 +263,6 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async producer to the client to send EventData.
 
         """
-        partition_id = kwargs.get("partition_id", None)
-        operation = kwargs.get("operation", None)
-        send_timeout = kwargs.get("send_timeout", None)
-        loop = kwargs.get("loop", None)
 
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:

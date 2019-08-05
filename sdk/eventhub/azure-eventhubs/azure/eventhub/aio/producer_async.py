@@ -14,7 +14,7 @@ from uamqp import SendClientAsync
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ..producer import _error, _set_partition_key
-from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
 
 
 log = logging.getLogger(__name__)
@@ -98,7 +98,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 self.client.config.user_agent),  # pylint: disable=protected-access
             loop=self.loop)
 
-    async def _open(self, timeout_time=None):
+    async def _open(self, timeout_time=None, **kwargs):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -110,39 +110,34 @@ class EventHubProducer(ConsumerProducerMixin):
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 
-    async def _send_event_data(self, timeout=None):
-        timeout = timeout or self.client.config.send_timeout
-        if not timeout:
-            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
-        start_time = time.time()
-        timeout_time = start_time + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                if self.unsent_events:
-                    await self._open(timeout_time)
-                    remaining_time = timeout_time - time.time()
-                    if remaining_time < 0.0:
-                        if last_exception:
-                            error = last_exception
-                        else:
-                            error = OperationTimeoutError("send operation timed out")
-                        log.info("%r send operation timed out. (%r)", self.name, error)
-                        raise error
-                    self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
-                    self._handler.queue_message(*self.unsent_events)
-                    await self._handler.wait_async()
-                    self.unsent_events = self._handler.pending_messages
-                    if self._outcome != constants.MessageSendResult.Ok:
-                        if self._outcome == constants.MessageSendResult.Timeout:
-                            self._condition = OperationTimeoutError("send operation timed out")
-                        _error(self._outcome, self._condition)
-                return
-            except Exception as exception:
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
-                retry_count += 1
+    @_retry_decorator
+    async def _open_with_retry(self, timeout_time=None, **kwargs):
+        return await self._open(timeout_time=timeout_time, **kwargs)
+
+    async def _send_event_data(self, timeout_time=None, last_exception=None):
+        if self.unsent_events:
+            await self._open(timeout_time)
+            remaining_time = timeout_time - time.time()
+            if remaining_time <= 0.0:
+                if last_exception:
+                    error = last_exception
+                else:
+                    error = OperationTimeoutError("send operation timed out")
+                log.info("%r send operation timed out. (%r)", self.name, error)
+                raise error
+            self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
+            self._handler.queue_message(*self.unsent_events)
+            await self._handler.wait_async()
+            self.unsent_events = self._handler.pending_messages
+            if self._outcome != constants.MessageSendResult.Ok:
+                if self._outcome == constants.MessageSendResult.Timeout:
+                    self._condition = OperationTimeoutError("send operation timed out")
+                _error(self._outcome, self._condition)
+        return
+
+    @_retry_decorator
+    async def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
+        return await self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -156,7 +151,8 @@ class EventHubProducer(ConsumerProducerMixin):
         self._outcome = outcome
         self._condition = condition
 
-    async def create_batch(self, **kwargs):
+    async def create_batch(self, max_size=None, partition_key=None):
+        # type:(int, str) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
@@ -167,20 +163,28 @@ class EventHubProducer(ConsumerProducerMixin):
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_client_async_create_batch]
+                :end-before: [END eventhub_client_async_create_batch]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
         """
-        max_size = kwargs.get("max_size", None)
-        partition_key = kwargs.get("partition_key", None)
+
         if not self._max_message_size_on_link:
-            await self._open()
+            await self._open_with_retry(timeout=self.client.config.send_timeout)
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
                              .format(max_size, self._max_message_size_on_link))
 
-        return EventDataBatch(max_size or self._max_message_size_on_link, partition_key)
+        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
-    async def send(self, event_data, **kwargs):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes]) -> None
+    async def send(self, event_data, *, partition_key=None, timeout=None):
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -200,7 +204,7 @@ class EventHubProducer(ConsumerProducerMixin):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
+            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
                 :start-after: [START eventhub_client_async_send]
                 :end-before: [END eventhub_client_async_send]
                 :language: python
@@ -208,8 +212,6 @@ class EventHubProducer(ConsumerProducerMixin):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
-        partition_key = kwargs.get("partition_key", None)
-        timeout = kwargs.get("timeout", None)
 
         self._check_closed()
         if isinstance(event_data, EventData):
@@ -227,7 +229,7 @@ class EventHubProducer(ConsumerProducerMixin):
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await self._send_event_data(timeout)
+        await self._send_event_data_with_retry(timeout=timeout)
 
     async def close(self,  exception=None):
         # type: (Exception) -> None

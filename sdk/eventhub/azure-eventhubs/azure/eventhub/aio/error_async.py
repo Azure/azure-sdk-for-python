@@ -33,6 +33,8 @@ def _create_eventhub_exception(exception):
 
 
 async def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):
+    if isinstance(exception, asyncio.CancelledError):
+        raise
     try:
         name = closable.name
     except AttributeError:

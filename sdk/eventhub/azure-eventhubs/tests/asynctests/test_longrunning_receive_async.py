@@ -44,12 +44,8 @@ def get_logger(filename, level=logging.INFO):
 
     return azure_logger
 
+
 logger = get_logger("recv_test_async.log", logging.INFO)
-
-
-async def get_partitions(client):
-    eh_data = await client.get_properties()
-    return eh_data["partition_ids"]
 
 
 async def pump(_pid, receiver, _args, _dl):
@@ -76,9 +72,7 @@ async def pump(_pid, receiver, _args, _dl):
                                 total,
                                 batch[-1].sequence_number,
                                 batch[-1].offset))
-            print("{}: total received {}".format(
-                _pid,
-                total))
+            print("{}: Total received {}".format(receiver.partition, total))
     except Exception as e:
         print("Partition {} receiver failed: {}".format(_pid, e))
         raise
@@ -127,11 +121,11 @@ async def test_long_running_receive_async(connection_str):
         receiver = client.create_consumer(consumer_group="$default",
             partition_id=pid,
             event_position=EventPosition(args.offset),
-            prefetch=50,
+            prefetch=300,
             loop=loop)
         pumps.append(pump(pid, receiver, args, args.duration))
     await asyncio.gather(*pumps)
 
 
 if __name__ == '__main__':
-    asyncio.run(test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))
+    asyncio.run(test_long_running_receive_async(os.environ.get('EVENT_HUB_PERF_CONN_STR')))

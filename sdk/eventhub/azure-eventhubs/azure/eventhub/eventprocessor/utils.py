@@ -4,14 +4,13 @@
 # -----------------------------------------------------------------------------------
 
 import asyncio
-import pytest
 
 
-@pytest.mark.liveTest
-def test_get_partition_ids(partition_manager):
-    """
-    Test that partition manger returns all the partitions for an event hub
-    """
-    loop = asyncio.get_event_loop()
-    pids = loop.run_until_complete(partition_manager.get_partition_ids_async())
-    assert pids == ["0", "1"]
+def get_running_loop():
+    try:
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.5 / 3.6
+        loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        if loop is None:
+            raise RuntimeError('No running event loop')
+        return loop

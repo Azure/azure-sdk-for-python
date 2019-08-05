@@ -13,8 +13,9 @@ from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
 from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import _error_handler, EventHubError
-from ._consumer_producer_mixin import ConsumerProducerMixin
+from azure.eventhub.error import _error_handler
+from ._consumer_producer_mixin import ConsumerProducerMixin, _retry_decorator
+
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +76,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         self.redirected = None
         self.error = None
         partition = self.source.split('/')[-1]
+        self.partition = partition
         self.name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
             self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
@@ -94,8 +96,9 @@ class EventHubConsumer(ConsumerProducerMixin):
                 if not self.messages_iter:
                     self.messages_iter = self._handler.receive_messages_iter()
                 message = next(self.messages_iter)
-                event_data = EventData(message=message)
+                event_data = EventData._from_message(message)
                 self.offset = EventPosition(event_data.offset, inclusive=False)
+                retry_count = 0
                 return event_data
             except Exception as exception:
                 self._handle_exception(exception, retry_count, max_retries)
@@ -139,6 +142,31 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.source = self.redirected.address
         super(EventHubConsumer, self)._open(timeout_time)
 
+    def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
+        last_exception = kwargs.get("last_exception")
+        data_batch = kwargs.get("data_batch")
+
+        self._open(timeout_time)
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                raise last_exception
+            return data_batch
+        remaining_time_ms = 1000 * remaining_time
+        message_batch = self._handler.receive_message_batch(
+            max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
+            timeout=remaining_time_ms)
+        for message in message_batch:
+            event_data = EventData._from_message(message)
+            self.offset = EventPosition(event_data.offset)
+            data_batch.append(event_data)
+        return data_batch
+
+    @_retry_decorator
+    def _receive_with_try(self, timeout_time=None, max_batch_size=None, **kwargs):
+        return self._receive(timeout_time=timeout_time, max_batch_size=max_batch_size, **kwargs)
+
     @property
     def queue_size(self):
         # type:() -> int
@@ -152,8 +180,8 @@ class EventHubConsumer(ConsumerProducerMixin):
             return self._handler._received_messages.qsize()
         return 0
 
-    def receive(self, **kwargs):
-        # type:(int, float) -> List[EventData]
+    def receive(self, max_batch_size=None, timeout=None):
+        # type: (int, float) -> List[EventData]
         """
         Receive events from the EventHub.
 
@@ -178,44 +206,13 @@ class EventHubConsumer(ConsumerProducerMixin):
                 :caption: Receive events from the EventHub.
 
         """
-        max_batch_size = kwargs.get("max_batch_size", None)
-        timeout = kwargs.get("timeout", None)
-
         self._check_closed()
-        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
-        timeout = self.client.config.receive_timeout if timeout is None else timeout
-        if not timeout:
-            timeout = 100000  # timeout None or 0 mean no timeout. 100000 seconds is equivalent to no timeout
 
+        timeout = timeout or self.client.config.receive_timeout
+        max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
-        start_time = time.time()
-        timeout_time = start_time + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                self._open(timeout_time)
-                remaining_time = timeout_time - time.time()
-                if remaining_time <= 0.0:
-                    if last_exception:
-                        log.info("%r receive operation timed out. (%r)", self.name, last_exception)
-                        raise last_exception
-                    return data_batch
-                remaining_time_ms = 1000 * remaining_time
-                message_batch = self._handler.receive_message_batch(
-                    max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
-                    timeout=remaining_time_ms)
-                for message in message_batch:
-                    event_data = EventData(message=message)
-                    self.offset = EventPosition(event_data.offset)
-                    data_batch.append(event_data)
-                return data_batch
-            except EventHubError:
-                raise
-            except Exception as exception:
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
-                retry_count += 1
+
+        return self._receive_with_try(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
 
     def close(self, exception=None):
         # type:(Exception) -> None

@@ -30,6 +30,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
+    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -39,6 +40,7 @@ async def test_receive_with_invalid_hostname_async(invalid_hostname):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
+    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -49,6 +51,7 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
+    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -58,6 +61,7 @@ async def test_receive_with_invalid_key_async(invalid_key):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
+    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -68,6 +72,7 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
+    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -77,6 +82,7 @@ async def test_receive_with_invalid_policy_async(invalid_policy):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
+    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -100,6 +106,7 @@ async def test_non_existing_entity_sender_async(connection_str):
     sender = client.create_producer(partition_id="1")
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
+    await sender.close()
 
 
 @pytest.mark.liveTest
@@ -109,6 +116,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=5)
+    await receiver.close()
 
 
 @pytest.mark.liveTest
@@ -119,7 +127,7 @@ async def test_receive_from_invalid_partitions_async(connection_str):
         client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
         receiver = client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"))
         with pytest.raises(ConnectError):
-            await receiver.receive(timeout=10)
+            await receiver.receive(timeout=5)
         await receiver.close()
 
 
@@ -196,3 +204,40 @@ async def test_max_receivers_async(connstr_senders):
     failed = [o for o in outputs if isinstance(o, EventHubError)]
     assert len(failed) == 1
     print(failed[0].message)
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    sender = client.create_producer()
+    try:
+        with pytest.raises(AuthenticationError):
+            batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
+    finally:
+        await sender.close()
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_create_batch_with_none_async(connection_str):
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_producer()
+    batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
+    try:
+        with pytest.raises(ValueError):
+            batch_event_data.try_add(EventData(None))
+    finally:
+        await sender.close()
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_create_batch_with_too_large_size_async(connection_str):
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_producer()
+    try:
+        with pytest.raises(ValueError):
+            batch_event_data = await sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
+    finally:
+        await sender.close()
