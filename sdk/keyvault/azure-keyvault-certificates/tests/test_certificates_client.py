@@ -196,9 +196,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate
         interval_time = 5 if not self.is_playback() else 0
-        client.create_certificate(name=cert_name,
-                                                   policy=CertificatePolicy._from_certificate_policy_bundle(
-                                                       cert_policy))
+        client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
         while True:
             pending_cert = client.get_certificate_operation(cert_name)
             self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
@@ -420,7 +418,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_policy=cert_policy
         )
 
-        retrieved_operation = client.get_certificate_operation(name=cert_name, headers={"x-ms-should-pass": "fake"})
+        retrieved_operation = client.get_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(retrieved_operation, 'cancellation_requested'))
         self.assertTrue(retrieved_operation.cancellation_requested)
         self._validate_certificate_operation(
@@ -441,7 +439,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         try:
-            client.get_certificate_operation(name=cert_name, headers={"x-ms-foo": "fake"})
+            client.get_certificate_operation(name=cert_name)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
