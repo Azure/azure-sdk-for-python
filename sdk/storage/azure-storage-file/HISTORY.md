@@ -17,6 +17,11 @@
 - Added async APIs to subnamespace `azure.storage.file.aio`.
 - Distributed tracing framework OpenCensus is now supported.
 
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-storage-file 12.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you'll need to `pip uninstall azure-core`
+
 **Fixes and improvements**
 - Fix for closing file handles - continuation token was not being passed to subsequent calls.
 - General refactor of duplicate and shared code.
