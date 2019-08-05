@@ -4,7 +4,7 @@ from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData, EventPosition
 
 
-class EventHub_async:
+class EventHub:
     def __init__(self):
         # This test requires a previusly created Event Hub.
         # In this example the name is "myeventhub", but it could be change below

@@ -1,6 +1,6 @@
 import asyncio
-from key_vault_secrets_async import KeyVault_async
-from event_hubs_async import EventHub_async
+from key_vault_secrets_async import KeyVault
+from event_hubs_async import EventHub
 
 print("")
 print("==========================================")
@@ -9,8 +9,8 @@ print("==========================================")
 
 
 async def main():
-    await KeyVault_async().run()
-    await EventHub_async().run()
+    await KeyVault().run()
+    await EventHub().run()
 
 
 loop = asyncio.get_event_loop()
