@@ -418,7 +418,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_policy=cert_policy
         )
 
-        retrieved_operation = client.get_certificate_operation(name=cert_name, headers={"x-ms-should-pass": "fake"})
+        retrieved_operation = client.get_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(retrieved_operation, 'cancellation_requested'))
         self.assertTrue(retrieved_operation.cancellation_requested)
         self._validate_certificate_operation(
@@ -439,7 +439,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         try:
-            client.get_certificate_operation(name=cert_name, headers={"x-ms-foo": "fake"})
+            client.get_certificate_operation(name=cert_name)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
