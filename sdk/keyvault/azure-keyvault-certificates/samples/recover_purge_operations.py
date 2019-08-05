@@ -4,7 +4,7 @@
 # ------------------------------------
 import time
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -34,7 +34,6 @@ from azure.core.exceptions import HttpResponseError
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 # ----------------------------------------------------------------------------------------------------------
-from azure.keyvault.certificates._models import KeyProperties
 
 
 def run_sample():

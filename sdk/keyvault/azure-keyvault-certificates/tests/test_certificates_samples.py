@@ -15,7 +15,7 @@ from certificates_test_case import KeyVaultTestCase
 
 from azure.keyvault.certificates._key_vault_id import KeyVaultId
 from azure.keyvault.certificates._shared._generated.v7_0.models import (ActionType, CertificateAttributes)
-from azure.keyvault.certificates._models import (CertificatePolicy, KeyProperties, LifetimeAction)
+from azure.keyvault.certificates.models import (CertificatePolicy, KeyProperties, LifetimeAction)
 
 
 def print(*args):

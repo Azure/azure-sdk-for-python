@@ -13,11 +13,11 @@ from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
-from azure.keyvault.certificates._models import CertificatePolicy as CertificatePolicy
+from azure.keyvault.certificates.models import CertificatePolicy as CertificatePolicy
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
     SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
-from azure.keyvault.certificates._models import (
+from azure.keyvault.certificates.models import (
     AdministratorDetails, IssuerBase, KeyProperties)
 
 class RetryAfterReplacer(RecordingProcessor):
