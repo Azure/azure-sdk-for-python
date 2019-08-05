@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_py3 import Entity
+from .entity import Entity
 
 
-class FileEntity(Entity):
-    """Represents a file entity.
+class DnsEntity(Entity):
+    """Represents a dns entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,16 +35,17 @@ class FileEntity(Entity):
     :ivar additional_data: A bag of custom fields that should be part of the
      entity and will be presented to the user.
     :vartype additional_data: dict[str, object]
-    :ivar directory: The full path to the file.
-    :vartype directory: str
-    :ivar file_name: The file name without path (some alerts might not include
-     path).
-    :vartype file_name: str
-    :ivar host_entity_id: The Host entity id which the file belongs to
-    :vartype host_entity_id: str
-    :ivar file_hash_entity_ids: The file hash entity identifiers associated
-     with this file
-    :vartype file_hash_entity_ids: list[str]
+    :ivar domain_name: The name of the dns record associated with the alert
+    :vartype domain_name: str
+    :ivar ip_address_entity_ids: Ip entity identifiers for the resolved ip
+     address.
+    :vartype ip_address_entity_ids: list[str]
+    :ivar dns_server_ip_entity_id: An ip entity id for the dns server
+     resolving the request
+    :vartype dns_server_ip_entity_id: str
+    :ivar host_ip_address_entity_id: An ip entity id for the dns request
+     client
+    :vartype host_ip_address_entity_id: str
     """
 
     _validation = {
@@ -54,10 +55,10 @@ class FileEntity(Entity):
         'kind': {'required': True},
         'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
-        'directory': {'readonly': True},
-        'file_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'file_hash_entity_ids': {'readonly': True},
+        'domain_name': {'readonly': True},
+        'ip_address_entity_ids': {'readonly': True},
+        'dns_server_ip_entity_id': {'readonly': True},
+        'host_ip_address_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,18 +68,18 @@ class FileEntity(Entity):
         'kind': {'key': 'kind', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
+        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
+        'ip_address_entity_ids': {'key': 'properties.ipAddressEntityIds', 'type': '[str]'},
+        'dns_server_ip_entity_id': {'key': 'properties.dnsServerIpEntityId', 'type': 'str'},
+        'host_ip_address_entity_id': {'key': 'properties.hostIpAddressEntityId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(FileEntity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(DnsEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
-        self.directory = None
-        self.file_name = None
-        self.host_entity_id = None
-        self.file_hash_entity_ids = None
-        self.kind = 'File'
+        self.domain_name = None
+        self.ip_address_entity_ids = None
+        self.dns_server_ip_entity_id = None
+        self.host_ip_address_entity_id = None
+        self.kind = 'DnsResolution'

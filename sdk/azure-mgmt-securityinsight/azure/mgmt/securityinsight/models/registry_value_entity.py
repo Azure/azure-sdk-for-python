@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_py3 import Entity
+from .entity import Entity
 
 
-class FileEntity(Entity):
-    """Represents a file entity.
+class RegistryValueEntity(Entity):
+    """Represents a registry value entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,16 +35,18 @@ class FileEntity(Entity):
     :ivar additional_data: A bag of custom fields that should be part of the
      entity and will be presented to the user.
     :vartype additional_data: dict[str, object]
-    :ivar directory: The full path to the file.
-    :vartype directory: str
-    :ivar file_name: The file name without path (some alerts might not include
-     path).
-    :vartype file_name: str
-    :ivar host_entity_id: The Host entity id which the file belongs to
-    :vartype host_entity_id: str
-    :ivar file_hash_entity_ids: The file hash entity identifiers associated
-     with this file
-    :vartype file_hash_entity_ids: list[str]
+    :ivar value_name: The registry value name.
+    :vartype value_name: str
+    :ivar value_data: String formatted representation of the value data.
+    :vartype value_data: str
+    :ivar value_type: Specifies the data types to use when storing values in
+     the registry, or identifies the data type of a value in the registry.
+     Possible values include: 'None', 'Unknown', 'String', 'ExpandString',
+     'Binary', 'DWord', 'MultiString', 'QWord'
+    :vartype value_type: str or
+     ~azure.mgmt.securityinsight.models.RegistryValueKind
+    :ivar key_entity_id: The registry key entity id.
+    :vartype key_entity_id: str
     """
 
     _validation = {
@@ -54,10 +56,10 @@ class FileEntity(Entity):
         'kind': {'required': True},
         'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
-        'directory': {'readonly': True},
-        'file_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'file_hash_entity_ids': {'readonly': True},
+        'value_name': {'readonly': True},
+        'value_data': {'readonly': True},
+        'value_type': {'readonly': True},
+        'key_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,18 +69,18 @@ class FileEntity(Entity):
         'kind': {'key': 'kind', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
+        'value_name': {'key': 'properties.valueName', 'type': 'str'},
+        'value_data': {'key': 'properties.valueData', 'type': 'str'},
+        'value_type': {'key': 'properties.valueType', 'type': 'str'},
+        'key_entity_id': {'key': 'properties.keyEntityId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(FileEntity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(RegistryValueEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
-        self.directory = None
-        self.file_name = None
-        self.host_entity_id = None
-        self.file_hash_entity_ids = None
-        self.kind = 'File'
+        self.value_name = None
+        self.value_data = None
+        self.value_type = None
+        self.key_entity_id = None
+        self.kind = 'RegistryValue'

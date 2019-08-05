@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_py3 import Entity
+from .entity import Entity
 
 
-class FileEntity(Entity):
-    """Represents a file entity.
+class IpEntity(Entity):
+    """Represents an ip entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,16 +35,15 @@ class FileEntity(Entity):
     :ivar additional_data: A bag of custom fields that should be part of the
      entity and will be presented to the user.
     :vartype additional_data: dict[str, object]
-    :ivar directory: The full path to the file.
-    :vartype directory: str
-    :ivar file_name: The file name without path (some alerts might not include
-     path).
-    :vartype file_name: str
-    :ivar host_entity_id: The Host entity id which the file belongs to
-    :vartype host_entity_id: str
-    :ivar file_hash_entity_ids: The file hash entity identifiers associated
-     with this file
-    :vartype file_hash_entity_ids: list[str]
+    :ivar address: The IP address as string, e.g. 127.0.0.1 (either in Ipv4 or
+     Ipv6)
+    :vartype address: str
+    :param location: The geo-location context attached to the ip entity
+    :type location: ~azure.mgmt.securityinsight.models.GeoLocation
+    :ivar threat_intelligence: A list of TI contexts attached to the ip
+     entity.
+    :vartype threat_intelligence:
+     list[~azure.mgmt.securityinsight.models.ThreatIntelligence]
     """
 
     _validation = {
@@ -54,10 +53,8 @@ class FileEntity(Entity):
         'kind': {'required': True},
         'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
-        'directory': {'readonly': True},
-        'file_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'file_hash_entity_ids': {'readonly': True},
+        'address': {'readonly': True},
+        'threat_intelligence': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,18 +64,16 @@ class FileEntity(Entity):
         'kind': {'key': 'kind', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
+        'address': {'key': 'properties.address', 'type': 'str'},
+        'location': {'key': 'properties.location', 'type': 'GeoLocation'},
+        'threat_intelligence': {'key': 'properties.threatIntelligence', 'type': '[ThreatIntelligence]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(FileEntity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(IpEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
-        self.directory = None
-        self.file_name = None
-        self.host_entity_id = None
-        self.file_hash_entity_ids = None
-        self.kind = 'File'
+        self.address = None
+        self.location = kwargs.get('location', None)
+        self.threat_intelligence = None
+        self.kind = 'Ip'
