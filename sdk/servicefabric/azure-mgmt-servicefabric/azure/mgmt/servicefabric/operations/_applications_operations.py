@@ -107,10 +107,10 @@ class ApplicationsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}'}
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, cluster_name, application_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -155,7 +155,7 @@ class ApplicationsOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, cluster_name, application_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a Service Fabric application resource.
 
@@ -184,7 +184,7 @@ class ApplicationsOperations(object):
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_name=application_name,
@@ -210,7 +210,7 @@ class ApplicationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applications/{applicationName}'}
 
 
     def _update_initial(
