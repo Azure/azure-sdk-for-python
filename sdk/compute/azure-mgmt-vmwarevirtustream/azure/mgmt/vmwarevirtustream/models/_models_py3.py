@@ -166,6 +166,10 @@ class Cluster(Model):
     :type hosts: list[str]
     """
 
+    _validation = {
+        'cluster_size': {'maximum': 16, 'minimum': 3},
+    }
+
     _attribute_map = {
         'cluster_id': {'key': 'clusterId', 'type': 'int'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
