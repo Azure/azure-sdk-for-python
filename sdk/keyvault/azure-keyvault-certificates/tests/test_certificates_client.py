@@ -8,7 +8,7 @@ import time
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
 from azure.keyvault.certificates import Issuer
-from azure.keyvault.certificates._key_vault_id import KeyVaultId
+from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
@@ -69,8 +69,8 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(cert_policy.issuer_parameters.name, pending_cert_operation.issuer_name)
-        pending_id = KeyVaultId.parse_certificate_operation_id(id=pending_cert_operation.id)
-        self.assertEqual(pending_id.vault.strip('/'), vault.strip('/'))
+        pending_id = parse_vault_id(pending_cert_operation.id)
+        self.assertEqual(pending_id.vault_url.strip('/'), vault.strip('/'))
         self.assertEqual(pending_id.name, cert_name)
 
     def _validate_certificate_bundle(self, cert, cert_name, cert_policy):
@@ -201,7 +201,7 @@ class CertificateClientTests(KeyVaultTestCase):
             pending_cert = client.get_certificate_operation(cert_name)
             self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
             if pending_cert.status.lower() == 'completed':
-                cert_id = KeyVaultId.parse_certificate_operation_id(id=pending_cert.target)
+                cert_id = parse_vault_id(url=pending_cert.target)
                 break
             elif pending_cert.status.lower() != 'inprogress':
                 raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
@@ -258,8 +258,9 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)[0]
-                cid = KeyVaultId.parse_certificate_id(cert_bundle.id).base_id.strip('/')
-                expected[cid] = cert_bundle
+                parsed_id = parse_vault_id(url=cert_bundle.id)
+                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
+                expected[cid.strip('/')] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, 'message') and 'Throttled' in ex.message:
                     error_count += 1
@@ -287,8 +288,9 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)[0]
-                cid = KeyVaultId.parse_certificate_id(id=cert_bundle.id).id.strip('/')
-                expected[cid] = cert_bundle
+                parsed_id = parse_vault_id(url=cert_bundle.id)
+                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
+                expected[cid.strip('/')] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, 'message') and 'Throttled' in ex.message:
                     error_count += 1
@@ -360,7 +362,7 @@ class CertificateClientTests(KeyVaultTestCase):
             time.sleep(30)
 
         # validate all our deleted certificates are returned by list_deleted_certificates
-        deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
@@ -375,12 +377,12 @@ class CertificateClientTests(KeyVaultTestCase):
             time.sleep(30)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [KeyVaultId.parse_certificate_id(id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
         expected = {k: v for k, v in certs.items() if k.startswith('certrec')}
-        actual = {k: client.get_certificate(k, KeyVaultId.version_none) for k in expected.keys()}
+        actual = {k: client.get_certificate(name=k, version="") for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer()
