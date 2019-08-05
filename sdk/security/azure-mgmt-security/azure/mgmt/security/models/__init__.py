@@ -72,9 +72,9 @@ try:
     from ._models_py3 import NetworkDataConnectableResourceActualTraffic
     from ._models_py3 import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
     from ._models_py3 import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
-    from ._models_py3 import NetworkDataConnectableResourceAllowedTraffic
-    from ._models_py3 import NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
-    from ._models_py3 import NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceAllowedConnections
+    from ._models_py3 import NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources
+    from ._models_py3 import NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources
     from ._models_py3 import NetworkDataConnectableResourceUnusedPorts
     from ._models_py3 import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
     from ._models_py3 import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
@@ -170,9 +170,9 @@ except (SyntaxError, ImportError):
     from ._models import NetworkDataConnectableResourceActualTraffic
     from ._models import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
     from ._models import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
-    from ._models import NetworkDataConnectableResourceAllowedTraffic
-    from ._models import NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
-    from ._models import NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+    from ._models import NetworkDataConnectableResourceAllowedConnections
+    from ._models import NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources
+    from ._models import NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources
     from ._models import NetworkDataConnectableResourceUnusedPorts
     from ._models import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
     from ._models import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
@@ -314,9 +314,9 @@ __all__ = [
     'NetworkDataConnectableResourceActualTraffic',
     'NetworkDataConnectableResourceActualTrafficInboundConnectedResources',
     'NetworkDataConnectableResourceActualTrafficOutboundConnectedResources',
-    'NetworkDataConnectableResourceAllowedTraffic',
-    'NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources',
-    'NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources',
+    'NetworkDataConnectableResourceAllowedConnections',
+    'NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources',
+    'NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources',
     'NetworkDataConnectableResourceUnusedPorts',
     'NetworkDataConnectableResourceUnusedPortsInboundConnectedResources',
     'NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources',

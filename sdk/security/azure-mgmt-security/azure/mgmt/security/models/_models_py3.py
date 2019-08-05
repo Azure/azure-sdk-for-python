@@ -2499,9 +2499,9 @@ class NetworkDataConnectableResource(Model):
     :vartype connected_resource_id: str
     :ivar connection_type: The connection type
     :vartype connection_type: str
-    :ivar allowed_traffic: The allowed traffic details
-    :vartype allowed_traffic:
-     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTraffic
+    :ivar allowed_connections: The allowed connections details
+    :vartype allowed_connections:
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedConnections
     :ivar actual_traffic: The actual traffic details
     :vartype actual_traffic:
      ~azure.mgmt.security.models.NetworkDataConnectableResourceActualTraffic
@@ -2513,7 +2513,7 @@ class NetworkDataConnectableResource(Model):
     _validation = {
         'connected_resource_id': {'readonly': True},
         'connection_type': {'readonly': True},
-        'allowed_traffic': {'readonly': True},
+        'allowed_connections': {'readonly': True},
         'actual_traffic': {'readonly': True},
         'unused_ports': {'readonly': True},
     }
@@ -2521,7 +2521,7 @@ class NetworkDataConnectableResource(Model):
     _attribute_map = {
         'connected_resource_id': {'key': 'connectedResourceId', 'type': 'str'},
         'connection_type': {'key': 'connectionType', 'type': 'str'},
-        'allowed_traffic': {'key': 'allowedTraffic', 'type': 'NetworkDataConnectableResourceAllowedTraffic'},
+        'allowed_connections': {'key': 'allowedConnections', 'type': 'NetworkDataConnectableResourceAllowedConnections'},
         'actual_traffic': {'key': 'actualTraffic', 'type': 'NetworkDataConnectableResourceActualTraffic'},
         'unused_ports': {'key': 'unusedPorts', 'type': 'NetworkDataConnectableResourceUnusedPorts'},
     }
@@ -2530,7 +2530,7 @@ class NetworkDataConnectableResource(Model):
         super(NetworkDataConnectableResource, self).__init__(**kwargs)
         self.connected_resource_id = None
         self.connection_type = None
-        self.allowed_traffic = None
+        self.allowed_connections = None
         self.actual_traffic = None
         self.unused_ports = None
 
@@ -2631,21 +2631,22 @@ class NetworkDataConnectableResourceActualTrafficOutboundConnectedResources(Mode
         self.connections_details = connections_details
 
 
-class NetworkDataConnectableResourceAllowedTraffic(Model):
-    """The allowed traffic details.
+class NetworkDataConnectableResourceAllowedConnections(Model):
+    """The allowed connections details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar calculated_date_time: The UTC time on which the allowed traffic was
-     calculated
+    :ivar calculated_date_time: The UTC time on which the allowed connections
+     was calculated
     :vartype calculated_date_time: datetime
-    :ivar inbound_connected_resources: The allowed traffic inbound details
+    :ivar inbound_connected_resources: The allowed connections inbound details
     :vartype inbound_connected_resources:
-     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources
-    :ivar outbound_connected_resources: The allowed traffic outbound details
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources
+    :ivar outbound_connected_resources: The allowed connections outbound
+     details
     :vartype outbound_connected_resources:
-     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources
+     ~azure.mgmt.security.models.NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources
     """
 
     _validation = {
@@ -2656,30 +2657,30 @@ class NetworkDataConnectableResourceAllowedTraffic(Model):
 
     _attribute_map = {
         'calculated_date_time': {'key': 'calculatedDateTime', 'type': 'iso-8601'},
-        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources'},
-        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(NetworkDataConnectableResourceAllowedTraffic, self).__init__(**kwargs)
+        super(NetworkDataConnectableResourceAllowedConnections, self).__init__(**kwargs)
         self.calculated_date_time = None
         self.inbound_connected_resources = None
         self.outbound_connected_resources = None
 
 
-class NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources(Model):
-    """The allowed traffic inbound details.
+class NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources(Model):
+    """The allowed connections inbound details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar tcp_ports_summary: The allowed traffic inbound tcp ports summary
+    :ivar tcp_ports_summary: The allowed connections inbound tcp ports summary
     :vartype tcp_ports_summary: int
-    :ivar udp_ports_summary: The allowed traffic inbound udp ports summary
+    :ivar udp_ports_summary: The allowed connections inbound udp ports summary
     :vartype udp_ports_summary: int
-    :ivar tcp_ports: The allowed traffic inbound tcp ports
+    :ivar tcp_ports: The allowed connections inbound tcp ports
     :vartype tcp_ports: str
-    :ivar udp_ports: The allowed traffic inbound udp ports
+    :ivar udp_ports: The allowed connections inbound udp ports
     :vartype udp_ports: str
     """
 
@@ -2698,26 +2699,28 @@ class NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources(Mode
     }
 
     def __init__(self, **kwargs) -> None:
-        super(NetworkDataConnectableResourceAllowedTrafficInboundConnectedResources, self).__init__(**kwargs)
+        super(NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources, self).__init__(**kwargs)
         self.tcp_ports_summary = None
         self.udp_ports_summary = None
         self.tcp_ports = None
         self.udp_ports = None
 
 
-class NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources(Model):
-    """The allowed traffic outbound details.
+class NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources(Model):
+    """The allowed connections outbound details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar tcp_ports_summary: The allowed traffic outbound tcp ports summary
+    :ivar tcp_ports_summary: The allowed connections outbound tcp ports
+     summary
     :vartype tcp_ports_summary: int
-    :ivar udp_ports_summary: The allowed traffic outbound udp ports summary
+    :ivar udp_ports_summary: The allowed connections outbound udp ports
+     summary
     :vartype udp_ports_summary: int
-    :ivar tcp_ports: The allowed traffic outbound tcp ports
+    :ivar tcp_ports: The allowed connections outbound tcp ports
     :vartype tcp_ports: str
-    :ivar udp_ports: The allowed traffic outbound udp ports
+    :ivar udp_ports: The allowed connections outbound udp ports
     :vartype udp_ports: str
     """
 
@@ -2736,7 +2739,7 @@ class NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources(Mod
     }
 
     def __init__(self, **kwargs) -> None:
-        super(NetworkDataConnectableResourceAllowedTrafficOutboundConnectedResources, self).__init__(**kwargs)
+        super(NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources, self).__init__(**kwargs)
         self.tcp_ports_summary = None
         self.udp_ports_summary = None
         self.tcp_ports = None
