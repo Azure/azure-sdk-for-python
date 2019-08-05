@@ -35,12 +35,11 @@ class _DocumentProducer(object):
     When handling an orderby query, MultiExecutionContextAggregator instantiates one instance of this class
     per target partition key range and aggregates the result of each.
     '''
-    def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp):
+    def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp, options):
         '''
         Constructor
         '''
-        # TODO: is that fine we build the options dict and we don't inherit it?
-        self._options = {}
+        self._options = options
         self._partition_key_target_range = partition_key_target_range
         self._doc_producer_comp = document_producer_comp
         self._client = client
