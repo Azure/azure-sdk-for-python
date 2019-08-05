@@ -90,6 +90,7 @@ The following sections provide several code snippets covering some of the most c
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
 - [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
 - [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
+- [Consume events from all partitions of an Event Hub](#consume-events-from-all-partitions-of-an-event-hub)
 
 ### Inspect an Event Hub
 
@@ -206,6 +207,41 @@ finally:
     pass
 ```
 
+### Consume events from all partitions of an Event Hub
+
+To consume events from all partitions of an Event Hub, you'll create an `EventProcessor` for a specific consumer group. When an Event Hub is created, it provides a default consumer group that can be used to get started.
+
+The `EventProcessor` will delegate processing of events to a `PartitionProcessor` implementation that you provide, allowing your logic to focus on the logic needed to provide value while the processor holds responsibility for managing the underlying consumer operations. In our example, we will focus on building the `EventProcessor` and use a very minimal partition processor that does no actual processing.
+
+```python
+import asyncio
+
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub.eventprocessor import PartitionProcessor, EventProcessor, Sqlite3PartitionManager
+
+class MyPartitionProcessor(PartitionProcessor):
+    async def process_events(self, events):
+        print("PartitionProcessor for eventhub:{}, consumer group:{}, partition id:{}, number of events processed:{}".
+              format(self._eventhub_name, self._consumer_group_name, self._partition_id, len(events)))
+        if events:
+            await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+
+async def stop_after_awhile(event_processor, duration):
+    await asyncio.sleep(duration)
+    await event_processor.stop()
+
+async def main():
+    connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+    client = EventHubClient.from_connection_string(connection_str)
+    partition_manager = Sqlite3PartitionManager(db_filename=":memory:")  # in-memory partition manager
+    event_processor = EventProcessor("$default", client, MyPartitionProcessor, partition_manager)
+    await asyncio.gather(event_processor.start(), stop_after_awhile(event_processor, 100))
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+```
+
 ## Troubleshooting
 
 ### General
@@ -230,7 +266,7 @@ These are the samples in our repo demonstraing the usage of the library.
 - [./examples/recv.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/recv.py) - use consumer to consume events
 - [./examples/async_examples/send_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/send_async.py) - async/await support of a producer
 - [./examples/async_examples/recv_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/recv_async.py) - async/await support of a consumer
-- [./examples/eph.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/eph.py) - event processor host
+- [./examples/eventprocessor/event_processor_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/eventprocessor/event_processor_example.py) - event processor
 
 ### Documentation
 
