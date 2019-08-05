@@ -11,9 +11,8 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.keyvault.certificates import CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
-    CertificateBase, Contact, Issuer
-from azure.keyvault.certificates._models import AdministratorDetails, IssuerBase
+from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
+    CertificateBase, Contact, Issuer, IssuerBase
 from .._shared import AsyncKeyVaultClientBase
 
 
