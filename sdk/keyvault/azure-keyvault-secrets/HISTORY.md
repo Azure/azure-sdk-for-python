@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b2
+## 4.0.0b2 (2019-08-06)
 ### Breaking changes:
 - Removed `azure.core.Configuration` from the public API in preparation for a
 revamped configuration API. Static `create_config` methods have been renamed
