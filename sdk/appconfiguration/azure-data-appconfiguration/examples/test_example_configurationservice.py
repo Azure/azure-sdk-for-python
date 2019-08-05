@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from os import path
-from azure.core import AzureError
+from azure.core.exceptions import AzureError
 from azure.data.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
