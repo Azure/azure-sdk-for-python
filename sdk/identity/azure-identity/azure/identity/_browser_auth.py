@@ -30,13 +30,13 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
     :param str client_id: the application's client ID
-    :param str secret: one of the application's client secrets
+    :param str client_secret: one of the application's client secrets
 
-    **Keyword arguments:**
+    Keyword arguments
+        - *tenant (str)*: a tenant ID or a domain associated with a tenant. Defaults to the 'organizations' tenant,
+          which can authenticate work or school accounts.
+        - *timeout (int)*: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
 
-    *tenant (str)* - a tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-        'organizations' tenant, which can authenticate work or school accounts.
-    *timeout (str)* - seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     """
 
     def __init__(self, client_id, client_secret, **kwargs):

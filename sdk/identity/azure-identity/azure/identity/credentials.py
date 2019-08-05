@@ -14,10 +14,11 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
+from ._browser_auth import InteractiveBrowserCredential
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ._internal import PublicClientCredential, wrap_exceptions
 from ._managed_identity import ImdsCredential, MsiCredential
-from .constants import Endpoints, EnvironmentVariables
+from ._constants import Endpoints, EnvironmentVariables
 
 try:
     from typing import TYPE_CHECKING
@@ -200,7 +201,7 @@ class ChainedTokenCredential(object):
         # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
-        self._credentials = credentials
+        self.credentials = credentials
 
     def get_token(self, *scopes):
         # type (*str) -> AccessToken
@@ -213,7 +214,7 @@ class ChainedTokenCredential(object):
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         history = []
-        for credential in self._credentials:
+        for credential in self.credentials:
             try:
                 return credential.get_token(*scopes)
             except ClientAuthenticationError as ex:
@@ -238,7 +239,8 @@ class DeviceCodeCredential(PublicClientCredential):
     """
     Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
     verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
-    authenticate with Directory. If the user authenticates successfully, the credential receives an access token.
+    authenticate with Azure Active Directory. If the user authenticates successfully, the credential receives
+    an access token.
 
     This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
 
@@ -246,20 +248,19 @@ class DeviceCodeCredential(PublicClientCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
 
     :param str client_id: the application's ID
-    :param prompt_callback: (optional) A callback enabling control of how authentication instructions are presented.
+    :param prompt_callback:
+        (optional) A callback enabling control of how authentication instructions are presented.
+        Must accept arguments (``verification_uri``, ``user_code``, ``expires_in``):
+            - ``verification_uri`` (str) the URL the user must visit
+            - ``user_code`` (str) the code the user must enter there
+            - ``expires_in`` (int) the number of seconds the code will be valid
         If not provided, the credential will print instructions to stdout.
-    :type prompt_callback: A callable accepting arguments (``verification_uri``, ``user_code``, ``expires_in``):
-        - ``verification_uri`` (str) the URL the user must visit
-        - ``user_code`` (str) the code the user must enter there
-        - ``expires_in`` (int) the number of seconds the code will be valid
 
-    **Keyword arguments:**
-
-    - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, the credential defaults to the
-      'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-
-    - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device code
-      as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+    Keyword arguments
+        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+          'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+        - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device
+          code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
 
     """
 
@@ -330,10 +331,9 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str username: the user's username (usually an email address)
     :param str password: the user's password
 
-    **Keyword arguments:**
-
-    - **tenant (str)** - a tenant ID or a domain associated with a tenant. If not provided, defaults to the
-      'organizations' tenant.
+    Keyword arguments
+        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+          'organizations' tenant, which supports only Azure Active Directory work or school accounts.
 
     """
 

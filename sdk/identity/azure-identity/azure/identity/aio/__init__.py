@@ -16,10 +16,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
     A default credential capable of handling most Azure SDK authentication scenarios.
 
     When environment variable configuration is present, it authenticates as a service principal
-    using :class:`identity.aio.EnvironmentCredential`.
+    using :class:`azure.identity.aio.EnvironmentCredential`.
 
     When environment configuration is not present, it authenticates with a managed identity
-    using :class:`identity.aio.ManagedIdentityCredential`.
+    using :class:`azure.identity.aio.ManagedIdentityCredential`.
     """
 
     def __init__(self, **kwargs):
