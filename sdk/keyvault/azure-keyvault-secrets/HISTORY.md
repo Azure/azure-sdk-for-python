@@ -1,5 +1,19 @@
 # Release History
 
+## 4.0.0b2
+### Breaking changes:
+- Removed `azure.core.Configuration` from the public API in preparation for a
+revamped configuration API. Static `create_config` methods have been renamed
+`_create_config`, and will be removed in a future release.
+- This version of the library requires `azure-core` 1.0.0b2
+  - If you later want to revert to a version requiring azure-core 1.0.0b1,
+  of this or another Azure SDK library, you'll need to `pip uninstall azure-core`
+
+### New features:
+- Distributed tracing framework OpenCensus is now supported
+- Added support for HTTP challenge based authentication, allowing clients to
+interact with vaults in sovereign clouds.
+
 ## 4.0.0b1 (2019-06-28)
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly
 and Pythonic client library for Azure Key Vault. For more information about
