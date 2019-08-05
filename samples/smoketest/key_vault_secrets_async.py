@@ -16,24 +16,24 @@ class KeyVault_async:
         self.secret_name = "MySecret"
         self.secret_value = "My Secret Value"
 
-    async def SetSecret(self):
+    async def set_secret(self):
         print("Setting a secret...")
         secret = await self.secret_client.set_secret(
             self.secret_name, self.secret_value
         )
         print("\tdone, secret: (" + secret.name + "," + secret.value + ").")
 
-    async def GetSecret(self):
+    async def get_secret(self):
         print("Getting a secret...")
         secret = await self.secret_client.get_secret(self.secret_name)
         print("\tdone, secret: (" + secret.name + "," + secret.value + ").")
 
-    async def DeleteSecret(self):
+    async def delete_secret(self):
         print("Deleting a secret...")
         await self.secret_client.delete_secret(self.secret_name)
         print("\tdone")
 
-    async def Run(self):
+    async def run(self):
 
         print("")
         print("------------------------")
@@ -45,7 +45,7 @@ class KeyVault_async:
         print("")
 
         try:
-            await self.SetSecret()
-            await self.GetSecret()
+            await self.set_secret()
+            await self.get_secret()
         finally:
-            await self.DeleteSecret()
+            await self.delete_secret()

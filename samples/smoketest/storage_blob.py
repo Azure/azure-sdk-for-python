@@ -10,25 +10,25 @@ class StorageBlob:
             connectionString, container="mycontainer", blob="pyTestBlob.txt"
         )
 
-    def UploadBLob(self):
+    def upload_blob(self):
         print("uploading blob...")
         self.data = "This is a sample data for Python Test"
         self.blob.upload_blob(self.data)
         print("\tdone")
 
-    def DownloadBlob(self):
+    def download_blob(self):
         print("downloading blob...")
         with open("./downloadedBlob.txt", "wb+") as my_blob:
             my_blob.writelines(self.blob.download_blob())
 
         print("\tdone")
 
-    def DeleteBlob(self):
+    def delete_blob(self):
         print("Cleaning up the resource...")
         self.blob.delete_blob()
         print("\tdone")
 
-    def Run(self):
+    def run(self):
         print("")
         print("------------------------")
         print("Storage - Blob")
@@ -40,12 +40,12 @@ class StorageBlob:
 
         # Ensure that the blob does not exists before the tests
         try:
-            self.DeleteBlob()
+            self.delete_blob()
         except exceptions.AzureError:
             pass
 
         try:
-            self.UploadBLob()
-            self.DownloadBlob()
+            self.upload_blob()
+            self.download_blob()
         finally:
-            self.DeleteBlob()
+            self.delete_blob()

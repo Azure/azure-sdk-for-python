@@ -9,8 +9,8 @@ print("==========================================")
 
 
 async def main():
-    await KeyVault_async().Run()
-    await EventHub_async().Run()
+    await KeyVault_async().run()
+    await EventHub_async().run()
 
 
 loop = asyncio.get_event_loop()

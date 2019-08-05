@@ -14,13 +14,13 @@ class EventHub_async:
             connection_string, event_hub_name
         )
 
-    async def Getpartition_ids(self):
+    async def get_partition_ids(self):
         print("Getting partitions id...")
         partition_ids = await self.client.get_partition_ids()
         print("\tdone")
         return partition_ids
 
-    async def SendAndReceiveEvents(self, partition_id):
+    async def send_and_receive_events(self, partition_id):
         async with self.client.create_consumer(
             consumer_group="$default",
             partition_id=partition_id,
@@ -53,7 +53,7 @@ class EventHub_async:
                     )
                 )
 
-    async def Run(self):
+    async def run(self):
         print("")
         print("------------------------")
         print("Event Hubs")
@@ -63,7 +63,7 @@ class EventHub_async:
         print("3) Consume Events")
         print("")
 
-        partition_id = await self.Getpartition_ids()
+        partition_id = await self.get_partition_ids()
         # In this sample the same partition id is going to be used for the producer and consumer,
         # It is the first one, but it could be any (is not relevant as long as it is the same in both producer and consumer)
-        await self.SendAndReceiveEvents(partition_id[0])
+        await self.send_and_receive_events(partition_id[0])
