@@ -2,6 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._client import KeyClient
+from .client import KeyClient
 
 __all__ = ["KeyClient"]

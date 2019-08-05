@@ -10,7 +10,6 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 from azure.identity.aio import DefaultAzureCredential, CertificateCredential, ClientSecretCredential
-from azure.identity.constants import EnvironmentVariables
 import pytest
 
 ARM_SCOPE = "https://management.azure.com/.default"

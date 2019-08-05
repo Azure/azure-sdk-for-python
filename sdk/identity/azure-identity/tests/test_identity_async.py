@@ -20,7 +20,7 @@ from azure.identity.aio import (
     ManagedIdentityCredential,
 )
 from azure.identity.aio._managed_identity import ImdsCredential
-from azure.identity.constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables
 
 from helpers import mock_response, Request, async_validating_transport
 
@@ -119,12 +119,6 @@ async def test_client_secret_environment_credential(monkeypatch):
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
-
-
-@pytest.mark.asyncio
-async def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        await EnvironmentCredential().get_token("scope")
 
 
 @pytest.mark.asyncio
@@ -229,7 +223,7 @@ async def test_imds_credential_retries():
     )
     mock_send = Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential.create_config().retry_policy.total_retries
+    total_retries = ImdsCredential._create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()

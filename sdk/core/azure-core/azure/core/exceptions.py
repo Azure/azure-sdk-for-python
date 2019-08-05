@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, TYPE_CHECKING
+from typing import Callable, Any, Dict, Optional, List, Union, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -237,10 +237,10 @@ class ODataV4Error(HttpResponseError):
     _ERROR_FORMAT = ODataV4Format
 
     def __init__(self, response, **kwargs):
-        # type: (_HttpResponseBase, Dict[str, Any]) -> None
+        # type: (_HttpResponseBase, Any) -> None
 
         # Ensure field are declared, whatever can happen afterwards
-        self.odata_json = None  # type: Optional[dict[str, Any]]
+        self.odata_json = None  # type: Optional[Dict[str, Any]]
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
@@ -259,7 +259,7 @@ class ODataV4Error(HttpResponseError):
 
         super(ODataV4Error, self).__init__(response=response, **kwargs)
 
-        self._error_format = None
+        self._error_format = None  # type: Optional[Union[str, ODataV4Format]]
         if self.odata_json:
             try:
                 error_node = self.odata_json["error"]

@@ -16,8 +16,8 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 from ._authn_client import AsyncAuthnClient
 from ._managed_identity import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..constants import Endpoints, EnvironmentVariables
-from ..credentials import ChainedTokenCredential
+from .._constants import Endpoints, EnvironmentVariables
+from ..credentials import ChainedTokenCredential as SyncChainedTokenCredential
 
 # pylint:disable=too-few-public-methods
 
@@ -29,20 +29,11 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_id: the service principal's client ID
     :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(
-        self,
-        client_id: str,
-        secret: str,
-        tenant_id: str,
-        config: Optional[Configuration] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> None:
+    def __init__(self, client_id: str, secret: str, tenant_id: str, **kwargs: Mapping[str, Any]) -> None:
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """
@@ -66,20 +57,11 @@ class CertificateCredential(CertificateCredentialBase):
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(
-        self,
-        client_id: str,
-        tenant_id: str,
-        certificate_path: str,
-        config: Optional[Configuration] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> None:
+    def __init__(self, client_id: str, tenant_id: str, certificate_path: str, **kwargs: Mapping[str, Any]) -> None:
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """
@@ -98,18 +80,24 @@ class CertificateCredential(CertificateCredentialBase):
 
 class EnvironmentCredential:
     """
-    Authenticates as a service principal using a client ID/secret pair or a certificate,
-    depending on environment variable settings.
+    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
+    password, depending on environment variable settings. Configuration is attempted in this order, using these
+    environment variables:
 
-    These environment variables are required:
-
+    Service principal with secret:
       - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
 
-    Additionally, set **one** of these to configure client secret or certificate authentication:
-
-      - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+    Service principal with certificate:
+      - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+
+    User with username and password:
+      - **AZURE_CLIENT_ID**: the application's client ID
+      - **AZURE_USERNAME**: a username (usually an email address)
+      - **AZURE_PASSWORD**: that user's password
     """
 
     def __init__(self, **kwargs: Mapping[str, Any]) -> None:
@@ -151,8 +139,6 @@ class ManagedIdentityCredential(object):
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
     """
 
     def __new__(cls, *args, **kwargs):
@@ -162,17 +148,8 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id: Optional[str] = None, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+    def __init__(self, client_id: Optional[str] = None, **kwargs: Any) -> None:
         pass
-
-    @staticmethod
-    def create_config(**kwargs: Dict[str, Any]) -> Configuration:
-        """
-        Build a default configuration for the credential's HTTP pipeline.
-
-        :rtype: :class:`azure.core.configuration`
-        """
-        return Configuration(**kwargs)
 
     async def get_token(self, *scopes: str) -> AccessToken:
         """
@@ -185,7 +162,7 @@ class ManagedIdentityCredential(object):
         return AccessToken()
 
 
-class ChainedTokenCredential(ChainedTokenCredential):
+class ChainedTokenCredential(SyncChainedTokenCredential):
     """
     A sequence of credentials that is itself a credential. Its ``get_token`` method calls ``get_token`` on each
     credential in the sequence, in order, returning the first valid token received.
@@ -194,7 +171,7 @@ class ChainedTokenCredential(ChainedTokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    async def get_token(self, *scopes: str) -> AccessToken:  # type: ignore
+    async def get_token(self, *scopes: str) -> AccessToken:
         """
         Asynchronously request a token from each credential, in order, returning the first token
         received. If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
@@ -204,7 +181,7 @@ class ChainedTokenCredential(ChainedTokenCredential):
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         history = []
-        for credential in self._credentials:
+        for credential in self.credentials:
             try:
                 return await credential.get_token(*scopes)
             except ClientAuthenticationError as ex:

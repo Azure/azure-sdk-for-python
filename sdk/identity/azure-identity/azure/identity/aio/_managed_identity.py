@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ..constants import Endpoints, EnvironmentVariables
+from .._constants import Endpoints, EnvironmentVariables
 from .._managed_identity import _ManagedIdentityBase
 
 
@@ -20,13 +20,13 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
         super().__init__(endpoint=endpoint, config=config, client_cls=AsyncAuthnClient, **kwargs)
 
     @staticmethod
-    def create_config(**kwargs: Any) -> Configuration:  # type: ignore
+    def _create_config(**kwargs: Any) -> Configuration:  # type: ignore
         """
         Build a default configuration for the credential's HTTP pipeline.
 
         :rtype: :class:`azure.core.configuration`
         """
-        return _ManagedIdentityBase.create_config(retry_policy=AsyncRetryPolicy, **kwargs)
+        return _ManagedIdentityBase._create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
 class ImdsCredential(_AsyncManagedIdentityBase):
