@@ -22,7 +22,7 @@ except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Union
+    from typing import Union, Any
 
 from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
@@ -94,7 +94,7 @@ class EventHubClientAbstract(object):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         """
         Constructs a new EventHubClient.
 

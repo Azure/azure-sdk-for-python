@@ -190,8 +190,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, EventPosition) -> EventHubConsumer
+    def create_consumer(self, consumer_group: str, partition_id: str, event_position: EventPosition, **kwargs):
         """
         Create an async consumer to the client for a particular consumer group and partition.
 

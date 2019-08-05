@@ -27,17 +27,45 @@ class EventProcessor(object):
         """An EventProcessor automatically creates and runs consumers for all partitions of the eventhub.
 
         It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
-        If multiple EventProcessors are running for an event hub, they will automatically balance loading. This feature
-        won't be available until preview 3.
+        If multiple EventProcessors are running for an event hub, they will automatically balance loading.
+        This load balancer won't be available until preview 3.
 
         :param eventhub_client: an instance of azure.eventhub.aio.EventClient object
-        :param consumer_group_name: the consumer group that is used to receive events
-        from the event hub that the eventhub_client is going to receive events from
-        :param partition_processor_factory: a callable (type or function) that is called to return a PartitionProcessor
-        TODO: elaborate an example
-        :param partition_manager: an instance of a PartitionManager implementation
+        :param consumer_group_name: the consumer group that is used to receive events from
+        :param partition_processor_factory: a callable (type or function) that is called to return a PartitionProcessor.
+        Users define their own PartitionProcessor by subclassing it implement abstract method process_events() to
+        implement their own operation logic.
+        :param partition_manager: an instance of a PartitionManager implementation. A partition manager claims ownership
+        of partitions and saves partition checkpoints to a data storage. For preview 2, sample Sqlite3PartitionManager is
+        already provided. For the future releases there will be more PartitionManager implementation provided to save
+        checkpoint to different data storage. Users can also implement their PartitionManager class to user their own
+        preferred data storage.
         :param initial_event_position: the offset to start a partition consumer if the partition has no checkpoint yet
         :type initial_event_position: int or str
+
+        Example:
+            ```python
+                    class MyPartitionProcessor(PartitionProcessor):
+                        async def process_events(self, events):
+                            if events:
+                                # do something sync or async to process the events
+                                await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+
+
+                    import asyncio
+                    from azure.eventhub.aio import EventHubClient
+                    from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+                    client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
+                    partition_manager = Sqlite3PartitionManager()
+                    try:
+                        event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+                        asyncio.ensure_future(event_processor.start())
+                        await asyncio.sleep(100)  # allow it to run 100 seconds
+                        await event_processor.stop()
+                    finally:
+                        await partition_manager.close()
+            ```
+
         """
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client

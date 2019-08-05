@@ -198,7 +198,7 @@ class EventHubClient(EventHubClientAbstract):
         return output
 
     def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, EventPosition, ...) -> EventHubConsumer
+        # type: (str, str, EventPosition, Any) -> EventHubConsumer
         """
         Create a consumer to the client for a particular consumer group and partition.
 
@@ -242,7 +242,7 @@ class EventHubClient(EventHubClientAbstract):
         return handler
 
     def create_producer(self, partition_id=None, operation=None, send_timeout=None):
-        # type: (str, str, float, ...) -> EventHubProducer
+        # type: (str, str, float) -> EventHubProducer
         """
         Create an producer to send EventData object to an EventHub.
 
