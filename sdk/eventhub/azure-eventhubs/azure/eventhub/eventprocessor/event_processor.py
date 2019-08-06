@@ -38,11 +38,11 @@ class EventProcessor(object):
          be read only in the context of this group.
         :type consumer_group_name: str
         :param partition_processor_factory: A callable(type or function) object that creates an instance of a class
-         implementing the ~azure.eventhub.eventprocessor.PartitionProcessor interface.
+         implementing the ~azure.eventhub.eventprocessor.PartitionProcessor.
         :type partition_processor_factory: callable object
         :param partition_manager: Interacts with the storage system, dealing with ownership and checkpoints.
          For preview 2, sample Sqlite3PartitionManager is provided.
-        :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager interface.
+        :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager.
         :param initial_event_position: The offset to start a partition consumer if the partition has no checkpoint yet.
         :type initial_event_position: int or str
 
