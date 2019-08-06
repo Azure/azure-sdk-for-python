@@ -19,6 +19,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from .crypto import CryptographyClient
 from .models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
@@ -39,6 +40,14 @@ class KeyClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
+
+    def get_cryptography_client(self, key, **kwargs):
+        # type: (Union[Key, str], Any) -> CryptographyClient
+
+        # the initializer requires a credential but won't actually use it in this case because we pass in this
+        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
+        credential = object()
+        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
 
     @distributed_trace
     def create_key(
@@ -510,69 +519,3 @@ class KeyClient(KeyVaultClientBase):
             self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)
-
-    @distributed_trace
-    def wrap_key(self, name, algorithm, value, version=None, **kwargs):
-        # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> KeyOperationResult
-        """Wraps a symmetric key using a specified key.
-
-        The WRAP operation supports encryption of a symmetric key using a key
-        encryption key that has previously been stored in an Azure Key Vault.
-        The WRAP operation is only strictly necessary for symmetric keys stored
-        in Azure Key Vault since protection with an asymmetric key can be
-        performed using the public portion of the key. This operation is
-        supported for asymmetric keys as a convenience for callers that have a
-        key-reference but do not have access to the public key material. This
-        operation requires the keys/wrapKey permission.
-
-        :param str name: The name of the key
-        :param str version: The version of the key.
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The wrapped symmetric key.
-        :rtype: ~azure.keyvault.keys.models.Key
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = self._client.wrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)
-
-    @distributed_trace
-    def unwrap_key(self, name, algorithm, value, version=None, **kwargs):
-        # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> KeyOperationResult
-        """Unwraps a symmetric key using the specified key that was initially used
-        for wrapping that key.
-
-        The UNWRAP operation supports decryption of a symmetric key using the
-        target key encryption key. This operation is the reverse of the WRAP
-        operation. The UNWRAP operation applies to asymmetric and symmetric
-        keys stored in Azure Key Vault since it uses the private portion of the
-        key. This operation requires the keys/unwrapKey permission.
-
-        :param str name: The name of the key
-        :param str version: The version of the key.
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The unwrapped symmetric key.
-        :rtype: ~azure.keyvault.keys.models.Key
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = self._client.unwrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)
