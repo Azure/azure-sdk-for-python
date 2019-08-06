@@ -33,7 +33,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         # # if not present, copy it
         if not os.path.exists(destination_tox_ini):
-            print('Tox.ini not available in package folder, leveraging tox.ini to package folder.')
+            print('No customized tox.ini present, using common eng/tox/tox.ini.')
             tox_execution_array.extend(['-c', DEFAULT_TOX_INI_LOCATION])
             
         if tox_env:

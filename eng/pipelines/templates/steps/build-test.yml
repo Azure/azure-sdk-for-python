@@ -78,6 +78,7 @@ steps:
         --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ne('${{ parameters.PythonVersion }}', '2.7'))
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
