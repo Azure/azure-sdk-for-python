@@ -64,7 +64,10 @@ class AsyncStorageAccountHostsMixin(object):
         if 'connection_timeout' not in kwargs:
             kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
         if not config.transport:
-            from azure.core.pipeline.transport import AioHttpTransport
+            try:
+                from azure.core.pipeline.transport import AioHttpTransport
+            except ImportError:
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
             config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
