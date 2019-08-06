@@ -301,25 +301,33 @@ class Endpoints(Model):
 class ExpressRouteAuthorization(Model):
     """ExpressRouteAuthorization.
 
-    :param id:
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name:
     :type name: str
-    :param key:
-    :type key: str
+    :ivar id:
+    :vartype id: str
+    :ivar key:
+    :vartype key: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'key': {'readonly': True},
+    }
+
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, key: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, **kwargs) -> None:
         super(ExpressRouteAuthorization, self).__init__(**kwargs)
-        self.id = id
         self.name = name
-        self.key = key
+        self.id = None
+        self.key = None
 
 
 class GetAdminCredentialsResponse(Model):
