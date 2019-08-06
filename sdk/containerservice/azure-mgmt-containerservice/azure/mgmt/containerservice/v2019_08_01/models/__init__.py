@@ -38,6 +38,7 @@ try:
     from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPs
     from ._models_py3 import ManagedClusterPoolUpgradeProfile
     from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
+    from ._models_py3 import ManagedClusterPrivateLinkResource
     from ._models_py3 import ManagedClusterServicePrincipalProfile
     from ._models_py3 import ManagedClusterUpgradeProfile
     from ._models_py3 import ManagedClusterWindowsProfile
@@ -75,6 +76,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedClusterLoadBalancerProfileOutboundIPs
     from ._models import ManagedClusterPoolUpgradeProfile
     from ._models import ManagedClusterPoolUpgradeProfileUpgradesItem
+    from ._models import ManagedClusterPrivateLinkResource
     from ._models import ManagedClusterServicePrincipalProfile
     from ._models import ManagedClusterUpgradeProfile
     from ._models import ManagedClusterWindowsProfile
@@ -128,6 +130,7 @@ __all__ = [
     'ManagedClusterLoadBalancerProfileOutboundIPs',
     'ManagedClusterPoolUpgradeProfile',
     'ManagedClusterPoolUpgradeProfileUpgradesItem',
+    'ManagedClusterPrivateLinkResource',
     'ManagedClusterServicePrincipalProfile',
     'ManagedClusterUpgradeProfile',
     'ManagedClusterWindowsProfile',
