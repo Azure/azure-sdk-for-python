@@ -4,16 +4,22 @@
 
 **New features**
 
-- Added ability to create and send EventDataBatch object with limited data size.
+- Added new class `EventDataBatch` for publication of a batch of events with known size constraint.
+- Added new method `create_batch` to producer for creating EventDataBatch objects.
 - Added new configuration parameters for exponential delay among each retry operation.
     - `retry_total`: The total number of attempts to redo the failed operation.
     - `backoff_factor`: The delay time factor.
     - `backoff_max`: The maximum delay time in total.
+- Added support for context manager on `EventHubClient`.
 
 **Breaking changes**
 
-- New `EventProcessor` design
-    - The `EventProcessorHost` was waived.
+- Replaced `max_retries` configuration parameter of the EventHubClient with `retry_total`.
+- Introduced the initial concept of a new version of the `EventProcessor`, intended as a neutral framework for processing events across all partitions for a given Event Hub and in the context of a specific Consumer Group. This early preview is intended to allow consumers to test the new design using a single instance that does not persist checkpoints to any durable store.
+    - `EventProcessor`: EventProcessor creates and runs consumers for all partitions of the eventhub.
+    - `PartitionManager`: PartitionManager defines the interface for getting/claiming ownerships of partitions and updating checkpoints.
+    - `PartitionProcessor`: PartitionProcessor defines the interface for processing events.
+    - `CheckpointManager`: CheckpointManager takes responsibility for updating checkpoints during events processing.
 
 ## 5.0.0b1 (2019-06-25)
 

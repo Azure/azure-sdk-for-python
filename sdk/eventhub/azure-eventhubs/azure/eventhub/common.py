@@ -63,8 +63,6 @@ class EventData(object):
 
         :param body: The data to send in a single message.
         :type body: str, bytes or list
-        :param batch: A data generator to send batched messages.
-        :type batch: Generator
         :param to_device: An IoT device to route to.
         :type to_device: str
         """

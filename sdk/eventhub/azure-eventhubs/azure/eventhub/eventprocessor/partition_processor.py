@@ -18,6 +18,11 @@ class CloseReason(Enum):
 
 
 class PartitionProcessor(ABC):
+    """
+    PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
+    implementing this interface will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
+
+    """
     def __init__(self, checkpoint_manager: CheckpointManager):
         self._checkpoint_manager = checkpoint_manager
 
@@ -27,6 +32,9 @@ class PartitionProcessor(ABC):
         There are different reasons to trigger the PartitionProcessor to close.
         Refer to enum class CloseReason
 
+        :param reason: Reason for closing the PartitionProcessor.
+        :type reason: CloseReason
+
         """
         pass
 
@@ -34,11 +42,17 @@ class PartitionProcessor(ABC):
     async def process_events(self, events: List[EventData]):
         """Called when a batch of events have been received.
 
+        :param events: Received events.
+        :type events: list[~azure.eventhub.common.EventData]
+
         """
         pass
 
     async def process_error(self, error):
         """Called when an error happens
+
+        :param error: The error that happens.
+        :type error: Exception
 
         """
         pass

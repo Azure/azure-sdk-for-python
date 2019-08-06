@@ -29,11 +29,17 @@ class MyPartitionProcessor(PartitionProcessor):
             await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
 
 
+def partition_processor_factory(checkpoint_manager):
+    return MyPartitionProcessor(checkpoint_manager)
+
+
 async def main():
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     partition_manager = Sqlite3PartitionManager()
     try:
         event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+        # You can also define a callable object for creating PartitionProcessor like below:
+        # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
         asyncio.ensure_future(event_processor.start())
         await asyncio.sleep(TEST_DURATION)
         await event_processor.stop()
