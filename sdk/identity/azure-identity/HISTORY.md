@@ -8,8 +8,10 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### Dependency changes:
 - Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
-  - If you later want to revert to azure-identity 1.0.0b1, or another Azure SDK
-  library requiring azure-core 1.0.0b1, you'll need to `pip uninstall azure-core`
+  - If you later want to revert to a version requiring azure-core 1.0.0b1,
+  of this or another Azure SDK library, you must explicitly install azure-core
+  1.0.0b1 as well. For example:
+  `pip install azure-core==1.0.0b1 azure-identity==1.0.0b1`
 - Adopted [MSAL](https://pypi.org/project/msal/) 0.4.1
 - New dependency for Python 2.7: [mock](https://pypi.org/project/mock/)
 
