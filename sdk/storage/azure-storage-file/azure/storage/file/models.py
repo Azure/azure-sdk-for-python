@@ -7,10 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.paging import PageIterator
-from ._shared.utils import (
-    return_context_and_deserialized,
-    process_storage_error)
-
+from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
@@ -250,7 +247,7 @@ class SharePropertiesPaged(PageIterator):
     :ivar str prefix: A file name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -282,6 +279,7 @@ class SharePropertiesPaged(PageIterator):
             return self._command(
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
+                prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
@@ -354,7 +352,7 @@ class HandlesPaged(PageIterator):
 
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -438,7 +436,7 @@ class DirectoryPropertiesPaged(PageIterator):
     :ivar str prefix: A file name prefix being used to filter the list.
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.

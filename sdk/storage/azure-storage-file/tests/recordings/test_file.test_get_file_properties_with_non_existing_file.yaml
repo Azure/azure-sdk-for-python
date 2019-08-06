@@ -9,21 +9,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 0adc1c74-9816-11e9-ade4-f45c89a7d159
+      - 9a3206e2-b639-11e9-a698-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:26:45 GMT
+      - Sat, 03 Aug 2019 21:56:52 GMT
       x-ms-version:
       - '2018-11-09'
     method: HEAD
-    uri: https://blobstoragename.file.core.windows.net/utsharea6d51786/filea6d51786
+    uri: https://storagename.file.core.windows.net/utsharea6d51786/filea6d51786
   response:
     body:
       string: ''
     headers:
       Date:
-      - Wed, 26 Jun 2019 13:26:46 GMT
+      - Sat, 03 Aug 2019 21:56:51 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -33,7 +35,7 @@ interactions:
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - 995d25ad-a01a-0007-4222-2c9285000000
+      - 94adbf14-d01a-00cf-6346-4a03b2000000
       x-ms-version:
       - '2018-11-09'
     status:
@@ -49,11 +51,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d77a0298-9819-11e9-a1b4-f45c89a7d159
+      - 79d7a140-b63a-11e9-96e3-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:53:56 GMT
+      - Sat, 03 Aug 2019 22:03:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: HEAD
@@ -63,7 +67,7 @@ interactions:
       string: ''
     headers:
       Date:
-      - Wed, 26 Jun 2019 13:53:56 GMT
+      - Sat, 03 Aug 2019 22:03:06 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -73,7 +77,49 @@ interactions:
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - b84427be-101a-0051-7926-2c7af5000000
+      - 6c4fcb56-b01a-00b9-2947-4a870e000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - e08dd234-b63a-11e9-a0ff-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 22:06:00 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utsharea6d51786/filea6d51786
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Sat, 03 Aug 2019 22:05:59 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-error-code:
+      - ResourceNotFound
+      x-ms-request-id:
+      - 74fdde28-201a-00da-2747-4ac12b000000
       x-ms-version:
       - '2018-11-09'
     status:

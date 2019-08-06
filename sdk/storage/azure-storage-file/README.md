@@ -120,10 +120,10 @@ Upload a file to the share
 ```python
 from azure.storage.file import FileClient
 
-file = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
+file_client = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
 
 with open("./SampleSource.txt", "rb") as source_file:
-    file.upload_file(source_file)
+    file_client.upload_file(source_file)
 ```
 
 ## Troubleshooting

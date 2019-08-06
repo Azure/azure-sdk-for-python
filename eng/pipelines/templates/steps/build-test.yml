@@ -37,7 +37,7 @@ steps:
     displayName: 'Install Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0

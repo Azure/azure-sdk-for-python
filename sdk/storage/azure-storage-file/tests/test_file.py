@@ -8,12 +8,13 @@
 import base64
 import os
 import unittest
+import time
 from datetime import datetime, timedelta
 
 import requests
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 
 from azure.storage.file import (
     FileClient,
@@ -105,7 +106,10 @@ class StorageFileTest(FileTestCase):
     def _create_remote_share(self):
         self.remote_share_name = self.get_resource_name('remoteshare')
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
-        remote_share.create_share()
+        try:
+            remote_share.create_share()
+        except ResourceExistsError:
+            pass
         return remote_share
 
     def _create_remote_file(self, file_data=None):
@@ -117,16 +121,18 @@ class StorageFileTest(FileTestCase):
         remote_file.upload_file(file_data)
         return remote_file
 
-    def _wait_for_async_copy(self, share_name, dir_name, file_name):
+    def _wait_for_async_copy(self, share_name, file_path):
         count = 0
-        file = self.fs.get_file_properties(share_name, dir_name, file_name)
-        while file.properties.copy.status != 'success':
+        share_client = self.fsc.get_share_client(share_name)
+        file_client = share_client.get_file_client(file_path)
+        properties = file_client.get_file_properties()
+        while properties.copy.status != 'success':
             count = count + 1
             if count > 10:
                 self.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
-            file = self.fs.get_file_properties(share_name, dir_name, file_name)
-        self.assertEqual(file.properties.copy.status, 'success')
+            properties = file_client.get_file_properties()
+        self.assertEqual(properties.copy.status, 'success')
 
     def assertFileEqual(self, file_client, expected_data):
         actual_data = file_client.download_file().content_as_bytes()
@@ -655,12 +661,12 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        copy = file_client.copy_file_from_url(source_client.url)
+        copy = file_client.start_copy_from_url(source_client.url)
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertEqual(copy.status(), 'success')
-        self.assertIsNotNone(copy.copy_id())
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
 
         copy_file = file_client.download_file().content_as_bytes()
         self.assertEqual(copy_file, self.short_byte_data)
@@ -679,7 +685,7 @@ class StorageFileTest(FileTestCase):
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         with self.assertRaises(HttpResponseError) as e:
-            file_client.copy_file_from_url(source_file.url)
+            file_client.start_copy_from_url(source_file.url)
 
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
@@ -703,13 +709,11 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_url)
+        copy_resp = file_client.start_copy_from_url(source_url)
 
         # Assert
-        status = copy_resp.status()
-        self.assertTrue(status in ['success', 'pending'])
-        if status == 'pending':
-            copy_resp.wait()
+        self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
+        self._wait_for_async_copy(self.share_name, target_file_name)
 
         actual_data = file_client.download_file().content_as_bytes()
         self.assertEqual(actual_data, data)
@@ -733,9 +737,9 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_url)
-        self.assertEqual(copy_resp.status(), 'pending')
-        copy_resp.abort()
+        copy_resp = file_client.start_copy_from_url(source_url)
+        self.assertEqual(copy_resp['copy_status'], 'pending')
+        file_client.abort_copy(copy_resp)
 
         # Assert
         target_file = file_client.download_file()
@@ -754,13 +758,13 @@ class StorageFileTest(FileTestCase):
             share=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
-        copy_resp = file_client.copy_file_from_url(source_file.url)
+        copy_resp = file_client.start_copy_from_url(source_file.url)
 
         with self.assertRaises(HttpResponseError):
-            copy_resp.abort()
+            file_client.abort_copy(copy_resp)
 
         # Assert
-        self.assertEqual(copy_resp.status(), 'success')
+        self.assertEqual(copy_resp['copy_status'], 'success')
 
     @record
     def test_unicode_get_file_unicode_name(self):
@@ -942,7 +946,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data)
         self.assert_upload_progress(
             len(data),
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     def test_create_file_from_stream(self):
@@ -1027,7 +1031,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self.assert_upload_progress(
             len(data),
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     def test_create_file_from_stream_truncated(self):
@@ -1089,7 +1093,7 @@ class StorageFileTest(FileTestCase):
         self.assertFileEqual(file_client, data[:file_size])
         self.assert_upload_progress(
             file_size,
-            self.fsc._config.data_settings.max_range_size,
+            self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
     @record

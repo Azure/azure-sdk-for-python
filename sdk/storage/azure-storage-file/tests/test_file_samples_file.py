@@ -119,7 +119,7 @@ class TestFileSamples(FileTestCase):
 
             # Copy the sample source file from the url to the destination file
             # [START copy_file_from_url]
-            destination_file.copy_file_from_url(source_url=source_url)
+            destination_file.start_copy_from_url(source_url=source_url)
             # [END copy_file_from_url]
         finally:
             # Delete the share

@@ -11,15 +11,28 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
-from ._shared.utils import return_response_headers, process_storage_error
-from ._generated.models import StorageErrorException
-from ._blob_utils import get_modification_conditions
+from azure.core.tracing.decorator import distributed_trace
+
+from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._generated.models import (
+    StorageErrorException,
+    ModifiedAccessConditions,
+    LeaseAccessConditions)
 
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.operations import BlobOperations, ContainerOperations
     BlobClient = TypeVar("BlobClient")
     ContainerClient = TypeVar("ContainerClient")
+
+
+def get_access_conditions(lease):
+    # type: (Optional[Union[LeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 class LeaseClient(object):
@@ -63,15 +76,9 @@ class LeaseClient(object):
     def __exit__(self, *args):
         self.release()
 
-    def acquire(
-            self, lease_duration=-1,  # type: int
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs):
-        # type: (...) -> None
+    @distributed_trace
+    def acquire(self, lease_duration=-1, timeout=None, **kwargs):
+        # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -107,8 +114,11 @@ class LeaseClient(object):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = self._client.acquire_lease(
                 timeout=timeout,
@@ -123,15 +133,9 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = kwargs.get('etag')  # type: str
 
-    def renew(
-            self, if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+    @distributed_trace
+    def renew(self, timeout=None, **kwargs):
+        # type: (Optional[int], Any) -> None
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -165,8 +169,11 @@ class LeaseClient(object):
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = self._client.renew_lease(
                 lease_id=self.id,
@@ -180,15 +187,9 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
-    def release(
-            self, if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+    @distributed_trace
+    def release(self, timeout=None, **kwargs):
+        # type: (Optional[int], Any) -> None
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -220,8 +221,11 @@ class LeaseClient(object):
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = self._client.release_lease(
                 lease_id=self.id,
@@ -235,16 +239,9 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
-    def change(
-            self, proposed_lease_id,  # type: str
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+    @distributed_trace
+    def change(self, proposed_lease_id, timeout=None, **kwargs):
+        # type: (str, Optional[int], Any) -> None
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -275,8 +272,11 @@ class LeaseClient(object):
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = self._client.change_lease(
                 lease_id=self.id,
@@ -291,13 +291,9 @@ class LeaseClient(object):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
-    def break_lease(
-            self, lease_break_period=None,  # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            timeout=None,  # type: Optional[int]
-            **kwargs):
-        # type: (...) -> int
+    @distributed_trace
+    def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -334,8 +330,9 @@ class LeaseClient(object):
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         try:
             response = self._client.break_lease(
                 timeout=timeout,

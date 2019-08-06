@@ -15,15 +15,12 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    return_response_headers,
-    parse_connection_str,
-    process_storage_error,
-    parse_query)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from .container_client import ContainerClient
@@ -219,6 +216,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -242,6 +240,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
@@ -281,6 +280,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
@@ -303,6 +303,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties(
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -379,6 +380,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -422,8 +424,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                page_iterator_class=ContainerPropertiesPaged
+            )
 
+    @distributed_trace
     def create_container(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -463,13 +470,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
 
+    @distributed_trace
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -523,10 +527,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         container = self.get_container_client(container) # type: ignore
         container.delete_container( # type: ignore
             lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
             **kwargs)
 

@@ -17,39 +17,35 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 import six
 
 from ._shared.shared_access_signature import BlobSharedAccessSignature
-from ._shared.utils import (
-    StorageAccountHostsMixin,
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    add_metadata_headers,
-    parse_connection_str,
-    serialize_iso,
-    parse_query,
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
+    ModifiedAccessConditions,
     StorageErrorException,
     SignedIdentifier)
-from ._blob_utils import (
-    get_access_conditions,
-    get_modification_conditions,
-    deserialize_container_properties)
+from ._deserialize import deserialize_container_properties
 from .models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
     BlobPrefix)
-from .lease import LeaseClient
+from .lease import LeaseClient, get_access_conditions
 from .blob_client import BlobClient
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
     from .models import ContainerPermissions, PublicAccess
     from datetime import datetime
     from .models import ( # pylint: disable=unused-import
@@ -281,6 +277,7 @@ class ContainerClient(StorageAccountHostsMixin):
             content_type=content_type,
         )
 
+    @distributed_trace
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
         """
@@ -317,12 +314,9 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_container(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -369,8 +363,11 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Delete a container.
         """
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             self._client.container.delete(
                 timeout=timeout,
@@ -380,13 +377,10 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> LeaseClient
@@ -438,16 +432,10 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Acquiring a lease on the container.
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
-        lease.acquire(
-            lease_duration=lease_duration,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            timeout=timeout,
-            **kwargs)
+        lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -463,6 +451,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -496,10 +485,10 @@ class ContainerClient(StorageAccountHostsMixin):
         response.name = self.container_name
         return response # type: ignore
 
+    @distributed_trace
     def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -537,7 +526,7 @@ class ContainerClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(if_modified_since=if_modified_since)
+        mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
         try:
             return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
@@ -549,6 +538,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
@@ -584,12 +574,11 @@ class ContainerClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace
     def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -645,8 +634,9 @@ class ContainerClient(StorageAccountHostsMixin):
                 identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
             signed_identifiers = identifiers # type: ignore
 
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since)
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         access_conditions = get_access_conditions(lease)
         try:
             return self._client.container.set_access_policy(
@@ -660,6 +650,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Any], Optional[int], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
@@ -699,6 +690,7 @@ class ContainerClient(StorageAccountHostsMixin):
             page_iterator_class=BlobPropertiesPaged)
 
 
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
@@ -744,6 +736,7 @@ class ContainerClient(StorageAccountHostsMixin):
             results_per_page=results_per_page,
             delimiter=delimiter)
 
+    @distributed_trace
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -754,13 +747,7 @@ class ContainerClient(StorageAccountHostsMixin):
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
@@ -861,27 +848,18 @@ class ContainerClient(StorageAccountHostsMixin):
             content_settings=content_settings,
             validate_content=validate_content,
             lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
-            premium_page_blob_tier=premium_page_blob_tier,
-            maxsize_condition=maxsize_condition,
             max_connections=max_connections,
             encoding=encoding,
             **kwargs
         )
         return blob
 
+    @distributed_trace
     def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -943,10 +921,6 @@ class ContainerClient(StorageAccountHostsMixin):
         blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
             timeout=timeout,
             **kwargs)
 
