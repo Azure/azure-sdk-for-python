@@ -1128,7 +1128,7 @@ class CIFSMountConfiguration(Model):
      command. These are 'net use' options in Windows and 'mount' options in
      Linux.
     :type mount_options: str
-    :param password: Required. The password to use for authentication agains
+    :param password: Required. The password to use for authentication against
      the CIFS file system.
     :type password: str
     """
