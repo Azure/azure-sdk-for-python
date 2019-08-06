@@ -13,7 +13,6 @@ try:
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .canceled_subscription_id_py3 import CanceledSubscriptionId
     from .renamed_subscription_id_py3 import RenamedSubscriptionId
-    from .enabled_subscription_id_py3 import EnabledSubscriptionId
     from .subscription_name_py3 import SubscriptionName
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -32,7 +31,6 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .canceled_subscription_id import CanceledSubscriptionId
     from .renamed_subscription_id import RenamedSubscriptionId
-    from .enabled_subscription_id import EnabledSubscriptionId
     from .subscription_name import SubscriptionName
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -60,7 +58,6 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'CanceledSubscriptionId',
     'RenamedSubscriptionId',
-    'EnabledSubscriptionId',
     'SubscriptionName',
     'OperationDisplay',
     'Operation',
