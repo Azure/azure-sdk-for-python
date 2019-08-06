@@ -36,9 +36,9 @@ async def run_until_interrupt():
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     partition_manager = Sqlite3PartitionManager()
     event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+    # You can also define a callable object for creating PartitionProcessor like below:
+    # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
     try:
-        # You can also define a callable object for creating PartitionProcessor like below:
-        # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
         await event_processor.start()
     except KeyboardInterrupt:
         await event_processor.stop()
