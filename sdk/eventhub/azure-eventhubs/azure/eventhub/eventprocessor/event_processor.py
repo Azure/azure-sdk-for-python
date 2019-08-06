@@ -78,7 +78,7 @@ class EventProcessor(object):
         self._initial_event_position = kwargs.get("initial_event_position", "-1")
         self._max_batch_size = eventhub_client.config.max_batch_size
         self._receive_timeout = eventhub_client.config.receive_timeout
-        self._tasks: List[asyncio.Task] = []
+        self._tasks = []  # type: List[asyncio.Task]
         self._id = str(uuid.uuid4())
 
     def __repr__(self):
