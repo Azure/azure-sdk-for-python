@@ -20,7 +20,7 @@ class CloseReason(Enum):
 class PartitionProcessor(ABC):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
-    implementing this interface will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
+    implementing this abstract class will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
 
     """
     def __init__(self, checkpoint_manager: CheckpointManager):
