@@ -835,8 +835,9 @@ class Issuer(IssuerBase):
         """Construct a Issuer from an autorest-generated IssuerBundle"""
         admin_details = []
         admin_details_service = issuer_bundle.organization_details.admin_details
-        for admin_detail in admin_details_service:
-            admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
+        if admin_details_service:
+            for admin_detail in admin_details_service:
+                admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
         return cls(
             attributes=issuer_bundle.attributes,
             issuer_id=issuer_bundle.id,

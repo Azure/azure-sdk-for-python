@@ -9,7 +9,6 @@ from typing import Any, Dict, Mapping, Optional, Iterable, List
 from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
-from msrest.exceptions import DeserializationError
 
 from ._shared import KeyVaultClientBase
 from .models import (
