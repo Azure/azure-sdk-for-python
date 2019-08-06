@@ -13,11 +13,12 @@ import argparse
 import time
 import os
 import sys
+import threading
 import logging
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClient, EventHubProducer, EventData, EventHubSharedKeyCredential
+from azure.eventhub import EventHubClient, EventDataBatch, EventData, EventHubSharedKeyCredential
 
 
 def get_logger(filename, level=logging.INFO):
@@ -42,34 +43,30 @@ def get_logger(filename, level=logging.INFO):
 
     return azure_logger
 
+
 logger = get_logger("send_test.log", logging.INFO)
 
 
-def check_send_successful(outcome, condition):
-    if outcome.value != 0:
-        print("Send failed {}".format(condition))
-
-
-def main(client, args):
-    sender = client.create_producer()
+def send(sender, args):
+    # sender = client.create_producer()
     deadline = time.time() + args.duration
     total = 0
-
     try:
         with sender:
-            event_list = []
+            batch = sender.create_batch()
             while time.time() < deadline:
                 data = EventData(body=b"D" * args.payload)
-                event_list.append(data)
-                total += 1
-                if total % 100 == 0:
-                    sender.send(event_list)
-                    event_list = []
-                    print("Send total {}".format(total))
+                try:
+                    batch.try_add(data)
+                    total += 1
+                except ValueError:
+                    sender.send(batch, timeout=0)
+                    print("Sent total {} of partition {}".format(total, sender.partition))
+                    batch = sender.create_batch()
     except Exception as err:
-        print("Send failed {}".format(err))
+        print("Partition {} send failed {}".format(sender.partition, err))
         raise
-    print("Sent total {}".format(total))
+    print("Sent total {} of partition {}".format(total, sender.partition))
 
 
 @pytest.mark.liveTest
@@ -105,10 +102,17 @@ def test_long_running_send(connection_str):
             raise ValueError("Must specify either '--conn-str' or '--address'")
 
     try:
-        main(client, args)
+        partition_ids = client.get_partition_ids()
+        threads = []
+        for pid in partition_ids:
+            sender = client.create_producer(partition_id=pid)
+            thread = threading.Thread(target=send, args=(sender, args))
+            thread.start()
+            threads.append(thread)
+        thread.join()
     except KeyboardInterrupt:
         pass
 
 
 if __name__ == '__main__':
-    test_long_running_send(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    test_long_running_send(os.environ.get('EVENT_HUB_PERF_CONN_STR'))
