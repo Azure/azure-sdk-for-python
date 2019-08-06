@@ -41,7 +41,7 @@ class Sqlite3PartitionManager(PartitionManager):
                       "partition_id text,"
                       "owner_level integer,"
                       "sequence_number integer,"
-                      "offset integer,"
+                      "offset text,"
                       "last_modified_time integer,"
                       "etag text)")
         except sqlite3.OperationalError:
