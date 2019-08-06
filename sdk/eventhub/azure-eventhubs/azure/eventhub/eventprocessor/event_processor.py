@@ -82,7 +82,7 @@ class EventProcessor(object):
         self._id = str(uuid.uuid4())
 
     def __repr__(self):
-        return f'EventProcessor: id {self._id}'
+        return 'EventProcessor: id {}'.format(self._id)
 
     async def start(self):
         """Start the EventProcessor.
