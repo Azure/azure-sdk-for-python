@@ -66,9 +66,6 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
-        if not self.is_playback():
-            self.bsc.create_container(self.container_name)
-            blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
         sas_token = blob.generate_shared_access_signature(

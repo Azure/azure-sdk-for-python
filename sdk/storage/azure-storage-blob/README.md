@@ -133,7 +133,8 @@ from azure.storage.blob import BlobClient
 blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
 
 with open("./BlockDestination.txt", "wb") as my_blob:
-    my_blob.writelines(blob.download_blob())
+    blob_data = blob.download_blob()
+    my_blob.writelines(blob_data.content_as_bytes())
 ```
 
 ### Enumerating blobs
