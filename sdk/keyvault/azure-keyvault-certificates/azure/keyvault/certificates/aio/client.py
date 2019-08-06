@@ -63,6 +63,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START create_certificate]
+                :end-before: [END create_certificate]
+                :language: python
+                :caption: Create a certificate
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -100,6 +108,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_certificate]
+                :end-before: [END get_certificate]
+                :language: python
+                :caption: Get a certificate
+                :dedent: 8
         """
         if version is None:
             version = ""
@@ -127,6 +143,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START delete_certificate]
+                :end-before: [END delete_certificate]
+                :language: python
+                :caption: Delete a certificate
+                :dedent: 8
         """
         bundle = await self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -146,6 +170,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_deleted_certificate]
+                :end-before: [END get_deleted_certificate]
+                :language: python
+                :caption: Get a deleted certificate
+                :dedent: 8
         """
         bundle = await self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
@@ -189,6 +221,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+         
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START recover_deleted_certificate]
+                :end-before: [END recover_deleted_certificate]
+                :language: python
+                :caption: Recover a deleted certificate
+                :dedent: 8
         """
         bundle = await self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -331,6 +371,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START update_certificate]
+                :end-before: [END update_certificate]
+                :language: python
+                :caption: Update a certificate's attributes
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -363,6 +411,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: bytes
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START backup_certificate]
+                :end-before: [END backup_certificate]
+                :language: python
+                :caption: Get a certificate backup
+                :dedent: 8
         """
         backup_result = await self._client.backup_certificate(
             vault_base_url=self.vault_url,
@@ -385,6 +441,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START restore_certificate]
+                :end-before: [END restore_certificate]
+                :language: python
+                :caption: Restore a certificate backup
+                :dedent: 8
         """
         bundle = await self._client.restore_certificate(
             vault_base_url=self.vault_url,
@@ -412,6 +476,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START list_deleted_certificates]
+                :end-before: [END list_deleted_certificates]
+                :language: python
+                :caption: List all the deleted certificates
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_certificates(
@@ -438,6 +510,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START list_certificates]
+                :end-before: [END list_certificates]
+                :language: python
+                :caption: List all certificates
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificates(
@@ -463,6 +543,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START list_certificate_versions]
+                :end-before: [END list_certificate_versions]
+                :language: python
+                :caption: List all versions of a certificate
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_versions(
