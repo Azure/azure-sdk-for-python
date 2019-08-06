@@ -9,6 +9,7 @@
 import pytest
 
 import os
+import platform
 import unittest
 
 from azure.storage.blob import (
