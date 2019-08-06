@@ -24,23 +24,26 @@ class EventProcessor(object):
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
                  partition_processor_factory: Callable[[CheckpointManager], PartitionProcessor],
                  partition_manager: PartitionManager, **kwargs):
-        """An EventProcessor automatically creates and runs consumers for all partitions of the eventhub.
+        """
+        An EventProcessor constantly receives events from all partitions of the Event Hub in the context of a given
+        consumer group. The received data will be sent to PartitionProcessor to be processed.
 
         It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
-        If multiple EventProcessors are running for an event hub, they will automatically balance loading.
-        This load balancer won't be available until preview 3.
+        If multiple EventProcessors are running for an event hub, they will automatically balance load.
+        This load balancing won't be available until preview 3.
 
-        :param eventhub_client: an instance of azure.eventhub.aio.EventClient object
-        :param consumer_group_name: the consumer group that is used to receive events from
-        :param partition_processor_factory: a callable (type or function) that is called to return a PartitionProcessor.
-        Users define their own PartitionProcessor by subclassing it implement abstract method process_events() to
-        implement their own operation logic.
-        :param partition_manager: an instance of a PartitionManager implementation. A partition manager claims ownership
-        of partitions and saves partition checkpoints to a data storage. For preview 2, sample Sqlite3PartitionManager is
-        already provided. For the future releases there will be more PartitionManager implementation provided to save
-        checkpoint to different data storage. Users can also implement their PartitionManager class to user their own
-        preferred data storage.
-        :param initial_event_position: the offset to start a partition consumer if the partition has no checkpoint yet
+        :param eventhub_client: An instance of ~azure.eventhub.aio.EventClient object
+        :type eventhub_client: ~azure.eventhub.aio.EventClient
+        :param consumer_group_name: The name of the consumer group this event processor is associated with. Events will
+         be read only in the context of this group.
+        :type consumer_group_name: str
+        :param partition_processor_factory: A callable(type or function) object that creates an instance of a class
+         implementing the ~azure.eventhub.eventprocessor.PartitionProcessor interface.
+        :type partition_processor_factory: callable object
+        :param partition_manager: Interacts with the storage system, dealing with ownership and checkpoints.
+         For preview 2, sample Sqlite3PartitionManager is provided.
+        :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager interface.
+        :param initial_event_position: The offset to start a partition consumer if the partition has no checkpoint yet.
         :type initial_event_position: int or str
 
         Example:

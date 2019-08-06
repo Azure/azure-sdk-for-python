@@ -217,25 +217,38 @@ The `EventProcessor` will delegate processing of events to a `PartitionProcessor
 import asyncio
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub.eventprocessor import PartitionProcessor, EventProcessor, Sqlite3PartitionManager
+from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+
+async def do_operation(event):
+    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    print(event)
 
 class MyPartitionProcessor(PartitionProcessor):
+    def __init__(self, checkpoint_manager):
+        super(MyPartitionProcessor, self).__init__(checkpoint_manager)
+
     async def process_events(self, events):
-        print("PartitionProcessor for eventhub:{}, consumer group:{}, partition id:{}, number of events processed:{}".
-              format(self._eventhub_name, self._consumer_group_name, self._partition_id, len(events)))
         if events:
+            await asyncio.gather(*[do_operation(event) for event in events])
             await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
 
-async def stop_after_awhile(event_processor, duration):
-    await asyncio.sleep(duration)
-    await event_processor.stop()
+def partition_processor_factory(checkpoint_manager):
+    return MyPartitionProcessor(checkpoint_manager)
 
 async def main():
-    connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-    client = EventHubClient.from_connection_string(connection_str)
-    partition_manager = Sqlite3PartitionManager(db_filename=":memory:")  # in-memory partition manager
-    event_processor = EventProcessor("$default", client, MyPartitionProcessor, partition_manager)
-    await asyncio.gather(event_processor.start(), stop_after_awhile(event_processor, 100))
+    client = EventHubClient.from_connection_string(connection_str, receive_timeout=5, retry_total=3)
+    partition_manager = Sqlite3PartitionManager()
+    try:
+        event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+        # You can also define a callable object for creating PartitionProcessor like below:
+        # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
+        asyncio.ensure_future(event_processor.start())
+        await asyncio.sleep(60)
+        await event_processor.stop()
+    finally:
+        await partition_manager.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

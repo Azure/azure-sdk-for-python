@@ -8,7 +8,9 @@ from .partition_manager import PartitionManager
 
 
 class CheckpointManager(object):
-    """Every PartitionProcessor has a CheckpointManager to save the partition's checkpoint.
+    """
+    CheckpointManager is responsible for the creation of checkpoints.
+    The interaction with the chosen storage service is done via ~azure.eventhub.eventprocessor.PartitionManager.
 
     """
     def __init__(self, partition_id: str, eventhub_name: str, consumer_group_name: str, owner_id: str, partition_manager: PartitionManager):
@@ -19,10 +21,13 @@ class CheckpointManager(object):
         self.partition_manager = partition_manager
 
     async def update_checkpoint(self, offset, sequence_number=None):
-        """Users call this method in PartitionProcessor.process_events() to save checkpoints
+        """
+        Updates the checkpoint using the given information for the associated partition and consumer group in the chosen storage service.
 
-        :param offset: offset of the processed EventData
-        :param sequence_number: sequence_number of the processed EventData
+        :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
+        :type offset: str
+        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint will be associated with.
+        :type sequence_number: int
         :return: None
         """
         await self.partition_manager.update_checkpoint(
