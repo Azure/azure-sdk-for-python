@@ -43,7 +43,7 @@ class TestMessageQueueSamples(QueueTestCase):
             queue_client.create_queue()
         except ResourceExistsError:
             pass
-        queue_client.enqueue_message('hello world')
+        queue_client.enqueue_message(u"hello world")
 
         try:
             # [START set_access_policy]

@@ -310,7 +310,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=ContainerPropertiesPaged
+        )
 
     async def create_container(
             self, name,  # type: str

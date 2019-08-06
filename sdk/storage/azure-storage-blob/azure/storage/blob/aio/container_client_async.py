@@ -511,7 +511,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             include=include,
             timeout=timeout,
             **kwargs)
-        return AsyncItemPaged(command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=BlobPropertiesPaged)
+        return AsyncItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=BlobPropertiesPaged
+        )
 
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]

@@ -99,5 +99,5 @@ class QueuePropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-
-        return self._response.next_marker or None, [QueueProperties._from_generated(q) for q in self._response.queue_items]  # pylint: disable=protected-access
+        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+        return self._response.next_marker or None, props_list

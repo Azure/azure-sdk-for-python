@@ -728,4 +728,3 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
         return async_poller(command, start_close, None, polling_method)
-

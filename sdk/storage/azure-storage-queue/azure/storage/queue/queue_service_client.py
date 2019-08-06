@@ -14,7 +14,7 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
-
+from azure.core.tracing.decorator import distributed_trace
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -24,7 +24,6 @@ from ._generated.models import StorageServiceProperties, StorageErrorException
 
 from .models import QueuePropertiesPaged
 from .queue_client import QueueClient
-from azure.core.tracing.decorator import distributed_trace
 
 if TYPE_CHECKING:
     from datetime import datetime

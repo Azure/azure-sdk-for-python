@@ -424,7 +424,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, page_iterator_class=ContainerPropertiesPaged)
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                page_iterator_class=ContainerPropertiesPaged
+            )
 
     @distributed_trace
     def create_container(
