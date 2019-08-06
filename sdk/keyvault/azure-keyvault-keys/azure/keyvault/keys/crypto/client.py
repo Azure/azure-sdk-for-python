@@ -65,14 +65,13 @@ class CryptographyClient(KeyVaultClientBase):
         """
         return "/".join(self._key_id)
 
-    @property
-    def key(self):
+    def get_key(self):
         # type: () -> Optional[Key]
         """
-        The client's :class:`~azure.keyvault.keys.models.Key`.
+        Get the client's :class:`~azure.keyvault.keys.models.Key`.
         Can be `None`, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.Key`
+        :rtype: :class:`~azure.keyvault.keys.models.Key` or None
         """
 
         if not (self._key or self._get_key_forbidden):
