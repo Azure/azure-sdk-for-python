@@ -35,7 +35,7 @@ steps:
       arguments: ${{ parameters.OSName }}
 
   - script: |
-      pip install pathlib twine codecov beautifulsoup4 tox
+      pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}
