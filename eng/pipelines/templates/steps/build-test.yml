@@ -66,6 +66,7 @@ steps:
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
 
+- ${{ if ne(parameters.PythonVersion, '2.7') }}:
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
@@ -78,7 +79,6 @@ steps:
         --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
-    condition: and(succeededOrFailed(), ne('parameters.PythonVersion', '2.7'))
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
