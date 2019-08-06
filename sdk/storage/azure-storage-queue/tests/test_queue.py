@@ -8,6 +8,7 @@
 
 import unittest
 import pytest
+import sys
 from dateutil.tz import tzutc
 from datetime import (
     datetime,
@@ -813,7 +814,8 @@ class StorageQueueTest(QueueTestCase):
 
     @record
     def test_unicode_get_messages_unicode_data(self):
-        pytest.skip("Uncomment after msrest fix")
+        if sys.version_info == (2, 7):
+            pytest.skip("Uncomment after msrest fix")
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1㚈')
@@ -831,7 +833,8 @@ class StorageQueueTest(QueueTestCase):
 
     @record
     def test_unicode_update_message_unicode_data(self):
-        pytest.skip("Uncomment after msrest fix")
+        if sys.version_info == (2, 7):
+            pytest.skip("Uncomment after msrest fix")
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
