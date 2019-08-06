@@ -11,7 +11,7 @@
 
 from .azure_appconfiguration_client import AzureAppConfigurationClient
 from ._generated.models import ConfigurationSetting
-from ._version import VERSION
+from .version import VERSION
 
 __version__ = VERSION
 __all__ = [
