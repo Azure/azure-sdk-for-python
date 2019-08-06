@@ -490,12 +490,12 @@ class PrivateCloud(TrackedResource):
      list[~azure.mgmt.vmwarevirtustream.models.IdentitySource]
     :param network_block:
     :type network_block: str
-    :ivar mgmt_network:
-    :vartype mgmt_network: str
-    :ivar prov_network:
-    :vartype prov_network: str
-    :ivar vmot_network:
-    :vartype vmot_network: str
+    :ivar management_network:
+    :vartype management_network: str
+    :ivar provisioning_network:
+    :vartype provisioning_network: str
+    :ivar vmotion_network:
+    :vartype vmotion_network: str
     """
 
     _validation = {
@@ -505,9 +505,9 @@ class PrivateCloud(TrackedResource):
         'provisioning_state': {'readonly': True},
         'clusters': {'readonly': True},
         'identity_sources': {'readonly': True},
-        'mgmt_network': {'readonly': True},
-        'prov_network': {'readonly': True},
-        'vmot_network': {'readonly': True},
+        'management_network': {'readonly': True},
+        'provisioning_network': {'readonly': True},
+        'vmotion_network': {'readonly': True},
     }
 
     _attribute_map = {
@@ -524,9 +524,9 @@ class PrivateCloud(TrackedResource):
         'internet': {'key': 'properties.internet', 'type': 'str'},
         'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
         'network_block': {'key': 'properties.networkBlock', 'type': 'str'},
-        'mgmt_network': {'key': 'properties.mgmtNetwork', 'type': 'str'},
-        'prov_network': {'key': 'properties.provNetwork', 'type': 'str'},
-        'vmot_network': {'key': 'properties.vmotNetwork', 'type': 'str'},
+        'management_network': {'key': 'properties.managementNetwork', 'type': 'str'},
+        'provisioning_network': {'key': 'properties.provisioningNetwork', 'type': 'str'},
+        'vmotion_network': {'key': 'properties.vmotionNetwork', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -539,6 +539,6 @@ class PrivateCloud(TrackedResource):
         self.internet = kwargs.get('internet', None)
         self.identity_sources = None
         self.network_block = kwargs.get('network_block', None)
-        self.mgmt_network = None
-        self.prov_network = None
-        self.vmot_network = None
+        self.management_network = None
+        self.provisioning_network = None
+        self.vmotion_network = None
