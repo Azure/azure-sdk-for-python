@@ -24,6 +24,8 @@ try:
     from ._models_py3 import DeploymentProperties
     from ._models_py3 import DeploymentPropertiesExtended
     from ._models_py3 import DeploymentValidateResult
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceFilter
@@ -44,7 +46,6 @@ try:
     from ._models_py3 import ResourceGroupFilter
     from ._models_py3 import ResourceGroupPatchable
     from ._models_py3 import ResourceGroupProperties
-    from ._models_py3 import ResourceManagementErrorWithDetails
     from ._models_py3 import ResourceProviderOperationDisplayProperties
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import Sku
@@ -69,6 +70,8 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentProperties
     from ._models import DeploymentPropertiesExtended
     from ._models import DeploymentValidateResult
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
     from ._models import GenericResource
     from ._models import GenericResourceFilter
@@ -89,7 +92,6 @@ except (SyntaxError, ImportError):
     from ._models import ResourceGroupFilter
     from ._models import ResourceGroupPatchable
     from ._models import ResourceGroupProperties
-    from ._models import ResourceManagementErrorWithDetails
     from ._models import ResourceProviderOperationDisplayProperties
     from ._models import ResourcesMoveInfo
     from ._models import Sku
@@ -127,6 +129,8 @@ __all__ = [
     'DeploymentProperties',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
+    'ErrorAdditionalInfo',
+    'ErrorResponse',
     'ExportTemplateRequest',
     'GenericResource',
     'GenericResourceFilter',
@@ -147,7 +151,6 @@ __all__ = [
     'ResourceGroupFilter',
     'ResourceGroupPatchable',
     'ResourceGroupProperties',
-    'ResourceManagementErrorWithDetails',
     'ResourceProviderOperationDisplayProperties',
     'ResourcesMoveInfo',
     'Sku',
