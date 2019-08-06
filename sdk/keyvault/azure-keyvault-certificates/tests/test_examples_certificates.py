@@ -14,6 +14,7 @@ from certificates_test_case import KeyVaultTestCase
 def print(*args):
     assert all(arg is not None for arg in args)
 
+
 def test_create_certificate_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
@@ -54,14 +55,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a certificate with optional arguments, returns a certificate operation that is creating the certificate
-        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy, expires=expires)
+        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy,
+                                                                      expires=expires)
 
         print(certificate_operation.name)
         print(certificate_operation.id)
         print(certificate_operation.status)
 
         # [END create_certificate]
-        # [START get_certificate]
 
         # iterate to make sure certificate creation operation is complete
         interval_time = 5
@@ -72,6 +73,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             elif pending_cert.status.lower() != 'inprogress':
                 raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
             time.sleep(interval_time)
+
+        # [START get_certificate]
 
         # get the certificate
         certificate = certificate_client.get_certificate(name=certificate_operation.name)
@@ -249,7 +252,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy)
         certificate_client.delete_certificate(name=certificate_operation.name)
         self._poll_until_no_exception(
-            functools.partial(certificate_client.get_deleted_certificate, certificate_operation.name), ResourceNotFoundError
+            functools.partial(certificate_client.get_deleted_certificate, certificate_operation.name),
+            ResourceNotFoundError
         )
         # [START get_deleted_certificate]
 
