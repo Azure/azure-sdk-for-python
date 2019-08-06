@@ -69,9 +69,9 @@ class CryptographyClient(KeyVaultClientBase):
         # type: () -> Optional[Key]
         """
         Get the client's :class:`~azure.keyvault.keys.models.Key`.
-        Can be `None`, if the client lacks keys/get permission.
+        Can be ``None``, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.Key` or None
+        :rtype: :class:`~azure.keyvault.keys.models.Key` or ``None``
         """
 
         if not (self._key or self._get_key_forbidden):
@@ -92,6 +92,16 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+
+        Example:
+
+        .. code-block:: python
+
+            from azure.keyvault.keys.crypto import EncryptionAlgorithm
+
+            # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
+            key_id, algorithm, ciphertext, authentication_tag = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+
         """
 
         result = self._client.encrypt(
@@ -110,6 +120,16 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+
+        Example:
+
+        .. code-block:: python
+
+            from azure.keyvault.keys.crypto import EncryptionAlgorithm
+
+            result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
+            print(result.decrypted_bytes)
+
         """
 
         authentication_data = kwargs.pop("authentication_data", None)
@@ -131,6 +151,16 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
         :param bytes key: key to wrap
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapKeyResult`
+
+        Example:
+
+        .. code-block:: python
+
+            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
+
+            # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
+            key_id, wrap_algorithm, wrapped_bytes = client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+
         """
 
         result = self._client.wrap_key(
@@ -147,6 +177,16 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
         :param bytes encrypted_key: the wrapped key
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapKeyResult`
+
+        Example:
+
+        .. code-block:: python
+
+            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
+
+            result = client.unwrap(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+            unwrapped_bytes = result.unwrapped_bytes
+
         """
 
         result = self._client.unwrap_key(
@@ -168,6 +208,19 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.SignatureAlgorithm`
         :param bytes digest: hashed bytes to sign
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
+
+        Example:
+
+        .. code-block:: python
+
+            import hashlib
+            from azure.keyvault.keys.crypto import SignatureAlgorithm
+
+            digest = hashlib.sha256(b"plaintext").digest()
+
+            # sign returns a tuple with the signature and the metadata required to verify it
+            key_id, algorithm, signature = client.sign(SignatureAlgorithm.rs256, digest)
+
         """
 
         result = self._client.sign(
@@ -185,6 +238,16 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes digest:
         :param bytes signature:
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
+
+        Example:
+
+        .. code-block:: python
+
+            from azure.keyvault.keys.crypto import SignatureAlgorithm
+
+            verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
+            assert verified.result is True
+
         """
 
         result = self._client.verify(
