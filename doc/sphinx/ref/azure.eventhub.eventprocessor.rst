@@ -12,7 +12,7 @@ azure.eventhub.event\_processor module
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.aio.partition\_processor module
+azure.eventhub.partition\_processor module
 -----------------------------------------
 
 .. automodule:: azure.eventhub.partition_processor
@@ -28,7 +28,7 @@ azure.eventhub.partition\_manager module
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.aio.checkpoint\_manager module
+azure.eventhub.checkpoint\_manager module
 -----------------------------------------
 
 .. automodule:: azure.eventhub.checkpoint_manager
@@ -36,7 +36,7 @@ azure.eventhub.aio.checkpoint\_manager module
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.aio.sqlite3\_partition\_manager module
+azure.eventhub.sqlite3\_partition\_manager module
 -----------------------------------------
 
 .. automodule:: azure.eventhub.sqlite3_partition_manager
