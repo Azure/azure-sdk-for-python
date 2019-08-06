@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import asyncio
 from key_vault_secrets_async import KeyVault
 from event_hubs_async import EventHub

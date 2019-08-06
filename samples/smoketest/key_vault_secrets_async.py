@@ -1,4 +1,9 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
+import uuid
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.secrets.aio import SecretClient
 
@@ -13,8 +18,8 @@ class KeyVault:
         self.secret_client = SecretClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
-        self.secret_name = "MySecret"
-        self.secret_value = "My Secret Value"
+        self.secret_name = "secret-name-" + uuid.uuid1().hex
+        self.secret_value = "secret-value"
 
     async def set_secret(self):
         print("Setting a secret...")

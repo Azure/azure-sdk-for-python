@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
 from datetime import datetime
 from azure.eventhub.aio import EventHubClient

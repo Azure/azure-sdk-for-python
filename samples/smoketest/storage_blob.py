@@ -1,13 +1,22 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
+import uuid
 from azure.storage.blob import BlobClient
 from azure.core import exceptions
 
 
 class StorageBlob:
     def __init__(self):
+        id = uuid.uuid1()
+
         connectionString = os.environ["STORAGE_CONNECTION_STRING"]
         self.blob = BlobClient.from_connection_string(
-            connectionString, container="mycontainer", blob="pyTestBlob.txt"
+            connectionString,
+            container="mycontainer",
+            blob="pyTestBlob-" + id.hex + ".txt",
         )
 
     def upload_blob(self):

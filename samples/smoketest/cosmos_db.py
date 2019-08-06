@@ -1,4 +1,9 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
+import uuid
 from azure.cosmos import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
@@ -8,7 +13,7 @@ class CosmosDB:
         URL = os.environ["COSMOS_ENDPOINT"]
         KEY = os.environ["COSMOS_KEY"]
         self.client = CosmosClient(URL, {"masterKey": KEY})
-        self.dbName = "pySolarSystem"
+        self.dbName = "pySolarSystem-" + uuid.uuid1().hex
 
     def create_database(self):
         print("Creating '{0}' database...".format(self.dbName))

@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from key_vault_secrets import KeyVault
 from storage_blob import StorageBlob
 from event_hubs import EventHub

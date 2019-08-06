@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
 from datetime import datetime
 from azure.eventhub import EventHubClient, EventData, EventPosition
@@ -37,7 +41,7 @@ class EventHub:
             print("\tdone")
 
             print("Receiving events...")
-            received = consumer.receive(max_batch_size=len(event_list), timeout=2)
+            received = consumer.receive(max_batch_size=len(event_list), timeout=3)
             for event_data in received:
                 print("\tEvent Received: " + event_data.body_as_str())
 
