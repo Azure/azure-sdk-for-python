@@ -6,7 +6,6 @@ from azure.eventhub.eventprocessor import EventProcessor
 from azure.eventhub.eventprocessor import PartitionProcessor
 from azure.eventhub.eventprocessor import Sqlite3PartitionManager
 
-TEST_DURATION = 60  # seconds
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # number of retries for receive operations
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -33,19 +32,36 @@ def partition_processor_factory(checkpoint_manager):
     return MyPartitionProcessor(checkpoint_manager)
 
 
-async def main():
+async def run_until_interrupt():
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     partition_manager = Sqlite3PartitionManager()
+    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
     try:
-        event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
         # You can also define a callable object for creating PartitionProcessor like below:
         # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
-        asyncio.ensure_future(event_processor.start())
-        await asyncio.sleep(TEST_DURATION)
+        await event_processor.start()
+    except KeyboardInterrupt:
         await event_processor.stop()
     finally:
         await partition_manager.close()
 
+
+async def run_awhile(duration):
+    client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT,
+                                                   retry_total=RETRY_TOTAL)
+    partition_manager = Sqlite3PartitionManager()
+    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+    try:
+        asyncio.ensure_future(event_processor.start())
+        await asyncio.sleep(duration)
+        await event_processor.stop()
+    finally:
+        await partition_manager.close()
+
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(run_until_interrupt())
+
+    # use the following code to run for 60 seconds
+    # loop.run_until_complete(run_awhile(60))
