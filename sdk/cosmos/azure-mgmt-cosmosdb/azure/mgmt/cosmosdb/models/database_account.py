@@ -18,9 +18,9 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str

@@ -22,6 +22,12 @@ from .collection_partition_region_operations import CollectionPartitionRegionOpe
 from .collection_partition_operations import CollectionPartitionOperations
 from .partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from .partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from .sql_resources_operations import SqlResourcesOperations
+from .mongo_db_resources_operations import MongoDBResourcesOperations
+from .table_resources_operations import TableResourcesOperations
+from .cassandra_resources_operations import CassandraResourcesOperations
+from .gremlin_resource_operations import GremlinResourceOperations
+from .gremlin_resources_operations import GremlinResourcesOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
@@ -37,4 +43,10 @@ __all__ = [
     'CollectionPartitionOperations',
     'PartitionKeyRangeIdOperations',
     'PartitionKeyRangeIdRegionOperations',
+    'SqlResourcesOperations',
+    'MongoDBResourcesOperations',
+    'TableResourcesOperations',
+    'CassandraResourcesOperations',
+    'GremlinResourceOperations',
+    'GremlinResourcesOperations',
 ]

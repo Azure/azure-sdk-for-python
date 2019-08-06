@@ -26,6 +26,12 @@ from .operations.collection_partition_region_operations import CollectionPartiti
 from .operations.collection_partition_operations import CollectionPartitionOperations
 from .operations.partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from .operations.partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from .operations.sql_resources_operations import SqlResourcesOperations
+from .operations.mongo_db_resources_operations import MongoDBResourcesOperations
+from .operations.table_resources_operations import TableResourcesOperations
+from .operations.cassandra_resources_operations import CassandraResourcesOperations
+from .operations.gremlin_resource_operations import GremlinResourceOperations
+from .operations.gremlin_resources_operations import GremlinResourcesOperations
 from . import models
 
 
@@ -93,6 +99,18 @@ class CosmosDB(SDKClient):
     :vartype partition_key_range_id: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdOperations
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegion operations
     :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
+    :ivar sql_resources: SqlResources operations
+    :vartype sql_resources: azure.mgmt.cosmosdb.operations.SqlResourcesOperations
+    :ivar mongo_db_resources: MongoDBResources operations
+    :vartype mongo_db_resources: azure.mgmt.cosmosdb.operations.MongoDBResourcesOperations
+    :ivar table_resources: TableResources operations
+    :vartype table_resources: azure.mgmt.cosmosdb.operations.TableResourcesOperations
+    :ivar cassandra_resources: CassandraResources operations
+    :vartype cassandra_resources: azure.mgmt.cosmosdb.operations.CassandraResourcesOperations
+    :ivar gremlin_resource: GremlinResource operations
+    :vartype gremlin_resource: azure.mgmt.cosmosdb.operations.GremlinResourceOperations
+    :ivar gremlin_resources: GremlinResources operations
+    :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -138,4 +156,16 @@ class CosmosDB(SDKClient):
         self.partition_key_range_id = PartitionKeyRangeIdOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_resources = SqlResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mongo_db_resources = MongoDBResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.table_resources = TableResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cassandra_resources = CassandraResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gremlin_resource = GremlinResourceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gremlin_resources = GremlinResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

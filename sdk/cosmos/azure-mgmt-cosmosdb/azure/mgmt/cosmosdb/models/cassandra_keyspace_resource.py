@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CassandraKeyspaceResource(Model):
-    """Cosmos DB Cassandra keyspace id object.
+    """Cosmos DB Cassandra keyspace resource object.
 
     All required parameters must be populated in order to send to Azure.
 

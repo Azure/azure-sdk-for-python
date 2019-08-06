@@ -9,14 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class TableCreateUpdateParameters(Model):
+class TableCreateUpdateParameters(Resource):
     """Parameters to create and update Cosmos DB Table.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Table
     :type resource: ~azure.mgmt.cosmosdb.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
@@ -25,16 +39,24 @@ class TableCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'TableResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(TableCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(TableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GremlinDatabaseResource(Model):
-    """Cosmos DB Gremlin database id object.
+    """Cosmos DB Gremlin database resource object.
 
     All required parameters must be populated in order to send to Azure.
 

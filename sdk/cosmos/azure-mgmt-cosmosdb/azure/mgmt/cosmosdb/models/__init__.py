@@ -165,6 +165,10 @@ from .database_account_paged import DatabaseAccountPaged
 from .metric_paged import MetricPaged
 from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
+from .operation_paged import OperationPaged
+from .percentile_metric_paged import PercentileMetricPaged
+from .partition_metric_paged import PartitionMetricPaged
+from .partition_usage_paged import PartitionUsagePaged
 from .sql_database_paged import SqlDatabasePaged
 from .sql_container_paged import SqlContainerPaged
 from .mongo_db_database_paged import MongoDBDatabasePaged
@@ -174,10 +178,6 @@ from .cassandra_keyspace_paged import CassandraKeyspacePaged
 from .cassandra_table_paged import CassandraTablePaged
 from .gremlin_database_paged import GremlinDatabasePaged
 from .gremlin_graph_paged import GremlinGraphPaged
-from .operation_paged import OperationPaged
-from .percentile_metric_paged import PercentileMetricPaged
-from .partition_metric_paged import PartitionMetricPaged
-from .partition_usage_paged import PartitionUsagePaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
@@ -273,6 +273,10 @@ __all__ = [
     'MetricPaged',
     'UsagePaged',
     'MetricDefinitionPaged',
+    'OperationPaged',
+    'PercentileMetricPaged',
+    'PartitionMetricPaged',
+    'PartitionUsagePaged',
     'SqlDatabasePaged',
     'SqlContainerPaged',
     'MongoDBDatabasePaged',
@@ -282,10 +286,6 @@ __all__ = [
     'CassandraTablePaged',
     'GremlinDatabasePaged',
     'GremlinGraphPaged',
-    'OperationPaged',
-    'PercentileMetricPaged',
-    'PartitionMetricPaged',
-    'PartitionUsagePaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',

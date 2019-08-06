@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class ExtendedResourceProperties(Model):
-    """The system generated resource properties associated with SQL databases and
-    SQL containers.
+    """The system generated resource properties associated with SQL databases, SQL
+    containers, Gremlin databases and Gremlin graphs.
 
     :param _rid: A system generated property. A unique identifier.
     :type _rid: str

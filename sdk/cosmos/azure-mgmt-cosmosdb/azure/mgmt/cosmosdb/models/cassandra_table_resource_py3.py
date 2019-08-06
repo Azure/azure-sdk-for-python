@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CassandraTableResource(Model):
-    """Cosmos DB Cassandra table id object.
+    """Cosmos DB Cassandra table resource object.
 
     All required parameters must be populated in order to send to Azure.
 

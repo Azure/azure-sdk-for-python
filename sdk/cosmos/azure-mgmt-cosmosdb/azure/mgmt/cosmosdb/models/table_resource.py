@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TableResource(Model):
-    """Cosmos DB table id object.
+    """Cosmos DB table resource object.
 
     All required parameters must be populated in order to send to Azure.
 
