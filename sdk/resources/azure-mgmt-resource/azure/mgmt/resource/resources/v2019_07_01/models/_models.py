@@ -1153,16 +1153,22 @@ class ResourceGroup(Model):
 class ResourceGroupExportResult(Model):
     """Resource group export result.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str,
+     ~azure.mgmt.resource.resources.v2019_07_01.models.CloudError]
     :param template: The template content.
     :type template: object
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{CloudError}'},
         'template': {'key': 'template', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(ResourceGroupExportResult, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.template = kwargs.get('template', None)
 
 
