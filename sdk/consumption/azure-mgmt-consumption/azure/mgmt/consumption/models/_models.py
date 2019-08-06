@@ -287,7 +287,8 @@ class Budget(ProxyResource):
     :type amount: decimal.Decimal
     :param time_grain: Required. The time covered by a budget. Tracking of the
      amount will be reset based on the time grain. Possible values include:
-     'Monthly', 'Quarterly', 'Annually'
+     'Monthly', 'Quarterly', 'Annually', 'BillingMonth', 'BillingQuarter',
+     'BillingAnnual'
     :type time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
     :param time_period: Required. Has start and end date of the budget. The
      start date must be first of the month and should be less than the end
@@ -1306,6 +1307,10 @@ class ReservationDetail(Resource):
      purchase transaction. A reservation order contains reservations. The
      reservation order specifies the VM size and region for the reservations.
     :vartype reservation_order_id: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: str
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
     :ivar reservation_id: The reservation ID is the identifier of a
      reservation within a reservation order. Each reservation is the grouping
      for applying the benefit scope and also specifies the number of instances
@@ -1336,6 +1341,8 @@ class ReservationDetail(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'reservation_order_id': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
         'reservation_id': {'readonly': True},
         'sku_name': {'readonly': True},
         'reserved_hours': {'readonly': True},
@@ -1351,6 +1358,8 @@ class ReservationDetail(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'str'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
         'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
         'sku_name': {'key': 'properties.skuName', 'type': 'str'},
         'reserved_hours': {'key': 'properties.reservedHours', 'type': 'decimal'},
@@ -1363,6 +1372,8 @@ class ReservationDetail(Resource):
     def __init__(self, **kwargs):
         super(ReservationDetail, self).__init__(**kwargs)
         self.reservation_order_id = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
         self.reservation_id = None
         self.sku_name = None
         self.reserved_hours = None
@@ -1393,6 +1404,15 @@ class ReservationRecommendation(Model):
     :ivar look_back_period: The number of days of usage to look back for
      recommendation.
     :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: int
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity
+     Normalized.
+    :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID)
     :vartype meter_id: str
     :ivar term: RI recommendations in one or three year terms.
@@ -1421,6 +1441,10 @@ class ReservationRecommendation(Model):
         'location': {'readonly': True},
         'sku': {'readonly': True},
         'look_back_period': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
+        'normalized_size': {'readonly': True},
+        'recommended_quantity_normalized': {'readonly': True},
         'meter_id': {'readonly': True},
         'term': {'readonly': True},
         'cost_with_no_reserved_instances': {'readonly': True},
@@ -1439,6 +1463,10 @@ class ReservationRecommendation(Model):
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
+        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
+        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
         'meter_id': {'key': 'properties.meterId', 'type': 'str'},
         'term': {'key': 'properties.term', 'type': 'str'},
         'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'decimal'},
@@ -1458,6 +1486,10 @@ class ReservationRecommendation(Model):
         self.location = None
         self.sku = None
         self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
         self.meter_id = None
         self.term = None
         self.cost_with_no_reserved_instances = None
@@ -1912,47 +1944,3 @@ class UsageDetail(Resource):
         self.plan_name = None
         self.charge_type = None
         self.frequency = None
-
-
-class UsageDetailsDownloadResponse(Resource):
-    """Download response of Usage Details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar download_url: The URL to the csv file.
-    :vartype download_url: str
-    :ivar valid_till: The time in UTC at which this download URL will expire.
-    :vartype valid_till: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'download_url': {'readonly': True},
-        'valid_till': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'download_url': {'key': 'properties.downloadUrl', 'type': 'str'},
-        'valid_till': {'key': 'properties.validTill', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(UsageDetailsDownloadResponse, self).__init__(**kwargs)
-        self.download_url = None
-        self.valid_till = None

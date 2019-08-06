@@ -41,7 +41,6 @@ try:
     from ._models_py3 import Tag
     from ._models_py3 import TagsResult
     from ._models_py3 import UsageDetail
-    from ._models_py3 import UsageDetailsDownloadResponse
 except (SyntaxError, ImportError):
     from ._models import Balance
     from ._models import BalancePropertiesAdjustmentDetailsItem
@@ -74,7 +73,6 @@ except (SyntaxError, ImportError):
     from ._models import Tag
     from ._models import TagsResult
     from ._models import UsageDetail
-    from ._models import UsageDetailsDownloadResponse
 from ._paged_models import BudgetPaged
 from ._paged_models import ForecastPaged
 from ._paged_models import MarketplacePaged
@@ -127,7 +125,6 @@ __all__ = [
     'Tag',
     'TagsResult',
     'UsageDetail',
-    'UsageDetailsDownloadResponse',
     'UsageDetailPaged',
     'MarketplacePaged',
     'BudgetPaged',
