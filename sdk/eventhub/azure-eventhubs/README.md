@@ -90,7 +90,7 @@ The following sections provide several code snippets covering some of the most c
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
 - [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
 - [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
-- [Consume events from all partitions of an Event Hub](#consume-events-from-all-partitions-of-an-event-hub)
+- [Consume events using an Event Processor](#consume-events-using-an-event-processor)
 
 ### Inspect an Event Hub
 
@@ -207,11 +207,13 @@ finally:
     pass
 ```
 
-### Consume events from all partitions of an Event Hub
+### Consume events using an Event Processor
 
-To consume events from all partitions of an Event Hub, you'll create an `EventProcessor` for a specific consumer group. When an Event Hub is created, it provides a default consumer group that can be used to get started.
+Using an `EventHubConsumer` to consume events like in the previous examples puts the responsibility of storing the checkpoints (the last processed event) on the user. Checkpoints are important for restarting the task of processing events from the right position in a partition. Ideally, you would also want to run multiple programs targeting different partitions with some load balancing. This is where an `EventProcessor` can help.
 
-The `EventProcessor` will delegate processing of events to a `PartitionProcessor` implementation that you provide, allowing your logic to focus on the logic needed to provide value while the processor holds responsibility for managing the underlying consumer operations. In our example, we will focus on building the `EventProcessor` and use a very minimal partition processor that does no actual processing.
+The `EventProcessor` will delegate the processing of events to a `PartitionProcessor` that you provide, allowing you to focus on business logic while the processor holds responsibility for managing the underlying consumer operations including checkpointing and load balancing.
+
+While load balancing is a feature we will be adding in the next update, you can see how to use the `EventProcessor` in the below example, where we use an in memory `PartitionManager` that does checkpointing in memory.
 
 ```python
 import asyncio
@@ -239,7 +241,7 @@ def partition_processor_factory(checkpoint_manager):
 
 async def main():
     client = EventHubClient.from_connection_string(connection_str, receive_timeout=5, retry_total=3)
-    partition_manager = Sqlite3PartitionManager()
+    partition_manager = Sqlite3PartitionManager()  # in-memory PartitionManager
     try:
         event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
         # You can also define a callable object for creating PartitionProcessor like below:
