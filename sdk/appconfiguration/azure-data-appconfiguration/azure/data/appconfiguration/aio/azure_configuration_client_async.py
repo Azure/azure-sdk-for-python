@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import os
-import sys
 import platform
 import re
 from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -20,6 +19,7 @@ from .._generated.aio import ConfigurationClient
 from .._generated.aio._configuration_async import ConfigurationClientConfiguration
 from ..azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.models import ConfigurationSetting
+from .._user_agent import USER_AGENT
 
 def escape_reserved(value):
     """
@@ -95,14 +95,10 @@ class AzureAppConfigurationClient():
 
     def __init__(self, connection_string, **kwargs):
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        program_name = os.path.basename(sys.argv[0]) or "noprogram"
         self.config = ConfigurationClientConfiguration(
             connection_string, **kwargs
         )
-        self.config.user_agent_policy.add_user_agent(
-            "{}{}".format(platform.python_implementation(), platform.python_version())
-        )
-        self.config.user_agent_policy.add_user_agent(platform.platform())
+        self.config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._impl = ConfigurationClient(
             connection_string,
             base_url,
