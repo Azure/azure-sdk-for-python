@@ -4,42 +4,42 @@ azure.eventhub.eventprocessor package
 Submodules
 ----------
 
-azure.eventhub.event\_processor module
+azure.eventhub.eventprocessor.event\_processor module
 ---------------------------------------
 
-.. automodule:: azure.eventhub.event_processor
+.. automodule:: azure.eventhub.eventprocessor.event_processor
    :members:
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.partition\_processor module
+azure.eventhub.eventprocessor.partition\_processor module
 -----------------------------------------
 
-.. automodule:: azure.eventhub.partition_processor
+.. automodule:: azure.eventhub.eventprocessor.partition_processor
    :members:
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.partition\_manager module
+azure.eventhub.eventprocessor.partition\_manager module
 -----------------------------------------
 
-.. automodule:: azure.eventhub.partition_manager
+.. automodule:: azure.eventhub.eventprocessor.partition_manager
    :members:
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.checkpoint\_manager module
+azure.eventhub.eventprocessor.checkpoint\_manager module
 -----------------------------------------
 
-.. automodule:: azure.eventhub.checkpoint_manager
+.. automodule:: azure.eventhub.eventprocessor.checkpoint_manager
    :members:
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.sqlite3\_partition\_manager module
+azure.eventhub.eventprocessor.sqlite3\_partition\_manager module
 -----------------------------------------
 
-.. automodule:: azure.eventhub.sqlite3_partition_manager
+.. automodule:: azure.eventhub.eventprocessor.sqlite3_partition_manager
    :members:
    :undoc-members:
    :show-inheritance:
