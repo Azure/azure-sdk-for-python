@@ -324,6 +324,10 @@ class IdentitySource(Model):
     :type secondary_server: str
     :param ssl: Possible values include: 'Enabled', 'Disabled'
     :type ssl: str or ~azure.mgmt.vmwarevirtustream.models.SslEnum
+    :param username:
+    :type username: str
+    :param credential:
+    :type credential: str
     """
 
     _attribute_map = {
@@ -335,6 +339,8 @@ class IdentitySource(Model):
         'primary_server': {'key': 'primaryServer', 'type': 'str'},
         'secondary_server': {'key': 'secondaryServer', 'type': 'str'},
         'ssl': {'key': 'ssl', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'credential': {'key': 'credential', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -347,6 +353,8 @@ class IdentitySource(Model):
         self.primary_server = kwargs.get('primary_server', None)
         self.secondary_server = kwargs.get('secondary_server', None)
         self.ssl = kwargs.get('ssl', None)
+        self.username = kwargs.get('username', None)
+        self.credential = kwargs.get('credential', None)
 
 
 class Operation(Model):
