@@ -14,34 +14,34 @@ from msrest import Configuration
 from .version import VERSION
 
 
-class QnAMakerRuntimeClientConfiguration(Configuration):
-    """Configuration for QnAMakerRuntimeClient
+class QnAMakerClientConfiguration(Configuration):
+    """Configuration for QnAMakerClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param runtime_endpoint: QnA Maker App Service endpoint (for example:
-     https://{qnaservice-hostname}.azurewebsites.net).
-    :type runtime_endpoint: str
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, runtime_endpoint, credentials):
+            self, endpoint, credentials):
 
-        if runtime_endpoint is None:
-            raise ValueError("Parameter 'runtime_endpoint' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{RuntimeEndpoint}/qnamaker'
+        base_url = '{Endpoint}/qnamaker/v4.0'
 
-        super(QnAMakerRuntimeClientConfiguration, self).__init__(base_url)
+        super(QnAMakerClientConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
 
         self.add_user_agent('azure-cognitiveservices-knowledge-qnamaker/{}'.format(VERSION))
 
-        self.runtime_endpoint = runtime_endpoint
+        self.endpoint = endpoint
         self.credentials = credentials
