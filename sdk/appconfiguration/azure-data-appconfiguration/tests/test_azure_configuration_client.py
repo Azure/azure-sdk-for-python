@@ -311,25 +311,33 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_multi_pages(self):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
-        delete_me = [
-            self.get_config_client().add_configuration_setting(
-                ConfigurationSetting(
-                    key="multi_" + str(i) + KEY_UUID,
-                    label="multi_label_" + str(i),
-                    value="multi value",
+        try:
+            delete_me = [
+                self.get_config_client().add_configuration_setting(
+                    ConfigurationSetting(
+                        key="multi_" + str(i) + KEY_UUID,
+                        label="multi_label_" + str(i),
+                        value="multi value",
+                    )
                 )
-            )
-            for i in range(PAGE_SIZE + 1)
-        ]
+                for i in range(PAGE_SIZE + 1)
+            ]
+        except ResourceExistsError:
+            pass
         items = self.get_config_client().list_configuration_settings(keys=["multi_*"])
-        assert len(list(items)) > PAGE_SIZE
+        assert len(list(items)) == PAGE_SIZE
 
-        # Remove the delete_me
-        for kv in delete_me:
-            try:
-                self.get_config_client().delete_configuration_setting(kv.key, kv.label)
-            except AzureError:
-                pass
+        # Remove the configuration settings
+        try:
+            [
+                self.get_config_client().delete_configuration_setting(
+                    key="multi_" + str(i) + KEY_UUID,
+                    label="multi_label_" + str(i)
+                )
+                for i in range(PAGE_SIZE + 1)
+            ]
+        except AzureError:
+            pass
 
     def test_list_configuration_settings_null_label(self):
         items = self.get_config_client().list_configuration_settings(

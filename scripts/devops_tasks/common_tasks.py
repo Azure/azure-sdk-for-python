@@ -15,7 +15,7 @@ import os
 import sys
 
 DEFAULT_BUILD_PACKAGES = ['azure-keyvault', 'azure-servicebus']
-OMITTED_CI_PACKAGES = ['azure-mgmt-documentdb']
+OMITTED_CI_PACKAGES = ['azure-mgmt-documentdb','azure-servicemanagement-legacy']
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
