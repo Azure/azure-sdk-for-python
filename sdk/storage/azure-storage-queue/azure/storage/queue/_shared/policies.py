@@ -47,16 +47,32 @@ try:
 except NameError:
     _unicode_type = str
 
-
-_LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def encode_base64(data):
     if isinstance(data, _unicode_type):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
+
+
+def is_exhausted(settings):
+    """Are we out of retries?"""
+    retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
+    retry_counts = list(filter(None, retry_counts))
+    if not retry_counts:
+        return False
+    return min(retry_counts) < 0
+
+
+def retry_hook(settings, **kwargs):
+    if settings['hook']:
+        settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
 def is_retry(response, mode):
@@ -94,7 +110,7 @@ def urljoin(base_url, stub_url):
 
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(
@@ -102,28 +118,9 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
                 message_id)
 
 
-class StorageBlobSettings(object):
-
-    def __init__(self, **kwargs):
-        self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
-        self.copy_polling_interval = 15
-
-        # Block blob uploads
-        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
-        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
-        self.use_byte_buffer = kwargs.get('use_byte_buffer', False)
-
-        # Page blob uploads
-        self.max_page_size = kwargs.get('max_page_size', 4 * 1024 * 1024)
-
-        # Blob downloads
-        self.max_single_get_size = kwargs.get('max_single_get_size', 32 * 1024 * 1024)
-        self.max_chunk_get_size = kwargs.get('max_chunk_get_size', 4 * 1024 * 1024)
-
-
 class StorageHeadersPolicy(HeadersPolicy):
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
@@ -139,7 +136,7 @@ class StorageHosts(SansIOHTTPPolicy):
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
@@ -172,7 +169,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -212,7 +209,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response, **kwargs):
+    def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -251,13 +248,15 @@ class StorageUserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._application = kwargs.pop('user_agent', None)
-        self._user_agent = "azsdk-python-storage-queue/{} Python/{} ({})".format(
+        storage_sdk = kwargs.pop('storage_sdk')
+        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
+            storage_sdk,
             VERSION,
             platform.python_version(),
             platform.platform())
         super(StorageUserAgentPolicy, self).__init__()
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         existing = request.http_request.headers.get(self._USERAGENT, "")
         app_string = request.context.options.pop('user_agent', None) or self._application
         if app_string:
@@ -275,7 +274,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, **Any) -> PipelineResponse
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
@@ -354,7 +353,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         return md5.digest()
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
@@ -363,7 +362,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
 
-    def on_response(self, request, response, **kwargs):
+    def on_response(self, request, response):
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
@@ -443,15 +442,6 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def is_exhausted(self, settings):  # pylint: disable=no-self-use
-        """Are we out of retries?"""
-        retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
-        retry_counts = list(filter(None, retry_counts))
-        if not retry_counts:
-            return False
-
-        return min(retry_counts) < 0
-
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
 
@@ -482,7 +472,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))
 
-        if not self.is_exhausted(settings):
+        if not is_exhausted(settings):
             if request.method not in ['PUT'] and settings['retry_secondary']:
                 self._set_next_host_location(settings, request)
 
@@ -494,16 +484,9 @@ class StorageRetryPolicy(HTTPPolicy):
                 try:
                     # attempt to rewind the body to the initial position
                     request.body.seek(settings['body_position'], SEEK_SET)
-                except UnsupportedOperation:
+                except (UnsupportedOperation, ValueError):
                     # if body is not seekable, then retry would not work
                     return False
-            if settings['hook']:
-                settings['hook'](
-                    request=request,
-                    response=response,
-                    error=error,
-                    retry_count=settings['count'],
-                    location_mode=settings['mode'])
             settings['count'] += 1
             return True
         return False
@@ -521,14 +504,23 @@ class StorageRetryPolicy(HTTPPolicy):
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
+                        retry_hook(
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None)
                         self.sleep(retry_settings, request.context.transport)
-
                         continue
                 break
             except AzureError as err:
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
+                    retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err)
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err

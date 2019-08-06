@@ -38,7 +38,7 @@ class TestCommonBlobSamples(StorageTestCase):
 
     def tearDown(self):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-        for container in ['containerformyblobs', 'containerforblobs', 'leasemyblobscontainer']:
+        for container in ['containerformyblobs', 'containerfordeletedblobs', 'leasemyblobscontainer']:
             try:
                 blob_service_client.delete_container(container)
             except HttpResponseError:
@@ -103,7 +103,7 @@ class TestCommonBlobSamples(StorageTestCase):
         blob_service_client.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("containerforblobs")
+        container_client = blob_service_client.get_container_client("containerfordeletedblobs")
 
         # Create new Container
         try:
@@ -114,10 +114,7 @@ class TestCommonBlobSamples(StorageTestCase):
 
         # Upload a blob to the container
         with open(SOURCE_FILE, "rb") as data:
-            container_client.upload_blob(name="my_blob", data=data)
-
-        # Get the blob client
-        blob_client = blob_service_client.get_blob_client("containerforblobs", "my_blob")
+            blob_client = container_client.upload_blob(name="my_blob", data=data)
 
         # Soft delete blob in the container (blob can be recovered with undelete)
         blob_client.delete_blob()
@@ -134,7 +131,7 @@ class TestCommonBlobSamples(StorageTestCase):
         assert properties is not None
 
         # Delete container
-        blob_service_client.delete_container("containerforblobs")
+        blob_service_client.delete_container("containerfordeletedblobs")
 
     @record
     def test_acquire_lease_on_blob(self):

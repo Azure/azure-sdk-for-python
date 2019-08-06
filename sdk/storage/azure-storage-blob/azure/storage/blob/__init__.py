@@ -12,15 +12,14 @@ from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
-from .polling import CopyStatusPoller
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
+from ._shared.downloads import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountPermissions,
     StorageErrorCode
 )
-from ._blob_utils import StorageStreamDownloader
 from .models import (
     BlobType,
     BlockState,
@@ -87,7 +86,6 @@ __all__ = [
     'BlobPermissions',
     'ResourceTypes',
     'AccountPermissions',
-    'CopyStatusPoller',
     'StorageStreamDownloader',
 ]
 
