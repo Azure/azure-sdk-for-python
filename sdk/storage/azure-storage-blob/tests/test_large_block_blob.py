@@ -36,7 +36,8 @@ LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
-
+if platform.python_implementation() == 'PyPy':
+    pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 class StorageLargeBlockBlobTest(StorageTestCase):
     def setUp(self):
