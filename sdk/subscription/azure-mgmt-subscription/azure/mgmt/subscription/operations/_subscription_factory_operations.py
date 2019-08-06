@@ -95,12 +95,14 @@ class SubscriptionFactoryOperations(object):
 
     def create_subscription(
             self, billing_account_name, invoice_section_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates an Azure subscription.
+        """The operation to create a new Azure subscription.
 
-        :param billing_account_name: The name of the commerce root billing
-         account.
+        :param billing_account_name: The name of the Microsoft Customer
+         Agreement billing account for which you want to create the
+         subscription.
         :type billing_account_name: str
-        :param invoice_section_name: The name of the invoice section.
+        :param invoice_section_name: The name of the invoice section in the
+         billing account for which you want to create the subscription.
         :type invoice_section_name: str
         :param body: The subscription creation parameters.
         :type body:

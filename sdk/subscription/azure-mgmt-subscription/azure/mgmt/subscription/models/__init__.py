@@ -12,7 +12,6 @@
 try:
     from ._models_py3 import AdPrincipal
     from ._models_py3 import CanceledSubscriptionId
-    from ._models_py3 import EnabledSubscriptionId
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Location
     from ._models_py3 import ModernSubscriptionCreationParameters
@@ -31,7 +30,6 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AdPrincipal
     from ._models import CanceledSubscriptionId
-    from ._models import EnabledSubscriptionId
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Location
     from ._models import ModernSubscriptionCreationParameters
@@ -59,7 +57,6 @@ from ._subscription_client_enums import (
 __all__ = [
     'AdPrincipal',
     'CanceledSubscriptionId',
-    'EnabledSubscriptionId',
     'ErrorResponse', 'ErrorResponseException',
     'Location',
     'ModernSubscriptionCreationParameters',

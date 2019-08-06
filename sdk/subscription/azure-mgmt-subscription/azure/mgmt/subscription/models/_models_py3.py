@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class AdPrincipal(Model):
-    """Active Directory Principal for subscription creation delegated permission.
+    """Active Directory Principal who’ll get owner access on the new subscription.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -36,12 +36,12 @@ class AdPrincipal(Model):
 
 
 class CanceledSubscriptionId(Model):
-    """Canceled Subscription Id.
+    """The ID of the canceled subscription.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Canceled Subscription Id
+    :ivar value: The ID of the canceled subscription
     :vartype value: str
     """
 
@@ -64,29 +64,6 @@ class CloudError(Model):
 
     _attribute_map = {
     }
-
-
-class EnabledSubscriptionId(Model):
-    """Enabled Subscription Id.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: Enabled Subscription Id
-    :vartype value: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(EnabledSubscriptionId, self).__init__(**kwargs)
-        self.value = None
 
 
 class ErrorResponse(Model):
@@ -171,23 +148,40 @@ class Location(Model):
 
 
 class ModernSubscriptionCreationParameters(Model):
-    """Subscription Creation Parameters required to create a new Azure
-    subscription.
+    """The parameters required to create a new subscription.
 
-    :param display_name: The display name of the subscription.
+    All required parameters must be populated in order to send to Azure.
+
+    :param display_name: Required. The friendly name of the subscription.
     :type display_name: str
-    :param billing_profile_id: The ARM id of the billing profile.
+    :param billing_profile_id: Required. The ARM ID of the billing profile for
+     which you want to create the subscription.
     :type billing_profile_id: str
-    :param sku_id: The commerce id of the sku.
+    :param sku_id: Required. The SKU ID of the Azure plan. Azure plan
+     determines the pricing and service-level agreement of the subscription.
+     Use 001 for Microsoft Azure Plan and 002 for Microsoft Azure Plan for
+     DevTest.
     :type sku_id: str
-    :param cost_center: optional customer cost center
+    :param cost_center: If set, the cost center will show up on the Azure
+     usage and charges file.
     :type cost_center: str
-    :param owner: rbac owner of the subscription
+    :param owner: If specified, the AD principal will get owner access to the
+     subscription, along with the user who is performing the create
+     subscription operation
     :type owner: ~azure.mgmt.subscription.models.AdPrincipal
+    :param management_group_id: The identifier of the management group to
+     which this subscription will be associated.
+    :type management_group_id: str
     :param additional_parameters: Additional, untyped parameters to support
      custom subscription creation scenarios.
     :type additional_parameters: dict[str, object]
     """
+
+    _validation = {
+        'display_name': {'required': True},
+        'billing_profile_id': {'required': True},
+        'sku_id': {'required': True},
+    }
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -195,16 +189,18 @@ class ModernSubscriptionCreationParameters(Model):
         'sku_id': {'key': 'skuId', 'type': 'str'},
         'cost_center': {'key': 'costCenter', 'type': 'str'},
         'owner': {'key': 'owner', 'type': 'AdPrincipal'},
+        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
         'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
     }
 
-    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, sku_id: str=None, cost_center: str=None, owner=None, additional_parameters=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str, billing_profile_id: str, sku_id: str, cost_center: str=None, owner=None, management_group_id: str=None, additional_parameters=None, **kwargs) -> None:
         super(ModernSubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = display_name
         self.billing_profile_id = billing_profile_id
         self.sku_id = sku_id
         self.cost_center = cost_center
         self.owner = owner
+        self.management_group_id = management_group_id
         self.additional_parameters = additional_parameters
 
 
@@ -276,12 +272,12 @@ class OperationListResult(Model):
 
 
 class RenamedSubscriptionId(Model):
-    """Renamed Subscription Id.
+    """The ID of the subscriptions that is being renamed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Renamed Subscription Id
+    :ivar value: The ID of the subscriptions that is being renamed
     :vartype value: str
     """
 
@@ -389,7 +385,8 @@ class SubscriptionCreationParameters(Model):
 class SubscriptionCreationResult(Model):
     """The created subscription object.
 
-    :param subscription_link: The link to the new subscription.
+    :param subscription_link: The link to the new subscription. Use this link
+     to check the status of subscription creation operation.
     :type subscription_link: str
     """
 
@@ -403,7 +400,7 @@ class SubscriptionCreationResult(Model):
 
 
 class SubscriptionName(Model):
-    """New name of the subscription.
+    """The new name of the subscription.
 
     :param subscription_name: New subscription name
     :type subscription_name: str
