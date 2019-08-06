@@ -813,9 +813,8 @@ class StorageQueueTest(QueueTestCase):
             # Asserts
 
     @record
+    @pytest.mark.skipif(sys.version_info == (2, 7), reason="Uncomment after msrest fix")
     def test_unicode_get_messages_unicode_data(self):
-        if sys.version_info == (2, 7):
-            pytest.skip("Uncomment after msrest fix")
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1㚈')
@@ -832,9 +831,8 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsInstance(message.time_next_visible, datetime)
 
     @record
+    @pytest.mark.skipif(sys.version_info == (2, 7), reason="Uncomment after msrest fix")
     def test_unicode_update_message_unicode_data(self):
-        if sys.version_info == (2, 7):
-            pytest.skip("Uncomment after msrest fix")
         # Action
         queue_client = self._create_queue()
         queue_client.enqueue_message(u'message1')
