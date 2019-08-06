@@ -31,9 +31,10 @@ class CertificateClient(KeyVaultClientBase):
             :start-after: [START create_certificate_client]
             :end-before: [END create_certificate_client]
             :language: python
+            :caption: Create a new ``CertificateClient``
             :dedent: 4
-            :caption: Creates a new instance of the Certificate client
     """
+
     # pylint:disable=protected-access
 
     @distributed_trace
@@ -68,6 +69,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START create_certificate]
+                :end-before: [END create_certificate]
+                :language: python
+                :caption: Create a certificate
+                :dedent: 8
         """
 
         if enabled is not None or not_before is not None or expires is not None:
@@ -106,6 +115,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START get_certificate]
+                :end-before: [END get_certificate]
+                :language: python
+                :caption: Get a certificate
+                :dedent: 8
         """
         if version is None:
             version = ""
@@ -133,6 +150,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START delete_certificate]
+                :end-before: [END delete_certificate]
+                :language: python
+                :caption: Delete a certificate
+                :dedent: 8
         """
         bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -152,6 +177,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START get_deleted_certificate]
+                :end-before: [END get_deleted_certificate]
+                :language: python
+                :caption: Get a deleted certificate
+                :dedent: 8
         """
         bundle = self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
@@ -195,6 +228,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_samples_keys.py
+                :start-after: [START recover_deleted_certificate]
+                :end-before: [END recover_deleted_certificate]
+                :language: python
+                :caption: Recover a deleted certificate
+                :dedent: 8
         """
         bundle = self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -337,6 +378,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START update_certificate]
+                :end-before: [END update_certificate]
+                :language: python
+                :caption: Update a certificate's attributes
+                :dedent: 8
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -369,6 +418,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: bytes
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START backup_certificate]
+                :end-before: [END backup_certificate]
+                :language: python
+                :caption: Get a certificate backup
+                :dedent: 8
         """
         backup_result = self._client.backup_certificate(
             vault_base_url=self.vault_url,
@@ -391,6 +448,14 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START restore_certificate]
+                :end-before: [END restore_certificate]
+                :language: python
+                :caption: Restore a certificate backup
+                :dedent: 8
         """
         bundle = self._client.restore_certificate(
             vault_base_url=self.vault_url,
@@ -418,6 +483,14 @@ class CertificateClient(KeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START list_deleted_certificates]
+                :end-before: [END list_deleted_certificates]
+                :language: python
+                :caption: List all the deleted certificates
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_certificates(
@@ -444,6 +517,14 @@ class CertificateClient(KeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START list_certificates]
+                :end-before: [END list_certificates]
+                :language: python
+                :caption: List all certificates
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificates(
@@ -469,6 +550,14 @@ class CertificateClient(KeyVaultClientBase):
          typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START list_certificate_versions]
+                :end-before: [END list_certificate_versions]
+                :language: python
+                :caption: List all versions of a certificate
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_versions(
