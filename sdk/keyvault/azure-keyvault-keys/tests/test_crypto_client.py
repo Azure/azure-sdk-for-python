@@ -71,11 +71,11 @@ class CryptoClientTests(KeyVaultTestCase):
         imported_key = self._import_test_key(key_client, key_name)
         crypto_client = key_client.get_cryptography_client(imported_key)
 
-        key_id, algorithm, ciphertext, authentication_tag = crypto_client.encrypt(self.plaintext, EncryptionAlgorithm.rsa_oaep)
+        key_id, algorithm, ciphertext, authentication_tag = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         self.assertEqual(key_id, imported_key.id)
         assert authentication_tag is None
 
-        result = crypto_client.decrypt(ciphertext, algorithm)
+        result = crypto_client.decrypt(algorithm, ciphertext)
         self.assertEqual(self.plaintext, result.decrypted_bytes)
 
     @ResourceGroupPreparer()
@@ -92,10 +92,10 @@ class CryptoClientTests(KeyVaultTestCase):
         imported_key = self._import_test_key(key_client, key_name)
         crypto_client = key_client.get_cryptography_client(imported_key)
 
-        key_id, algorithm, signature = crypto_client.sign(digest, SignatureAlgorithm.rs256)
+        key_id, algorithm, signature = crypto_client.sign(SignatureAlgorithm.rs256, digest)
         self.assertEqual(key_id, imported_key.id)
 
-        verified = crypto_client.verify(digest, signature, algorithm)
+        verified = crypto_client.verify(algorithm, digest, signature)
         self.assertTrue(verified.result)
 
     @ResourceGroupPreparer()
@@ -110,8 +110,8 @@ class CryptoClientTests(KeyVaultTestCase):
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
-        key_id, wrap_algorithm, wrapped_bytes = crypto_client.wrap(key_bytes, KeyWrapAlgorithm.rsa_oaep)
+        key_id, wrap_algorithm, wrapped_bytes = crypto_client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
         self.assertEqual(key_id, created_key.id)
 
-        result = crypto_client.unwrap(wrapped_bytes, wrap_algorithm)
+        result = crypto_client.unwrap(wrap_algorithm, wrapped_bytes)
         self.assertEqual(key_bytes, result.unwrapped_bytes)

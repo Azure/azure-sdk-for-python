@@ -76,15 +76,15 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 self._get_key_forbidden = ex.status_code == 403
         return self._key
 
-    async def encrypt(self, plaintext: bytes, algorithm: "EncryptionAlgorithm", **kwargs: "Any") -> EncryptResult:
+    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
         This method encrypts only a single block of data, the size of which depends on the key and encryption algorithm.
 
-        :param bytes plaintext: bytes to encrypt
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.EncryptionAlgorithm`
+        :param bytes plaintext: bytes to encrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
         """
 
@@ -93,15 +93,15 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
-    async def decrypt(self, ciphertext: bytes, algorithm: "EncryptionAlgorithm", **kwargs: "Any") -> DecryptResult:
+    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
         This method decrypts only a single block of data, the size of which depends on the key and encryption algorithm.
 
-        :param bytes ciphertext: encrypted bytes to decrypt
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.EncryptionAlgorithm`
+        :param bytes ciphertext: encrypted bytes to decrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
         """
 
@@ -115,13 +115,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return DecryptResult(decrypted_bytes=result.result)
 
-    async def wrap(self, key: bytes, algorithm: "KeyWrapAlgorithm", **kwargs: "Any") -> WrapKeyResult:
+    async def wrap(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapKeyResult:
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
-        :param bytes key: key to wrap
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
+        :param bytes key: key to wrap
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapKeyResult`
         """
 
@@ -130,13 +130,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
-    async def unwrap(self, encrypted_key: bytes, algorithm: "KeyWrapAlgorithm", **kwargs: "Any") -> UnwrapKeyResult:
+    async def unwrap(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapKeyResult:
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
-        :param bytes encrypted_key: the wrapped key
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
+        :param bytes encrypted_key: the wrapped key
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapKeyResult`
         """
 
@@ -150,13 +150,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return UnwrapKeyResult(unwrapped_bytes=result.result)
 
-    async def sign(self, digest: bytes, algorithm: "SignatureAlgorithm", **kwargs: "Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
-        :param bytes digest: hashed bytes to sign
         :param algorithm: signing algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.SignatureAlgorithm`
+        :param bytes digest: hashed bytes to sign
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
         """
 
@@ -165,14 +165,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
-    async def verify(self, digest: bytes, signature: bytes, algorithm: "SignatureAlgorithm", **kwargs: "Any") -> VerifyResult:
+    async def verify(self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any") -> VerifyResult:
         """
         Verify a signature using the client's key. Requires the keys/verify permission.
 
-        :param bytes digest:
-        :param bytes signature:
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.SignatureAlgorithm`
+        :param bytes digest:
+        :param bytes signature:
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
         """
 
