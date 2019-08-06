@@ -24,7 +24,7 @@ class QnAMakerRuntimeClient(SDKClient):
     :vartype config: QnAMakerRuntimeClientConfiguration
 
     :ivar runtime: Runtime operations
-    :vartype runtime: azure.cognitiveservices.knowledge.qnamaker.operations.RuntimeOperations
+    :vartype runtime: azure.cognitiveservices.knowledge.qnamaker.runtime.operations.RuntimeOperations
 
     :param runtime_endpoint: QnA Maker App Service endpoint (for example:
      https://{qnaservice-hostname}.azurewebsites.net).

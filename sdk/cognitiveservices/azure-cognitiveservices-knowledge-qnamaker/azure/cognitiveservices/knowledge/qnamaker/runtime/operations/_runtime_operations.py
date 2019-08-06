@@ -43,7 +43,7 @@ class RuntimeOperations(object):
         :type kb_id: str
         :param generate_answer_payload: Post body of the request.
         :type generate_answer_payload:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.QueryDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.QueryDTO
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -51,10 +51,10 @@ class RuntimeOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: QnASearchResultList or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.QnASearchResultList
+         ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.QnASearchResultList
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.runtime.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.generate_answer.metadata['url']
@@ -103,7 +103,7 @@ class RuntimeOperations(object):
         :type kb_id: str
         :param feedback_records: List of feedback records.
         :type feedback_records:
-         list[~azure.cognitiveservices.knowledge.qnamaker.models.FeedbackRecordDTO]
+         list[~azure.cognitiveservices.knowledge.qnamaker.runtime.models.FeedbackRecordDTO]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -112,7 +112,7 @@ class RuntimeOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.runtime.models.ErrorResponseException>`
         """
         train_payload = models.FeedbackRecordsDTO(feedback_records=feedback_records)
 
