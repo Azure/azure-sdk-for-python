@@ -12,24 +12,6 @@
 from enum import Enum
 
 
-class SearchSortEnum(str, Enum):
-
-    asc = "asc"
-    desc = "desc"
-
-
-class StorageInsightState(str, Enum):
-
-    ok = "OK"
-    error = "ERROR"
-
-
-class PurgeState(str, Enum):
-
-    pending = "Pending"
-    completed = "Completed"
-
-
 class DataSourceKind(str, Enum):
 
     azure_activity_log = "AzureActivityLog"
@@ -54,7 +36,6 @@ class SkuNameEnum(str, Enum):
     free = "Free"
     standard = "Standard"
     premium = "Premium"
-    unlimited = "Unlimited"
     per_node = "PerNode"
     per_gb2018 = "PerGB2018"
     standalone = "Standalone"

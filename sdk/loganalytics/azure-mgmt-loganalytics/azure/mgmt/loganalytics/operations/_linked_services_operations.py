@@ -16,8 +16,10 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DataSourcesOperations(object):
-    """DataSourcesOperations operations.
+class LinkedServicesOperations(object):
+    """LinkedServicesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,36 +40,40 @@ class DataSourcesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, workspace_name, data_source_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update a data source.
+            self, resource_group_name, workspace_name, linked_service_name, resource_id, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Create or update a linked service.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of the Log Analytics Workspace that will
-         contain the datasource
+         contain the linkedServices resource
         :type workspace_name: str
-        :param data_source_name: The name of the datasource resource.
-        :type data_source_name: str
-        :param parameters: The parameters required to create or update a
-         datasource.
-        :type parameters: ~azure.mgmt.loganalytics.models.DataSource
+        :param linked_service_name: Name of the linkedServices resource
+        :type linked_service_name: str
+        :param resource_id: The resource id of the resource that will be
+         linked to the workspace.
+        :type resource_id: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataSource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.loganalytics.models.DataSource or
+        :return: LinkedService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.LinkedService or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.LinkedService(tags=tags, resource_id=resource_id)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -78,6 +84,7 @@ class DataSourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -87,12 +94,11 @@ class DataSourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DataSource')
+        body_content = self._serialize.body(parameters, 'LinkedService')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -100,31 +106,30 @@ class DataSourcesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('DataSource', response)
+            deserialized = self._deserialize('LinkedService', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DataSource', response)
+            deserialized = self._deserialize('LinkedService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def delete(
-            self, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a data source instance.
+            self, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a linked service instance.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of the Log Analytics Workspace that
-         contains the datasource.
+         contains the linkedServices resource
         :type workspace_name: str
-        :param data_source_name: Name of the datasource.
-        :type data_source_name: str
+        :param linked_service_name: Name of the linked service.
+        :type linked_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -139,7 +144,7 @@ class DataSourcesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -150,7 +155,6 @@ class DataSourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -159,8 +163,8 @@ class DataSourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -170,27 +174,27 @@ class DataSourcesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def get(
-            self, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a datasource instance.
+            self, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a linked service instance.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of the Log Analytics Workspace that
-         contains the datasource.
+         contains the linkedServices resource
         :type workspace_name: str
-        :param data_source_name: Name of the datasource
-        :type data_source_name: str
+        :param linked_service_name: Name of the linked service.
+        :type linked_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataSource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.loganalytics.models.DataSource or
+        :return: LinkedService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.LinkedService or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -199,7 +203,7 @@ class DataSourcesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -210,7 +214,7 @@ class DataSourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -219,8 +223,8 @@ class DataSourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -228,44 +232,37 @@ class DataSourcesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('DataSource', response)
+            deserialized = self._deserialize('LinkedService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def list_by_workspace(
-            self, resource_group_name, workspace_name, filter, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the first page of data source instances in a workspace with the
-        link to the next page.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the linked services instances in a workspace.
 
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The workspace that contains the data sources.
+        :param workspace_name: Name of the Log Analytics Workspace that
+         contains the linked services.
         :type workspace_name: str
-        :param filter: The filter to apply on the operation.
-        :type filter: str
-        :param skiptoken: Starting point of the collection of data source
-         instances.
-        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DataSource
+        :return: An iterator like instance of LinkedService
         :rtype:
-         ~azure.mgmt.loganalytics.models.DataSourcePaged[~azure.mgmt.loganalytics.models.DataSource]
+         ~azure.mgmt.loganalytics.models.LinkedServicePaged[~azure.mgmt.loganalytics.models.LinkedService]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_workspace.metadata['url']
@@ -278,9 +275,6 @@ class DataSourcesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -289,7 +283,7 @@ class DataSourcesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -298,9 +292,13 @@ class DataSourcesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -310,12 +308,10 @@ class DataSourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DataSourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.DataSourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.LinkedServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources'}
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices'}
