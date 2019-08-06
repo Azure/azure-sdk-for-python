@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class PrivateLinkServiceConnectionStateProperty(Model):
     """PrivateLinkServiceConnectionStateProperty.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param status: Required. The private link service connection status.
@@ -22,19 +25,24 @@ class PrivateLinkServiceConnectionStateProperty(Model):
     :param description: Required. The private link service connection
      description.
     :type description: str
+    :ivar actions_required: The private link service connection description.
+    :vartype actions_required: str
     """
 
     _validation = {
         'status': {'required': True},
         'description': {'required': True},
+        'actions_required': {'readonly': True},
     }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.description = kwargs.get('description', None)
+        self.actions_required = None

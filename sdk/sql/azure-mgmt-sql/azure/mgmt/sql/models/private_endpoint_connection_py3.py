@@ -30,14 +30,15 @@ class PrivateEndpointConnection(ProxyResource):
      Private Endpoint Connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
-    :param state: State of the Private Endpoint Connection.
-    :type state: str
+    :ivar provisioning_state: State of the Private Endpoint Connection.
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,11 +47,11 @@ class PrivateEndpointConnection(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, state: str=None, **kwargs) -> None:
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.state = state
+        self.provisioning_state = None

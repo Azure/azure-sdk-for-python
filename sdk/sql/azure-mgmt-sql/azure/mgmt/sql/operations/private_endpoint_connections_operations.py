@@ -109,7 +109,9 @@ class PrivateEndpointConnectionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, server_name, private_endpoint_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.PrivateEndpointConnection(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -159,7 +161,7 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, private_endpoint_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Approve or reject a private endpoint connection with a given name.
 
         :param resource_group_name: The name of the resource group that
@@ -170,8 +172,13 @@ class PrivateEndpointConnectionsOperations(object):
         :type server_name: str
         :param private_endpoint_connection_name:
         :type private_endpoint_connection_name: str
-        :param parameters:
-        :type parameters: ~azure.mgmt.sql.models.PrivateEndpointConnection
+        :param private_endpoint: Private endpoint which the connection belongs
+         to.
+        :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+        :param private_link_service_connection_state: Connection State of the
+         Private Endpoint Connection.
+        :type private_link_service_connection_state:
+         ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -190,7 +197,8 @@ class PrivateEndpointConnectionsOperations(object):
             resource_group_name=resource_group_name,
             server_name=server_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
-            parameters=parameters,
+            private_endpoint=private_endpoint,
+            private_link_service_connection_state=private_link_service_connection_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
