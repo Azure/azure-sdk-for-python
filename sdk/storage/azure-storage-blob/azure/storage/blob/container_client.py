@@ -44,8 +44,8 @@ from .lease import LeaseClient, get_access_conditions
 from .blob_client import BlobClient
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
     from .models import ContainerPermissions, PublicAccess
     from datetime import datetime
     from .models import ( # pylint: disable=unused-import

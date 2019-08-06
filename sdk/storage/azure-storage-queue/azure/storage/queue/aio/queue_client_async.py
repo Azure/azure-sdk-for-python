@@ -657,4 +657,3 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             )
         except StorageErrorException as error:
             process_storage_error(error)
-
