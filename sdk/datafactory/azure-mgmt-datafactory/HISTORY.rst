@@ -151,8 +151,7 @@ Release History
 **Breaking changes**
 
 - Operation PipelinesOperations.create_run has a new signature
-- Operation PipelinesOperations.create_run has a new signature
-
+- Model SSISPackageLocation has a new signature
 0.7.0 (2019-01-31)
 ++++++++++++++++++
 
