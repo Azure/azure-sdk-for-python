@@ -11,7 +11,7 @@
 
 from .billing_accounts_operations import BillingAccountsOperations
 from .payment_methods_operations import PaymentMethodsOperations
-from .addresses_operations import AddressesOperations
+from .address_operations import AddressOperations
 from .available_balances_operations import AvailableBalancesOperations
 from .billing_profiles_operations import BillingProfilesOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
@@ -25,6 +25,8 @@ from .transactions_operations import TransactionsOperations
 from .policies_operations import PoliciesOperations
 from .billing_property_operations import BillingPropertyOperations
 from .transfers_operations import TransfersOperations
+from .partner_transfers_operations import PartnerTransfersOperations
+from .partner_transfers_transfers_operations import PartnerTransfersTransfersOperations
 from .recipient_transfers_operations import RecipientTransfersOperations
 from .operations import Operations
 from .billing_permissions_operations import BillingPermissionsOperations
@@ -36,7 +38,7 @@ from .line_of_credits_operations import LineOfCreditsOperations
 __all__ = [
     'BillingAccountsOperations',
     'PaymentMethodsOperations',
-    'AddressesOperations',
+    'AddressOperations',
     'AvailableBalancesOperations',
     'BillingProfilesOperations',
     'InvoiceSectionsOperations',
@@ -50,6 +52,8 @@ __all__ = [
     'PoliciesOperations',
     'BillingPropertyOperations',
     'TransfersOperations',
+    'PartnerTransfersOperations',
+    'PartnerTransfersTransfersOperations',
     'RecipientTransfersOperations',
     'Operations',
     'BillingPermissionsOperations',

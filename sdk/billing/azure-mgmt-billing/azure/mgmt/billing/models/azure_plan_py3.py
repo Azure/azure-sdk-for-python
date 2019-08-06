@@ -12,30 +12,28 @@
 from msrest.serialization import Model
 
 
-class DownloadProperties(Model):
-    """The properties of the invoice download.
+class AzurePlan(Model):
+    """Details about the azure plan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar kind: Document type. Possible values include: 'Invoice', 'VoidNote',
-     'Receipt', 'CreditNote'
-    :vartype kind: str or ~azure.mgmt.billing.models.enum
-    :ivar url: Document URL.
-    :vartype url: str
+    :param sku_id: The sku id.
+    :type sku_id: str
+    :ivar sku_description: The sku description.
+    :vartype sku_description: str
     """
 
     _validation = {
-        'kind': {'readonly': True},
-        'url': {'readonly': True},
+        'sku_description': {'readonly': True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
+        'sku_description': {'key': 'skuDescription', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(DownloadProperties, self).__init__(**kwargs)
-        self.kind = None
-        self.url = None
+    def __init__(self, *, sku_id: str=None, **kwargs) -> None:
+        super(AzurePlan, self).__init__(**kwargs)
+        self.sku_id = sku_id
+        self.sku_description = None

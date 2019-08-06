@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class InvoiceSummary(Resource):
+class Invoice(Resource):
     """An invoice resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -30,7 +30,7 @@ class InvoiceSummary(Resource):
     :vartype invoice_date: datetime
     :ivar status: Invoice status. Possible values include: 'PastDue', 'Due',
      'Paid', 'Void'
-    :vartype status: str or ~azure.mgmt.billing.models.enum
+    :vartype status: str or ~azure.mgmt.billing.models.InvoiceStatus
     :ivar amount_due: Amount due.
     :vartype amount_due: ~azure.mgmt.billing.models.Amount
     :ivar billed_amount: Amount billed.
@@ -41,14 +41,14 @@ class InvoiceSummary(Resource):
     :vartype invoice_period_end_date: datetime
     :ivar billing_profile_id: The billing profile id this invoice belongs to.
     :vartype billing_profile_id: str
-    :ivar billing_profile_name: The profile name this invoice belongs to.
-    :vartype billing_profile_name: str
+    :ivar billing_profile_display_name: The billing profile display name this
+     invoice belongs to.
+    :vartype billing_profile_display_name: str
     :ivar purchase_order_number: The purchase identifier for the invoice.
     :vartype purchase_order_number: str
-    :ivar document_urls: List of document urls available to download including
-     invoice and tax documents.
-    :vartype document_urls:
-     list[~azure.mgmt.billing.models.DownloadProperties]
+    :ivar documents: List of documents available to download including invoice
+     and tax documents.
+    :vartype documents: list[~azure.mgmt.billing.models.Document]
     :ivar payments: List of payments.
     :vartype payments: list[~azure.mgmt.billing.models.PaymentProperties]
     """
@@ -65,9 +65,9 @@ class InvoiceSummary(Resource):
         'invoice_period_start_date': {'readonly': True},
         'invoice_period_end_date': {'readonly': True},
         'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
+        'billing_profile_display_name': {'readonly': True},
         'purchase_order_number': {'readonly': True},
-        'document_urls': {'readonly': True},
+        'documents': {'readonly': True},
         'payments': {'readonly': True},
     }
 
@@ -83,14 +83,14 @@ class InvoiceSummary(Resource):
         'invoice_period_start_date': {'key': 'properties.invoicePeriodStartDate', 'type': 'iso-8601'},
         'invoice_period_end_date': {'key': 'properties.invoicePeriodEndDate', 'type': 'iso-8601'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
         'purchase_order_number': {'key': 'properties.purchaseOrderNumber', 'type': 'str'},
-        'document_urls': {'key': 'properties.documentUrls', 'type': '[DownloadProperties]'},
+        'documents': {'key': 'properties.documents', 'type': '[Document]'},
         'payments': {'key': 'properties.payments', 'type': '[PaymentProperties]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(InvoiceSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(Invoice, self).__init__(**kwargs)
         self.due_date = None
         self.invoice_date = None
         self.status = None
@@ -99,7 +99,7 @@ class InvoiceSummary(Resource):
         self.invoice_period_start_date = None
         self.invoice_period_end_date = None
         self.billing_profile_id = None
-        self.billing_profile_name = None
+        self.billing_profile_display_name = None
         self.purchase_order_number = None
-        self.document_urls = None
+        self.documents = None
         self.payments = None

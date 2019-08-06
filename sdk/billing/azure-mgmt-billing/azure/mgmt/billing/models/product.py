@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class ProductSummary(Resource):
-    """A product summary resource.
+class Product(Resource):
+    """A product resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -59,15 +59,15 @@ class ProductSummary(Resource):
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
-    :ivar invoice_section_name: Invoice section name to which this product
-     belongs.
-    :vartype invoice_section_name: str
+    :ivar invoice_section_display_name: Invoice section display name to which
+     this product belongs.
+    :vartype invoice_section_display_name: str
     :ivar billing_profile_id: Billing Profile id to which this product
      belongs.
     :vartype billing_profile_id: str
-    :ivar billing_profile_name: Billing Profile name to which this product
-     belongs.
-    :vartype billing_profile_name: str
+    :ivar billing_profile_display_name: Billing Profile display name to which
+     this product belongs.
+    :vartype billing_profile_display_name: str
     """
 
     _validation = {
@@ -87,9 +87,9 @@ class ProductSummary(Resource):
         'availability_id': {'readonly': True},
         'parent_product_id': {'readonly': True},
         'invoice_section_id': {'readonly': True},
-        'invoice_section_name': {'readonly': True},
+        'invoice_section_display_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
+        'billing_profile_display_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -111,20 +111,20 @@ class ProductSummary(Resource):
         'availability_id': {'key': 'properties.availabilityId', 'type': 'str'},
         'parent_product_id': {'key': 'properties.parentProductId', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
     }
 
-    def __init__(self, *, status=None, billing_frequency=None, **kwargs) -> None:
-        super(ProductSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(Product, self).__init__(**kwargs)
         self.display_name = None
         self.purchase_date = None
         self.product_type_id = None
         self.product_type = None
-        self.status = status
+        self.status = kwargs.get('status', None)
         self.end_date = None
-        self.billing_frequency = billing_frequency
+        self.billing_frequency = kwargs.get('billing_frequency', None)
         self.last_charge = None
         self.last_charge_date = None
         self.quantity = None
@@ -133,6 +133,6 @@ class ProductSummary(Resource):
         self.availability_id = None
         self.parent_product_id = None
         self.invoice_section_id = None
-        self.invoice_section_name = None
+        self.invoice_section_display_name = None
         self.billing_profile_id = None
-        self.billing_profile_name = None
+        self.billing_profile_display_name = None

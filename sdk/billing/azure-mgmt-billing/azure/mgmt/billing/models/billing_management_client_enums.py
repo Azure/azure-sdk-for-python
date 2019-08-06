@@ -62,6 +62,36 @@ class SubscriptionTransferValidationErrorCode(str, Enum):
     not_available_for_destination_market = "NotAvailableForDestinationMarket"
 
 
+class AgreementType(str, Enum):
+
+    microsoft_customer_agreement = "MicrosoftCustomerAgreement"
+    enterprise_agreement = "EnterpriseAgreement"
+    microsoft_online_services_program = "MicrosoftOnlineServicesProgram"
+
+
+class CustomerType(str, Enum):
+
+    enterprise = "Enterprise"
+    individual = "Individual"
+    partner = "Partner"
+
+
+class InvoiceStatus(str, Enum):
+
+    past_due = "PastDue"
+    due = "Due"
+    paid = "Paid"
+    void = "Void"
+
+
+class DocumentType(str, Enum):
+
+    invoice = "Invoice"
+    void_note = "VoidNote"
+    receipt = "Receipt"
+    credit_note = "CreditNote"
+
+
 class ProductStatusType(str, Enum):
 
     active = "Active"
@@ -113,6 +143,25 @@ class ReservationType(str, Enum):
 
     purchase = "Purchase"
     usage_charge = "Usage Charge"
+
+
+class MarketplacePurchasesPolicy(str, Enum):
+
+    all_allowed = "AllAllowed"
+    free_allowed = "FreeAllowed"
+    not_allowed = "NotAllowed"
+
+
+class ReservationPurchasesPolicy(str, Enum):
+
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
+
+
+class ViewChargesPolicy(str, Enum):
+
+    none = "None"
+    subscription_owner = "SubscriptionOwner"
 
 
 class PaymentMethodType(str, Enum):

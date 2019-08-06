@@ -12,30 +12,29 @@
 from msrest.serialization import Model
 
 
-class DownloadProperties(Model):
-    """The properties of the invoice download.
+class TransactionListResult(Model):
+    """Result of listing reservation transactions.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar kind: Document type. Possible values include: 'Invoice', 'VoidNote',
-     'Receipt', 'CreditNote'
-    :vartype kind: str or ~azure.mgmt.billing.models.enum
-    :ivar url: Document URL.
-    :vartype url: str
+    :ivar value: The list of reservation transactions.
+    :vartype value: list[~azure.mgmt.billing.models.Transaction]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'kind': {'readonly': True},
-        'url': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Transaction]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(DownloadProperties, self).__init__(**kwargs)
-        self.kind = None
-        self.url = None
+    def __init__(self, **kwargs) -> None:
+        super(TransactionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None

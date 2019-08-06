@@ -12,35 +12,34 @@
 from msrest.serialization import Model
 
 
-class BillingProfileCreationParameters(Model):
-    """The parameters for creating a new billing profile.
+class BillingProfileCreationRequest(Model):
+    """The request parameters for creating a new billing profile.
 
     :param display_name: The billing profile name.
     :type display_name: str
     :param po_number: Purchase order number.
     :type po_number: str
     :param address: Billing address.
-    :type address: ~azure.mgmt.billing.models.Address
+    :type address: ~azure.mgmt.billing.models.AddressDetails
     :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :type invoice_email_opt_in: bool
-    :param enable_azure_sk_us: Azure skus to enable for this billing profile..
-    :type enable_azure_sk_us:
-     list[~azure.mgmt.billing.models.EnabledAzureSKUs]
+    :param enabled_azure_plans: Enabled azure plans for this billing profile.
+    :type enabled_azure_plans: list[~azure.mgmt.billing.models.AzurePlan]
     """
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
         'po_number': {'key': 'poNumber', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'Address'},
+        'address': {'key': 'address', 'type': 'AddressDetails'},
         'invoice_email_opt_in': {'key': 'invoiceEmailOptIn', 'type': 'bool'},
-        'enable_azure_sk_us': {'key': 'enableAzureSKUs', 'type': '[EnabledAzureSKUs]'},
+        'enabled_azure_plans': {'key': 'enabledAzurePlans', 'type': '[AzurePlan]'},
     }
 
     def __init__(self, **kwargs):
-        super(BillingProfileCreationParameters, self).__init__(**kwargs)
+        super(BillingProfileCreationRequest, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
         self.po_number = kwargs.get('po_number', None)
         self.address = kwargs.get('address', None)
         self.invoice_email_opt_in = kwargs.get('invoice_email_opt_in', None)
-        self.enable_azure_sk_us = kwargs.get('enable_azure_sk_us', None)
+        self.enabled_azure_plans = kwargs.get('enabled_azure_plans', None)

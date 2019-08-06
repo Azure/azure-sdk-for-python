@@ -22,7 +22,7 @@ class BillingPermissionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class BillingPermissionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -91,14 +91,16 @@ class BillingPermissionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingPermissions'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingPermissions'}
 
     def list_by_invoice_sections(
-            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists all billing permissions for the caller under invoice section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -116,6 +118,7 @@ class BillingPermissionsOperations(object):
         url = self.list_by_invoice_sections.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -151,11 +154,11 @@ class BillingPermissionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_invoice_sections.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingPermissions'}
+    list_by_invoice_sections.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingPermissions'}
 
     def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all billingPermissions for the caller has for a billing account.
+        """Lists all billing permissions for the caller has for a billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
@@ -211,4 +214,4 @@ class BillingPermissionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingPermissions'}
+    list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingPermissions'}

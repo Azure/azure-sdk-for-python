@@ -17,16 +17,12 @@ class InvoiceSectionCreationRequest(Model):
 
     :param display_name: The name of the InvoiceSection.
     :type display_name: str
-    :param billing_profile_id: The billing profile id.
-    :type billing_profile_id: str
     """
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
     }
 
-    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, **kwargs) -> None:
         super(InvoiceSectionCreationRequest, self).__init__(**kwargs)
         self.display_name = display_name
-        self.billing_profile_id = billing_profile_id

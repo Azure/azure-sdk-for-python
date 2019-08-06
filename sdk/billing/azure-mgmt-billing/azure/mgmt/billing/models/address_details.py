@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Address(Model):
+class AddressDetails(Model):
     """Address details.
 
     :param first_name: First Name.
@@ -51,7 +51,7 @@ class Address(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Address, self).__init__(**kwargs)
+        super(AddressDetails, self).__init__(**kwargs)
         self.first_name = kwargs.get('first_name', None)
         self.last_name = kwargs.get('last_name', None)
         self.company_name = kwargs.get('company_name', None)

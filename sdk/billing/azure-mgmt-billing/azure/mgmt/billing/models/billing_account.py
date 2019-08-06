@@ -26,19 +26,15 @@ class BillingAccount(Resource):
     :vartype type: str
     :ivar display_name: The billing account name.
     :vartype display_name: str
-    :ivar account_type: The billing account Type. Possible values include:
-     'Organization', 'Enrollment'
-    :vartype account_type: str or ~azure.mgmt.billing.models.enum
     :param address: The address associated with billing account.
-    :type address: ~azure.mgmt.billing.models.Address
-    :ivar company: Company Name.
-    :vartype company: str
-    :ivar country: Country Name.
-    :vartype country: str
-    :param invoice_sections: The invoice sections associated to the billing
-     account. By default this is not populated, unless it's specified in
-     $expand.
-    :type invoice_sections: list[~azure.mgmt.billing.models.InvoiceSection]
+    :type address: ~azure.mgmt.billing.models.AddressDetails
+    :ivar agreement_type: The type of agreement. Possible values include:
+     'MicrosoftCustomerAgreement', 'EnterpriseAgreement',
+     'MicrosoftOnlineServicesProgram'
+    :vartype agreement_type: str or ~azure.mgmt.billing.models.AgreementType
+    :ivar customer_type: The type of customer. Possible values include:
+     'Enterprise', 'Individual', 'Partner'
+    :vartype customer_type: str or ~azure.mgmt.billing.models.CustomerType
     :param billing_profiles: The billing profiles associated to the billing
      account. By default this is not populated, unless it's specified in
      $expand.
@@ -52,9 +48,8 @@ class BillingAccount(Resource):
     :param enrollment_accounts: The accounts associated to the enrollment.
     :type enrollment_accounts:
      list[~azure.mgmt.billing.models.EnrollmentAccount]
-    :ivar has_read_access: Specifies whether the user has read access on
-     billing account.
-    :vartype has_read_access: bool
+    :ivar organization_id: Organization id.
+    :vartype organization_id: str
     """
 
     _validation = {
@@ -62,11 +57,10 @@ class BillingAccount(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'display_name': {'readonly': True},
-        'account_type': {'readonly': True},
-        'company': {'readonly': True},
-        'country': {'readonly': True},
+        'agreement_type': {'readonly': True},
+        'customer_type': {'readonly': True},
         'enrollment_details': {'readonly': True},
-        'has_read_access': {'readonly': True},
+        'organization_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -74,28 +68,24 @@ class BillingAccount(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'account_type': {'key': 'properties.accountType', 'type': 'str'},
-        'address': {'key': 'properties.address', 'type': 'Address'},
-        'company': {'key': 'properties.company', 'type': 'str'},
-        'country': {'key': 'properties.country', 'type': 'str'},
-        'invoice_sections': {'key': 'properties.invoiceSections', 'type': '[InvoiceSection]'},
+        'address': {'key': 'properties.address', 'type': 'AddressDetails'},
+        'agreement_type': {'key': 'properties.agreementType', 'type': 'str'},
+        'customer_type': {'key': 'properties.customerType', 'type': 'str'},
         'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
         'enrollment_details': {'key': 'properties.enrollmentDetails', 'type': 'Enrollment'},
         'departments': {'key': 'properties.departments', 'type': '[Department]'},
         'enrollment_accounts': {'key': 'properties.enrollmentAccounts', 'type': '[EnrollmentAccount]'},
-        'has_read_access': {'key': 'properties.hasReadAccess', 'type': 'bool'},
+        'organization_id': {'key': 'properties.organizationId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(BillingAccount, self).__init__(**kwargs)
         self.display_name = None
-        self.account_type = None
         self.address = kwargs.get('address', None)
-        self.company = None
-        self.country = None
-        self.invoice_sections = kwargs.get('invoice_sections', None)
+        self.agreement_type = None
+        self.customer_type = None
         self.billing_profiles = kwargs.get('billing_profiles', None)
         self.enrollment_details = None
         self.departments = kwargs.get('departments', None)
         self.enrollment_accounts = kwargs.get('enrollment_accounts', None)
-        self.has_read_access = None
+        self.organization_id = None
