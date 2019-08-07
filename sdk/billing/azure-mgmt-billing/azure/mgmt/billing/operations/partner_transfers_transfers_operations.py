@@ -35,13 +35,11 @@ class PartnerTransfersTransfersOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_name, billing_profile_name, customer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, custom_headers=None, raw=False, **operation_config):
         """Lists all transfer's details initiated from given invoice section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param customer_name: Customer name.
         :type customer_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -62,7 +60,6 @@ class PartnerTransfersTransfersOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
                     'customerName': self._serialize.url("customer_name", customer_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -102,4 +99,4 @@ class PartnerTransfersTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/transfers'}

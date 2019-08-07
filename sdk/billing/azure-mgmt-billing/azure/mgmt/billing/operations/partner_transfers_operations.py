@@ -35,13 +35,11 @@ class PartnerTransfersOperations(object):
         self.config = config
 
     def initiate(
-            self, billing_account_name, billing_profile_name, customer_name, recipient_email_id=None, reseller_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, recipient_email_id=None, reseller_id=None, custom_headers=None, raw=False, **operation_config):
         """Initiates the request to transfer the legacy subscriptions or RIs.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param customer_name: Customer name.
         :type customer_name: str
         :param recipient_email_id: Email Id of recipient for transfer.
@@ -65,7 +63,6 @@ class PartnerTransfersOperations(object):
         url = self.initiate.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'customerName': self._serialize.url("customer_name", customer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -104,16 +101,14 @@ class PartnerTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/initiateTransfer'}
+    initiate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/initiateTransfer'}
 
     def get(
-            self, billing_account_name, billing_profile_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Gets the transfer details for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param customer_name: Customer name.
         :type customer_name: str
         :param transfer_name: Transfer Name.
@@ -133,7 +128,6 @@ class PartnerTransfersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'customerName': self._serialize.url("customer_name", customer_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
@@ -169,16 +163,14 @@ class PartnerTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers/{transferName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/transfers/{transferName}'}
 
     def cancel(
-            self, billing_account_name, billing_profile_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Cancels the transfer for given transfer Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param customer_name: Customer name.
         :type customer_name: str
         :param transfer_name: Transfer Name.
@@ -198,7 +190,6 @@ class PartnerTransfersOperations(object):
         url = self.cancel.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'customerName': self._serialize.url("customer_name", customer_name, 'str'),
             'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
         }
@@ -234,4 +225,4 @@ class PartnerTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers/{transferName}'}
+    cancel.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/transfers/{transferName}'}
