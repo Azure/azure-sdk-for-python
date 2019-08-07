@@ -25,7 +25,7 @@ class ProvidersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-05-10".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-07-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ProvidersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-10"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
@@ -52,7 +52,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Provider or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.Provider or
+        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -111,7 +111,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Provider or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.Provider or
+        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -176,7 +176,7 @@ class ProvidersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Provider
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_10.models.ProviderPaged[~azure.mgmt.resource.resources.v2019_05_10.models.Provider]
+         ~azure.mgmt.resource.resources.v2019_07_01.models.ProviderPaged[~azure.mgmt.resource.resources.v2019_07_01.models.Provider]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -254,7 +254,7 @@ class ProvidersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Provider
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_05_10.models.ProviderPaged[~azure.mgmt.resource.resources.v2019_05_10.models.Provider]
+         ~azure.mgmt.resource.resources.v2019_07_01.models.ProviderPaged[~azure.mgmt.resource.resources.v2019_07_01.models.Provider]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -325,7 +325,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Provider or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.Provider or
+        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -389,7 +389,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Provider or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.Provider or
+        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.Provider or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
