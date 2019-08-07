@@ -18,10 +18,6 @@ from common_tasks import process_glob_string, run_check_call
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
-# a return code of 5 from pytest == no tests run
-# evaluating whether we want this or not.
-ALLOWED_RETURN_CODES = []
-
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
@@ -47,13 +43,6 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     # if we are targeting only packages that are management plane, it is a possibility
     # that no tests running is an acceptable situation
     # we explicitly handle this here.
-    if all(
-        map(
-            lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
-            targeted_packages,
-        )
-    ):
-        ALLOWED_RETURN_CODES.append(5)
 
     # base command array without a targeted package
     command_array = [python_version, "-m", "pytest"]
@@ -64,6 +53,17 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 
     for target_package in targeted_packages:
         target_package_options = []
+        allowed_return_codes = []
+
+        if all(
+            map(
+                lambda x: any(
+                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
+                ),
+                [target_package],
+            )
+        ):
+            allowed_return_codes.append(5)
 
         if test_output_location:
             target_package_options.extend(
@@ -81,15 +81,18 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         err_result = run_check_call(
             command_array + target_package_options,
             root_dir,
-            ALLOWED_RETURN_CODES,
+            allowed_return_codes,
             True,
             False,
         )
         if err_result:
             err_results.append(err_result)
 
+    print(err_results)
+
     # if any of the packages failed, we should get exit with errors
     if err_results:
+        print("nooo")
         exit(1)
 
 
