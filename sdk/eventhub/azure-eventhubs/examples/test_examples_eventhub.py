@@ -57,7 +57,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
 
     from azure.eventhub import EventData, EventPosition
 
-    # [START create_eventhub_client_producer]
+    # [START create_eventhub_client_sender]
     client = EventHubClient.from_connection_string(connection_str)
     # Create a producer.
     producer = client.create_producer(partition_id="0")
