@@ -15,7 +15,7 @@ Common uses of Queue storage include:
 Install the Azure Storage Queue client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-queue --preview
+pip install azure-storage-queue --pre
 ```
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
