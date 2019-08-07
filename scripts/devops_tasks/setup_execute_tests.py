@@ -22,6 +22,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
+    "azure-nspkg"
 ]
 
 
