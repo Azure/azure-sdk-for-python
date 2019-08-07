@@ -23,7 +23,7 @@ class MetricDefinition(Model):
     :vartype metric_availabilities:
      list[~azure.mgmt.cosmosdb.models.MetricAvailability]
     :ivar primary_aggregation_type: The primary aggregation type of the
-     metric. Possible values include: 'None', 'Average', 'Total', 'Minimimum',
+     metric. Possible values include: 'None', 'Average', 'Total', 'Minimum',
      'Maximum', 'Last'
     :vartype primary_aggregation_type: str or
      ~azure.mgmt.cosmosdb.models.PrimaryAggregationType
