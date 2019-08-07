@@ -42,7 +42,7 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def run_tests(targeted_packages, python_version, test_res):
+def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
     # if we are targeting only packages that are management plane, it is a possibility
     # that no tests running is an acceptable situation
@@ -63,8 +63,15 @@ def run_tests(targeted_packages, python_version, test_res):
     print("Running pytest for {}".format(targeted_packages))
 
     for target_package in targeted_packages:
+        target_package_options = []
+
+        if test_output_location:
+            target_package_options.extend(["--junitxml", os.path.join("results/{}/".format(os.path.basename(target_package)), test_output_location)])
+
+        target_package_options.append(target_package)
+
         err_result = run_check_call(
-            command_array + [target_package], root_dir, ALLOWED_RETURN_CODES, True, False
+            command_array + target_package_options, root_dir, ALLOWED_RETURN_CODES, True, False
         )
         if err_result:
             err_results.append(err_result)
@@ -140,8 +147,6 @@ if __name__ == "__main__":
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
-    if args.test_results:
-        test_results_arg.extend(["--junitxml", args.test_results])
 
     if args.disablecov:
         test_results_arg.append("--no-cov")
@@ -153,8 +158,8 @@ if __name__ == "__main__":
 
     print(targeted_packages)
 
-    if args.runtype == "setup" or args.runtype == "all":
-        prep_tests(targeted_packages, args.python_version)
+    # if args.runtype == "setup" or args.runtype == "all":
+    #     prep_tests(targeted_packages, args.python_version)
 
     if args.runtype == "execute" or args.runtype == "all":
-        run_tests(targeted_packages, args.python_version, test_results_arg)
+        run_tests(targeted_packages, args.python_version, args.test_results, test_results_arg)
