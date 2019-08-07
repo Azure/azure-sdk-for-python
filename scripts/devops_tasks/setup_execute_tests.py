@@ -59,7 +59,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     command_array = [python_version, "-m", "pytest"]
     command_array.extend(test_res)
 
-    # loop through the
+    # loop through the packages
     print("Running pytest for {}".format(targeted_packages))
 
     for target_package in targeted_packages:
@@ -88,6 +88,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         if err_result:
             err_results.append(err_result)
 
+    # if any of the packages failed, we should get exit with errors
     if err_results:
         exit(1)
 
