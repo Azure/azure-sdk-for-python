@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
    azure.eventhub.aio
+   azure.eventhub.eventprocessor
 
 Submodules
 ----------
