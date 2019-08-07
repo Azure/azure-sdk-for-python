@@ -12,17 +12,21 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'This script is used to execute mypy against a specific folder. Tox does not support ')
-    parser.add_argument(
-        'path',
-        nargs='?',
-        help=('The target directory'))
 
+    parser.add_argument(
+        '-p',
+        '--package_dir',
+        dest='package_dir',
+        help='Specific set of named environments to execute'
+    )
 
     args = parser.parse_args()
 
-    if sys.version_info < (3, 5):
-        run_check_call(['mypy', args.path])
-    else:
-        print('Mypy is not supported on < Python 3.5')
+    print(args.package_dir)
+
+    # if sys.version_info >= (3, 5):
+    #     run_check_call(['mypy', args.package_dir], args.package_dir)
+    # else:
+    #     print('Mypy is not supported on < Python 3.5')
 
 
