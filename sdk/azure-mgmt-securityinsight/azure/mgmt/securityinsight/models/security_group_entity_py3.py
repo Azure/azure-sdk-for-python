@@ -12,8 +12,8 @@
 from .entity_py3 import Entity
 
 
-class FileEntity(Entity):
-    """Represents a file entity.
+class SecurityGroupEntity(Entity):
+    """Represents a security group entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,16 +35,14 @@ class FileEntity(Entity):
     :ivar additional_data: A bag of custom fields that should be part of the
      entity and will be presented to the user.
     :vartype additional_data: dict[str, object]
-    :ivar directory: The full path to the file.
-    :vartype directory: str
-    :ivar file_name: The file name without path (some alerts might not include
-     path).
-    :vartype file_name: str
-    :ivar host_entity_id: The Host entity id which the file belongs to
-    :vartype host_entity_id: str
-    :ivar file_hash_entity_ids: The file hash entity identifiers associated
-     with this file
-    :vartype file_hash_entity_ids: list[str]
+    :ivar distinguished_name: The group distinguished name
+    :vartype distinguished_name: str
+    :ivar sid: The SID attribute is a single-value attribute that specifies
+     the security identifier (SID) of the group
+    :vartype sid: str
+    :ivar object_guid: A single-value attribute that is the unique identifier
+     for the object, assigned by active directory.
+    :vartype object_guid: str
     """
 
     _validation = {
@@ -54,10 +52,9 @@ class FileEntity(Entity):
         'kind': {'required': True},
         'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
-        'directory': {'readonly': True},
-        'file_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'file_hash_entity_ids': {'readonly': True},
+        'distinguished_name': {'readonly': True},
+        'sid': {'readonly': True},
+        'object_guid': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,18 +64,16 @@ class FileEntity(Entity):
         'kind': {'key': 'kind', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
+        'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
+        'object_guid': {'key': 'properties.objectGuid', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(FileEntity, self).__init__(**kwargs)
+        super(SecurityGroupEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
-        self.directory = None
-        self.file_name = None
-        self.host_entity_id = None
-        self.file_hash_entity_ids = None
-        self.kind = 'File'
+        self.distinguished_name = None
+        self.sid = None
+        self.object_guid = None
+        self.kind = 'SecurityGroup'

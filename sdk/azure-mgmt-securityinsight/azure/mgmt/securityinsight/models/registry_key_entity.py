@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entity_py3 import Entity
+from .entity import Entity
 
 
-class FileEntity(Entity):
-    """Represents a file entity.
+class RegistryKeyEntity(Entity):
+    """Represents a registry key entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,16 +35,14 @@ class FileEntity(Entity):
     :ivar additional_data: A bag of custom fields that should be part of the
      entity and will be presented to the user.
     :vartype additional_data: dict[str, object]
-    :ivar directory: The full path to the file.
-    :vartype directory: str
-    :ivar file_name: The file name without path (some alerts might not include
-     path).
-    :vartype file_name: str
-    :ivar host_entity_id: The Host entity id which the file belongs to
-    :vartype host_entity_id: str
-    :ivar file_hash_entity_ids: The file hash entity identifiers associated
-     with this file
-    :vartype file_hash_entity_ids: list[str]
+    :ivar hive: the hive that holds the registry key. Possible values include:
+     'HKEY_LOCAL_MACHINE', 'HKEY_CLASSES_ROOT', 'HKEY_CURRENT_CONFIG',
+     'HKEY_USERS', 'HKEY_CURRENT_USER_LOCAL_SETTINGS', 'HKEY_PERFORMANCE_DATA',
+     'HKEY_PERFORMANCE_NLSTEXT', 'HKEY_PERFORMANCE_TEXT', 'HKEY_A',
+     'HKEY_CURRENT_USER'
+    :vartype hive: str or ~azure.mgmt.securityinsight.models.RegistryHive
+    :ivar key: The registry key path.
+    :vartype key: str
     """
 
     _validation = {
@@ -54,10 +52,8 @@ class FileEntity(Entity):
         'kind': {'required': True},
         'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
-        'directory': {'readonly': True},
-        'file_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'file_hash_entity_ids': {'readonly': True},
+        'hive': {'readonly': True},
+        'key': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,18 +63,14 @@ class FileEntity(Entity):
         'kind': {'key': 'kind', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'file_hash_entity_ids': {'key': 'properties.fileHashEntityIds', 'type': '[str]'},
+        'hive': {'key': 'properties.hive', 'type': 'str'},
+        'key': {'key': 'properties.key', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(FileEntity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(RegistryKeyEntity, self).__init__(**kwargs)
         self.friendly_name = None
         self.additional_data = None
-        self.directory = None
-        self.file_name = None
-        self.host_entity_id = None
-        self.file_hash_entity_ids = None
-        self.kind = 'File'
+        self.hive = None
+        self.key = None
+        self.kind = 'RegistryKey'

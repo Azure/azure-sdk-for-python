@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class EntityKind1(Model):
-    """Describes an entity with kind.
+class EntityExpandResponseValue(Model):
+    """The expansion result values.
 
-    :param kind: The kind of the entity. Possible values include: 'Account',
-     'Host', 'File', 'AzureResource', 'CloudApplication', 'DnsResolution',
-     'FileHash', 'Ip', 'Malware', 'Process', 'RegistryKey', 'RegistryValue',
-     'SecurityGroup', 'Url', 'SecurityAlert', 'Bookmark'
-    :type kind: str or ~azure.mgmt.securityinsight.models.EntityKind
+    :param entities: Array of the expansion result entities.
+    :type entities: list[~azure.mgmt.securityinsight.models.Entity]
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'entities': {'key': 'entities', 'type': '[Entity]'},
     }
 
     def __init__(self, **kwargs):
-        super(EntityKind1, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        super(EntityExpandResponseValue, self).__init__(**kwargs)
+        self.entities = kwargs.get('entities', None)

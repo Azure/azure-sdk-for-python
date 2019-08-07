@@ -27,14 +27,20 @@ class EntityQuery(Resource):
     :param query_template: The template query string to be parsed and
      formatted
     :type query_template: str
-    :param input_entity_type: The type of the query's source entity
-    :type input_entity_type: str
+    :param input_entity_type: The type of the query's source entity. Possible
+     values include: 'Account', 'Host', 'File', 'AzureResource',
+     'CloudApplication', 'DNS', 'FileHash', 'IP', 'Malware', 'Process',
+     'RegistryKey', 'RegistryValue', 'SecurityGroup', 'URL', 'SecurityAlert',
+     'HuntingBookmark'
+    :type input_entity_type: str or
+     ~azure.mgmt.securityinsight.models.EntityType
     :param input_fields: List of the fields of the source entity that are
      required to run the query
     :type input_fields: list[str]
     :param output_entity_types: List of the desired output types to be
      constructed from the result
-    :type output_entity_types: list[str]
+    :type output_entity_types: list[str or
+     ~azure.mgmt.securityinsight.models.EntityType]
     :param data_sources: List of the data sources that are required to run the
      query
     :type data_sources: list[str]

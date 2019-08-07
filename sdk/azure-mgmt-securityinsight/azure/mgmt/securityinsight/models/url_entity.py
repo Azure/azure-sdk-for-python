@@ -9,17 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .entity import Entity
 
 
-class Entity(Model):
-    """Specific entity.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AccountEntity, HostEntity, FileEntity, SecurityAlert,
-    FileHashEntity, MalwareEntity, SecurityGroupEntity, AzureResourceEntity,
-    CloudApplicationEntity, ProcessEntity, DnsEntity, IpEntity,
-    RegistryKeyEntity, RegistryValueEntity, UrlEntity
+class UrlEntity(Entity):
+    """Represents a url entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,6 +28,15 @@ class Entity(Model):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :ivar friendly_name: The graph item display name which is a short humanly
+     readable description of the graph item instance. This property is optional
+     and might be system generated.
+    :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
+    :ivar url: A full URL the entity points to
+    :vartype url: str
     """
 
     _validation = {
@@ -41,6 +44,9 @@ class Entity(Model):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
+        'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
+        'url': {'readonly': True},
     }
 
     _attribute_map = {
@@ -48,15 +54,14 @@ class Entity(Model):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
+        'url': {'key': 'properties.url', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHashEntity', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Entity, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.kind = None
+    def __init__(self, **kwargs):
+        super(UrlEntity, self).__init__(**kwargs)
+        self.friendly_name = None
+        self.additional_data = None
+        self.url = None
+        self.kind = 'Url'

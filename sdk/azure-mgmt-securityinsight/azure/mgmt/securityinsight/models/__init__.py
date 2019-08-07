@@ -46,9 +46,30 @@ try:
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
     from .entity_kind1_py3 import EntityKind1
+    from .entity_common_properties_py3 import EntityCommonProperties
     from .account_entity_py3 import AccountEntity
     from .host_entity_py3 import HostEntity
     from .file_entity_py3 import FileEntity
+    from .security_alert_properties_confidence_reasons_item_py3 import SecurityAlertPropertiesConfidenceReasonsItem
+    from .security_alert_py3 import SecurityAlert
+    from .file_hash_entity_py3 import FileHashEntity
+    from .malware_entity_py3 import MalwareEntity
+    from .security_group_entity_py3 import SecurityGroupEntity
+    from .azure_resource_entity_py3 import AzureResourceEntity
+    from .cloud_application_entity_py3 import CloudApplicationEntity
+    from .process_entity_py3 import ProcessEntity
+    from .dns_entity_py3 import DnsEntity
+    from .geo_location_py3 import GeoLocation
+    from .threat_intelligence_py3 import ThreatIntelligence
+    from .ip_entity_py3 import IpEntity
+    from .registry_key_entity_py3 import RegistryKeyEntity
+    from .registry_value_entity_py3 import RegistryValueEntity
+    from .url_entity_py3 import UrlEntity
+    from .entity_expand_parameters_py3 import EntityExpandParameters
+    from .entity_expand_response_value_py3 import EntityExpandResponseValue
+    from .expansion_result_aggregation_py3 import ExpansionResultAggregation
+    from .expansion_results_metadata_py3 import ExpansionResultsMetadata
+    from .entity_expand_response_py3 import EntityExpandResponse
     from .office_consent_py3 import OfficeConsent
     from .resource_py3 import Resource
     from .settings_py3 import Settings
@@ -98,9 +119,30 @@ except (SyntaxError, ImportError):
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
     from .entity_kind1 import EntityKind1
+    from .entity_common_properties import EntityCommonProperties
     from .account_entity import AccountEntity
     from .host_entity import HostEntity
     from .file_entity import FileEntity
+    from .security_alert_properties_confidence_reasons_item import SecurityAlertPropertiesConfidenceReasonsItem
+    from .security_alert import SecurityAlert
+    from .file_hash_entity import FileHashEntity
+    from .malware_entity import MalwareEntity
+    from .security_group_entity import SecurityGroupEntity
+    from .azure_resource_entity import AzureResourceEntity
+    from .cloud_application_entity import CloudApplicationEntity
+    from .process_entity import ProcessEntity
+    from .dns_entity import DnsEntity
+    from .geo_location import GeoLocation
+    from .threat_intelligence import ThreatIntelligence
+    from .ip_entity import IpEntity
+    from .registry_key_entity import RegistryKeyEntity
+    from .registry_value_entity import RegistryValueEntity
+    from .url_entity import UrlEntity
+    from .entity_expand_parameters import EntityExpandParameters
+    from .entity_expand_response_value import EntityExpandResponseValue
+    from .expansion_result_aggregation import ExpansionResultAggregation
+    from .expansion_results_metadata import ExpansionResultsMetadata
+    from .entity_expand_response import EntityExpandResponse
     from .office_consent import OfficeConsent
     from .resource import Resource
     from .settings import Settings
@@ -134,10 +176,19 @@ from .security_insights_enums import (
     DataTypeState,
     EntityKind,
     OSFamily,
+    ConfidenceScoreStatus,
+    KillChainIntent,
+    ConfidenceLevel,
+    AlertStatus,
+    FileHashAlgorithm,
+    ElevationToken,
+    RegistryHive,
+    RegistryValueKind,
     SettingKind,
     StatusInMcas,
     LicenseStatus,
     AggregationsKind,
+    EntityType,
 )
 
 __all__ = [
@@ -177,9 +228,30 @@ __all__ = [
     'DataConnectorDataTypeCommon',
     'Entity',
     'EntityKind1',
+    'EntityCommonProperties',
     'AccountEntity',
     'HostEntity',
     'FileEntity',
+    'SecurityAlertPropertiesConfidenceReasonsItem',
+    'SecurityAlert',
+    'FileHashEntity',
+    'MalwareEntity',
+    'SecurityGroupEntity',
+    'AzureResourceEntity',
+    'CloudApplicationEntity',
+    'ProcessEntity',
+    'DnsEntity',
+    'GeoLocation',
+    'ThreatIntelligence',
+    'IpEntity',
+    'RegistryKeyEntity',
+    'RegistryValueEntity',
+    'UrlEntity',
+    'EntityExpandParameters',
+    'EntityExpandResponseValue',
+    'ExpansionResultAggregation',
+    'ExpansionResultsMetadata',
+    'EntityExpandResponse',
     'OfficeConsent',
     'Resource',
     'Settings',
@@ -212,8 +284,17 @@ __all__ = [
     'DataTypeState',
     'EntityKind',
     'OSFamily',
+    'ConfidenceScoreStatus',
+    'KillChainIntent',
+    'ConfidenceLevel',
+    'AlertStatus',
+    'FileHashAlgorithm',
+    'ElevationToken',
+    'RegistryHive',
+    'RegistryValueKind',
     'SettingKind',
     'StatusInMcas',
     'LicenseStatus',
     'AggregationsKind',
+    'EntityType',
 ]

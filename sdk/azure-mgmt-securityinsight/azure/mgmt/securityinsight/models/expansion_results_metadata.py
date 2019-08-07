@@ -12,20 +12,19 @@
 from msrest.serialization import Model
 
 
-class EntityKind1(Model):
-    """Describes an entity with kind.
+class ExpansionResultsMetadata(Model):
+    """Expansion result metadata.
 
-    :param kind: The kind of the entity. Possible values include: 'Account',
-     'Host', 'File', 'AzureResource', 'CloudApplication', 'DnsResolution',
-     'FileHash', 'Ip', 'Malware', 'Process', 'RegistryKey', 'RegistryValue',
-     'SecurityGroup', 'Url', 'SecurityAlert', 'Bookmark'
-    :type kind: str or ~azure.mgmt.securityinsight.models.EntityKind
+    :param aggregations: Information of the aggregated nodes in the expansion
+     result.
+    :type aggregations:
+     list[~azure.mgmt.securityinsight.models.ExpansionResultAggregation]
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'aggregations': {'key': 'aggregations', 'type': '[ExpansionResultAggregation]'},
     }
 
     def __init__(self, **kwargs):
-        super(EntityKind1, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        super(ExpansionResultsMetadata, self).__init__(**kwargs)
+        self.aggregations = kwargs.get('aggregations', None)
