@@ -4,8 +4,8 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.secrets.aio import SecretClient
 
 
 class KeyVault:
@@ -18,26 +18,28 @@ class KeyVault:
         self.secret_client = SecretClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
-
         self.secret_name = "secret-name-" + uuid.uuid1().hex
-        self.secret_Value = "secret-value"
+        self.secret_value = "secret-value"
 
-    def set_secret(self):
+    async def set_secret(self):
         print("Setting a secret...")
-        self.secret_client.set_secret(self.secret_name, self.secret_Value)
-        print("\tdone")
-
-    def get_secret(self):
-        print("Getting a secret...")
-        secret = self.secret_client.get_secret(self.secret_name)
+        secret = await self.secret_client.set_secret(
+            self.secret_name, self.secret_value
+        )
         print("\tdone, secret: (" + secret.name + "," + secret.value + ").")
 
-    def delete_secret(self):
-        print("Deleting a secret...")
-        deleted_secret = self.secret_client.delete_secret(self.secret_name)
-        print("\tdone: " + deleted_secret.name)
+    async def get_secret(self):
+        print("Getting a secret...")
+        secret = await self.secret_client.get_secret(self.secret_name)
+        print("\tdone, secret: (" + secret.name + "," + secret.value + ").")
 
-    def run(self):
+    async def delete_secret(self):
+        print("Deleting a secret...")
+        await self.secret_client.delete_secret(self.secret_name)
+        print("\tdone")
+
+    async def run(self):
+
         print("")
         print("------------------------")
         print("Key Vault - Secrets\nIdentity - Credential")
@@ -48,7 +50,7 @@ class KeyVault:
         print("")
 
         try:
-            self.set_secret()
-            self.get_secret()
+            await self.set_secret()
+            await self.get_secret()
         finally:
-            self.delete_secret()
+            await self.delete_secret()
