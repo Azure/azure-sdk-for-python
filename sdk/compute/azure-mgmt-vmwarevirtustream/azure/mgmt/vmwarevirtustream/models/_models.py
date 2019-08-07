@@ -25,7 +25,7 @@ class AdminCredentials(Model):
     :vartype nsxt_password: str
     :ivar vcenter_username: vCenter admin username
     :vartype vcenter_username: str
-    :ivar vcenter_password: vSphere admin password
+    :ivar vcenter_password: vCenter admin password
     :vartype vcenter_password: str
     """
 
