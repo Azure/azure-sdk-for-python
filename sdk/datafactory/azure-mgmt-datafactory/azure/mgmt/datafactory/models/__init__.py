@@ -21,6 +21,7 @@ try:
     from ._models_py3 import AmazonMWSSource
     from ._models_py3 import AmazonRedshiftLinkedService
     from ._models_py3 import AmazonRedshiftSource
+    from ._models_py3 import AmazonRedshiftTableDataset
     from ._models_py3 import AmazonS3Dataset
     from ._models_py3 import AmazonS3LinkedService
     from ._models_py3 import AmazonS3Location
@@ -62,11 +63,15 @@ try:
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
     from ._models_py3 import AzureKeyVaultSecretReference
+    from ._models_py3 import AzureMariaDBLinkedService
+    from ._models_py3 import AzureMariaDBSource
+    from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMLBatchExecutionActivity
     from ._models_py3 import AzureMLLinkedService
     from ._models_py3 import AzureMLUpdateResourceActivity
     from ._models_py3 import AzureMLWebServiceFile
     from ._models_py3 import AzureMySqlLinkedService
+    from ._models_py3 import AzureMySqlSink
     from ._models_py3 import AzureMySqlSource
     from ._models_py3 import AzureMySqlTableDataset
     from ._models_py3 import AzurePostgreSqlLinkedService
@@ -142,6 +147,7 @@ try:
     from ._models_py3 import DatasetZipDeflateCompression
     from ._models_py3 import Db2LinkedService
     from ._models_py3 import Db2Source
+    from ._models_py3 import Db2TableDataset
     from ._models_py3 import DeleteActivity
     from ._models_py3 import DelimitedTextDataset
     from ._models_py3 import DelimitedTextReadSettings
@@ -526,6 +532,7 @@ except (SyntaxError, ImportError):
     from ._models import AmazonMWSSource
     from ._models import AmazonRedshiftLinkedService
     from ._models import AmazonRedshiftSource
+    from ._models import AmazonRedshiftTableDataset
     from ._models import AmazonS3Dataset
     from ._models import AmazonS3LinkedService
     from ._models import AmazonS3Location
@@ -567,11 +574,15 @@ except (SyntaxError, ImportError):
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
     from ._models import AzureKeyVaultSecretReference
+    from ._models import AzureMariaDBLinkedService
+    from ._models import AzureMariaDBSource
+    from ._models import AzureMariaDBTableDataset
     from ._models import AzureMLBatchExecutionActivity
     from ._models import AzureMLLinkedService
     from ._models import AzureMLUpdateResourceActivity
     from ._models import AzureMLWebServiceFile
     from ._models import AzureMySqlLinkedService
+    from ._models import AzureMySqlSink
     from ._models import AzureMySqlSource
     from ._models import AzureMySqlTableDataset
     from ._models import AzurePostgreSqlLinkedService
@@ -647,6 +658,7 @@ except (SyntaxError, ImportError):
     from ._models import DatasetZipDeflateCompression
     from ._models import Db2LinkedService
     from ._models import Db2Source
+    from ._models import Db2TableDataset
     from ._models import DeleteActivity
     from ._models import DelimitedTextDataset
     from ._models import DelimitedTextReadSettings
@@ -1112,6 +1124,7 @@ __all__ = [
     'AmazonMWSSource',
     'AmazonRedshiftLinkedService',
     'AmazonRedshiftSource',
+    'AmazonRedshiftTableDataset',
     'AmazonS3Dataset',
     'AmazonS3LinkedService',
     'AmazonS3Location',
@@ -1153,11 +1166,15 @@ __all__ = [
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
     'AzureKeyVaultSecretReference',
+    'AzureMariaDBLinkedService',
+    'AzureMariaDBSource',
+    'AzureMariaDBTableDataset',
     'AzureMLBatchExecutionActivity',
     'AzureMLLinkedService',
     'AzureMLUpdateResourceActivity',
     'AzureMLWebServiceFile',
     'AzureMySqlLinkedService',
+    'AzureMySqlSink',
     'AzureMySqlSource',
     'AzureMySqlTableDataset',
     'AzurePostgreSqlLinkedService',
@@ -1233,6 +1250,7 @@ __all__ = [
     'DatasetZipDeflateCompression',
     'Db2LinkedService',
     'Db2Source',
+    'Db2TableDataset',
     'DeleteActivity',
     'DelimitedTextDataset',
     'DelimitedTextReadSettings',
