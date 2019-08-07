@@ -18,7 +18,7 @@ Blob storage is ideal for:
 Install the Azure Storage Blobs client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-blob
+pip install azure-storage-blob --preview
 ```
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a

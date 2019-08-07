@@ -15,7 +15,7 @@ Azure file shares can be used to:
 Install the Azure Storage File client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-file
+pip install azure-storage-file --preview
 ```
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
