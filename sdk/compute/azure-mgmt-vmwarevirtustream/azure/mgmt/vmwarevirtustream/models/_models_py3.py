@@ -16,29 +16,39 @@ from msrest.exceptions import HttpOperationError
 class AdminCredentials(Model):
     """AdminCredentials.
 
-    :param nsx_user:
-    :type nsx_user: str
-    :param nsx_password:
-    :type nsx_password: str
-    :param user:
-    :type user: str
-    :param password:
-    :type password: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar nsxt_username: NSX-T Manager username
+    :vartype nsxt_username: str
+    :ivar nsxt_password: NSX-T Manager password
+    :vartype nsxt_password: str
+    :ivar vcenter_username: vCenter admin username
+    :vartype vcenter_username: str
+    :ivar vcenter_password: vSphere admin password
+    :vartype vcenter_password: str
     """
 
-    _attribute_map = {
-        'nsx_user': {'key': 'nsxUser', 'type': 'str'},
-        'nsx_password': {'key': 'nsxPassword', 'type': 'str'},
-        'user': {'key': 'user', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+    _validation = {
+        'nsxt_username': {'readonly': True},
+        'nsxt_password': {'readonly': True},
+        'vcenter_username': {'readonly': True},
+        'vcenter_password': {'readonly': True},
     }
 
-    def __init__(self, *, nsx_user: str=None, nsx_password: str=None, user: str=None, password: str=None, **kwargs) -> None:
+    _attribute_map = {
+        'nsxt_username': {'key': 'nsxtUsername', 'type': 'str'},
+        'nsxt_password': {'key': 'nsxtPassword', 'type': 'str'},
+        'vcenter_username': {'key': 'vcenterUsername', 'type': 'str'},
+        'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
         super(AdminCredentials, self).__init__(**kwargs)
-        self.nsx_user = nsx_user
-        self.nsx_password = nsx_password
-        self.user = user
-        self.password = password
+        self.nsxt_username = None
+        self.nsxt_password = None
+        self.vcenter_username = None
+        self.vcenter_password = None
 
 
 class ApiError(Model):
@@ -256,20 +266,20 @@ class ClusterProperties(Model):
 class Endpoints(Model):
     """Endpoints.
 
-    :param nsx_manager:
-    :type nsx_manager: str
+    :param nsxt_manager:
+    :type nsxt_manager: str
     :param vcsa:
     :type vcsa: str
     """
 
     _attribute_map = {
-        'nsx_manager': {'key': 'nsxManager', 'type': 'str'},
+        'nsxt_manager': {'key': 'nsxtManager', 'type': 'str'},
         'vcsa': {'key': 'vcsa', 'type': 'str'},
     }
 
-    def __init__(self, *, nsx_manager: str=None, vcsa: str=None, **kwargs) -> None:
+    def __init__(self, *, nsxt_manager: str=None, vcsa: str=None, **kwargs) -> None:
         super(Endpoints, self).__init__(**kwargs)
-        self.nsx_manager = nsx_manager
+        self.nsxt_manager = nsxt_manager
         self.vcsa = vcsa
 
 
@@ -326,8 +336,8 @@ class IdentitySource(Model):
     :type ssl: str or ~azure.mgmt.vmwarevirtustream.models.SslEnum
     :param username:
     :type username: str
-    :param credential:
-    :type credential: str
+    :param password:
+    :type password: str
     """
 
     _attribute_map = {
@@ -340,10 +350,10 @@ class IdentitySource(Model):
         'secondary_server': {'key': 'secondaryServer', 'type': 'str'},
         'ssl': {'key': 'ssl', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, alias: str=None, domain: str=None, base_user_dn: str=None, base_group_dn: str=None, primary_server: str=None, secondary_server: str=None, ssl=None, username: str=None, credential: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, alias: str=None, domain: str=None, base_user_dn: str=None, base_group_dn: str=None, primary_server: str=None, secondary_server: str=None, ssl=None, username: str=None, password: str=None, **kwargs) -> None:
         super(IdentitySource, self).__init__(**kwargs)
         self.name = name
         self.alias = alias
@@ -354,7 +364,7 @@ class IdentitySource(Model):
         self.secondary_server = secondary_server
         self.ssl = ssl
         self.username = username
-        self.credential = credential
+        self.password = password
 
 
 class Operation(Model):
@@ -504,6 +514,12 @@ class PrivateCloud(TrackedResource):
     :vartype provisioning_network: str
     :ivar vmotion_network:
     :vartype vmotion_network: str
+    :param vcenter_password: Optionally, set the vCenter admin password when
+     the private cloud is created
+    :type vcenter_password: str
+    :param nsxt_password: Optionally, set the NSX-T Manager password when the
+     private cloud is created
+    :type nsxt_password: str
     """
 
     _validation = {
@@ -535,9 +551,11 @@ class PrivateCloud(TrackedResource):
         'management_network': {'key': 'properties.managementNetwork', 'type': 'str'},
         'provisioning_network': {'key': 'properties.provisioningNetwork', 'type': 'str'},
         'vmotion_network': {'key': 'properties.vmotionNetwork', 'type': 'str'},
+        'vcenter_password': {'key': 'properties.vcenterPassword', 'type': 'str'},
+        'nsxt_password': {'key': 'properties.nsxtPassword', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, circuit=None, cluster=None, endpoints=None, internet=None, network_block: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, circuit=None, cluster=None, endpoints=None, internet=None, network_block: str=None, vcenter_password: str=None, nsxt_password: str=None, **kwargs) -> None:
         super(PrivateCloud, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.circuit = circuit
@@ -550,3 +568,5 @@ class PrivateCloud(TrackedResource):
         self.management_network = None
         self.provisioning_network = None
         self.vmotion_network = None
+        self.vcenter_password = vcenter_password
+        self.nsxt_password = nsxt_password
