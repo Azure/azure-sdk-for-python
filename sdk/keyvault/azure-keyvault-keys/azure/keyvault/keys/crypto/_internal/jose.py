@@ -1,7 +1,7 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 import json
 import os
@@ -13,16 +13,18 @@ from .key import Key
 def protect(plaintext, kek=None, alg=None, cek=None, enc=None):
     # if neither the kek or the cek is specified raise an error
     if not kek and not cek:
-        raise ValueError('Either kek must be specified for key encryption sharing, '
-                         'or cek must be specified for direct encryption key sharing')
+        raise ValueError(
+            "Either kek must be specified for key encryption sharing, "
+            "or cek must be specified for direct encryption key sharing"
+        )
 
     # key encryption key can be any key (symmetric or asymmetric)
     if kek and not isinstance(kek, Key):
-        raise TypeError('The specified kek must be a valid Key')
+        raise TypeError("The specified kek must be a valid Key")
 
     # only symmetric keys are valid for the content encryption key
     if cek and not isinstance(cek, SymmetricKey):
-        raise TypeError('The specified cek must be a valid SymmetricKey')
+        raise TypeError("The specified cek must be a valid SymmetricKey")
 
     # create the cek if not specified
     cek = cek or SymmetricKey()
@@ -32,7 +34,7 @@ def protect(plaintext, kek=None, alg=None, cek=None, enc=None):
 
     # alg is 'dir' for direct sharing otherwise use the specified alg
     # or the default key wrap algorithm if not specified
-    alg = 'dir' if not kek else alg or kek.default_key_wrap_algorithm
+    alg = "dir" if not kek else alg or kek.default_key_wrap_algorithm
 
     # use the specified enc or the default encryption algorithm of the cek if not specified
     enc = enc or cek.default_encryption_algorithm
@@ -48,7 +50,6 @@ def protect(plaintext, kek=None, alg=None, cek=None, enc=None):
 
 
 class JoseObject(object):
-
     def deserialize(self, s):
         d = json.loads(s)
         self.__dict__ = d
@@ -66,7 +67,6 @@ class JoseObject(object):
 
 
 class JoseHeader(JoseObject):
-
     def to_compact_header(self):
         return _str_to_b64url(json.dumps(self.__dict__))
 
@@ -95,7 +95,7 @@ class JweObject(JoseObject):
 
     def to_flattened_jwe(self):
         if not (self.protected, self.encrypted_key, self.iv, self.ciphertext, self.tag):
-            raise ValueError('JWE is not complete.')
+            raise ValueError("JWE is not complete.")
 
         return json.dumps(self.__dict__)
 
@@ -124,6 +124,6 @@ class JwsObject(JoseObject):
 
     def to_flattened_jws(self):
         if not (self.protected, self.payload, self.signature):
-            raise ValueError('JWS is not complete.')
+            raise ValueError("JWS is not complete.")
 
         return json.dumps(self.__dict__)

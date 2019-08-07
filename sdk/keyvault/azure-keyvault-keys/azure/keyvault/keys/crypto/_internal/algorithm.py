@@ -1,7 +1,7 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from abc import ABCMeta, abstractmethod
 from six import with_metaclass
@@ -23,11 +23,12 @@ class Algorithm(object):
 
     @staticmethod
     def resolve(name):
+        if name not in _alg_registry:
+            return None
         return _alg_registry[name]()
 
 
 class EncryptionAlgorithm(with_metaclass(ABCMeta, Algorithm)):
-
     @abstractmethod
     def create_encryptor(self, key):
         raise NotImplementedError()
@@ -38,7 +39,6 @@ class EncryptionAlgorithm(with_metaclass(ABCMeta, Algorithm)):
 
 
 class SymmetricEncryptionAlgorithm(EncryptionAlgorithm):
-
     @abstractmethod
     def create_encryptor(self, key, iv):
         raise NotImplementedError()
@@ -49,7 +49,6 @@ class SymmetricEncryptionAlgorithm(EncryptionAlgorithm):
 
 
 class AuthenticatedSymmetricEncryptionAlgorithm(EncryptionAlgorithm):
-
     @abstractmethod
     def create_encryptor(self, key, iv, auth_data, auth_tag):
         raise NotImplementedError()
@@ -60,11 +59,11 @@ class AuthenticatedSymmetricEncryptionAlgorithm(EncryptionAlgorithm):
 
 
 class SignatureAlgorithm(Algorithm):
-    _default_hash_algoritm = None
+    _default_hash_algorithm = None
 
     @property
     def default_hash_algorithm(self):
-        return self._default_hash_algoritm
+        return self._default_hash_algorithm
 
     @abstractmethod
     def create_signature_transform(self, key):
@@ -72,7 +71,6 @@ class SignatureAlgorithm(Algorithm):
 
 
 class HashAlgorithm(Algorithm):
-
     @abstractmethod
     def create_digest(self):
         raise NotImplementedError()

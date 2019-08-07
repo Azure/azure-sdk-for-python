@@ -1,7 +1,7 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from ..algorithm import HashAlgorithm
 from ..transform import DigestTransform
@@ -19,9 +19,6 @@ class _Sha2DigestTransform(DigestTransform):
     def finalize(self, data):
         return self._digest.finalize(data)
 
-    def dispose(self):
-        self._digest = None
-
 
 class _Sha2HashAlgorithm(HashAlgorithm):
 
@@ -33,17 +30,17 @@ class _Sha2HashAlgorithm(HashAlgorithm):
 
 class Sha256(_Sha2HashAlgorithm):
     _algorithm_cls = hashes.SHA256
-    _name = 'SHA256'
+    _name = "SHA256"
 
 
 class Sha384(_Sha2HashAlgorithm):
     _algorithm_cls = hashes.SHA384
-    _name = 'SHA384'
+    _name = "SHA384"
 
 
 class Sha512(_Sha2HashAlgorithm):
     _algorithm_cls = hashes.SHA512
-    _name = 'SHA512'
+    _name = "SHA512"
 
 
 Sha256.register()

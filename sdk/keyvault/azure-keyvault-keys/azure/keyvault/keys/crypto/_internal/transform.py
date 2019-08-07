@@ -1,13 +1,15 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from abc import ABCMeta, abstractmethod
 from six import with_metaclass
 
 
 class CryptoTransform(with_metaclass(ABCMeta, object)):
+    def __init__(self, key):
+        self._key = key
 
     def __enter__(self):
         return self
@@ -18,9 +20,6 @@ class CryptoTransform(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def transform(self, data):
         raise NotImplementedError()
-
-    def dispose(self):
-        return None
 
 
 class BlockCryptoTransform(CryptoTransform):
@@ -38,14 +37,12 @@ class BlockCryptoTransform(CryptoTransform):
 
 
 class AuthenticatedCryptoTransform(with_metaclass(ABCMeta, object)):
-
     @abstractmethod
     def tag(self):
         raise NotImplementedError()
 
 
 class SignatureTransform(with_metaclass(ABCMeta, object)):
-
     @abstractmethod
     def sign(self, digest):
         raise NotImplementedError()
@@ -54,17 +51,8 @@ class SignatureTransform(with_metaclass(ABCMeta, object)):
     def verify(self, digest, signature):
         raise NotImplementedError()
 
-    @abstractmethod
-    def sign_message(self, message):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def verify_message(self, message, signature):
-        raise NotImplementedError()
-
 
 class DigestTransform(with_metaclass(ABCMeta, object)):
-
     @abstractmethod
     def update(self, data):
         raise NotImplementedError()

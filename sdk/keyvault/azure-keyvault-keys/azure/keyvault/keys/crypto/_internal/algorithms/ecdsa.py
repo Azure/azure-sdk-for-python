@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from ..algorithm import Algorithm, SignatureAlgorithm
 from ..transform import SignatureTransform
 from cryptography.hazmat.primitives import hashes
@@ -14,36 +18,31 @@ class _EcdsaSignatureTransform(SignatureTransform):
         return self._key.sign(digest, ec.ECDSA(utils.Prehashed(self._hash_algorithm)))
 
     def verify(self, digest, signature):
-        return self._key.verify(signature, digest, utils.Prehashed(self._hash_algorithm))
-
-    def dispose(self):
-        self._key = None
-        self._hash_algo = None
+        return self._key.verify(signature, digest, ec.ECDSA(utils.Prehashed(self._hash_algorithm)))
 
 
 class _Ecdsa(SignatureAlgorithm):
-
     def create_signature_transform(self, key):
         return _EcdsaSignatureTransform(key, self.default_hash_algorithm)
 
 
 class Ecdsa256(_Ecdsa):
-    _name = 'ECDSA256'
+    _name = "ES256K"
     _default_hash_algorithm = hashes.SHA256()
 
 
 class Es256(_Ecdsa):
-    _name = 'ES256'
+    _name = "ES256"
     _default_hash_algorithm = hashes.SHA256()
 
 
 class Es384(_Ecdsa):
-    _name = 'ES384'
+    _name = "ES384"
     _default_hash_algorithm = hashes.SHA384()
 
 
 class Es512(_Ecdsa):
-    _name = 'ES512'
+    _name = "ES512"
     _default_hash_algorithm = hashes.SHA512()
 
 

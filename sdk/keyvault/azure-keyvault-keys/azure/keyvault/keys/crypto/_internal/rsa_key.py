@@ -1,28 +1,46 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 import uuid
 import codecs
 import json
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateNumbers, RSAPublicNumbers, \
-    generate_private_key, rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp, RSAPrivateKey
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateNumbers,
+    RSAPublicNumbers,
+    generate_private_key,
+    rsa_crt_dmp1,
+    rsa_crt_dmq1,
+    rsa_crt_iqmp,
+    RSAPrivateKey,
+)
+from azure.keyvault.keys.models import JsonWebKey
+from ._internal import _bytes_to_int, _int_to_bytes
 from .key import Key
-from .algorithms import RsaOaep, Rs256
+from .algorithms import Ps256, Ps384, Ps512, Rsa1_5, RsaOaep, RsaOaep256, Rs256, Rs384, Rs512
 
 
 class RsaKey(Key):
-    PUBLIC_KEY_DEFAULT_OPS = ['encrypt', 'wrapKey', 'verify']
-    PRIVATE_KEY_DEFAULT_OPS = ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey', 'verify', 'sign']
+    PUBLIC_KEY_DEFAULT_OPS = ["encrypt", "wrapKey", "verify"]
+    PRIVATE_KEY_DEFAULT_OPS = ["encrypt", "decrypt", "wrapKey", "unwrapKey", "verify", "sign"]
 
-    _supported_encryption_algorithms = [RsaOaep.name()]
-    _supported_key_wrap_algorithms = [RsaOaep.name()]
-    _supported_signature_algorithms = [Rs256.name()]
+    _supported_encryption_algorithms = [Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()]
+    _supported_key_wrap_algorithms = [Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()]
+    _supported_signature_algorithms = [
+        Ps256.name(),
+        Ps384.name(),
+        Ps512.name(),
+        Rs256.name(),
+        Rs384.name(),
+        Rs512.name(),
+    ]
 
-    def __init__(self):
-        self.kid = None
+    def __init__(self, kid=None):
+        super(RsaKey, self).__init__()
+        self._kid = kid
         self.kty = None
         self.key_ops = None
         self._rsa_impl = None
@@ -34,6 +52,10 @@ class RsaKey(Key):
     @property
     def e(self):
         return _int_to_bytes(self._public_key_material().e)
+
+    @property
+    def p(self):
+        return _int_to_bytes(self._public_key_material().p) if self.is_private_key() else None
 
     @property
     def q(self):
@@ -68,35 +90,23 @@ class RsaKey(Key):
         return self._rsa_impl.public_key() if self.is_private_key() else self._rsa_impl
 
     @staticmethod
-    def generate(kid=None, kty='RSA', size=2048, e=65537):
+    def generate(kid=None, kty="RSA", size=2048, e=65537):
         key = RsaKey()
         key.kid = kid or str(uuid.uuid4())
         key.kty = kty
         key.key_ops = RsaKey.PRIVATE_KEY_DEFAULT_OPS
-        key._rsa_impl = generate_private_key(public_exponent=e,
-                                             key_size=size,
-                                             backend=default_backend())
+        key._rsa_impl = generate_private_key(public_exponent=e, key_size=size, backend=default_backend())
         return key
 
-    @staticmethod
-    def from_jwk_str(s):
-        jwk_dict = json.loads(s)
-        jwk = JsonWebKey.from_dict(jwk_dict)
-        return RsaKey.from_jwk(jwk)
-
-    @staticmethod
-    def from_jwk(jwk):
-        if not isinstance(jwk, JsonWebKey):
-            raise TypeError('The specified jwk must be a JsonWebKey')
-
-        if jwk.kty != 'RSA' and jwk.kty != 'RSA-HSM':
+    @classmethod
+    def from_jwk(cls, jwk):
+        if jwk.kty != "RSA" and jwk.kty != "RSA-HSM":
             raise ValueError('The specified jwk must have a key type of "RSA" or "RSA-HSM"')
 
         if not jwk.n or not jwk.e:
-            raise ValueError('Invalid RSA jwk, both n and e must be have values')
+            raise ValueError("Invalid RSA jwk, both n and e must be have values")
 
-        rsa_key = RsaKey()
-        rsa_key.kid = jwk.kid
+        rsa_key = cls(kid=jwk.kid)
         rsa_key.kty = jwk.kty
         rsa_key.key_ops = jwk.key_ops
 
@@ -112,7 +122,7 @@ class RsaKey(Key):
 
             # convert or compute the remaining private key numbers
             dmp1 = _bytes_to_int(jwk.dp) if jwk.dp else rsa_crt_dmp1(private_exponent=d, p=p)
-            dmq1 = _bytes_to_int(jwk.dq) if jwk.dq else rsa_crt_dmq1(private_exponent=d, p=q)
+            dmq1 = _bytes_to_int(jwk.dq) if jwk.dq else rsa_crt_dmq1(private_exponent=d, q=q)
             iqmp = _bytes_to_int(jwk.qi) if jwk.qi else rsa_crt_iqmp(p=p, q=q)
 
             # create the private key from the jwk key values
@@ -128,11 +138,13 @@ class RsaKey(Key):
         return rsa_key
 
     def to_jwk(self, include_private=False):
-        jwk = JsonWebKey(kid=self.kid,
-                         kty=self.kty,
-                         key_ops=self.key_ops if include_private else _RsaKey.PUBLIC_KEY_DEFAULT_OPS,
-                         n=self.n,
-                         e=self.e)
+        jwk = JsonWebKey(
+            kid=self.kid,
+            kty=self.kty,
+            key_ops=self.key_ops if include_private else RsaKey.PUBLIC_KEY_DEFAULT_OPS,
+            n=self.n,
+            e=self.e,
+        )
 
         if include_private:
             jwk.q = self.q
@@ -143,7 +155,6 @@ class RsaKey(Key):
             jwk.qi = self.qi
 
         return jwk
-
 
     @property
     def default_encryption_algorithm(self):
@@ -158,43 +169,48 @@ class RsaKey(Key):
         return Rs256.name()
 
     def encrypt(self, plain_text, **kwargs):
-        algorithm = self._get_algorithm('encrypt', **kwargs)
+        algorithm = self._get_algorithm("encrypt", **kwargs)
         encryptor = algorithm.create_encryptor(self._rsa_impl)
-        return encryptor.transform(plain_text, **kwargs)
+        return encryptor.transform(plain_text)
 
     def decrypt(self, cipher_text, **kwargs):
         if not self.is_private_key():
-            raise NotImplementedError('The current RsaKey does not support decrypt')
+            raise NotImplementedError("The current RsaKey does not support decrypt")
 
-        algorithm = self._get_algorithm('decrypt', **kwargs)
+        algorithm = self._get_algorithm("decrypt", **kwargs)
         decryptor = algorithm.create_decryptor(self._rsa_impl)
-        return decryptor.transform(cipher_text, **kwargs)
+        return decryptor.transform(cipher_text)
 
     def sign(self, digest, **kwargs):
         if not self.is_private_key():
-            raise NotImplementedError('The current RsaKey does not support sign')
+            raise NotImplementedError("The current RsaKey does not support sign")
 
-        algorithm = self._get_algorithm('sign', **kwargs)
+        algorithm = self._get_algorithm("sign", **kwargs)
         signer = algorithm.create_signature_transform(self._rsa_impl)
         return signer.sign(digest)
 
     def verify(self, digest, signature, **kwargs):
-        algorithm = self._get_algorithm('verify', **kwargs)
+        algorithm = self._get_algorithm("verify", **kwargs)
         signer = algorithm.create_signature_transform(self._rsa_impl)
-        return signer.verify(signature, digest)
+        try:
+            # cryptography's verify methods return None, and raise when verification fails
+            signer.verify(digest, signature)
+            return True
+        except InvalidSignature:
+            return False
 
     def wrap_key(self, key, **kwargs):
-        algorithm = self._get_algorithm('wrapKey', **kwargs)
+        algorithm = self._get_algorithm("wrapKey", **kwargs)
         encryptor = algorithm.create_encryptor(self._rsa_impl)
-        return encryptor.transform(key, **kwargs)
+        return encryptor.transform(key)
 
     def unwrap_key(self, encrypted_key, **kwargs):
         if not self.is_private_key():
-            raise NotImplementedError('The current RsaKey does not support unwrap')
+            raise NotImplementedError("The current RsaKey does not support unwrap")
 
-        algorithm = self._get_algorithm('unwrapKey', **kwargs)
+        algorithm = self._get_algorithm("unwrapKey", **kwargs)
         decryptor = algorithm.create_decryptor(self._rsa_impl)
-        return decryptor.transform(encrypted_key, **kwargs)
+        return decryptor.transform(encrypted_key)
 
     def is_private_key(self):
         return isinstance(self._rsa_impl, RSAPrivateKey)
@@ -207,17 +223,17 @@ class RsaKey(Key):
 
 
 def _bytes_to_int(b):
-    return int(codecs.encode(b, 'hex'), 16)
+    return int(codecs.encode(b, "hex"), 16)
 
 
 def _int_to_bytes(i):
     h = hex(i)
-    if len(h) > 1 and h[0:2] == '0x':
+    if len(h) > 1 and h[0:2] == "0x":
         h = h[2:]
 
     # need to strip L in python 2.x
-    h = h.strip('L')
+    h = h.strip("L")
 
     if len(h) % 2:
-        h = '0' + h
-    return codecs.decode(h, 'hex')
+        h = "0" + h
+    return codecs.decode(h, "hex")

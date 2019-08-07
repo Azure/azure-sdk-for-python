@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from ..algorithm import Algorithm, AuthenticatedSymmetricEncryptionAlgorithm
 from ..transform import AuthenticatedCryptoTransform
 from .._internal import _int_to_bigendian_8_bytes
@@ -10,13 +14,9 @@ from cryptography.hazmat.primitives import padding, hashes, hmac
 
 class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
     def __init__(self, key, iv, auth_data, auth_tag):
-        self._aes_key = key[:len(key) // 2]
-        self._hmac_key = key[len(key) // 2:]
-        hash_algo = {
-            256: hashes.SHA256(),
-            384: hashes.SHA384(),
-            512: hashes.SHA512()
-        }[len(key) * 8]
+        self._aes_key = key[: len(key) // 2]
+        self._hmac_key = key[len(key) // 2 :]
+        hash_algo = {256: hashes.SHA256(), 384: hashes.SHA384(), 512: hashes.SHA512()}[len(key) * 8]
 
         self._cipher = Cipher(algorithms.AES(self._aes_key), modes.CBC(iv), backend=default_backend())
         self._tag = auth_tag or bytearray()
@@ -63,7 +63,7 @@ class _AesCbcHmacEncryptor(_AesCbcHmacCryptoTransform):
         cipher_text = self._ctx.update(padded) + self._ctx.finalize()
         self._hmac.update(cipher_text)
         self._hmac.update(self._auth_data_length)
-        self._tag.extend(hmac.finalize()[:len(self._hmac_key)])
+        self._tag.extend(hmac.finalize()[: len(self._hmac_key)])
         return cipher_text
 
 
@@ -120,18 +120,18 @@ class _AesCbcHmac(AuthenticatedSymmetricEncryptionAlgorithm):
 
 
 class Aes128CbcHmacSha256(_AesCbcHmac):
-    _key_size=256
-    _name='A128CBC-HS256'
+    _key_size = 256
+    _name = "A128CBC-HS256"
 
 
 class Aes192CbcHmacSha384(_AesCbcHmac):
-    _key_size=384
-    _name='A192CBC-HS384'
+    _key_size = 384
+    _name = "A192CBC-HS384"
 
 
 class Aes256CbcHmacSha512(_AesCbcHmac):
-    _key_size=512
-    _name='A256CBC-HS512'
+    _key_size = 512
+    _name = "A256CBC-HS512"
 
 
 Aes128CbcHmacSha256.register()

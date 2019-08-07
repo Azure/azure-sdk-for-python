@@ -1,7 +1,7 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from abc import ABCMeta, abstractmethod
 from six import with_metaclass
@@ -12,6 +12,9 @@ class Key(with_metaclass(ABCMeta, object)):
     _supported_encryption_algorithms = []
     _supported_key_wrap_algorithms = []
     _supported_signature_algorithms = []
+
+    def __init__(self):
+        self._kid = None
 
     @property
     def default_encryption_algorithm(self):
@@ -39,7 +42,7 @@ class Key(with_metaclass(ABCMeta, object)):
 
     @property
     def kid(self):
-        return None
+        return self._kid
 
     @abstractmethod
     def decrypt(self, cipher_text, **kwargs):
@@ -65,28 +68,22 @@ class Key(with_metaclass(ABCMeta, object)):
     def verify(self, digest, signature, **kwargs):
         raise NotImplementedError()
 
-    @abstractmethod
-    def sign_message(self, message, **kwargs):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def verify_message(self, message, signature, **kwargs):
-        raise NotImplementedError()
-
     def _get_algorithm(self, op, **kwargs):
-        default_algorithm, supported_alogrithms = {
-            'encrypt': (self.default_encryption_algorithm, self.supported_encryption_algorithms),
-            'decrypt': (self.default_encryption_algorithm, self.supported_encryption_algorithms),
-            'wrapKey': (self.default_key_wrap_algorithm, self.supported_key_wrap_algorithms),
-            'unwrapKey': (self.default_key_wrap_algorithm, self.supported_key_wrap_algorithms),
-            'sign': (self.default_signature_algorithm, self.supported_signature_algorithms),
-            'verify': (self.default_signature_algorithm, self.supported_signature_algorithms)
+        default_algorithm, supported_algorithms = {
+            "encrypt": (self.default_encryption_algorithm, self.supported_encryption_algorithms),
+            "decrypt": (self.default_encryption_algorithm, self.supported_encryption_algorithms),
+            "wrapKey": (self.default_key_wrap_algorithm, self.supported_key_wrap_algorithms),
+            "unwrapKey": (self.default_key_wrap_algorithm, self.supported_key_wrap_algorithms),
+            "sign": (self.default_signature_algorithm, self.supported_signature_algorithms),
+            "verify": (self.default_signature_algorithm, self.supported_signature_algorithms),
         }[op]
 
-        algorithm = kwargs.get('algorithm', default_algorithm)
+        algorithm = kwargs.get("algorithm", default_algorithm)
 
         if not isinstance(algorithm, Algorithm):
             algorithm = Algorithm.resolve(algorithm)
 
-        if not algorithm or not supported_alogrithms or algorithm.name() not in supported_alogrithms:
-            raise ValueError('invalid algorithm')
+        if not algorithm or not supported_algorithms or algorithm.name() not in supported_algorithms:
+            raise ValueError("unsupported algorithm '{}'".format(algorithm))
+
+        return algorithm

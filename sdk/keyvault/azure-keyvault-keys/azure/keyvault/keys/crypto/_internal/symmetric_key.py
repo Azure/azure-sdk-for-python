@@ -1,7 +1,7 @@
-# ---------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 import uuid
 import os
@@ -18,13 +18,7 @@ key_size_512 = 512 >> 3
 
 _default_key_size = key_size_256
 
-_supported_key_sizes = [
-    key_size_128,
-    key_size_192,
-    key_size_256,
-    key_size_384,
-    key_size_512
-]
+_supported_key_sizes = [key_size_128, key_size_192, key_size_256, key_size_384, key_size_512]
 
 _default_enc_alg_by_size = {
     key_size_128: Aes128Cbc.name(),
@@ -49,14 +43,14 @@ class SymmetricKey(Key):
 
         if not key_bytes:
             key_size = key_size or _default_key_size
-            
+
             if key_size not in _supported_key_sizes:
-                raise ValueError('The key size must be 128, 192, 256, 384 or 512 bits of data')
+                raise ValueError("The key size must be 128, 192, 256, 384 or 512 bits of data")
 
             key_bytes = os.urandom(key_size)
 
         if len(key_bytes) not in _supported_key_sizes:
-            raise ValueError('The key size must be 128, 192, 256, 384 or 512 bits of data')
+            raise ValueError("The key size must be 128, 192, 256, 384 or 512 bits of data")
 
         self._key = key_bytes
 
@@ -106,22 +100,22 @@ class SymmetricKey(Key):
         return supported
 
     def encrypt(self, plain_text, iv, **kwargs):
-        algorithm = self._get_algorithm('encrypt', **kwargs)
+        algorithm = self._get_algorithm("encrypt", **kwargs)
         encryptor = algorithm.create_encryptor(key=self._key, iv=iv)
         return encryptor.transform(plain_text, **kwargs)
 
     def decrypt(self, cipher_text, iv, **kwargs):
-        algorithm = self._get_algorithm('decrypt', **kwargs)
+        algorithm = self._get_algorithm("decrypt", **kwargs)
         decryptor = algorithm.create_decryptor(key=self._key, iv=iv)
         return decryptor.transform(cipher_text, **kwargs)
 
     def wrap_key(self, key, **kwargs):
-        algorithm = self._get_algorithm('wrapKey', **kwargs)
+        algorithm = self._get_algorithm("wrapKey", **kwargs)
         encryptor = algorithm.create_encryptor(key=self._key)
         return encryptor.transform(key, **kwargs)
 
     def unwrap_key(self, encrypted_key, **kwargs):
-        algorithm = self._get_algorithm('decrypt', **kwargs)
+        algorithm = self._get_algorithm("decrypt", **kwargs)
         decryptor = algorithm.create_decryptor(key=self._key)
         return decryptor.transform(encrypted_key, **kwargs)
 

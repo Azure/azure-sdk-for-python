@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from ..algorithm import EncryptionAlgorithm, Algorithm
 from ..transform import CryptoTransform
 from cryptography.hazmat.primitives.keywrap import aes_key_wrap, aes_key_unwrap
@@ -9,7 +13,7 @@ class _AesKeyWrapTransform(CryptoTransform):
         self._key = key
 
     def transform(self, data):
-        aes_key_wrap(self._key, data, default_backend())
+        return aes_key_wrap(self._key, data, default_backend())
 
 
 class _AesKeyUnwrapTransform(CryptoTransform):
@@ -17,7 +21,7 @@ class _AesKeyUnwrapTransform(CryptoTransform):
         self._key = key
 
     def transform(self, data):
-        aes_key_unwrap(self._key, data, default_backend())
+        return aes_key_unwrap(self._key, data, default_backend())
 
 
 class _AesKeyWrap(EncryptionAlgorithm):
@@ -41,26 +45,26 @@ class _AesKeyWrap(EncryptionAlgorithm):
 
     def _validate_input(self, key):
         if not key:
-            raise ValueError('key')
+            raise ValueError("key")
         if len(key) < self.key_size_in_bytes:
-            raise ValueError('key must be at least %d bits' % self.key_size)
+            raise ValueError("key must be at least %d bits" % self.key_size)
 
-        return key[:self.key_size_in_bytes]
+        return key[: self.key_size_in_bytes]
 
 
 class AesKw128(_AesKeyWrap):
     _key_size = 128
-    _name = 'A128KW'
+    _name = "A128KW"
 
 
 class AesKw192(_AesKeyWrap):
     _key_size = 192
-    _name = 'A192KW'
+    _name = "A192KW"
 
 
 class AesKw256(_AesKeyWrap):
     _key_size = 256
-    _name = 'A256KW'
+    _name = "A256KW"
 
 
 AesKw128.register()

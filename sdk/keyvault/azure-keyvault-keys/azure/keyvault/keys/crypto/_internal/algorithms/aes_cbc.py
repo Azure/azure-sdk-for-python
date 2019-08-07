@@ -1,5 +1,9 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from ..algorithm import SymmetricEncryptionAlgorithm, Algorithm
-from .. transform import BlockCryptoTransform
+from ..transform import BlockCryptoTransform
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
@@ -75,30 +79,30 @@ class _AesCbc(SymmetricEncryptionAlgorithm):
 
     def _validate_input(self, key, iv):
         if not key:
-            raise ValueError('key')
+            raise ValueError("key")
         if len(key) < self.key_size_in_bytes():
-            raise ValueError('key must be at least %d bits' % self.key_size)
+            raise ValueError("key must be at least %d bits" % self.key_size)
 
         if not iv:
-            raise ValueError('iv')
+            raise ValueError("iv")
         if not len(iv) == self.block_size_in_bytes:
-            raise ValueError('iv must be %d bits' % self.block_size)
+            raise ValueError("iv must be %d bits" % self.block_size)
 
-        return key[:self.key_size_in_bytes], iv
+        return key[: self.key_size_in_bytes], iv
 
 
 class Aes128Cbc(_AesCbc):
-    _name = 'A128CBC'
+    _name = "A128CBC"
     _key_size = 128
 
 
 class Aes192Cbc(_AesCbc):
-    _name = 'A192CBC'
+    _name = "A192CBC"
     _key_size = 192
 
 
 class Aes256Cbc(_AesCbc):
-    _name = 'A256CBC'
+    _name = "A256CBC"
     _key_size = 256
 
 
