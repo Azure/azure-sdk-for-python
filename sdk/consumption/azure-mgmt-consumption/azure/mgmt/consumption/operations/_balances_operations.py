@@ -24,7 +24,7 @@ class BalancesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-05-01-preview. Constant value: "2019-05-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-05-01. Constant value: "2019-05-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class BalancesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2019-05-01"
 
         self.config = config
 

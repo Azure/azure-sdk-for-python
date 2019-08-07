@@ -30,6 +30,9 @@ class TimeGrainType(str, Enum):
     monthly = "Monthly"
     quarterly = "Quarterly"
     annually = "Annually"
+    billing_month = "BillingMonth"
+    billing_quarter = "BillingQuarter"
+    billing_annual = "BillingAnnual"
 
 
 class OperatorType(str, Enum):
