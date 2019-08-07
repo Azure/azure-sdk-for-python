@@ -23,7 +23,7 @@ from testcase import (
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestContainerSamples(StorageTestCase):
+class TestContainerSamplesAsync(StorageTestCase):
     connection_string = settings.BLOB_CONNECTION_STRING
 
     def setUp(self):
