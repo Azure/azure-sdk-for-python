@@ -26,7 +26,6 @@ from .sql_resources_operations import SqlResourcesOperations
 from .mongo_db_resources_operations import MongoDBResourcesOperations
 from .table_resources_operations import TableResourcesOperations
 from .cassandra_resources_operations import CassandraResourcesOperations
-from .gremlin_resource_operations import GremlinResourceOperations
 from .gremlin_resources_operations import GremlinResourcesOperations
 
 __all__ = [
@@ -47,6 +46,5 @@ __all__ = [
     'MongoDBResourcesOperations',
     'TableResourcesOperations',
     'CassandraResourcesOperations',
-    'GremlinResourceOperations',
     'GremlinResourcesOperations',
 ]
