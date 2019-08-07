@@ -4618,6 +4618,9 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
     """Database specific information for Oracle to Azure Database for PostgreSQL
     migration task inputs.
 
+    :param case_manipulation: How to handle object name casing: either
+     Preserve or ToLower
+    :type case_manipulation: str
     :param name: Name of the migration pipeline
     :type name: str
     :param schema_name: Name of the source schema
@@ -4639,6 +4642,7 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
     """
 
     _attribute_map = {
+        'case_manipulation': {'key': 'caseManipulation', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'schema_name': {'key': 'schemaName', 'type': 'str'},
         'table_map': {'key': 'tableMap', 'type': '{str}'},
@@ -4650,6 +4654,7 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
 
     def __init__(self, **kwargs):
         super(MigrateOracleAzureDbPostgreSqlSyncDatabaseInput, self).__init__(**kwargs)
+        self.case_manipulation = kwargs.get('case_manipulation', None)
         self.name = kwargs.get('name', None)
         self.schema_name = kwargs.get('schema_name', None)
         self.table_map = kwargs.get('table_map', None)
