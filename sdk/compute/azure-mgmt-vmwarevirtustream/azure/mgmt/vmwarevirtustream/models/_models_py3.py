@@ -13,6 +13,34 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AdminCredentials(Model):
+    """AdminCredentials.
+
+    :param nsx_user:
+    :type nsx_user: str
+    :param nsx_password:
+    :type nsx_password: str
+    :param user:
+    :type user: str
+    :param password:
+    :type password: str
+    """
+
+    _attribute_map = {
+        'nsx_user': {'key': 'nsxUser', 'type': 'str'},
+        'nsx_password': {'key': 'nsxPassword', 'type': 'str'},
+        'user': {'key': 'user', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, *, nsx_user: str=None, nsx_password: str=None, user: str=None, password: str=None, **kwargs) -> None:
+        super(AdminCredentials, self).__init__(**kwargs)
+        self.nsx_user = nsx_user
+        self.nsx_password = nsx_password
+        self.user = user
+        self.password = password
+
+
 class ApiError(Model):
     """API error response.
 
@@ -275,34 +303,6 @@ class ExpressRouteAuthorization(Model):
         self.name = name
         self.id = None
         self.key = None
-
-
-class GetAdminCredentialsResponse(Model):
-    """GetAdminCredentialsResponse.
-
-    :param nsx_user:
-    :type nsx_user: str
-    :param nsx_password:
-    :type nsx_password: str
-    :param user:
-    :type user: str
-    :param password:
-    :type password: str
-    """
-
-    _attribute_map = {
-        'nsx_user': {'key': 'nsxUser', 'type': 'str'},
-        'nsx_password': {'key': 'nsxPassword', 'type': 'str'},
-        'user': {'key': 'user', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-    }
-
-    def __init__(self, *, nsx_user: str=None, nsx_password: str=None, user: str=None, password: str=None, **kwargs) -> None:
-        super(GetAdminCredentialsResponse, self).__init__(**kwargs)
-        self.nsx_user = nsx_user
-        self.nsx_password = nsx_password
-        self.user = user
-        self.password = password
 
 
 class IdentitySource(Model):

@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AdminCredentials
     from ._models_py3 import ApiError, ApiErrorException
     from ._models_py3 import ApiErrorBase
     from ._models_py3 import Circuit
@@ -17,7 +18,6 @@ try:
     from ._models_py3 import ClusterProperties
     from ._models_py3 import Endpoints
     from ._models_py3 import ExpressRouteAuthorization
-    from ._models_py3 import GetAdminCredentialsResponse
     from ._models_py3 import IdentitySource
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -25,6 +25,7 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
+    from ._models import AdminCredentials
     from ._models import ApiError, ApiErrorException
     from ._models import ApiErrorBase
     from ._models import Circuit
@@ -32,7 +33,6 @@ except (SyntaxError, ImportError):
     from ._models import ClusterProperties
     from ._models import Endpoints
     from ._models import ExpressRouteAuthorization
-    from ._models import GetAdminCredentialsResponse
     from ._models import IdentitySource
     from ._models import Operation
     from ._models import OperationDisplay
@@ -50,6 +50,7 @@ from ._azure_vmware_solutionby_virtustream_api_enums import (
 )
 
 __all__ = [
+    'AdminCredentials',
     'ApiError', 'ApiErrorException',
     'ApiErrorBase',
     'Circuit',
@@ -57,7 +58,6 @@ __all__ = [
     'ClusterProperties',
     'Endpoints',
     'ExpressRouteAuthorization',
-    'GetAdminCredentialsResponse',
     'IdentitySource',
     'Operation',
     'OperationDisplay',

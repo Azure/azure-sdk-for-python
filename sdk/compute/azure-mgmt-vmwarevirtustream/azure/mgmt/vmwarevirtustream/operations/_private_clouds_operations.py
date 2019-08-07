@@ -456,9 +456,9 @@ class PrivateCloudsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}'}
 
-    def get_admin_credentials(
+    def list_admin_credentials(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """Get the admin credentials for the private cloud.
+        """List the admin credentials for the private cloud.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription
@@ -470,15 +470,14 @@ class PrivateCloudsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GetAdminCredentialsResponse or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.vmwarevirtustream.models.GetAdminCredentialsResponse or
+        :return: AdminCredentials or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarevirtustream.models.AdminCredentials or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.vmwarevirtustream.models.ApiErrorException>`
         """
         # Construct URL
-        url = self.get_admin_credentials.metadata['url']
+        url = self.list_admin_credentials.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -509,11 +508,11 @@ class PrivateCloudsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('GetAdminCredentialsResponse', response)
+            deserialized = self._deserialize('AdminCredentials', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_admin_credentials.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/getAdminCredentials'}
+    list_admin_credentials.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VMwareVirtustream/privateClouds/{privateCloudName}/listAdminCredentials'}
