@@ -170,8 +170,8 @@ if __name__ == "__main__":
 
     print(targeted_packages)
 
-    # if args.runtype == "setup" or args.runtype == "all":
-    #     prep_tests(targeted_packages, args.python_version)
+    if args.runtype == "setup" or args.runtype == "all":
+        prep_tests(targeted_packages, args.python_version)
 
     if args.runtype == "execute" or args.runtype == "all":
         run_tests(
