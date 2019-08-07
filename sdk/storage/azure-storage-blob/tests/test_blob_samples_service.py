@@ -36,9 +36,6 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_account_info]
         assert account_info is not None
 
-        # delibrate failure
-        assert 'this' is None
-
     @record
     def test_blob_service_properties(self):
 
