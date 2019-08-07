@@ -619,8 +619,8 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -650,7 +650,7 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -672,7 +672,7 @@ class ProtectedItem(Model):
         self.last_recovery_point = kwargs.get('last_recovery_point', None)
         self.backup_set_name = kwargs.get('backup_set_name', None)
         self.create_mode = kwargs.get('create_mode', None)
-        self.deferred_delete_sync_time_in_utc = kwargs.get('deferred_delete_sync_time_in_utc', None)
+        self.deferred_delete_time_in_utc = kwargs.get('deferred_delete_time_in_utc', None)
         self.is_scheduled_for_deferred_delete = kwargs.get('is_scheduled_for_deferred_delete', None)
         self.deferred_delete_time_remaining = kwargs.get('deferred_delete_time_remaining', None)
         self.is_deferred_delete_schedule_upcoming = kwargs.get('is_deferred_delete_schedule_upcoming', None)
@@ -715,8 +715,8 @@ class AzureFileshareProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -770,7 +770,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1308,8 +1308,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1369,7 +1369,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1441,8 +1441,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1502,7 +1502,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1654,8 +1654,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1715,7 +1715,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -2468,8 +2468,8 @@ class AzureSqlProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -2510,7 +2510,7 @@ class AzureSqlProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -3280,8 +3280,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -3350,7 +3350,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -3570,8 +3570,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -3640,7 +3640,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -3948,8 +3948,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -4018,7 +4018,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -4396,8 +4396,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -4466,7 +4466,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -6892,8 +6892,8 @@ class DPMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -6936,7 +6936,7 @@ class DPMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -7252,8 +7252,8 @@ class GenericProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -7300,7 +7300,7 @@ class GenericProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -8290,8 +8290,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -8316,6 +8316,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param protection_state: Protected, ProtectionStopped, IRPending or
      ProtectionError
     :type protection_state: str
+    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
+    :type deferred_delete_sync_time_in_utc: long
     :param extended_info: Additional information with this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo
@@ -8334,7 +8336,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -8344,6 +8346,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'computer_name': {'key': 'computerName', 'type': 'str'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
+        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
         'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
     }
 
@@ -8353,6 +8356,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         self.computer_name = kwargs.get('computer_name', None)
         self.last_backup_status = kwargs.get('last_backup_status', None)
         self.protection_state = kwargs.get('protection_state', None)
+        self.deferred_delete_sync_time_in_utc = kwargs.get('deferred_delete_sync_time_in_utc', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.protected_item_type = 'MabFileFolderProtectedItem'
 

@@ -619,8 +619,8 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -650,7 +650,7 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -662,7 +662,7 @@ class ProtectedItem(Model):
         'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, **kwargs) -> None:
         super(ProtectedItem, self).__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
@@ -672,7 +672,7 @@ class ProtectedItem(Model):
         self.last_recovery_point = last_recovery_point
         self.backup_set_name = backup_set_name
         self.create_mode = create_mode
-        self.deferred_delete_sync_time_in_utc = deferred_delete_sync_time_in_utc
+        self.deferred_delete_time_in_utc = deferred_delete_time_in_utc
         self.is_scheduled_for_deferred_delete = is_scheduled_for_deferred_delete
         self.deferred_delete_time_remaining = deferred_delete_time_remaining
         self.is_deferred_delete_schedule_upcoming = is_deferred_delete_schedule_upcoming
@@ -715,8 +715,8 @@ class AzureFileshareProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -770,7 +770,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -785,8 +785,8 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, health_status=None, last_backup_status: str=None, last_backup_time=None, extended_info=None, **kwargs) -> None:
-        super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, health_status=None, last_backup_status: str=None, last_backup_time=None, extended_info=None, **kwargs) -> None:
+        super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
@@ -1308,8 +1308,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1369,7 +1369,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1391,8 +1391,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'protected_item_type': {'Microsoft.ClassicCompute/virtualMachines': 'AzureIaaSClassicComputeVMProtectedItem', 'Microsoft.Compute/virtualMachines': 'AzureIaaSComputeVMProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
+        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
         self.protection_status = protection_status
@@ -1441,8 +1441,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1502,7 +1502,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1520,8 +1520,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
+        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'Microsoft.ClassicCompute/virtualMachines'
 
 
@@ -1654,8 +1654,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -1715,7 +1715,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -1733,8 +1733,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
+        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'Microsoft.Compute/virtualMachines'
 
 
@@ -2468,8 +2468,8 @@ class AzureSqlProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -2510,7 +2510,7 @@ class AzureSqlProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -2521,8 +2521,8 @@ class AzureSqlProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureSqlProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, protected_item_data_id: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
-        super(AzureSqlProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, protected_item_data_id: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
+        super(AzureSqlProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.protected_item_data_id = protected_item_data_id
         self.protection_state = protection_state
         self.extended_info = extended_info
@@ -3280,8 +3280,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -3350,7 +3350,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -3374,8 +3374,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'protected_item_type': {'AzureVmWorkloadSAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectedItem', 'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.server_name = server_name
         self.parent_name = parent_name
@@ -3570,8 +3570,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -3640,7 +3640,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -3660,8 +3660,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPAseDatabase'
 
 
@@ -3948,8 +3948,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -4018,7 +4018,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -4038,8 +4038,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPHanaDatabase'
 
 
@@ -4396,8 +4396,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -4466,7 +4466,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -4486,8 +4486,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
+        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSQLDatabase'
 
 
@@ -6892,8 +6892,8 @@ class DPMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -6936,7 +6936,7 @@ class DPMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -6948,8 +6948,8 @@ class DPMProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
-        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
+        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state
@@ -7252,8 +7252,8 @@ class GenericProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -7300,7 +7300,7 @@ class GenericProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -7314,8 +7314,8 @@ class GenericProtectedItem(ProtectedItem):
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
-        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
+        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
@@ -8290,8 +8290,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
-    :type deferred_delete_sync_time_in_utc: long
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
     :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
      is scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
@@ -8316,6 +8316,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param protection_state: Protected, ProtectionStopped, IRPending or
      ProtectionError
     :type protection_state: str
+    :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
+    :type deferred_delete_sync_time_in_utc: long
     :param extended_info: Additional information with this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo
@@ -8334,7 +8336,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
@@ -8344,15 +8346,17 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'computer_name': {'key': 'computerName', 'type': 'str'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
+        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
         'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_sync_time_in_utc: int=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, protection_state: str=None, extended_info=None, **kwargs) -> None:
-        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_sync_time_in_utc=deferred_delete_sync_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, protection_state: str=None, deferred_delete_sync_time_in_utc: int=None, extended_info=None, **kwargs) -> None:
+        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
         self.protection_state = protection_state
+        self.deferred_delete_sync_time_in_utc = deferred_delete_sync_time_in_utc
         self.extended_info = extended_info
         self.protected_item_type = 'MabFileFolderProtectedItem'
 
