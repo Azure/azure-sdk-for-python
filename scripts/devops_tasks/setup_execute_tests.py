@@ -86,13 +86,11 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
             False,
         )
         if err_result:
+            print("Errors present in {}".format(os.path.basename(target_package)))
             err_results.append(err_result)
-
-    print(err_results)
 
     # if any of the packages failed, we should get exit with errors
     if err_results:
-        print("nooo")
         exit(1)
 
 
