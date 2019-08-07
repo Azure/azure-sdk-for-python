@@ -66,12 +66,24 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         target_package_options = []
 
         if test_output_location:
-            target_package_options.extend(["--junitxml", os.path.join("results/{}/".format(os.path.basename(target_package)), test_output_location)])
+            target_package_options.extend(
+                [
+                    "--junitxml",
+                    os.path.join(
+                        "results/{}/".format(os.path.basename(target_package)),
+                        test_output_location,
+                    ),
+                ]
+            )
 
         target_package_options.append(target_package)
 
         err_result = run_check_call(
-            command_array + target_package_options, root_dir, ALLOWED_RETURN_CODES, True, False
+            command_array + target_package_options,
+            root_dir,
+            ALLOWED_RETURN_CODES,
+            True,
+            False,
         )
         if err_result:
             err_results.append(err_result)
@@ -162,4 +174,6 @@ if __name__ == "__main__":
     #     prep_tests(targeted_packages, args.python_version)
 
     if args.runtype == "execute" or args.runtype == "all":
-        run_tests(targeted_packages, args.python_version, args.test_results, test_results_arg)
+        run_tests(
+            targeted_packages, args.python_version, args.test_results, test_results_arg
+        )
