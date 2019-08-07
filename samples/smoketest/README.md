@@ -41,7 +41,7 @@ The following environment variables are needed:
   * COSMOS_KEY: Primary or secondary key.
 
 ```
-//Bash code to create the environment variables
+# Bash code to create the environment variables
 export AZURE_CLIENT_ID=""
 export AZURE_CLIENT_SECRET=""
 export AZURE_TENANT_ID=""
@@ -53,15 +53,30 @@ export COSMOS_KEY=""
 ```
 
 ### Running the console app
-[Python](https://www.python.org/downloads/) version 3.7.4 was used to run this sample.
+[Python](https://www.python.org/downloads/) version 2.7.16 and 3.7.4 were used to run this sample.
+
+Install the libraries required using pip:
+```
+pip install -r requiriments.txt
+```
 
 In the \SmokeTest\ directory, run Program.py
 ```
 python .\Program.py
 ```
 
-## Key concepts
+#### Important: To run the async tests
+In order to run the samples with the asynchronous clients, **python 3.5 or greater** is needed.
 
+Install both requirements.txt and requirements_async.txt:
+```
+pip install -r requiriments.txt
+pip install -r requiriments_async.txt
+```
+
+If a python version below 3.5 is being used, it is still possible to run the samples. When it gets to the async tests a message `'Async not suported'` will be displayed.
+
+## Key concepts
 
 ## Examples
 All the classes in this sample has a `Run()` method as entry point, and do not depend on each other. 
@@ -102,6 +117,11 @@ def SendAndReceiveEvents(self, partitionID, events):
 
 ### Authentication
 Be sure to set the environment variables and credentials required before running the sample.
+
+### ImportError
+`ImportError: cannot import name 'AsyncPipelineClient' from 'azure.core'`
+
+The libraries in the `requiriments_async.txt` are not installed and the python version used has async capabilities. Install the libraries using pip.
 
 ## Next steps
 Check the [Azure SDK for Python Repository](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) for more samples inside the sdk folder.
