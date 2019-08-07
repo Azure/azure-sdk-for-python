@@ -8,9 +8,6 @@ parameters:
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
 
-variables:
-  - dumb: '${{ parameters.PythonVersion }}'
-
 steps:
   - task: DownloadPipelineArtifact@0
     inputs:
@@ -43,33 +40,32 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
-  # - task: PythonScript@0
-  #   displayName: 'Run Tests'
-  #   inputs:
-  #     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-  #     arguments: >-
-  #       "${{ parameters.BuildTargetingString }}" 
-  #       ${{ parameters.AdditionalTestArgs }} 
-  #       --mark_arg="${{ parameters.TestMarkArgument }}" 
-  #       --service="${{ parameters.ServiceDirectory }}" 
-  #       --toxenv=""
-  #       --wheel_dir="$(Build.ArtifactStagingDirectory)"
-  #   env: ${{ parameters.EnvVars }}
+  - task: PythonScript@0
+    displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.AdditionalTestArgs }} 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv=""
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
+    env: ${{ parameters.EnvVars }}
 
-  # - task: PythonScript@0
-  #   displayName: 'Run Pylint'
-  #   inputs:
-  #     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-  #     arguments: >-
-  #       "${{ parameters.BuildTargetingString }}" 
-  #       ${{ parameters.AdditionalTestArgs }} 
-  #       --mark_arg="${{ parameters.TestMarkArgument }}" 
-  #       --service="${{ parameters.ServiceDirectory }}" 
-  #       --toxenv="lint"
-  #       --wheel_dir="$(Build.ArtifactStagingDirectory)"
-  #   env: ${{ parameters.EnvVars }}
+  - task: PythonScript@0
+    displayName: 'Run Pylint'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.AdditionalTestArgs }} 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="lint"
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
+    env: ${{ parameters.EnvVars }}
 
-  #- ${{ if ne(parameters.PythonVersion, '2.7') }}:
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
@@ -82,7 +78,6 @@ steps:
         --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
-    condition: ne(variables['dumb'], '2.7')
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
