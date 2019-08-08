@@ -1,0 +1,620 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:05 GMT
+    method: GET
+    uri: https://xyazconfig.azconfig.io/kv?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: '{"items":[]}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '12'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "label":
+      "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309", "content_type": "test content
+      type", "value": "test value", "tags": {"tag1": "tag1", "tag2": "tag2"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '231'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      if-none-match:
+      - '*'
+      x-ms-content-sha256:
+      - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: PUT
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+  response:
+    body:
+      string: '{"etag":"IfQeYDLQLZCydOtLy8ME7Oml91E","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '315'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      etag:
+      - W/"IfQeYDLQLZCydOtLy8ME7Oml91E"
+      last-modified:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzE=;sn=380031
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: GET
+    uri: https://xyazconfig.azconfig.io/kv?label=&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: '{"items":[{"etag":"IfQeYDLQLZCydOtLy8ME7Oml91E","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"}]}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '327'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzE=;sn=380031
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: DELETE
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "content_type":
+      "test content type", "value": "test value", "tags": {"tag1": "tag1", "tag2":
+      "tag2"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '170'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      if-none-match:
+      - '*'
+      x-ms-content-sha256:
+      - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: PUT
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: '{"etag":"aYKLiLN5Pz1XK6e816wl2irSyTk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '269'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      etag:
+      - W/"aYKLiLN5Pz1XK6e816wl2irSyTk"
+      last-modified:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzI=;sn=380032
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: GET
+    uri: https://xyazconfig.azconfig.io/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: '{"items":[{"etag":"aYKLiLN5Pz1XK6e816wl2irSyTk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"},{"etag":"IfQeYDLQLZCydOtLy8ME7Oml91E","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"},{"etag":"m6k7l8E4MULiCXniwqoiCD5VyWZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"},{"etag":"y6Yl0iPbJHI2WZyqXcaRLCNleck","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"},{"etag":"lspwgX2gl86V6FTIETd5ro8Nwxm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:05+00:00"},{"etag":"FxN1yKYYHGqGAh9ERZHukfC3rYL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:05+00:00"},{"etag":"ycfyUBNGRAMY6K8Qj0o41icPame","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:05+00:00"},{"etag":"HBSvLRcyVXugZjLp7yctAXRhlHh","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:05+00:00"},{"etag":"SjlhdFv9umoaZVQGILmYaYIratE","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"rqO2apnvmCbd1WzfQbQLtF4Y1f1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"gS0eyRbwi1kfOVWyhTWlBbPtdCb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"aJNdysmijG5FTZ4dCo3n2wDruj4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"Xm8mLwc0cWDngl3U9vUSinyUkjI","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"tgMGgEPES4Y3lwV3WwrzRUzFr4X","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"7KQkgQSkCDO4bNTfqQSFCoUzs1S","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:04+00:00"},{"etag":"STouSX3ULwK6rqAnbP2n3shNDAx","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:03+00:00"},{"etag":"r9nLMXE2nh1udEcpUGSpuTumL4o","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:03+00:00"},{"etag":"jUXwOLxWMSBU3C2A607Vxr05Yyb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:03+00:00"},{"etag":"eiU3ZEecLSCRkAHUNy4ISQqct51","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:03+00:00"},{"etag":"mOHOHYGyhtArhENPpp9BbVDQhoz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:53+00:00"},{"etag":"EPP6lhYHd6WxvcLPWo5JeqRg6pZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:53+00:00"},{"etag":"4Dx2rXHsvtoL6Cdsy03lWvO7F57","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:53+00:00"},{"etag":"34W6tf4EwNooJWcFgL8FupSPIHz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:53+00:00"},{"etag":"FF21UOMmCJqgiVvQz9ZH4gB9WAV","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:53+00:00"},{"etag":"X6u5Af1oWliOopSW7oAzloohWbW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:52+00:00"},{"etag":"fDWMPJsRoZtyQXmkoZMSk38ixu5","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:52+00:00"},{"etag":"vhWUC7CLr2yAVHNxGrB7wdc6DGa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:52+00:00"},{"etag":"owLVqV8rogdhz2hFBZ7goyx0ukv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:52+00:00"},{"etag":"j6MCDBmPKTft9fTA0RyYFrrM8MV","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:52+00:00"},{"etag":"LEIyN0aapXRD8lwKH5bU1nRvD92","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:51+00:00"},{"etag":"QZ0pqT41AUhTw2egSR7rWmJCaGY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:51+00:00"},{"etag":"QklRDzzbnAdXT1Ybgh1VtELW8g4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:51+00:00"},{"etag":"KkFpVIt69X8Q0sadV3DxDanqYTe","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:51+00:00"},{"etag":"Of0S1nofU3t8bVQu2AVLov7Nlky","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"BJdXeTvhyJnVtMad2FGY6PiOUsx","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"btukTaFVREaI1AXnUZf2WbfXTZH","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"rNwjszcyrqzZZth11bQH0sfNsbk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"XHztFEtAeqR0BiI51jn6wngAqOR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"ZIyCWoSK1CKDTOhMOLIMqDiDhd2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:50+00:00"},{"etag":"NOeiY2HqSgXye1UlY5naOZHHQhR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:49+00:00"},{"etag":"06m1CviTwcQlDdgSpYm4fHIvr50","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:49+00:00"},{"etag":"ocW9FGl49gWxwOlJe1FpSdHgkvj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:49+00:00"},{"etag":"O6QmHsJjCFnnXrqGmkB4bW6FJLc","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:49+00:00"},{"etag":"KAVwinDy4Ht8LVIZLHDZUm91IB0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:48+00:00"},{"etag":"yWK7YCelnK32Z2pf0Esz7ksKE2k","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:48+00:00"},{"etag":"LMPnzWsZWcSMnjLjd64fKUjTNcd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:48+00:00"},{"etag":"fucAK0xIl4elIuWuU7ch1GpHvWB","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:48+00:00"},{"etag":"Syd5FmlcQBD3uFZZuofRze6yPvb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:48+00:00"},{"etag":"9uZlajaI81LNn8Ul1MoaZXUGUoP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:30:47+00:00"},{"etag":"C49tQPWKMu2bL3rcz9DYgskUwAM","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:33+00:00"},{"etag":"dNY441ZNJH9eWzxVo6J3U1kaEFc","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:33+00:00"},{"etag":"Q03ZlpX3BW34w6FpzWJpcd8KElR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:32+00:00"},{"etag":"laO2cBWim18Mo31Veb8wpia3UJH","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:32+00:00"},{"etag":"SSDD43wte95f7UQ4RdLssBcmZKC","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-06T17:41:32+00:00"},{"etag":"xvjvkmKrQGHYLrs95nrS92a4jjY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:32+00:00"},{"etag":"4j9hUxwfbgVQ74pac8NiIZFwXLw","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:32+00:00"},{"etag":"QlvPoqWMMhGsNa9tqichdQJdFco","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"3HmxkUhqOGtezpQs2OikW54SK3x","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"rDFlaWZqv7FRPakKyRo8LQ6nABc","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"oKMbtFfzPqKlyhADZpHxlsMguyF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"VAZU1zUNlRUKj3lj1Jdl2fk8FU7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"zKr39Fom2ICMe15QgInuh7PkPwX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"GChN2aCzqTLqRskYgURO67vJC5S","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:31+00:00"},{"etag":"nPB2sKh8bZDo9ooHBxRZ6zSxrw4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:30+00:00"},{"etag":"03Gxvo9KqeTtKD089aG1OdOj725","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:30+00:00"},{"etag":"tOB0J3IGzVYmDHdCWwFlTACyhJs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:30+00:00"},{"etag":"UsRRz5aWlVJFI6jbHwhBBkWsfgP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:30+00:00"},{"etag":"WPWPnhhw1SRVGUIkSoIJmx1bn9q","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:30+00:00"},{"etag":"rAGLPXvIZY6TXgQhY5ucACW6jb7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:29+00:00"},{"etag":"fdcQjfnfoAkuWPk0PJkdGBDjwyL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:29+00:00"},{"etag":"kmD2FRt9Yc4KOi9pOvTB1zpf8at","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:29+00:00"},{"etag":"pSiYevLjFeJ5Y7gOOOggHxbOrY4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:29+00:00"},{"etag":"dnJAhUXH3AXYXezS0YNCHQg2lQS","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:28+00:00"},{"etag":"IAnZNz0m9RcdDiBoPeJoPnerbzz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:28+00:00"},{"etag":"JtUAYmBqTf0QggY4Iu5MbPXcv9l","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:28+00:00"},{"etag":"JAhV4SNfKGgzHxnEi7PlW4huOTv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:28+00:00"},{"etag":"uZkgefBRstpxNaFwVBpjIOXCsXE","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"TPLBjetyQS2JpTSgfw0j9ppMlm6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"2uslrmdYYGvFyIvsuyrSkpzfSyg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"YzVn6atynlLNKtBZPYnp1xDlA5Q","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"OCieRhHWGLugqvV6T9tX0VGB6lO","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"69x8ZKU3R2gm1jZcmQpAKsX4rTF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:27+00:00"},{"etag":"j3dHRv664Or72D0nU5yqfuhpL13","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:26+00:00"},{"etag":"i3fozKjSvsC2C8IAkYlTjNRxls6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:26+00:00"},{"etag":"jVz4fRqBuZWEfts3kj8jlFtwaM9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:26+00:00"},{"etag":"g3RBH6QLjoR0K0Fg23pisPN1TfH","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:26+00:00"},{"etag":"7XuDVIHBG3Rq1eog0WQMi3mtCq6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:26+00:00"},{"etag":"JU0KzMUrLKvGG2hTAHdOEPKqurF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:25+00:00"},{"etag":"bodcEFdTC3VlWUOyOi6IYzgklDe","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:25+00:00"},{"etag":"6iWOLAFxQ6KhhkEtGNahw6tAMff","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:16+00:00"},{"etag":"NPdxq7lg8zzBicRehwB8DvYXrPU","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:16+00:00"},{"etag":"IKiEXGlHO0NJGpZDjgXrZ0lSYMD","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:15+00:00"},{"etag":"tih8MHrQiy7kxAcbPtsBn7RtF5S","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:15+00:00"},{"etag":"oBgIblGsRwvSdnQgxuBDBiZOM0G","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:15+00:00"},{"etag":"3kA2ngnazEc8LCu6nPl3mbN64GM","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:15+00:00"},{"etag":"qmah4PdhK0XXLBZ8kx1b9AOe2mu","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:14+00:00"},{"etag":"ICJC3i4RvwLTPKMSifZFl2hGxvf","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:14+00:00"},{"etag":"fwHZUuwJkNHjXOh7K56RxB6hexd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:14+00:00"},{"etag":"0SZmRFzzi7XVdNLIhIUw6o1HipN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:14+00:00"},{"etag":"VSBeuEEOYRlkEkcU9KAAD5AMU2G","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T17:41:14+00:00"}],"@nextLink":"/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&after=MTU2NTExMzI3NA%3D%3D"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '29414'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      link:
+      - </revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&after=MTU2NTExMzI3NA%3D%3D>;
+        rel="next"
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzI=;sn=380032
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: DELETE
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+  response:
+    body:
+      string: '{"etag":"IfQeYDLQLZCydOtLy8ME7Oml91E","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '315'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      etag:
+      - W/"IfQeYDLQLZCydOtLy8ME7Oml91E"
+      last-modified:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzM=;sn=380033
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Aug, 06 2019 20:31:06 GMT
+    method: DELETE
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+  response:
+    body:
+      string: '{"etag":"aYKLiLN5Pz1XK6e816wl2irSyTk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-06T20:31:06+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-length:
+      - '269'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      etag:
+      - W/"aYKLiLN5Pz1XK6e816wl2irSyTk"
+      last-modified:
+      - Tue, 06 Aug 2019 20:31:06 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSMzODAwMzQ=;sn=380034
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

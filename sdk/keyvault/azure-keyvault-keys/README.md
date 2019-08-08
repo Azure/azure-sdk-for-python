@@ -152,6 +152,26 @@ for key in keys:
     print(key.name)
 ```
 
+### Cryptographic operations
+`CryptographyClient` enables cryptographic operations (encrypt/decrypt,
+wrap/unwrap, sign/verify) using a particular key.
+
+```py
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+from azure.keyvault.keys.crypto import EncryptionAlgorithm
+
+credential = DefaultAzureCredential()
+key_client = KeyClient(vault_url=vault_url, credential=credential)
+
+key = key_client.get_key("my-key")
+crypto_client = key_client.get_cryptography_client(key)
+
+result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
+crypto_client.decrypt(result.algorithm, result.ciphertext)
+```
+See the [reference documentation][reference_docs] for more information.
+
 ### Async operations
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/).
