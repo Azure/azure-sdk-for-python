@@ -21,7 +21,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue
+    uri: https://storagename.queue.core.windows.net/messagequeue
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c6beb214-980a-40e9-84c9-bc20af5a3281</MessageId><InsertionTime>Thu,
@@ -110,7 +110,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages?visibilitytimeout=30
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages?visibilitytimeout=30
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>1b029463-6d90-4d88-a6bd-85f63fce5883</MessageId><InsertionTime>Thu,
@@ -157,7 +157,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>3e2489dd-1b30-4d86-853d-d2fc61ac08a8</MessageId><InsertionTime>Thu,
@@ -204,7 +204,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2c64160d-cbf7-4e21-8c30-2d8ce5d5cd90</MessageId><InsertionTime>Thu,
@@ -251,7 +251,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a8ccfc6e-c4e9-4e45-ad33-1d88ee4a2aec</MessageId><InsertionTime>Thu,
@@ -294,7 +294,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c6beb214-980a-40e9-84c9-bc20af5a3281</MessageId><InsertionTime>Thu,
@@ -341,7 +341,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>3e2489dd-1b30-4d86-853d-d2fc61ac08a8</MessageId><InsertionTime>Thu,
@@ -388,7 +388,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2c64160d-cbf7-4e21-8c30-2d8ce5d5cd90</MessageId><InsertionTime>Thu,
@@ -435,7 +435,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a8ccfc6e-c4e9-4e45-ad33-1d88ee4a2aec</MessageId><InsertionTime>Thu,
@@ -482,7 +482,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
@@ -527,7 +527,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue/messages?numofmessages=5
+    uri: https://storagename.queue.core.windows.net/messagequeue/messages?numofmessages=5
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
@@ -574,7 +574,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://blobstoragename.queue.core.windows.net/messagequeue
+    uri: https://storagename.queue.core.windows.net/messagequeue
   response:
     body:
       string: ''
