@@ -45,13 +45,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     :ivar str url:
         The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -465,7 +465,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (Optional[ContentSettings], Any) -> None
         """Sets system properties on the blob.
 
-        If one property is set for the content_settings, all properties will be overriden.
+        If one property is set for the content_settings, all properties will be overridden.
 
         :param ~azure.storage.blob.models.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
@@ -767,7 +767,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             is public, no authentication is required.
             Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
+
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
         :param metadata:
             Name-value pairs associated with the blob as metadata. If no name-value
@@ -852,9 +854,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             premium storage accounts.
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
-        :param bool polling: A poller will be used for this operation. Defaults to True.
-        :returns: A pollable object to check copy operation status (and abort).
-        :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
+        :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
+        :rtype: Dict[str, Union[str, datetime]]
+
+        Example:
+            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+                :start-after: [START copy_blob_from_url]
+                :end-before: [END copy_blob_from_url]
+                :language: python
+                :dedent: 12
+                :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
             source_url,
@@ -869,7 +878,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     async def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], Any) -> Dict[str, Any]
+        # type: (Union[str, BlobProperties], Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -877,9 +886,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
-            instance of FileProperties.
-        :type copy_id: str or ~azure.storage.file.models.FileProperties
+            instance of BlobProperties.
+        :type copy_id: str or ~azure.storage.blob.models.BlobProperties
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+                :start-after: [START abort_copy_blob_from_url]
+                :end-before: [END abort_copy_blob_from_url]
+                :language: python
+                :dedent: 12
+                :caption: Abort copying a blob from URL.
         """
         options = self._abort_copy_options(copy_id, **kwargs)
         try:

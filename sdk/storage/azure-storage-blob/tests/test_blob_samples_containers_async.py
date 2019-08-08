@@ -31,7 +31,7 @@ class TestContainerSamplesAsync(StorageTestCase):
         with open(SOURCE_FILE, 'wb') as stream:
             stream.write(data)
 
-        super(TestContainerSamples, self).setUp()
+        super(TestContainerSamplesAsync, self).setUp()
 
     def tearDown(self):
         if os.path.isfile(SOURCE_FILE):
@@ -40,7 +40,7 @@ class TestContainerSamplesAsync(StorageTestCase):
             except:
                 pass
 
-        return super(TestContainerSamples, self).tearDown()
+        return super(TestContainerSamplesAsync, self).tearDown()
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
