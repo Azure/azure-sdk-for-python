@@ -897,9 +897,6 @@ class ManagedCluster(Resource):
     :param aad_profile: Profile of Azure Active Directory configuration.
     :type aad_profile:
      ~azure.mgmt.containerservice.v2019_08_01.models.ManagedClusterAADProfile
-    :param private_link_resources: Properties related to private link cluster.
-    :type private_link_resources:
-     list[~azure.mgmt.containerservice.v2019_08_01.models.ManagedClusterPrivateLinkResource]
     :param api_server_access_profile: Access profile for managed cluster API
      server.
     :type api_server_access_profile:
@@ -940,7 +937,6 @@ class ManagedCluster(Resource):
         'enable_pod_security_policy': {'key': 'properties.enablePodSecurityPolicy', 'type': 'bool'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
-        'private_link_resources': {'key': 'properties.privateLinkResources', 'type': '[ManagedClusterPrivateLinkResource]'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'identity': {'key': 'identity', 'type': 'ManagedClusterIdentity'},
     }
@@ -962,7 +958,6 @@ class ManagedCluster(Resource):
         self.enable_pod_security_policy = kwargs.get('enable_pod_security_policy', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.aad_profile = kwargs.get('aad_profile', None)
-        self.private_link_resources = kwargs.get('private_link_resources', None)
         self.api_server_access_profile = kwargs.get('api_server_access_profile', None)
         self.identity = kwargs.get('identity', None)
 
@@ -1600,43 +1595,6 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(Model):
         super(ManagedClusterPoolUpgradeProfileUpgradesItem, self).__init__(**kwargs)
         self.kubernetes_version = kwargs.get('kubernetes_version', None)
         self.is_preview = kwargs.get('is_preview', None)
-
-
-class ManagedClusterPrivateLinkResource(Model):
-    """Properties related to private link cluster.
-
-    :param id: The fully qualified Azure resource ID.
-    :type id: str
-    :param name: The private link resource name.
-    :type name: str
-    :param type: The private link resource type.
-    :type type: str
-    :param group_id: The group ID of the private link resource.
-    :type group_id: str
-    :param required_members: The required members of the private link cluster.
-    :type required_members: list[str]
-    :param private_link_service_id: The fully qualified private link service
-     Azure resource ID.
-    :type private_link_service_id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
-        'private_link_service_id': {'key': 'privateLinkServiceID', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedClusterPrivateLinkResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.group_id = kwargs.get('group_id', None)
-        self.required_members = kwargs.get('required_members', None)
-        self.private_link_service_id = kwargs.get('private_link_service_id', None)
 
 
 class ManagedClusterServicePrincipalProfile(Model):
