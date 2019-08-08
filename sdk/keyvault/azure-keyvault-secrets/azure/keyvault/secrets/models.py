@@ -16,6 +16,28 @@ if TYPE_CHECKING:
 from ._shared import parse_vault_id
 
 
+class RetentionPolicy(object):
+    """The retention policy which determines how long the associated data should
+    persist."""
+
+    def __init__(self, enabled=False, days=None):
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+
+class Logging(object):
+    """Azure Analytics Logging settings."""
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+
 class SecretAttributes(object):
     """A secret's id and attributes."""
 

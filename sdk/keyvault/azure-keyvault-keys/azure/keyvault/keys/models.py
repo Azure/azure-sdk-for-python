@@ -20,6 +20,48 @@ from ._shared import parse_vault_id
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 
+class RetentionPolicy(object):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param bool enabled: Required. Indicates whether a retention policy is enabled
+        for the storage service.
+    :param int days: Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted.
+    """
+
+    def __init__(self, enabled=False, days=None):
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+
+class Logging(object):
+    """Azure Analytics Logging settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar str version: Required. The version of Storage Analytics to configure.
+    :ivar bool delete: Required. Indicates whether all delete requests should be logged.
+    :ivar bool read: Required. Indicates whether all read requests should be logged.
+    :ivar bool write: Required. Indicates whether all write requests should be logged.
+    :ivar retention_policy: Required.
+        The retention policy for the metrics.
+    :vartype retention_policy: ~azure.storage.queue.models.RetentionPolicy
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+
 class JsonWebKey(object):
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
