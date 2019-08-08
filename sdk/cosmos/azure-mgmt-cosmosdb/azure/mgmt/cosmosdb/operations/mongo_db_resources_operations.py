@@ -429,7 +429,7 @@ class MongoDBResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/settings/throughput'}
+    get_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
 
 
     def _update_mongo_db_database_throughput_initial(
@@ -535,7 +535,7 @@ class MongoDBResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/settings/throughput'}
+    update_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
 
     def list_mongo_db_collections(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -944,7 +944,7 @@ class MongoDBResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/mongodbCollections/{collectionName}/settings/throughput'}
+    get_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/mongodbCollections/{collectionName}/throughputSettings/{throughputSettingName}'}
 
 
     def _update_mongo_db_collection_throughput_initial(
@@ -1054,4 +1054,4 @@ class MongoDBResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/mongodbCollections/{collectionName}/settings/throughput'}
+    update_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/mongodbCollections/{collectionName}/throughputSettings/{throughputSettingName}'}

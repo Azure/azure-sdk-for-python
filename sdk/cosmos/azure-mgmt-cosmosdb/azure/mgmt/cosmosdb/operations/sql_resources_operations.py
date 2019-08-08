@@ -429,7 +429,7 @@ class SqlResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_sql_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/settings/throughput'}
+    get_sql_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
 
 
     def _update_sql_database_throughput_initial(
@@ -535,7 +535,7 @@ class SqlResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_sql_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/settings/throughput'}
+    update_sql_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
 
     def list_sql_containers(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -944,7 +944,7 @@ class SqlResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_sql_container_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/sqlContainers/{containerName}/settings/throughput'}
+    get_sql_container_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/sqlContainers/{containerName}/throughputSettings/{throughputSettingName}'}
 
 
     def _update_sql_container_throughput_initial(
@@ -1054,4 +1054,4 @@ class SqlResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_sql_container_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/sqlContainers/{containerName}/settings/throughput'}
+    update_sql_container_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/sqlContainers/{containerName}/throughputSettings/{throughputSettingName}'}
