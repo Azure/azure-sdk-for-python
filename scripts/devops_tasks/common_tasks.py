@@ -13,6 +13,9 @@ from pathlib import Path
 from subprocess import check_call, CalledProcessError
 import os
 import sys
+import logging
+
+logging.getLogger().setLevel(logging.INFO)
 
 OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
 
@@ -62,14 +65,14 @@ def run_check_call(
 ):
     try:
         if run_as_shell:
-            print(
+            logging.info(
                 "Command Array: {0}, Target Working Directory: {1}".format(
                     " ".join(command_array), working_directory
                 )
             )
             check_call(" ".join(command_array), cwd=working_directory, shell=True)
         else:
-            print(
+            logging.info(
                 "Command Array: {0}, Target Working Directory: {1}".format(
                     command_array, working_directory
                 )
@@ -77,7 +80,7 @@ def run_check_call(
             check_call(command_array, cwd=working_directory)
     except CalledProcessError as err:
         if err.returncode not in acceptable_return_codes:
-            print(err)  # , file = sys.stderr
+            logging.error(err)  # , file = sys.stderr
             if always_exit:
                 exit(1)
             else:

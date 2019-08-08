@@ -12,8 +12,11 @@ import argparse
 import sys
 from pathlib import Path
 import os
+import logging
 
 from common_tasks import process_glob_string, run_check_call
+
+logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
@@ -22,12 +25,12 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
-    "azure-nspkg"
+    "azure-nspkg",
 ]
 
 
 def prep_tests(targeted_packages, python_version):
-    print("running test setup for {}".format(targeted_packages))
+    logging.info("running test setup for {}".format(targeted_packages))
     run_check_call(
         [
             python_version,
@@ -55,7 +58,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res,
     command_array.extend(test_res)
 
     # loop through the packages
-    print("Running pytest for {}".format(targeted_packages))
+    logging.info("Running pytest for {}".format(targeted_packages))
 
     for index, target_package in enumerate(targeted_packages):
         target_package_options = []
@@ -87,7 +90,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res,
                 [
                     "--junitxml",
                     os.path.join(
-                        "results/{}/".format(os.path.basename(target_package)),
+                        "TestResults/{}/".format(os.path.basename(target_package)),
                         test_output_location,
                     ),
                 ]
@@ -102,7 +105,9 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res,
             False,
         )
         if err_result:
-            print("Errors present in {}".format(os.path.basename(target_package)))
+            logging.error(
+                "Errors present in {}".format(os.path.basename(target_package))
+            )
             err_results.append(err_result)
 
     # if any of the packages failed, we should get exit with errors
@@ -181,7 +186,7 @@ if __name__ == "__main__":
     if args.mark_arg:
         test_results_arg.extend(["-m", '"{}"'.format(args.mark_arg)])
 
-    print(targeted_packages)
+    logging.info(targeted_packages)
 
     if args.runtype == "setup" or args.runtype == "all":
         prep_tests(targeted_packages, args.python_version)
