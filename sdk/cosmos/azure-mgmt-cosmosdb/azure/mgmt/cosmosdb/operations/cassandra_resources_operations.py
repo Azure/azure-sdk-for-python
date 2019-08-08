@@ -429,7 +429,7 @@ class CassandraResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_cassandra_keyspace_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/{throughputSettingName}'}
+    get_cassandra_keyspace_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default'}
 
 
     def _update_cassandra_keyspace_throughput_initial(
@@ -535,7 +535,7 @@ class CassandraResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_cassandra_keyspace_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/{throughputSettingName}'}
+    update_cassandra_keyspace_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default'}
 
     def list_cassandra_tables(
             self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
@@ -944,7 +944,7 @@ class CassandraResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_cassandra_table_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/cassandraTables/{tableName}/throughputSettings/{throughputSettingName}'}
+    get_cassandra_table_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/cassandraTables/{tableName}/throughputSettings/default'}
 
 
     def _update_cassandra_table_throughput_initial(
@@ -1054,4 +1054,4 @@ class CassandraResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_cassandra_table_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/cassandraTables/{tableName}/throughputSettings/{throughputSettingName}'}
+    update_cassandra_table_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/cassandraTables/{tableName}/throughputSettings/default'}

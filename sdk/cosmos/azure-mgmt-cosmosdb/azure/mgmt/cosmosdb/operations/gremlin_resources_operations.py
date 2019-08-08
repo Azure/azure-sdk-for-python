@@ -429,7 +429,7 @@ class GremlinResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
+    get_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default'}
 
 
     def _update_gremlin_database_throughput_initial(
@@ -535,7 +535,7 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/{throughputSettingName}'}
+    update_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default'}
 
     def list_gremlin_graphs(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -944,7 +944,7 @@ class GremlinResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/gremlinGraphs/{graphName}/throughputSettings/{throughputSettingName}'}
+    get_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/gremlinGraphs/{graphName}/throughputSettings/default'}
 
 
     def _update_gremlin_graph_throughput_initial(
@@ -1054,4 +1054,4 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/gremlinGraphs/{graphName}/throughputSettings/{throughputSettingName}'}
+    update_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/gremlinGraphs/{graphName}/throughputSettings/default'}
