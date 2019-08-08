@@ -61,6 +61,8 @@ class TestQueueAuthSamples(QueueTestCase):
 
     @record
     def test_auth_active_directory(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
 
         # [START create_queue_service_client_token]
         # Get a token credential for authentication
