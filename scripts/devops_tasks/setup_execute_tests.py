@@ -39,11 +39,16 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def run_tests(targeted_packages, python_version, test_output_location, test_res):
+def run_tests(targeted_packages, python_version, test_output_location, test_res, disable_cov):
     err_results = []
-    # if we are targeting only packages that are management plane, it is a possibility
-    # that no tests running is an acceptable situation
-    # we explicitly handle this here.
+
+    # moved coverage logic here, so that it's clearer to see
+    # when we specifically handle passing "--cov" for the first execution
+    # before using "--cov-append" for successive runs
+    if disable_cov:
+        test_res.append("--no-cov")
+    else:
+        test_res.extend(["--durations=10", "--cov-report="])
 
     # base command array without a targeted package
     command_array = [python_version, "-m", "pytest"]
@@ -52,10 +57,13 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     # loop through the packages
     print("Running pytest for {}".format(targeted_packages))
 
-    for target_package in targeted_packages:
+    for index, target_package in enumerate(targeted_packages):
         target_package_options = []
         allowed_return_codes = []
 
+        # if we are targeting only packages that are management plane, it is a possibility
+        # that no tests running is an acceptable situation
+        # we explicitly handle this here.
         if all(
             map(
                 lambda x: any(
@@ -66,6 +74,14 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         ):
             allowed_return_codes.append(5)
 
+        # handle cov vs cov-append
+        if not disable_cov:
+            if index == 0:
+                target_package_options.append("--cov")
+            else:
+                target_package_options.append("--cov-append")
+
+        # format test result output location
         if test_output_location:
             target_package_options.extend(
                 [
@@ -78,7 +94,6 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
             )
 
         target_package_options.append(target_package)
-
         err_result = run_check_call(
             command_array + target_package_options,
             root_dir,
@@ -163,11 +178,6 @@ if __name__ == "__main__":
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
 
-    if args.disablecov:
-        test_results_arg.append("--no-cov")
-    else:
-        test_results_arg.extend(["--durations=10", "--cov-append", "--cov-report="])
-
     if args.mark_arg:
         test_results_arg.extend(["-m", '"{}"'.format(args.mark_arg)])
 
@@ -178,5 +188,5 @@ if __name__ == "__main__":
 
     if args.runtype == "execute" or args.runtype == "all":
         run_tests(
-            targeted_packages, args.python_version, args.test_results, test_results_arg
+            targeted_packages, args.python_version, args.test_results, test_results_arg, args.disablecov
         )
