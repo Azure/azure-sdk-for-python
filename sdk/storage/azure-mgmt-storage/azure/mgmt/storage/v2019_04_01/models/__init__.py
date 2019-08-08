@@ -27,6 +27,11 @@ try:
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
+    from ._models_py3 import FileServiceItems
+    from ._models_py3 import FileServiceProperties
+    from ._models_py3 import FileShare
+    from ._models_py3 import FileShareItem
+    from ._models_py3 import FileShareItems
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -90,6 +95,11 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionService
     from ._models import EncryptionServices
     from ._models import Endpoints
+    from ._models import FileServiceItems
+    from ._models import FileServiceProperties
+    from ._models import FileShare
+    from ._models import FileShareItem
+    from ._models import FileShareItems
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -191,6 +201,11 @@ __all__ = [
     'EncryptionService',
     'EncryptionServices',
     'Endpoints',
+    'FileServiceItems',
+    'FileServiceProperties',
+    'FileShare',
+    'FileShareItem',
+    'FileShareItems',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',

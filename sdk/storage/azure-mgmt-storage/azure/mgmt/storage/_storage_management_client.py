@@ -161,6 +161,32 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def file_services(self):
+        """Instance depends on the API version:
+
+           * 2019-04-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_04_01.operations.FileServicesOperations>`
+        """
+        api_version = self._get_api_version('file_services')
+        if api_version == '2019-04-01':
+            from .v2019_04_01.operations import FileServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def file_shares(self):
+        """Instance depends on the API version:
+
+           * 2019-04-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_04_01.operations.FileSharesOperations>`
+        """
+        api_version = self._get_api_version('file_shares')
+        if api_version == '2019-04-01':
+            from .v2019_04_01.operations import FileSharesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def management_policies(self):
         """Instance depends on the API version:
 
