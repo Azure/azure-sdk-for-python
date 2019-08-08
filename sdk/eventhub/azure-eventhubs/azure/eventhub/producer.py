@@ -163,6 +163,7 @@ class EventHubProducer(ConsumerProducerMixin):
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
+
         :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
         :type max_size: int
         :param partition_key: With the given partition_key, event data will land to
@@ -204,7 +205,8 @@ class EventHubProducer(ConsumerProducerMixin):
         :type partition_key: str
         :param timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
-        :type timeout:float
+        :type timeout: float
+
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
