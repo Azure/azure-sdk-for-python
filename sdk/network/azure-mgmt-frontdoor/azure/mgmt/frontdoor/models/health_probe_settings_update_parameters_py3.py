@@ -22,16 +22,31 @@ class HealthProbeSettingsUpdateParameters(Model):
     :type protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
     :param interval_in_seconds: The number of seconds between health probes.
     :type interval_in_seconds: int
+    :param health_probe_method: Configures which HTTP method to use to probe
+     the backends defined under backendPools. Possible values include: 'GET',
+     'HEAD'. Default value: "HEAD" .
+    :type health_probe_method: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
+    :param enabled_state: Whether to enable health probes to be made against
+     backends defined under backendPools. Health probes can only be disabled if
+     there is a single enabled backend in single enabled backend pool. Possible
+     values include: 'Enabled', 'Disabled'
+    :type enabled_state: str or
+     ~azure.mgmt.frontdoor.models.HealthProbeEnabled
     """
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'protocol': {'key': 'protocol', 'type': 'str'},
         'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'int'},
+        'health_probe_method': {'key': 'healthProbeMethod', 'type': 'str'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
     }
 
-    def __init__(self, *, path: str=None, protocol=None, interval_in_seconds: int=None, **kwargs) -> None:
+    def __init__(self, *, path: str=None, protocol=None, interval_in_seconds: int=None, health_probe_method="HEAD", enabled_state=None, **kwargs) -> None:
         super(HealthProbeSettingsUpdateParameters, self).__init__(**kwargs)
         self.path = path
         self.protocol = protocol
         self.interval_in_seconds = interval_in_seconds
+        self.health_probe_method = health_probe_method
+        self.enabled_state = enabled_state

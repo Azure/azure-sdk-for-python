@@ -51,9 +51,10 @@ class FrontDoorCertificateSource(str, Enum):
     front_door = "FrontDoor"
 
 
-class FrontDoorTlsProtocolType(str, Enum):
+class MinimumTLSVersion(str, Enum):
 
-    server_name_indication = "ServerNameIndication"
+    one_full_stop_zero = "1.0"
+    one_full_stop_two = "1.2"
 
 
 class FrontDoorCertificateType(str, Enum):
@@ -120,6 +121,18 @@ class FrontDoorRedirectProtocol(str, Enum):
 
 
 class BackendEnabledState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class FrontDoorHealthProbeMethod(str, Enum):
+
+    get = "GET"
+    head = "HEAD"
+
+
+class HealthProbeEnabled(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"

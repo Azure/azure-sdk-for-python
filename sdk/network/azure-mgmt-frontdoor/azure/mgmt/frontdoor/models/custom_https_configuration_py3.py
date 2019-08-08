@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class CustomHttpsConfiguration(Model):
     """Https settings for a domain.
 
-    :param certificate_source: Defines the source of the SSL certificate.
-     Possible values include: 'AzureKeyVault', 'FrontDoor'
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param certificate_source: Required. Defines the source of the SSL
+     certificate. Possible values include: 'AzureKeyVault', 'FrontDoor'
     :type certificate_source: str or
      ~azure.mgmt.frontdoor.models.FrontDoorCertificateSource
-    :param protocol_type: Defines the TLS extension protocol that is used for
-     secure delivery. Possible values include: 'ServerNameIndication'
-    :type protocol_type: str or
-     ~azure.mgmt.frontdoor.models.FrontDoorTlsProtocolType
+    :ivar protocol_type: Required. Defines the TLS extension protocol that is
+     used for secure delivery. Default value: "ServerNameIndication" .
+    :vartype protocol_type: str
+    :param minimum_tls_version: Required. The minimum TLS version required
+     from the clients to establish an SSL handshake with Front Door. Possible
+     values include: '1.0', '1.2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.frontdoor.models.MinimumTLSVersion
     :param vault: The Key Vault containing the SSL certificate
     :type vault:
      ~azure.mgmt.frontdoor.models.KeyVaultCertificateSourceParametersVault
@@ -39,19 +48,28 @@ class CustomHttpsConfiguration(Model):
      ~azure.mgmt.frontdoor.models.FrontDoorCertificateType
     """
 
+    _validation = {
+        'certificate_source': {'required': True},
+        'protocol_type': {'required': True, 'constant': True},
+        'minimum_tls_version': {'required': True},
+    }
+
     _attribute_map = {
         'certificate_source': {'key': 'certificateSource', 'type': 'str'},
         'protocol_type': {'key': 'protocolType', 'type': 'str'},
+        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
         'vault': {'key': 'keyVaultCertificateSourceParameters.vault', 'type': 'KeyVaultCertificateSourceParametersVault'},
         'secret_name': {'key': 'keyVaultCertificateSourceParameters.secretName', 'type': 'str'},
         'secret_version': {'key': 'keyVaultCertificateSourceParameters.secretVersion', 'type': 'str'},
         'certificate_type': {'key': 'frontDoorCertificateSourceParameters.certificateType', 'type': 'str'},
     }
 
-    def __init__(self, *, certificate_source=None, protocol_type=None, vault=None, secret_name: str=None, secret_version: str=None, certificate_type=None, **kwargs) -> None:
+    protocol_type = "ServerNameIndication"
+
+    def __init__(self, *, certificate_source, minimum_tls_version, vault=None, secret_name: str=None, secret_version: str=None, certificate_type=None, **kwargs) -> None:
         super(CustomHttpsConfiguration, self).__init__(**kwargs)
         self.certificate_source = certificate_source
-        self.protocol_type = protocol_type
+        self.minimum_tls_version = minimum_tls_version
         self.vault = vault
         self.secret_name = secret_name
         self.secret_version = secret_version
