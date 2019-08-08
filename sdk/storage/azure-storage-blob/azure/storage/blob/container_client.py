@@ -828,7 +828,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_cient.BlobClient
+        :rtype: ~azure.storage.blob.blob_client.BlobClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers.py

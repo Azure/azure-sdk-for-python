@@ -169,7 +169,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.aio.lease_async.LeaseClient lease:
             If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID.
             Required if the blob has an active lease.
@@ -262,7 +262,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             If specified, download_blob only succeeds if the blob's lease is active
             and matches this ID. Required if the blob has an active lease.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -334,7 +334,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -406,7 +406,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -472,7 +472,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -517,7 +517,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -576,7 +576,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -631,7 +631,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -706,7 +706,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -835,11 +835,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
-        :type destination_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type destination_lease: ~azure.storage.blob.aio.lease_async..LeaseClient or str
         :param source_lease:
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
-        :type source_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type source_lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param bool incremental_copy:
@@ -944,7 +944,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
@@ -978,7 +978,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1021,7 +1021,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param str encoding:
             Defaults to UTF-8.
         :param int timeout:
@@ -1066,7 +1066,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1095,7 +1095,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
@@ -1129,7 +1129,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param ~azure.storage.blob.models.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param metadata:
@@ -1195,7 +1195,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1237,7 +1237,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param str previous_snapshot_diff:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
@@ -1302,7 +1302,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1348,7 +1348,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1409,7 +1409,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -1483,7 +1483,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -1562,7 +1562,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.

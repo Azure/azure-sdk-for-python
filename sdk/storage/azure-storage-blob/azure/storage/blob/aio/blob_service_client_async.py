@@ -340,7 +340,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type public_access: str or ~azure.storage.blob.models.PublicAccess
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob.container_client.ContainerClient
+        :rtype: ~azure.storage.blob.aio.container_client_async.ContainerClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
@@ -425,7 +425,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
-        :rtype: ~azure.core.blob.container_client.ContainerClient
+        :rtype: ~azure.core.blob.aio.container_client_async.ContainerClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
@@ -462,10 +462,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
-            or a dictionary output returned by :func:`~azure.storage.blob.blob_client.BlobClient.create_snapshot()`.
+            or a dictionary output returned by :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_service_async.py

@@ -158,7 +158,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.aio.lease_async.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
@@ -253,7 +253,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
@@ -287,7 +287,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.aio.lease_async.LeaseClient lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
         :param int timeout:
@@ -423,7 +423,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -612,7 +612,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -654,7 +654,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_cient.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
@@ -712,7 +712,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -765,7 +765,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
