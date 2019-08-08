@@ -124,6 +124,17 @@ blob = BlobClient.from_connection_string("my_connection_string", container="myco
 with open("./SampleSource.txt", "rb") as data:
     blob.upload_blob(data)
 ```
+Use the async client to upload a blob to your container.
+
+```python
+from azure.storage.blob.aio import BlobClient
+
+blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
+
+with open("./SampleSource.txt", "rb") as data:
+    await blob.upload_blob(data)
+```
+
 ### Downloading a blob
 Download a blob from your container.
 
@@ -137,8 +148,21 @@ with open("./BlockDestination.txt", "wb") as my_blob:
     my_blob.writelines(blob_data.content_as_bytes())
 ```
 
+Download a blob asynchronously.
+
+```python
+from azure.storage.blob.aio import BlobClient
+
+blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
+
+with open("./BlockDestination.txt", "wb") as my_blob:
+    stream = await blob.download_blob()
+    data = await stream.content_as_bytes()
+    my_blob.write(data)
+```
+
 ### Enumerating blobs
-List the blob in your container.
+List the blobs in your container.
 
 ```python
 from azure.storage.blob import ContainerClient
@@ -148,6 +172,18 @@ container = ContainerClient.from_connection_string("my_connection_string", conta
 blob_list = container.list_blobs()
 for blob in blob_list:
     print(blob.name + '\n')
+```
+
+List the blobs asynchronously.
+
+```python
+from azure.storage.blob.aio import ContainerClient
+
+container = ContainerClient.from_connection_string("my_connection_string", container="mycontainer")
+
+blob_list = [] 
+async for blob in container.list_blobs():
+    blob_list.append(blob)
 ```
 
 ## Troubleshooting
@@ -163,27 +199,27 @@ Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-pytho
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
-* [`test_blob_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_hello_world.py) - Examples for common Storage Blob tasks:
+* [`test_blob_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_hello_world_async.py)) - Examples for common Storage Blob tasks:
     * Set up a container
     * Create a block, page, or append blob
     * Upload blobs
     * Download blobs
     * Delete blobs
 
-* [`test_blob_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_authentication.py) - Examples for authenticating and creating the client:
+* [`test_blob_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
     
-* [`test_blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service.py) - Examples for interacting with the blob service:
+* [`test_blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service_async.py)) - Examples for interacting with the blob service:
     * Get account information
     * Get and set service properties
     * Get service statistics
     * Create, list, and delete containers
     * Get the Blob or Container client
 
-* [`test_blob_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_containers.py) - Examples for interacting with containers:
+* [`test_blob_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_containers.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_containers_async.py)) - Examples for interacting with containers:
     * Create a container and delete containers
     * Set metadata on containers
     * Get container properties
@@ -192,7 +228,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Upload, list, delete blobs in container
     * Get the blob client to interact with a specific blob
 
-* [`test_blob_samples_common.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_common.py) - Examples common to all types of blobs:
+* [`test_blob_samples_common.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_common.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_common_async.py)) - Examples common to all types of blobs:
     * Create a snapshot
     * Delete a blob snapshot
     * Soft delete a blob
