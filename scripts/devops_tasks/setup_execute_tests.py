@@ -42,7 +42,9 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def run_tests(targeted_packages, python_version, test_output_location, test_res, disable_cov):
+def run_tests(
+    targeted_packages, python_version, test_output_location, test_res, disable_cov
+):
     err_results = []
 
     # moved coverage logic here, so that it's clearer to see
@@ -193,5 +195,9 @@ if __name__ == "__main__":
 
     if args.runtype == "execute" or args.runtype == "all":
         run_tests(
-            targeted_packages, args.python_version, args.test_results, test_results_arg, args.disablecov
+            targeted_packages,
+            args.python_version,
+            args.test_results,
+            test_results_arg,
+            args.disablecov,
         )
