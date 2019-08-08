@@ -511,7 +511,8 @@ class StorageQueueTest(QueueTestCase):
 
     @record
     def test_token_credential(self):
-        pytest.skip("")
+        if TestMode.need_recording_file(self.test_mode):
+            return
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
