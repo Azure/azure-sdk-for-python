@@ -161,6 +161,65 @@ class SubscriptionsOperations(object):
         return deserialized
     rename.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/rename'}
 
+    def enable(
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+        """The operation to enable a subscription.
+
+        :param subscription_id: Subscription Id.
+        :type subscription_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EnabledSubscriptionId or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.subscription.models.EnabledSubscriptionId or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
+        """
+        api_version = "2019-03-01-preview"
+
+        # Construct URL
+        url = self.enable.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EnabledSubscriptionId', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    enable.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/enable'}
+
     def list_locations(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Gets all available geo-locations.
