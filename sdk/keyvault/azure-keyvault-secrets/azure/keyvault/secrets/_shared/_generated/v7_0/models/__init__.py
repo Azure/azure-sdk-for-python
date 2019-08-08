@@ -72,8 +72,10 @@ try:
     from ._models_py3 import KeyVerifyParameters
     from ._models_py3 import KeyVerifyResult
     from ._models_py3 import LifetimeAction
+    from ._models_py3 import Logging
     from ._models_py3 import OrganizationDetails
     from ._models_py3 import PendingCertificateSigningRequestResult
+    from ._models_py3 import RetentionPolicy
     from ._models_py3 import SasDefinitionAttributes
     from ._models_py3 import SasDefinitionBundle
     from ._models_py3 import SasDefinitionCreateParameters
@@ -162,8 +164,10 @@ except (SyntaxError, ImportError):
     from ._models import KeyVerifyParameters
     from ._models import KeyVerifyResult
     from ._models import LifetimeAction
+    from ._models import Logging
     from ._models import OrganizationDetails
     from ._models import PendingCertificateSigningRequestResult
+    from ._models import RetentionPolicy
     from ._models import SasDefinitionAttributes
     from ._models import SasDefinitionBundle
     from ._models import SasDefinitionCreateParameters
@@ -264,8 +268,10 @@ __all__ = [
     'KeyVerifyParameters',
     'KeyVerifyResult',
     'LifetimeAction',
+    'Logging',
     'OrganizationDetails',
     'PendingCertificateSigningRequestResult',
+    'RetentionPolicy',
     'SasDefinitionAttributes',
     'SasDefinitionBundle',
     'SasDefinitionCreateParameters',

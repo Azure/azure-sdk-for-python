@@ -2458,11 +2458,11 @@ class KeyVaultErrorException(HttpResponseError):
 
     def __init__(self, response, deserialize, *args):
 
-      model_name = 'KeyVaultError'
-      self.error = deserialize(model_name, response)
-      if self.error is None:
-          self.error = deserialize.dependencies[model_name]()
-      super(KeyVaultErrorException, self).__init__(response=response)
+        model_name = 'KeyVaultError'
+        self.error = deserialize(model_name, response)
+        if self.error is None:
+            self.error = deserialize.dependencies[model_name]()
+        super(KeyVaultErrorException, self).__init__(response=response)
 
 
 class KeyVerifyParameters(Model):
@@ -2545,6 +2545,51 @@ class LifetimeAction(Model):
         self.action = action
 
 
+class Logging(Model):
+    """Azure Analytics Logging settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param version: Required. The version of Storage Analytics to configure.
+    :type version: str
+    :param delete: Required. Indicates whether all delete requests should be
+     logged.
+    :type delete: bool
+    :param read: Required. Indicates whether all read requests should be
+     logged.
+    :type read: bool
+    :param write: Required. Indicates whether all write requests should be
+     logged.
+    :type write: bool
+    :param retention_policy: Required.
+    :type retention_policy: ~azure.keyvault.v7_0.models.RetentionPolicy
+    """
+
+    _validation = {
+        'version': {'required': True},
+        'delete': {'required': True},
+        'read': {'required': True},
+        'write': {'required': True},
+        'retention_policy': {'required': True},
+    }
+
+    _attribute_map = {
+        'version': {'key': 'Version', 'type': 'str'},
+        'delete': {'key': 'Delete', 'type': 'bool'},
+        'read': {'key': 'Read', 'type': 'bool'},
+        'write': {'key': 'Write', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+    }
+
+    def __init__(self, *, version: str, delete: bool, read: bool, write: bool, retention_policy, **kwargs) -> None:
+        super(Logging, self).__init__(**kwargs)
+        self.version = version
+        self.delete = delete
+        self.read = read
+        self.write = write
+        self.retention_policy = retention_policy
+
+
 class OrganizationDetails(Model):
     """Details of the organization of the certificate issuer.
 
@@ -2588,6 +2633,36 @@ class PendingCertificateSigningRequestResult(Model):
     def __init__(self, **kwargs) -> None:
         super(PendingCertificateSigningRequestResult, self).__init__(**kwargs)
         self.value = None
+
+
+class RetentionPolicy(Model):
+    """the retention policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Indicates whether a retention policy is enabled
+     for the storage service
+    :type enabled: bool
+    :param days: Indicates the number of days that metrics or logging or
+     soft-deleted data should be retained. All data older than this value will
+     be deleted
+    :type days: int
+    """
+
+    _validation = {
+        'enabled': {'required': True},
+        'days': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'days': {'key': 'Days', 'type': 'int'},
+    }
+
+    def __init__(self, *, enabled: bool, days: int=None, **kwargs) -> None:
+        super(RetentionPolicy, self).__init__(**kwargs)
+        self.enabled = enabled
+        self.days = days
 
 
 class SasDefinitionAttributes(Model):
