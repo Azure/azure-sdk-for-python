@@ -3440,8 +3440,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
      includes schedule and retention
     :type sub_protection_policy:
      list[~azure.mgmt.recoveryservicesbackup.models.SubProtectionPolicy]
-    :param make_policy_consistent: Fix the policy inconsistency
-    :type make_policy_consistent: bool
     """
 
     _validation = {
@@ -3454,7 +3452,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
         'work_load_type': {'key': 'workLoadType', 'type': 'str'},
         'settings': {'key': 'settings', 'type': 'Settings'},
         'sub_protection_policy': {'key': 'subProtectionPolicy', 'type': '[SubProtectionPolicy]'},
-        'make_policy_consistent': {'key': 'makePolicyConsistent', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3462,7 +3459,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
         self.work_load_type = kwargs.get('work_load_type', None)
         self.settings = kwargs.get('settings', None)
         self.sub_protection_policy = kwargs.get('sub_protection_policy', None)
-        self.make_policy_consistent = kwargs.get('make_policy_consistent', None)
         self.backup_management_type = 'AzureWorkload'
 
 
