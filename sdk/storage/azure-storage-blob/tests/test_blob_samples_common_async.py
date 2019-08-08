@@ -46,7 +46,7 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    async def _test_blob_snapshots(self):
+    async def _test_blob_snapshots_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -79,13 +79,13 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         await blob_service_client.delete_container("containerformyblobsasync")
 
     @record
-    def test_blob_snapshots(self):
+    def test_blob_snapshots_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_snapshots())
+        loop.run_until_complete(self._test_blob_snapshots_async())
 
-    async def _test_soft_delete_and_undelete_blob(self):
+    async def _test_soft_delete_and_undelete_blob_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -129,13 +129,13 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         await blob_service_client.delete_container("containerfordeletedblobsasync")
 
     @record
-    def test_soft_delete_and_undelete_blob(self):
+    def test_soft_delete_and_undelete_blob_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_soft_delete_and_undelete_blob())
+        loop.run_until_complete(self._test_soft_delete_and_undelete_blob_async())
 
-    async def _test_acquire_lease_on_blob(self):
+    async def _test_acquire_lease_on_blob_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -165,13 +165,13 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         await blob_service_client.delete_container("leasemyblobscontainerasync")
 
     @record
-    def test_acquire_lease_on_blob(self):
+    def test_acquire_lease_on_blob_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_acquire_lease_on_blob())
+        loop.run_until_complete(self._test_acquire_lease_on_blob_async())
 
-    async def _test_copy_blob_from_url_and_abort_copy(self):
+    async def _test_copy_blob_from_url_and_abort_copy_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -208,8 +208,8 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
             await blob_service_client.delete_container("copyblobcontainerasync")
 
     @record
-    def test_copy_blob_from_url_and_abort_copy(self):
+    def test_copy_blob_from_url_and_abort_copy_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_blob_from_url_and_abort_copy())
+        loop.run_until_complete(self._test_copy_blob_from_url_and_abort_copy_async())
