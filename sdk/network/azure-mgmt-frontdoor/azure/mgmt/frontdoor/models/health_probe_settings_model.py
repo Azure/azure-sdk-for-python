@@ -27,6 +27,17 @@ class HealthProbeSettingsModel(SubResource):
     :type protocol: str or ~azure.mgmt.frontdoor.models.FrontDoorProtocol
     :param interval_in_seconds: The number of seconds between health probes.
     :type interval_in_seconds: int
+    :param health_probe_method: Configures which HTTP method to use to probe
+     the backends defined under backendPools. Possible values include: 'GET',
+     'HEAD'. Default value: "HEAD" .
+    :type health_probe_method: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorHealthProbeMethod
+    :param enabled_state: Whether to enable health probes to be made against
+     backends defined under backendPools. Health probes can only be disabled if
+     there is a single enabled backend in single enabled backend pool. Possible
+     values include: 'Enabled', 'Disabled'
+    :type enabled_state: str or
+     ~azure.mgmt.frontdoor.models.HealthProbeEnabled
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
@@ -46,6 +57,8 @@ class HealthProbeSettingsModel(SubResource):
         'path': {'key': 'properties.path', 'type': 'str'},
         'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'interval_in_seconds': {'key': 'properties.intervalInSeconds', 'type': 'int'},
+        'health_probe_method': {'key': 'properties.healthProbeMethod', 'type': 'str'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -56,6 +69,8 @@ class HealthProbeSettingsModel(SubResource):
         self.path = kwargs.get('path', None)
         self.protocol = kwargs.get('protocol', None)
         self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
+        self.health_probe_method = kwargs.get('health_probe_method', "HEAD")
+        self.enabled_state = kwargs.get('enabled_state', None)
         self.resource_state = kwargs.get('resource_state', None)
         self.name = kwargs.get('name', None)
         self.type = None

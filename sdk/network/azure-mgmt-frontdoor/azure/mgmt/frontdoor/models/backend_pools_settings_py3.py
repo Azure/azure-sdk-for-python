@@ -21,12 +21,22 @@ class BackendPoolsSettings(Model):
      "Enabled" .
     :type enforce_certificate_name_check: str or
      ~azure.mgmt.frontdoor.models.EnforceCertificateNameCheckEnabledState
+    :param send_recv_timeout_seconds: Send and receive timeout on forwarding
+     request to the backend. When timeout is reached, the request fails and
+     returns.
+    :type send_recv_timeout_seconds: int
     """
+
+    _validation = {
+        'send_recv_timeout_seconds': {'minimum': 16},
+    }
 
     _attribute_map = {
         'enforce_certificate_name_check': {'key': 'enforceCertificateNameCheck', 'type': 'str'},
+        'send_recv_timeout_seconds': {'key': 'sendRecvTimeoutSeconds', 'type': 'int'},
     }
 
-    def __init__(self, *, enforce_certificate_name_check="Enabled", **kwargs) -> None:
+    def __init__(self, *, enforce_certificate_name_check="Enabled", send_recv_timeout_seconds: int=None, **kwargs) -> None:
         super(BackendPoolsSettings, self).__init__(**kwargs)
         self.enforce_certificate_name_check = enforce_certificate_name_check
+        self.send_recv_timeout_seconds = send_recv_timeout_seconds
