@@ -30,10 +30,10 @@ class PartitionProcessor(ABC):
         """Called when EventProcessor stops processing this PartitionProcessor.
 
         There are different reasons to trigger the PartitionProcessor to close.
-        Refer to enum class CloseReason
+        Refer to enum class ~azure.eventhub.eventprocessor.CloseReason
 
         :param reason: Reason for closing the PartitionProcessor.
-        :type reason: CloseReason
+        :type reason: ~azure.eventhub.eventprocessor.CloseReason
 
         """
         pass
