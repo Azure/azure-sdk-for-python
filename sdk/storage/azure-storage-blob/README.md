@@ -235,6 +235,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Soft delete a blob
     * Undelete a blob
     * Acquire a lease on a blob
+    * Copy a blob from a URL
 
 
 ### Additional documentation
