@@ -9,7 +9,7 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/rest/api/storageservices/blob-service-rest-api) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
 
 
 ## Getting started
@@ -184,6 +184,7 @@ container = ContainerClient.from_connection_string("my_connection_string", conta
 blob_list = [] 
 async for blob in container.list_blobs():
     blob_list.append(blob)
+print(blob_list)
 ```
 
 ## Troubleshooting
