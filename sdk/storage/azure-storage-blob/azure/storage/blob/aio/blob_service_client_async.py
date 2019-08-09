@@ -49,13 +49,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     :ivar str url:
         The full endpoint URL to the Blob service endpoint. This could be either the
-        primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -76,14 +76,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
     Example:
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobServiceClient with account url and credential.
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
             :start-after: [START create_blob_service_client_oauth]
             :end-before: [END create_blob_service_client_oauth]
             :language: python
@@ -118,7 +118,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: dict(str, str)
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
                 :language: python
@@ -156,7 +156,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
                 :language: python
@@ -179,7 +179,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
                 :language: python
@@ -246,7 +246,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
                 :language: python
@@ -295,7 +295,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.ContainerProperties]
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
                 :language: python
@@ -340,10 +340,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type public_access: str or ~azure.storage.blob.models.PublicAccess
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob.container_client.ContainerClient
+        :rtype: ~azure.storage.blob.aio.container_client_async.ContainerClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
                 :language: python
@@ -401,7 +401,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
                 :language: python
@@ -425,10 +425,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
-        :rtype: ~azure.core.blob.container_client.ContainerClient
+        :rtype: ~azure.core.blob.aio.container_client_async.ContainerClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
                 :language: python
@@ -462,13 +462,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
-            or a dictionary output returned by :func:`~azure.storage.blob.blob_client.BlobClient.create_snapshot()`.
+            or a dictionary output returned by :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]
                 :language: python
