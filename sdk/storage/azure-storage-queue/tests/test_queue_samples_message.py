@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-
+from azure.core.exceptions import ResourceExistsError
 try:
     import settings_real as settings
 except ImportError:
@@ -39,8 +39,11 @@ class TestMessageQueueSamples(QueueTestCase):
         # [END create_queue_client_from_connection_string]
 
         # Create the queue
-        queue_client.create_queue()
-        queue_client.enqueue_message('hello world')
+        try:
+            queue_client.create_queue()
+        except ResourceExistsError:
+            pass
+        queue_client.enqueue_message(u"hello world")
 
         try:
             # [START set_access_policy]

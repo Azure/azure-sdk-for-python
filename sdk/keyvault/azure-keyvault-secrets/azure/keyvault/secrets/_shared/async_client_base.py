@@ -2,15 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
+from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
+
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
+from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.transport import AsyncHttpTransport
 from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
 from . import AsyncChallengeAuthPolicy
+from .._user_agent import USER_AGENT
 
 
 if TYPE_CHECKING:
@@ -21,51 +24,45 @@ if TYPE_CHECKING:
         pass
 
 
-class AsyncPagingAdapter:
-    """For each item in an AsyncPagedMixin, returns the result of applying fn to that item.
-    Python 3.6 added syntax that could replace this (yield within async for)."""
-
-    def __init__(self, pages: AsyncPagedMixin, fn: Callable[[Model], Any]) -> None:
-        self._pages = pages
-        self._fn = fn
-
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self) -> Any:
-        item = await self._pages.__anext__()
-        if not item:
-            raise StopAsyncIteration
-        return self._fn(item)
-        # TODO: expected type Model got Coroutine instead?
-
-
 class AsyncKeyVaultClientBase:
-    """
-    :param credential:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credential: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
-    """
+    """Base class for async Key Vault clients"""
 
     @staticmethod
-    def create_config(
+    def _create_config(
         credential: "TokenCredential", api_version: str = None, **kwargs: Mapping[str, Any]
     ) -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
         config.authentication_policy = AsyncChallengeAuthPolicy(credential)
+
+        # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
+        # https://github.com/Azure/azure-sdk-for-python/issues/6637
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+
+        # Override config policies if found in kwargs
+        if "user_agent_policy" in kwargs:
+            config.user_agent_policy = kwargs["user_agent_policy"]
+        if "headers_policy" in kwargs:
+            config.headers_policy = kwargs["headers_policy"]
+        if "proxy_policy" in kwargs:
+            config.proxy_policy = kwargs["proxy_policy"]
+        if "logging_policy" in kwargs:
+            config.logging_policy = kwargs["logging_policy"]
+        if "retry_policy" in kwargs:
+            config.retry_policy = kwargs["retry_policy"]
+        if "custom_hook_policy" in kwargs:
+            config.custom_hook_policy = kwargs["custom_hook_policy"]
+        if "redirect_policy" in kwargs:
+            config.redirect_policy = kwargs["redirect_policy"]
+
         return config
 
     def __init__(
         self,
         vault_url: str,
         credential: "TokenCredential",
-        config: Configuration = None,
-        transport: HttpTransport = None,
+        transport: AsyncHttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
@@ -87,12 +84,12 @@ class AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
-        config = config or self.create_config(credential, api_version=api_version, **kwargs)
+        config = self._create_config(credential, api_version=api_version, **kwargs)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport, **kwargs: Any) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: Any) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -101,10 +98,13 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
+            DistributedTracingPolicy(),
         ]
 
         if transport is None:
-            transport = AsyncioRequestsTransport(**kwargs)
+            from azure.core.pipeline.transport import AioHttpTransport
+
+            transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies=policies)
 

@@ -23,12 +23,12 @@
 """
 
 import six
-from .cosmos_client_connection import CosmosClientConnection
+from ._cosmos_client_connection import CosmosClientConnection
 from .errors import HTTPFailure
 from .http_constants import StatusCodes
 from .offer import Offer
 from .scripts import Scripts
-from .query_iterable import QueryIterable
+from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
 from typing import (
     Any,
@@ -222,7 +222,7 @@ class Container:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
+        :returns: An Iterable of items (dicts).
         """
         if not feed_options:
             feed_options = {} # type: Dict[str, Any]
@@ -264,7 +264,7 @@ class Container:
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
+        :returns: An Iterable of items (dicts).
 
         """
         if not feed_options:
@@ -317,7 +317,7 @@ class Container:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
+        :returns: An Iterable of items (dicts).
 
         You can use any value for the container name in the FROM clause, but typically the container name is used.
         In the examples below, the container name is "products," and is aliased as "p" for easier referencing
@@ -675,7 +675,7 @@ class Container:
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
+        :returns: An Iterable of conflicts (dicts).
 
         """
         if not feed_options:
@@ -712,7 +712,7 @@ class Container:
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
+        :returns: An Iterable of conflicts (dicts).
 
         """
         if not feed_options:

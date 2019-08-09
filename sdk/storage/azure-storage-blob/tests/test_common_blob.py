@@ -120,17 +120,16 @@ class StorageCommonBlobTest(StorageTestCase):
         source_blob.upload_blob(blob_data)
         return source_blob
 
-    def _wait_for_async_copy(self, container_name, blob_name):
+    def _wait_for_async_copy(self, blob):
         count = 0
-        blob = self.bsc.get_blob_client(container_name, blob_name)
         props = blob.get_blob_properties()
-        while props.copy.status != 'success':
+        while props.copy.status == 'pending':
             count = count + 1
             if count > 10:
                 self.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             props = blob.get_blob_properties()
-        self.assertEqual(props.copy.status, 'success')
+        return props
 
     def _enable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
@@ -845,8 +844,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_existing_blob(self):
-        #if TestMode.need_recording_file(self.test_mode):
-        #    return
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -856,41 +853,34 @@ class StorageCommonBlobTest(StorageTestCase):
             self._get_account_url(), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        copy = copyblob.copy_blob_from_url(sourceblob)
+        copy = copyblob.start_copy_from_url(sourceblob)
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertEqual(copy.status(), 'success')
-        self.assertIsNotNone(copy.copy_id())
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
 
         copy_content = copyblob.download_blob().content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
 
     @record
     def test_copy_blob_with_external_blob_fails(self):
-        #if TestMode.need_recording_file(self.test_mode):
-        #    return
         # Arrange
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act
-        copy = copied_blob.copy_blob_from_url(source_blob)
-        self.assertEqual(copy.status(), 'pending')
-
-        with self.assertRaises(ValueError) as e:
-            copy.wait(timeout=120)
-            self.fail("Wait timeout without error.")
+        copy = copied_blob.start_copy_from_url(source_blob)
+        self.assertEqual(copy['copy_status'], 'pending')
+        props = self._wait_for_async_copy(copied_blob)
 
         # Assert
-        self.assertTrue('500 InternalServerError' in str(e.exception))
-        self.assertEqual(copy.status(), 'failed')
-        self.assertIsNotNone(copy.copy_id())
+        self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
+        self.assertEqual(props.copy.status, 'failed')
+        self.assertIsNotNone(props.copy.id)
 
     @record
-    def test_copy_blob_async_private_blob_f(self):
-        #if TestMode.need_recording_file(self.test_mode):
-        #    return
+    def test_copy_blob_async_private_blob_no_sas(self):
         # Arrange
         self._create_remote_container()
         source_blob = self._create_remote_block_blob()
@@ -898,16 +888,13 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy = target_blob.copy_blob_from_url(source_blob.url)
-        copy.wait(timeout=120)
 
         # Assert
-        self.assertEqual(copy.status(), 'success')
+        with self.assertRaises(ResourceNotFoundError):
+            target_blob.start_copy_from_url(source_blob.url)
 
     @record
     def test_copy_blob_async_private_blob_with_sas(self):
-        #if TestMode.need_recording_file(self.test_mode):
-        #    return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
@@ -921,11 +908,11 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.copy_blob_from_url(blob.url)
+        copy_resp = target_blob.start_copy_from_url(blob.url)
 
         # Assert
-        copy_resp.wait(timeout=120)
-        self.assertEqual(copy_resp.status(), 'success')
+        props = self._wait_for_async_copy(target_blob)
+        self.assertEqual(props.copy.status, 'success')
         actual_data = target_blob.download_blob()
         self.assertEqual(b"".join(list(actual_data)), data)
 
@@ -936,14 +923,12 @@ class StorageCommonBlobTest(StorageTestCase):
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act
-        copy = copied_blob.copy_blob_from_url(source_blob)
-        self.assertEqual(copy.status(), 'pending')
+        copy = copied_blob.start_copy_from_url(source_blob)
+        self.assertEqual(copy['copy_status'], 'pending')
 
-        copy.abort()
-        with self.assertRaises(ValueError):
-            copy.wait(timeout=120)
-            self.fail("Wait timeout without error.")
-        self.assertEqual(copy.status(), 'aborted')
+        copied_blob.abort_copy(copy)
+        props = self._wait_for_async_copy(copied_blob)
+        self.assertEqual(props.copy.status, 'aborted')
 
         # Assert
         actual_data = copied_blob.download_blob()
@@ -959,13 +944,13 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.copy_blob_from_url(source_blob.url)
+        copy_resp = target_blob.start_copy_from_url(source_blob.url)
 
         with self.assertRaises(HttpResponseError):
-            copy_resp.abort()
+            target_blob.abort_copy(copy_resp)
 
         # Assert
-        self.assertEqual(copy_resp.status(), 'success')
+        self.assertEqual(copy_resp['copy_status'], 'success')
 
     @record
     def test_snapshot_blob(self):
@@ -1489,7 +1474,7 @@ class StorageCommonBlobTest(StorageTestCase):
         download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_connections=2,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1510,7 +1495,7 @@ class StorageCommonBlobTest(StorageTestCase):
             download_blob_from_url(
                 source_blob.url, stream,
                 max_connections=2,
-                credential=self.settings.STORAGE_ACCOUNT_KEY)
+                credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1529,7 +1514,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         with self.assertRaises(ValueError):
             download_blob_from_url(source_blob.url, FILE_PATH)
@@ -1551,13 +1536,13 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = self._create_remote_block_blob(blob_data=data2)
         download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:

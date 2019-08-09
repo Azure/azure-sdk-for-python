@@ -57,7 +57,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
 
     from azure.eventhub import EventData, EventPosition
 
-    # [START create_eventhub_client_producer]
+    # [START create_eventhub_client_sender]
     client = EventHubClient.from_connection_string(connection_str)
     # Create a producer.
     producer = client.create_producer(partition_id="0")
@@ -85,6 +85,17 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
         list_data = ['Message {}'.format(i) for i in range(10)]
         event_data = EventData(body=list_data)
         # [END create_event_data]
+
+        # [START eventhub_client_sync_create_batch]
+        event_data_batch = producer.create_batch(max_size=10000)
+        while True:
+            try:
+                event_data_batch.try_add(EventData('Message inside EventBatchData'))
+            except ValueError:
+                # The EventDataBatch object reaches its max_size.
+                # You can send the full EventDataBatch object and create a new one here.
+                break
+        # [END eventhub_client_sync_create_batch]
 
         # [START eventhub_client_sync_send]
         with producer:

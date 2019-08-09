@@ -9,115 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ff4e24e2-9813-11e9-8c23-f45c89a7d159
+      - 4dd3e2a8-b637-11e9-9917-2816a845e8c6
       x-ms-date:
-      - Wed, 26 Jun 2019 13:12:06 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://blobstoragename.file.core.windows.net/shared8d10d42?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:2316dc6d-f01a-0097-3c20-2c07c9000000\n\
-        Time:2019-06-26T13:12:08.0787139Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 26 Jun 2019 13:12:07 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ShareNotFound
-      x-ms-request-id:
-      - 2316dc6d-f01a-0097-3c20-2c07c9000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified share does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - e0679710-9814-11e9-9ad2-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 13:18:24 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://blobstoragename.file.core.windows.net/shared8d10d42?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:471f81de-c01a-00b6-4221-2c6af8000000\n\
-        Time:2019-06-26T13:18:25.7435727Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 26 Jun 2019 13:18:25 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ShareNotFound
-      x-ms-request-id:
-      - 471f81de-c01a-00b6-4221-2c6af8000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified share does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - ae1d4814-9818-11e9-a54e-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 13:45:37 GMT
+      - Sat, 03 Aug 2019 21:40:25 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
     uri: https://storagename.file.core.windows.net/shared8d10d42?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The\
-        \ specified share does not exist.\nRequestId:a5bb7cb7-401a-008e-1a25-2c2ba1000000\n\
-        Time:2019-06-26T13:45:38.2295974Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:c1ab2e15-901a-00e1-2b44-4a8375000000\nTime:2019-08-03T21:40:24.8323406Z</Message></Error>"
     headers:
       Content-Length:
       - '217'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 13:45:37 GMT
+      - Sat, 03 Aug 2019 21:40:23 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -125,10 +38,54 @@ interactions:
       x-ms-error-code:
       - ShareNotFound
       x-ms-request-id:
-      - a5bb7cb7-401a-008e-1a25-2c2ba1000000
+      - c1ab2e15-901a-00e1-2b44-4a8375000000
       x-ms-version:
       - '2018-11-09'
     status:
       code: 404
       message: The specified share does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 4e0fb8f4-b637-11e9-8b3b-2816a845e8c6
+      x-ms-date:
+      - Sat, 03 Aug 2019 21:40:26 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Sat, 03 Aug 2019 21:40:24 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - c1ab2e18-901a-00e1-2c44-4a8375000000
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 200
+      message: OK
 version: 1

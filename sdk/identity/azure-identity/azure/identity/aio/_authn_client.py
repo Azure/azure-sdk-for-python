@@ -8,6 +8,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
@@ -26,8 +27,13 @@ class AsyncAuthnClient(AuthnClientBase):
         transport: Optional[AsyncHttpTransport] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        config = config or self.create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.logging_policy, config.retry_policy]
+        config = config or self._create_config(**kwargs)
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         if not transport:
             transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
@@ -49,7 +55,7 @@ class AsyncAuthnClient(AuthnClientBase):
         return token
 
     @staticmethod
-    def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
+    def _create_config(**kwargs: Mapping[str, Any]) -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)

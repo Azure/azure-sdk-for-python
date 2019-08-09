@@ -54,7 +54,7 @@ class MgmtACRTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
     @StorageAccountPreparer(name_prefix='pyacr', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
-    def test_classic_registry(self, resource_group, location, storage_account):
+    def _disabled_test_classic_registry(self, resource_group, location, storage_account):
         registry_name = self.get_resource_name('pyacr')
 
         name_status = self.client.registries.check_name_availability(registry_name)
@@ -216,7 +216,7 @@ class MgmtACRTest(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    def test_replication(self, resource_group, location):
+    def _disabled_test_replication(self, resource_group, location):
         registry_name = self.get_resource_name('pyacr')
         replication_name = DEFAULT_REPLICATION_LOCATION
 

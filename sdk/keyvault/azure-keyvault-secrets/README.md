@@ -1,5 +1,13 @@
 # Azure Key Vault Secret client library for Python
-Azure Key Vault is a cloud service that provides a secure storage of secrets, such as passwords and database connection strings. Secret client library allows you to securely store and tightly control the access to tokens, passwords, API keys, and other secrets. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the secrets and its versions.
+This client library helps you to set, get, update, and delete Azure Key Vault
+Secrets. Secrets are a resource for storing secret values, such as passwords,
+API keys, and connection strings, and controlling access to them.
+
+Use this library to:
+- Set, get, and delete secrets.
+- Update secrets and their attributes.
+- Backup and restore secrets.
+- List the secrets in a vault, or the versions of a particular secret.
 
 [Source code][secret_client_src] | [Package (PyPI)][pypi_package_secrets] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][secret_samples]
 ## Getting started
@@ -20,7 +28,12 @@ pip install azure-keyvault-secrets
     ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient][secret_client_docs] class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object for using the `DefaultAzureCredential` examples in the README. `DefaultAzureCredential` authentication by providing client secret credentials is being used in this getting started section but you can find more ways to authenticate with [azure-identity][azure_identity].
+In order to interact with secrets in a vault, you'll need to create an instance
+of [`SecretClient`][secret_client_docs]. That requires a **vault url**, and a
+**credential** that can authenticate the client to the vault. This document
+shows authentication with a client secret credential configured via environment
+variables, but other credential types can be used. See
+[azure-identity][azure_identity] documentation for more information.
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get client secret credentials.
@@ -59,7 +72,9 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
     ```
 
 #### Create Secret client
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI, you can create the [SecretClient][secret_client_docs]:
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
+**AZURE_TENANT_ID** environment variables and replaced **your-vault-url**
+with the above returned URI, you can create the [`SecretClient`][secret_client_docs]:
 
 ```python
     from azure.identity import DefaultAzureCredential
@@ -72,12 +87,9 @@ Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZU
 ```
 ## Key concepts
 ### Secret
-  A secret is the fundamental resource within Azure KeyVault. From a developer's perspective, Key Vault APIs accept and return secret values as strings. In addition to the secret data, the following attributes may be specified:
-* expires: Identifies the expiration time on or after which the secret data should not be retrieved.
-* not_before: Identifies the time after which the secret will be active.
-* enabled: Specifies whether the secret data can be retrieved.
-* created: Indicates when this version of the secret was created.
-* updated: Indicates when this version of the secret was updated.
+  In Azure Key Vault, a Secret consists of a secret value and its associated
+  metadata and management information. From the perspective of a developer, the
+  secret values themselves are strings.
 
 ### Secret Client:
 The Secret client performs the interactions with the Azure Key Vault service for getting, setting, updating,deleting, and listing secrets and its versions. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a SecretClient, you can interact with the primary resource types in Key Vault.
@@ -148,10 +160,11 @@ This example lists all the secrets in the specified Key Vault.
 ```
 
 ### Async operations
-Python’s [asyncio package][asyncio_package] and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
-The package supports async API on Python 3.5+ and is identical to synchronous API.
-
-The following examples provide code snippets for performing async operations in the Secret Client library:
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
 
 ### Async create a secret
 This example creates a secret in the Key Vault with the specified optional arguments.
@@ -247,7 +260,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-[asyncio_package]: https://docs.python.org/3/library/asyncio.html
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
