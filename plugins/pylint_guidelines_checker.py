@@ -18,13 +18,13 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     msgs = {
         "C4717": (
             "Client constructor is missing a credentials parameter. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "missing-client-constructor-parameter-credentials",
             "All client types should accept a credentials parameter.",
         ),
         "C4719": (
             "Client constructor is missing a **kwargs parameter. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "missing-client-constructor-parameter-kwargs",
             "All client types should accept a **kwargs parameter.",
         )
@@ -85,7 +85,7 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     msgs = {
         "C4714": (
             "A policy in the create_configuration() function is missing a **kwargs argument. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "config-missing-kwargs-in-policy",
             "All policies should take a **kwargs parameter.",
         )
@@ -128,7 +128,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
     msgs = {
         "C4715": (
             "Client is not using an approved method name prefix. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#service-operations",
             "unapproved-client-method-name-prefix",
             "All clients should use the preferred verbs for method names.",
         )
@@ -178,7 +178,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     msgs = {
         "C4720": (
             "Client has too many positional arguments. Use keyword-only arguments."
-            " See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures",
+            " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "client-method-has-more-than-5-positional-arguments",
             "Client method should use keyword-only arguments for some parameters.",
         )
@@ -236,7 +236,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
     msgs = {
         "C4721": (
             "Client method is missing type annotations and/or return type annotations. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints",
+            " https://azure.github.io/azure-sdk/python_introduction.html#types-or-not",
             "client-method-missing-type-annotations",
             "Client method should use type annotations.",
         )
@@ -310,13 +310,13 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     msgs = {
         "C4722": (
             "Client method is missing the distributed tracing decorator - `distributed_trace`. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-distributed-tracing",
+            " https://azure.github.io/azure-sdk/python_implementation.html#distributed-tracing",
             "client-method-missing-tracing-decorator",
             "Client method should support distributed tracing.",
         ),
         "C4723": (
             "Client async method is missing the distributed tracing decorator - `distributed_trace_async`. "
-            " See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-distributed-tracing",
+            " See details: https://azure.github.io/azure-sdk/python_implementation.html#distributed-tracing",
             "client-method-missing-tracing-decorator-async",
             "Client method should support distributed tracing.",
         ),
@@ -397,7 +397,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
     msgs = {
         "C4724": (
             "Client should not use static methods (staticmethod). See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures",
+            " https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "client-method-should-not-use-static-method",
             "Client method should not use staticmethod.",
         ),
@@ -450,7 +450,7 @@ class FileHasCopyrightHeader(BaseChecker):
     msgs = {
         "C4730": (
             "File is missing a copyright header. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#github-source-headers",
+            " https://azure.github.io/azure-sdk/policies_opensource.html",
             "file-needs-copyright-header",
             "Every source file should have a copyright header.",
         ),
@@ -486,7 +486,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
     msgs = {
         "C4726": (
             "Client is using an incorrect naming convention. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-naming-convention",
+            " https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions",
             "client-incorrect-naming-convention",
             "Client method should use correct naming conventions.",
         )
@@ -552,7 +552,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
     msgs = {
         "C4727": (
             "Client method is missing a **kwargs parameter. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "client-method-missing-kwargs",
             "All client methods should accept a kwargs parameter.",
         ),
@@ -605,7 +605,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
     msgs = {
         "C4731": (
             "Client method name should not use a double underscore prefix. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-no-leading-underscore",
+            " https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private",
             "client-method-name-no-double-underscore",
             "Client method names should not use a leading double underscore prefix.",
         ),
@@ -657,7 +657,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
     msgs = {
         "C4732": (
             "Client docstring should use a literal include directive for the code example. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-docstrings",
+            " https://azure.github.io/azure-sdk/python_documentation.html#code-snippets",
             "client-docstring-use-literal-include",
             "Client/methods should use literal include directives for code examples.",
         ),
@@ -723,7 +723,7 @@ class AsyncClientCorrectNaming(BaseChecker):
     msgs = {
         "C4728": (
             "Async client should not include `Async` in the client name. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-aio-suffix",
+            " https://azure.github.io/azure-sdk/python_design.html#async-support",
             "async-client-bad-name",
             "Async clients should not have async in the name.",
         ),
@@ -760,7 +760,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     msgs = {
         "C4729": (
             "Specify the parameter names when calling methods with more than 2 required positional parameters."
-            " See details: https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-parameter-name",
+            " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "specify-parameter-names-in-call",
             "You should specify the parameter names when the method has more than two positional arguments.",
         )
@@ -791,7 +791,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     def visit_call(self, node):
         try:
             if self.is_client and self.is_client[-1] and node.parent.parent.is_method():
-                print(node.args)
+                # print(node.args)
                 if len(node.args) > 2:
                     self.add_message(
                         msg_id="specify-parameter-names-in-call", node=node, confidence=None
@@ -853,5 +853,5 @@ def register(linter):
     linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
     linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
 
-    # linter.register_checker(SpecifyParameterNamesInCall(linter))
+    linter.register_checker(SpecifyParameterNamesInCall(linter))
     # linter.register_checker(ClientExceptionsDeriveFromCore(linter))
