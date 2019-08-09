@@ -16,6 +16,8 @@ from ._usages_operations import UsagesOperations
 from ._management_policies_operations import ManagementPoliciesOperations
 from ._blob_services_operations import BlobServicesOperations
 from ._blob_containers_operations import BlobContainersOperations
+from ._file_services_operations import FileServicesOperations
+from ._file_shares_operations import FileSharesOperations
 
 __all__ = [
     'Operations',
@@ -25,4 +27,6 @@ __all__ = [
     'ManagementPoliciesOperations',
     'BlobServicesOperations',
     'BlobContainersOperations',
+    'FileServicesOperations',
+    'FileSharesOperations',
 ]

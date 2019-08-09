@@ -20,6 +20,8 @@ from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
 from .operations import BlobServicesOperations
 from .operations import BlobContainersOperations
+from .operations import FileServicesOperations
+from .operations import FileSharesOperations
 from . import models
 
 
@@ -43,6 +45,10 @@ class StorageManagementClient(SDKClient):
     :vartype blob_services: azure.mgmt.storage.v2019_04_01.operations.BlobServicesOperations
     :ivar blob_containers: BlobContainers operations
     :vartype blob_containers: azure.mgmt.storage.v2019_04_01.operations.BlobContainersOperations
+    :ivar file_services: FileServices operations
+    :vartype file_services: azure.mgmt.storage.v2019_04_01.operations.FileServicesOperations
+    :ivar file_shares: FileShares operations
+    :vartype file_shares: azure.mgmt.storage.v2019_04_01.operations.FileSharesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -76,4 +82,8 @@ class StorageManagementClient(SDKClient):
         self.blob_services = BlobServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.blob_containers = BlobContainersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.file_services = FileServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.file_shares = FileSharesOperations(
             self._client, self.config, self._serialize, self._deserialize)
