@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import asyncio
+
 try:
     import settings_real as settings
 except ImportError:
@@ -13,7 +15,8 @@ except ImportError:
 
 from queuetestcase import (
     QueueTestCase,
-    record
+    record,
+    TestMode
 )
 
 
@@ -21,15 +24,14 @@ class TestQueueServiceSamples(QueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 
-    @record
-    def test_queue_service_properties(self):
+    async def _test_queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue import QueueServiceClient
+        from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
-        # [START set_queue_service_properties]
+        # [START async_set_queue_service_properties]
         # Create service properties
-        from azure.storage.queue import Logging, Metrics, CorsRule, RetentionPolicy
+        from azure.storage.queue.aio import Logging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
         logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -56,48 +58,64 @@ class TestQueueServiceSamples(QueueTestCase):
         cors = [cors_rule1, cors_rule2]
 
         # Set the service properties
-        queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
-        # [END set_queue_service_properties]
+        await queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
+        # [END async_set_queue_service_properties]
 
-        # [START get_queue_service_properties]
-        properties = queue_service.get_service_properties()
-        # [END get_queue_service_properties]
+        # [START async_get_queue_service_properties]
+        properties = await queue_service.get_service_properties()
+        # [END async_get_queue_service_properties]
 
-    @record
-    def test_queues_in_account(self):
+    def test_queue_service_properties(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queue_service_properties())
+
+    async def _test_queues_in_account(self):
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue import QueueServiceClient
+        from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
-        # [START qsc_create_queue]
-        queue_service.create_queue("testqueue")
-        # [END qsc_create_queue]
+        # [START async_qsc_create_queue]
+        await queue_service.create_queue("asynctestqueue")
+        # [END async_qsc_create_queue]
 
         try:
-            # [START qsc_list_queues]
+            # [START async_qsc_list_queues]
             # List all the queues in the service
             list_queues = queue_service.list_queues()
-            for queue in list_queues:
+            async for queue in list_queues:
                 print(queue)
 
             # List the queues in the service that start with the name "test"
             list_test_queues = queue_service.list_queues(name_starts_with="test")
-            for queue in list_test_queues:
+            async for queue in list_test_queues:
                 print(queue)
-            # [END qsc_list_queues]
+            # [END async_qsc_list_queues]
 
         finally:
-            # [START qsc_delete_queue]
-            queue_service.delete_queue("testqueue")
-            # [END qsc_delete_queue]
+            # [START async_qsc_delete_queue]
+            await queue_service.delete_queue("asynctestqueue")
+            # [END async_qsc_delete_queue]
 
-    @record
-    def test_get_queue_client(self):
+    def test_queues_in_account(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_queues_in_account())
+
+    async def _test_get_queue_client(self):
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue import QueueServiceClient, QueueClient
+        from azure.storage.queue.aio import QueueServiceClient, QueueClient
         queue_service = QueueServiceClient.from_connection_string(self.connection_string)
 
-        # [START get_queue_client]
+        # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client("myqueue")
-        # [END get_queue_client]
+        queue = queue_service.get_queue_client("myasyncqueue")
+        # [END async_get_queue_client]
+
+    def test_get_queue_client(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_queue_client())

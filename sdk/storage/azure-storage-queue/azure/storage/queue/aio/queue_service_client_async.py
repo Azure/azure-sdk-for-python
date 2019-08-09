@@ -75,12 +75,19 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     Example:
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
-            :start-after: [START create_queue_service_client]
-            :end-before: [END create_queue_service_client]
+        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+            :start-after: [START async_create_queue_service_client]
+            :end-before: [END async_create_queue_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
+
+        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+            :start-after: [START async_create_queue_service_client_token]
+            :end-before: [END async_create_queue_service_client_token]
+            :language: python
+            :dedent: 8
+            :caption: Creating the QueueServiceClient with Azure Identity credentials.
     """
 
     def __init__(
@@ -142,9 +149,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START get_queue_service_properties]
-                :end-before: [END get_queue_service_properties]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_get_queue_service_properties]
+                :end-before: [END async_get_queue_service_properties]
                 :language: python
                 :dedent: 8
                 :caption: Getting queue service properties.
@@ -191,9 +198,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START set_queue_service_properties]
-                :end-before: [END set_queue_service_properties]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_set_queue_service_properties]
+                :end-before: [END async_set_queue_service_properties]
                 :language: python
                 :dedent: 8
                 :caption: Setting queue service properties.
@@ -238,9 +245,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.core.queue.models.QueueProperties]
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_list_queues]
-                :end-before: [END qsc_list_queues]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_list_queues]
+                :end-before: [END async_qsc_list_queues]
                 :language: python
                 :dedent: 12
                 :caption: List queues in the service.
@@ -277,12 +284,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_create_queue]
-                :end-before: [END qsc_create_queue]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_create_queue]
+                :end-before: [END async_qsc_create_queue]
                 :language: python
                 :dedent: 8
                 :caption: Create a queue in the service.
@@ -318,9 +325,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_delete_queue]
-                :end-before: [END qsc_delete_queue]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_delete_queue]
+                :end-before: [END async_qsc_delete_queue]
                 :language: python
                 :dedent: 12
                 :caption: Delete a queue in the service.
@@ -339,12 +346,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.models.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.core.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START get_queue_client]
-                :end-before: [END get_queue_client]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_get_queue_client]
+                :end-before: [END async_get_queue_client]
                 :language: python
                 :dedent: 8
                 :caption: Get the queue client.
