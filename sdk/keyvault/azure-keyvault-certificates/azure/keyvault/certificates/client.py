@@ -40,14 +40,15 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def create_certificate(
             self,
-            name: str,
-            policy: CertificatePolicy,
-            enabled: Optional[bool] = None,
-            not_before: Optional[datetime] = None,
-            expires: Optional[datetime] = None,
-            tags: Optional[Dict[str, str]] = None,
-            **kwargs: Mapping[str, Any]
-    ) -> CertificateOperation:
+            name,  # type: str
+            policy,  # type: CertificatePolicy
+            enabled=None,  # type: Optional[bool]
+            not_before=None,  # type: Optional[datetime]
+            expires=None, # type: Optional[datetime]
+            tags=None,  # type: Optional[Dict[str, str]]
+            **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> CertificateOperation
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -100,7 +101,8 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def get_certificate(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Certificate:
+    def get_certificate(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], Mapping[str, Any]) -> Certificate
         """Gets information about a certificate.
 
         Gets information about a specific certificate. This operation requires
@@ -136,7 +138,8 @@ class CertificateClient(KeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def delete_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
+    def delete_certificate(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> DeletedCertificate
         """Deletes a certificate from the key vault.
 
         Deletes all versions of a certificate object along with its associated
@@ -163,7 +166,8 @@ class CertificateClient(KeyVaultClientBase):
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace
-    def get_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
+    def get_deleted_certificate(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> DeletedCertificate
         """Retrieves information about the specified deleted certificate.
 
         Retrieves the deleted certificate information plus its attributes,
@@ -195,7 +199,8 @@ class CertificateClient(KeyVaultClientBase):
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace
-    def purge_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> None:
+    def purge_deleted_certificate(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> None
         """Permanently deletes the specified deleted certificate.
 
         Performs an irreversible deletion of the specified certificate, without
@@ -213,7 +218,8 @@ class CertificateClient(KeyVaultClientBase):
         self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
 
     @distributed_trace
-    def recover_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> Certificate:
+    def recover_deleted_certificate(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Certificate
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
@@ -243,16 +249,17 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def import_certificate(
             self,
-            name: str,
-            certificate_bytes: bytes,
-            password: Optional[str] = None,
-            policy: Optional[CertificatePolicy] = None,
-            enabled: Optional[bool] = None,
-            not_before: Optional[datetime] = None,
-            expires: Optional[datetime] = None,
-            tags: Optional[Dict[str, str]] = None,
-            **kwargs: Mapping[str, Any]
-    ) -> Certificate:
+            name,  # type: str
+            certificate_bytes,  # type: bytes
+            password=None,  # type: Optional[str]
+            policy=None,  # type: Optional[CertificatePolicy]
+            enabled=None,  # type: Optional[bool]
+            not_before=None,  # type: Optional[datetime]
+            expires=None,  # type: Optional[datetime]
+            tags=None,  # type: Optional[Dict[str, str]]
+            **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Certificate
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
@@ -304,7 +311,8 @@ class CertificateClient(KeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_policy(self, name: str, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
+    def get_policy(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> CertificatePolicy
         """Gets the policy for a certificate.
 
         Returns the specified certificate policy resources in the key
@@ -321,7 +329,8 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_policy(self, name: str, policy: CertificatePolicy, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
+    def update_policy(self, name, policy, **kwargs) -> CertificatePolicy:
+        # type: (str, CertificatePolicy, Mapping[str, Any]) -> CertificatePolicy
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leaves others as null.
@@ -347,14 +356,15 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def update_certificate(
             self,
-            name: str,
-            version: Optional[str] = None,
-            not_before: Optional[datetime] = None,
-            expires: Optional[datetime] = None,
-            enabled: Optional[bool] = None,
-            tags: Optional[Dict[str, str]] = None,
-            **kwargs: Mapping[str, Any]
-    ) -> Certificate:
+            name,  # type: str
+            version=None,   # type: Optional[str]
+            not_before=None,  # type: Optional[datetime]
+            expires=None,  # type: Optional[datetime]
+            enabled=None,  # type: Optional[bool]
+            tags=None,  # type: Optional[Dict[str, str]]
+            **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Certificate
         """Updates the specified attributes associated with the given certificate.
 
         The UpdateCertificate operation applies the specified update on the
@@ -405,7 +415,8 @@ class CertificateClient(KeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def backup_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
+    def backup_certificate(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> bytes
         """Backs up the specified certificate.
 
         Requests that a backup of the specified certificate be downloaded
@@ -436,7 +447,8 @@ class CertificateClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_certificate(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Certificate:
+    def restore_certificate(self, backup, **kwargs):
+        # type: (bytes, Mapping[str, Any]) -> Certificate
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault.
@@ -466,7 +478,8 @@ class CertificateClient(KeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> Iterable[DeletedCertificate]:
+    def list_deleted_certificates(self, include_pending=None, **kwargs) -> Iterable[DeletedCertificate]:
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[DeletedCertificate]
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
@@ -502,7 +515,8 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> Iterable[CertificateBase]:
+    def list_certificates(self, include_pending=None, **kwargs):
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[CertificateBase]
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -536,7 +550,8 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> Iterable[CertificateBase]:
+    def list_certificate_versions(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Iterable[CertificateBase]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -568,7 +583,8 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs)
 
     @distributed_trace
-    def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
+    def create_contacts(self, contacts, **kwargs):
+        # type: (Iterable[Contact], Mapping[str, Any]) -> Iterable[Contact]
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
@@ -585,7 +601,8 @@ class CertificateClient(KeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
 
     @distributed_trace
-    def get_contacts(self, **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
+    def get_contacts(self, **kwargs):
+        # type: (Mapping[str, Any]) -> Iterable[Contact]
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -599,7 +616,8 @@ class CertificateClient(KeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in pages.contact_list)
 
     @distributed_trace
-    def delete_contacts(self, **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
+    def delete_contacts(self, **kwargs):
+        # type: (Mapping[str, Any]) -> Iterable[Contact]
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
@@ -614,7 +632,8 @@ class CertificateClient(KeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
 
     @distributed_trace
-    def get_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    def get_certificate_operation(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> CertificateOperation
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate.
@@ -632,7 +651,8 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def delete_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    def delete_certificate_operation(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> CertificateOperation
         """Deletes the creation operation for a specific certificate.
 
         Deletes the creation operation for a specified certificate that is in
@@ -650,7 +670,8 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def cancel_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    def cancel_certificate_operation(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> CertificateOperation
         """Updates a certificate operation.
 
         Updates a certificate creation operation that is already in progress.
@@ -674,14 +695,15 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def merge_certificate(
         self,
-        name: str,
-        x509_certificates: List[bytearray],
-        enabled: Optional[bool] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Certificate:
+        name,  # type: str
+        x509_certificates,  # type: List[bytearray]
+        enabled=None,  # type: Optional[bool]
+        not_before=None,  # type: Optional[datetime]
+        expires=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Certificate
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         Performs the merging of a certificate or certificate chain with a key pair currently
@@ -723,10 +745,11 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def get_pending_certificate_signing_request(
         self,
-        name: str,
-        custom_headers: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> str:
+        name,  # type: str
+        custom_headers=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> str
         """Gets the Base64 pending certificate signing request (PKCS-10).
         :param name: The name of the certificate
         :type name: str
@@ -777,7 +800,8 @@ class CertificateClient(KeyVaultClientBase):
         return deserialized
 
     @distributed_trace
-    def get_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
+    def get_issuer(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Issuer
         """Gets the specified certificate issuer.
 
         Returns the specified certificate issuer resources in the key vault.
@@ -796,15 +820,16 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def create_issuer(
         self,
-        name: str,
-        provider: str,
-        account_id: Optional[str] = None,
-        password: Optional[str] = None,
-        organization_id: Optional[str] = None,
-        admin_details: Optional[List[AdministratorDetails]] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Issuer:
+        name,  # type: str,
+        provider,  # type: str,
+        account_id=None,  # type: Optional[str]
+        password=None,  # type: Optional[str]
+        organization_id=None,  # type: Optional[str]
+        admin_details=None,  # type: Optional[List[AdministratorDetails]]
+        enabled=None,  # type: Optional[bool]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Issuer
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified
@@ -865,15 +890,16 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def update_issuer(
         self,
-        name: str,
-        provider: Optional[str] = None,
-        account_id: Optional[str] = None,
-        password: Optional[str] = None,
-        organization_id: Optional[str] = None,
-        admin_details: Optional[List[AdministratorDetails]] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Issuer:
+        name,  # type: str,
+        provider=None,  # type: Optional[str],
+        account_id=None,  # type: Optional[str]
+        password=None,  # type: Optional[str]
+        organization_id=None,  # type: Optional[str]
+        admin_details=None,  # type: Optional[List[AdministratorDetails]]
+        enabled=None,  # type: Optional[bool]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Issuer
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
@@ -931,7 +957,8 @@ class CertificateClient(KeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def delete_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
+    def delete_issuer(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Issuer
         """Deletes the specified certificate issuer.
 
         Permanently removes the specified certificate issuer from the vault.
@@ -948,7 +975,8 @@ class CertificateClient(KeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: Mapping[str, Any]) -> Iterable[IssuerBase]:
+    def list_issuers(self, **kwargs):
+        # type: (Mapping[str, Any]) -> Iterable[IssuerBase]
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
