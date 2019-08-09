@@ -9,16 +9,16 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+
 from ._generated import KeyVaultClient
+from .challenge_auth_policy import ChallengeAuthPolicy
+from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Mapping, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
-
-from .challenge_auth_policy import ChallengeAuthPolicy
-from .._user_agent import USER_AGENT
 
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
