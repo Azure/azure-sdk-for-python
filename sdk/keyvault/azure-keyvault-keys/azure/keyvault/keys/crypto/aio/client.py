@@ -2,6 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys.models import Key
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
+
+from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -12,12 +18,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-
-from azure.core.exceptions import HttpResponseError
-
-from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
-from azure.keyvault.keys.models import Key
-from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
 
 
 class CryptographyClient(AsyncKeyVaultClientBase):
@@ -94,7 +94,8 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
             # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag = await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            key_id, algorithm, ciphertext, authentication_tag =
+                await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
 
         """
 
@@ -218,7 +219,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
-    async def verify(self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any") -> VerifyResult:
+    async def verify(
+        self,
+        algorithm: "SignatureAlgorithm",
+        digest: bytes, signature: bytes,
+        **kwargs: "Any"
+    ) -> VerifyResult:
         """
         Verify a signature using the client's key. Requires the keys/verify permission.
 

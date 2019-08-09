@@ -2,6 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import six
+from azure.core.exceptions import HttpResponseError
+
+from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+from ..models import Key
+from .._shared import KeyVaultClientBase, parse_vault_id
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -12,13 +19,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-
-from azure.core.exceptions import HttpResponseError
-import six
-
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
-from ..models import Key
-from .._shared import KeyVaultClientBase, parse_vault_id
 
 
 class CryptographyClient(KeyVaultClientBase):
@@ -100,7 +100,8 @@ class CryptographyClient(KeyVaultClientBase):
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
             # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            key_id, algorithm, ciphertext, authentication_tag =
+                client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
 
         """
 
