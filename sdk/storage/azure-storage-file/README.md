@@ -257,7 +257,7 @@ Several Storage File Python SDK samples are available to you in the SDK's GitHub
 
 ### Additional documentation
 
-For more extensive documentation on the Azure Storage File, see the [Azure Storage File documentation](https://docs.microsoft.com/azure/storage/) on docs.microsoft.com.
+For more extensive documentation on the Azure Storage File, see the [Azure Storage File documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file) on docs.microsoft.com.
 
 
 ## Contributing
