@@ -38,7 +38,7 @@ class CryptographyClient(KeyVaultClientBase):
     """
 
     def __init__(self, key, credential, **kwargs):
-        # type: (Union[Key, str], TokenCredential, Any) -> None
+        # type: (Union[Key, str], TokenCredential, Mapping[str, Any]) -> None
 
         if isinstance(key, Key):
             self._key = key
@@ -82,7 +82,7 @@ class CryptographyClient(KeyVaultClientBase):
         return self._key
 
     def encrypt(self, algorithm, plaintext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, Any) -> EncryptResult
+        # type: (EncryptionAlgorithm, bytes, Mapping[str, Any]) -> EncryptResult
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -111,7 +111,7 @@ class CryptographyClient(KeyVaultClientBase):
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
     def decrypt(self, algorithm, ciphertext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, Any) -> DecryptResult
+        # type: (EncryptionAlgorithm, bytes, Mapping[str, Any]) -> DecryptResult
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
@@ -144,7 +144,7 @@ class CryptographyClient(KeyVaultClientBase):
         return DecryptResult(decrypted_bytes=result.result)
 
     def wrap(self, algorithm, key, **kwargs):
-        # type: (KeyWrapAlgorithm, bytes, Any) -> WrapKeyResult
+        # type: (KeyWrapAlgorithm, bytes, Mapping[str, Any]) -> WrapKeyResult
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
@@ -170,7 +170,7 @@ class CryptographyClient(KeyVaultClientBase):
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
     def unwrap(self, algorithm, encrypted_key, **kwargs):
-        # type: (KeyWrapAlgorithm, bytes, Any) -> UnwrapKeyResult
+        # type: (KeyWrapAlgorithm, bytes, Mapping[str, Any]) -> UnwrapKeyResult
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
@@ -201,7 +201,7 @@ class CryptographyClient(KeyVaultClientBase):
         return UnwrapKeyResult(unwrapped_bytes=result.result)
 
     def sign(self, algorithm, digest, **kwargs):
-        # type: (SignatureAlgorithm, bytes, Any) -> SignResult
+        # type: (SignatureAlgorithm, bytes, Mapping[str, Any]) -> SignResult
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
@@ -230,7 +230,7 @@ class CryptographyClient(KeyVaultClientBase):
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
     def verify(self, algorithm, digest, signature, **kwargs):
-        # type: (SignatureAlgorithm, bytes, bytes, Any) -> VerifyResult
+        # type: (SignatureAlgorithm, bytes, bytes, Mapping[str, Any]) -> VerifyResult
         """
         Verify a signature using the client's key. Requires the keys/verify permission.
 

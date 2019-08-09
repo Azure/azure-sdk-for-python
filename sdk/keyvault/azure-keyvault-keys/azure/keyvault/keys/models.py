@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from collections import namedtuple
+from ._shared import parse_vault_id
 
 try:
     from typing import TYPE_CHECKING
@@ -12,10 +13,9 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from datetime import datetime
-    from typing import Any, Dict, Generator, Mapping, Optional
-    from ._shared._generated.v7_0 import models as _models
+    from typing import Any, Dict, Mapping, Optional
 
-from ._shared import parse_vault_id
+    from ._shared._generated.v7_0 import models as _models
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
