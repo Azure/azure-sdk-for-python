@@ -9,78 +9,6 @@ import pylint.testutils
 from azure.core import PipelineClient, Configuration
 from plugins import pylint_guidelines_checker as checker
 
-#
-# class TestClientHasConfigurationMethod(pylint.testutils.CheckerTestCase):
-#     CHECKER_CLASS = checker.ClientHasCreateConfigurationMethod
-#
-#     def test_missing_create_config_method(self):
-#         class_node, function_node = astroid.extract_node("""
-#         class SomeClient(): #@
-#             def __init__(self, **kwargs): #@
-#                 pass
-#         """)
-#
-#         with self.assertAddsMessages(
-#             pylint.testutils.Message(
-#                 msg_id="missing-configuration-factory-method", node=class_node
-#             )
-#         ):
-#             self.checker.visit_classdef(class_node)
-#
-#     def test_finds_config_method(self):
-#         class_node, function_node = astroid.extract_node("""
-#         class SomeClient(): #@
-#             def create_configuration(self, **kwargs): #@
-#                 pass
-#         """)
-#
-#         with self.assertNoMessages():
-#             self.checker.visit_classdef(class_node)
-#
-#     def test_finds_config_method_without_kwargs(self):
-#         class_node, function_node = astroid.extract_node("""
-#         class SomeClient(): #@
-#             def create_configuration(self): #@
-#                 pass
-#         """)
-#
-#         with self.assertAddsMessages(
-#             pylint.testutils.Message(
-#                 msg_id="missing-configuration-factory-method-kwargs", node=function_node
-#             )
-#         ):
-#             self.checker.visit_classdef(class_node)
-#
-#     def test_ignores_non_client_missing_config_method(self):
-#         class_node, function_node = astroid.extract_node("""
-#         class SomethingElse(): #@
-#             def __init__(self, some, **kwargs): #@
-#                 pass
-#         """)
-#
-#         with self.assertNoMessages():
-#             self.checker.visit_classdef(class_node)
-#
-#     def test_ignores_nested_function_missing_create_config(self):
-#         class_node, function_node = astroid.extract_node("""
-#         class SomeClient(): #@
-#             def create_configuration(self, **kwargs): #@
-#                 def nested(hello, world):
-#                     pass
-#         """)
-#
-#         with self.assertNoMessages():
-#             self.checker.visit_classdef(class_node)
-#
-#     def test_guidelines_link_active(self):
-#         url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
-#         config = Configuration()
-#         client = PipelineClient(url, config=config)
-#         request = client.get(url)
-#         response = client._pipeline.run(request)
-#         assert response.http_response.status_code == 200
-#
-
 
 class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodsHaveTracingDecorators
@@ -283,7 +211,7 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
             self.checker.visit_asyncfunctiondef(func_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-distributed-tracing"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#distributed-tracing"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -489,7 +417,7 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
             self.checker.visit_asyncfunctiondef(func_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures"
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -691,7 +619,7 @@ class TestClientHasApprovedMethodNamePrefix(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#service-operations"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -784,7 +712,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1024,7 +952,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-method-signatures"
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1316,7 +1244,7 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-type-hints"
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#types-or-not"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1419,7 +1347,7 @@ class TestClientHasKwargsInPoliciesForCreateConfigurationMethod(pylint.testutils
             self.checker.visit_functiondef(function_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1665,7 +1593,7 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-naming-convention"
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1771,7 +1699,7 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
             self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-constructorsfactory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1837,7 +1765,7 @@ class TestAsyncClientCorrectNaming(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-aio-suffix"
+        url = "https://azure.github.io/azure-sdk/python_design.html#async-support"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1851,7 +1779,7 @@ class TestFileHasCopyrightHeader(pylint.testutils.CheckerTestCase):
     # Unable to use the astroid for this testcase.
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#github-source-headers"
+        url = "https://azure.github.io/azure-sdk/policies_opensource.html"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1952,7 +1880,7 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
             self.checker.visit_call(call_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#python-parameter-name"
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)

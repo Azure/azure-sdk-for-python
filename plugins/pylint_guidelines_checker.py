@@ -49,13 +49,14 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -144,12 +145,14 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
         ),
     )
 
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             client_methods = [child for child in node.get_children() if child.is_function]
 
             approved_prefixes = ["get", "list", "create", "upsert", "set", "update", "replace", "append", "add",
@@ -192,12 +195,14 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
         ),
     )
 
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -247,13 +252,14 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -335,13 +341,14 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -406,13 +413,14 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -494,6 +502,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
@@ -501,7 +510,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
 
     def visit_classdef(self, node):
         if "_" in node.name or node.name.endswith("client") or node.name[0] != node.name[0].upper():
-            if not node.name.startswith("_"):
+            if not node.name.startswith("_") and node.name not in self.ignore_clients:
                 self.add_message(
                     msg_id="client-incorrect-naming-convention", node=node, confidence=None
                 )
@@ -559,13 +568,14 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
@@ -611,27 +621,29 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    acceptable_names = ["__init__"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
         if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name.startswith("__"):
+            if node.name.startswith("__") and node.name not in self.acceptable_names:
                 self.add_message(
                     msg_id="client-method-name-no-double-underscore", node=node, confidence=None
                 )
 
     def visit_asyncfunctiondef(self, node):
         if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name.startswith("__"):
+            if node.name.startswith("__") and node.name not in self.acceptable_names:
                 self.add_message(
                     msg_id="client-method-name-no-double-underscore", node=node, confidence=None
                 )
@@ -662,34 +674,45 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
         ),
     )
 
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
 
-        if node.doc.find("code-block"):
-            self.add_message(
-                msg_id="client-docstring-use-literal-include", node=node, confidence=None
-            )
+        try:
+            if node.doc.find("code-block") != -1:
+                self.add_message(
+                    msg_id="client-docstring-use-literal-include", node=node, confidence=None
+                )
+        except AttributeError:
+            pass
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.doc.find("code-block"):
-                self.add_message(
-                    msg_id="client-docstring-use-literal-include", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.doc.find("code-block") != -1:
+                    self.add_message(
+                        msg_id="client-docstring-use-literal-include", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.doc.find("code-block"):
-                self.add_message(
-                    msg_id="client-docstring-use-literal-include", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.doc.find("code-block") != -1:
+                    self.add_message(
+                        msg_id="client-docstring-use-literal-include", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
 
 class AsyncClientCorrectNaming(BaseChecker):
@@ -716,13 +739,14 @@ class AsyncClientCorrectNaming(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
 
     def visit_classdef(self, node):
         if node.name.endswith("Client") and "async" in node.name.lower() and "base" not in node.name.lower():
-            if not node.name.startswith("_"):
+            if not node.name.startswith("_") and node.name not in self.ignore_clients:
                 self.add_message(
                     msg_id="async-client-bad-name", node=node, confidence=None
                 )
@@ -752,13 +776,14 @@ class SpecifyParameterNamesInCall(BaseChecker):
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
             self.is_client.append(True)
         else:
             self.is_client.append(False)
