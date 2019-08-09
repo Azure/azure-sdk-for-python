@@ -153,7 +153,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
                 :language: python
@@ -230,7 +230,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
                 :language: python
@@ -293,7 +293,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
                 :language: python
@@ -368,7 +368,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: A iterable data generator (stream)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
                 :language: python
@@ -407,7 +407,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]
                 :language: python
