@@ -4,6 +4,13 @@
 # ------------------------------------
 from datetime import datetime
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
+
+from ._shared import KeyVaultClientBase
+from .crypto import CryptographyClient
+from .models import Key, KeyBase, DeletedKey
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -14,13 +21,6 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Mapping, Optional
     from azure.core.paging import ItemPaged
     from .models import JsonWebKey
-
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-
-from ._shared import KeyVaultClientBase
-from .crypto import CryptographyClient
-from .models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
 class KeyClient(KeyVaultClientBase):

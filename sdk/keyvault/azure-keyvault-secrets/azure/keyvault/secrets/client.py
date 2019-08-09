@@ -3,6 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
+
+from ._shared import KeyVaultClientBase
+from .models import Secret, DeletedSecret, SecretAttributes
 
 try:
     from typing import TYPE_CHECKING
@@ -13,12 +18,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
     from azure.core.paging import ItemPaged
-
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-
-from ._shared import KeyVaultClientBase
-from .models import Secret, DeletedSecret, SecretAttributes
 
 
 class SecretClient(KeyVaultClientBase):

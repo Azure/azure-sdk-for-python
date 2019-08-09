@@ -12,9 +12,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from datetime import datetime
     from typing import Any, Dict, Mapping, Optional
-
+    from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
@@ -215,15 +214,15 @@ class DeletedKey(Key):
 
     def __init__(
         self,
-        attributes,
-        vault_id,
-        key_material=None,
-        deleted_date=None,
-        recovery_id=None,
-        scheduled_purge_date=None,
-        **kwargs
+        attributes,  # type: models.KeyAttributes
+        vault_id,  # type: str
+        key_material=None,  # type: models.JsonWebKey
+        deleted_date=None,  # type: Optional[datetime]
+        recovery_id=None,  # type: Optional[str]
+        scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: Mapping[str, Any]
     ):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        # type: (...) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id

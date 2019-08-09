@@ -10,8 +10,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from datetime import datetime
     from typing import Any, Dict, Mapping, Optional
+    from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
 
 
@@ -198,8 +198,16 @@ class Secret(SecretAttributes):
 class DeletedSecret(SecretAttributes):
     """A deleted secret's attributes, as well as when it will be purged, if soft-delete is enabled for its vault."""
 
-    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (_models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+    def __init__(
+        self,
+        attributes,  # type: models.SecretAttributes
+        vault_id,  # type: str
+        deleted_date=None,  # type: Optional[datetime]
+        recovery_id=None,  # type: Optional[str]
+        scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
