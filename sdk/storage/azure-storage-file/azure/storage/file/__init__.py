@@ -20,6 +20,8 @@ from .models import (
     SharePropertiesPaged,
     DirectoryProperties,
     DirectoryPropertiesPaged,
+    Handle,
+    HandlesPaged,
     FileProperties,
     Metrics,
     RetentionPolicy,
@@ -56,5 +58,7 @@ __all__ = [
     'DirectoryProperties',
     'DirectoryPropertiesPaged',
     'FileProperties',
-    'ContentSettings'
+    'ContentSettings',
+    'Handle',
+    'HandlesPaged'
 ]

@@ -30,7 +30,7 @@ try:
 except ImportError:
     pass
 
-with open(os.path.join(package_folder_path, "version.py"), "r") as fd:
+with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
     VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 if not VERSION:
     raise RuntimeError("Cannot find version information")
@@ -69,6 +69,10 @@ setup(
             "azure",
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.0.0b1", "cryptography>=2.1.4", "msal~=0.4.1", "six>=1.6"],
-    extras_require={":python_version<'3.0'": ["azure-nspkg"], ":python_version<'3.5'": ["typing"]},
+    install_requires=["azure-core<2.0.0,>=1.0.0b2", "cryptography>=2.1.4", "msal~=0.4.1", "six>=1.6"],
+    extras_require={
+        ":python_version<'3.0'": ["azure-nspkg"],
+        ":python_version<'3.3'": ["mock"],
+        ":python_version<'3.5'": ["typing"],
+    },
 )

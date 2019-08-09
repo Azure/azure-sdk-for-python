@@ -19,7 +19,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
-from .constants import Endpoints, EnvironmentVariables
+from ._constants import Endpoints, EnvironmentVariables
 
 
 class _ManagedIdentityBase(object):

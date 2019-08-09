@@ -247,8 +247,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, content)
         self.assert_download_progress(
             len(self.byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -269,8 +269,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, content)
         self.assert_download_progress(
             len(self.byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -295,8 +295,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(blob_data, content)
         self.assert_download_progress(
             len(blob_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     def test_get_blob_to_stream(self):
@@ -343,8 +343,8 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self.assert_download_progress(
             len(self.byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -370,8 +370,8 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(self.byte_data, actual)
         self.assert_download_progress(
             len(self.byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -402,8 +402,8 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(blob_data, actual)
         self.assert_download_progress(
             len(blob_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     def test_ranged_get_blob_to_path(self):
@@ -415,7 +415,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        end_range = self.config.blob_settings.max_single_get_size
+        end_range = self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range)
             properties = downloader.download_to_stream(stream, max_connections=2)
@@ -442,7 +442,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         start_range = 3
-        end_range = self.config.blob_settings.max_single_get_size + 1024
+        end_range = self.config.max_single_get_size + 1024
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=start_range, length=end_range, raw_response_hook=callback)
             properties = downloader.download_to_stream(stream, max_connections=2)
@@ -454,8 +454,8 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(self.byte_data[start_range:end_range + 1], actual)
         self.assert_download_progress(
             end_range - start_range + 1,
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -497,14 +497,14 @@ class StorageGetBlobTest(StorageTestCase):
             return
 
         # Arrange
-        blob_size = self.config.blob_settings.max_single_get_size + 1
+        blob_size = self.config.max_single_get_size + 1
         blob_data = self.get_random_bytes(blob_size)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
 
         # Act
-        end_range = 2 * self.config.blob_settings.max_single_get_size
+        end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range)
             properties = downloader.download_to_stream(stream, max_connections=2)
@@ -529,7 +529,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(blob_data)
 
         # Act
-        end_range = 2 * self.config.blob_settings.max_single_get_size
+        end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range)
             properties = downloader.download_to_stream(stream, max_connections=2)
@@ -549,7 +549,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         text_blob = self.get_resource_name('textblob')
-        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
         blob.upload_blob(text_data)
 
@@ -566,7 +566,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         text_blob = self.get_resource_name('textblob')
-        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
         blob.upload_blob(text_data)
 
@@ -584,15 +584,15 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(text_data, content)
         self.assert_download_progress(
             len(text_data.encode('utf-8')),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
     def test_get_blob_to_text_non_parallel(self):
         # Arrange
         text_blob = self._get_blob_reference()
-        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
         blob.upload_blob(text_data)
 
@@ -610,8 +610,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(text_data, content)
         self.assert_download_progress(
             len(text_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -636,8 +636,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(blob_data, content)
         self.assert_download_progress(
             len(blob_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -676,8 +676,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(text, content)
         self.assert_download_progress(
             len(text.encode('utf-8')),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
@@ -717,7 +717,7 @@ class StorageGetBlobTest(StorageTestCase):
     def test_get_blob_to_stream_exact_get_size(self):
         # Arrange
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.config.blob_settings.max_single_get_size)
+        byte_data = self.get_random_bytes(self.config.max_single_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(byte_data)
 
@@ -739,15 +739,15 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(byte_data, actual)
         self.assert_download_progress(
             len(byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     @record
     def test_get_blob_exact_get_size(self):
         # Arrange
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.config.blob_settings.max_single_get_size)
+        byte_data = self.get_random_bytes(self.config.max_single_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(byte_data)
 
@@ -765,8 +765,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(byte_data, content)
         self.assert_download_progress(
             len(byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     def test_get_blob_exact_chunk_size(self):
@@ -777,8 +777,8 @@ class StorageGetBlobTest(StorageTestCase):
         # Arrange
         blob_name = self._get_blob_reference()
         byte_data = self.get_random_bytes(
-            self.config.blob_settings.max_single_get_size + 
-            self.config.blob_settings.max_chunk_get_size)
+            self.config.max_single_get_size + 
+            self.config.max_chunk_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(byte_data)
 
@@ -796,8 +796,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(byte_data, content)
         self.assert_download_progress(
             len(byte_data),
-            self.config.blob_settings.max_chunk_get_size,
-            self.config.blob_settings.max_single_get_size,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
             progress)
 
     def test_get_blob_to_stream_with_md5(self):

@@ -9,11 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a5e1df9e-9924-11e9-b31a-b831b58100e8
+      - b552b512-b636-11e9-a6d7-2816a845e8c6
       x-ms-date:
-      - Thu, 27 Jun 2019 21:43:49 GMT
+      - Sat, 03 Aug 2019 21:36:09 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -26,7 +28,7 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 27 Jun 2019 21:43:49 GMT
+      - Sat, 03 Aug 2019 21:36:09 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -34,7 +36,7 @@ interactions:
       Vary:
       - Origin
       x-ms-request-id:
-      - aadb4c98-701a-0094-5431-2de49d000000
+      - 2931a7d6-f01a-00b5-6943-4a69ff000000
       x-ms-version:
       - '2018-11-09'
     status:

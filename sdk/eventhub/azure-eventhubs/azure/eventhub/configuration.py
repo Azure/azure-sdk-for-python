@@ -8,7 +8,11 @@ from uamqp.constants import TransportType
 class _Configuration(object):
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")
-        self.max_retries = kwargs.get("max_retries", 3)
+        self.retry_total = kwargs.get('retry_total', 3)
+        self.max_retries = self.retry_total
+        self.backoff_factor = kwargs.get('retry_backoff_factor', 0.8)
+        self.backoff_max = kwargs.get('retry_backoff_max', 120)
+
         self.network_tracing = kwargs.get("network_tracing", False)
         self.http_proxy = kwargs.get("http_proxy")
         self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy \

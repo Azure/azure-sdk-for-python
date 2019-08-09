@@ -597,9 +597,6 @@ class StorageServiceProperties(Model):
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
-        'default_service_version': {'key': 'DefaultServiceVersion', 'type': 'str', 'xml': {'name': 'DefaultServiceVersion'}},
-        'delete_retention_policy': {'key': 'DeleteRetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'DeleteRetentionPolicy'}},
-        'static_website': {'key': 'StaticWebsite', 'type': 'StaticWebsite', 'xml': {'name': 'StaticWebsite'}},
     }
     _xml_map = {
     }

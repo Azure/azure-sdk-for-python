@@ -183,7 +183,7 @@ class LROPoller(object):
          if one is available.
         :raises CloudError: Server problem with the query.
         """
-        self.wait(timeout)
+        self.wait(timeout)  # type: ignore
         return self._polling_method.resource()
 
     @distributed_trace
