@@ -2,14 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
+from typing import Any, Mapping, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
-from msrest.serialization import Model
 
 from ._generated import KeyVaultClient
 from . import AsyncChallengeAuthPolicy
@@ -18,6 +17,7 @@ from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     try:
+        # pylint:disable=unused-import
         from azure.core.credentials import TokenCredential
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
@@ -41,6 +41,7 @@ class AsyncKeyVaultClientBase:
         config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
         # Override config policies if found in kwargs
+        # TODO: should be unnecessary after next regeneration (written 2019-08-02)
         if "user_agent_policy" in kwargs:
             config.user_agent_policy = kwargs["user_agent_policy"]
         if "headers_policy" in kwargs:

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from ._shared import parse_vault_id
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -12,8 +13,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from typing import Any, Dict, Mapping, Optional
     from ._shared._generated.v7_0 import models as _models
-
-from ._shared import parse_vault_id
 
 
 class SecretAttributes(object):
