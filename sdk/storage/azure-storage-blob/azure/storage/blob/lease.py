@@ -47,7 +47,7 @@ class LeaseClient(object):
         The ETag of the lease currently being maintained. This will be `None` if no
         lease has yet been acquired or modified.
     :ivar datetime last_modified:
-        The last modified timestampt of the lease currently being maintained.
+        The last modified timestamp of the lease currently being maintained.
         This will be `None` if no lease has yet been acquired or modified.
 
     :param client:

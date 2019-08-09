@@ -35,13 +35,13 @@ class LeaseClient(LeaseClientBase):
         The ETag of the lease currently being maintained. This will be `None` if no
         lease has yet been acquired or modified.
     :ivar datetime last_modified:
-        The last modified timestampt of the lease currently being maintained.
+        The last modified timestamp of the lease currently being maintained.
         This will be `None` if no lease has yet been acquired or modified.
 
     :param client:
         The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.blob_client.BlobClient or
-        ~azure.storage.blob.container_client.ContainerClient
+    :type client: ~azure.storage.blob.aio.blob_client_async.BlobClient or
+        ~azure.storage.blob.aio.container_client_async.ContainerClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.

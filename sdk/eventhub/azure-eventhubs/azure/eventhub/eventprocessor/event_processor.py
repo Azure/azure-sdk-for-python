@@ -21,16 +21,42 @@ OWNER_LEVEL = 0
 
 
 class EventProcessor(object):
+    """
+    An EventProcessor constantly receives events from all partitions of the Event Hub in the context of a given
+    consumer group. The received data will be sent to PartitionProcessor to be processed.
+
+    It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
+    If multiple EventProcessors are running for an event hub, they will automatically balance load.
+    This load balancing won't be available until preview 3.
+
+    Example:
+        .. code-block:: python
+
+            class MyPartitionProcessor(PartitionProcessor):
+                async def process_events(self, events):
+                    if events:
+                        # do something sync or async to process the events
+                        await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+
+            import asyncio
+            from azure.eventhub.aio import EventHubClient
+            from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+            client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
+            partition_manager = Sqlite3PartitionManager()
+            try:
+                event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+                asyncio.ensure_future(event_processor.start())
+                await asyncio.sleep(100)  # allow it to run 100 seconds
+                await event_processor.stop()
+            finally:
+                await partition_manager.close()
+
+    """
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
                  partition_processor_factory: Callable[[CheckpointManager], PartitionProcessor],
                  partition_manager: PartitionManager, **kwargs):
         """
-        An EventProcessor constantly receives events from all partitions of the Event Hub in the context of a given
-        consumer group. The received data will be sent to PartitionProcessor to be processed.
-
-        It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
-        If multiple EventProcessors are running for an event hub, they will automatically balance load.
-        This load balancing won't be available until preview 3.
+        Instantiate an EventProcessor.
 
         :param eventhub_client: An instance of ~azure.eventhub.aio.EventClient object
         :type eventhub_client: ~azure.eventhub.aio.EventClient
@@ -45,29 +71,6 @@ class EventProcessor(object):
         :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager.
         :param initial_event_position: The offset to start a partition consumer if the partition has no checkpoint yet.
         :type initial_event_position: int or str
-
-        Example:
-            ```python
-                    class MyPartitionProcessor(PartitionProcessor):
-                        async def process_events(self, events):
-                            if events:
-                                # do something sync or async to process the events
-                                await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
-
-
-                    import asyncio
-                    from azure.eventhub.aio import EventHubClient
-                    from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
-                    client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
-                    partition_manager = Sqlite3PartitionManager()
-                    try:
-                        event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
-                        asyncio.ensure_future(event_processor.start())
-                        await asyncio.sleep(100)  # allow it to run 100 seconds
-                        await event_processor.stop()
-                    finally:
-                        await partition_manager.close()
-            ```
 
         """
         self._consumer_group_name = consumer_group_name
@@ -87,12 +90,12 @@ class EventProcessor(object):
     async def start(self):
         """Start the EventProcessor.
 
-            1. retrieve the partition ids from eventhubs
-            2. claim partition ownership of these partitions.
-            3. repeatedly call EvenHubConsumer.receive() to retrieve events and
-            call user defined PartitionProcessor.process_events()
+        1. retrieve the partition ids from eventhubs.
+        2. claim partition ownership of these partitions.
+        3. repeatedly call EvenHubConsumer.receive() to retrieve events and call user defined PartitionProcessor.process_events().
 
-            :return None
+        :return: None
+
         """
         log.info("EventProcessor %r is being started", self._id)
         partition_ids = await self._eventhub_client.get_partition_ids()
@@ -104,7 +107,8 @@ class EventProcessor(object):
 
         This method cancels tasks that are running EventHubConsumer.receive() for the partitions owned by this EventProcessor.
 
-        :return None
+        :return: None
+
         """
         for i in range(len(self._tasks)):
             task = self._tasks.pop()

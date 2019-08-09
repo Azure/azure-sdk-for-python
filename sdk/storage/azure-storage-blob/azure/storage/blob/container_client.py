@@ -63,13 +63,13 @@ class ContainerClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the Container, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -97,7 +97,7 @@ class ContainerClient(StorageAccountHostsMixin):
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 8
-            :caption: Get a ContainerClient from an existing BlobSericeClient.
+            :caption: Get a ContainerClient from an existing BlobServiceClient.
 
         .. literalinclude:: ../tests/test_blob_samples_containers.py
             :start-after: [START create_container_client_sasurl]
@@ -828,7 +828,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_cient.BlobClient
+        :rtype: ~azure.storage.blob.blob_client.BlobClient
 
         Example:
             .. literalinclude:: ../tests/test_blob_samples_containers.py
