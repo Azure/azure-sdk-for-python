@@ -94,7 +94,7 @@ jobs:
     variables:
     - template: ../variables/globals.yml
     - name: RunMyPy
-      value: $[ ne($(PythonVersion), '2.7') ]
+      value: $[ ne(variables['PythonVersion'], '2.7') ]
 
     # dependsOn:
     #    - 'Build'
