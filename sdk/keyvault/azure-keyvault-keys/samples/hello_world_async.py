@@ -17,7 +17,9 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(key) resource for Azure Key Vault
@@ -63,8 +65,9 @@ async def run_sample():
         rsa_key = await client.get_key(rsa_key.name)
         print("Key with name '{0}' was found.".format(rsa_key.name))
 
-        # Let's say we want to update the expiration time for the EC key and disable the key to be useable for cryptographic operations.
-        # The update method allows the user to modify the metadata (key attributes) associated with a key previously stored within Key Vault.
+        # Let's say we want to update the expiration time for the EC key and disable the key to be usable
+        # for cryptographic operations. The update method allows the user to modify the metadata (key attributes)
+        # associated with a key previously stored within Key Vault.
         print("\n3. Update a Key by name")
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         updated_ec_key = await client.update_key(ec_key.name, ec_key.version, expires=expires, enabled=False)

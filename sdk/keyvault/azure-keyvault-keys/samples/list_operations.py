@@ -17,10 +17,13 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault. The vault has to be
+# soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
+# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
 #
 # 1. Create key (create_key)
 #
@@ -28,7 +31,8 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. List key versions from the Key Vault (list_key_versions)
 #
-# 4. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this operation.
+# 4. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this
+# operation.
 #
 # ----------------------------------------------------------------------------------------------------------
 def run_sample():
@@ -62,8 +66,9 @@ def run_sample():
                 )
             )
 
-        # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure it reflects the new key size.
-        # Calling create_rsa_key on an existing key creates a new version of the key in the Key Vault with the new key size.
+        # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure
+        # it reflects the new key size. Calling create_rsa_key on an existing key creates a new version of the key in
+        # the Key Vault with the new key size.
         new_key = client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
         print("New version was created for Key with name '{0}' with the updated size.".format(new_key.name))
 
