@@ -95,7 +95,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param str directory_path:
             Path to the specified directory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client_async.DirectoryClient
+        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         return DirectoryClient(
             self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
