@@ -83,7 +83,7 @@ class KeyVaultClientBase(object):
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=False, **kwargs)
 
     def _build_pipeline(self, config, transport, **kwargs):
-        # type: (Configuration, HttpTransport) -> Pipeline
+        # type: (Configuration, HttpTransport, **Any) -> Pipeline
         policies = [
             config.headers_policy,
             config.user_agent_policy,

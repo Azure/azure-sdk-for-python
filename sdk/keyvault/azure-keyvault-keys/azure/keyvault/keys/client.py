@@ -3,13 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-
-from ._shared import KeyVaultClientBase
-from .crypto import CryptographyClient
-from .models import Key, KeyBase, DeletedKey
-from typing import Any, Dict, Mapping, Optional, Union, List
 
 try:
     from typing import TYPE_CHECKING
@@ -18,8 +11,17 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from typing import Any, Dict, Mapping, Optional
     from azure.core.paging import ItemPaged
     from .models import JsonWebKey
+
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
+
+from ._shared import KeyVaultClientBase
+from .crypto import CryptographyClient
+from .models import Key, KeyBase, DeletedKey, KeyOperationResult
+
 
 class KeyClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's keys.
@@ -39,7 +41,9 @@ class KeyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def get_cryptography_client(self, key: Union[Key, str], **kwargs: Any) -> CryptographyClient:
+    def get_cryptography_client(self, key, **kwargs):
+        # type: (Union[Key, str], Any) -> CryptographyClient
+
         # the initializer requires a credential but won't actually use it in this case because we pass in this
         # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
         credential = object()
@@ -48,17 +52,18 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_key(
         self,
-        name: str,
-        key_type: str,
-        size: Optional[int] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        curve: Optional[str] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Key:
+        name,  # type: str
+        key_type,  # type: str
+        size=None,  # type: Optional[int]
+        key_operations=None,  # type: Optional[List[str]]
+        enabled=None,  # type: Optional[bool]
+        expires=None,  # type: Optional[datetime]
+        not_before=None,  # type: Optional[datetime],
+        tags=None,  # type: Optional[Dict[str, str]]
+        curve=None,  # type: Optional[str]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Key
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
@@ -106,16 +111,17 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_rsa_key(
         self,
-        name: str,
-        hsm: bool,
-        size: Optional[int] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Key:
+        name,  # type: str
+        hsm,  # type: bool
+        size=None,  # type: Optional[int]
+        key_operations=None,  # type: Optional[List[str]]
+        enabled=None,  # type: Optional[bool]
+        expires=None,  # type: Optional[datetime]
+        not_before=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
@@ -156,16 +162,17 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_ec_key(
         self,
-        name: str,
-        hsm: bool,
-        curve: Optional[str] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Key:
+        name,  # type: str
+        hsm,  # type: bool
+        curve=None,  # type: Optional[str]
+        key_operations=None,  # type: Optional[List[str]]
+        enabled=None,  # type: Optional[bool]
+        expires=None,  # type: Optional[datetime]
+        not_before=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
@@ -206,7 +213,8 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def delete_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
+    def delete_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> DeletedKey
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
@@ -226,7 +234,8 @@ class KeyClient(KeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def get_key(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Key:
+    def get_key(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], Mapping[str, Any]) -> Key
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -249,7 +258,8 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def get_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
+    def get_deleted_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> DeletedKey
         """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
         permission.
 
@@ -345,7 +355,8 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def purge_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> None:
+    def purge_deleted_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> None
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
         does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
 
@@ -365,7 +376,8 @@ class KeyClient(KeyVaultClientBase):
         self._client.purge_deleted_key(self.vault_url, name, kwargs)
 
     @distributed_trace
-    def recover_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> Key:
+    def recover_deleted_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Key
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -390,15 +402,16 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def update_key(
         self,
-        name: str,
-        version: Optional[str] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Key:
+        name,  # type: str
+        version=None,  # type: Optional[str]
+        key_operations=None,  # type: Optional[List[str]]
+        enabled=None,  # type: Optional[bool]
+        expires=None,  # type: Optional[datetime]
+        not_before=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
@@ -439,7 +452,8 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def backup_key(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
+    def backup_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> bytes
         """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
         copying a key from one vault to another. Requires the key/backup permission.
 
@@ -463,7 +477,8 @@ class KeyClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_key(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Key:
+    def restore_key(self, backup, **kwargs):
+        # type: (bytes, Mapping[str, Any]) -> Key
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -489,15 +504,16 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def import_key(
         self,
-        name: str,
-        key: List[str],
-        hsm: Optional[bool] = None,
-        enabled: Optional[bool] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
-    ) -> Key:
+        name,  # type: str
+        key,  # type: List[str]
+        hsm=None,  # type: Optional[bool]
+        enabled=None,  # type: Optional[bool]
+        not_before=None,  # type: Optional[datetime]
+        expires=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Mapping[str, Any]
+    ):
+        # type: (...) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
