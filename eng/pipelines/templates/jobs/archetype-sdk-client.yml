@@ -5,97 +5,97 @@ parameters:
   BuildTargetingString: 'azure-*'
 
 jobs:
-  # - job: 'Build'
-  #   variables:
-  #     - template: ../variables/globals.yml
+  - job: 'Build'
+    variables:
+      - template: ../variables/globals.yml
 
-  #   pool:
-  #     vmImage: 'ubuntu-16.04'
+    pool:
+      vmImage: 'ubuntu-16.04'
 
-  #   steps:
-  #     - script: |
-  #         echo "##vso[build.addbuildtag]Scheduled"
-  #       displayName: 'Tag scheduled builds'
-  #       condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
+    steps:
+      - script: |
+          echo "##vso[build.addbuildtag]Scheduled"
+        displayName: 'Tag scheduled builds'
+        condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
 
-  #     - task: UsePythonVersion@0
-  #       displayName: 'Use Python $(PythonVersion)'
-  #       inputs:
-  #         versionSpec: $(PythonVersion)
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
 
-  #     - script: |
-  #         pip install wheel setuptools pathlib twine readme-renderer[md]
-  #       displayName: 'Prep Environment'
+      - script: |
+          pip install wheel setuptools pathlib twine readme-renderer[md]
+        displayName: 'Prep Environment'
 
-  #     - task: PythonScript@0
-  #       displayName: 'Generate Packages'
-  #       inputs:
-  #         scriptPath: 'scripts/devops_tasks/build_packages.py'
-  #         arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
+      - task: PythonScript@0
+        displayName: 'Generate Packages'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/build_packages.py'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
-  #     - script: |
-  #         twine check $(Build.ArtifactStagingDirectory)/*
-  #       displayName: 'Verify Readme'
+      - script: |
+          twine check $(Build.ArtifactStagingDirectory)/*
+        displayName: 'Verify Readme'
 
-  #     - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
+      - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
 
-  #     - task: PublishPipelineArtifact@0
-  #       inputs:
-  #         artifactName: 'artifacts' 
-  #         targetPath: $(Build.ArtifactStagingDirectory)
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: 'artifacts' 
+          targetPath: $(Build.ArtifactStagingDirectory)
 
-  #     - task: PublishBuildArtifacts@1
-  #       condition: succeededOrFailed()
-  #       displayName: 'Publish Artifacts'
-  #       inputs:
-  #         artifactName: packages
+      - task: PublishBuildArtifacts@1
+        condition: succeededOrFailed()
+        displayName: 'Publish Artifacts'
+        inputs:
+          artifactName: packages
 
-  # - job: 'Analyze'
-  #   variables:
-  #     - template: ../variables/globals.yml
+  - job: 'Analyze'
+    variables:
+      - template: ../variables/globals.yml
 
-  #   dependsOn:
-  #     - 'Build'
+    dependsOn:
+      - 'Build'
 
-  #   pool:
-  #     vmImage: 'ubuntu-16.04'
+    pool:
+      vmImage: 'ubuntu-16.04'
 
-  #     steps:
-  #      - task: UsePythonVersion@0
-  #        displayName: 'Use Python $(PythonVersion)'
-  #        inputs:
-  #          versionSpec: '$(PythonVersion)'
+      steps:
+       - task: UsePythonVersion@0
+         displayName: 'Use Python $(PythonVersion)'
+         inputs:
+           versionSpec: '$(PythonVersion)'
 
-  #      - script: |
-  #          pip install setuptools wheel Jinja2
-  #          pip install doc-warden==0.3.0
-  #          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
-  #        displayName: 'Verify Readmes'
+       - script: |
+           pip install setuptools wheel Jinja2
+           pip install doc-warden==0.3.0
+           ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+         displayName: 'Verify Readmes'
 
-  #      - task: PythonScript@0
-  #        displayName: 'Analyze dependencies'
-  #        inputs:
-  #          scriptPath: 'scripts/analyze_deps.py'
-  #          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+       - task: PythonScript@0
+         displayName: 'Analyze dependencies'
+         inputs:
+           scriptPath: 'scripts/analyze_deps.py'
+           arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
 
-  #      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  #        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-  #        # builds should be sufficient.
-  #        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-  #        displayName: 'Component Detection'
+       - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+         # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
+         # builds should be sufficient.
+         condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
+         displayName: 'Component Detection'
 
-  #      - task: PublishBuildArtifacts@1
-  #        condition: succeededOrFailed()
-  #        displayName: 'Publish Report Artifacts'
-  #        inputs:
-  #          artifactName: reports
+       - task: PublishBuildArtifacts@1
+         condition: succeededOrFailed()
+         displayName: 'Publish Report Artifacts'
+         inputs:
+           artifactName: reports
 
   - job: 'Generic_Tests'
     variables:
     - template: ../variables/globals.yml
 
-    # dependsOn:
-    #    - 'Build'
+    dependsOn:
+       - 'Build'
 
     strategy:
       matrix:
