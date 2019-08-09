@@ -222,7 +222,8 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     async def verify(
         self,
         algorithm: "SignatureAlgorithm",
-        digest: bytes, signature: bytes,
+        digest: bytes,
+        signature: bytes,
         **kwargs: "Any"
     ) -> VerifyResult:
         """
