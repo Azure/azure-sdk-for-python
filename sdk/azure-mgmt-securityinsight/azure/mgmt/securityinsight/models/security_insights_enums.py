@@ -54,6 +54,8 @@ class CloseReason(str, Enum):
 
     resolved = "Resolved"  #: Case was resolved
     dismissed = "Dismissed"  #: Case was dismissed
+    true_positive = "TruePositive"  #: Case was true positive
+    false_positive = "FalsePositive"  #: Case was false positive
     other = "Other"  #: Case was closed for another reason
 
 

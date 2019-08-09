@@ -18,6 +18,7 @@ try:
     from .action_py3 import Action
     from .user_info_py3 import UserInfo
     from .case_py3 import Case
+    from .case_comment_py3 import CaseComment
     from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
@@ -90,6 +91,7 @@ except (SyntaxError, ImportError):
     from .action import Action
     from .user_info import UserInfo
     from .case import Case
+    from .case_comment import CaseComment
     from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
@@ -157,6 +159,7 @@ from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
 from .case_paged import CasePaged
+from .case_comment_paged import CaseCommentPaged
 from .bookmark_paged import BookmarkPaged
 from .data_connector_paged import DataConnectorPaged
 from .entity_paged import EntityPaged
@@ -197,6 +200,7 @@ __all__ = [
     'Action',
     'UserInfo',
     'Case',
+    'CaseComment',
     'Bookmark',
     'DataConnector',
     'DataConnectorKind1',
@@ -264,6 +268,7 @@ __all__ = [
     'AlertRulePaged',
     'ActionPaged',
     'CasePaged',
+    'CaseCommentPaged',
     'BookmarkPaged',
     'DataConnectorPaged',
     'EntityPaged',
