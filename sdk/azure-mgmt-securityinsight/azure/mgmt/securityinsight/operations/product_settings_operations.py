@@ -49,7 +49,7 @@ class ProductSettingsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param settings_name: The setting name. Supports- Fusion, UEBA
+        :param settings_name: The setting name. Supports- UEBA
         :type settings_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -119,7 +119,7 @@ class ProductSettingsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param settings_name: The setting name. Supports- Fusion, UEBA
+        :param settings_name: The setting name. Supports- UEBA
         :type settings_name: str
         :param settings: The setting
         :type settings: ~azure.mgmt.securityinsight.models.Settings
