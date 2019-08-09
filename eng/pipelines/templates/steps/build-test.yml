@@ -7,10 +7,8 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-steps:
-  variables:
-    RunMyPy: $[ if ne('${{ parameters.PythonVersion }}', '2.7') ]
 
+steps:
   - task: DownloadPipelineArtifact@0
     inputs:
       artifactName: 'artifacts' 

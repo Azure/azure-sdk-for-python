@@ -93,6 +93,8 @@ jobs:
   - job: 'Generic_Tests'
     variables:
     - template: ../variables/globals.yml
+    - name: RunMyPy
+      value: $[ if ne('$(PythonVersion)', '2.7') ]
 
     dependsOn:
        - 'Build'
