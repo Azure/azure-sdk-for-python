@@ -78,7 +78,7 @@ steps:
         --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
-    condition: $(RunMyPy)
+    condition: variables['RunMyPy']
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
