@@ -9,7 +9,6 @@
 from datetime import datetime, timedelta
 import pytest
 import asyncio
-from multidict import CIMultiDict, CIMultiDictProxy
 try:
     import settings_real as settings
 except ImportError:

@@ -284,7 +284,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
@@ -346,7 +346,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.models.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.core.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
