@@ -377,7 +377,6 @@ try:
     from ._models_py3 import RerunTriggerListResponse
     from ._models_py3 import RerunTriggerResource
     from ._models_py3 import RerunTumblingWindowTrigger
-    from ._models_py3 import RerunTumblingWindowTriggerActionParameters
     from ._models_py3 import Resource
     from ._models_py3 import ResponsysLinkedService
     from ._models_py3 import ResponsysObjectDataset
@@ -889,7 +888,6 @@ except (SyntaxError, ImportError):
     from ._models import RerunTriggerListResponse
     from ._models import RerunTriggerResource
     from ._models import RerunTumblingWindowTrigger
-    from ._models import RerunTumblingWindowTriggerActionParameters
     from ._models import Resource
     from ._models import ResponsysLinkedService
     from ._models import ResponsysObjectDataset
@@ -1481,7 +1479,6 @@ __all__ = [
     'RerunTriggerListResponse',
     'RerunTriggerResource',
     'RerunTumblingWindowTrigger',
-    'RerunTumblingWindowTriggerActionParameters',
     'Resource',
     'ResponsysLinkedService',
     'ResponsysObjectDataset',
