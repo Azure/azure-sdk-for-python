@@ -27241,9 +27241,10 @@ class TriggerSubscriptionOperationStatus(Model):
 
     :ivar trigger_name: Trigger name.
     :vartype trigger_name: str
-    :ivar status: Subscription status.
-    :vartype status: list[str or
-     ~azure.mgmt.datafactory.models.EventSubscriptionStatusTypes]
+    :ivar status: Event Subscription Status. Possible values include:
+     'Enabled', 'Provisioning', 'Deprovisioning', 'Disabled', 'Unknown'
+    :vartype status: str or
+     ~azure.mgmt.datafactory.models.EventSubscriptionStatus
     """
 
     _validation = {
@@ -27253,7 +27254,7 @@ class TriggerSubscriptionOperationStatus(Model):
 
     _attribute_map = {
         'trigger_name': {'key': 'triggerName', 'type': 'str'},
-        'status': {'key': 'status', 'type': '[str]'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
