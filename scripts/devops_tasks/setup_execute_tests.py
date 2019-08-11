@@ -53,7 +53,7 @@ def run_tests(
     if disable_cov:
         test_res.append("--no-cov")
     else:
-        test_res.extend(["--durations=10", "--cov-report="])
+        test_res.extend(["--cov-report="]) # "--durations=10", 
 
     # base command array without a targeted package
     command_array = [python_version, "-m", "pytest"]
@@ -63,6 +63,8 @@ def run_tests(
     logging.info("Running pytest for {}".format(targeted_packages))
 
     for index, target_package in enumerate(targeted_packages):
+        # loop through the packages
+        logging.info("Running pytest for {}. {} of {}.".format(target_package, index, len(targeted_packages)))
         target_package_options = []
         allowed_return_codes = []
 
