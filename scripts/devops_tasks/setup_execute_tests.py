@@ -84,10 +84,10 @@ def run_tests(
             # --cov-append only works if a .coverage file exists already.
             # until we get a .coverage file, keep using --cov
             # once we have one, then we can begin appending to it.
-            if not os.path.exists(os.path.join(root_dir, './.coverage')):
-                target_package_options.append("--cov")
-            else:
-                target_package_options.append("--cov-append")
+            # if not os.path.exists(os.path.join(root_dir, './.coverage')):
+            #     target_package_options.append("--cov --cov-append")
+            # else:
+            target_package_options.append("--cov --cov-append")
 
         # format test result output location
         if test_output_location:
@@ -119,6 +119,37 @@ def run_tests(
     if err_results:
         exit(1)
 
+def collect_coverage_files(targeted_packages):
+    root_coverage_dir = os.path.join(root_dir, '_coverage/')
+
+    try:
+        os.mkdir(root_coverage_dir)
+    except FileExistsError:
+        print('Coverage dir already exists. Cleaning.')
+        cleanup_folder(root_coverage_dir)
+
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(package_dir, '.coverage')
+        if os.path.isfile(coverage_file):
+            destination_file = os.path.join(root_coverage_dir, '.coverage_{}'.format(os.path.basename(package_dir)))
+            shutil.copyfile(coverage_file, destination_file)
+            coverage_files.append(destination_file)
+
+    print('Visible uncombined .coverage files: {}'.format(coverage_files))
+
+    if len(coverage_files):
+        cov_cmd_array = ['coverage', 'combine']
+        cov_cmd_array.extend(coverage_files)
+
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, os.path.join(root_dir, '_coverage/'))
+
+        source = os.path.join(root_coverage_dir, './.coverage')
+        dest = os.path.join(root_dir)
+
+        shutil.move(source, os.path.join(root_dir, '.coverage'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
