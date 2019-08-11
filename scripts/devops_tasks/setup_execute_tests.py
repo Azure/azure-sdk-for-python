@@ -63,7 +63,6 @@ def run_tests(
     logging.info("Running pytest for {}".format(targeted_packages))
 
     for index, target_package in enumerate(targeted_packages):
-        # loop through the packages
         logging.info("Running pytest for {}. {} of {}.".format(target_package, index, len(targeted_packages)))
         target_package_options = []
         allowed_return_codes = []
