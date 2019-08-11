@@ -95,7 +95,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param str directory_path:
             Path to the specified directory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         return DirectoryClient(
             self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
@@ -109,7 +109,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param str file_path:
             Path to the specified file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.aio.file_client_async.FileClient
         """
         return FileClient(
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
@@ -137,7 +137,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
                 :language: python
@@ -184,7 +184,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: dict[str, Any]
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
                 :language: python
@@ -219,7 +219,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
                 :language: python
@@ -251,7 +251,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.models.ShareProperties
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_hello_world.py
+            .. literalinclude:: ../tests/test_file_samples_hello_world_async.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
                 :language: python
@@ -284,7 +284,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
                 :language: python
@@ -318,7 +318,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
                 :language: python
@@ -444,7 +444,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../tests/test_file_samples_share_async.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
                 :language: python
@@ -469,7 +469,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
         await directory.create_directory(metadata, timeout, **kwargs)

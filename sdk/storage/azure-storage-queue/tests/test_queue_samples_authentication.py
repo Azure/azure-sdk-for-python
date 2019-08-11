@@ -61,8 +61,10 @@ class TestQueueAuthSamples(QueueTestCase):
 
     @record
     def test_auth_active_directory(self):
-        pytest.skip('pending azure identity')
+        if TestMode.need_recording_file(self.test_mode):
+            return
 
+        # [START create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
         token_credential = ClientSecretCredential(
@@ -74,6 +76,7 @@ class TestQueueAuthSamples(QueueTestCase):
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient(account_url=self.url, credential=token_credential)
+        # [END create_queue_service_client_token]
 
         # Get information for the Queue Service
         properties = queue_service.get_service_properties()
