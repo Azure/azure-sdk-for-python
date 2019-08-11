@@ -20,16 +20,20 @@ from common_tasks import process_glob_string, run_check_call, cleanup_folder
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
-# a return code of 5 from pytest == no tests run
-# evaluating whether we want this or not.
-ALLOWED_RETURN_CODES = []
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, 'eng/tox/tox.ini')
 MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices', 'azure-servicefabric']
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, 'tox.ini')
+        allowed_return_codes = []
         tox_execution_array = ['tox']
+
+        # if we are targeting only packages that are management plane, it is a possibility 
+        # that no tests running is an acceptable situation
+        # we explicitly handle this here.
+        if all(map(lambda x : any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]), [package_dir])):
+            allowed_return_codes.append(5)
 
         # # if not present, copy it
         if not os.path.exists(destination_tox_ini):
@@ -42,7 +46,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         if options_array:
             tox_execution_array.extend(['--'] + options_array)
 
-        run_check_call(tox_execution_array, package_dir)
+        run_check_call(tox_execution_array, package_dir, allowed_return_codes)
 
 def collect_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, '_coverage/')
