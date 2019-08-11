@@ -80,6 +80,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
+
+        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+            :start-after: [START create_queue_service_client_token]
+            :end-before: [END create_queue_service_client_token]
+            :language: python
+            :dedent: 8
+            :caption: Creating the QueueServiceClient with Azure Identity credentials.
     """
 
     def __init__(

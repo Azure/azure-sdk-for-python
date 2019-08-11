@@ -120,10 +120,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
                 :language: python
@@ -154,7 +154,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :rtype: dict(str, Any)
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
@@ -183,7 +183,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
@@ -209,7 +209,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.DirectoryProperties]
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
                 :language: python
@@ -366,10 +366,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
                 :language: python
@@ -396,7 +396,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
                 :language: python
@@ -448,10 +448,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param str encoding:
             Defaults to UTF-8.
         :returns: FileClient
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.aio.file_client_async.FileClient
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
                 :language: python
@@ -488,7 +488,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
                 :language: python
