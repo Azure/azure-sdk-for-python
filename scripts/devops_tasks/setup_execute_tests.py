@@ -81,7 +81,10 @@ def run_tests(
 
         # handle cov vs cov-append
         if not disable_cov:
-            if index == 0 or not os.path.exists(os.path.join(root_dir, './.coverage')):
+            # --cov-append only works if a .coverage file exists already.
+            # until we get a .coverage file, keep using --cov
+            # once we have one, then we can begin appending to it.
+            if not os.path.exists(os.path.join(root_dir, './.coverage')):
                 target_package_options.append("--cov")
             else:
                 target_package_options.append("--cov-append")
