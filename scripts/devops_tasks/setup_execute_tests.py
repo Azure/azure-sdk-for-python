@@ -8,6 +8,8 @@
 # Normally, this module will be executed as referenced as part of the devops build definitions.
 # An enterprising user can easily glance over this and leverage for their own purposes.
 
+
+
 import argparse
 import sys
 from pathlib import Path
@@ -33,7 +35,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
         if all(map(lambda x : any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]), [package_dir])):
-            allowed_return_codes.append(5)
+            options_array.append('--suppress-no-test-exit-code')
 
         # # if not present, copy it
         if not os.path.exists(destination_tox_ini):
@@ -46,7 +48,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         if options_array:
             tox_execution_array.extend(['--'] + options_array)
 
-        run_check_call(tox_execution_array, package_dir, allowed_return_codes)
+        run_check_call(tox_execution_array, package_dir)
 
 def collect_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, '_coverage/')
