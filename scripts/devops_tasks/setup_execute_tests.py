@@ -88,7 +88,7 @@ def run_tests(
             # if not os.path.exists(os.path.join(root_dir, './.coverage')):
             #     target_package_options.append("--cov --cov-append")
             # else:
-            target_package_options.append("--cov --cov-append")
+            target_package_options.append("--cov")
 
         # format test result output location
         if test_output_location:
