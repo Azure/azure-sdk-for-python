@@ -81,7 +81,7 @@ def run_tests(
 
         # handle cov vs cov-append
         if not disable_cov:
-            if index == 0:
+            if index == 0 or not os.path.exists(os.path.join(root_dir, './.coverage')):
                 target_package_options.append("--cov")
             else:
                 target_package_options.append("--cov-append")
