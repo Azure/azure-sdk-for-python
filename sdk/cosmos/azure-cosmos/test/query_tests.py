@@ -2,6 +2,8 @@ import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
+from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+import azure.cosmos.errors as errors
 import pytest
 import test_config
 
@@ -188,7 +190,7 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
         # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
-        self.validate_query_requests_count(query_iterable, 16 * 2)
+        self.validate_query_requests_count(query_iterable, 29)
 
         query_iterable = created_collection.query_items(
             query=query,
@@ -197,7 +199,7 @@ class QueryTest(unittest.TestCase):
         )
 
         # 1 call to get query plan 1 calls to one partition with the documents, 1 call each to other 4 partitions
-        self.validate_query_requests_count(query_iterable, 6 * 2)
+        self.validate_query_requests_count(query_iterable, 11)
 
     def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -214,6 +216,41 @@ class QueryTest(unittest.TestCase):
         self.count += 1
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
+    def test_get_query_plan_through_gateway(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select top 10 value count(c.id) from c", created_collection.container_link)
+        query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
+        self._validate_query_plan(query_execution_info, 10, [], ['Count'], True)
+
+        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select * from c order by c._ts", created_collection.container_link)
+        query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
+        self._validate_query_plan(query_execution_info, None, ['Ascending'], [], False)
+
+    def _validate_query_plan(self, query_execution_info, top, order_by, aggregate, select_value):
+        self.assertTrue(query_execution_info.has_rewritten_query())
+        self.assertEquals(query_execution_info.has_top(), top is not None)
+        self.assertEquals(query_execution_info.get_top(), top)
+        self.assertEquals(query_execution_info.has_order_by(), len(order_by) > 0)
+        self.assertListEqual(query_execution_info.get_order_by(), order_by)
+        self.assertEquals(query_execution_info.has_aggregates(), len(aggregate)> 0)
+        self.assertListEqual(query_execution_info.get_aggregates(), aggregate)
+        self.assertEquals(query_execution_info.has_select_value(), select_value)
+
+    def test_unsupported_queries(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        for query in queries:
+            query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
+            try:
+                list(query_iterable)
+                self.fail()
+            except errors.HTTPFailure as e:
+                self.assertEqual(e.status_code, 400)
+
+    def test_query_with_non_overlapping_pk_ranges(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'")
+        self.assertListEqual(list(query_iterable), [])
 
 if __name__ == "__main__":
     unittest.main()

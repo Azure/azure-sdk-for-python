@@ -294,7 +294,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'dbs')
 
     def ReadContainers(self, database_link, options=None):
         """Reads all collections in a database.
@@ -341,7 +341,7 @@ class CosmosClientConnection(object):
                                     lambda _, body: body,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'colls')
 
     def CreateContainer(self, database_link, collection, options=None):
         """Creates a collection in a database.
@@ -550,7 +550,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'users')
 
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
@@ -710,7 +710,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'permissions')
 
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
@@ -875,7 +875,7 @@ class CosmosClientConnection(object):
                                         query,
                                         options, 
                                         response_hook=response_hook), self.last_response_headers
-            return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
+            return query_iterable.QueryIterable(self, query, options, fetch_fn, 'docs', database_or_Container_link)
 
     def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
         """Queries documents change feed in a collection.
@@ -944,7 +944,7 @@ class CosmosClientConnection(object):
                                     options,
                                     partition_key_range_id,
                                     response_hook=response_hook), self.last_response_headers
-        return query_iterable.QueryIterable(self, None, options, fetch_fn, collection_link)
+        return query_iterable.QueryIterable(self, None, options, fetch_fn, resource_key, collection_link)
 
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
         """Reads Partition Key Ranges.
@@ -992,7 +992,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'pkranges')
 
     def CreateItem(self, database_or_Container_link, document, options=None):
         """Creates a document in a collection.
@@ -1173,7 +1173,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'triggers')
 
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
@@ -1308,7 +1308,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'udfs')
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
@@ -1443,7 +1443,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'sprocs')
 
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
@@ -1576,7 +1576,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'conflicts')
 
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
@@ -1899,7 +1899,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'attachments')
 
 
     def ReadMedia(self, media_link):
@@ -2366,7 +2366,7 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'offers')
 
     def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
@@ -2744,7 +2744,8 @@ class CosmosClientConnection(object):
                     query,
                     options=None,
                     partition_key_range_id=None,
-                    response_hook=None):
+                    response_hook=None,
+                    is_query_plan=False):
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
@@ -2783,7 +2784,7 @@ class CosmosClientConnection(object):
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request = _request_object.RequestObject(type, documents._OperationType.ReadFeed)
+            request = _request_object.RequestObject(type, documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'get',
@@ -2801,7 +2802,8 @@ class CosmosClientConnection(object):
         else:
             query = self.__CheckAndUnifyQueryFormat(query)
 
-            initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
+            if not is_query_plan:
+                initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
             if (self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default or
                     self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query):
                 initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
@@ -2811,7 +2813,7 @@ class CosmosClientConnection(object):
                 raise SystemError('Unexpected query compatibility mode.')
 
             # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-            request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
+            request = _request_object.RequestObject(type, documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.SqlQuery)
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'post',
@@ -2830,6 +2832,35 @@ class CosmosClientConnection(object):
                 response_hook(self.last_response_headers, result)
 
             return __GetBodiesFromQueryResult(result)
+
+    def _GetQueryPlanThroughGateway(self, query, resource_link):
+        supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                    documents._QueryFeature.CompositeAggregate + "," +
+                                    documents._QueryFeature.Distinct + "," +
+                                    documents._QueryFeature.MultipleOrderBy + "," +
+                                    documents._QueryFeature.OffsetAndLimit + "," +
+                                    documents._QueryFeature.OrderBy + "," +
+                                    documents._QueryFeature.Top)
+
+        options = {
+            'contentType': runtime_constants.MediaTypes.Json,
+            'isQueryPlanRequest': True,
+            'supportedQueryFeatures': supported_query_features,
+            'queryVersion': http_constants.Versions.QueryVersion
+            }
+
+        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
+        path = base.GetPathFromLink(resource_link, 'docs')
+        resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
+
+        return self.__QueryFeed(path,
+                                'docs',
+                                resource_id,
+                                lambda r: r,
+                                None,
+                                query,
+                                options,
+                                is_query_plan=True)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.

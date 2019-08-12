@@ -187,6 +187,10 @@ class AggregateQueryTestSequenceMeta(type):
 
         _all_tests = []
 
+        _setup()
+        _generate_test_configs()
+        _run_all()
+
         return type.__new__(mcs, name, bases, dict)
 
 
@@ -197,8 +201,6 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
         print('Running test with query: ' + query)
 
         # executes the query and validates the results against the expected results
-        options = {'enableCrossPartitionQuery': 'true'}
-
         result_iterable = collection.query_items(
             query=query,
             enable_cross_partition_query=True

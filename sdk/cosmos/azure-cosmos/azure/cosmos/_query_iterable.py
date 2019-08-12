@@ -21,15 +21,19 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
-from azure.cosmos._execution_context import execution_dispatcher
-from azure.cosmos._execution_context import base_execution_context
+from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+from azure.cosmos._execution_context import multi_execution_aggregator
+from . import http_constants
+from . import errors
+from ._execution_context.execution_dispatcher import _PipelineExecutionContext
 
 class QueryIterable(object):
     """Represents an iterable object of the query results.
     QueryIterable is a wrapper for query execution context.
     """
     
-    def __init__(self, client, query, options, fetch_function, collection_link = None):
+    def __init__(self, client, query, options, fetch_function, resource_type, resource_link=None):
         """
         Instantiates a QueryIterable for non-client side partitioning queries.
         _ProxyQueryExecutionContext will be used as the internal query execution context
@@ -54,8 +58,9 @@ class QueryIterable(object):
         self._query = query
         self._options = options
         self._fetch_function = fetch_function
-        self._collection_link = collection_link
+        self._resource_link = resource_link
         self._ex_context = None
+        self._resource_type = resource_type
 
     @classmethod
     def PartitioningQueryIterable(cls, client, query, options, database_link, partition_key):
@@ -63,8 +68,7 @@ class QueryIterable(object):
         Represents a client side partitioning query iterable.
         
         This constructor instantiates a QueryIterable for
-        client side partitioning queries, and sets _MultiCollectionQueryExecutionContext
-        as the internal execution context.
+        client side partitioning queries
         
         :param CosmosClient client:
             Instance of document client
@@ -87,12 +91,44 @@ class QueryIterable(object):
     def _create_execution_context(self):
         """instantiates the internal query execution context based.
         """
-        if hasattr(self, '_database_link'):
-            # client side partitioning query
-            return base_execution_context._MultiCollectionQueryExecutionContext(self._client, self._options, self._database_link, self._query, self._partition_key)
-        else:
-            # 
-            return execution_dispatcher._ProxyQueryExecutionContext(self._client, self._collection_link, self._query, self._options, self._fetch_function)
+        query_execution_context = _DefaultQueryExecutionContext(self._client, self._options, self._fetch_function)
+        if self._resource_type != http_constants.ResourceType.Document or self._use_default_query_execution_context():
+            return query_execution_context
+
+        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway(self._query, self._resource_link))
+
+        # Non value aggregates must go through DefaultDocumentQueryExecutionContext
+        # Single partition query can serve queries like SELECT AVG(c.age) FROM c
+        # SELECT MIN(c.age) + 5 FROM c
+        # SELECT MIN(c.age), MAX(c.age) FROM c
+        # while pipelined queries can only serve
+        # SELECT VALUE <AGGREGATE>. So we send the query down the old pipeline to avoid a breaking change.
+
+        if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
+            if self._options and ('enableCrossPartitionQuery' in self._options and self._options['enableCrossPartitionQuery']):
+                raise errors.HTTPFailure(http_constants.StatusCodes.BAD_REQUEST, "Cross partition query only supports 'VALUE <AggreateFunc>' for aggregates")
+            return query_execution_context
+
+        return self._create_pipelined_execution_context(query_execution_info)
+
+    def _use_default_query_execution_context(self):
+        options = ['partitionKeyRangeId', 'changeFeed', 'partitionKey']
+        if self._options:
+            for option in options:
+                if option in self._options:
+                    return True
+        return False
+
+    def _create_pipelined_execution_context(self, query_execution_info):
+
+        assert self._resource_link, "code bug, resource_link has is required."
+        execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
+                                                                                                   self._resource_link,
+                                                                                                   self._query,
+                                                                                                   self._options,
+                                                                                                   query_execution_info)
+        return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
+                                         query_execution_info)
 
     def __iter__(self):
         """Makes this class iterable.

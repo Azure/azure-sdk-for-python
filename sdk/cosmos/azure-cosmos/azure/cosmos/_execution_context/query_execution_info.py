@@ -29,8 +29,9 @@ class _PartitionedQueryExecutionInfo(object):
     Represents a wrapper helper for partitioned query execution info dictionary
     returned by the backend.
     '''
-    
+
     QueryInfoPath = 'queryInfo'
+    HasSelectValue = [QueryInfoPath, 'hasSelectValue']
     TopPath = [QueryInfoPath, 'top']
     OrderByPath = [QueryInfoPath, 'orderBy']
     AggregatesPath = [QueryInfoPath, 'aggregates']
@@ -72,6 +73,23 @@ class _PartitionedQueryExecutionInfo(object):
             # Hardcode formattable filter to true for now 
             rewrittenQuery = rewrittenQuery.replace('{documentdb-formattableorderbyquery-filter}', 'true')
         return rewrittenQuery
+
+    def has_select_value(self):
+        return self._extract(self.HasSelectValue)
+
+    def has_top(self):
+        return self.get_top() is not None
+
+    def has_order_by(self):
+        order_by = self.get_order_by()
+        return order_by is not None and len(order_by) > 0
+
+    def has_aggregates(self):
+        aggregates = self.get_aggregates()
+        return aggregates is not None and len(aggregates) > 0
+
+    def has_rewritten_query(self):
+        return self.get_rewritten_query() is not None
 
     def _extract(self, path):
         

@@ -386,6 +386,7 @@ class _OperationType(object):
     Recreate = 'Recreate'
     Replace = 'Replace'
     SqlQuery = 'SqlQuery'
+    QueryPlan = 'QueryPlan'
     Update = 'Update'
     Upsert = 'Upsert'
 
@@ -408,3 +409,24 @@ class _OperationType(object):
                operationType == _OperationType.Query or
                operationType == _OperationType.SqlQuery)
 
+    @staticmethod
+    def IsFeedOperation(operationType):
+        return (operationType == _OperationType.Create or
+               operationType == _OperationType.Upsert or
+               operationType == _OperationType.ReadFeed or
+               operationType == _OperationType.Query or
+               operationType == _OperationType.SqlQuery or
+               operationType == _OperationType.QueryPlan or
+               operationType == _OperationType.HeadFeed)
+
+class _QueryFeature(object):
+    NoneQuery = "NoneQuery"
+    Aggregate = "Aggregate"
+    CompositeAggregate = "CompositeAggregate"
+    Distinct = "Distinct"
+    GroupBy = "GroupBy"
+    MultipleAggregates = "MultipleAggregates"
+    MultipleOrderBy = "MultipleOrderBy"
+    OffsetAndLimit = "OffsetAndLimit"
+    OrderBy = "OrderBy"
+    Top = "Top"

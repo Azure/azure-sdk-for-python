@@ -141,6 +141,18 @@ def GetHeaders(cosmos_client_connection,
     if options.get('offerThroughput'):
         headers[http_constants.HttpHeaders.OfferThroughput] = options['offerThroughput']
 
+    if options.get('contentType'):
+        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+
+    if options.get('isQueryPlanRequest'):
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+
+    if options.get('supportedQueryFeatures'):
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+
+    if options.get('queryVersion'):
+        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
+
     if 'partitionKey' in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
         if options.get('partitionKey') is partition_key._Undefined:
