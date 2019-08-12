@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class InitiateTransferRequest(Model):
     """Request parameters to initiate transfer.
 
-    :param billing_profile_id: Target Usage context for devTest subscriptions.
-    :type billing_profile_id: str
     :param recipient_email_id: Email Id of recipient for transfer.
     :type recipient_email_id: str
+    :param reseller_id: Optional reseller Id for transfer.
+    :type reseller_id: str
     """
 
     _attribute_map = {
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'recipient_email_id': {'key': 'properties.recipientEmailId', 'type': 'str'},
+        'reseller_id': {'key': 'properties.resellerId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(InitiateTransferRequest, self).__init__(**kwargs)
-        self.billing_profile_id = kwargs.get('billing_profile_id', None)
         self.recipient_email_id = kwargs.get('recipient_email_id', None)
+        self.reseller_id = kwargs.get('reseller_id', None)

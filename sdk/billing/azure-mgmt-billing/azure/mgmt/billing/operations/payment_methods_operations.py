@@ -22,7 +22,7 @@ class PaymentMethodsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class PaymentMethodsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -40,7 +40,7 @@ class PaymentMethodsOperations(object):
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing account Id.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -105,7 +105,7 @@ class PaymentMethodsOperations(object):
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing profile Id.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

@@ -22,7 +22,7 @@ class BillingRoleAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-11-01-preview. Constant value: "2018-11-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class BillingRoleAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -40,7 +40,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
@@ -94,13 +94,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    get_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def delete_by_billing_account_name(
             self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on this billing account.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
@@ -154,14 +154,16 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    delete_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def get_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller on the invoice Section.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param billing_role_assignment_name: role assignment id.
@@ -181,6 +183,7 @@ class BillingRoleAssignmentsOperations(object):
         url = self.get_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'billingRoleAssignmentName': self._serialize.url("billing_role_assignment_name", billing_role_assignment_name, 'str')
         }
@@ -217,14 +220,16 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    get_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def delete_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on the invoice Section.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param billing_role_assignment_name: role assignment id.
@@ -244,6 +249,7 @@ class BillingRoleAssignmentsOperations(object):
         url = self.delete_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'billingRoleAssignmentName': self._serialize.url("billing_role_assignment_name", billing_role_assignment_name, 'str')
         }
@@ -280,13 +286,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    delete_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def get_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller on the Billing Profile.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -343,13 +349,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    get_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def delete_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on this Billing Profile.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -406,13 +412,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    delete_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def list_by_billing_account_name(
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the Billing Account.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -464,13 +470,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments'}
+    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleAssignments'}
 
     def add_by_billing_account_name(
             self, billing_account_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing account.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param principal_id: The user's principal id that the role gets
          assigned to
@@ -533,14 +539,16 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/createBillingRoleAssignment'}
+    add_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/createBillingRoleAssignment'}
 
     def list_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the invoice Section.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -559,6 +567,7 @@ class BillingRoleAssignmentsOperations(object):
         url = self.list_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -594,14 +603,16 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleAssignments'}
+    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleAssignments'}
 
     def add_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a invoice Section.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param principal_id: The user's principal id that the role gets
@@ -627,6 +638,7 @@ class BillingRoleAssignmentsOperations(object):
         url = self.add_by_invoice_section_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -666,13 +678,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/createBillingRoleAssignment'}
+    add_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/createBillingRoleAssignment'}
 
     def list_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the Billing Profile.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -727,13 +739,13 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments'}
+    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleAssignments'}
 
     def add_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing profile.
 
-        :param billing_account_name: Billing Account Id.
+        :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -799,4 +811,4 @@ class BillingRoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    add_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/createBillingRoleAssignment'}
+    add_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/createBillingRoleAssignment'}

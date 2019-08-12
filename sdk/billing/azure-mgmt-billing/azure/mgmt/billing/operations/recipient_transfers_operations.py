@@ -53,7 +53,7 @@ class RecipientTransfersOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        body = models.AcceptTransferRequest(product_details=product_details)
+        parameters = models.AcceptTransferRequest(product_details=product_details)
 
         # Construct URL
         url = self.accept.metadata['url']
@@ -77,7 +77,7 @@ class RecipientTransfersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'AcceptTransferRequest')
+        body_content = self._serialize.body(parameters, 'AcceptTransferRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -208,7 +208,7 @@ class RecipientTransfersOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}/'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
