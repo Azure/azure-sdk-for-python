@@ -22,11 +22,13 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault. The vault has to be soft-delete enabled
-# to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
+# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
 #
 # 1. Create certificate (create_certificate)
 #
@@ -34,13 +36,14 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. List certificate versions from the Key Vault (list_certificate_versions)
 #
-# 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled to perform this operation.
+# 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled
+# to perform this operation.
 #
 # ----------------------------------------------------------------------------------------------------------
 
 def run_sample():
-    # Instantiate a certificate client that will be used to call the service. Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
+    # Instantiate a certificate client that will be used to call the service. Notice that the client is using default
+    # Azure credentials. To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
@@ -86,21 +89,33 @@ def run_sample():
         for certificate in certificates:
             print("Certificate with name '{0}' was found.".format(certificate.name))
 
-        # You find the bank certificate needs to change the expiration date because the bank account credentials will be valid for an extra year.
-        # Calling create_certificate on an existing certificate creates a new version of the certificate in the Key Vault with the new value.
+        # You find the bank certificate needs to change the expiration date because the bank account credentials will be
+        # valid for an extra year. Calling create_certificate on an existing certificate creates a new version of the
+        # certificate in the Key Vault with the new value.
 
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 
-        updated_bank_certificate_operation = client.create_certificate(name=bank_certificate_operation.name, policy=cert_policy, expires=expires)
+        updated_bank_certificate_operation = client.create_certificate(
+            name=bank_certificate_operation.name,
+            policy=cert_policy,
+            expires=expires
+        )
         print(
-            "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_bank_certificate_operation.name, expires)
+            "Certificate with name '{0}' was updated with expiration date '{1}'".format(
+                updated_bank_certificate_operation.name,
+                expires
+            )
         )
 
-        # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.
+        # You need to check all the different expiration dates your bank account certificate had previously. Let's print
+        # all the versions of this certificate.
         print("\n3. List versions of the certificate using its name")
         certificate_versions = client.list_certificate_versions(bank_certificate_operation.name)
         for certificate_version in certificate_versions:
-            print("Bank Certificate with name '{0}' with version '{1}' has expiration date: '{2}'.".format(certificate_version.name, certificate_version.version, certificate_version.expires))
+            print("Bank Certificate with name '{0}' with version '{1}' has expiration date: '{2}'.".format(
+                certificate_version.name,
+                certificate_version.version,
+                certificate_version.expires))
 
         # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts certificates.
         client.delete_certificate(name=bank_certificate_operation.name)
@@ -114,9 +129,9 @@ def run_sample():
         print("\n3. List deleted certificates from the Key Vault")
         deleted_certificates = client.list_deleted_certificates()
         for deleted_certificate in deleted_certificates:
-            print(
-                "Certificate with name '{0}' has recovery id '{1}'".format(deleted_certificate.name, deleted_certificate.recovery_id)
-            )
+            print("Certificate with name '{0}' has recovery id '{1}'".format(
+                    deleted_certificate.name,
+                    deleted_certificate.recovery_id))
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:

@@ -21,7 +21,8 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
@@ -75,7 +76,10 @@ def run_sample():
         print("\n2. Delete a Certificate")
         deleted_bank_certificate = client.delete_certificate(name=bank_certificate_operation.name)
         time.sleep(20)
-        print("Certificate with name '{0}' was deleted on date {1}.".format(deleted_bank_certificate.name, deleted_bank_certificate.deleted_date))
+        print("Certificate with name '{0}' was deleted on date {1}.".format(
+            deleted_bank_certificate.name,
+            deleted_bank_certificate.deleted_date)
+        )
 
         # We accidentally deleted the bank account certificate. Let's recover it.
         # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
