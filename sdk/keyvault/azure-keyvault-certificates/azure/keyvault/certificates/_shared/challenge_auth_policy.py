@@ -2,6 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline.policies import HTTPPolicy
+from azure.core.pipeline.policies.authentication import _BearerTokenCredentialPolicyBase
+from azure.core.pipeline.transport import HttpRequest
+
+from .http_challenge import HttpChallenge
+from . import http_challenge_cache as ChallengeCache
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -10,14 +18,6 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from azure.core.pipeline.transport import HttpResponse
-
-from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.policies.authentication import _BearerTokenCredentialPolicyBase
-from azure.core.pipeline.transport import HttpRequest
-
-from .http_challenge import HttpChallenge
-from . import http_challenge_cache as ChallengeCache
 
 
 class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):

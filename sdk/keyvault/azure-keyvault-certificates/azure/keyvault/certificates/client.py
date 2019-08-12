@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import base64
 import uuid
-from typing import Any, Dict, Mapping, Optional, Iterable, List
+from typing import Any, Dict, List, Mapping, Optional, Iterable
 from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -20,7 +20,8 @@ from .models import (
     IssuerBase,
     Contact,
     CertificateOperation,
-    AdministratorDetails)
+    AdministratorDetails
+)
 
 
 class CertificateClient(KeyVaultClientBase):
@@ -243,7 +244,11 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Recover a deleted certificate
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = self._client.recover_deleted_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
@@ -510,7 +515,10 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
-            cls=lambda objs: [DeletedCertificate._from_deleted_certificate_item(deleted_certificate_item=x) for x in objs],
+            cls=lambda objs: [
+                DeletedCertificate._from_deleted_certificate_item(deleted_certificate_item=x)
+                for x in objs
+            ],
             **kwargs
         )
 
@@ -666,7 +674,11 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = self._client.delete_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = self._client.delete_certificate_operation(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
@@ -869,7 +881,10 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
+            organization_details = self._client.models.OrganizationDetails(
+                id=organization_id,
+                admin_details=admin_details_to_pass
+            )
         else:
             organization_details = None
         if enabled is not None:
@@ -938,7 +953,10 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
+            organization_details = self._client.models.OrganizationDetails(
+                id=organization_id,
+                admin_details=admin_details_to_pass
+            )
         else:
             organization_details = None
         if enabled is not None:
@@ -971,7 +989,11 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        issuer_bundle = self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
+        issuer_bundle = self._client.delete_certificate_issuer(
+            vault_base_url=self.vault_url,
+            issuer_name=name,
+            **kwargs
+        )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
