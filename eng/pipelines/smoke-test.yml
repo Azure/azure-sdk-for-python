@@ -18,10 +18,10 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: pip install -r ./samples/smoketest/requirements.txt
-        displayName: "Install requiriments.txt"
+        displayName: "Install requirements.txt"
 
       - script: pip install -r ./samples/smoketest/requirements_async.txt
-        displayName: "Install requiriments_async.txt"
+        displayName: "Install requirements_async.txt"
         condition: eq(variables['InstallAsyncRequirements'], true)
 
       - script: python ./samples/smoketest/program.py
