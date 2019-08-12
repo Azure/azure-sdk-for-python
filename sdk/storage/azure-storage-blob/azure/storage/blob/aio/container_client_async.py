@@ -51,13 +51,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     :ivar str url:
         The full endpoint URL to the Container, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -80,14 +80,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
     Example:
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../tests/test_blob_samples_containers_async.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 8
-            :caption: Get a ContainerClient from an existing BlobSericeClient.
+            :caption: Get a ContainerClient from an existing BlobServiceClient.
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../tests/test_blob_samples_containers_async.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
@@ -129,7 +129,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -158,7 +158,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.aio.lease_async.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
@@ -188,7 +188,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
@@ -253,10 +253,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
@@ -287,7 +287,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.aio.lease_async.LeaseClient lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
         :param int timeout:
@@ -296,7 +296,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: ~azure.storage.blob.models.ContainerProperties
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
@@ -345,7 +345,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: Container-updated property dict (Etag and last modified).
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
@@ -381,7 +381,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: dict[str, str]
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
@@ -423,7 +423,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -441,7 +441,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: Container-updated property dict (Etag and last modified).
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
@@ -495,7 +495,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.BlobProperties]
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
@@ -612,7 +612,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -654,10 +654,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_cient.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
@@ -712,7 +712,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -765,10 +765,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
         Example:
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python

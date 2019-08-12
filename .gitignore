@@ -13,6 +13,7 @@ env*/
 
 # Coverage report
 **/.coverage
+_coverage
 
 # Build results
 bin/

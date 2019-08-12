@@ -85,12 +85,19 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     Example:
-        .. literalinclude:: ../tests/test_queue_samples_message.py
-            :start-after: [START create_queue_client]
-            :end-before: [END create_queue_client]
+        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            :start-after: [START async_create_queue_client]
+            :end-before: [END async_create_queue_client]
             :language: python
             :dedent: 12
             :caption: Create the queue client with url and credential.
+
+        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            :start-after: [START async_create_queue_client_from_connection_string]
+            :end-before: [END async_create_queue_client_from_connection_string]
+            :language: python
+            :dedent: 8
+            :caption: Create the queue client with a connection string.
     """
 
     def __init__(
@@ -127,9 +134,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             ~azure.storage.queue._generated.models._models.StorageErrorException
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_hello_world.py
-                :start-after: [START create_queue]
-                :end-before: [END create_queue]
+            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+                :start-after: [START async_create_queue]
+                :end-before: [END async_create_queue]
                 :language: python
                 :dedent: 8
                 :caption: Create a queue.
@@ -161,9 +168,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_hello_world.py
-                :start-after: [START delete_queue]
-                :end-before: [END delete_queue]
+            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+                :start-after: [START async_delete_queue]
+                :end-before: [END async_delete_queue]
                 :language: python
                 :dedent: 12
                 :caption: Delete a queue.
@@ -186,9 +193,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: ~azure.storage.queue.models.QueueProperties
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START get_queue_properties]
-                :end-before: [END get_queue_properties]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_get_queue_properties]
+                :end-before: [END async_get_queue_properties]
                 :language: python
                 :dedent: 12
                 :caption: Get the properties on the queue.
@@ -217,9 +224,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START set_queue_metadata]
-                :end-before: [END set_queue_metadata]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_set_queue_metadata]
+                :end-before: [END async_set_queue_metadata]
                 :language: python
                 :dedent: 12
                 :caption: Set metadata on the queue.
@@ -278,9 +285,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START set_access_policy]
-                :end-before: [END set_access_policy]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_set_access_policy]
+                :end-before: [END async_set_access_policy]
                 :language: python
                 :dedent: 12
                 :caption: Set an access policy on the queue.
@@ -350,9 +357,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: ~azure.storage.queue.models.QueueMessage
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START enqueue_messages]
-                :end-before: [END enqueue_messages]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_enqueue_messages]
+                :end-before: [END async_enqueue_messages]
                 :language: python
                 :dedent: 12
                 :caption: Enqueue messages.
@@ -414,9 +421,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.models.Message]
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START receive_messages]
-                :end-before: [END receive_messages]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_receive_messages]
+                :end-before: [END async_receive_messages]
                 :language: python
                 :dedent: 12
                 :caption: Receive messages from the queue.
@@ -484,9 +491,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: ~azure.storage.queue.models.QueueMessage
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START update_message]
-                :end-before: [END update_message]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_update_message]
+                :end-before: [END async_update_message]
                 :language: python
                 :dedent: 12
                 :caption: Update a message.
@@ -567,9 +574,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START peek_message]
-                :end-before: [END peek_message]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_peek_message]
+                :end-before: [END async_peek_message]
                 :language: python
                 :dedent: 12
                 :caption: Peek messages.
@@ -599,9 +606,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START clear_messages]
-                :end-before: [END clear_messages]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_clear_messages]
+                :end-before: [END async_clear_messages]
                 :language: python
                 :dedent: 12
                 :caption: Clears all messages.
@@ -635,9 +642,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
 
         Example:
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START delete_message]
-                :end-before: [END delete_message]
+            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+                :start-after: [START async_delete_message]
+                :end-before: [END async_delete_message]
                 :language: python
                 :dedent: 12
                 :caption: Delete a message.
