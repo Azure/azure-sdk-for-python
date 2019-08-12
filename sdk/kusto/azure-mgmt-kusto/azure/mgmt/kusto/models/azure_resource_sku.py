@@ -19,7 +19,7 @@ class AzureResourceSku(Model):
     :type resource_type: str
     :param sku: The SKU details.
     :type sku: ~azure.mgmt.kusto.models.AzureSku
-    :param capacity: The SKU capacity.
+    :param capacity: The number of instances of the cluster.
     :type capacity: ~azure.mgmt.kusto.models.AzureCapacity
     """
 
