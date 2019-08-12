@@ -33,12 +33,14 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-nspkg",
 ]
 
+
 def clean_coverage():
     try:
         os.mkdir(coverage_dir)
     except FileExistsError:
         logging.info("Coverage dir already exists. Cleaning.")
         cleanup_folder(coverage_dir)
+
 
 def prep_tests(targeted_packages, python_version):
     logging.info("running test setup for {}".format(targeted_packages))
@@ -51,6 +53,7 @@ def prep_tests(targeted_packages, python_version):
         ],
         root_dir,
     )
+
 
 def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
@@ -118,11 +121,12 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         if os.path.isfile(source_coverage_file):
             shutil.move(source_coverage_file, target_coverage_file)
 
-    collect_coverage_files(targeted_packages)
+    collect_pytest_coverage_files(targeted_packages)
 
     # if any of the packages failed, we should get exit with errors
     if err_results:
         exit(1)
+
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
@@ -156,10 +160,11 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         run_check_call(tox_execution_array, package_dir)
 
-        if not tox_env:
-            collect_coverage_files(targeted_packages)
+    if not tox_env:
+        collect_tox_coverage_files(targeted_packages)
 
 
+# TODO, dedup this function with collect_tox
 def collect_pytest_coverage_files(targeted_packages):
     coverage_files = []
     # generate coverage files
@@ -184,6 +189,8 @@ def collect_pytest_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
 
+
+# TODO, dedup this function with collect_pytest
 def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
@@ -267,7 +274,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-r", "--runtype", choices=["setup", "execute", "all"], default="all"
+        "-r", "--runtype", choices=["setup", "execute", "all", "none"], default="none"
     )
 
     parser.add_argument(
@@ -314,8 +321,10 @@ if __name__ == "__main__":
 
         if args.runtype == "execute" or args.runtype == "all":
             run_tests(
-                targeted_packages, args.python_version, args.test_results, test_results_arg
+                targeted_packages,
+                args.python_version,
+                args.test_results,
+                test_results_arg,
             )
     else:
         prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
-
