@@ -44,26 +44,28 @@ from azure.core.pipeline.policies import (
 class FooServiceClient():
 
     @staticmethod
-    def create_config(credential, scopes, **kwargs):
+    def _create_config(credential, scopes, **kwargs):
         # Here the SDK developer would define the default
         # config to interact with the service
         config = Configuration(**kwargs)
-        config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, scopes, **kwargs)
-        config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-        config.retry_policy = RetryPolicy(**kwargs)
-        config.redirect_policy = RedirectPolicy(**kwargs)
-        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.proxy_policy = ProxyPolicy(**kwargs)
+        config.headers_policy = kwargs.get('headers_policy', HeadersPolicy({"CustomHeader": "Value"}, **kwargs))
+        config.user_agent_policy = kwargs.get('user_agent_policy', UserAgentPolicy("ServiceUserAgentValue", **kwargs))
+        config.authentication_policy = kwargs.get('authentication_policy', BearerTokenCredentialPolicy(credential, scopes, **kwargs))
+        config.retry_policy = kwargs.get('retry_policy', RetryPolicy(**kwargs))
+        config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
+        config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
+        config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
+        return config
 
-    def __init__(self, configuration=None, **kwargs):
-        config = configuration or FooServiceClient.create_config(**kwargs)
+    def __init__(self, **kwargs):
         transport = kwargs.get('transport', RequestsTransport(**kwargs))
+        config = FooServiceClient._create_config(**kwargs)
         policies = [
             config.user_agent_policy,
             config.headers_policy,
             config.authentication_policy,
             ContentDecodePolicy(),
+            config.proxy_policy,
             config.redirect_policy,
             config.retry_policy,
             config.logging_policy,

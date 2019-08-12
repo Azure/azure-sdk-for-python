@@ -48,7 +48,7 @@ class MgmtACRTest20170301(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
     @StorageAccountPreparer(name_prefix='pyacr', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
-    def test_basic_registry(self, resource_group, location, storage_account, storage_account_key):
+    def _disabled_test_basic_registry(self, resource_group, location, storage_account, storage_account_key):
         registry_name = self.get_resource_name('pyacr')
 
         name_status = self.client.registries.check_name_availability(registry_name)

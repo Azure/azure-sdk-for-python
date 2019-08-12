@@ -123,9 +123,7 @@ def test_raw_deserializer():
             def __init__(self, body, content_type):
                 super(MockResponse, self).__init__(None, None)
                 self._body = body
-                self.content_type = None
-                if content_type:
-                    self.content_type = [content_type]
+                self.content_type = content_type
 
             def body(self):
                 return self._body
@@ -158,6 +156,18 @@ def test_raw_deserializer():
 
     # Simple JSON
     response = build_response(b'{"success": true}', content_type="application/json")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
+    # Simple JSON with complex content_type
+    response = build_response(b'{"success": true}', content_type="application/vnd.microsoft.appconfig.kv.v1+json")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
+    # Simple JSON with complex content_type, v2
+    response = build_response(b'{"success": true}', content_type="text/vnd.microsoft.appconfig.kv.v1+json")
     raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
