@@ -15,19 +15,114 @@ from pathlib import Path
 import os
 import glob
 import shutil
-
+import logging
 from common_tasks import process_glob_string, run_check_call, cleanup_folder
 
+logging.getLogger().setLevel(logging.INFO)
+
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
+
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
+    "azure-nspkg",
 ]
 
+def clean_coverage():
+    try:
+        os.mkdir(coverage_dir)
+    except FileExistsError:
+        logging.info("Coverage dir already exists. Cleaning.")
+        cleanup_folder(coverage_dir)
+
+def prep_tests(targeted_packages, python_version):
+    logging.info("running test setup for {}".format(targeted_packages))
+    run_check_call(
+        [
+            python_version,
+            dev_setup_script_location,
+            "-p",
+            ",".join([os.path.basename(p) for p in targeted_packages]),
+        ],
+        root_dir,
+    )
+
+def run_tests(targeted_packages, python_version, test_output_location, test_res):
+    err_results = []
+
+    clean_coverage()
+
+    # base command array without a targeted package
+    command_array = [python_version, "-m", "pytest"]
+    command_array.extend(test_res)
+
+    # loop through the packages
+    logging.info("Running pytest for {}".format(targeted_packages))
+
+    for index, target_package in enumerate(targeted_packages):
+        logging.info(
+            "Running pytest for {}. {} of {}.".format(
+                target_package, index, len(targeted_packages)
+            )
+        )
+
+        package_name = os.path.basename(target_package)
+        source_coverage_file = os.path.join(root_dir, ".coverage")
+        target_coverage_file = os.path.join(
+            coverage_dir, ".coverage_{}".format(package_name)
+        )
+        target_package_options = []
+        allowed_return_codes = []
+
+        # if we are targeting only packages that are management plane, it is a possibility
+        # that no tests running is an acceptable situation
+        # we explicitly handle this here.
+        if all(
+            map(
+                lambda x: any(
+                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
+                ),
+                [target_package],
+            )
+        ):
+            allowed_return_codes.append(5)
+
+        # format test result output location
+        if test_output_location:
+            target_package_options.extend(
+                [
+                    "--junitxml",
+                    os.path.join(
+                        "TestResults/{}/".format(package_name), test_output_location
+                    ),
+                ]
+            )
+
+        target_package_options.append(target_package)
+        err_result = run_check_call(
+            command_array + target_package_options,
+            root_dir,
+            allowed_return_codes,
+            True,
+            False,
+        )
+        if err_result:
+            logging.error("Errors present in {}".format(package_name))
+            err_results.append(err_result)
+
+        if os.path.isfile(source_coverage_file):
+            shutil.move(source_coverage_file, target_coverage_file)
+
+    collect_coverage_files(targeted_packages)
+
+    # if any of the packages failed, we should get exit with errors
+    if err_results:
+        exit(1)
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
@@ -50,7 +145,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         # # if not present, copy it
         if not os.path.exists(destination_tox_ini):
-            print("No customized tox.ini present, using common eng/tox/tox.ini.")
+            logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
 
         if tox_env:
@@ -61,15 +156,38 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         run_check_call(tox_execution_array, package_dir)
 
+        if not tox_env:
+            collect_coverage_files(targeted_packages)
 
-def collect_coverage_files(targeted_packages):
+
+def collect_pytest_coverage_files(targeted_packages):
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(
+            coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
+        )
+        if os.path.isfile(coverage_file):
+            coverage_files.append(coverage_file)
+
+    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
+
+    if len(coverage_files):
+        cov_cmd_array = ["coverage", "combine"]
+        cov_cmd_array.extend(coverage_files)
+
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, coverage_dir)
+
+        source = os.path.join(coverage_dir, "./.coverage")
+        dest = os.path.join(root_dir, ".coverage")
+
+        shutil.move(source, dest)
+
+def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
-    try:
-        os.mkdir(root_coverage_dir)
-    except FileExistsError:
-        print("Coverage dir already exists. Cleaning.")
-        cleanup_folder(root_coverage_dir)
+    clean_coverage()
 
     coverage_files = []
     # generate coverage files
@@ -82,7 +200,7 @@ def collect_coverage_files(targeted_packages):
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
 
-    print("Visible uncombined .coverage files: {}".format(coverage_files))
+    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
         cov_cmd_array = ["coverage", "combine"]
@@ -91,10 +209,10 @@ def collect_coverage_files(targeted_packages):
         # merge them with coverage combine and copy to root
         run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
 
-        source = os.path.join(root_coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir)
+        source = os.path.join(coverage_dir, "./.coverage")
+        dest = os.path.join(root_dir, ".coverage")
 
-        shutil.move(source, os.path.join(root_dir, ".coverage"))
+        shutil.move(source, dest)
 
 
 if __name__ == "__main__":
@@ -119,6 +237,15 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--junitxml",
+        dest="test_results",
+        help=(
+            "The folder where the test results will be stored in xml format."
+            'Example: --junitxml="junit/test-results.xml"'
+        ),
+    )
+
+    parser.add_argument(
         "--mark_arg",
         dest="mark_arg",
         help=(
@@ -137,6 +264,10 @@ if __name__ == "__main__":
             "Name of service directory (under sdk/) to test."
             "Example: --service applicationinsights"
         ),
+    )
+
+    parser.add_argument(
+        "-r", "--runtype", choices=["setup", "execute", "all"], default="all"
     )
 
     parser.add_argument(
@@ -177,7 +308,14 @@ if __name__ == "__main__":
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
 
-    prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
+    if args.runtype != "none":
+        if args.runtype == "setup" or args.runtype == "all":
+            prep_tests(targeted_packages, args.python_version)
 
-    if not args.tox_env:
-        collect_coverage_files(targeted_packages)
+        if args.runtype == "execute" or args.runtype == "all":
+            run_tests(
+                targeted_packages, args.python_version, args.test_results, test_results_arg
+            )
+    else:
+        prep_and_run_tox(targeted_packages, args.tox_env, test_results_arg)
+

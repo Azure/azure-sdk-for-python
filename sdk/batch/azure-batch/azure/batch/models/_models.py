@@ -402,7 +402,12 @@ class AutoUserSpecification(Model):
     """Specifies the parameters for the auto user that runs a Task on the Batch
     service.
 
-    :param scope: The scope for the auto user. The default value is Task.
+    :param scope: The scope for the auto user. The default value is pool. If
+     the pool is running Windows a value of Task should be specified if
+     stricter isolation between tasks is required. For example, if the task
+     mutates the registry in a way which could impact other tasks, or if
+     certificates have been specified on the pool which should not be
+     accessible by normal tasks but should be accessible by StartTasks.
      Possible values include: 'task', 'pool'
     :type scope: str or ~azure.batch.models.AutoUserScope
     :param elevation_level: The elevation level of the auto user. The default
@@ -419,6 +424,104 @@ class AutoUserSpecification(Model):
         super(AutoUserSpecification, self).__init__(**kwargs)
         self.scope = kwargs.get('scope', None)
         self.elevation_level = kwargs.get('elevation_level', None)
+
+
+class AzureBlobFileSystemConfiguration(Model):
+    """Information used to connect to an Azure Storage Container using Blobfuse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The Azure Storage Account name.
+    :type account_name: str
+    :param container_name: Required. The Azure Blob Storage Container name.
+    :type container_name: str
+    :param account_key: The Azure Storage Account key. This property is
+     mutually exclusive with sasKey and one must be specified.
+    :type account_key: str
+    :param sas_key: The Azure Storage SAS token. This property is mutually
+     exclusive with accountKey and one must be specified.
+    :type sas_key: str
+    :param blobfuse_options: Additional command line options to pass to the
+     mount command. These are 'net use' options in Windows and 'mount' options
+     in Linux.
+    :type blobfuse_options: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+        'container_name': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+        'sas_key': {'key': 'sasKey', 'type': 'str'},
+        'blobfuse_options': {'key': 'blobfuseOptions', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.account_key = kwargs.get('account_key', None)
+        self.sas_key = kwargs.get('sas_key', None)
+        self.blobfuse_options = kwargs.get('blobfuse_options', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+
+
+class AzureFileShareConfiguration(Model):
+    """Information used to connect to an Azure Fileshare.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The Azure Storage account name.
+    :type account_name: str
+    :param azure_file_url: Required. The Azure Files URL. This is of the form
+     'https://{account}.file.core.windows.net/'.
+    :type azure_file_url: str
+    :param account_key: Required. The Azure Storage account key.
+    :type account_key: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Additional command line options to pass to the mount
+     command. These are 'net use' options in Windows and 'mount' options in
+     Linux.
+    :type mount_options: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+        'azure_file_url': {'required': True},
+        'account_key': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'azure_file_url': {'key': 'azureFileUrl', 'type': 'str'},
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileShareConfiguration, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.azure_file_url = kwargs.get('azure_file_url', None)
+        self.account_key = kwargs.get('account_key', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+        self.mount_options = kwargs.get('mount_options', None)
 
 
 class BatchError(Model):
@@ -836,6 +939,54 @@ class CertificateReference(Model):
         self.visibility = kwargs.get('visibility', None)
 
 
+class CIFSMountConfiguration(Model):
+    """Information used to connect to a CIFS file system.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param username: Required. The user to use for authentication against the
+     CIFS file system.
+    :type username: str
+    :param source: Required. The URI of the file system to mount.
+    :type source: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Additional command line options to pass to the mount
+     command. These are 'net use' options in Windows and 'mount' options in
+     Linux.
+    :type mount_options: str
+    :param password: Required. The password to use for authentication against
+     the CIFS file system.
+    :type password: str
+    """
+
+    _validation = {
+        'username': {'required': True},
+        'source': {'required': True},
+        'relative_mount_path': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CIFSMountConfiguration, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.source = kwargs.get('source', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+        self.mount_options = kwargs.get('mount_options', None)
+        self.password = kwargs.get('password', None)
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -1247,6 +1398,9 @@ class CloudPool(Model):
      service performs periodic roll-up of statistics. The typical delay is
      about 30 minutes.
     :type stats: ~azure.batch.models.PoolStatistics
+    :param mount_configuration: A list of file systems to mount on each node
+     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :type mount_configuration: list[~azure.batch.models.MountConfiguration]
     """
 
     _attribute_map = {
@@ -1284,6 +1438,7 @@ class CloudPool(Model):
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
+        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
     }
 
     def __init__(self, **kwargs):
@@ -1322,6 +1477,7 @@ class CloudPool(Model):
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
         self.stats = kwargs.get('stats', None)
+        self.mount_configuration = kwargs.get('mount_configuration', None)
 
 
 class CloudServiceConfiguration(Model):
@@ -1647,7 +1803,7 @@ class ComputeNode(Model):
      joins the Pool.
     :type start_task: ~azure.batch.models.StartTask
     :param start_task_info: Runtime information about the execution of the
-     start Task on the Compute Node.
+     StartTask on the Compute Node.
     :type start_task_info: ~azure.batch.models.StartTaskInformation
     :param certificate_references: The list of Certificates installed on the
      Compute Node. For Windows Nodes, the Batch service installs the
@@ -2395,7 +2551,8 @@ class ContainerRegistry(Model):
 
 class DataDisk(Model):
     """Settings which will be used by the data disks associated to Compute Nodes
-    in the Pool.
+    in the Pool. When using attached data disks, you need to mount and format
+    the disks from within a VM to use them.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2635,13 +2792,10 @@ class ExitOptions(Model):
      'terminate'
     :type job_action: str or ~azure.batch.models.JobAction
     :param dependency_action: An action that the Batch service performs on
-     Tasks that depend on this Task. The default is 'satisfy' for exit code 0,
-     and 'block' for all other exit conditions. If the Job's
-     usesTaskDependencies property is set to false, then specifying the
-     dependencyAction property returns an error and the add Task request fails
-     with an invalid property value error; if you are calling the REST API
-     directly, the HTTP status code is 400  (Bad Request). Possible values
-     include: 'satisfy', 'block'
+     Tasks that depend on this Task. Possible values are 'satisfy' (allowing
+     dependent tasks to progress) and 'block' (dependent tasks continue to
+     wait). Batch does not yet support cancellation of dependent tasks.
+     Possible values include: 'satisfy', 'block'
     :type dependency_action: str or ~azure.batch.models.DependencyAction
     """
 
@@ -3122,20 +3276,25 @@ class ImageReference(Model):
      Image. For example, UbuntuServer or WindowsServer.
     :type offer: str
     :param sku: The SKU of the Azure Virtual Machines Marketplace Image. For
-     example, 14.04.0-LTS or 2012-R2-Datacenter.
+     example, 18.04-LTS or 2019-Datacenter.
     :type sku: str
     :param version: The version of the Azure Virtual Machines Marketplace
      Image. A value of 'latest' can be specified to select the latest version
      of an Image. If omitted, the default is 'latest'.
     :type version: str
     :param virtual_machine_image_id: The ARM resource identifier of the
-     Virtual Machine Image. Computes Compute Nodes of the Pool will be created
-     using this custom Image. This is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
-     This property is mutually exclusive with other ImageReference properties.
-     The Virtual Machine Image must be in the same region and subscription as
-     the Azure Batch Account. For information about the firewall settings for
-     the Batch Compute Node agent to communicate with the Batch service see
+     Virtual Machine Image or Shared Image Gallery Image. Computes Compute
+     Nodes of the Pool will be created using this Image Id. This is of either
+     the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}
+     for Virtual Machine Image or
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}
+     for SIG image. This property is mutually exclusive with other
+     ImageReference properties. For Virtual Machine Image it must be in the
+     same region and subscription as the Azure Batch account. For SIG image it
+     must have replicas in the same region as the Azure Batch account. For
+     information about the firewall settings for the Batch Compute Node agent
+     to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type virtual_machine_image_id: str
     """
@@ -4141,14 +4300,14 @@ class JobManagerTask(Model):
      concurrent Tasks. The default value is true.
     :type run_exclusive: bool
     :param application_package_references: A list of Application Packages that
-     the Batch service will deploy to the Compute Compute Node before running
-     the command line. Application Packages are downloaded and deployed to a
-     shared directory, not the Task working directory. Therefore, if a
-     referenced Application Package is already on the Compute Node, and is up
-     to date, then it is not re-downloaded; the existing copy on the Compute
-     Compute Node is used. If a referenced Application Package cannot be
-     installed, for example because the package has been deleted or because
-     download failed, the Task fails.
+     the Batch service will deploy to the Compute Node before running the
+     command line. Application Packages are downloaded and deployed to a shared
+     directory, not the Task working directory. Therefore, if a referenced
+     Application Package is already on the Compute Node, and is up to date,
+     then it is not re-downloaded; the existing copy on the Compute Node is
+     used. If a referenced Application Package cannot be installed, for example
+     because the package has been deleted or because download failed, the Task
+     fails.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
@@ -4335,10 +4494,11 @@ class JobPatchParameter(Model):
     :param pool_info: The Pool on which the Batch service runs the Job's
      Tasks. You may change the Pool for a Job only when the Job is disabled.
      The Patch Job call will fail if you include the poolInfo element and the
-     Job is not disabled. If you specify an autoPoolSpecification specification
-     in the poolInfo, only the keepAlive property can be updated, and then only
-     if the auto Pool has a poolLifetimeOption of Job. If omitted, the Job
-     continues to run on its current Pool.
+     Job is not disabled. If you specify an autoPoolSpecification in the
+     poolInfo, only the keepAlive property of the autoPoolSpecification can be
+     updated, and then only if the autoPoolSpecification has a
+     poolLifetimeOption of Job (other job properties can be updated as normal).
+     If omitted, the Job continues to run on its current Pool.
     :type pool_info: ~azure.batch.models.PoolInformation
     :param metadata: A list of name-value pairs associated with the Job as
      metadata. If omitted, the existing Job metadata is left unchanged.
@@ -6092,9 +6252,10 @@ class JobUpdateParameter(Model):
      Job's Tasks. You may change the Pool for a Job only when the Job is
      disabled. The Update Job call will fail if you include the poolInfo
      element and the Job is not disabled. If you specify an
-     autoPoolSpecification specification in the poolInfo, only the keepAlive
-     property can be updated, and then only if the auto Pool has a
-     poolLifetimeOption of Job.
+     autoPoolSpecification in the poolInfo, only the keepAlive property of the
+     autoPoolSpecification can be updated, and then only if the
+     autoPoolSpecification has a poolLifetimeOption of Job (other job
+     properties can be updated as normal).
     :type pool_info: ~azure.batch.models.PoolInformation
     :param metadata: A list of name-value pairs associated with the Job as
      metadata. If omitted, it takes the default value of an empty list; in
@@ -6200,6 +6361,41 @@ class MetadataItem(Model):
         super(MetadataItem, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
+
+
+class MountConfiguration(Model):
+    """The file system to mount on each node.
+
+    :param azure_blob_file_system_configuration: The Azure Storage Container
+     to mount using blob FUSE on each node. This property is mutually exclusive
+     with all other properties.
+    :type azure_blob_file_system_configuration:
+     ~azure.batch.models.AzureBlobFileSystemConfiguration
+    :param nfs_mount_configuration: The NFS file system to mount on each node.
+     This property is mutually exclusive with all other properties.
+    :type nfs_mount_configuration: ~azure.batch.models.NFSMountConfiguration
+    :param cifs_mount_configuration: The CIFS/SMB file system to mount on each
+     node. This property is mutually exclusive with all other properties.
+    :type cifs_mount_configuration: ~azure.batch.models.CIFSMountConfiguration
+    :param azure_file_share_configuration: The Azure File Share to mount on
+     each node. This property is mutually exclusive with all other properties.
+    :type azure_file_share_configuration:
+     ~azure.batch.models.AzureFileShareConfiguration
+    """
+
+    _attribute_map = {
+        'azure_blob_file_system_configuration': {'key': 'azureBlobFileSystemConfiguration', 'type': 'AzureBlobFileSystemConfiguration'},
+        'nfs_mount_configuration': {'key': 'nfsMountConfiguration', 'type': 'NFSMountConfiguration'},
+        'cifs_mount_configuration': {'key': 'cifsMountConfiguration', 'type': 'CIFSMountConfiguration'},
+        'azure_file_share_configuration': {'key': 'azureFileShareConfiguration', 'type': 'AzureFileShareConfiguration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MountConfiguration, self).__init__(**kwargs)
+        self.azure_blob_file_system_configuration = kwargs.get('azure_blob_file_system_configuration', None)
+        self.nfs_mount_configuration = kwargs.get('nfs_mount_configuration', None)
+        self.cifs_mount_configuration = kwargs.get('cifs_mount_configuration', None)
+        self.azure_file_share_configuration = kwargs.get('azure_file_share_configuration', None)
 
 
 class MultiInstanceSettings(Model):
@@ -6312,12 +6508,21 @@ class NetworkConfiguration(Model):
      Pools with the virtualMachineConfiguration property.
     :type endpoint_configuration:
      ~azure.batch.models.PoolEndpointConfiguration
+    :param public_ips: The list of public IPs which the Batch service will use
+     when provisioning Compute Nodes. The number of IPs specified here limits
+     the maximum size of the Pool - 50 dedicated nodes or 20 low-priority nodes
+     can be allocated for each public IP. For example, a pool needing 150
+     dedicated VMs would need at least 3 public IPs specified. Each element of
+     this collection is of the form:
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+    :type public_ips: list[str]
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'dynamic_vnet_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'DynamicVNetAssignmentScope'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -6325,6 +6530,7 @@ class NetworkConfiguration(Model):
         self.subnet_id = kwargs.get('subnet_id', None)
         self.dynamic_vnet_assignment_scope = kwargs.get('dynamic_vnet_assignment_scope', None)
         self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
+        self.public_ips = kwargs.get('public_ips', None)
 
 
 class NetworkSecurityGroupRule(Model):
@@ -6377,6 +6583,42 @@ class NetworkSecurityGroupRule(Model):
         self.access = kwargs.get('access', None)
         self.source_address_prefix = kwargs.get('source_address_prefix', None)
         self.source_port_ranges = kwargs.get('source_port_ranges', None)
+
+
+class NFSMountConfiguration(Model):
+    """Information used to connect to an NFS file system.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. The URI of the file system to mount.
+    :type source: str
+    :param relative_mount_path: Required. The relative path on the compute
+     node where the file system will be mounted. All file systems are mounted
+     relative to the Batch mounts directory, accessible via the
+     AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :type relative_mount_path: str
+    :param mount_options: Additional command line options to pass to the mount
+     command. These are 'net use' options in Windows and 'mount' options in
+     Linux.
+    :type mount_options: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'relative_mount_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NFSMountConfiguration, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+        self.mount_options = kwargs.get('mount_options', None)
 
 
 class NodeAgentInformation(Model):
@@ -6972,6 +7214,10 @@ class PoolAddParameter(Model):
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
+    :param mount_configuration: Mount storage using specified file system for
+     the entire lifetime of the pool. Mount the storage using Azure fileshare,
+     NFS, CIFS or Blobfuse based file system.
+    :type mount_configuration: list[~azure.batch.models.MountConfiguration]
     """
 
     _validation = {
@@ -7001,6 +7247,7 @@ class PoolAddParameter(Model):
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
+        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
     }
 
     def __init__(self, **kwargs):
@@ -7026,6 +7273,7 @@ class PoolAddParameter(Model):
         self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
+        self.mount_configuration = kwargs.get('mount_configuration', None)
 
 
 class PoolDeleteOptions(Model):
@@ -7716,8 +7964,7 @@ class PoolPatchParameter(Model):
     :param start_task: A Task to run on each Compute Node as it joins the
      Pool. The Task runs when the Compute Node is added to the Pool or when the
      Compute Node is restarted. If this element is present, it overwrites any
-     existing start Task. If omitted, any existing start Task is left
-     unchanged.
+     existing StartTask. If omitted, any existing StartTask is left unchanged.
     :type start_task: ~azure.batch.models.StartTask
     :param certificate_references: A list of Certificates to be installed on
      each Compute Node in the Pool. If this element is present, it replaces any
@@ -7963,7 +8210,7 @@ class PoolSpecification(Model):
      vmSize of the Pool or 256.
     :type max_tasks_per_node: int
     :param task_scheduling_policy: How Tasks are distributed across Compute
-     Compute Nodes in a Pool. If not specified, the default is spread.
+     Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
     :param resize_timeout: The timeout for allocation of Compute Nodes to the
      Pool. This timeout applies only to manual scaling; it has no effect when
@@ -8048,6 +8295,9 @@ class PoolSpecification(Model):
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
+    :param mount_configuration: A list of file systems to mount on each node
+     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :type mount_configuration: list[~azure.batch.models.MountConfiguration]
     """
 
     _validation = {
@@ -8075,6 +8325,7 @@ class PoolSpecification(Model):
         'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
+        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
     }
 
     def __init__(self, **kwargs):
@@ -8099,6 +8350,7 @@ class PoolSpecification(Model):
         self.application_licenses = kwargs.get('application_licenses', None)
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
+        self.mount_configuration = kwargs.get('mount_configuration', None)
 
 
 class PoolStatistics(Model):
@@ -8250,8 +8502,8 @@ class PoolUpdatePropertiesParameter(Model):
     :param start_task: A Task to run on each Compute Node as it joins the
      Pool. The Task runs when the Compute Node is added to the Pool or when the
      Compute Node is restarted. If this element is present, it overwrites any
-     existing start Task. If omitted, any existing start Task is removed from
-     the Pool.
+     existing StartTask. If omitted, any existing StartTask is removed from the
+     Pool.
     :type start_task: ~azure.batch.models.StartTask
     :param certificate_references: Required. A list of Certificates to be
      installed on each Compute Node in the Pool. This list replaces any
@@ -8268,15 +8520,15 @@ class PoolUpdatePropertiesParameter(Model):
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Required. The list of Application
-     Packages to be installed on each Compute Compute Node in the Pool. The
-     list replaces any existing Application Package references on the Pool.
-     Changes to Application Package references affect all new Compute Nodes
-     joining the Pool, but do not affect Compute Compute Nodes that are already
-     in the Pool until they are rebooted or reimaged. There is a maximum of 10
-     Application Package references on any given Pool. If omitted, or if you
-     specify an empty collection, any existing Application Packages references
-     are removed from the Pool. A maximum of 10 references may be specified on
-     a given Pool.
+     Packages to be installed on each Compute Node in the Pool. The list
+     replaces any existing Application Package references on the Pool. Changes
+     to Application Package references affect all new Compute Nodes joining the
+     Pool, but do not affect Compute Nodes that are already in the Pool until
+     they are rebooted or reimaged. There is a maximum of 10 Application
+     Package references on any given Pool. If omitted, or if you specify an
+     empty collection, any existing Application Packages references are removed
+     from the Pool. A maximum of 10 references may be specified on a given
+     Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param metadata: Required. A list of name-value pairs associated with the
@@ -8649,15 +8901,15 @@ class StartTask(Model):
     all Tasks should be idempotent. This means Tasks need to tolerate being
     interrupted and restarted without causing any corruption or duplicate data.
     The best practice for long running Tasks is to use some form of
-    checkpointing. In some cases the start Task may be re-run even though the
-    Compute Node was not rebooted. Special care should be taken to avoid start
-    Tasks which create breakaway process or install/launch services from the
-    start Task working directory, as this will block Batch from being able to
-    re-run the start Task.
+    checkpointing. In some cases the StartTask may be re-run even though the
+    Compute Node was not rebooted. Special care should be taken to avoid
+    StartTasks which create breakaway process or install/launch services from
+    the StartTask working directory, as this will block Batch from being able
+    to re-run the StartTask.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. The command line of the start Task. The
+    :param command_line: Required. The command line of the StartTask. The
      command line does not run under a shell, and therefore cannot take
      advantage of shell features such as environment variable expansion. If you
      want to take advantage of such features, you should invoke the shell in
@@ -8668,7 +8920,7 @@ class StartTask(Model):
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
-     start Task runs. When this is specified, all directories recursively below
+     StartTask runs. When this is specified, all directories recursively below
      the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the
      node) are mapped into the container, all Task environment variables are
      mapped into the container, and the Task command line is executed in the
@@ -8686,10 +8938,10 @@ class StartTask(Model):
      element are located in the Task's working directory.
     :type resource_files: list[~azure.batch.models.ResourceFile]
     :param environment_settings: A list of environment variable settings for
-     the start Task.
+     the StartTask.
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :param user_identity: The user identity under which the start Task runs.
-     If omitted, the Task runs as a non-administrative user unique to the Task.
+    :param user_identity: The user identity under which the StartTask runs. If
+     omitted, the Task runs as a non-administrative user unique to the Task.
     :type user_identity: ~azure.batch.models.UserIdentity
     :param max_task_retry_count: The maximum number of times the Task may be
      retried. The Batch service retries a Task if its exit code is nonzero.
@@ -8701,17 +8953,17 @@ class StartTask(Model):
      -1, the Batch service retries the Task without limit.
     :type max_task_retry_count: int
     :param wait_for_success: Whether the Batch service should wait for the
-     start Task to complete successfully (that is, to exit with exit code 0)
-     before scheduling any Tasks on the Compute Node. If true and the start
-     Task fails on a Node, the Batch service retries the start Task up to its
-     maximum retry count (maxTaskRetryCount). If the Task has still not
-     completed successfully after all retries, then the Batch service marks the
-     Node unusable, and will not schedule Tasks to it. This condition can be
+     StartTask to complete successfully (that is, to exit with exit code 0)
+     before scheduling any Tasks on the Compute Node. If true and the StartTask
+     fails on a Node, the Batch service retries the StartTask up to its maximum
+     retry count (maxTaskRetryCount). If the Task has still not completed
+     successfully after all retries, then the Batch service marks the Node
+     unusable, and will not schedule Tasks to it. This condition can be
      detected via the Compute Node state and failure info details. If false,
-     the Batch service will not wait for the start Task to complete. In this
-     case, other Tasks can start executing on the Compute Node while the start
-     Task is still running; and even if the start Task fails, new Tasks will
-     continue to be scheduled on the Compute Node. The default is false.
+     the Batch service will not wait for the StartTask to complete. In this
+     case, other Tasks can start executing on the Compute Node while the
+     StartTask is still running; and even if the StartTask fails, new Tasks
+     will continue to be scheduled on the Compute Node. The default is true.
     :type wait_for_success: bool
     """
 
@@ -8741,30 +8993,30 @@ class StartTask(Model):
 
 
 class StartTaskInformation(Model):
-    """Information about a start Task running on a Compute Node.
+    """Information about a StartTask running on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param state: Required. The state of the start Task on the Compute Node.
+    :param state: Required. The state of the StartTask on the Compute Node.
      Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.StartTaskState
-    :param start_time: Required. The time at which the start Task started
+    :param start_time: Required. The time at which the StartTask started
      running. This value is reset every time the Task is restarted or retried
-     (that is, this is the most recent time at which the start Task started
+     (that is, this is the most recent time at which the StartTask started
      running).
     :type start_time: datetime
-    :param end_time: The time at which the start Task stopped running. This is
-     the end time of the most recent run of the start Task, if that run has
+    :param end_time: The time at which the StartTask stopped running. This is
+     the end time of the most recent run of the StartTask, if that run has
      completed (even if that run failed and a retry is pending). This element
-     is not present if the start Task is currently running.
+     is not present if the StartTask is currently running.
     :type end_time: datetime
-    :param exit_code: The exit code of the program specified on the start Task
-     command line. This property is set only if the start Task is in the
+    :param exit_code: The exit code of the program specified on the StartTask
+     command line. This property is set only if the StartTask is in the
      completed state. In general, the exit code for a process reflects the
      specific convention implemented by the application developer for that
      process. If you use the exit code value to make decisions in your code, be
      sure that you know the exit code convention used by the application
-     process. However, if the Batch service terminates the start Task (due to
+     process. However, if the Batch service terminates the StartTask (due to
      timeout, or user termination via the API) you may see an operating
      system-defined exit code.
     :type exit_code: int
@@ -9911,8 +10163,8 @@ class TaskSchedulingPolicy(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param node_fill_type: Required. How Tasks are distributed across Compute
-     Compute Nodes in a Pool. If not specified, the default is spread. Possible
-     values include: 'spread', 'pack'
+     Nodes in a Pool. If not specified, the default is spread. Possible values
+     include: 'spread', 'pack'
     :type node_fill_type: str or ~azure.batch.models.ComputeNodeFillType
     """
 
