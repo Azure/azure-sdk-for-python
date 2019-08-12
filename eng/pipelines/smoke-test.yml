@@ -10,7 +10,7 @@ jobs:
           versionSpec: $(python_3_version)
       - script: pip install -r .\samples\smoketest\requirements.txt
         displayName: "Install requiriments.txt"
-      - scripts: pip install -r .\samples\smoketest\requirements_async.txt
+      - script: pip install -r .\samples\smoketest\requirements_async.txt
         displayName: "Install requiriments_async.txt"
       - script: python .\samples\smoketest\program.py
         displayName: "Run Smoke Test"
