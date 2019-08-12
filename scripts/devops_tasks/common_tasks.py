@@ -19,6 +19,17 @@ logging.getLogger().setLevel(logging.INFO)
 
 OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
 
+
+def cleanup_folder(target_folder):
+    for file in os.listdir(target_folder):
+        file_path = os.path.join(target_folder, file)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(e)
+
+
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
 # for handling targeting of release packages
