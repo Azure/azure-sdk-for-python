@@ -53,6 +53,8 @@ class BillingSubscription(Resource):
     :ivar invoice_section_display_name: Invoice section display name to which
      this product belongs.
     :vartype invoice_section_display_name: str
+    :ivar reseller: Reseller for this subscription.
+    :vartype reseller: ~azure.mgmt.billing.models.Reseller
     :param sku_id: The sku id.
     :type sku_id: str
     :ivar sku_description: The sku description.
@@ -73,6 +75,7 @@ class BillingSubscription(Resource):
         'customer_display_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_display_name': {'readonly': True},
+        'reseller': {'readonly': True},
         'sku_description': {'readonly': True},
     }
 
@@ -91,6 +94,7 @@ class BillingSubscription(Resource):
         'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
     }
@@ -108,5 +112,6 @@ class BillingSubscription(Resource):
         self.customer_display_name = None
         self.invoice_section_id = None
         self.invoice_section_display_name = None
+        self.reseller = None
         self.sku_id = sku_id
         self.sku_description = None
