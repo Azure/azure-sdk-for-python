@@ -24,29 +24,16 @@ Internally `tox` leverages `virtualenv` to create each test environment's virtua
 
 This means that once the `tox` workflow is in place, all tests will be executed _within a virtual environment._
 
-To see what environments are available for a given `tox.ini` folder, use the command `tox -l`.
+To see the default environments from a specific `tox.ini` file, use the command `tox -l` in the same directory as the file itself.
 
-> sdk-for-python/sdk/batch/azure-batch> tox -l
+> sdk-for-python/eng/tox> tox -l
 
 ```
 
-python3.7-linux-tests
-python3.7-macos-tests
-python3.7-windows-tests
-py36-linux-tests
-py36-macos-tests
-py36-windows-tests
-py27-linux-tests
-py27-macos-tests
-py27-windows-tests
-python3.5-linux-tests
-python3.5-macos-tests
-python3.5-windows-tests
-python3.4-linux-tests
-python3.4-macos-tests
-python3.4-windows-tests
-py36-lint
-py27-lint
+linux-wheel_tests
+macos-wheel_tests
+windows-wheel_tests
+sdist
 
 ```
 
@@ -63,13 +50,13 @@ However, take a look at the above environment list. Running just `tox` will resu
 #### `dev` environment
 This is the most straightforward environment. Installs a given package in `develop` mode.
 
-#### `*-tests` environments
+#### `*wheel_tests` environments
 Used for test execution across the spectrum of all the platforms we want to support. Maintained at a `platform specific` level just in case we run into platform-specific bugs.
 
 * Installs the wheel, runs tests using the wheel
 
-#### `*-lint` environments
-Used to execute pylint on python 2.7 and python 3.7.
+#### `sdist` environment
+Used to install the development version of the package.
 
 ```
 # both
@@ -88,7 +75,7 @@ Used for the local dev loop.
 
 ```
 
-\> tox -e dev
+\> tox -e sdist
 
 ```
 
