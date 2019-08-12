@@ -85,7 +85,7 @@ steps:
     displayName: 'Install Packages (Global)'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disable-cov --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -93,7 +93,7 @@ steps:
     displayName: 'Run Tests (Global)'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --disable-cov --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --disablecov --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
