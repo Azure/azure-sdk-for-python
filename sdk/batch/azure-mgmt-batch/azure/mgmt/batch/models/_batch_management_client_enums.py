@@ -12,137 +12,143 @@
 from enum import Enum
 
 
-class PoolAllocationMode(Enum):
+class PoolAllocationMode(str, Enum):
 
-    batch_service = "BatchService"
-    user_subscription = "UserSubscription"
-
-
-class ProvisioningState(Enum):
-
-    invalid = "Invalid"
-    creating = "Creating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancelled = "Cancelled"
+    batch_service = "BatchService"  #: Pools will be allocated in subscriptions owned by the Batch service.
+    user_subscription = "UserSubscription"  #: Pools will be allocated in a subscription owned by the user.
 
 
-class AccountKeyType(Enum):
+class ProvisioningState(str, Enum):
 
-    primary = "Primary"
-    secondary = "Secondary"
-
-
-class PackageState(Enum):
-
-    pending = "Pending"
-    active = "Active"
+    invalid = "Invalid"  #: The account is in an invalid state.
+    creating = "Creating"  #: The account is being created.
+    deleting = "Deleting"  #: The account is being deleted.
+    succeeded = "Succeeded"  #: The account has been created and is ready for use.
+    failed = "Failed"  #: The last operation for the account is failed.
+    cancelled = "Cancelled"  #: The last operation for the account is cancelled.
 
 
-class CertificateFormat(Enum):
+class AccountKeyType(str, Enum):
 
-    pfx = "Pfx"
-    cer = "Cer"
-
-
-class CertificateProvisioningState(Enum):
-
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-    failed = "Failed"
+    primary = "Primary"  #: The primary account key.
+    secondary = "Secondary"  #: The secondary account key.
 
 
-class PoolProvisioningState(Enum):
+class PackageState(str, Enum):
 
-    succeeded = "Succeeded"
-    deleting = "Deleting"
-
-
-class AllocationState(Enum):
-
-    steady = "Steady"
-    resizing = "Resizing"
-    stopping = "Stopping"
+    pending = "Pending"  #: The application package has been created but has not yet been activated.
+    active = "Active"  #: The application package is ready for use.
 
 
-class CachingType(Enum):
+class CertificateFormat(str, Enum):
 
-    none = "None"
-    read_only = "ReadOnly"
-    read_write = "ReadWrite"
-
-
-class StorageAccountType(Enum):
-
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
+    pfx = "Pfx"  #: The certificate is a PFX (PKCS#12) formatted certificate or certificate chain.
+    cer = "Cer"  #: The certificate is a base64-encoded X.509 certificate.
 
 
-class ComputeNodeDeallocationOption(Enum):
+class CertificateProvisioningState(str, Enum):
 
-    requeue = "Requeue"
-    terminate = "Terminate"
-    task_completion = "TaskCompletion"
-    retained_data = "RetainedData"
-
-
-class InterNodeCommunicationState(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
+    succeeded = "Succeeded"  #: The certificate is available for use in pools.
+    deleting = "Deleting"  #: The user has requested that the certificate be deleted, but the delete operation has not yet completed. You may not reference the certificate when creating or updating pools.
+    failed = "Failed"  #: The user requested that the certificate be deleted, but there are pools that still have references to the certificate, or it is still installed on one or more compute nodes. (The latter can occur if the certificate has been removed from the pool, but the node has not yet restarted. Nodes refresh their certificates only when they restart.) You may use the cancel certificate delete operation to cancel the delete, or the delete certificate operation to retry the delete.
 
 
-class InboundEndpointProtocol(Enum):
+class PoolProvisioningState(str, Enum):
 
-    tcp = "TCP"
-    udp = "UDP"
-
-
-class NetworkSecurityGroupRuleAccess(Enum):
-
-    allow = "Allow"
-    deny = "Deny"
+    succeeded = "Succeeded"  #: The pool is available to run tasks subject to the availability of compute nodes.
+    deleting = "Deleting"  #: The user has requested that the pool be deleted, but the delete operation has not yet completed.
 
 
-class ComputeNodeFillType(Enum):
+class AllocationState(str, Enum):
 
-    spread = "Spread"
-    pack = "Pack"
-
-
-class ElevationLevel(Enum):
-
-    non_admin = "NonAdmin"
-    admin = "Admin"
+    steady = "Steady"  #: The pool is not resizing. There are no changes to the number of nodes in the pool in progress. A pool enters this state when it is created and when no operations are being performed on the pool to change the number of nodes.
+    resizing = "Resizing"  #: The pool is resizing; that is, compute nodes are being added to or removed from the pool.
+    stopping = "Stopping"  #: The pool was resizing, but the user has requested that the resize be stopped, but the stop request has not yet been completed.
 
 
-class LoginMode(Enum):
+class CachingType(str, Enum):
 
-    batch = "Batch"
-    interactive = "Interactive"
-
-
-class AutoUserScope(Enum):
-
-    task = "Task"
-    pool = "Pool"
+    none = "None"  #: The caching mode for the disk is not enabled.
+    read_only = "ReadOnly"  #: The caching mode for the disk is read only.
+    read_write = "ReadWrite"  #: The caching mode for the disk is read and write.
 
 
-class CertificateStoreLocation(Enum):
+class StorageAccountType(str, Enum):
 
-    current_user = "CurrentUser"
-    local_machine = "LocalMachine"
-
-
-class CertificateVisibility(Enum):
-
-    start_task = "StartTask"
-    task = "Task"
-    remote_user = "RemoteUser"
+    standard_lrs = "Standard_LRS"  #: The data disk should use standard locally redundant storage.
+    premium_lrs = "Premium_LRS"  #: The data disk should use premium locally redundant storage.
 
 
-class NameAvailabilityReason(Enum):
+class ComputeNodeDeallocationOption(str, Enum):
 
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
+    requeue = "Requeue"  #: Terminate running task processes and requeue the tasks. The tasks will run again when a node is available. Remove nodes as soon as tasks have been terminated.
+    terminate = "Terminate"  #: Terminate running tasks. The tasks will be completed with failureInfo indicating that they were terminated, and will not run again. Remove nodes as soon as tasks have been terminated.
+    task_completion = "TaskCompletion"  #: Allow currently running tasks to complete. Schedule no new tasks while waiting. Remove nodes when all tasks have completed.
+    retained_data = "RetainedData"  #: Allow currently running tasks to complete, then wait for all task data retention periods to expire. Schedule no new tasks while waiting. Remove nodes when all task retention periods have expired.
+
+
+class InterNodeCommunicationState(str, Enum):
+
+    enabled = "Enabled"  #: Enable network communication between virtual machines.
+    disabled = "Disabled"  #: Disable network communication between virtual machines.
+
+
+class InboundEndpointProtocol(str, Enum):
+
+    tcp = "TCP"  #: Use TCP for the endpoint.
+    udp = "UDP"  #: Use UDP for the endpoint.
+
+
+class NetworkSecurityGroupRuleAccess(str, Enum):
+
+    allow = "Allow"  #: Allow access.
+    deny = "Deny"  #: Deny access.
+
+
+class ComputeNodeFillType(str, Enum):
+
+    spread = "Spread"  #: Tasks should be assigned evenly across all nodes in the pool.
+    pack = "Pack"  #: As many tasks as possible (maxTasksPerNode) should be assigned to each node in the pool before any tasks are assigned to the next node in the pool.
+
+
+class ElevationLevel(str, Enum):
+
+    non_admin = "NonAdmin"  #: The user is a standard user without elevated access.
+    admin = "Admin"  #: The user is a user with elevated access and operates with full Administrator permissions.
+
+
+class LoginMode(str, Enum):
+
+    batch = "Batch"  #: The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running parallel processes.
+    interactive = "Interactive"  #: The LOGON32_LOGON_INTERACTIVE Win32 login mode. Some applications require having permissions associated with the interactive login mode. If this is the case for an application used in your task, then this option is recommended.
+
+
+class AutoUserScope(str, Enum):
+
+    task = "Task"  #: Specifies that the service should create a new user for the task.
+    pool = "Pool"  #: Specifies that the task runs as the common auto user account which is created on every node in a pool.
+
+
+class ContainerWorkingDirectory(str, Enum):
+
+    task_working_directory = "TaskWorkingDirectory"  #: Use the standard Batch service task working directory, which will contain the Task resource files populated by Batch.
+    container_image_default = "ContainerImageDefault"  #: Using container image defined working directory. Beware that this directory will not contain the resource files downloaded by Batch.
+
+
+class CertificateStoreLocation(str, Enum):
+
+    current_user = "CurrentUser"  #: Certificates should be installed to the CurrentUser certificate store.
+    local_machine = "LocalMachine"  #: Certificates should be installed to the LocalMachine certificate store.
+
+
+class CertificateVisibility(str, Enum):
+
+    start_task = "StartTask"  #: The certificate should be visible to the user account under which the start task is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
+    task = "Task"  #: The certificate should be visible to the user accounts under which job tasks are run.
+    remote_user = "RemoteUser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
+
+
+class NameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"  #: The requested name is invalid.
+    already_exists = "AlreadyExists"  #: The requested name is already in use.

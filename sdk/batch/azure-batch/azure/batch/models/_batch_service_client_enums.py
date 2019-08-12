@@ -57,8 +57,8 @@ class JobAction(str, Enum):
 
 class DependencyAction(str, Enum):
 
-    satisfy = "satisfy"  #: Satisfy the Task's dependencies.
-    block = "block"  #: Block the Task's dependencies.
+    satisfy = "satisfy"  #: Satisfy tasks waiting on this task; once all dependencies are satisfied, the task will be scheduled to run.
+    block = "block"  #: Blocks tasks waiting on this task, preventing them from being scheduled.
 
 
 class AutoUserScope(str, Enum):
@@ -100,9 +100,9 @@ class CertificateStoreLocation(str, Enum):
 
 class CertificateVisibility(str, Enum):
 
-    start_task = "starttask"  #: The Certificate should be visible to the user Account under which the start Task is run.
-    task = "task"  #: The Certificate should be visible to the user Accounts under which Job Tasks are run.
-    remote_user = "remoteuser"  #: The Certificate should be visible to the user Accounts under which users remotely access the Compute Node.
+    start_task = "starttask"  #: The Certificate should be visible to the user account under which the StartTask is run. Note that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be visible to the Task as well.
+    task = "task"  #: The Certificate should be visible to the user accounts under which Job Tasks are run.
+    remote_user = "remoteuser"  #: The Certificate should be visible to the user accounts under which users remotely access the Compute Node.
 
 
 class CachingType(str, Enum):
@@ -235,8 +235,8 @@ class SubtaskState(str, Enum):
 
 class StartTaskState(str, Enum):
 
-    running = "running"  #: The start Task is currently running.
-    completed = "completed"  #: The start Task has exited with exit code 0, or the start Task has failed and the retry limit has reached, or the start Task process did not run due to Task preparation errors (such as resource file download failures).
+    running = "running"  #: The StartTask is currently running.
+    completed = "completed"  #: The StartTask has exited with exit code 0, or the StartTask has failed and the retry limit has reached, or the StartTask process did not run due to Task preparation errors (such as resource file download failures).
 
 
 class ComputeNodeState(str, Enum):
@@ -244,12 +244,12 @@ class ComputeNodeState(str, Enum):
     idle = "idle"  #: The Compute Node is not currently running a Task.
     rebooting = "rebooting"  #: The Compute Node is rebooting.
     reimaging = "reimaging"  #: The Compute Node is reimaging.
-    running = "running"  #: The Compute Node is running one or more Tasks (other than a start task).
+    running = "running"  #: The Compute Node is running one or more Tasks (other than a StartTask).
     unusable = "unusable"  #: The Compute Node cannot be used for Task execution due to errors.
     creating = "creating"  #: The Batch service has obtained the underlying virtual machine from Azure Compute, but it has not yet started to join the Pool.
     starting = "starting"  #: The Batch service is starting on the underlying virtual machine.
-    waiting_for_start_task = "waitingforstarttask"  #: The start Task has started running on the Compute Node, but waitForSuccess is set and the start Task has not yet completed.
-    start_task_failed = "starttaskfailed"  #: The start Task has failed on the Compute Node (and exhausted all retries), and waitForSuccess is set. The Compute Node is not usable for running Tasks.
+    waiting_for_start_task = "waitingforstarttask"  #: The StartTask has started running on the Compute Node, but waitForSuccess is set and the StartTask has not yet completed.
+    start_task_failed = "starttaskfailed"  #: The StartTask has failed on the Compute Node (and exhausted all retries), and waitForSuccess is set. The Compute Node is not usable for running Tasks.
     unknown = "unknown"  #: The Batch service has lost contact with the Compute Node, and does not know its true state.
     leaving_pool = "leavingpool"  #: The Compute Node is leaving the Pool, either because the user explicitly removed it or because the Pool is resizing or autoscaling down.
     offline = "offline"  #: The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute Node is disabled.

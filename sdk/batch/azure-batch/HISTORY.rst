@@ -3,6 +3,16 @@
 Release History
 ===============
 
+8.0.0 (2019-8-5)
+++++++++++++++++++
+
+- Using REST API version 2019-08-01.10.0.
+    * Added ability to specify a collection of public IPs on `NetworkConfiguration` via the new `public_ips` property. This guarantees nodes in the Pool will have an IP from the list user provided IPs.
+    * Added ability to mount remote file-systems on each node of a pool via the `mount_configuration` property on `CloudPool`.
+    * Shared Image Gallery images can now be specified on the `virtual_machine_image_id` property of `ImageReference` by referencing the image via its ARM ID.
+    * **Breaking** When not specified, the default value for `wait_for_success` on `StartTask` is now `True` (was `False`).
+    * **Breaking** When not specified, the default value for `scope` on `AutoUserSpecification` is now always `Pool` (was `Task` on Windows nodes, `Pool` on Linux nodes).
+
 7.0.0 (2019-6-11)
 ++++++++++++++++++
 
