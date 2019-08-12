@@ -1,12 +1,11 @@
 jobs:
   - job:
-      
     variables:
       python_3_version: "3.7.4"
 
-      steps:
+    steps:
       - task: UsePythonVersion@0
-      displayName: "Use Python $(python_3_version)"
+        displayName: "Use Python $(python_3_version)"
         inputs:
           versionSpec: $(python_3_version)
       - script: pip install -r .\samples\smoketest\requirements.txt
