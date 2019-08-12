@@ -61,7 +61,7 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
     ```
 
 #### Create Key client
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI for example "<https://myvault.vault.azure.net>", you can create the [KeyClient][key_client_docs]:
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI for example "<https://myvault.vault.azure.net>", you can create the [KeyClient][key_client_docs].:
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -117,7 +117,6 @@ print(ec_key.key_material.kty)
 key = key_client.get_key("key-name")
 
 print(key.name)
-print(key.value)
 ```
 
 ### Update an existing Key
@@ -154,7 +153,7 @@ for key in keys:
 
 ### Cryptographic operations
 `CryptographyClient` enables cryptographic operations (encrypt/decrypt,
-wrap/unwrap, sign/verify) using a particular key.
+wrap/unwrap, sign/verify) using a particular key. 
 
 ```py
 from azure.identity import DefaultAzureCredential
@@ -217,6 +216,7 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed infr
 
 For example, if you try to retrieve a key after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 try:
     key_client.get_key("deleted_key")
 except ResourceNotFoundError as e:
