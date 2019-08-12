@@ -62,19 +62,22 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if node.name == "__init__" and self.is_client and self.is_client[-1]:
-            arguments_node = next(
-                (child for child in node.get_children() if child.is_argument)
-            )
-            arg_names = [argument.name for argument in arguments_node.args]
-            if "credential" not in arg_names and "credentials" not in arg_names:
-                self.add_message(
-                    msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
+        try:
+            if node.name == "__init__" and self.is_client and self.is_client[-1]:
+                arguments_node = next(
+                    (child for child in node.get_children() if child.is_argument)
                 )
-            if not arguments_node.kwarg:
-                self.add_message(
-                    msg_id="missing-client-constructor-parameter-kwargs", node=node, confidence=None
-                )
+                arg_names = [argument.name for argument in arguments_node.args]
+                if "credential" not in arg_names and "credentials" not in arg_names:
+                    self.add_message(
+                        msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
+                    )
+                if not arguments_node.kwarg:
+                    self.add_message(
+                        msg_id="missing-client-constructor-parameter-kwargs", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
 
 class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
@@ -107,17 +110,20 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
         self.is_client = []
 
     def visit_functiondef(self, node):
-        if node.name == "create_configuration" or node.name == "create_config":
-            node.decorators = None
-            for idx in range(len(node.body)):
-                line = list(node.get_children())[idx].as_string()
-                if line.find("Policy") != -1:
-                    if line.find("**kwargs") == -1:
-                        self.add_message(
-                            msg_id="config-missing-kwargs-in-policy",
-                            node=list(node.get_children())[idx],
-                            confidence=None
-                        )
+        try:
+            if node.name == "create_configuration" or node.name == "create_config":
+                node.decorators = None
+                for idx in range(len(node.body)):
+                    line = list(node.get_children())[idx].as_string()
+                    if line.find("Policy") != -1:
+                        if line.find("**kwargs") == -1:
+                            self.add_message(
+                                msg_id="config-missing-kwargs-in-policy",
+                                node=list(node.get_children())[idx],
+                                confidence=None
+                            )
+        except AttributeError:
+            pass
 
 
 class ClientHasApprovedMethodNamePrefix(BaseChecker):
@@ -208,24 +214,30 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
-            if len(node.args.args) > 6:
-                positional_args = len(node.args.args) - len(node.args.defaults)
-                if positional_args > 6:
-                    self.add_message(
-                        msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
+                if len(node.args.args) > 6:
+                    positional_args = len(node.args.args) - len(node.args.defaults)
+                    if positional_args > 6:
+                        self.add_message(
+                            msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
-            if len(node.args.args) > 6:
-                positional_args = len(node.args.args) - len(node.args.defaults)
-                if positional_args > 6:
-                    self.add_message(
-                        msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
+                if len(node.args.args) > 6:
+                    positional_args = len(node.args.args) - len(node.args.defaults)
+                    if positional_args > 6:
+                        self.add_message(
+                            msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
 
 class ClientMethodsHaveTypeAnnotations(BaseChecker):
@@ -265,41 +277,47 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_") or node.name == "__init__":
-                # Checks that method has python 2/3 type comments or annotations as shown here:
-                # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_") or node.name == "__init__":
+                    # Checks that method has python 2/3 type comments or annotations as shown here:
+                    # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
 
-                # check for type comments
-                if node.type_comment_args is None or node.type_comment_returns is None:
+                    # check for type comments
+                    if node.type_comment_args is None or node.type_comment_returns is None:
 
-                    # type annotations default to None when not present, so need extra logic here
-                    type_annotations = [type_hint for type_hint in node.args.annotations if type_hint is not None]
+                        # type annotations default to None when not present, so need extra logic here
+                        type_annotations = [type_hint for type_hint in node.args.annotations if type_hint is not None]
 
-                    # check for type annotations
-                    if (type_annotations == [] and len(node.args.args) > 1) or node.returns is None:
-                        self.add_message(
-                            msg_id="client-method-missing-type-annotations", node=node, confidence=None
-                        )
+                        # check for type annotations
+                        if (type_annotations == [] and len(node.args.args) > 1) or node.returns is None:
+                            self.add_message(
+                                msg_id="client-method-missing-type-annotations", node=node, confidence=None
+                            )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_") or node.name == "__init__":
-                # Checks that method has python 2/3 type comments or annotations as shown here:
-                # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_") or node.name == "__init__":
+                    # Checks that method has python 2/3 type comments or annotations as shown here:
+                    # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
 
-                # check for type comments
-                if node.type_comment_args is None or node.type_comment_returns is None:
+                    # check for type comments
+                    if node.type_comment_args is None or node.type_comment_returns is None:
 
-                    # type annotations default to None when not present, so need extra logic here
-                    type_annotations = \
-                        [type_hint for type_hint in node.args.annotations if type_hint is not None]
+                        # type annotations default to None when not present, so need extra logic here
+                        type_annotations = \
+                            [type_hint for type_hint in node.args.annotations if type_hint is not None]
 
-                    # check for type annotations
-                    if (type_annotations == [] and len(node.args.args) > 1) or node.returns is None:
-                        self.add_message(
-                            msg_id="client-method-missing-type-annotations", node=node, confidence=None
-                        )
+                        # check for type annotations
+                        if (type_annotations == [] and len(node.args.args) > 1) or node.returns is None:
+                            self.add_message(
+                                msg_id="client-method-missing-type-annotations", node=node, confidence=None
+                            )
+        except AttributeError:
+            pass
 
 
 class ClientMethodsHaveTracingDecorators(BaseChecker):
@@ -373,20 +391,26 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     #             pass
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_"):
-                if "azure.core.tracing.decorator.distributed_trace" not in node.decoratornames():
-                    self.add_message(
-                        msg_id="client-method-missing-tracing-decorator", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_"):
+                    if "azure.core.tracing.decorator.distributed_trace" not in node.decoratornames():
+                        self.add_message(
+                            msg_id="client-method-missing-tracing-decorator", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_"):
-                if "azure.core.tracing.decorator_async.distributed_trace_async" not in node.decoratornames():
-                    self.add_message(
-                        msg_id="client-method-missing-tracing-decorator-async", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_"):
+                    if "azure.core.tracing.decorator_async.distributed_trace_async" not in node.decoratornames():
+                        self.add_message(
+                            msg_id="client-method-missing-tracing-decorator-async", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
 
 class ClientsDoNotUseStaticMethods(BaseChecker):
@@ -426,20 +450,26 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_") and node.decorators is not None:
-                if "builtins.staticmethod" in node.decoratornames():
-                    self.add_message(
-                        msg_id="client-method-should-not-use-static-method", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_") and node.decorators is not None:
+                    if "builtins.staticmethod" in node.decoratornames():
+                        self.add_message(
+                            msg_id="client-method-should-not-use-static-method", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_") and node.decorators is not None:
-                if "builtins.staticmethod" in node.decoratornames():
-                    self.add_message(
-                        msg_id="client-method-should-not-use-static-method", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_") and node.decorators is not None:
+                    if "builtins.staticmethod" in node.decoratornames():
+                        self.add_message(
+                            msg_id="client-method-should-not-use-static-method", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
 
 class FileHasCopyrightHeader(BaseChecker):
@@ -471,11 +501,12 @@ class FileHasCopyrightHeader(BaseChecker):
         super().__init__(linter)
 
     def visit_module(self, node):
-        header = node.stream().read(200).lower()
-        if header.find(b'copyright') == -1:
-            self.add_message(
-                        msg_id="file-needs-copyright-header", node=node, confidence=None
-                    )
+        if not node.package:
+            header = node.stream().read(200).lower()
+            if header.find(b'copyright') == -1:
+                self.add_message(
+                            msg_id="file-needs-copyright-header", node=node, confidence=None
+                        )
 
 
 class ClientUsesCorrectNamingConventions(BaseChecker):
@@ -530,18 +561,24 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
                     pass
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name != node.name.lower():
-                self.add_message(
-                    msg_id="client-incorrect-naming-convention", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name != node.name.lower():
+                    self.add_message(
+                        msg_id="client-incorrect-naming-convention", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name != node.name.lower():
-                self.add_message(
-                    msg_id="client-incorrect-naming-convention", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name != node.name.lower():
+                    self.add_message(
+                        msg_id="client-incorrect-naming-convention", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
 
 class ClientMethodsHaveKwargsParameter(BaseChecker):
@@ -581,20 +618,26 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_"):
-                if not node.args.kwarg:
-                    self.add_message(
-                        msg_id="client-method-missing-kwargs", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_"):
+                    if not node.args.kwarg:
+                        self.add_message(
+                            msg_id="client-method-missing-kwargs", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if not node.name.startswith("_"):
-                if not node.args.kwarg:
-                    self.add_message(
-                        msg_id="client-method-missing-kwargs", node=node, confidence=None
-                    )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if not node.name.startswith("_"):
+                    if not node.args.kwarg:
+                        self.add_message(
+                            msg_id="client-method-missing-kwargs", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
 
 
 class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
@@ -635,18 +678,24 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
             self.is_client.append(False)
 
     def visit_functiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name.startswith("__") and node.name not in self.acceptable_names:
-                self.add_message(
-                    msg_id="client-method-name-no-double-underscore", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name.startswith("__") and node.name not in self.acceptable_names:
+                    self.add_message(
+                        msg_id="client-method-name-no-double-underscore", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
     def visit_asyncfunctiondef(self, node):
-        if self.is_client and self.is_client[-1] and node.is_method():
-            if node.name.startswith("__") and node.name not in self.acceptable_names:
-                self.add_message(
-                    msg_id="client-method-name-no-double-underscore", node=node, confidence=None
-                )
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name.startswith("__") and node.name not in self.acceptable_names:
+                    self.add_message(
+                        msg_id="client-method-name-no-double-underscore", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
 
 
 class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
@@ -799,44 +848,44 @@ class SpecifyParameterNamesInCall(BaseChecker):
         except AttributeError:
             pass
 
-
-class ClientExceptionsDeriveFromCore(BaseChecker):
-    __implements__ = IAstroidChecker
-
-    name = "client-exceptions-derive-from-core"
-    priority = -1
-    msgs = {
-        "C4731": (
-            "Client exceptions should be based on existing exception types present in azure-core. See details:"
-            " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-error-handling",
-            "client-bad-exception-type",
-            "All client exceptions should derive from azure-core.",
-        ),
-    }
-    options = (
-        (
-            "ignore-client-bad-exception-type",
-            {
-                "default": False,
-                "type": "yn",
-                "metavar": "<y_or_n>",
-                "help": "Allow client to have new exception type.",
-            },
-        ),
-    )
-
-    def __init__(self, linter=None):
-        super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        if node.name.endswith("ErrorException"):
-            core_exception = [ex for ex in node.bases if ex.name == "HttpResponseError"]
-            if not core_exception:
-                self.add_message(
-                    msg_id="client-bad-exception-type", node=node, confidence=None
-                )
-
+#
+# class ClientExceptionsDeriveFromCore(BaseChecker):
+#     __implements__ = IAstroidChecker
+#
+#     name = "client-exceptions-derive-from-core"
+#     priority = -1
+#     msgs = {
+#         "C4731": (
+#             "Client exceptions should be based on existing exception types present in azure-core. See details:"
+#             " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-error-handling",
+#             "client-bad-exception-type",
+#             "All client exceptions should derive from azure-core.",
+#         ),
+#     }
+#     options = (
+#         (
+#             "ignore-client-bad-exception-type",
+#             {
+#                 "default": False,
+#                 "type": "yn",
+#                 "metavar": "<y_or_n>",
+#                 "help": "Allow client to have new exception type.",
+#             },
+#         ),
+#     )
+#
+#     def __init__(self, linter=None):
+#         super().__init__(linter)
+#         self.is_client = []
+#
+#     def visit_classdef(self, node):
+#         if node.name.endswith("ErrorException"):
+#             core_exception = [ex for ex in node.bases if ex.name == "HttpResponseError"]
+#             if not core_exception:
+#                 self.add_message(
+#                     msg_id="client-bad-exception-type", node=node, confidence=None
+#                 )
+#
 
 def register(linter):
     linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
@@ -852,6 +901,5 @@ def register(linter):
     linter.register_checker(FileHasCopyrightHeader(linter))
     linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
     linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
-
     linter.register_checker(SpecifyParameterNamesInCall(linter))
     # linter.register_checker(ClientExceptionsDeriveFromCore(linter))

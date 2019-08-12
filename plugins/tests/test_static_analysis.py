@@ -11,6 +11,7 @@ def test_run_pylint():
 
         result = subprocess.check_call(argv)
     except subprocess.CalledProcessError:
-        if subprocess.getstatusoutput(argv)[0] == 16 or subprocess.getstatusoutput(argv)[0] == 30:
-            raise PylintError
+        raise PylintError
+        # if subprocess.getstatusoutput(argv)[0] in [16, 28, 30]:
+        #     raise PylintError
 
