@@ -79,23 +79,23 @@ steps:
         --toxenv="mypy"
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
-    condition: ${{ parameters.RunMyPy }}
+    condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
 
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disable-cov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
   - task: PythonScript@0
     displayName: 'Run Tests (Global)'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --disable-cov --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
