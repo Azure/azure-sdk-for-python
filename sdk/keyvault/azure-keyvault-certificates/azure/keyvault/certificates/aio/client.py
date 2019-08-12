@@ -11,8 +11,17 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy, CertificateOperation, Certificate, DeletedCertificate, \
-    CertificateBase, Contact, Issuer, IssuerBase
+from azure.keyvault.certificates import(
+    AdministratorDetails,
+    CertificatePolicy,
+    CertificateOperation,
+    Certificate,
+    DeletedCertificate,
+    CertificateBase,
+    Contact,
+    Issuer,
+    IssuerBase
+)
 from .._shared import AsyncKeyVaultClientBase
 
 
@@ -29,7 +38,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-    
     @distributed_trace_async
     async def create_certificate(
         self,
@@ -93,7 +101,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def get_certificate(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Certificate:
+    async def get_certificate(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        **kwargs: Mapping[str, Any]
+    ) -> Certificate:
         """Gets information about a certificate.
 
         Gets information about a specific certificate. This operation requires
@@ -221,7 +234,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype ~azure.security.keyvault.certificates._models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
-         
+
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
                 :start-after: [START recover_deleted_certificate]
@@ -230,7 +243,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted certificate
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = await self._client.recover_deleted_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
@@ -310,11 +327,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = await self._client.get_certificate_policy(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = await self._client.get_certificate_policy(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(self, name: str, policy: CertificatePolicy, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
+    async def update_policy(
+        self,
+        name: str,
+        policy: CertificatePolicy,
+        **kwargs: Mapping[str, Any]
+    ) -> CertificatePolicy:
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leaves others as null.
@@ -459,7 +485,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedCertificate]:
+    def list_deleted_certificates(
+        self,
+        include_pending: Optional[bool] = None,
+        **kwargs: Mapping[str, Any]
+    ) -> AsyncIterable[DeletedCertificate]:
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
@@ -495,7 +525,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificates(self, include_pending: Optional[bool] = None, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
+    def list_certificates(
+        self,
+        include_pending: Optional[bool] = None,
+        **kwargs: Mapping[str, Any]
+    ) -> AsyncIterable[CertificateBase]:
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -574,7 +608,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        contacts = await self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
+        contacts = await self._client.set_certificate_contacts(
+            vault_base_url=self.vault_url,
+            contact_list=contacts,
+            **kwargs
+        )
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
@@ -621,7 +659,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
 
-        bundle = await self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = await self._client.get_certificate_operation(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
@@ -639,7 +681,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = await self._client.delete_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = await self._client.delete_certificate_operation(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
@@ -668,7 +714,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def get_pending_certificate_signing_request(
             self,
             name: str,
-            custom_headers: Optional[Dict[str, str]]= None,
+            custom_headers: Optional[Dict[str, str]] = None,
             **kwargs: Mapping[str, Any]) -> str:
         """Gets the Base64 pending certificate signing request (PKCS-10).
         :param name: The name of the certificate
@@ -693,7 +739,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._client._serialize.query("self.api_version", self._client.api_version, 'str')
+        query_parameters['api-version'] = self._client._serialize.query(
+            "self.api_version",
+            self._client.api_version,
+            'str'
+        )
 
         # Construct headers
         header_parameters = {}
@@ -782,7 +832,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        issuer_bundle = await self._client.get_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
+        issuer_bundle = await self._client.get_certificate_issuer(
+            vault_base_url=self.vault_url,
+            issuer_name=name,
+            **kwargs
+        )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
@@ -836,7 +890,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
+            organization_details = self._client.models.OrganizationDetails(
+                id=organization_id,
+                admin_details=admin_details_to_pass
+            )
         else:
             organization_details = None
         if enabled is not None:
@@ -904,7 +961,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             admin_details_to_pass = admin_details
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(id=organization_id, admin_details=admin_details_to_pass)
+            organization_details = self._client.models.OrganizationDetails(
+                id=organization_id,
+                admin_details=admin_details_to_pass
+            )
         else:
             organization_details = None
         if enabled is not None:
@@ -936,7 +996,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        issuer_bundle = await self._client.delete_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
+        issuer_bundle = await self._client.delete_certificate_issuer(
+            vault_base_url=self.vault_url,
+            issuer_name=name,
+            **kwargs
+        )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
