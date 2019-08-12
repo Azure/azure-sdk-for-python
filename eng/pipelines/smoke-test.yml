@@ -12,7 +12,7 @@ jobs:
         displayName: "Install requiriments.txt"
       - scripts: pip install -r .\samples\smoketest\requirements_async.txt
         displayName: "Install requiriments_async.txt"
-      -script: python .\samples\smoketest\program.py
+      - script: python .\samples\smoketest\program.py
         displayName: "Run Smoke Test"
         env:
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
