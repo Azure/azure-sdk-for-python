@@ -17,7 +17,6 @@ from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     try:
-        # pylint:disable=unused-import
         from azure.core.credentials import TokenCredential
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
@@ -69,7 +68,8 @@ class AsyncKeyVaultClientBase:
     ) -> None:
         if not credential:
             raise ValueError(
-                "credential should be an object supporting the TokenCredential protocol, such as a credential from azure-identity"
+                "credential should be an object supporting the TokenCredential protocol, "
+                "such as a credential from azure-identity"
             )
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")

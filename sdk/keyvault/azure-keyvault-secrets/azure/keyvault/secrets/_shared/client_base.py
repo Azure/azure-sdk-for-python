@@ -9,7 +9,6 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .._user_agent import USER_AGENT
@@ -62,7 +61,8 @@ class KeyVaultClientBase(object):
         # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
         if not credential:
             raise ValueError(
-                "credential should be an object supporting the TokenCredential protocol, such as a credential from azure-identity"
+                "credential should be an object supporting the TokenCredential protocol, "
+                "such as a credential from azure-identity"
             )
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
