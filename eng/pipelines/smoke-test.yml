@@ -1,5 +1,5 @@
 variables:
-  TestAsync: true
+  InstallAsyncRequirements: true
 
 jobs:
   - job:
@@ -9,7 +9,7 @@ jobs:
           PythonVersion: '3.7.4'
         Python_27:
           PythonVersion: '2.7'
-          TestAsync: false
+          InstallAsyncRequirements: false
 
     steps:
       - task: UsePythonVersion@0
@@ -22,7 +22,7 @@ jobs:
 
       - script: pip install -r ./samples/smoketest/requirements_async.txt
         displayName: "Install requiriments_async.txt"
-        condition: eq(variables['TestAsync'], true)
+        condition: eq(variables['InstallAsyncRequirements'], true)
 
       - script: python ./samples/smoketest/program.py
         displayName: "Run Smoke Test"
