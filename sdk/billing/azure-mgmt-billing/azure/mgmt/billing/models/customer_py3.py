@@ -26,8 +26,8 @@ class Customer(Resource):
     :vartype type: str
     :param display_name: The name of the customer.
     :type display_name: str
-    :param enabled_azure_sk_us: Information about the product.
-    :type enabled_azure_sk_us: list[~azure.mgmt.billing.models.AzurePlan]
+    :param enabled_azure_plans: Information about the product.
+    :type enabled_azure_plans: list[~azure.mgmt.billing.models.AzurePlan]
     :param resellers: The resellers which are allowed to provide service to
      this customer.
     :type resellers: list[~azure.mgmt.billing.models.Reseller]
@@ -44,12 +44,12 @@ class Customer(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'enabled_azure_sk_us': {'key': 'properties.enabledAzureSKUs', 'type': '[AzurePlan]'},
+        'enabled_azure_plans': {'key': 'properties.enabledAzurePlans', 'type': '[AzurePlan]'},
         'resellers': {'key': 'properties.resellers', 'type': '[Reseller]'},
     }
 
-    def __init__(self, *, display_name: str=None, enabled_azure_sk_us=None, resellers=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, enabled_azure_plans=None, resellers=None, **kwargs) -> None:
         super(Customer, self).__init__(**kwargs)
         self.display_name = display_name
-        self.enabled_azure_sk_us = enabled_azure_sk_us
+        self.enabled_azure_plans = enabled_azure_plans
         self.resellers = resellers
