@@ -1,17 +1,29 @@
+variables:
+  TestAsync: true
+
 jobs:
   - job:
-    variables:
-      python_3_version: "3.7.4"
+    strategy:
+      matrix:
+        Python_374:
+          PythonVersion: '3.7.4'
+        Python_27:
+          PythonVersion: '2.7'
+          TestAsync: false
 
     steps:
       - task: UsePythonVersion@0
-        displayName: "Use Python $(python_3_version)"
+        displayName: "Use Python $(PythonVersion)"
         inputs:
-          versionSpec: $(python_3_version)
+          versionSpec: $(PythonVersion)
+
       - script: pip install -r ./samples/smoketest/requirements.txt
         displayName: "Install requiriments.txt"
+
       - script: pip install -r ./samples/smoketest/requirements_async.txt
         displayName: "Install requiriments_async.txt"
+        condition: eq(variables['TestAsync'], true)
+
       - script: python ./samples/smoketest/program.py
         displayName: "Run Smoke Test"
         env:
@@ -23,5 +35,3 @@ jobs:
           COSMOS_ENDPOINT: $(smoke-tests-cosmos-endpoint)
           COSMOS_KEY: $(smoke-tests-cosmos-key)
           STORAGE_CONNECTION_STRING: $(smoke-tests-storage-connection-string)
-
-        
