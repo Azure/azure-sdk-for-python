@@ -502,6 +502,12 @@ class SapMonitor(Resource):
      'Succeeded', 'Deleting', 'Migrating'
     :vartype provisioning_state: str or
      ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
+    :ivar managed_resource_group_name: The name of the resource group the SAP
+     Monitor resources get deployed into.
+    :vartype managed_resource_group_name: str
+    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
+     Workspace that is used for monitoring
+    :vartype log_analytics_workspace_arm_id: str
     """
 
     _validation = {
@@ -510,6 +516,8 @@ class SapMonitor(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'managed_resource_group_name': {'readonly': True},
+        'log_analytics_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -528,6 +536,8 @@ class SapMonitor(Resource):
         'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
+        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, **kwargs) -> None:
@@ -542,6 +552,8 @@ class SapMonitor(Resource):
         self.hana_db_credentials_msi_id = hana_db_credentials_msi_id
         self.key_vault_id = key_vault_id
         self.provisioning_state = None
+        self.managed_resource_group_name = None
+        self.log_analytics_workspace_arm_id = None
 
 
 class StorageProfile(Model):
