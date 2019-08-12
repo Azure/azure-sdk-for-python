@@ -36,7 +36,7 @@ class EnrollmentAccountsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_billing_account(
             self, billing_account_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists all Enrollment Accounts for a user which he has access to.
 
@@ -61,7 +61,7 @@ class EnrollmentAccountsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
+        url = self.list_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
@@ -102,7 +102,7 @@ class EnrollmentAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts'}
 
     def get_by_enrollment_account_id(
             self, billing_account_name, enrollment_account_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):

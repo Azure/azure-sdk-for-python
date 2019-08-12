@@ -68,6 +68,11 @@ class Product(Resource):
     :ivar billing_profile_display_name: Billing Profile display name to which
      this product belongs.
     :vartype billing_profile_display_name: str
+    :ivar customer_id: Customer id to which this product belongs.
+    :vartype customer_id: str
+    :ivar customer_display_name: Display name of customer to which this
+     product belongs.
+    :vartype customer_display_name: str
     """
 
     _validation = {
@@ -90,6 +95,8 @@ class Product(Resource):
         'invoice_section_display_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'billing_profile_display_name': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'customer_display_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -114,6 +121,8 @@ class Product(Resource):
         'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
+        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -136,3 +145,5 @@ class Product(Resource):
         self.invoice_section_display_name = None
         self.billing_profile_id = None
         self.billing_profile_display_name = None
+        self.customer_id = None
+        self.customer_display_name = None

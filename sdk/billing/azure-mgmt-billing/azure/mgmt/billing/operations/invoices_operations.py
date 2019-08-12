@@ -36,7 +36,7 @@ class InvoicesOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_billing_account(
             self, billing_account_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
         """List of invoices for a billing account.
 
@@ -58,7 +58,7 @@ class InvoicesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
+        url = self.list_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
@@ -97,7 +97,7 @@ class InvoicesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoices'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoices'}
 
     def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):

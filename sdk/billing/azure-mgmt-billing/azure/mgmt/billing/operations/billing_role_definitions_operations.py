@@ -36,7 +36,7 @@ class BillingRoleDefinitionsOperations(object):
 
         self.config = config
 
-    def get_by_billing_account_name(
+    def get_by_billing_account(
             self, billing_account_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
@@ -56,7 +56,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_billing_account_name.metadata['url']
+        url = self.get_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingRoleDefinitionName': self._serialize.url("billing_role_definition_name", billing_role_definition_name, 'str')
@@ -94,9 +94,9 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
+    get_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
 
-    def get_by_invoice_section_name(
+    def get_by_invoice_section(
             self, billing_account_name, billing_profile_name, invoice_section_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
@@ -120,7 +120,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_invoice_section_name.metadata['url']
+        url = self.get_by_invoice_section.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
@@ -160,9 +160,9 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
+    get_by_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
 
-    def get_by_billing_profile_name(
+    def get_by_billing_profile(
             self, billing_account_name, billing_profile_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
@@ -184,7 +184,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_billing_profile_name.metadata['url']
+        url = self.get_by_billing_profile.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
@@ -223,9 +223,9 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
+    get_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleDefinitions/{billingRoleDefinitionName}'}
 
-    def list_by_billing_account_name(
+    def list_by_billing_account(
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for a billing account.
 
@@ -244,7 +244,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
+        url = self.list_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
@@ -281,9 +281,9 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleDefinitions'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingRoleDefinitions'}
 
-    def list_by_invoice_section_name(
+    def list_by_invoice_section(
             self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for an invoice Section.
 
@@ -306,7 +306,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_invoice_section_name.metadata['url']
+        url = self.list_by_invoice_section.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
@@ -345,9 +345,9 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleDefinitions'}
+    list_by_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingRoleDefinitions'}
 
-    def list_by_billing_profile_name(
+    def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for a Billing Profile.
 
@@ -368,7 +368,7 @@ class BillingRoleDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_profile_name.metadata['url']
+        url = self.list_by_billing_profile.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -406,4 +406,4 @@ class BillingRoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleDefinitions'}
+    list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingRoleDefinitions'}

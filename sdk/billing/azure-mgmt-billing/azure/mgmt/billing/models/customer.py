@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class BillingRoleDefinition(Resource):
-    """Result of get role definition for a role.
+class Customer(Resource):
+    """A partner's customer.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,36 +24,32 @@ class BillingRoleDefinition(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar description: The role description
-    :vartype description: str
-    :ivar value: The list of billingPermissions a caller has on a billing
-     account.
-    :vartype value:
-     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
-    :ivar role_name: The name of the role
-    :vartype role_name: str
+    :param display_name: The name of the customer.
+    :type display_name: str
+    :param enabled_azure_sk_us: Information about the product.
+    :type enabled_azure_sk_us: list[~azure.mgmt.billing.models.AzurePlan]
+    :param resellers: The resellers which are allowed to provide service to
+     this customer.
+    :type resellers: list[~azure.mgmt.billing.models.Reseller]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'description': {'readonly': True},
-        'value': {'readonly': True},
-        'role_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'value': {'key': 'properties.permissions.value', 'type': '[BillingPermissionsProperties]'},
-        'role_name': {'key': 'properties.roleName', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'enabled_azure_sk_us': {'key': 'properties.enabledAzureSKUs', 'type': '[AzurePlan]'},
+        'resellers': {'key': 'properties.resellers', 'type': '[Reseller]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(BillingRoleDefinition, self).__init__(**kwargs)
-        self.description = None
-        self.value = None
-        self.role_name = None
+    def __init__(self, **kwargs):
+        super(Customer, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.enabled_azure_sk_us = kwargs.get('enabled_azure_sk_us', None)
+        self.resellers = kwargs.get('resellers', None)

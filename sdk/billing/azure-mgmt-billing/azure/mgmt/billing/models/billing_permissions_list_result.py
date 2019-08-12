@@ -18,7 +18,7 @@ class BillingPermissionsListResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list OF billingPermissions a caller has on a billing
+    :ivar value: The list of billingPermissions a caller has on a billing
      account.
     :vartype value:
      list[~azure.mgmt.billing.models.BillingPermissionsProperties]

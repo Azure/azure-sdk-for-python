@@ -42,6 +42,11 @@ class BillingSubscription(Resource):
     :ivar billing_profile_display_name: Billing Profile display name to which
      this product belongs.
     :vartype billing_profile_display_name: str
+    :ivar customer_id: Customer id to which this product belongs.
+    :vartype customer_id: str
+    :ivar customer_display_name: Display name of customer to which this
+     product belongs.
+    :vartype customer_display_name: str
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
@@ -64,6 +69,8 @@ class BillingSubscription(Resource):
         'month_to_date_charges': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'billing_profile_display_name': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'customer_display_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_display_name': {'readonly': True},
         'sku_description': {'readonly': True},
@@ -80,6 +87,8 @@ class BillingSubscription(Resource):
         'month_to_date_charges': {'key': 'properties.monthToDateCharges', 'type': 'Amount'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
+        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'invoice_section_display_name': {'key': 'properties.invoiceSectionDisplayName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
@@ -95,6 +104,8 @@ class BillingSubscription(Resource):
         self.month_to_date_charges = None
         self.billing_profile_id = None
         self.billing_profile_display_name = None
+        self.customer_id = None
+        self.customer_display_name = None
         self.invoice_section_id = None
         self.invoice_section_display_name = None
         self.sku_id = kwargs.get('sku_id', None)

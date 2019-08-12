@@ -36,7 +36,7 @@ class PaymentMethodsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_billing_account(
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing account Id.
 
@@ -57,7 +57,7 @@ class PaymentMethodsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_account_name.metadata['url']
+                url = self.list_by_billing_account.metadata['url']
                 path_format_arguments = {
                     'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
                 }
@@ -99,9 +99,9 @@ class PaymentMethodsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/paymentMethods'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/paymentMethods'}
 
-    def list_by_billing_profile_name(
+    def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing profile Id.
 
@@ -124,7 +124,7 @@ class PaymentMethodsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_profile_name.metadata['url']
+                url = self.list_by_billing_profile.metadata['url']
                 path_format_arguments = {
                     'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
                     'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -167,4 +167,4 @@ class PaymentMethodsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/paymentMethods'}
+    list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/paymentMethods'}

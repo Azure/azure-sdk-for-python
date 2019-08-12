@@ -38,7 +38,138 @@ class BillingSubscriptionsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_customer(
+            self, billing_account_name, customer_name, custom_headers=None, raw=False, **operation_config):
+        """Lists billing subscription by customer id.
+
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of BillingSubscription
+        :rtype:
+         ~azure.mgmt.billing.models.BillingSubscriptionPaged[~azure.mgmt.billing.models.BillingSubscription]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_customer.metadata['url']
+                path_format_arguments = {
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'customerName': self._serialize.url("customer_name", customer_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.BillingSubscriptionPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.BillingSubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_customer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/billingSubscriptions'}
+
+    def get_by_customer(
+            self, billing_account_name, customer_name, billing_subscription_name, custom_headers=None, raw=False, **operation_config):
+        """Get a single billing subscription by id.
+
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
+        :param billing_subscription_name: Billing Subscription Id.
+        :type billing_subscription_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BillingSubscription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingSubscription or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_by_customer.metadata['url']
+        path_format_arguments = {
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'customerName': self._serialize.url("customer_name", customer_name, 'str'),
+            'billingSubscriptionName': self._serialize.url("billing_subscription_name", billing_subscription_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BillingSubscription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_by_customer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/billingSubscriptions/{billingSubscriptionName}'}
+
+    def list_by_billing_account(
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists billing subscriptions by billing account name.
 
@@ -59,7 +190,7 @@ class BillingSubscriptionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_account_name.metadata['url']
+                url = self.list_by_billing_account.metadata['url']
                 path_format_arguments = {
                     'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
                 }
@@ -101,9 +232,9 @@ class BillingSubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingSubscriptions'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingSubscriptions'}
 
-    def list_by_billing_profile_name(
+    def list_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists billing subscriptions by billing profile name.
 
@@ -124,7 +255,7 @@ class BillingSubscriptionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_profile_name.metadata['url']
+        url = self.list_by_billing_profile.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -162,9 +293,9 @@ class BillingSubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingSubscriptions'}
+    list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/billingSubscriptions'}
 
-    def list_by_invoice_section_name(
+    def list_by_invoice_section(
             self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists billing subscription by invoice section name.
 
@@ -187,7 +318,7 @@ class BillingSubscriptionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_invoice_section_name.metadata['url']
+        url = self.list_by_invoice_section.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
@@ -226,7 +357,7 @@ class BillingSubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingSubscriptions'}
+    list_by_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/billingSubscriptions'}
 
     def get(
             self, billing_account_name, billing_profile_name, invoice_section_name, billing_subscription_name, custom_headers=None, raw=False, **operation_config):

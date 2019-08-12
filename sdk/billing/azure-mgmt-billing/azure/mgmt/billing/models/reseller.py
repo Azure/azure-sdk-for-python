@@ -12,26 +12,29 @@
 from msrest.serialization import Model
 
 
-class BillingPermissionsListResult(Model):
-    """Result of list billingPermissions a caller has on a billing account.
+class Reseller(Model):
+    """Details about a reseller.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of billingPermissions a caller has on a billing
-     account.
-    :vartype value:
-     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
+    :ivar reseller_id: The reseller id.
+    :vartype reseller_id: str
+    :ivar description: A description of the reseller.
+    :vartype description: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'reseller_id': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BillingPermissionsProperties]'},
+        'reseller_id': {'key': 'resellerId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(BillingPermissionsListResult, self).__init__(**kwargs)
-        self.value = None
+    def __init__(self, **kwargs):
+        super(Reseller, self).__init__(**kwargs)
+        self.reseller_id = None
+        self.description = None
