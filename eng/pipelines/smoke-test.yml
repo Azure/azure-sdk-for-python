@@ -8,11 +8,11 @@ jobs:
         displayName: "Use Python $(python_3_version)"
         inputs:
           versionSpec: $(python_3_version)
-      - script: pip install -r .\samples\smoketest\requirements.txt
+      - script: pip install -r ./samples/smoketest/requirements.txt
         displayName: "Install requiriments.txt"
-      - script: pip install -r .\samples\smoketest\requirements_async.txt
+      - script: pip install -r ./samples/smoketest/requirements_async.txt
         displayName: "Install requiriments_async.txt"
-      - script: python .\samples\smoketest\program.py
+      - script: python ./samples/smoketest/program.py
         displayName: "Run Smoke Test"
         env:
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
