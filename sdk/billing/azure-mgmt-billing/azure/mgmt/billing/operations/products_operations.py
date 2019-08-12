@@ -37,13 +37,11 @@ class ProductsOperations(object):
         self.config = config
 
     def list_by_customer(
-            self, billing_account_name, billing_profile_name, customer_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists products by customer id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param customer_name: Customer name.
         :type customer_name: str
         :param filter: May be used to filter by product type. The filter
@@ -66,7 +64,6 @@ class ProductsOperations(object):
         url = self.list_by_customer.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'customerName': self._serialize.url("customer_name", customer_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
