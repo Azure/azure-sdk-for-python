@@ -1,0 +1,30 @@
+jobs:
+  - job:
+      pool:
+        vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
+      
+    variables:
+      python_3_version: "3.7.4"
+
+      steps:
+      - task: UsePythonVersion@0
+      displayName: "Use Python $(python_3_version)"
+        inputs:
+          versionSpec: $(python_3_version)
+      - script: pip install -r .\samples\smoketest\requirements.txt
+        displayName: "Install requiriments.txt"
+      - scripts: pip install -r .\samples\smoketest\requirements_async.txt
+        displayName: "Install requiriments_async.txt"
+      -script: python .\samples\smoketest\program.py
+        displayName: "Run Smoke Test"
+        env:
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_PROJECT_URL: $(smoke-tests-key-vault-project-url)
+          EVENT_HUBS_CONNECTION_STRING: $(smoke-tests-event-hubs-connection-string)
+          COSMOS_ENDPOINT: $(smoke-tests-cosmos-endpoint)
+          COSMOS_KEY: $(smoke-tests-cosmos-key)
+          STORAGE_CONNECTION_STRING: $(smoke-tests-storage-connection-string)
+
+        
