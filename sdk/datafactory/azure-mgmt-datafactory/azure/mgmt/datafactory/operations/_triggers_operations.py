@@ -357,8 +357,6 @@ class TriggersOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('TriggerSubscriptionOperationStatus', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('TriggerSubscriptionOperationStatus', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -522,8 +520,6 @@ class TriggersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TriggerSubscriptionOperationStatus', response)
-        if response.status_code == 202:
             deserialized = self._deserialize('TriggerSubscriptionOperationStatus', response)
 
         if raw:

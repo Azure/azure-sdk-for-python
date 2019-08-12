@@ -74,15 +74,6 @@ class EventSubscriptionStatus(str, Enum):
     unknown = "Unknown"
 
 
-class EventSubscriptionStatusTypes(str, Enum):
-
-    enabled = "Enabled"
-    provisioning = "Provisioning"
-    deprovisioning = "Deprovisioning"
-    disabled = "Disabled"
-    unknown = "Unknown"
-
-
 class RunQueryFilterOperand(str, Enum):
 
     pipeline_name = "PipelineName"
