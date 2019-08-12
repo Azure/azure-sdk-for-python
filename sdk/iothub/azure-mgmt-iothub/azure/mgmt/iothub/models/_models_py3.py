@@ -330,40 +330,6 @@ class EndpointHealthData(Model):
         self.health_status = health_status
 
 
-class EnrichmentProperties(Model):
-    """The properties of an enrichment that your IoT hub applies to messages
-    delivered to endpoints.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param key: Required. The key or name for the enrichment property.
-    :type key: str
-    :param value: Required. The value for the enrichment property.
-    :type value: str
-    :param endpoint_names: Required. The list of endpoints for which the
-     enrichment is applied to the message.
-    :type endpoint_names: list[str]
-    """
-
-    _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
-        'endpoint_names': {'required': True, 'min_items': 1},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'endpoint_names': {'key': 'endpointNames', 'type': '[str]'},
-    }
-
-    def __init__(self, *, key: str, value: str, endpoint_names, **kwargs) -> None:
-        super(EnrichmentProperties, self).__init__(**kwargs)
-        self.key = key
-        self.value = value
-        self.endpoint_names = endpoint_names
-
-
 class ErrorDetails(Model):
     """Error details.
 
@@ -909,9 +875,6 @@ class IotHubProperties(Model):
     :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
-    :param device_streams: The device streams properties of iothub.
-    :type device_streams:
-     ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
@@ -940,12 +903,11 @@ class IotHubProperties(Model):
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
-        'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[IotHubLocationDescription]'},
     }
 
-    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, **kwargs) -> None:
+    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, features=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
@@ -959,25 +921,8 @@ class IotHubProperties(Model):
         self.enable_file_upload_notifications = enable_file_upload_notifications
         self.cloud_to_device = cloud_to_device
         self.comments = comments
-        self.device_streams = device_streams
         self.features = features
         self.locations = None
-
-
-class IotHubPropertiesDeviceStreams(Model):
-    """The device streams properties of iothub.
-
-    :param streaming_endpoints: List of Device Streams Endpoints.
-    :type streaming_endpoints: list[str]
-    """
-
-    _attribute_map = {
-        'streaming_endpoints': {'key': 'streamingEndpoints', 'type': '[str]'},
-    }
-
-    def __init__(self, *, streaming_endpoints=None, **kwargs) -> None:
-        super(IotHubPropertiesDeviceStreams, self).__init__(**kwargs)
-        self.streaming_endpoints = streaming_endpoints
 
 
 class IotHubQuotaMetricInfo(Model):
@@ -1615,25 +1560,19 @@ class RoutingProperties(Model):
      set, the messages which do not meet any of the conditions specified in the
      'routes' section get routed to the built-in eventhub endpoint.
     :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
-    :param enrichments: The list of user-provided enrichments that the IoT hub
-     applies to messages to be delivered to built-in and custom endpoints. See:
-     https://aka.ms/iotmsgenrich
-    :type enrichments: list[~azure.mgmt.iothub.models.EnrichmentProperties]
     """
 
     _attribute_map = {
         'endpoints': {'key': 'endpoints', 'type': 'RoutingEndpoints'},
         'routes': {'key': 'routes', 'type': '[RouteProperties]'},
         'fallback_route': {'key': 'fallbackRoute', 'type': 'FallbackRouteProperties'},
-        'enrichments': {'key': 'enrichments', 'type': '[EnrichmentProperties]'},
     }
 
-    def __init__(self, *, endpoints=None, routes=None, fallback_route=None, enrichments=None, **kwargs) -> None:
+    def __init__(self, *, endpoints=None, routes=None, fallback_route=None, **kwargs) -> None:
         super(RoutingProperties, self).__init__(**kwargs)
         self.endpoints = endpoints
         self.routes = routes
         self.fallback_route = fallback_route
-        self.enrichments = enrichments
 
 
 class RoutingServiceBusQueueEndpointProperties(Model):

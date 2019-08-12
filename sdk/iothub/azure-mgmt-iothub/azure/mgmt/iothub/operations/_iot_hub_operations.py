@@ -26,7 +26,7 @@ class IotHubOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2019-03-22-preview".
+    :ivar api_version: The version of the API. Constant value: "2019-03-22".
     """
 
     models = models
@@ -36,7 +36,7 @@ class IotHubOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-22-preview"
+        self.api_version = "2019-03-22"
 
         self.config = config
 
