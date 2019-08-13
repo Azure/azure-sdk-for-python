@@ -19,7 +19,8 @@ class MatchCondition(Model):
 
     :param match_variable: Required. Request variable to compare with.
      Possible values include: 'RemoteAddr', 'RequestMethod', 'QueryString',
-     'PostArgs', 'RequestUri', 'RequestHeader', 'RequestBody', 'Cookies'
+     'PostArgs', 'RequestUri', 'RequestHeader', 'RequestBody', 'Cookies',
+     'SocketAddr'
     :type match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
     :param selector: Match against a specific key from the QueryString,
      PostArgs, RequestHeader or Cookies variables. Default is null.

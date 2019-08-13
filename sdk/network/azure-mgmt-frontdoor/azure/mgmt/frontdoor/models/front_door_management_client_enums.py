@@ -197,6 +197,7 @@ class MatchVariable(str, Enum):
     request_header = "RequestHeader"
     request_body = "RequestBody"
     cookies = "Cookies"
+    socket_addr = "SocketAddr"
 
 
 class Operator(str, Enum):
