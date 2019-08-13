@@ -44,7 +44,7 @@ def clean_coverage():
             cleanup_folder(coverage_dir)
         else:
             raise
-        
+
 
 def prep_tests(targeted_packages, python_version):
     logging.info("running test setup for {}".format(targeted_packages))
@@ -150,7 +150,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
                 [package_dir],
             )
         ):
-            options_array.append("--suppress-no-test-exit-code")
+            tox_execution_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
         if not os.path.exists(destination_tox_ini):
@@ -171,6 +171,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         run_check_call(tox_execution_array, package_dir)
 
+    # TODO: a bit smarter here
     if not tox_env:
         collect_tox_coverage_files(targeted_packages)
 
@@ -233,9 +234,11 @@ def collect_tox_coverage_files(targeted_packages):
         shutil.move(source, dest)
 
 
-def execute_global_install_and_test(parsed_args, targeted_packages, extended_pytest_args):
+def execute_global_install_and_test(
+    parsed_args, targeted_packages, extended_pytest_args
+):
     if args.mark_arg:
-        extended_pytest_args.extend(["-m", "\"{}\"".format(args.mark_arg)])
+        extended_pytest_args.extend(["-m", '"{}"'.format(args.mark_arg)])
 
     if args.runtype == "setup" or args.runtype == "all":
         prep_tests(targeted_packages, args.python_version)

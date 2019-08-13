@@ -1,7 +1,10 @@
-from __future__ import print_function
+from __future__ import logging.info_function
 from subprocess import check_call
 import argparse
 import os
+import logging
+
+logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -24,6 +27,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
 
     check_call(
         [
@@ -51,13 +55,13 @@ if __name__ == "__main__":
                 check_call(
                     ["pip", "install", os.path.join(args.distribution_directory, wheel)]
                 )
-                print("Installed {w} from wheel directory".format(w=wheel))
+                logging.info("Installed {w} from wheel directory".format(w=wheel))
             # it does't exist, so we need to error out
             else:
-                print("{w} not present in the prebuilt wheels directory. Exiting.")
+                logging.error("{w} not present in the prebuilt wheels directory. Exiting.")
                 exit(1)
         else:
             check_call(
                 ["pip", "install", os.path.join(args.distribution_directory, wheel)]
             )
-            print("Installed {w} from fresh wheel.".format(w=wheel))
+            logging.info("Installed {w} from fresh wheel.".format(w=wheel))
