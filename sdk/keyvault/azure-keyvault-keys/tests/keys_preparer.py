@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import time
 import uuid
 
-from azure_devtools.scenario_tests import create_random_name
+from azure_devtools.scenario_tests import create_random_name, ReplayableTest, RecordingProcessor
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 try:
     from unittest.mock import Mock
@@ -54,7 +56,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         enabled_for_disk_encryption=True,
         enabled_for_template_deployment=True,
         enable_soft_delete=None,
-        name_prefix=create_random_name(prefix='vault', length=12),
+        name_prefix=create_random_name(prefix='vault', length=9),
         location="westus",
         parameter_name="vault_client",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,

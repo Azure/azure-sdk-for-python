@@ -25,6 +25,7 @@ class IntegrationTestBase(unittest.TestCase):
         super(IntegrationTestBase, self).__init__(method_name)
         self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == 'True'
         self.logger = logging.getLogger('azure_devtools.scenario_tests')
+        self.logger.setLevel(logging.DEBUG)
 
     def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
         return create_random_name(prefix=prefix, length=length)
