@@ -1,4 +1,3 @@
-from __future__ import logging.info_function
 from subprocess import check_call
 import argparse
 import os
