@@ -160,8 +160,8 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         # handle empty file
         if not os.path.exists(destination_dev_req):
             logging.info("No dev_requirements present.")
-            with open(destination_dev_req, "w+"):
-                pass
+            with open(destination_dev_req, "w+") as file:
+                file.write("-e ../../../tools/azure-sdk-tools")
 
         if tox_env:
             tox_execution_array.extend(["-e", tox_env])
