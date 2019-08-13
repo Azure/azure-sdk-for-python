@@ -183,16 +183,16 @@ class Cluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar cluster_id:
-    :vartype cluster_id: int
+    :ivar cluster_id: Resource ID.
+    :vartype cluster_id: str
+    :ivar cluster_name: Resource name.
+    :vartype cluster_name: str
+    :ivar cluster_type: Resource type.
+    :vartype cluster_type: str
     :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
      'Cancelled', 'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.vmwarevirtustream.models.ClusterProvisioningState
-    :param cluster_size:
-    :type cluster_size: int
-    :ivar hosts:
-    :vartype hosts: list[str]
     """
 
     _validation = {
@@ -200,41 +200,37 @@ class Cluster(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'cluster_id': {'readonly': True},
+        'cluster_name': {'readonly': True},
+        'cluster_type': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'cluster_size': {'maximum': 16, 'minimum': 3},
-        'hosts': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
+        'cluster_id': {'key': 'properties.id', 'type': 'str'},
+        'cluster_name': {'key': 'properties.name', 'type': 'str'},
+        'cluster_type': {'key': 'properties.type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
     }
 
-    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Cluster, self).__init__(**kwargs)
         self.cluster_id = None
+        self.cluster_name = None
+        self.cluster_type = None
         self.provisioning_state = None
-        self.cluster_size = cluster_size
-        self.hosts = None
 
 
-class ClusterProperties(Model):
-    """ClusterProperties.
+class DefaultClusterProperties(Model):
+    """DefaultClusterProperties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar cluster_id:
     :vartype cluster_id: int
-    :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Cancelled', 'Updating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.vmwarevirtustream.models.ClusterProvisioningState
     :param cluster_size:
     :type cluster_size: int
     :ivar hosts:
@@ -243,22 +239,19 @@ class ClusterProperties(Model):
 
     _validation = {
         'cluster_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'cluster_size': {'maximum': 16, 'minimum': 3},
         'hosts': {'readonly': True},
     }
 
     _attribute_map = {
         'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'cluster_size': {'key': 'clusterSize', 'type': 'int'},
         'hosts': {'key': 'hosts', 'type': '[str]'},
     }
 
     def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
-        super(ClusterProperties, self).__init__(**kwargs)
+        super(DefaultClusterProperties, self).__init__(**kwargs)
         self.cluster_id = None
-        self.provisioning_state = None
         self.cluster_size = cluster_size
         self.hosts = None
 
@@ -496,7 +489,8 @@ class PrivateCloud(TrackedResource):
     :param circuit:
     :type circuit: ~azure.mgmt.vmwarevirtustream.models.Circuit
     :param cluster:
-    :type cluster: ~azure.mgmt.vmwarevirtustream.models.ClusterProperties
+    :type cluster:
+     ~azure.mgmt.vmwarevirtustream.models.DefaultClusterProperties
     :ivar clusters:
     :vartype clusters: list[str]
     :param endpoints:
@@ -542,7 +536,7 @@ class PrivateCloud(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'circuit': {'key': 'properties.circuit', 'type': 'Circuit'},
-        'cluster': {'key': 'properties.cluster', 'type': 'ClusterProperties'},
+        'cluster': {'key': 'properties.cluster', 'type': 'DefaultClusterProperties'},
         'clusters': {'key': 'properties.clusters', 'type': '[str]'},
         'endpoints': {'key': 'properties.endpoints', 'type': 'Endpoints'},
         'internet': {'key': 'properties.internet', 'type': 'str'},

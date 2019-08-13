@@ -28,15 +28,15 @@ class PrivateCloudProvisioningState(str, Enum):
     updating = "Updating"
 
 
+class InternetEnum(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class ClusterProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
     failed = "Failed"
     cancelled = "Cancelled"
     updating = "Updating"
-
-
-class InternetEnum(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"

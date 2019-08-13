@@ -178,8 +178,8 @@ class ClustersOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, private_cloud_name, cluster_name, cluster_size=None, custom_headers=None, raw=False, **operation_config):
-        cluster = models.Cluster(cluster_size=cluster_size)
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        cluster = None
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -230,7 +230,7 @@ class ClustersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, cluster_name, cluster_size=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a cluster in a private cloud.
 
         :param resource_group_name: Name of the resource group within the
@@ -240,8 +240,6 @@ class ClustersOperations(object):
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
-        :param cluster_size:
-        :type cluster_size: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -260,7 +258,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             cluster_name=cluster_name,
-            cluster_size=cluster_size,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -286,8 +283,8 @@ class ClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, private_cloud_name, cluster_name, cluster_size=None, custom_headers=None, raw=False, **operation_config):
-        cluster = models.Cluster(cluster_size=cluster_size)
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        cluster = None
 
         # Construct URL
         url = self.update.metadata['url']
@@ -338,7 +335,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, private_cloud_name, cluster_name, cluster_size=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a cluster in a private cloud.
 
         :param resource_group_name: Name of the resource group within the
@@ -348,8 +345,6 @@ class ClustersOperations(object):
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster in the private cloud
         :type cluster_name: str
-        :param cluster_size:
-        :type cluster_size: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -368,7 +363,6 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             cluster_name=cluster_name,
-            cluster_size=cluster_size,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

@@ -15,7 +15,7 @@ try:
     from ._models_py3 import ApiErrorBase
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
-    from ._models_py3 import ClusterProperties
+    from ._models_py3 import DefaultClusterProperties
     from ._models_py3 import Endpoints
     from ._models_py3 import ExpressRouteAuthorization
     from ._models_py3 import IdentitySource
@@ -30,7 +30,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiErrorBase
     from ._models import Circuit
     from ._models import Cluster
-    from ._models import ClusterProperties
+    from ._models import DefaultClusterProperties
     from ._models import Endpoints
     from ._models import ExpressRouteAuthorization
     from ._models import IdentitySource
@@ -45,8 +45,8 @@ from ._paged_models import PrivateCloudPaged
 from ._azure_vmware_solutionby_virtustream_api_enums import (
     SslEnum,
     PrivateCloudProvisioningState,
-    ClusterProvisioningState,
     InternetEnum,
+    ClusterProvisioningState,
 )
 
 __all__ = [
@@ -55,7 +55,7 @@ __all__ = [
     'ApiErrorBase',
     'Circuit',
     'Cluster',
-    'ClusterProperties',
+    'DefaultClusterProperties',
     'Endpoints',
     'ExpressRouteAuthorization',
     'IdentitySource',
@@ -69,6 +69,6 @@ __all__ = [
     'ClusterPaged',
     'SslEnum',
     'PrivateCloudProvisioningState',
-    'ClusterProvisioningState',
     'InternetEnum',
+    'ClusterProvisioningState',
 ]
