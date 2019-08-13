@@ -21,17 +21,26 @@ class AzureBlobStorageConfiguration(Configuration):
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
+    :param filter: The filter parameter enables the caller to query blobs
+     whose tags match a given expression. The given expression must evaluate to
+     true for a blob to be returned in the results.
+    :type filter: str
+    :param path_rename_mode: Determines the behavior of the rename operation.
+     Possible values include: 'legacy', 'posix'
+    :type path_rename_mode: str or ~blob.models.PathRenameMode
     :ivar version: Specifies the version of the operation to use for this
      request.
     :type version: str
     """
 
-    def __init__(self, credentials, url, **kwargs):
+    def __init__(self, credentials, url, filter, path_rename_mode=None, **kwargs):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        if filter is None:
+            raise ValueError("Parameter 'filter' must not be None.")
 
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
@@ -41,7 +50,9 @@ class AzureBlobStorageConfiguration(Configuration):
 
         self.credentials = credentials
         self.url = url
-        self.version = "2018-03-28"
+        self.filter = filter
+        self.path_rename_mode = path_rename_mode
+        self.version = "2019-02-02"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)

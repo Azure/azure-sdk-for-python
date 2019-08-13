@@ -11,6 +11,7 @@ from msrest import Serializer, Deserializer
 from ._configuration_async import AzureBlobStorageConfiguration
 from .operations_async import ServiceOperations
 from .operations_async import ContainerOperations
+from .operations_async import DirectoryOperations
 from .operations_async import BlobOperations
 from .operations_async import PageBlobOperations
 from .operations_async import AppendBlobOperations
@@ -26,6 +27,8 @@ class AzureBlobStorage(object):
     :vartype service: blob.operations.ServiceOperations
     :ivar container: Container operations
     :vartype container: blob.operations.ContainerOperations
+    :ivar directory: Directory operations
+    :vartype directory: blob.operations.DirectoryOperations
     :ivar blob: Blob operations
     :vartype blob: blob.operations.BlobOperations
     :ivar page_blob: PageBlob operations
@@ -41,23 +44,32 @@ class AzureBlobStorage(object):
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
+    :param filter: The filter parameter enables the caller to query blobs
+     whose tags match a given expression. The given expression must evaluate to
+     true for a blob to be returned in the results.
+    :type filter: str
+    :param path_rename_mode: Determines the behavior of the rename operation.
+     Possible values include: 'legacy', 'posix'
+    :type path_rename_mode: str or ~blob.models.PathRenameMode
     """
 
     def __init__(
-            self, credentials, url, **kwargs):
+            self, credentials, url, filter, path_rename_mode=None, **kwargs):
 
         base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(credentials, url, **kwargs)
+        self._config = AzureBlobStorageConfiguration(credentials, url, filter, path_rename_mode, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-28'
+        self.api_version = '2019-02-02'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.service = ServiceOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.container = ContainerOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.directory = DirectoryOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.blob = BlobOperations(
             self._client, self._config, self._serialize, self._deserialize)

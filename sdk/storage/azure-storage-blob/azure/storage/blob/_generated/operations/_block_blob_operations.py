@@ -34,7 +34,7 @@ class BlockBlobOperations(object):
 
         self._config = config
 
-    def upload(self, body, content_length, timeout=None, metadata=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def upload(self, body, content_length, timeout=None, metadata=None, tags=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, customer_provided_key_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Upload Block Blob operation updates the content of an existing
         block blob. Updating an existing block blob overwrites any existing
         metadata on the blob. Partial updates are not supported with Put Blob;
@@ -61,6 +61,29 @@ class BlockBlobOperations(object):
          C# identifiers. See Naming and Referencing Containers, Blobs, and
          Metadata for more information.
         :type metadata: str
+        :param tags: Optional. A URL encoded query param string which
+         specifies the tags to be created with the Blob object. e.g.
+         TagName1=TagValue1&TagName2=TagValue2. The x-ms-tags header may
+         contain up to 2kb of tags.
+        :type tags: str
+        :param x_ms_encryption_key: Optional. Specifies the encryption key to
+         use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the root account encryption key.  For
+         more information, see Encryption at Rest for Azure Storage Services.
+        :type x_ms_encryption_key: str
+        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
+         encryption key. Must be provided if the x-ms-encryption-key header is
+         provided.
+        :type x_ms_encryption_key_sha256: str
+        :param x_ms_encryption_algorithm: The algorithm used to produce the
+         encryption key hash. Currently, the only accepted value is "AES256".
+         Must be provided if the x-ms-encryption-key header is provided.
+         Possible values include: 'AES256'
+        :type x_ms_encryption_algorithm: str or
+         ~blob.models.EncryptionAlgorithmType
+        :param tier: Optional. Indicates the tier to be set on the blob.
+         Possible values include: 'Hot', 'Cool', 'Archive'
+        :type tier: str or ~blob.models.AccessTierOptional
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -70,6 +93,9 @@ class BlockBlobOperations(object):
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :param customer_provided_key_info: Additional parameters for the
+         operation
+        :type customer_provided_key_info: ~blob.models.CustomerProvidedKeyInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -103,6 +129,9 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_scope = None
+        if customer_provided_key_info is not None:
+            encryption_scope = customer_provided_key_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -127,6 +156,14 @@ class BlockBlobOperations(object):
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if x_ms_encryption_key is not None:
+            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
+        if x_ms_encryption_key_sha256 is not None:
+            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
+        if x_ms_encryption_algorithm is not None:
+            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -136,6 +173,10 @@ class BlockBlobOperations(object):
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+        if tags is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("tags", tags, 'str')
+        if tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -179,16 +220,20 @@ class BlockBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     upload.metadata = {'url': '/{containerName}/{blob}'}
 
-    def stage_block(self, block_id, content_length, body, transactional_content_md5=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def stage_block(self, block_id, content_length, body, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, request_id=None, lease_access_conditions=None, customer_provided_key_info=None, cls=None, **kwargs):
         """The Stage Block operation creates a new block to be committed as part
         of a blob.
 
@@ -204,11 +249,29 @@ class BlockBlobOperations(object):
         :param transactional_content_md5: Specify the transactional md5 for
          the body, to be validated by the service.
         :type transactional_content_md5: bytearray
+        :param transactional_content_crc64: Specify the transactional crc64
+         for the body, to be validated by the service.
+        :type transactional_content_crc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param x_ms_encryption_key: Optional. Specifies the encryption key to
+         use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the root account encryption key.  For
+         more information, see Encryption at Rest for Azure Storage Services.
+        :type x_ms_encryption_key: str
+        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
+         encryption key. Must be provided if the x-ms-encryption-key header is
+         provided.
+        :type x_ms_encryption_key_sha256: str
+        :param x_ms_encryption_algorithm: The algorithm used to produce the
+         encryption key hash. Currently, the only accepted value is "AES256".
+         Must be provided if the x-ms-encryption-key header is provided.
+         Possible values include: 'AES256'
+        :type x_ms_encryption_algorithm: str or
+         ~blob.models.EncryptionAlgorithmType
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -216,6 +279,9 @@ class BlockBlobOperations(object):
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :param customer_provided_key_info: Additional parameters for the
+         operation
+        :type customer_provided_key_info: ~blob.models.CustomerProvidedKeyInfo
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -227,6 +293,9 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_scope = None
+        if customer_provided_key_info is not None:
+            encryption_scope = customer_provided_key_info.encryption_scope
 
         comp = "block"
 
@@ -242,7 +311,15 @@ class BlockBlobOperations(object):
         query_parameters['blockid'] = self._serialize.query("block_id", block_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if x_ms_encryption_key is not None:
+            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
+        if x_ms_encryption_key_sha256 is not None:
+            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
+        if x_ms_encryption_algorithm is not None:
+            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if encryption_scope is not None:
+            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -252,6 +329,8 @@ class BlockBlobOperations(object):
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if transactional_content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        if transactional_content_crc64 is not None:
+            header_parameters['x-ms-content-crc64'] = self._serialize.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -272,16 +351,20 @@ class BlockBlobOperations(object):
         if cls:
             response_headers = {
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     stage_block.metadata = {'url': '/{containerName}/{blob}'}
 
-    def stage_block_from_url(self, block_id, content_length, source_url, source_range=None, source_content_md5=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def stage_block_from_url(self, block_id, content_length, source_url, source_range=None, source_content_md5=None, source_contentcrc64=None, timeout=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, request_id=None, lease_access_conditions=None, customer_provided_key_info=None, source_modified_access_conditions=None, cls=None, **kwargs):
         """The Stage Block operation creates a new block to be committed as part
         of a blob where the contents are read from a URL.
 
@@ -299,11 +382,29 @@ class BlockBlobOperations(object):
         :param source_content_md5: Specify the md5 calculated for the range of
          bytes that must be read from the copy source.
         :type source_content_md5: bytearray
+        :param source_contentcrc64: Specify the crc64 calculated for the range
+         of bytes that must be read from the copy source.
+        :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param x_ms_encryption_key: Optional. Specifies the encryption key to
+         use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the root account encryption key.  For
+         more information, see Encryption at Rest for Azure Storage Services.
+        :type x_ms_encryption_key: str
+        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
+         encryption key. Must be provided if the x-ms-encryption-key header is
+         provided.
+        :type x_ms_encryption_key_sha256: str
+        :param x_ms_encryption_algorithm: The algorithm used to produce the
+         encryption key hash. Currently, the only accepted value is "AES256".
+         Must be provided if the x-ms-encryption-key header is provided.
+         Possible values include: 'AES256'
+        :type x_ms_encryption_algorithm: str or
+         ~blob.models.EncryptionAlgorithmType
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -311,6 +412,13 @@ class BlockBlobOperations(object):
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :param customer_provided_key_info: Additional parameters for the
+         operation
+        :type customer_provided_key_info: ~blob.models.CustomerProvidedKeyInfo
+        :param source_modified_access_conditions: Additional parameters for
+         the operation
+        :type source_modified_access_conditions:
+         ~blob.models.SourceModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -322,6 +430,21 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_scope = None
+        if customer_provided_key_info is not None:
+            encryption_scope = customer_provided_key_info.encryption_scope
+        source_if_modified_since = None
+        if source_modified_access_conditions is not None:
+            source_if_modified_since = source_modified_access_conditions.source_if_modified_since
+        source_if_unmodified_since = None
+        if source_modified_access_conditions is not None:
+            source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        source_if_match = None
+        if source_modified_access_conditions is not None:
+            source_if_match = source_modified_access_conditions.source_if_match
+        source_if_none_match = None
+        if source_modified_access_conditions is not None:
+            source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         comp = "block"
 
@@ -337,7 +460,15 @@ class BlockBlobOperations(object):
         query_parameters['blockid'] = self._serialize.query("block_id", block_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if x_ms_encryption_key is not None:
+            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
+        if x_ms_encryption_key_sha256 is not None:
+            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
+        if x_ms_encryption_algorithm is not None:
+            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if encryption_scope is not None:
+            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -349,11 +480,21 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-source-range'] = self._serialize.header("source_range", source_range, 'str')
         if source_content_md5 is not None:
             header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
+        if source_contentcrc64 is not None:
+            header_parameters['x-ms-source-content-crc64'] = self._serialize.header("source_contentcrc64", source_contentcrc64, 'bytearray')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if source_if_modified_since is not None:
+            header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
+        if source_if_unmodified_since is not None:
+            header_parameters['x-ms-source-if-unmodified-since'] = self._serialize.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+        if source_if_match is not None:
+            header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", source_if_match, 'str')
+        if source_if_none_match is not None:
+            header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", source_if_none_match, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -367,16 +508,20 @@ class BlockBlobOperations(object):
         if cls:
             response_headers = {
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     stage_block_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    def commit_block_list(self, blocks, timeout=None, metadata=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def commit_block_list(self, blocks, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, metadata=None, tags=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, customer_provided_key_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob. In order to be written as part of a
         blob, a block must have been successfully written to the server in a
@@ -394,6 +539,12 @@ class BlockBlobOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param transactional_content_md5: Specify the transactional md5 for
+         the body, to be validated by the service.
+        :type transactional_content_md5: bytearray
+        :param transactional_content_crc64: Specify the transactional crc64
+         for the body, to be validated by the service.
+        :type transactional_content_crc64: bytearray
         :param metadata: Optional. Specifies a user-defined name-value pair
          associated with the blob. If no name-value pairs are specified, the
          operation will copy the metadata from the source blob or file to the
@@ -404,6 +555,29 @@ class BlockBlobOperations(object):
          C# identifiers. See Naming and Referencing Containers, Blobs, and
          Metadata for more information.
         :type metadata: str
+        :param tags: Optional. A URL encoded query param string which
+         specifies the tags to be created with the Blob object. e.g.
+         TagName1=TagValue1&TagName2=TagValue2. The x-ms-tags header may
+         contain up to 2kb of tags.
+        :type tags: str
+        :param x_ms_encryption_key: Optional. Specifies the encryption key to
+         use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the root account encryption key.  For
+         more information, see Encryption at Rest for Azure Storage Services.
+        :type x_ms_encryption_key: str
+        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
+         encryption key. Must be provided if the x-ms-encryption-key header is
+         provided.
+        :type x_ms_encryption_key_sha256: str
+        :param x_ms_encryption_algorithm: The algorithm used to produce the
+         encryption key hash. Currently, the only accepted value is "AES256".
+         Must be provided if the x-ms-encryption-key header is provided.
+         Possible values include: 'AES256'
+        :type x_ms_encryption_algorithm: str or
+         ~blob.models.EncryptionAlgorithmType
+        :param tier: Optional. Indicates the tier to be set on the blob.
+         Possible values include: 'Hot', 'Cool', 'Archive'
+        :type tier: str or ~blob.models.AccessTierOptional
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -413,6 +587,9 @@ class BlockBlobOperations(object):
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :param customer_provided_key_info: Additional parameters for the
+         operation
+        :type customer_provided_key_info: ~blob.models.CustomerProvidedKeyInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -446,6 +623,9 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_scope = None
+        if customer_provided_key_info is not None:
+            encryption_scope = customer_provided_key_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -472,15 +652,31 @@ class BlockBlobOperations(object):
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if x_ms_encryption_key is not None:
+            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
+        if x_ms_encryption_key_sha256 is not None:
+            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
+        if x_ms_encryption_algorithm is not None:
+            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if encryption_scope is not None:
+            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if transactional_content_md5 is not None:
+            header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        if transactional_content_crc64 is not None:
+            header_parameters['x-ms-content-crc64'] = self._serialize.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+        if tags is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("tags", tags, 'str')
+        if tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -524,16 +720,21 @@ class BlockBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     commit_block_list.metadata = {'url': '/{containerName}/{blob}'}
 
-    def get_block_list(self, list_type="committed", snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def get_block_list(self, list_type="committed", snapshot=None, version_id=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -547,6 +748,9 @@ class BlockBlobOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
+        :param version_id: The version ID parameter is an opaque DateTime
+         value that, when present, specifies the blob version to retrieve.
+        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -584,6 +788,8 @@ class BlockBlobOperations(object):
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
+        if version_id is not None:
+            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         query_parameters['blocklisttype'] = self._serialize.query("list_type", list_type, 'BlockListType')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
@@ -591,7 +797,7 @@ class BlockBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -618,6 +824,7 @@ class BlockBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
                 'x-ms-blob-content-length': self._deserialize('long', response.headers.get('x-ms-blob-content-length')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),

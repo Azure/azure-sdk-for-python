@@ -76,7 +76,6 @@ class StorageErrorCode(str, Enum):
     account_being_created = "AccountBeingCreated"
     account_is_disabled = "AccountIsDisabled"
     authentication_failed = "AuthenticationFailed"
-    authorization_failure = "AuthorizationFailure"
     condition_headers_not_supported = "ConditionHeadersNotSupported"
     condition_not_met = "ConditionNotMet"
     empty_metadata_key = "EmptyMetadataKey"
@@ -186,6 +185,33 @@ class GeoReplicationStatusType(str, Enum):
     unavailable = "unavailable"
 
 
+class AccessTierRequired(str, Enum):
+
+    p4 = "P4"
+    p6 = "P6"
+    p10 = "P10"
+    p20 = "P20"
+    p30 = "P30"
+    p40 = "P40"
+    p50 = "P50"
+    hot = "Hot"
+    cool = "Cool"
+    archive = "Archive"
+
+
+class AccessTierOptional(str, Enum):
+
+    hot = "Hot"
+    cool = "Cool"
+    archive = "Archive"
+
+
+class RehydratePriority(str, Enum):
+
+    high = "High"
+    standard = "Standard"
+
+
 class BlockListType(str, Enum):
 
     committed = "committed"
@@ -199,18 +225,30 @@ class DeleteSnapshotsOptionType(str, Enum):
     only = "only"
 
 
+class EncryptionAlgorithmType(str, Enum):
+
+    aes256 = "AES256"
+
+
 class ListBlobsIncludeItem(str, Enum):
 
-    snapshots = "snapshots"
-    metadata = "metadata"
-    uncommittedblobs = "uncommittedblobs"
     copy = "copy"
     deleted = "deleted"
+    metadata = "metadata"
+    snapshots = "snapshots"
+    tags = "tags"
+    uncommittedblobs = "uncommittedblobs"
 
 
 class ListContainersIncludeType(str, Enum):
 
     metadata = "metadata"
+
+
+class PathRenameMode(str, Enum):
+
+    legacy = "legacy"
+    posix = "posix"
 
 
 class SequenceNumberActionType(str, Enum):
@@ -234,3 +272,8 @@ class AccountKind(str, Enum):
     storage = "Storage"
     blob_storage = "BlobStorage"
     storage_v2 = "StorageV2"
+
+
+class SyncCopyStatusType(str, Enum):
+
+    success = "success"

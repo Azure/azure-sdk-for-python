@@ -97,6 +97,7 @@ class ServiceOperations(object):
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -145,7 +146,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -166,6 +167,7 @@ class ServiceOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('StorageServiceProperties', response)
             header_dict = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -218,7 +220,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -239,6 +241,7 @@ class ServiceOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('StorageServiceStats', response)
             header_dict = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -321,7 +324,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -342,6 +345,7 @@ class ServiceOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('ListContainersSegmentResponse', response)
             header_dict = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -352,6 +356,86 @@ class ServiceOperations(object):
 
         return deserialized
     list_containers_segment.metadata = {'url': '/'}
+
+    def get_user_delegation_key(self, key_info, timeout=None, request_id=None, cls=None, **kwargs):
+        """Retrieves a user delgation key for the Blob service. This is only a
+        valid operation when using bearer token authentication.
+
+        :param key_info:
+        :type key_info: ~blob.models.KeyInfo
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: UserDelegationKey or the result of cls(response)
+        :rtype: ~blob.models.UserDelegationKey
+        :raises:
+         :class:`StorageErrorException<blob.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        restype = "service"
+        comp = "userdelegationkey"
+
+        # Construct URL
+        url = self.get_user_delegation_key.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key_info, 'KeyInfo')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('UserDelegationKey', response)
+            header_dict = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
+    get_user_delegation_key.metadata = {'url': '/'}
 
     def get_account_info(self, cls=None, **kwargs):
         """Returns the sku name and account kind .
@@ -396,6 +480,7 @@ class ServiceOperations(object):
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -405,3 +490,98 @@ class ServiceOperations(object):
             }
             return cls(response, None, response_headers)
     get_account_info.metadata = {'url': '/'}
+
+    def filter_blobs(self, marker=None, maxresults=None, timeout=None, request_id=None, cls=None, **kwargs):
+        """The Filter Blobs operation enables callers to list blobs in an account
+        whose tags match a given search expression.
+
+        :param marker: A string value that identifies the portion of the list
+         of containers to be returned with the next listing operation. The
+         operation returns the NextMarker value within the response body if the
+         listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value
+         for the marker parameter in a subsequent call to request the next page
+         of list items. The marker value is opaque to the client.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to
+         return. If the request does not specify maxresults, or specifies a
+         value greater than 5000, the server will return up to 5000 items. Note
+         that if the listing operation crosses a partition boundary, then the
+         service will return a continuation token for retrieving the remainder
+         of the results. For this reason, it is possible that the service will
+         return fewer results than specified by maxresults, or than the default
+         of 5000.
+        :type maxresults: int
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: FilterBlobsResponse or the result of cls(response)
+        :rtype: ~blob.models.FilterBlobsResponse
+        :raises:
+         :class:`StorageErrorException<blob.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "blobs"
+
+        # Construct URL
+        url = self.filter_blobs.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if marker is not None:
+            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
+        if maxresults is not None:
+            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
+        query_parameters['filter'] = self._serialize.query("self._config.filter", self._config.filter, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('FilterBlobsResponse', response)
+            header_dict = {
+                'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
+    filter_blobs.metadata = {'url': '/'}

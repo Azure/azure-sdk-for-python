@@ -19,7 +19,7 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 
 ### Settings
 ``` yaml
-input-file: ./blob-2018-03-28.json
+input-file: ./blob-2019-02-02.json
 output-folder: ../azure/storage/blob/_generated
 namespace: blob
 clear-output-folder: true
@@ -48,12 +48,26 @@ directive:
 ### Add comp=metadata
 ``` yaml
 directive:
-- from: ./blob-2018-03-28.json
+- from: ./blob-2019-02-02.json
   where: $["x-ms-paths"]["/{containerName}?restype=container"]
   transform: >
     $.get.parameters.splice(0, 0, { name: "comp", in: "query", required: false, type: "string", enum: [ "metadata" ] });
-- from: ./blob-2018-03-28.json
+- from: ./blob-2019-02-02.json
   where: $["x-ms-paths"]["/{containerName}/{blob}"]
   transform: >
     $.head.parameters.splice(0, 0, { name: "comp", in: "query", required: false, type: "string", enum: [ "metadata" ] });
+```
+
+### Make AccessTier Unique
+autorest.python complains that the same enum has different values
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters.AccessTierRequired
+  transform: >
+    $["x-ms-enum"].name = "AccessTierRequired";
+- from: swagger-document
+  where: $.parameters.AccessTierOptional
+  transform: >
+    $["x-ms-enum"].name = "AccessTierOptional";
 ```

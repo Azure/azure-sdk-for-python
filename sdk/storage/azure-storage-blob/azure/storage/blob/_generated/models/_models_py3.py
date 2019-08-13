@@ -42,7 +42,8 @@ class AccessPolicy(Model):
 
 
 class AppendPositionAccessConditions(Model):
-    """Additional parameters for append_block operation.
+    """Additional parameters for a set of operations, such as:
+    AppendBlob_append_block, AppendBlob_append_block_from_url.
 
     :param max_size: Optional conditional header. The max length in bytes
      permitted for the append blob. If the Append Block operation would cause
@@ -177,16 +178,21 @@ class BlobItem(Model):
     :type deleted: bool
     :param snapshot: Required.
     :type snapshot: str
+    :param version_id: Required.
+    :type version_id: str
     :param properties: Required.
     :type properties: ~blob.models.BlobProperties
     :param metadata:
-    :type metadata: dict[str, str]
+    :type metadata: ~blob.models.BlobMetadata
+    :param tags:
+    :type tags: ~blob.models.BlobTags
     """
 
     _validation = {
         'name': {'required': True},
         'deleted': {'required': True},
         'snapshot': {'required': True},
+        'version_id': {'required': True},
         'properties': {'required': True},
     }
 
@@ -194,17 +200,42 @@ class BlobItem(Model):
         'name': {'key': 'Name', 'type': 'str'},
         'deleted': {'key': 'Deleted', 'type': 'bool'},
         'snapshot': {'key': 'Snapshot', 'type': 'str'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
         'properties': {'key': 'Properties', 'type': 'BlobProperties'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
+        'tags': {'key': 'Tags', 'type': 'BlobTags'},
     }
 
-    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, metadata=None, **kwargs) -> None:
+    def __init__(self, *, name: str, deleted: bool, snapshot: str, version_id: str, properties, metadata=None, tags=None, **kwargs) -> None:
         super(BlobItem, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
         self.snapshot = snapshot
+        self.version_id = version_id
         self.properties = properties
         self.metadata = metadata
+        self.tags = tags
+
+
+class BlobMetadata(Model):
+    """BlobMetadata.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, str]
+    :param encrypted:
+    :type encrypted: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{str}'},
+        'encrypted': {'key': 'Encrypted', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, encrypted: str=None, **kwargs) -> None:
+        super(BlobMetadata, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.encrypted = encrypted
 
 
 class BlobPrefix(Model):
@@ -297,13 +328,20 @@ class BlobProperties(Model):
     :param archive_status: Possible values include:
      'rehydrate-pending-to-hot', 'rehydrate-pending-to-cool'
     :type archive_status: str or ~blob.models.ArchiveStatus
+    :param customer_provided_key_sha256:
+    :type customer_provided_key_sha256: str
+    :param encryption_scope:
+    :type encryption_scope: str
     :param access_tier_change_time:
     :type access_tier_change_time: datetime
+    :param tag_count: Required. The number of tags corresponding to the blob.
+    :type tag_count: int
     """
 
     _validation = {
         'last_modified': {'required': True},
         'etag': {'required': True},
+        'tag_count': {'required': True},
     }
 
     _attribute_map = {
@@ -336,10 +374,13 @@ class BlobProperties(Model):
         'access_tier': {'key': 'AccessTier', 'type': 'str'},
         'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
         'archive_status': {'key': 'ArchiveStatus', 'type': 'str'},
+        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str'},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
+        'tag_count': {'key': 'TagCount', 'type': 'int'},
     }
 
-    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, access_tier_change_time=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, tag_count: int, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, **kwargs) -> None:
         super(BlobProperties, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -370,7 +411,26 @@ class BlobProperties(Model):
         self.access_tier = access_tier
         self.access_tier_inferred = access_tier_inferred
         self.archive_status = archive_status
+        self.customer_provided_key_sha256 = customer_provided_key_sha256
+        self.encryption_scope = encryption_scope
         self.access_tier_change_time = access_tier_change_time
+        self.tag_count = tag_count
+
+
+class BlobTags(Model):
+    """XML containing key/value pairs representing the tags for the blob.
+
+    :param tag_set:
+    :type tag_set: list[~blob.models.Tag]
+    """
+
+    _attribute_map = {
+        'tag_set': {'key': 'TagSet', 'type': '[Tag]'},
+    }
+
+    def __init__(self, *, tag_set=None, **kwargs) -> None:
+        super(BlobTags, self).__init__(**kwargs)
+        self.tag_set = tag_set
 
 
 class Block(Model):
@@ -611,6 +671,195 @@ class CorsRule(Model):
         self.max_age_in_seconds = max_age_in_seconds
 
 
+class CustomerProvidedKeyInfo(Model):
+    """Additional parameters for a set of operations.
+
+    :param encryption_scope: Optional. Specifies the encryption scope to use
+     to encrypt the data provided in the request. If not specified, encryption
+     is performed with the root account encryption key.  For more information,
+     see Encryption at Rest for Azure Storage Services.
+    :type encryption_scope: str
+    """
+
+    _attribute_map = {
+        'encryption_scope': {'key': '', 'type': 'str'},
+    }
+
+    def __init__(self, *, encryption_scope: str=None, **kwargs) -> None:
+        super(CustomerProvidedKeyInfo, self).__init__(**kwargs)
+        self.encryption_scope = encryption_scope
+
+
+class DataLakeStorageError(Model):
+    """DataLakeStorageError.
+
+    :param error: The service error response object.
+    :type error: ~blob.models.DataLakeStorageErrorError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(DataLakeStorageError, self).__init__(**kwargs)
+        self.error = error
+
+
+class DataLakeStorageErrorException(HttpResponseError):
+    """Server responsed with exception of type: 'DataLakeStorageError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, response, deserialize, *args):
+
+      model_name = 'DataLakeStorageError'
+      self.error = deserialize(model_name, response)
+      if self.error is None:
+          self.error = deserialize.dependencies[model_name]()
+      super(DataLakeStorageErrorException, self).__init__(response=response)
+
+
+class DataLakeStorageErrorError(Model):
+    """The service error response object.
+
+    :param code: The service error code.
+    :type code: str
+    :param message: The service error message.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(DataLakeStorageErrorError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class DirectoryHttpHeaders(Model):
+    """Additional parameters for a set of operations, such as: Directory_create,
+    Directory_rename, Blob_rename.
+
+    :param cache_control: Cache control for given resource
+    :type cache_control: str
+    :param content_type: Content type for given resource
+    :type content_type: str
+    :param content_encoding: Content encoding for given resource
+    :type content_encoding: str
+    :param content_language: Content language for given resource
+    :type content_language: str
+    :param content_disposition: Content disposition for given resource
+    :type content_disposition: str
+    """
+
+    _attribute_map = {
+        'cache_control': {'key': '', 'type': 'str'},
+        'content_type': {'key': '', 'type': 'str'},
+        'content_encoding': {'key': '', 'type': 'str'},
+        'content_language': {'key': '', 'type': 'str'},
+        'content_disposition': {'key': '', 'type': 'str'},
+    }
+
+    def __init__(self, *, cache_control: str=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_disposition: str=None, **kwargs) -> None:
+        super(DirectoryHttpHeaders, self).__init__(**kwargs)
+        self.cache_control = cache_control
+        self.content_type = content_type
+        self.content_encoding = content_encoding
+        self.content_language = content_language
+        self.content_disposition = content_disposition
+
+
+class FilterBlobsItem(Model):
+    """FilterBlobsItem.
+
+    :param name:
+    :type name: str
+    :param container_name:
+    :type container_name: str
+    :param tag_value:
+    :type tag_value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        'tag_value': {'key': 'TagValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, container_name: str=None, tag_value: str=None, **kwargs) -> None:
+        super(FilterBlobsItem, self).__init__(**kwargs)
+        self.name = name
+        self.container_name = container_name
+        self.tag_value = tag_value
+
+
+class FilterBlobsResponse(Model):
+    """An enumeration of blobs which matched the filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_endpoint: Required.
+    :type service_endpoint: str
+    :param filter: Required.
+    :type filter: str
+    :param marker:
+    :type marker: str
+    :param max_results:
+    :type max_results: int
+    :param segment: Required.
+    :type segment: ~blob.models.FilterBlobsSegment
+    :param next_marker: Required.
+    :type next_marker: str
+    """
+
+    _validation = {
+        'service_endpoint': {'required': True},
+        'filter': {'required': True},
+        'segment': {'required': True},
+        'next_marker': {'required': True},
+    }
+
+    _attribute_map = {
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
+        'filter': {'key': 'Filter', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'segment': {'key': 'Segment', 'type': 'FilterBlobsSegment'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+    }
+
+    def __init__(self, *, service_endpoint: str, filter: str, segment, next_marker: str, marker: str=None, max_results: int=None, **kwargs) -> None:
+        super(FilterBlobsResponse, self).__init__(**kwargs)
+        self.service_endpoint = service_endpoint
+        self.filter = filter
+        self.marker = marker
+        self.max_results = max_results
+        self.segment = segment
+        self.next_marker = next_marker
+
+
+class FilterBlobsSegment(Model):
+    """FilterBlobsSegment.
+
+    :param blob_items:
+    :type blob_items: list[~blob.models.FilterBlobsItem]
+    """
+
+    _attribute_map = {
+        'blob_items': {'key': 'BlobItems', 'type': '[FilterBlobsItem]'},
+    }
+
+    def __init__(self, *, blob_items=None, **kwargs) -> None:
+        super(FilterBlobsSegment, self).__init__(**kwargs)
+        self.blob_items = blob_items
+
+
 class GeoReplication(Model):
     """Geo-Replication information for the Secondary Storage Service.
 
@@ -642,6 +891,35 @@ class GeoReplication(Model):
         self.last_sync_time = last_sync_time
 
 
+class KeyInfo(Model):
+    """Key information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. The date-time the key is active in ISO 8601 UTC
+     time
+    :type start: str
+    :param expiry: Required. The date-time the key expires in ISO 8601 UTC
+     time
+    :type expiry: str
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'expiry': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'Start', 'type': 'str'},
+        'expiry': {'key': 'Expiry', 'type': 'str'},
+    }
+
+    def __init__(self, *, start: str, expiry: str, **kwargs) -> None:
+        super(KeyInfo, self).__init__(**kwargs)
+        self.start = start
+        self.expiry = expiry
+
+
 class LeaseAccessConditions(Model):
     """Additional parameters for a set of operations.
 
@@ -668,29 +946,24 @@ class ListBlobsFlatSegmentResponse(Model):
     :type service_endpoint: str
     :param container_name: Required.
     :type container_name: str
-    :param prefix: Required.
+    :param prefix:
     :type prefix: str
-    :param marker: Required.
+    :param marker:
     :type marker: str
-    :param max_results: Required.
+    :param max_results:
     :type max_results: int
-    :param delimiter: Required.
+    :param delimiter:
     :type delimiter: str
     :param segment: Required.
     :type segment: ~blob.models.BlobFlatListSegment
-    :param next_marker: Required.
+    :param next_marker:
     :type next_marker: str
     """
 
     _validation = {
         'service_endpoint': {'required': True},
         'container_name': {'required': True},
-        'prefix': {'required': True},
-        'marker': {'required': True},
-        'max_results': {'required': True},
-        'delimiter': {'required': True},
         'segment': {'required': True},
-        'next_marker': {'required': True},
     }
 
     _attribute_map = {
@@ -704,7 +977,7 @@ class ListBlobsFlatSegmentResponse(Model):
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
-    def __init__(self, *, service_endpoint: str, container_name: str, prefix: str, marker: str, max_results: int, delimiter: str, segment, next_marker: str, **kwargs) -> None:
+    def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
         super(ListBlobsFlatSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
@@ -725,29 +998,24 @@ class ListBlobsHierarchySegmentResponse(Model):
     :type service_endpoint: str
     :param container_name: Required.
     :type container_name: str
-    :param prefix: Required.
+    :param prefix:
     :type prefix: str
-    :param marker: Required.
+    :param marker:
     :type marker: str
-    :param max_results: Required.
+    :param max_results:
     :type max_results: int
-    :param delimiter: Required.
+    :param delimiter:
     :type delimiter: str
     :param segment: Required.
     :type segment: ~blob.models.BlobHierarchyListSegment
-    :param next_marker: Required.
+    :param next_marker:
     :type next_marker: str
     """
 
     _validation = {
         'service_endpoint': {'required': True},
         'container_name': {'required': True},
-        'prefix': {'required': True},
-        'marker': {'required': True},
-        'max_results': {'required': True},
-        'delimiter': {'required': True},
         'segment': {'required': True},
-        'next_marker': {'required': True},
     }
 
     _attribute_map = {
@@ -761,7 +1029,7 @@ class ListBlobsHierarchySegmentResponse(Model):
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
-    def __init__(self, *, service_endpoint: str, container_name: str, prefix: str, marker: str, max_results: int, delimiter: str, segment, next_marker: str, **kwargs) -> None:
+    def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
         super(ListBlobsHierarchySegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
@@ -780,24 +1048,21 @@ class ListContainersSegmentResponse(Model):
 
     :param service_endpoint: Required.
     :type service_endpoint: str
-    :param prefix: Required.
+    :param prefix:
     :type prefix: str
     :param marker:
     :type marker: str
-    :param max_results: Required.
+    :param max_results:
     :type max_results: int
     :param container_items: Required.
     :type container_items: list[~blob.models.ContainerItem]
-    :param next_marker: Required.
+    :param next_marker:
     :type next_marker: str
     """
 
     _validation = {
         'service_endpoint': {'required': True},
-        'prefix': {'required': True},
-        'max_results': {'required': True},
         'container_items': {'required': True},
-        'next_marker': {'required': True},
     }
 
     _attribute_map = {
@@ -809,7 +1074,7 @@ class ListContainersSegmentResponse(Model):
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
-    def __init__(self, *, service_endpoint: str, prefix: str, max_results: int, container_items, next_marker: str, marker: str=None, **kwargs) -> None:
+    def __init__(self, *, service_endpoint: str, container_items, prefix: str=None, marker: str=None, max_results: int=None, next_marker: str=None, **kwargs) -> None:
         super(ListContainersSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.prefix = prefix
@@ -1013,7 +1278,8 @@ class RetentionPolicy(Model):
 
 class SequenceNumberAccessConditions(Model):
     """Additional parameters for a set of operations, such as:
-    PageBlob_upload_pages, PageBlob_clear_pages.
+    PageBlob_upload_pages, PageBlob_clear_pages,
+    PageBlob_upload_pages_from_url.
 
     :param if_sequence_number_less_than_or_equal_to: Specify this header value
      to operate only on a blob if it has a sequence number less than or equal
@@ -1068,7 +1334,7 @@ class SignedIdentifier(Model):
 
 
 class SourceModifiedAccessConditions(Model):
-    """Additional parameters for start_copy_from_url operation.
+    """Additional parameters for a set of operations.
 
     :param source_if_modified_since: Specify this header value to operate only
      on a blob if it has been modified since the specified date/time.
@@ -1219,3 +1485,85 @@ class StorageServiceStats(Model):
     def __init__(self, *, geo_replication=None, **kwargs) -> None:
         super(StorageServiceStats, self).__init__(**kwargs)
         self.geo_replication = geo_replication
+
+
+class Tag(Model):
+    """Represents a single user-provided tag.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The tag name.
+    :type key: str
+    :param value: Required. The tag value.
+    :type value: str
+    """
+
+    _validation = {
+        'key': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
+    }
+
+    def __init__(self, *, key: str, value: str, **kwargs) -> None:
+        super(Tag, self).__init__(**kwargs)
+        self.key = key
+        self.value = value
+
+
+class UserDelegationKey(Model):
+    """A user delegation key.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param signed_oid: Required. The Azure Active Directory object ID in GUID
+     format.
+    :type signed_oid: str
+    :param signed_tid: Required. The Azure Active Directory tenant ID in GUID
+     format
+    :type signed_tid: str
+    :param signed_start: Required. The date-time the key is active
+    :type signed_start: datetime
+    :param signed_expiry: Required. The date-time the key expires
+    :type signed_expiry: datetime
+    :param signed_service: Required. Abbreviation of the Azure Storage service
+     that accepts the key
+    :type signed_service: str
+    :param signed_version: Required. The service version that created the key
+    :type signed_version: str
+    :param value: Required. The key as a base64 string
+    :type value: str
+    """
+
+    _validation = {
+        'signed_oid': {'required': True},
+        'signed_tid': {'required': True},
+        'signed_start': {'required': True},
+        'signed_expiry': {'required': True},
+        'signed_service': {'required': True},
+        'signed_version': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'signed_oid': {'key': 'SignedOid', 'type': 'str'},
+        'signed_tid': {'key': 'SignedTid', 'type': 'str'},
+        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601'},
+        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601'},
+        'signed_service': {'key': 'SignedService', 'type': 'str'},
+        'signed_version': {'key': 'SignedVersion', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
+    }
+
+    def __init__(self, *, signed_oid: str, signed_tid: str, signed_start, signed_expiry, signed_service: str, signed_version: str, value: str, **kwargs) -> None:
+        super(UserDelegationKey, self).__init__(**kwargs)
+        self.signed_oid = signed_oid
+        self.signed_tid = signed_tid
+        self.signed_start = signed_start
+        self.signed_expiry = signed_expiry
+        self.signed_service = signed_service
+        self.signed_version = signed_version
+        self.value = value

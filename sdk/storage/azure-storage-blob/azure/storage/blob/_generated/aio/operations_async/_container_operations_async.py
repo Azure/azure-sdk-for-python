@@ -32,7 +32,7 @@ class ContainerOperations:
 
         self._config = config
 
-    async def create(self, timeout=None, metadata=None, access=None, request_id=None, *, cls=None, **kwargs):
+    async def create(self, timeout=None, metadata=None, access=None, default_encryption_scope=None, deny_encryption_scope_override=None, request_id=None, *, cls=None, **kwargs):
         """creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
@@ -55,6 +55,17 @@ class ContainerOperations:
          publicly and the level of access. Possible values include:
          'container', 'blob'
         :type access: str or ~blob.models.PublicAccessType
+        :param default_encryption_scope: Optional. Specifies the default
+         encryption scope on the container. If not specified, encryption is
+         performed with the root account encryption key.  For more information,
+         see Encryption at Rest for Azure Storage Services.
+        :type default_encryption_scope: str
+        :param deny_encryption_scope_override: Optional. Specifies whether to
+         deny encryption scope override provided in the request or not. If
+         true, reject the request with encryption scope. If false, encryption
+         is performed using encryption scope provided in the request. For more
+         information, see Encryption at Rest for Azure Storage Services.
+        :type deny_encryption_scope_override: bool
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -90,6 +101,10 @@ class ContainerOperations:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if access is not None:
             header_parameters['x-ms-blob-public-access'] = self._serialize.header("access", access, 'str')
+        if default_encryption_scope is not None:
+            header_parameters['x-ms-default-encryption-scope'] = self._serialize.header("default_encryption_scope", default_encryption_scope, 'str')
+        if deny_encryption_scope_override is not None:
+            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("deny_encryption_scope_override", deny_encryption_scope_override, 'bool')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -107,6 +122,7 @@ class ContainerOperations:
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -186,10 +202,13 @@ class ContainerOperations:
                 'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
                 'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
                 'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
+                'x-ms-default-encryption-scope': self._deserialize('str', response.headers.get('x-ms-default-encryption-scope')),
+                'x-ms-deny-encryption-scope-override': self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override')),
                 'x-ms-has-immutability-policy': self._deserialize('bool', response.headers.get('x-ms-has-immutability-policy')),
                 'x-ms-has-legal-hold': self._deserialize('bool', response.headers.get('x-ms-has-legal-hold')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -276,6 +295,7 @@ class ContainerOperations:
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -373,6 +393,7 @@ class ContainerOperations:
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -428,7 +449,7 @@ class ContainerOperations:
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -454,6 +475,7 @@ class ContainerOperations:
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -563,6 +585,7 @@ class ContainerOperations:
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -663,6 +686,7 @@ class ContainerOperations:
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -751,6 +775,7 @@ class ContainerOperations:
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -840,6 +865,7 @@ class ContainerOperations:
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -938,6 +964,7 @@ class ContainerOperations:
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1033,6 +1060,7 @@ class ContainerOperations:
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1112,7 +1140,7 @@ class ContainerOperations:
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1134,6 +1162,7 @@ class ContainerOperations:
             deserialized = self._deserialize('ListBlobsFlatSegmentResponse', response)
             header_dict = {
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1225,7 +1254,7 @@ class ContainerOperations:
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1247,6 +1276,7 @@ class ContainerOperations:
             deserialized = self._deserialize('ListBlobsHierarchySegmentResponse', response)
             header_dict = {
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1302,6 +1332,7 @@ class ContainerOperations:
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
