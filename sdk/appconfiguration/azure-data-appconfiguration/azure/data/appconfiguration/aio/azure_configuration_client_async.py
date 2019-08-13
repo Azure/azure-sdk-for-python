@@ -83,7 +83,7 @@ class AzureAppConfigurationClient():
 
         from azure.data.appconfiguration.aio import AzureAppConfigurationClient
         connection_str = "<my connection string>"
-        async_client = AzureAppConfigurationClient(connection_str)
+        async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
     """
 
     @classmethod
