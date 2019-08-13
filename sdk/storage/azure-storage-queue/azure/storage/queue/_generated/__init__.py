@@ -4,11 +4,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
-from ._configuration import AzureQueueStorageConfiguration
 from ._azure_queue_storage import AzureQueueStorage
-__all__ = ['AzureQueueStorage', 'AzureQueueStorageConfiguration']
+__all__ = ['AzureQueueStorage']
 
 from .version import VERSION
 

@@ -4,13 +4,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureQueueStorageConfiguration
-from azure.core.exceptions import map_error
 from .operations import ServiceOperations
 from .operations import QueueOperations
 from .operations import MessagesOperations
@@ -31,15 +29,19 @@ class AzureQueueStorage(object):
     :ivar message_id: MessageId operations
     :vartype message_id: queue.operations.MessageIdOperations
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param url: The URL of the service account, queue or message that is the
      targe of the desired operation.
     :type url: str
     """
 
-    def __init__(self, url, config=None, **kwargs):
+    def __init__(
+            self, credentials, url, **kwargs):
 
         base_url = '{url}'
-        self._config = config or AzureQueueStorageConfiguration(url, **kwargs)
+        self._config = AzureQueueStorageConfiguration(credentials, url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

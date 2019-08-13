@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from ... import models
@@ -30,9 +30,9 @@ class ShareOperations:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.restype = "share"
 
         self._config = config
-        self.restype = "share"
 
     async def create(self, timeout=None, metadata=None, quota=None, *, cls=None, **kwargs):
         """Creates a new share under the specified account. If the share with the
@@ -71,6 +71,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if quota is not None:
@@ -136,6 +138,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -203,6 +207,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if delete_snapshots is not None:
             header_parameters['x-ms-delete-snapshots'] = self._serialize.header("delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
@@ -263,6 +269,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -325,6 +333,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if quota is not None:
             header_parameters['x-ms-share-quota'] = self._serialize.header("quota", quota, 'int', minimum=1)
@@ -387,6 +397,8 @@ class ShareOperations:
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -448,6 +460,8 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -515,13 +529,13 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct body
-        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifier', 'wrapped': True}}
         if share_acl is not None:
-            body_content = self._serialize.serialize_iter(share_acl, 'SignedIdentifier',
-                                                          serialization_ctxt=serialization_ctxt)
+            body_content = self._serialize.body(share_acl, '[SignedIdentifier]')
         else:
             body_content = None
 
@@ -581,6 +595,8 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request

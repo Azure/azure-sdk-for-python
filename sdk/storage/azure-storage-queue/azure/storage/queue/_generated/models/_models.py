@@ -4,7 +4,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from msrest.serialization import Model
 from azure.core import HttpResponseError
@@ -30,11 +29,9 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
-        'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
-    }
-    _xml_map = {
+        'start': {'key': 'Start', 'type': 'iso-8601'},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
+        'permission': {'key': 'Permission', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -84,13 +81,11 @@ class CorsRule(Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str', 'xml': {'name': 'AllowedOrigins'}},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str', 'xml': {'name': 'AllowedMethods'}},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str', 'xml': {'name': 'AllowedHeaders'}},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str', 'xml': {'name': 'ExposedHeaders'}},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int', 'xml': {'name': 'MaxAgeInSeconds'}},
-    }
-    _xml_map = {
+        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -141,17 +136,13 @@ class DequeuedMessageItem(Model):
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str', 'xml': {'name': 'MessageId'}},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123', 'xml': {'name': 'InsertionTime'}},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123', 'xml': {'name': 'ExpirationTime'}},
-        'pop_receipt': {'key': 'PopReceipt', 'type': 'str', 'xml': {'name': 'PopReceipt'}},
-        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123', 'xml': {'name': 'TimeNextVisible'}},
-        'dequeue_count': {'key': 'DequeueCount', 'type': 'long', 'xml': {'name': 'DequeueCount'}},
-        'message_text': {'key': 'MessageText', 'type': 'str', 'xml': {'name': 'MessageText'}},
-    }
-
-    _xml_map = {
-        'name': 'QueueMessage'
+        'message_id': {'key': 'MessageId', 'type': 'str'},
+        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
+        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
+        'pop_receipt': {'key': 'PopReceipt', 'type': 'str'},
+        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123'},
+        'dequeue_count': {'key': 'DequeueCount', 'type': 'long'},
+        'message_text': {'key': 'MessageText', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -197,15 +188,11 @@ class EnqueuedMessage(Model):
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str', 'xml': {'name': 'MessageId'}},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123', 'xml': {'name': 'InsertionTime'}},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123', 'xml': {'name': 'ExpirationTime'}},
-        'pop_receipt': {'key': 'PopReceipt', 'type': 'str', 'xml': {'name': 'PopReceipt'}},
-        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123', 'xml': {'name': 'TimeNextVisible'}},
-    }
-
-    _xml_map = {
-        'name': 'QueueMessage'
+        'message_id': {'key': 'MessageId', 'type': 'str'},
+        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
+        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
+        'pop_receipt': {'key': 'PopReceipt', 'type': 'str'},
+        'time_next_visible': {'key': 'TimeNextVisible', 'type': 'rfc-1123'},
     }
 
     def __init__(self, **kwargs):
@@ -238,10 +225,8 @@ class GeoReplication(Model):
     }
 
     _attribute_map = {
-        'status': {'key': 'Status', 'type': 'str', 'xml': {'name': 'Status'}},
-        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123', 'xml': {'name': 'LastSyncTime'}},
-    }
-    _xml_map = {
+        'status': {'key': 'Status', 'type': 'str'},
+        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123'},
     }
 
     def __init__(self, **kwargs):
@@ -277,12 +262,12 @@ class ListQueuesSegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
-        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
-        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'queue_items': {'key': 'QueueItems', 'type': '[QueueItem]', 'xml': {'name': 'Queues', 'itemsName': 'Queues', 'wrapped': True}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'queue_items': {'key': 'QueueItems', 'type': '[QueueItem]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -324,13 +309,11 @@ class Logging(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
-        'delete': {'key': 'Delete', 'type': 'bool', 'xml': {'name': 'Delete'}},
-        'read': {'key': 'Read', 'type': 'bool', 'xml': {'name': 'Read'}},
-        'write': {'key': 'Write', 'type': 'bool', 'xml': {'name': 'Write'}},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
-    }
-    _xml_map = {
+        'version': {'key': 'Version', 'type': 'str'},
+        'delete': {'key': 'Delete', 'type': 'bool'},
+        'read': {'key': 'Read', 'type': 'bool'},
+        'write': {'key': 'Write', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -352,9 +335,9 @@ class Metrics(Model):
     :param enabled: Required. Indicates whether metrics are enabled for the
      Queue service.
     :type enabled: bool
-    :param include_ap_is: Indicates whether metrics should generate summary
+    :param include_apis: Indicates whether metrics should generate summary
      statistics for called API operations.
-    :type include_ap_is: bool
+    :type include_apis: bool
     :param retention_policy:
     :type retention_policy: ~queue.models.RetentionPolicy
     """
@@ -364,19 +347,17 @@ class Metrics(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
-        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
-    }
-    _xml_map = {
+        'version': {'key': 'Version', 'type': 'str'},
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
         super(Metrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', None)
         self.enabled = kwargs.get('enabled', None)
-        self.include_ap_is = kwargs.get('include_ap_is', None)
+        self.include_apis = kwargs.get('include_apis', None)
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
@@ -410,15 +391,11 @@ class PeekedMessageItem(Model):
     }
 
     _attribute_map = {
-        'message_id': {'key': 'MessageId', 'type': 'str', 'xml': {'name': 'MessageId'}},
-        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123', 'xml': {'name': 'InsertionTime'}},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123', 'xml': {'name': 'ExpirationTime'}},
-        'dequeue_count': {'key': 'DequeueCount', 'type': 'long', 'xml': {'name': 'DequeueCount'}},
-        'message_text': {'key': 'MessageText', 'type': 'str', 'xml': {'name': 'MessageText'}},
-    }
-
-    _xml_map = {
-        'name': 'QueueMessage'
+        'message_id': {'key': 'MessageId', 'type': 'str'},
+        'insertion_time': {'key': 'InsertionTime', 'type': 'rfc-1123'},
+        'expiration_time': {'key': 'ExpirationTime', 'type': 'rfc-1123'},
+        'dequeue_count': {'key': 'DequeueCount', 'type': 'long'},
+        'message_text': {'key': 'MessageText', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -446,8 +423,8 @@ class QueueItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
-        'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
+        'name': {'key': 'Name', 'type': 'str'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -470,11 +447,7 @@ class QueueMessage(Model):
     }
 
     _attribute_map = {
-        'message_text': {'key': 'MessageText', 'type': 'str', 'xml': {'name': 'MessageText'}},
-    }
-
-    _xml_map = {
-        'name': 'QueueMessage'
+        'message_text': {'key': 'MessageText', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -502,10 +475,8 @@ class RetentionPolicy(Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
-        'days': {'key': 'Days', 'type': 'int', 'xml': {'name': 'Days'}},
-    }
-    _xml_map = {
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'days': {'key': 'Days', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -531,10 +502,8 @@ class SignedIdentifier(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str', 'xml': {'name': 'Id'}},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy', 'xml': {'name': 'AccessPolicy'}},
-    }
-    _xml_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -551,9 +520,7 @@ class StorageError(Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
-    }
-    _xml_map = {
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -593,12 +560,10 @@ class StorageServiceProperties(Model):
     """
 
     _attribute_map = {
-        'logging': {'key': 'Logging', 'type': 'Logging', 'xml': {'name': 'Logging'}},
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
-    }
-    _xml_map = {
+        'logging': {'key': 'Logging', 'type': 'Logging'},
+        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
+        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]'},
     }
 
     def __init__(self, **kwargs):
@@ -618,9 +583,7 @@ class StorageServiceStats(Model):
     """
 
     _attribute_map = {
-        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication', 'xml': {'name': 'GeoReplication'}},
-    }
-    _xml_map = {
+        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
 
     def __init__(self, **kwargs):

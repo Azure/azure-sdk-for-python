@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -30,9 +30,9 @@ class MessagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.peekonly = "true"
 
         self._config = config
-        self.peekonly = "true"
 
     def dequeue(self, number_of_messages=None, visibilitytimeout=None, timeout=None, request_id=None, cls=None, **kwargs):
         """The Dequeue operation retrieves one or more messages from the front of
@@ -87,6 +87,8 @@ class MessagesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -151,6 +153,8 @@ class MessagesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -235,6 +239,8 @@ class MessagesOperations(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -313,6 +319,8 @@ class MessagesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')

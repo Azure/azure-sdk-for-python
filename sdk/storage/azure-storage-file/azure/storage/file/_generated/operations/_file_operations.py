@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -31,10 +31,10 @@ class FileOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-
-        self._config = config
         self.x_ms_type = "file"
         self.x_ms_copy_action = "abort"
+
+        self._config = config
 
     def create(self, file_content_length, timeout=None, metadata=None, file_http_headers=None, cls=None, **kwargs):
         """Creates a new file or replaces a file. Note it only initializes the
@@ -94,6 +94,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         header_parameters['x-ms-content-length'] = self._serialize.header("file_content_length", file_content_length, 'long')
         header_parameters['x-ms-type'] = self._serialize.header("self.x_ms_type", self.x_ms_type, 'str')
@@ -173,6 +175,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
@@ -204,18 +208,18 @@ class FileOperations(object):
                 'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
                 'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
                 'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
                 'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
                 'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
                 'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
                 'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
                 'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
-                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
-                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
-                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
-                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
-                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-content-md5')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
         if response.status_code == 206:
@@ -232,18 +236,18 @@ class FileOperations(object):
                 'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
                 'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
                 'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
                 'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
                 'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
                 'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
                 'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
                 'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
-                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
-                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
-                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
-                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
-                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-content-md5')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
 
@@ -289,6 +293,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -358,6 +364,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -437,6 +445,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if file_content_length is not None:
             header_parameters['x-ms-content-length'] = self._serialize.header("file_content_length", file_content_length, 'long')
@@ -511,6 +521,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -600,6 +612,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/octet-stream'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-write'] = self._serialize.header("file_range_write", file_range_write, 'FileRangeWriteType')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
@@ -674,6 +688,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
@@ -750,6 +766,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
@@ -816,6 +834,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-copy-action'] = self._serialize.header("self.x_ms_copy_action", self.x_ms_copy_action, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
@@ -892,6 +912,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -971,6 +993,8 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-handle-id'] = self._serialize.header("handle_id", handle_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 

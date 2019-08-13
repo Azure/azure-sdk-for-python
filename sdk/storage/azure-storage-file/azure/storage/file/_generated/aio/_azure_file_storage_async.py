@@ -4,13 +4,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core import AsyncPipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration_async import AzureFileStorageConfiguration
-from azure.core.exceptions import map_error
 from .operations_async import ServiceOperations
 from .operations_async import ShareOperations
 from .operations_async import DirectoryOperations
@@ -23,14 +21,17 @@ class AzureFileStorage(object):
 
 
     :ivar service: Service operations
-    :vartype service: file.aio.operations_async.ServiceOperations
+    :vartype service: file.operations.ServiceOperations
     :ivar share: Share operations
-    :vartype share: file.aio.operations_async.ShareOperations
+    :vartype share: file.operations.ShareOperations
     :ivar directory: Directory operations
-    :vartype directory: file.aio.operations_async.DirectoryOperations
+    :vartype directory: file.operations.DirectoryOperations
     :ivar file: File operations
-    :vartype file: file.aio.operations_async.FileOperations
+    :vartype file: file.operations.FileOperations
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param version: Specifies the version of the operation to use for this
      request.
     :type version: str
@@ -40,10 +41,10 @@ class AzureFileStorage(object):
     """
 
     def __init__(
-            self, version, url, config=None, **kwargs):
+            self, credentials, version, url, **kwargs):
 
         base_url = '{url}'
-        self._config = config or AzureFileStorageConfiguration(version, url, **kwargs)
+        self._config = AzureFileStorageConfiguration(credentials, version, url, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

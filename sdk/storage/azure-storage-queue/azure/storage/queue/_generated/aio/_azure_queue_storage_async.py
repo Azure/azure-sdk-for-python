@@ -4,13 +4,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core import AsyncPipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration_async import AzureQueueStorageConfiguration
-from azure.core.exceptions import map_error
 from .operations_async import ServiceOperations
 from .operations_async import QueueOperations
 from .operations_async import MessagesOperations
@@ -23,24 +21,27 @@ class AzureQueueStorage(object):
 
 
     :ivar service: Service operations
-    :vartype service: queue.aio.operations_async.ServiceOperations
+    :vartype service: queue.operations.ServiceOperations
     :ivar queue: Queue operations
-    :vartype queue: queue.aio.operations_async.QueueOperations
+    :vartype queue: queue.operations.QueueOperations
     :ivar messages: Messages operations
-    :vartype messages: queue.aio.operations_async.MessagesOperations
+    :vartype messages: queue.operations.MessagesOperations
     :ivar message_id: MessageId operations
-    :vartype message_id: queue.aio.operations_async.MessageIdOperations
+    :vartype message_id: queue.operations.MessageIdOperations
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param url: The URL of the service account, queue or message that is the
      targe of the desired operation.
     :type url: str
     """
 
     def __init__(
-            self, url, config=None, **kwargs):
+            self, credentials, url, **kwargs):
 
         base_url = '{url}'
-        self._config = config or AzureQueueStorageConfiguration(url, **kwargs)
+        self._config = AzureQueueStorageConfiguration(credentials, url, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -30,9 +30,9 @@ class ServiceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.restype = "service"
 
         self._config = config
-        self.restype = "service"
 
     def set_properties(self, storage_service_properties, timeout=None, cls=None, **kwargs):
         """Sets properties for a storage account's File service endpoint,
@@ -74,6 +74,8 @@ class ServiceOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct body
@@ -134,6 +136,8 @@ class ServiceOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -221,6 +225,8 @@ class ServiceOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request

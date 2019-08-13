@@ -4,7 +4,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from msrest.serialization import Model
 from azure.core import HttpResponseError
@@ -22,13 +21,10 @@ class AccessPolicy(Model):
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
-        'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
+        'start': {'key': 'Start', 'type': 'iso-8601'},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
+        'permission': {'key': 'Permission', 'type': 'str'},
     }
-    _xml_map = {
-    }
-
 
     def __init__(self, **kwargs):
         super(AccessPolicy, self).__init__(**kwargs)
@@ -77,13 +73,11 @@ class CorsRule(Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str', 'xml': {'name': 'AllowedOrigins'}},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str', 'xml': {'name': 'AllowedMethods'}},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str', 'xml': {'name': 'AllowedHeaders'}},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str', 'xml': {'name': 'ExposedHeaders'}},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int', 'xml': {'name': 'MaxAgeInSeconds'}},
-    }
-    _xml_map = {
+        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -109,9 +103,7 @@ class DirectoryItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
-    }
-    _xml_map = {
+        'name': {'key': 'Name', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -143,14 +135,12 @@ class FileHTTPHeaders(Model):
     """
 
     _attribute_map = {
-        'file_cache_control': {'key': '', 'type': 'str', 'xml': {'name': 'file_cache_control'}},
-        'file_content_type': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_type'}},
-        'file_content_md5': {'key': '', 'type': 'bytearray', 'xml': {'name': 'file_content_md5'}},
-        'file_content_encoding': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_encoding'}},
-        'file_content_language': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_language'}},
-        'file_content_disposition': {'key': '', 'type': 'str', 'xml': {'name': 'file_content_disposition'}},
-    }
-    _xml_map = {
+        'file_content_type': {'key': '', 'type': 'str'},
+        'file_content_encoding': {'key': '', 'type': 'str'},
+        'file_content_language': {'key': '', 'type': 'str'},
+        'file_cache_control': {'key': '', 'type': 'str'},
+        'file_content_md5': {'key': '', 'type': 'bytearray'},
+        'file_content_disposition': {'key': '', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -180,11 +170,8 @@ class FileItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
-        'properties': {'key': 'Properties', 'type': 'FileProperty', 'xml': {'name': 'Properties'}},
-    }
-    _xml_map = {
-        'name': 'File'
+        'name': {'key': 'Name', 'type': 'str'},
+        'properties': {'key': 'Properties', 'type': 'FileProperty'},
     }
 
     def __init__(self, **kwargs):
@@ -211,10 +198,7 @@ class FileProperty(Model):
     }
 
     _attribute_map = {
-        'content_length': {'key': 'Content-Length', 'type': 'long', 'xml': {'name': 'Content-Length'}},
-    }
-    _xml_map = {
-        'name': 'Properties'
+        'content_length': {'key': 'Content-Length', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -239,11 +223,8 @@ class FilesAndDirectoriesListSegment(Model):
     }
 
     _attribute_map = {
-        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]', 'xml': {'name': 'Directory', 'itemsName': 'Directory'}},
-        'file_items': {'key': 'FileItems', 'type': '[FileItem]', 'xml': {'name': 'File', 'itemsName': 'File'}},
-    }
-    _xml_map = {
-        'name': 'Entries'
+        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]'},
+        'file_items': {'key': 'FileItems', 'type': '[FileItem]'},
     }
 
     def __init__(self, **kwargs):
@@ -290,17 +271,14 @@ class HandleItem(Model):
     }
 
     _attribute_map = {
-        'handle_id': {'key': 'HandleId', 'type': 'str', 'xml': {'name': 'HandleId'}},
-        'path': {'key': 'Path', 'type': 'str', 'xml': {'name': 'Path'}},
-        'file_id': {'key': 'FileId', 'type': 'str', 'xml': {'name': 'FileId'}},
-        'parent_id': {'key': 'ParentId', 'type': 'str', 'xml': {'name': 'ParentId'}},
-        'session_id': {'key': 'SessionId', 'type': 'str', 'xml': {'name': 'SessionId'}},
-        'client_ip': {'key': 'ClientIp', 'type': 'str', 'xml': {'name': 'ClientIp'}},
-        'open_time': {'key': 'OpenTime', 'type': 'rfc-1123', 'xml': {'name': 'OpenTime'}},
-        'last_reconnect_time': {'key': 'LastReconnectTime', 'type': 'rfc-1123', 'xml': {'name': 'LastReconnectTime'}},
-    }
-    _xml_map = {
-        'name': 'Handle'
+        'handle_id': {'key': 'HandleId', 'type': 'str'},
+        'path': {'key': 'Path', 'type': 'str'},
+        'file_id': {'key': 'FileId', 'type': 'str'},
+        'parent_id': {'key': 'ParentId', 'type': 'str'},
+        'session_id': {'key': 'SessionId', 'type': 'str'},
+        'client_ip': {'key': 'ClientIp', 'type': 'str'},
+        'open_time': {'key': 'OpenTime', 'type': 'rfc-1123'},
+        'last_reconnect_time': {'key': 'LastReconnectTime', 'type': 'rfc-1123'},
     }
 
     def __init__(self, **kwargs):
@@ -350,18 +328,15 @@ class ListFilesAndDirectoriesSegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
-        'share_name': {'key': 'ShareName', 'type': 'str', 'xml': {'name': 'ShareName', 'attr': True}},
-        'share_snapshot': {'key': 'ShareSnapshot', 'type': 'str', 'xml': {'name': 'ShareSnapshot'}},
-        'directory_path': {'key': 'DirectoryPath', 'type': 'str', 'xml': {'name': 'DirectoryPath'}},
-        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
-        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
-        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment', 'xml': {'name': 'Segment'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
-    }
-    _xml_map = {
-        'name': 'EnumerationResults'
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
+        'share_name': {'key': 'ShareName', 'type': 'str'},
+        'share_snapshot': {'key': 'ShareSnapshot', 'type': 'str'},
+        'directory_path': {'key': 'DirectoryPath', 'type': 'str'},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -393,11 +368,8 @@ class ListHandlesResponse(Model):
     }
 
     _attribute_map = {
-        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'Entries', 'itemsName': 'Entries', 'wrapped': True}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
-    }
-    _xml_map = {
-        'name': 'EnumerationResults'
+        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -431,15 +403,12 @@ class ListSharesResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
-        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
-        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'share_items': {'key': 'ShareItems', 'type': '[ShareItem]', 'xml': {'name': 'Shares', 'itemsName': 'Shares', 'wrapped': True}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
-    }
-    _xml_map = {
-        'name': 'EnumerationResults'
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
+        'prefix': {'key': 'Prefix', 'type': 'str'},
+        'marker': {'key': 'Marker', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'int'},
+        'share_items': {'key': 'ShareItems', 'type': '[ShareItem]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -475,12 +444,10 @@ class Metrics(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
-        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
-    }
-    _xml_map = {
+        'version': {'key': 'Version', 'type': 'str'},
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -508,11 +475,8 @@ class Range(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
-    }
-    _xml_map = {
-        'name': 'Range'
+        'start': {'key': 'Start', 'type': 'long'},
+        'end': {'key': 'End', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -542,10 +506,8 @@ class RetentionPolicy(Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
-        'days': {'key': 'Days', 'type': 'int', 'xml': {'name': 'Days'}},
-    }
-    _xml_map = {
+        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        'days': {'key': 'Days', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -575,13 +537,10 @@ class ShareItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
-        'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
-        'properties': {'key': 'Properties', 'type': 'ShareProperties', 'xml': {'name': 'Properties'}},
-        'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
-    }
-    _xml_map = {
-        'name': 'Share'
+        'name': {'key': 'Name', 'type': 'str'},
+        'snapshot': {'key': 'Snapshot', 'type': 'str'},
+        'properties': {'key': 'Properties', 'type': 'ShareProperties'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -612,12 +571,9 @@ class ShareProperties(Model):
     }
 
     _attribute_map = {
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123', 'xml': {'name': 'Last-Modified'}},
-        'etag': {'key': 'Etag', 'type': 'str', 'xml': {'name': 'Etag'}},
-        'quota': {'key': 'Quota', 'type': 'int', 'xml': {'name': 'Quota'}},
-    }
-    _xml_map = {
-        'name': 'Properties'
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
+        'quota': {'key': 'Quota', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -643,10 +599,7 @@ class ShareStats(Model):
     }
 
     _attribute_map = {
-        'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int', 'xml': {'name': 'ShareUsageBytes'}},
-    }
-    _xml_map = {
-        'name': 'ShareStats'
+        'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -670,10 +623,8 @@ class SignedIdentifier(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str', 'xml': {'name': 'Id'}},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy', 'xml': {'name': 'AccessPolicy'}},
-    }
-    _xml_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -690,9 +641,7 @@ class StorageError(Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
-    }
-    _xml_map = {
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -730,11 +679,9 @@ class StorageServiceProperties(Model):
     """
 
     _attribute_map = {
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
-    }
-    _xml_map = {
+        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
+        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]'},
     }
 
     def __init__(self, **kwargs):

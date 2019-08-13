@@ -4,7 +4,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 try:
     from ._models_py3 import AccessPolicy
@@ -41,9 +40,9 @@ except (SyntaxError, ImportError):
     from ._models import StorageServiceProperties
     from ._models import StorageServiceStats
 from ._azure_queue_storage_enums import (
+    StorageErrorCode,
     GeoReplicationStatusType,
     ListQueuesIncludeType,
-    StorageErrorCode,
 )
 
 __all__ = [

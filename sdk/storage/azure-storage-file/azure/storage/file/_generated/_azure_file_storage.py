@@ -4,13 +4,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureFileStorageConfiguration
-from azure.core.exceptions import map_error
 from .operations import ServiceOperations
 from .operations import ShareOperations
 from .operations import DirectoryOperations
@@ -31,6 +29,9 @@ class AzureFileStorage(object):
     :ivar file: File operations
     :vartype file: file.operations.FileOperations
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param version: Specifies the version of the operation to use for this
      request.
     :type version: str
@@ -39,10 +40,11 @@ class AzureFileStorage(object):
     :type url: str
     """
 
-    def __init__(self, version, url, config=None, **kwargs):
+    def __init__(
+            self, credentials, version, url, **kwargs):
 
         base_url = '{url}'
-        self._config = config or AzureFileStorageConfiguration(version, url, **kwargs)
+        self._config = AzureFileStorageConfiguration(credentials, version, url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

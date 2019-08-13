@@ -4,9 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
-
-from azure.core.configuration import Configuration, ConnectionConfiguration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .version import VERSION
@@ -17,6 +15,9 @@ class AzureFileStorageConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param version: Specifies the version of the operation to use for this
      request.
     :type version: str
@@ -25,8 +26,10 @@ class AzureFileStorageConfiguration(Configuration):
     :type url: str
     """
 
-    def __init__(self, version, url, **kwargs):
+    def __init__(self, credentials, version, url, **kwargs):
 
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
         if version is None:
             raise ValueError("Parameter 'version' must not be None.")
         if url is None:
@@ -35,19 +38,18 @@ class AzureFileStorageConfiguration(Configuration):
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
 
-        self.user_agent_policy.add_user_agent('azurefilestorage/{}'.format(VERSION))
+        self.user_agent_policy.add_user_agent('azsdk-python-azurefilestorage/{}'.format(VERSION))
         self.generate_client_request_id = True
-        self.accept_language = None
 
+        self.credentials = credentials
         self.version = version
         self.url = url
 
     def _configure(self, **kwargs):
-        self.connection = ConnectionConfiguration(**kwargs)
-        self.user_agent_policy = policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = policies.ProxyPolicy(**kwargs)
-        self.logging_policy = policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.retry_policy = policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = policies.RedirectPolicy(**kwargs)
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)

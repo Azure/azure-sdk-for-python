@@ -4,8 +4,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from ._azure_file_storage_async import AzureFileStorage
-from ._configuration_async import AzureFileStorageConfiguration
-__all__ = ['AzureFileStorage', 'AzureFileStorageConfiguration']
+__all__ = ['AzureFileStorage']

@@ -488,15 +488,6 @@
         "description": "returns all user-defined metadata and system properties for the specified container. The data returned does not include the container's list of blobs",
         "parameters": [
           {
-            "name": "comp",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "metadata"
-            ]
-          },
-          {
             "$ref": "#/parameters/Timeout"
           },
           {
@@ -2290,15 +2281,6 @@
         "operationId": "Blob_GetProperties",
         "description": "The Get Properties operation returns all user-defined metadata, standard HTTP properties, and system properties for the blob. It does not return the content of the blob.",
         "parameters": [
-          {
-            "name": "comp",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "metadata"
-            ]
-          },
           {
             "$ref": "#/parameters/Snapshot"
           },
@@ -5765,12 +5747,12 @@
         "Start": {
           "description": "the date-time the policy is active",
           "type": "string",
-          "format": "str"
+          "format": "date-time"
         },
         "Expiry": {
           "description": "the date-time the policy expires",
           "type": "string",
-          "format": "str"
+          "format": "date-time"
         },
         "Permission": {
           "description": "the permissions for the acl policy",

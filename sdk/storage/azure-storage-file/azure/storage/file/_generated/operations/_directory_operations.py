@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -30,9 +30,9 @@ class DirectoryOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.restype = "directory"
 
         self._config = config
-        self.restype = "directory"
 
     def create(self, timeout=None, metadata=None, cls=None, **kwargs):
         """Creates a new directory under the specified share or parent directory.
@@ -68,6 +68,8 @@ class DirectoryOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -132,6 +134,8 @@ class DirectoryOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -189,6 +193,8 @@ class DirectoryOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -247,6 +253,8 @@ class DirectoryOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -335,6 +343,8 @@ class DirectoryOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -421,6 +431,8 @@ class DirectoryOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if recursive is not None:
             header_parameters['x-ms-recursive'] = self._serialize.header("recursive", recursive, 'bool')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -505,6 +517,8 @@ class DirectoryOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-handle-id'] = self._serialize.header("handle_id", handle_id, 'str')
         if recursive is not None:
             header_parameters['x-ms-recursive'] = self._serialize.header("recursive", recursive, 'bool')

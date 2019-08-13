@@ -4,8 +4,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
+import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -32,7 +32,7 @@ class MessageIdOperations(object):
 
         self._config = config
 
-    def update(self, queue_message, pop_receipt, visibilitytimeout=None, timeout=None, request_id=None, cls=None, **kwargs):
+    def update(self, queue_message, pop_receipt, visibilitytimeout, timeout=None, request_id=None, cls=None, **kwargs):
         """The Update operation was introduced with version 2011-08-18 of the
         Queue service API. The Update Message operation updates the visibility
         timeout of a message. You can also use this operation to update the
@@ -87,15 +87,14 @@ class MessageIdOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
         # Construct body
-        if queue_message is not None:
-            body_content = self._serialize.body(queue_message, 'QueueMessage')
-        else:
-            body_content = None
+        body_content = self._serialize.body(queue_message, 'QueueMessage')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -157,6 +156,8 @@ class MessageIdOperations(object):
 
         # Construct headers
         header_parameters = {}
+        if self._config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
