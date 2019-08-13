@@ -113,6 +113,9 @@ class Circuit(Model):
      only)
     :type authorizations:
      list[~azure.mgmt.vmwarevirtustream.models.ExpressRouteAuthorization]
+    :param express_route_private_peering_id: ExpressRoute private peering
+     identifier
+    :type express_route_private_peering_id: str
     """
 
     _attribute_map = {
@@ -120,14 +123,16 @@ class Circuit(Model):
         'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
         'express_route_id': {'key': 'expressRouteID', 'type': 'str'},
         'authorizations': {'key': 'authorizations', 'type': '[ExpressRouteAuthorization]'},
+        'express_route_private_peering_id': {'key': 'expressRoutePrivatePeeringID', 'type': 'str'},
     }
 
-    def __init__(self, *, primary_subnet: str=None, secondary_subnet: str=None, express_route_id: str=None, authorizations=None, **kwargs) -> None:
+    def __init__(self, *, primary_subnet: str=None, secondary_subnet: str=None, express_route_id: str=None, authorizations=None, express_route_private_peering_id: str=None, **kwargs) -> None:
         super(Circuit, self).__init__(**kwargs)
         self.primary_subnet = primary_subnet
         self.secondary_subnet = secondary_subnet
         self.express_route_id = express_route_id
         self.authorizations = authorizations
+        self.express_route_private_peering_id = express_route_private_peering_id
 
 
 class CloudError(Model):
