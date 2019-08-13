@@ -7,7 +7,7 @@ parameters:
   OSName: ''
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
-  RunMyPy: ne(variables['PythonVersion'], '2.7')
+  RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
   - task: DownloadPipelineArtifact@0
