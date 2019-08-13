@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import platform
 import re
 from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
