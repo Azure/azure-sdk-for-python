@@ -15,9 +15,9 @@ Traditionally, the `tox.ini` file for a package sits _alongside the setup.py_ in
 
 A given `tox.ini` works on the concept of `test environments`. A given test environment is a combination of:
 
-1. An identifier
+1. An identifier (or identifiers)
 2. A targeted Python version 
-    a. `tox` will default to base python executing the `tox` command if no Python environment is specified
+    1. `tox` will default to base python executing the `tox` command if no Python environment is specified
 3. (optionally) an OS platform
 
 Internally `tox` leverages `virtualenv` to create each test environment's virtual environment. 
@@ -37,33 +37,37 @@ sdist
 
 ```
 
+Unfortunately, the command `tox -l` only returns the _default_ builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
+
 ### Example Usage of the Azure SDK For Python `tox.ini` Files
 
 Basic usage of `tox` is:
 
-1. `pip install tox`
+1. `pip install tox tox-monorepo`
 2. `cd` to target package folder
 3. run `tox`
 
-However, take a look at the above environment list. Running just `tox` will result in a virtual environment for each of the above environment list! 
+Not only this, but `tox` created virtual directories are tied to the location of the `tox.ini` file! The only way around this behavior is to utilize a plugin, `tox-monorepo`, to update the actual working directories prior to execution.
 
-#### `dev` environment
-This is the most straightforward environment. Installs a given package in `develop` mode.
+#### Example `azure-core` mypy
+
+1. `cd` to `sdk/core/azure-core`
+2. Run `tox -e mypy -c ../../../eng/tox/tox.ini`
+
+#### Example `azure-storage-blob` tests
+
+1. `cd` to `sdk/storage/azure-storage-blob`
+2. Execute `tox -c ../../../eng/tox/tox.ini`
+
+Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 
 #### `*wheel_tests` environments
 Used for test execution across the spectrum of all the platforms we want to support. Maintained at a `platform specific` level just in case we run into platform-specific bugs.
 
 * Installs the wheel, runs tests using the wheel
 
-#### `sdist` environment
-Used to install the development version of the package.
-
 ```
-# both
-\> tox -e py36-lint,py27-lint
-
-# single
-\> tox -e py27-lint
+\> tox -e linux-wheel_tests,macos-wheel_tests,windows-wheel_tests -c <path to tox.ini>
 
 ```
 
@@ -75,7 +79,7 @@ Used for the local dev loop.
 
 ```
 
-\> tox -e sdist
+\> tox -e sdist -c <path to tox.ini>
 
 ```
 
