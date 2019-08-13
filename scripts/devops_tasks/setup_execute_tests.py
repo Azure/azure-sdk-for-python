@@ -227,11 +227,11 @@ def collect_tox_coverage_files(targeted_packages):
 
 
 def execute_global_install_and_test(parsed_args, targeted_packages, extended_pytest_args):
-    if args.runtype == "setup" or args.runtype == "all":
-        prep_tests(targeted_packages, args.python_version)
-
     if args.mark_arg:
         extended_pytest_args.extend(["-m", "\"{}\"".format(args.mark_arg)])
+
+    if args.runtype == "setup" or args.runtype == "all":
+        prep_tests(targeted_packages, args.python_version)
 
     if args.runtype == "execute" or args.runtype == "all":
         run_tests(
@@ -341,6 +341,6 @@ if __name__ == "__main__":
         extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
 
     if args.runtype != "none":
-        execute_tox_harness(args, targeted_packages, extended_pytest_args)
-    else:
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
+    else:
+        execute_tox_harness(args, targeted_packages, extended_pytest_args)
