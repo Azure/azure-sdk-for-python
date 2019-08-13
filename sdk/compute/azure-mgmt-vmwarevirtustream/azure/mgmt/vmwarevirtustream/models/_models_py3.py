@@ -183,12 +183,12 @@ class Cluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar cluster_id: Resource ID.
-    :vartype cluster_id: str
-    :ivar cluster_name: Resource name.
-    :vartype cluster_name: str
-    :ivar cluster_type: Resource type.
-    :vartype cluster_type: str
+    :ivar cluster_id:
+    :vartype cluster_id: int
+    :param cluster_size:
+    :type cluster_size: int
+    :ivar hosts:
+    :vartype hosts: list[str]
     :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
      'Cancelled', 'Updating'
     :vartype provisioning_state: str or
@@ -200,8 +200,8 @@ class Cluster(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'cluster_name': {'readonly': True},
-        'cluster_type': {'readonly': True},
+        'cluster_size': {'maximum': 16, 'minimum': 3},
+        'hosts': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -209,17 +209,17 @@ class Cluster(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'cluster_id': {'key': 'properties.id', 'type': 'str'},
-        'cluster_name': {'key': 'properties.name', 'type': 'str'},
-        'cluster_type': {'key': 'properties.type', 'type': 'str'},
+        'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
+        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
+        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
         super(Cluster, self).__init__(**kwargs)
         self.cluster_id = None
-        self.cluster_name = None
-        self.cluster_type = None
+        self.cluster_size = cluster_size
+        self.hosts = None
         self.provisioning_state = None
 
 
