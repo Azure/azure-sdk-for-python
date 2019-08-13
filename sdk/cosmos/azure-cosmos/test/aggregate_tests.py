@@ -96,8 +96,8 @@ class AggregateQueryTestSequenceMeta(type):
             _insert_doc(mcs.created_collection, document_definitions)
 
         def _generate_test_configs():
-            aggregate_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {}'
-            aggregate_orderby_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}'
+            aggregate_query_format = 'SELECT TOP 1 VALUE {}(r.{}) FROM r WHERE {}'
+            aggregate_orderby_query_format = 'SELECT TOP 1 VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}'
             aggregate_configs = [
                 ['AVG', _config.sum / _config.docs_with_numeric_id,
                  'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
@@ -119,8 +119,8 @@ class AggregateQueryTestSequenceMeta(type):
                                                           _config.PARTITION_KEY),
                     expected])
 
-            aggregate_single_partition_format = 'SELECT VALUE {}(r.{}) FROM r WHERE r.{} = \'{}\''
-            aggregate_orderby_single_partition_format = 'SELECT {}(r.{}) FROM r WHERE r.{} = \'{}\''
+            aggregate_single_partition_format = 'SELECT TOP 1 VALUE {}(r.{}) FROM r WHERE r.{} = \'{}\''
+            aggregate_orderby_single_partition_format = 'SELECT TOP 1 {}(r.{}) FROM r WHERE r.{} = \'{}\''
             same_partiton_sum = _config.DOCS_WITH_SAME_PARTITION_KEY * (_config.DOCS_WITH_SAME_PARTITION_KEY + 1) / 2.0
             aggregate_single_partition_configs = [
                 ['AVG', same_partiton_sum / _config.DOCS_WITH_SAME_PARTITION_KEY],
