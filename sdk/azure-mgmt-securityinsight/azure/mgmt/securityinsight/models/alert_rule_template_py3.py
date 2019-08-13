@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class CaseComment(Resource):
-    """Represents a case comment.
+class AlertRuleTemplate(Model):
+    """Alert rule template.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ScheduledAlertRuleTemplate, FilterAlertRuleTemplate,
+    FusionAlertRuleTemplate
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,34 +30,35 @@ class CaseComment(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param message: Required. The comment message
-    :type message: str
-    :ivar created_time_utc: The time the comment was created
-    :vartype created_time_utc: datetime
-    :ivar user_info: Describes the user that created the comment
-    :vartype user_info: ~azure.mgmt.securityinsight.models.UserInfo
+    :param etag: Etag of the alert rule.
+    :type etag: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'message': {'required': True},
-        'created_time_utc': {'readonly': True},
-        'user_info': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
-        'user_info': {'key': 'properties.userInfo', 'type': 'UserInfo'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(CaseComment, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.created_time_utc = None
-        self.user_info = None
+    _subtype_map = {
+        'kind': {'Scheduled': 'ScheduledAlertRuleTemplate', 'Filter': 'FilterAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate'}
+    }
+
+    def __init__(self, *, etag: str=None, **kwargs) -> None:
+        super(AlertRuleTemplate, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.etag = etag
+        self.kind = None

@@ -34,7 +34,7 @@ class MCASDataConnector(DataConnector):
     :type tenant_id: str
     :param data_types: The available data types for the connector.
     :type data_types:
-     ~azure.mgmt.securityinsight.models.MCASDataConnectorDataTypes
+     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
     """
 
     _validation = {
@@ -51,7 +51,7 @@ class MCASDataConnector(DataConnector):
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'MCASDataConnectorDataTypes'},
+        'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
     def __init__(self, **kwargs):

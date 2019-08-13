@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class EntitiesOperations(object):
-    """EntitiesOperations operations.
+class AlertRuleTemplatesOperations(object):
+    """AlertRuleTemplatesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,7 @@ class EntitiesOperations(object):
 
     def list(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all entities.
+        """Gets all alert rule templates.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -54,9 +54,9 @@ class EntitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Entity
+        :return: An iterator like instance of AlertRuleTemplate
         :rtype:
-         ~azure.mgmt.securityinsight.models.EntityPaged[~azure.mgmt.securityinsight.models.Entity]
+         ~azure.mgmt.securityinsight.models.AlertRuleTemplatePaged[~azure.mgmt.securityinsight.models.AlertRuleTemplate]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -102,19 +102,19 @@ class EntitiesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EntityPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AlertRuleTemplatePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.EntityPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AlertRuleTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/entities'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRuleTemplates'}
 
     def get(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets an entity.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, alert_rule_template_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the alert rule template.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -124,15 +124,15 @@ class EntitiesOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param entity_id: entity ID
-        :type entity_id: str
+        :param alert_rule_template_id: Alert rule template ID
+        :type alert_rule_template_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Entity or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.Entity or
+        :return: AlertRuleTemplate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.AlertRuleTemplate or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -143,7 +143,7 @@ class EntitiesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+            'alertRuleTemplateId': self._serialize.url("alert_rule_template_id", alert_rule_template_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -173,11 +173,11 @@ class EntitiesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Entity', response)
+            deserialized = self._deserialize('AlertRuleTemplate', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/entities/{entityId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRuleTemplates/{alertRuleTemplateId}'}

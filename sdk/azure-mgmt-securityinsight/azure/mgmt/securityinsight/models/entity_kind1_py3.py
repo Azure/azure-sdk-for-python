@@ -13,12 +13,10 @@ from msrest.serialization import Model
 
 
 class EntityKind1(Model):
-    """Describes an entity with kind.
+    """Describes an Azure resource with kind.
 
     :param kind: The kind of the entity. Possible values include: 'Account',
-     'Host', 'File', 'AzureResource', 'CloudApplication', 'DnsResolution',
-     'FileHash', 'Ip', 'Malware', 'Process', 'RegistryKey', 'RegistryValue',
-     'SecurityGroup', 'Url', 'SecurityAlert', 'Bookmark'
+     'Host', 'File'
     :type kind: str or ~azure.mgmt.securityinsight.models.EntityKind
     """
 

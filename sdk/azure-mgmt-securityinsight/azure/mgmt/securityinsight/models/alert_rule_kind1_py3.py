@@ -16,7 +16,7 @@ class AlertRuleKind1(Model):
     """Describes an Azure resource with kind.
 
     :param kind: The kind of the alert rule. Possible values include:
-     'Scheduled'
+     'Scheduled', 'Filter', 'Fusion'
     :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
     """
 

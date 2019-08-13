@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_py3 import DataConnector
+from msrest.serialization import Model
 
 
-class AATPDataConnector(DataConnector):
-    """Represents AATP (Azure Advanced Threat Protection) data connector.
+class AlertRuleTemplate(Model):
+    """Alert rule template.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ScheduledAlertRuleTemplate, FilterAlertRuleTemplate,
+    FusionAlertRuleTemplate
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,15 +30,10 @@ class AATPDataConnector(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
+    :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
     """
 
     _validation = {
@@ -50,12 +49,16 @@ class AATPDataConnector(DataConnector):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
-    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(AATPDataConnector, self).__init__(etag=etag, **kwargs)
-        self.tenant_id = tenant_id
-        self.data_types = data_types
-        self.kind = 'AzureAdvancedThreatProtection'
+    _subtype_map = {
+        'kind': {'Scheduled': 'ScheduledAlertRuleTemplate', 'Filter': 'FilterAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate'}
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertRuleTemplate, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.etag = kwargs.get('etag', None)
+        self.kind = None

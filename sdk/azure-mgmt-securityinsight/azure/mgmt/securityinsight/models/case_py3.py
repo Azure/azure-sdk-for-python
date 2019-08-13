@@ -28,13 +28,13 @@ class Case(Resource):
     :vartype name: str
     :param etag: Etag of the alert rule.
     :type etag: str
-    :ivar last_updated_time_utc: The last time the case was updated
-    :vartype last_updated_time_utc: datetime
-    :ivar created_time_utc: The time the case was created
-    :vartype created_time_utc: datetime
+    :param last_updated_time_utc: The last time the case was updated
+    :type last_updated_time_utc: datetime
+    :param created_time_utc: The time the case was created
+    :type created_time_utc: datetime
     :param end_time_utc: The end time of the case
     :type end_time_utc: datetime
-    :param start_time_utc: Required. The start time of the case
+    :param start_time_utc: The start time of the case
     :type start_time_utc: datetime
     :param labels: List of labels relevant to this case
     :type labels: list[str]
@@ -42,8 +42,8 @@ class Case(Resource):
     :type description: str
     :param title: Required. The title of the case
     :type title: str
-    :param owner: Describes a user that the case is assigned to
-    :type owner: ~azure.mgmt.securityinsight.models.UserInfo
+    :param assigned_to: Describes a user that the case is assigned to
+    :type assigned_to: ~azure.mgmt.securityinsight.models.UserInfo
     :param severity: Required. The severity of the case. Possible values
      include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
@@ -51,34 +51,17 @@ class Case(Resource):
      'Draft', 'New', 'InProgress', 'Closed'
     :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
-     include: 'Resolved', 'Dismissed', 'TruePositive', 'FalsePositive', 'Other'
+     include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
-    :param closed_reason_text: the case close reason details
-    :type closed_reason_text: str
-    :ivar related_alert_ids: List of related alert identifiers
-    :vartype related_alert_ids: list[str]
-    :ivar case_number: a sequential number
-    :vartype case_number: int
-    :ivar last_comment: the last comment in the case
-    :vartype last_comment: str
-    :ivar total_comments: the number of total comments in the case
-    :vartype total_comments: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'last_updated_time_utc': {'readonly': True},
-        'created_time_utc': {'readonly': True},
-        'start_time_utc': {'required': True},
         'title': {'required': True},
         'severity': {'required': True},
         'status': {'required': True},
-        'related_alert_ids': {'readonly': True},
-        'case_number': {'readonly': True},
-        'last_comment': {'readonly': True},
-        'total_comments': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,33 +76,23 @@ class Case(Resource):
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
-        'owner': {'key': 'properties.owner', 'type': 'UserInfo'},
+        'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
-        'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
-        'related_alert_ids': {'key': 'properties.relatedAlertIds', 'type': '[str]'},
-        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
-        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
-        'total_comments': {'key': 'properties.totalComments', 'type': 'int'},
     }
 
-    def __init__(self, *, start_time_utc, title: str, severity, status, etag: str=None, end_time_utc=None, labels=None, description: str=None, owner=None, close_reason=None, closed_reason_text: str=None, **kwargs) -> None:
+    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
-        self.last_updated_time_utc = None
-        self.created_time_utc = None
+        self.last_updated_time_utc = last_updated_time_utc
+        self.created_time_utc = created_time_utc
         self.end_time_utc = end_time_utc
         self.start_time_utc = start_time_utc
         self.labels = labels
         self.description = description
         self.title = title
-        self.owner = owner
+        self.assigned_to = assigned_to
         self.severity = severity
         self.status = status
         self.close_reason = close_reason
-        self.closed_reason_text = closed_reason_text
-        self.related_alert_ids = None
-        self.case_number = None
-        self.last_comment = None
-        self.total_comments = None

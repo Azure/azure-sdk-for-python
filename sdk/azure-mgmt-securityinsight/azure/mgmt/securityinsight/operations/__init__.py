@@ -12,9 +12,8 @@
 from .operations import Operations
 from .alert_rules_operations import AlertRulesOperations
 from .actions_operations import ActionsOperations
+from .alert_rule_templates_operations import AlertRuleTemplatesOperations
 from .cases_operations import CasesOperations
-from .comments_operations import CommentsOperations
-from .case_comments_operations import CaseCommentsOperations
 from .bookmarks_operations import BookmarksOperations
 from .data_connectors_operations import DataConnectorsOperations
 from .entities_operations import EntitiesOperations
@@ -27,9 +26,8 @@ __all__ = [
     'Operations',
     'AlertRulesOperations',
     'ActionsOperations',
+    'AlertRuleTemplatesOperations',
     'CasesOperations',
-    'CommentsOperations',
-    'CaseCommentsOperations',
     'BookmarksOperations',
     'DataConnectorsOperations',
     'EntitiesOperations',

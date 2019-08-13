@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class EntityExpandResponseValue(Model):
-    """The expansion result values.
-
-    :param entities: Array of the expansion result entities.
-    :type entities: list[~azure.mgmt.securityinsight.models.Entity]
+class AlertRuleTemplatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AlertRuleTemplate <azure.mgmt.securityinsight.models.AlertRuleTemplate>` object
     """
 
     _attribute_map = {
-        'entities': {'key': 'entities', 'type': '[Entity]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertRuleTemplate]'}
     }
 
-    def __init__(self, *, entities=None, **kwargs) -> None:
-        super(EntityExpandResponseValue, self).__init__(**kwargs)
-        self.entities = entities
+    def __init__(self, *args, **kwargs):
+
+        super(AlertRuleTemplatePaged, self).__init__(*args, **kwargs)

@@ -28,13 +28,6 @@ class HostEntity(Entity):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar friendly_name: The graph item display name which is a short humanly
-     readable description of the graph item instance. This property is optional
-     and might be system generated.
-    :vartype friendly_name: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar dns_domain: The DNS domain that this host belongs to. Should contain
      the compete DNS suffix for the domain
     :vartype dns_domain: str
@@ -64,8 +57,6 @@ class HostEntity(Entity):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'friendly_name': {'readonly': True},
-        'additional_data': {'readonly': True},
         'dns_domain': {'readonly': True},
         'nt_domain': {'readonly': True},
         'host_name': {'readonly': True},
@@ -81,8 +72,6 @@ class HostEntity(Entity):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'dns_domain': {'key': 'properties.dnsDomain', 'type': 'str'},
         'nt_domain': {'key': 'properties.ntDomain', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -96,8 +85,6 @@ class HostEntity(Entity):
 
     def __init__(self, *, os_family=None, **kwargs) -> None:
         super(HostEntity, self).__init__(**kwargs)
-        self.friendly_name = None
-        self.additional_data = None
         self.dns_domain = None
         self.nt_domain = None
         self.host_name = None
