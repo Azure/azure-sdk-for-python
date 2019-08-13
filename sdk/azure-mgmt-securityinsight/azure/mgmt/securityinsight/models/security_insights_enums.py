@@ -58,7 +58,7 @@ class AlertSeverity(str, Enum):
 
 class TemplateStatus(str, Enum):
 
-    installed = "Installed"  #: Alert rule template installed. and cann't use more then once
+    installed = "Installed"  #: Alert rule template installed. and can not use more then once
     available = "Available"  #: Alert rule template is available.
     not_available = "NotAvailable"  #: Alert rule template is not available
 

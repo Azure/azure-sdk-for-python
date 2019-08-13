@@ -18,10 +18,12 @@ try:
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .alert_rule_template_py3 import AlertRuleTemplate
     from .scheduled_alert_rule_template_py3 import ScheduledAlertRuleTemplate
+    from .base_alert_rule_template_properties_py3 import BaseAlertRuleTemplateProperties
     from .scheduled_alert_rule_template_properties_model_py3 import ScheduledAlertRuleTemplatePropertiesModel
     from .filter_alert_rule_template_py3 import FilterAlertRuleTemplate
     from .filter_alert_rule_template_properties_model_py3 import FilterAlertRuleTemplatePropertiesModel
     from .fusion_alert_rule_template_py3 import FusionAlertRuleTemplate
+    from .fusion_alert_rule_template_properties_model_py3 import FusionAlertRuleTemplatePropertiesModel
     from .action_py3 import Action
     from .user_info_py3 import UserInfo
     from .case_py3 import Case
@@ -98,10 +100,12 @@ except (SyntaxError, ImportError):
     from .scheduled_alert_rule import ScheduledAlertRule
     from .alert_rule_template import AlertRuleTemplate
     from .scheduled_alert_rule_template import ScheduledAlertRuleTemplate
+    from .base_alert_rule_template_properties import BaseAlertRuleTemplateProperties
     from .scheduled_alert_rule_template_properties_model import ScheduledAlertRuleTemplatePropertiesModel
     from .filter_alert_rule_template import FilterAlertRuleTemplate
     from .filter_alert_rule_template_properties_model import FilterAlertRuleTemplatePropertiesModel
     from .fusion_alert_rule_template import FusionAlertRuleTemplate
+    from .fusion_alert_rule_template_properties_model import FusionAlertRuleTemplatePropertiesModel
     from .action import Action
     from .user_info import UserInfo
     from .case import Case
@@ -218,10 +222,12 @@ __all__ = [
     'ScheduledAlertRule',
     'AlertRuleTemplate',
     'ScheduledAlertRuleTemplate',
+    'BaseAlertRuleTemplateProperties',
     'ScheduledAlertRuleTemplatePropertiesModel',
     'FilterAlertRuleTemplate',
     'FilterAlertRuleTemplatePropertiesModel',
     'FusionAlertRuleTemplate',
+    'FusionAlertRuleTemplatePropertiesModel',
     'Action',
     'UserInfo',
     'Case',

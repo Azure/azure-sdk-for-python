@@ -30,26 +30,29 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param display_name: The display name for alert rule template.
+    :param display_name: Required. The display name for alert rule template.
     :type display_name: str
-    :param description: The description of the alert rule template.
+    :param description: Required. The description of the alert rule template.
     :type description: str
     :param tactics: The tactics of the alert rule template
     :type tactics: list[str or
      ~azure.mgmt.securityinsight.models.AttackTactic]
-    :ivar created_date_utc: The time that this alert rule template has been
-     added.
+    :ivar created_date_utc: Required. The time that this alert rule template
+     has been added.
     :vartype created_date_utc: str
-    :param status: The alert rule template status. Possible values include:
-     'Installed', 'Available', 'NotAvailable'
+    :param status: Required. The alert rule template status. Possible values
+     include: 'Installed', 'Available', 'NotAvailable'
     :type status: str or ~azure.mgmt.securityinsight.models.TemplateStatus
     :param required_data_connectors: The required data connectors for this
      template
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
-    :param alert_rules_created_by_template_count: the number of alert rules
-     that were created by this template
+    :param alert_rules_created_by_template_count: Required. the number of
+     alert rules that were created by this template
     :type alert_rules_created_by_template_count: int
+    :param severity: The severity for alerts created by this alert rule.
+     Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     """
 
     _validation = {
@@ -57,7 +60,11 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'created_date_utc': {'readonly': True},
+        'display_name': {'required': True},
+        'description': {'required': True},
+        'created_date_utc': {'required': True, 'readonly': True},
+        'status': {'required': True},
+        'alert_rules_created_by_template_count': {'required': True},
     }
 
     _attribute_map = {
@@ -73,6 +80,7 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
         'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
+        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
     }
 
     def __init__(self, **kwargs):
@@ -84,4 +92,5 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
         self.status = kwargs.get('status', None)
         self.required_data_connectors = kwargs.get('required_data_connectors', None)
         self.alert_rules_created_by_template_count = kwargs.get('alert_rules_created_by_template_count', None)
+        self.severity = kwargs.get('severity', None)
         self.kind = 'Fusion'
