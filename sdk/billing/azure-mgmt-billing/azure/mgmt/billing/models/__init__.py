@@ -79,7 +79,6 @@ try:
     from .agreement_list_result_py3 import AgreementListResult
     from .validation_result_properties_py3 import ValidationResultProperties
     from .validate_transfer_response_py3 import ValidateTransferResponse
-    from .validation_results_py3 import ValidationResults
     from .line_of_credit_py3 import LineOfCredit
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
@@ -151,7 +150,6 @@ except (SyntaxError, ImportError):
     from .agreement_list_result import AgreementListResult
     from .validation_result_properties import ValidationResultProperties
     from .validate_transfer_response import ValidateTransferResponse
-    from .validation_results import ValidationResults
     from .line_of_credit import LineOfCredit
 from .payment_method_paged import PaymentMethodPaged
 from .billing_subscription_paged import BillingSubscriptionPaged
@@ -255,7 +253,6 @@ __all__ = [
     'AgreementListResult',
     'ValidationResultProperties',
     'ValidateTransferResponse',
-    'ValidationResults',
     'LineOfCredit',
     'PaymentMethodPaged',
     'BillingSubscriptionPaged',
