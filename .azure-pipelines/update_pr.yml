@@ -21,6 +21,11 @@ steps:
 - script: python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
   displayName: 'Install Azure SDK tools'
 
+- script: |
+    python3 -m pip install flake8
+    flake8 . --count --exclude./.*,*/templates/* --select=E9,F63,F7,F82 --show-source --statistics
+  displayName: 'Lint code for Python syntax errors and undefined names'
+
 - script: python3  -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
   displayName: 'Update packaging of PR'
   env:
