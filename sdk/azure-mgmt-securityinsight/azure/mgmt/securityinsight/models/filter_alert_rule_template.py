@@ -48,7 +48,7 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
     :param alert_rules_created_by_template_count: Required. the number of
-     alert rules that was created by this template
+     alert rules that were created by this template
     :type alert_rules_created_by_template_count: int
     :param filter_product: Required. The filter prodact name for this template
      rule.

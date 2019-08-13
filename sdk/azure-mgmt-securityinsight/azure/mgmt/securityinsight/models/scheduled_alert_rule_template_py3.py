@@ -48,7 +48,7 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
     :param alert_rules_created_by_template_count: Required. the number of
-     alert rules that was created by this template
+     alert rules that were created by this template
     :type alert_rules_created_by_template_count: int
     :param severity: Required. The severity for alerts created by this alert
      rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
