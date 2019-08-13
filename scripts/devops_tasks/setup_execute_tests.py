@@ -136,8 +136,8 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
-        allowed_return_codes = []
         tox_execution_array = ["tox"]
+        local_options_array = options_array[:]
 
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
@@ -150,7 +150,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
                 [package_dir],
             )
         ):
-            tox_execution_array.append("--suppress-no-test-exit-code")
+            local_options_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
         if not os.path.exists(destination_tox_ini):
@@ -166,8 +166,8 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         if tox_env:
             tox_execution_array.extend(["-e", tox_env])
 
-        if options_array:
-            tox_execution_array.extend(["--"] + options_array)
+        if local_options_array:
+            tox_execution_array.extend(["--"] + local_options_array)
 
         run_check_call(tox_execution_array, package_dir)
 
