@@ -27,7 +27,7 @@ def cleanup_folder(target_folder):
             if os.path.isfile(file_path):
                 os.remove(file_path)
         except Exception as e:
-            print(e)
+            logging.error(e)
 
 
 # this function is where a glob string gets translated to a list of packages

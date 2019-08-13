@@ -13,6 +13,7 @@ import argparse
 import sys
 from pathlib import Path
 import os
+import errno
 import glob
 import shutil
 import logging
@@ -37,10 +38,13 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
 def clean_coverage():
     try:
         os.mkdir(coverage_dir)
-    except FileExistsError:
-        logging.info("Coverage dir already exists. Cleaning.")
-        cleanup_folder(coverage_dir)
-
+    except OSError as e:
+        if e.errno == errno.EEXIST:
+            logging.info("Coverage dir already exists. Cleaning.")
+            cleanup_folder(coverage_dir)
+        else:
+            raise
+        
 
 def prep_tests(targeted_packages, python_version):
     logging.info("running test setup for {}".format(targeted_packages))
