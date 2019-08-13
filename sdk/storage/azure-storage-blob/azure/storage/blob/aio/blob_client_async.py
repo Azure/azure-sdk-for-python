@@ -10,6 +10,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.downloads_async import StorageStreamDownloader
@@ -114,6 +116,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
+    @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
@@ -129,6 +132,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
@@ -240,6 +244,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             return await upload_page_blob(**options)
         return await upload_append_blob(**options)
 
+    @distributed_trace_async
     async def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
         # type: (Optional[int], Optional[int], bool, Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
@@ -312,6 +317,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         await downloader.setup(extra_properties=extra_properties)
         return downloader
 
+    @distributed_trace_async
     async def delete_blob(self, delete_snapshots=False, **kwargs):
         # type: (bool, Any) -> None
         """Marks the specified blob for deletion.
@@ -374,6 +380,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def undelete_blob(self, **kwargs):
         # type: (Any) -> None
         """Restores soft-deleted blobs or snapshots.
@@ -398,6 +405,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_blob_properties(self, **kwargs):
         # type: (Any) -> BlobProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -461,6 +469,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
+    @distributed_trace_async
     async def set_http_headers(self, content_settings=None, **kwargs):
         # type: (Optional[ContentSettings], Any) -> None
         """Sets system properties on the blob.
@@ -505,6 +514,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_blob_metadata(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Sets user-defined metadata for the blob as one or more name-value pairs.
@@ -549,6 +559,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
@@ -619,6 +630,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
@@ -667,6 +679,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_snapshot(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a snapshot of the blob.
@@ -726,6 +739,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
         # type: (str, Optional[Dict[str, str]], bool, Any) -> Any
         """Copies a blob asynchronously.
@@ -877,6 +891,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def abort_copy(self, copy_id, **kwargs):
         # type: (Union[str, BlobProperties], Any) -> None
         """Abort an ongoing copy operation.
@@ -904,6 +919,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
         # type: (int, Optional[str], Optional[int], Any) -> LeaseClient
         """Requests a new lease.
@@ -958,6 +974,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         await lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace_async
     async def set_standard_blob_tier(self, standard_blob_tier, **kwargs):
         # type: (Union[str, StandardBlobTier], Any) -> None
         """This operation sets the tier on a block blob.
@@ -993,6 +1010,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def stage_block(
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -1039,6 +1057,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def stage_block_from_url(
             self, block_id,  # type: str
             source_url,  # type: str
@@ -1083,6 +1102,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_block_list(self, block_list_type="committed", **kwargs):
         # type: (Optional[str], Any) -> Tuple[List[BlobBlock], List[BlobBlock]]
         """The Get Block List operation retrieves the list of blocks that have
@@ -1113,6 +1133,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
+    @distributed_trace_async
     async def commit_block_list( # type: ignore
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -1179,6 +1200,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
@@ -1210,6 +1232,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
@@ -1284,6 +1307,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
         return self._get_page_ranges_result(ranges)
 
+    @distributed_trace_async
     async def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
@@ -1336,6 +1360,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def resize_blob(self, size, **kwargs):
         # type: (int, Any) -> Dict[str, Union[str, datetime]]
         """Resizes a page blob to the specified size.
@@ -1381,6 +1406,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def upload_page( # type: ignore
             self, page,  # type: bytes
             start_range,  # type: int
@@ -1466,6 +1492,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def clear_page(self, start_range, end_range, **kwargs):
         # type: (int, int) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
@@ -1525,6 +1552,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def append_block( # type: ignore
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
