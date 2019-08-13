@@ -50,7 +50,7 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
     :param alert_rules_created_by_template_count: Required. the number of
      alert rules that were created by this template
     :type alert_rules_created_by_template_count: int
-    :param filter_product: Required. The filter prodact name for this template
+    :param filter_product: Required. The filter product name for this template
      rule.
     :type filter_product: str
     :param filter_severities: the alert’s severities on which the cases will

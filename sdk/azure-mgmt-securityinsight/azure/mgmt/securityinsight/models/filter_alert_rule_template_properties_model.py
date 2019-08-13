@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class FilterAlertRuleTemplatePropertiesModel(Model):
     """Filter alert rule template property bag.
 
-    :param filter_product: The filter prodact name for this template rule.
+    :param filter_product: The filter product name for this template rule.
     :type filter_product: str
     :param filter_severities: the alert’s severities on which the cases will
      be generated
