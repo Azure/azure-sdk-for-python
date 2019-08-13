@@ -135,6 +135,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     for package_dir in [package for package in targeted_packages]:
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
+        destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
         allowed_return_codes = []
         tox_execution_array = ["tox"]
 
@@ -151,10 +152,16 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
         ):
             options_array.append("--suppress-no-test-exit-code")
 
-        # # if not present, copy it
+        # if not present, re-use base
         if not os.path.exists(destination_tox_ini):
             logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
+
+        # handle empty file
+        if not os.path.exists(destination_dev_req):
+            logging.info("No dev_requirements present.")
+            with open(destination_dev_req, "w+"):
+                pass
 
         if tox_env:
             tox_execution_array.extend(["-e", tox_env])
