@@ -49,14 +49,22 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
         order_by = query_execution_info.get_order_by()
         if (order_by):
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
-        
-        top = query_execution_info.get_top()
-        if not (top is None):
-            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
 
         aggregates = query_execution_info.get_aggregates()
         if aggregates:
             self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
+
+        offset = query_execution_info.get_offset()
+        if not (offset is None):
+            self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(self._endpoint, offset)
+
+        top = query_execution_info.get_top()
+        if not (top is None):
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
+
+        limit = query_execution_info.get_limit()
+        if not (limit is None):
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
 
     def next(self):
         """Returns the next query result.

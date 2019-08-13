@@ -220,21 +220,25 @@ class QueryTest(unittest.TestCase):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select top 10 value count(c.id) from c", created_collection.container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-        self._validate_query_plan(query_execution_info, 10, [], ['Count'], True)
+        self._validate_query_plan(query_execution_info, 10, [], ['Count'], True, None, None)
 
-        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select * from c order by c._ts", created_collection.container_link)
+        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select * from c order by c._ts offset 5 limit 10", created_collection.container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-        self._validate_query_plan(query_execution_info, None, ['Ascending'], [], False)
+        self._validate_query_plan(query_execution_info, None, ['Ascending'], [], False, 5, 10)
 
-    def _validate_query_plan(self, query_execution_info, top, order_by, aggregate, select_value):
+    def _validate_query_plan(self, query_execution_info, top, order_by, aggregate, select_value, offset, limit):
         self.assertTrue(query_execution_info.has_rewritten_query())
         self.assertEquals(query_execution_info.has_top(), top is not None)
         self.assertEquals(query_execution_info.get_top(), top)
         self.assertEquals(query_execution_info.has_order_by(), len(order_by) > 0)
         self.assertListEqual(query_execution_info.get_order_by(), order_by)
-        self.assertEquals(query_execution_info.has_aggregates(), len(aggregate)> 0)
+        self.assertEquals(query_execution_info.has_aggregates(), len(aggregate) > 0)
         self.assertListEqual(query_execution_info.get_aggregates(), aggregate)
         self.assertEquals(query_execution_info.has_select_value(), select_value)
+        self.assertEquals(query_execution_info.has_offset(), offset is not None)
+        self.assertEquals(query_execution_info.get_offset(), offset)
+        self.assertEquals(query_execution_info.has_limit(), limit is not None)
+        self.assertEquals(query_execution_info.get_limit(), limit)
 
     def test_unsupported_queries(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
@@ -251,6 +255,25 @@ class QueryTest(unittest.TestCase):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'")
         self.assertListEqual(list(query_iterable), [])
+
+    def test_offset_limit(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        values = []
+        for i in range(10):
+            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
+            values.append(created_collection.create_item(body=document_definition)['pk'])
+
+        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', values[:5])
+        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', values[5:])
+        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', [])
+        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', [])
+
+    def _validate_skip_take(self, created_collection, query, results):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
 
 if __name__ == "__main__":
     unittest.main()

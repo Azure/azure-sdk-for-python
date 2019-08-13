@@ -68,6 +68,26 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
             return res
         raise StopIteration
 
+
+class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling offset query.
+
+    It returns results offset by as many results as offset arg specified.
+    """
+    def __init__(self, execution_context, offset_count):
+        super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
+        self._offset_count = offset_count
+
+    def next(self):
+        while self._offset_count > 0:
+            res = next(self._execution_context)
+            if res is not None:
+                self._offset_count -= 1
+            else:
+                raise StopIteration
+        return next(self._execution_context)
+
+
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling aggregate query.
 
