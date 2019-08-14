@@ -25,12 +25,22 @@ try:
     from ._models_py3 import ComputeOperationValue
     from ._models_py3 import DataDisk
     from ._models_py3 import DataDiskImage
+    from ._models_py3 import DedicatedHost
+    from ._models_py3 import DedicatedHostAllocatableVM
+    from ._models_py3 import DedicatedHostAvailableCapacity
+    from ._models_py3 import DedicatedHostGroup
+    from ._models_py3 import DedicatedHostGroupUpdate
+    from ._models_py3 import DedicatedHostInstanceView
+    from ._models_py3 import DedicatedHostUpdate
     from ._models_py3 import DiagnosticsProfile
     from ._models_py3 import DiffDiskSettings
     from ._models_py3 import Disallowed
     from ._models_py3 import DiskEncryptionSettings
     from ._models_py3 import DiskInstanceView
     from ._models_py3 import Gallery
+    from ._models_py3 import GalleryApplication
+    from ._models_py3 import GalleryApplicationVersion
+    from ._models_py3 import GalleryApplicationVersionPublishingProfile
     from ._models_py3 import GalleryArtifactPublishingProfileBase
     from ._models_py3 import GalleryArtifactSource
     from ._models_py3 import GalleryDataDiskImage
@@ -88,6 +98,7 @@ try:
     from ._models_py3 import RunCommandInputParameter
     from ._models_py3 import RunCommandParameterDefinition
     from ._models_py3 import RunCommandResult
+    from ._models_py3 import ScheduledEventsProfile
     from ._models_py3 import Sku
     from ._models_py3 import SshConfiguration
     from ._models_py3 import SshPublicKey
@@ -95,6 +106,7 @@ try:
     from ._models_py3 import SubResource
     from ._models_py3 import SubResourceReadOnly
     from ._models_py3 import TargetRegion
+    from ._models_py3 import TerminateNotificationProfile
     from ._models_py3 import ThrottledRequestsInput
     from ._models_py3 import UpdateResource
     from ._models_py3 import UpgradeOperationHistoricalStatusInfo
@@ -103,6 +115,7 @@ try:
     from ._models_py3 import UpgradePolicy
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
+    from ._models_py3 import UserArtifactSource
     from ._models_py3 import VaultCertificate
     from ._models_py3 import VaultSecretGroup
     from ._models_py3 import VirtualHardDisk
@@ -186,12 +199,22 @@ except (SyntaxError, ImportError):
     from ._models import ComputeOperationValue
     from ._models import DataDisk
     from ._models import DataDiskImage
+    from ._models import DedicatedHost
+    from ._models import DedicatedHostAllocatableVM
+    from ._models import DedicatedHostAvailableCapacity
+    from ._models import DedicatedHostGroup
+    from ._models import DedicatedHostGroupUpdate
+    from ._models import DedicatedHostInstanceView
+    from ._models import DedicatedHostUpdate
     from ._models import DiagnosticsProfile
     from ._models import DiffDiskSettings
     from ._models import Disallowed
     from ._models import DiskEncryptionSettings
     from ._models import DiskInstanceView
     from ._models import Gallery
+    from ._models import GalleryApplication
+    from ._models import GalleryApplicationVersion
+    from ._models import GalleryApplicationVersionPublishingProfile
     from ._models import GalleryArtifactPublishingProfileBase
     from ._models import GalleryArtifactSource
     from ._models import GalleryDataDiskImage
@@ -249,6 +272,7 @@ except (SyntaxError, ImportError):
     from ._models import RunCommandInputParameter
     from ._models import RunCommandParameterDefinition
     from ._models import RunCommandResult
+    from ._models import ScheduledEventsProfile
     from ._models import Sku
     from ._models import SshConfiguration
     from ._models import SshPublicKey
@@ -256,6 +280,7 @@ except (SyntaxError, ImportError):
     from ._models import SubResource
     from ._models import SubResourceReadOnly
     from ._models import TargetRegion
+    from ._models import TerminateNotificationProfile
     from ._models import ThrottledRequestsInput
     from ._models import UpdateResource
     from ._models import UpgradeOperationHistoricalStatusInfo
@@ -264,6 +289,7 @@ except (SyntaxError, ImportError):
     from ._models import UpgradePolicy
     from ._models import Usage
     from ._models import UsageName
+    from ._models import UserArtifactSource
     from ._models import VaultCertificate
     from ._models import VaultSecretGroup
     from ._models import VirtualHardDisk
@@ -333,6 +359,10 @@ except (SyntaxError, ImportError):
     from ._models import WinRMListener
 from ._paged_models import AvailabilitySetPaged
 from ._paged_models import ComputeOperationValuePaged
+from ._paged_models import DedicatedHostGroupPaged
+from ._paged_models import DedicatedHostPaged
+from ._paged_models import GalleryApplicationPaged
+from ._paged_models import GalleryApplicationVersionPaged
 from ._paged_models import GalleryImagePaged
 from ._paged_models import GalleryImageVersionPaged
 from ._paged_models import GalleryPaged
@@ -352,6 +382,7 @@ from ._compute_management_client_enums import (
     StatusLevelTypes,
     AvailabilitySetSkuTypes,
     ProximityPlacementGroupType,
+    DedicatedHostLicenseTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
@@ -376,9 +407,9 @@ from ._compute_management_client_enums import (
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
     IntervalInMins,
-    StorageAccountType,
     AggregatedReplicationState,
     ReplicationState,
+    StorageAccountType,
     HostCaching,
     InstanceViewTypes,
     ReplicationStatusTypes,
@@ -400,12 +431,22 @@ __all__ = [
     'ComputeOperationValue',
     'DataDisk',
     'DataDiskImage',
+    'DedicatedHost',
+    'DedicatedHostAllocatableVM',
+    'DedicatedHostAvailableCapacity',
+    'DedicatedHostGroup',
+    'DedicatedHostGroupUpdate',
+    'DedicatedHostInstanceView',
+    'DedicatedHostUpdate',
     'DiagnosticsProfile',
     'DiffDiskSettings',
     'Disallowed',
     'DiskEncryptionSettings',
     'DiskInstanceView',
     'Gallery',
+    'GalleryApplication',
+    'GalleryApplicationVersion',
+    'GalleryApplicationVersionPublishingProfile',
     'GalleryArtifactPublishingProfileBase',
     'GalleryArtifactSource',
     'GalleryDataDiskImage',
@@ -463,6 +504,7 @@ __all__ = [
     'RunCommandInputParameter',
     'RunCommandParameterDefinition',
     'RunCommandResult',
+    'ScheduledEventsProfile',
     'Sku',
     'SshConfiguration',
     'SshPublicKey',
@@ -470,6 +512,7 @@ __all__ = [
     'SubResource',
     'SubResourceReadOnly',
     'TargetRegion',
+    'TerminateNotificationProfile',
     'ThrottledRequestsInput',
     'UpdateResource',
     'UpgradeOperationHistoricalStatusInfo',
@@ -478,6 +521,7 @@ __all__ = [
     'UpgradePolicy',
     'Usage',
     'UsageName',
+    'UserArtifactSource',
     'VaultCertificate',
     'VaultSecretGroup',
     'VirtualHardDisk',
@@ -549,6 +593,8 @@ __all__ = [
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'ProximityPlacementGroupPaged',
+    'DedicatedHostGroupPaged',
+    'DedicatedHostPaged',
     'UsagePaged',
     'VirtualMachinePaged',
     'ImagePaged',
@@ -561,10 +607,13 @@ __all__ = [
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
+    'GalleryApplicationPaged',
+    'GalleryApplicationVersionPaged',
     'HyperVGenerationTypes',
     'StatusLevelTypes',
     'AvailabilitySetSkuTypes',
     'ProximityPlacementGroupType',
+    'DedicatedHostLicenseTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',
@@ -589,9 +638,9 @@ __all__ = [
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
     'IntervalInMins',
-    'StorageAccountType',
     'AggregatedReplicationState',
     'ReplicationState',
+    'StorageAccountType',
     'HostCaching',
     'InstanceViewTypes',
     'ReplicationStatusTypes',

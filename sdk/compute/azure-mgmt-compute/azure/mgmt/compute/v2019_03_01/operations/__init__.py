@@ -12,6 +12,8 @@
 from ._operations import Operations
 from ._availability_sets_operations import AvailabilitySetsOperations
 from ._proximity_placement_groups_operations import ProximityPlacementGroupsOperations
+from ._dedicated_host_groups_operations import DedicatedHostGroupsOperations
+from ._dedicated_hosts_operations import DedicatedHostsOperations
 from ._virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from ._virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
 from ._virtual_machine_images_operations import VirtualMachineImagesOperations
@@ -28,11 +30,15 @@ from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsO
 from ._galleries_operations import GalleriesOperations
 from ._gallery_images_operations import GalleryImagesOperations
 from ._gallery_image_versions_operations import GalleryImageVersionsOperations
+from ._gallery_applications_operations import GalleryApplicationsOperations
+from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations
 
 __all__ = [
     'Operations',
     'AvailabilitySetsOperations',
     'ProximityPlacementGroupsOperations',
+    'DedicatedHostGroupsOperations',
+    'DedicatedHostsOperations',
     'VirtualMachineExtensionImagesOperations',
     'VirtualMachineExtensionsOperations',
     'VirtualMachineImagesOperations',
@@ -49,4 +55,6 @@ __all__ = [
     'GalleriesOperations',
     'GalleryImagesOperations',
     'GalleryImageVersionsOperations',
+    'GalleryApplicationsOperations',
+    'GalleryApplicationVersionsOperations',
 ]

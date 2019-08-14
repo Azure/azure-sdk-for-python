@@ -52,8 +52,12 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
             'availability_sets': '2019-03-01',
+            'dedicated_host_groups': '2019-03-01',
+            'dedicated_hosts': '2019-03-01',
             'disks': '2018-09-30',
             'galleries': '2019-03-01',
+            'gallery_application_versions': '2019-03-01',
+            'gallery_applications': '2019-03-01',
             'gallery_image_versions': '2019-03-01',
             'gallery_images': '2019-03-01',
             'images': '2019-03-01',
@@ -182,6 +186,32 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def dedicated_host_groups(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`DedicatedHostGroupsOperations<azure.mgmt.compute.v2019_03_01.operations.DedicatedHostGroupsOperations>`
+        """
+        api_version = self._get_api_version('dedicated_host_groups')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import DedicatedHostGroupsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def dedicated_hosts(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`DedicatedHostsOperations<azure.mgmt.compute.v2019_03_01.operations.DedicatedHostsOperations>`
+        """
+        api_version = self._get_api_version('dedicated_hosts')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import DedicatedHostsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def disks(self):
         """Instance depends on the API version:
 
@@ -218,6 +248,32 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_06_01.operations import GalleriesOperations as OperationClass
         elif api_version == '2019-03-01':
             from .v2019_03_01.operations import GalleriesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def gallery_application_versions(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationVersionsOperations>`
+        """
+        api_version = self._get_api_version('gallery_application_versions')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import GalleryApplicationVersionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def gallery_applications(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationsOperations>`
+        """
+        api_version = self._get_api_version('gallery_applications')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import GalleryApplicationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

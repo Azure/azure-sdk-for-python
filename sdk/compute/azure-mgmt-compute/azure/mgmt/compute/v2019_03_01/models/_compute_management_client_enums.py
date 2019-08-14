@@ -37,6 +37,13 @@ class ProximityPlacementGroupType(str, Enum):
     ultra = "Ultra"
 
 
+class DedicatedHostLicenseTypes(str, Enum):
+
+    none = "None"
+    windows_server_hybrid = "Windows_Server_Hybrid"
+    windows_server_perpetual = "Windows_Server_Perpetual"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
@@ -358,12 +365,6 @@ class IntervalInMins(str, Enum):
     sixty_mins = "SixtyMins"
 
 
-class StorageAccountType(str, Enum):
-
-    standard_lrs = "Standard_LRS"
-    standard_zrs = "Standard_ZRS"
-
-
 class AggregatedReplicationState(str, Enum):
 
     unknown = "Unknown"
@@ -378,6 +379,12 @@ class ReplicationState(str, Enum):
     replicating = "Replicating"
     completed = "Completed"
     failed = "Failed"
+
+
+class StorageAccountType(str, Enum):
+
+    standard_lrs = "Standard_LRS"
+    standard_zrs = "Standard_ZRS"
 
 
 class HostCaching(str, Enum):
