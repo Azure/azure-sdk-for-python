@@ -33,9 +33,11 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601'},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
-        'permission': {'key': 'Permission', 'type': 'str'},
+        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, start, expiry, permission: str, **kwargs) -> None:
@@ -66,8 +68,10 @@ class AppendPositionAccessConditions(Model):
     """
 
     _attribute_map = {
-        'max_size': {'key': '', 'type': 'long'},
-        'append_position': {'key': '', 'type': 'long'},
+        'max_size': {'key': '', 'type': 'long', 'xml': {'name': 'max_size'}},
+        'append_position': {'key': '', 'type': 'long', 'xml': {'name': 'append_position'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, max_size: int=None, append_position: int=None, **kwargs) -> None:
@@ -90,7 +94,10 @@ class BlobFlatListSegment(Model):
     }
 
     _attribute_map = {
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]'},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
+    }
+    _xml_map = {
+        'name': 'Blobs'
     }
 
     def __init__(self, *, blob_items, **kwargs) -> None:
@@ -114,8 +121,11 @@ class BlobHierarchyListSegment(Model):
     }
 
     _attribute_map = {
-        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]'},
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]'},
+        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefixes', 'itemsName': 'BlobPrefix'}},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
+    }
+    _xml_map = {
+        'name': 'Blobs'
     }
 
     def __init__(self, *, blob_items, blob_prefixes=None, **kwargs) -> None:
@@ -153,12 +163,14 @@ class BlobHTTPHeaders(Model):
     """
 
     _attribute_map = {
-        'blob_cache_control': {'key': '', 'type': 'str'},
-        'blob_content_type': {'key': '', 'type': 'str'},
-        'blob_content_md5': {'key': '', 'type': 'bytearray'},
-        'blob_content_encoding': {'key': '', 'type': 'str'},
-        'blob_content_language': {'key': '', 'type': 'str'},
-        'blob_content_disposition': {'key': '', 'type': 'str'},
+        'blob_cache_control': {'key': '', 'type': 'str', 'xml': {'name': 'blob_cache_control'}},
+        'blob_content_type': {'key': '', 'type': 'str', 'xml': {'name': 'blob_content_type'}},
+        'blob_content_md5': {'key': '', 'type': 'bytearray', 'xml': {'name': 'blob_content_md5'}},
+        'blob_content_encoding': {'key': '', 'type': 'str', 'xml': {'name': 'blob_content_encoding'}},
+        'blob_content_language': {'key': '', 'type': 'str', 'xml': {'name': 'blob_content_language'}},
+        'blob_content_disposition': {'key': '', 'type': 'str', 'xml': {'name': 'blob_content_disposition'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, blob_cache_control: str=None, blob_content_type: str=None, blob_content_md5: bytearray=None, blob_content_encoding: str=None, blob_content_language: str=None, blob_content_disposition: str=None, **kwargs) -> None:
@@ -201,13 +213,16 @@ class BlobItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'deleted': {'key': 'Deleted', 'type': 'bool'},
-        'snapshot': {'key': 'Snapshot', 'type': 'str'},
-        'version_id': {'key': 'VersionId', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'BlobProperties'},
-        'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
-        'tags': {'key': 'Tags', 'type': 'BlobTags'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
+        'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
+        'version_id': {'key': 'VersionId', 'type': 'str', 'xml': {'name': 'VersionId'}},
+        'properties': {'key': 'Properties', 'type': 'BlobProperties', 'xml': {'name': 'Properties'}},
+        'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
+        'tags': {'key': 'Tags', 'type': 'BlobTags', 'xml': {'name': 'Tags'}},
+    }
+    _xml_map = {
+        'name': 'Blob'
     }
 
     def __init__(self, *, name: str, deleted: bool, snapshot: str, version_id: str, properties, metadata=None, tags=None, **kwargs) -> None:
@@ -232,8 +247,11 @@ class BlobMetadata(Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
-        'encrypted': {'key': 'Encrypted', 'type': 'str'},
+        'additional_properties': {'key': '', 'type': '{str}', 'xml': {'name': 'additional_properties'}},
+        'encrypted': {'key': 'Encrypted', 'type': 'str', 'xml': {'name': 'Encrypted', 'attr': True}},
+    }
+    _xml_map = {
+        'name': 'Metadata'
     }
 
     def __init__(self, *, additional_properties=None, encrypted: str=None, **kwargs) -> None:
@@ -256,7 +274,9 @@ class BlobPrefix(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, name: str, **kwargs) -> None:
@@ -349,39 +369,42 @@ class BlobProperties(Model):
     }
 
     _attribute_map = {
-        'creation_time': {'key': 'Creation-Time', 'type': 'rfc-1123'},
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'content_length': {'key': 'Content-Length', 'type': 'long'},
-        'content_type': {'key': 'Content-Type', 'type': 'str'},
-        'content_encoding': {'key': 'Content-Encoding', 'type': 'str'},
-        'content_language': {'key': 'Content-Language', 'type': 'str'},
-        'content_md5': {'key': 'Content-MD5', 'type': 'bytearray'},
-        'content_disposition': {'key': 'Content-Disposition', 'type': 'str'},
-        'cache_control': {'key': 'Cache-Control', 'type': 'str'},
-        'blob_sequence_number': {'key': 'x-ms-blob-sequence-number', 'type': 'long'},
-        'blob_type': {'key': 'BlobType', 'type': 'BlobType'},
-        'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType'},
-        'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType'},
-        'copy_id': {'key': 'CopyId', 'type': 'str'},
-        'copy_status': {'key': 'CopyStatus', 'type': 'CopyStatusType'},
-        'copy_source': {'key': 'CopySource', 'type': 'str'},
-        'copy_progress': {'key': 'CopyProgress', 'type': 'str'},
-        'copy_completion_time': {'key': 'CopyCompletionTime', 'type': 'rfc-1123'},
-        'copy_status_description': {'key': 'CopyStatusDescription', 'type': 'str'},
-        'server_encrypted': {'key': 'ServerEncrypted', 'type': 'bool'},
-        'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool'},
-        'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str'},
-        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'access_tier': {'key': 'AccessTier', 'type': 'str'},
-        'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
-        'archive_status': {'key': 'ArchiveStatus', 'type': 'str'},
-        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str'},
-        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
-        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
-        'tag_count': {'key': 'TagCount', 'type': 'int'},
+        'creation_time': {'key': 'Creation-Time', 'type': 'rfc-1123', 'xml': {'name': 'Creation-Time'}},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123', 'xml': {'name': 'Last-Modified'}},
+        'etag': {'key': 'Etag', 'type': 'str', 'xml': {'name': 'Etag'}},
+        'content_length': {'key': 'Content-Length', 'type': 'long', 'xml': {'name': 'Content-Length'}},
+        'content_type': {'key': 'Content-Type', 'type': 'str', 'xml': {'name': 'Content-Type'}},
+        'content_encoding': {'key': 'Content-Encoding', 'type': 'str', 'xml': {'name': 'Content-Encoding'}},
+        'content_language': {'key': 'Content-Language', 'type': 'str', 'xml': {'name': 'Content-Language'}},
+        'content_md5': {'key': 'Content-MD5', 'type': 'bytearray', 'xml': {'name': 'Content-MD5'}},
+        'content_disposition': {'key': 'Content-Disposition', 'type': 'str', 'xml': {'name': 'Content-Disposition'}},
+        'cache_control': {'key': 'Cache-Control', 'type': 'str', 'xml': {'name': 'Cache-Control'}},
+        'blob_sequence_number': {'key': 'x-ms-blob-sequence-number', 'type': 'long', 'xml': {'name': 'x-ms-blob-sequence-number'}},
+        'blob_type': {'key': 'BlobType', 'type': 'BlobType', 'xml': {'name': 'BlobType'}},
+        'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
+        'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
+        'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
+        'copy_id': {'key': 'CopyId', 'type': 'str', 'xml': {'name': 'CopyId'}},
+        'copy_status': {'key': 'CopyStatus', 'type': 'CopyStatusType', 'xml': {'name': 'CopyStatus'}},
+        'copy_source': {'key': 'CopySource', 'type': 'str', 'xml': {'name': 'CopySource'}},
+        'copy_progress': {'key': 'CopyProgress', 'type': 'str', 'xml': {'name': 'CopyProgress'}},
+        'copy_completion_time': {'key': 'CopyCompletionTime', 'type': 'rfc-1123', 'xml': {'name': 'CopyCompletionTime'}},
+        'copy_status_description': {'key': 'CopyStatusDescription', 'type': 'str', 'xml': {'name': 'CopyStatusDescription'}},
+        'server_encrypted': {'key': 'ServerEncrypted', 'type': 'bool', 'xml': {'name': 'ServerEncrypted'}},
+        'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool', 'xml': {'name': 'IncrementalCopy'}},
+        'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str', 'xml': {'name': 'DestinationSnapshot'}},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
+        'access_tier': {'key': 'AccessTier', 'type': 'str', 'xml': {'name': 'AccessTier'}},
+        'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool', 'xml': {'name': 'AccessTierInferred'}},
+        'archive_status': {'key': 'ArchiveStatus', 'type': 'str', 'xml': {'name': 'ArchiveStatus'}},
+        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str', 'xml': {'name': 'CustomerProvidedKeySha256'}},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str', 'xml': {'name': 'EncryptionScope'}},
+        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
+        'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
+    }
+    _xml_map = {
+        'name': 'Properties'
     }
 
     def __init__(self, *, last_modified, etag: str, tag_count: int, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, **kwargs) -> None:
@@ -429,7 +452,10 @@ class BlobTags(Model):
     """
 
     _attribute_map = {
-        'tag_set': {'key': 'TagSet', 'type': '[Tag]'},
+        'tag_set': {'key': 'TagSet', 'type': '[Tag]', 'xml': {'name': 'TagSet', 'itemsName': 'Tag', 'wrapped': True}},
+    }
+    _xml_map = {
+        'name': 'Tags'
     }
 
     def __init__(self, *, tag_set=None, **kwargs) -> None:
@@ -455,8 +481,10 @@ class Block(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'size': {'key': 'Size', 'type': 'int'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'size': {'key': 'Size', 'type': 'int', 'xml': {'name': 'Size'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, name: str, size: int, **kwargs) -> None:
@@ -475,8 +503,10 @@ class BlockList(Model):
     """
 
     _attribute_map = {
-        'committed_blocks': {'key': 'CommittedBlocks', 'type': '[Block]'},
-        'uncommitted_blocks': {'key': 'UncommittedBlocks', 'type': '[Block]'},
+        'committed_blocks': {'key': 'CommittedBlocks', 'type': '[Block]', 'xml': {'name': 'CommittedBlocks', 'itemsName': 'Block', 'wrapped': True}},
+        'uncommitted_blocks': {'key': 'UncommittedBlocks', 'type': '[Block]', 'xml': {'name': 'UncommittedBlocks', 'itemsName': 'Block', 'wrapped': True}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, committed_blocks=None, uncommitted_blocks=None, **kwargs) -> None:
@@ -497,9 +527,12 @@ class BlockLookupList(Model):
     """
 
     _attribute_map = {
-        'committed': {'key': 'Committed', 'type': '[str]'},
-        'uncommitted': {'key': 'Uncommitted', 'type': '[str]'},
-        'latest': {'key': 'Latest', 'type': '[str]'},
+        'committed': {'key': 'Committed', 'type': '[str]', 'xml': {'name': 'Committed', 'itemsName': 'Committed'}},
+        'uncommitted': {'key': 'Uncommitted', 'type': '[str]', 'xml': {'name': 'Uncommitted', 'itemsName': 'Uncommitted'}},
+        'latest': {'key': 'Latest', 'type': '[str]', 'xml': {'name': 'Latest', 'itemsName': 'Latest'}},
+    }
+    _xml_map = {
+        'name': 'BlockList'
     }
 
     def __init__(self, *, committed=None, uncommitted=None, latest=None, **kwargs) -> None:
@@ -526,8 +559,11 @@ class ClearRange(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long'},
-        'end': {'key': 'End', 'type': 'long'},
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'ClearRange'
     }
 
     def __init__(self, *, start: int, end: int, **kwargs) -> None:
@@ -555,9 +591,12 @@ class ContainerItem(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'ContainerProperties'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'properties': {'key': 'Properties', 'type': 'ContainerProperties', 'xml': {'name': 'Properties'}},
+        'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
+    }
+    _xml_map = {
+        'name': 'Container'
     }
 
     def __init__(self, *, name: str, properties, metadata=None, **kwargs) -> None:
@@ -597,14 +636,16 @@ class ContainerProperties(Model):
     }
 
     _attribute_map = {
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType'},
-        'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType'},
-        'public_access': {'key': 'PublicAccess', 'type': 'str'},
-        'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool'},
-        'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123', 'xml': {'name': 'Last-Modified'}},
+        'etag': {'key': 'Etag', 'type': 'str', 'xml': {'name': 'Etag'}},
+        'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
+        'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
+        'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
+        'public_access': {'key': 'PublicAccess', 'type': 'str', 'xml': {'name': 'PublicAccess'}},
+        'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool', 'xml': {'name': 'HasImmutabilityPolicy'}},
+        'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool', 'xml': {'name': 'HasLegalHold'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, last_modified, etag: str, lease_status=None, lease_state=None, lease_duration=None, public_access=None, has_immutability_policy: bool=None, has_legal_hold: bool=None, **kwargs) -> None:
@@ -659,11 +700,13 @@ class CorsRule(Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
+        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str', 'xml': {'name': 'AllowedOrigins'}},
+        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str', 'xml': {'name': 'AllowedMethods'}},
+        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str', 'xml': {'name': 'AllowedHeaders'}},
+        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str', 'xml': {'name': 'ExposedHeaders'}},
+        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int', 'xml': {'name': 'MaxAgeInSeconds'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, allowed_origins: str, allowed_methods: str, allowed_headers: str, exposed_headers: str, max_age_in_seconds: int, **kwargs) -> None:
@@ -686,7 +729,9 @@ class CustomerProvidedKeyInfo(Model):
     """
 
     _attribute_map = {
-        'encryption_scope': {'key': '', 'type': 'str'},
+        'encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_scope'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, encryption_scope: str=None, **kwargs) -> None:
@@ -702,7 +747,9 @@ class DataLakeStorageError(Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
+        'error': {'key': 'error', 'type': 'DataLakeStorageErrorError', 'xml': {'name': 'error'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, error=None, **kwargs) -> None:
@@ -736,8 +783,10 @@ class DataLakeStorageErrorError(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str', 'xml': {'name': 'code'}},
+        'message': {'key': 'message', 'type': 'str', 'xml': {'name': 'message'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
@@ -763,11 +812,13 @@ class DirectoryHttpHeaders(Model):
     """
 
     _attribute_map = {
-        'cache_control': {'key': '', 'type': 'str'},
-        'content_type': {'key': '', 'type': 'str'},
-        'content_encoding': {'key': '', 'type': 'str'},
-        'content_language': {'key': '', 'type': 'str'},
-        'content_disposition': {'key': '', 'type': 'str'},
+        'cache_control': {'key': '', 'type': 'str', 'xml': {'name': 'cache_control'}},
+        'content_type': {'key': '', 'type': 'str', 'xml': {'name': 'content_type'}},
+        'content_encoding': {'key': '', 'type': 'str', 'xml': {'name': 'content_encoding'}},
+        'content_language': {'key': '', 'type': 'str', 'xml': {'name': 'content_language'}},
+        'content_disposition': {'key': '', 'type': 'str', 'xml': {'name': 'content_disposition'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, cache_control: str=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_disposition: str=None, **kwargs) -> None:
@@ -791,9 +842,12 @@ class FilterBlobsItem(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'tag_value': {'key': 'TagValue', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName'}},
+        'tag_value': {'key': 'TagValue', 'type': 'str', 'xml': {'name': 'TagValue'}},
+    }
+    _xml_map = {
+        'name': 'Blob'
     }
 
     def __init__(self, *, name: str=None, container_name: str=None, tag_value: str=None, **kwargs) -> None:
@@ -830,12 +884,15 @@ class FilterBlobsResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'filter': {'key': 'Filter', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'segment': {'key': 'Segment', 'type': 'FilterBlobsSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'filter': {'key': 'Filter', 'type': 'str', 'xml': {'name': 'Filter'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'segment': {'key': 'Segment', 'type': 'FilterBlobsSegment', 'xml': {'name': 'Segment'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, service_endpoint: str, filter: str, segment, next_marker: str, marker: str=None, max_results: int=None, **kwargs) -> None:
@@ -856,7 +913,10 @@ class FilterBlobsSegment(Model):
     """
 
     _attribute_map = {
-        'blob_items': {'key': 'BlobItems', 'type': '[FilterBlobsItem]'},
+        'blob_items': {'key': 'BlobItems', 'type': '[FilterBlobsItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
+    }
+    _xml_map = {
+        'name': 'Blobs'
     }
 
     def __init__(self, *, blob_items=None, **kwargs) -> None:
@@ -885,8 +945,10 @@ class GeoReplication(Model):
     }
 
     _attribute_map = {
-        'status': {'key': 'Status', 'type': 'str'},
-        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123'},
+        'status': {'key': 'Status', 'type': 'str', 'xml': {'name': 'Status'}},
+        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123', 'xml': {'name': 'LastSyncTime'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, status, last_sync_time, **kwargs) -> None:
@@ -914,8 +976,10 @@ class KeyInfo(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, start: str, expiry: str, **kwargs) -> None:
@@ -933,7 +997,9 @@ class LeaseAccessConditions(Model):
     """
 
     _attribute_map = {
-        'lease_id': {'key': '', 'type': 'str'},
+        'lease_id': {'key': '', 'type': 'str', 'xml': {'name': 'lease_id'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, lease_id: str=None, **kwargs) -> None:
@@ -971,14 +1037,17 @@ class ListBlobsFlatSegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'delimiter': {'key': 'Delimiter', 'type': 'str'},
-        'segment': {'key': 'Segment', 'type': 'BlobFlatListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName', 'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'delimiter': {'key': 'Delimiter', 'type': 'str', 'xml': {'name': 'Delimiter'}},
+        'segment': {'key': 'Segment', 'type': 'BlobFlatListSegment', 'xml': {'name': 'Segment'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
@@ -1023,14 +1092,17 @@ class ListBlobsHierarchySegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'delimiter': {'key': 'Delimiter', 'type': 'str'},
-        'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName', 'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'delimiter': {'key': 'Delimiter', 'type': 'str', 'xml': {'name': 'Delimiter'}},
+        'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment', 'xml': {'name': 'Segment'}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
@@ -1070,12 +1142,15 @@ class ListContainersSegmentResponse(Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str'},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'container_items': {'key': 'ContainerItems', 'type': '[ContainerItem]'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
+        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
+        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
+        'container_items': {'key': 'ContainerItems', 'type': '[ContainerItem]', 'xml': {'name': 'Containers', 'itemsName': 'Containers', 'wrapped': True}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
     }
 
     def __init__(self, *, service_endpoint: str, container_items, prefix: str=None, marker: str=None, max_results: int=None, next_marker: str=None, **kwargs) -> None:
@@ -1117,11 +1192,13 @@ class Logging(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'delete': {'key': 'Delete', 'type': 'bool'},
-        'read': {'key': 'Read', 'type': 'bool'},
-        'write': {'key': 'Write', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
+        'delete': {'key': 'Delete', 'type': 'bool', 'xml': {'name': 'Delete'}},
+        'read': {'key': 'Read', 'type': 'bool', 'xml': {'name': 'Read'}},
+        'write': {'key': 'Write', 'type': 'bool', 'xml': {'name': 'Write'}},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, version: str, delete: bool, read: bool, write: bool, retention_policy, **kwargs) -> None:
@@ -1156,10 +1233,12 @@ class Metrics(Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
+        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, enabled: bool, version: str=None, include_apis: bool=None, retention_policy=None, **kwargs) -> None:
@@ -1188,10 +1267,12 @@ class ModifiedAccessConditions(Model):
     """
 
     _attribute_map = {
-        'if_modified_since': {'key': '', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': '', 'type': 'rfc-1123'},
-        'if_match': {'key': '', 'type': 'str'},
-        'if_none_match': {'key': '', 'type': 'str'},
+        'if_modified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'if_modified_since'}},
+        'if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'if_unmodified_since'}},
+        'if_match': {'key': '', 'type': 'str', 'xml': {'name': 'if_match'}},
+        'if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'if_none_match'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, if_modified_since=None, if_unmodified_since=None, if_match: str=None, if_none_match: str=None, **kwargs) -> None:
@@ -1212,8 +1293,10 @@ class PageList(Model):
     """
 
     _attribute_map = {
-        'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
-        'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'page_range': {'key': 'PageRange', 'type': '[PageRange]', 'xml': {'name': 'PageRange', 'itemsName': 'PageRange'}},
+        'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]', 'xml': {'name': 'ClearRange', 'itemsName': 'ClearRange'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, page_range=None, clear_range=None, **kwargs) -> None:
@@ -1239,8 +1322,11 @@ class PageRange(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long'},
-        'end': {'key': 'End', 'type': 'long'},
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'PageRange'
     }
 
     def __init__(self, *, start: int, end: int, **kwargs) -> None:
@@ -1270,8 +1356,10 @@ class RetentionPolicy(Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'days': {'key': 'Days', 'type': 'int'},
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+        'days': {'key': 'Days', 'type': 'int', 'xml': {'name': 'Days'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, enabled: bool, days: int=None, **kwargs) -> None:
@@ -1298,9 +1386,11 @@ class SequenceNumberAccessConditions(Model):
     """
 
     _attribute_map = {
-        'if_sequence_number_less_than_or_equal_to': {'key': '', 'type': 'long'},
-        'if_sequence_number_less_than': {'key': '', 'type': 'long'},
-        'if_sequence_number_equal_to': {'key': '', 'type': 'long'},
+        'if_sequence_number_less_than_or_equal_to': {'key': '', 'type': 'long', 'xml': {'name': 'if_sequence_number_less_than_or_equal_to'}},
+        'if_sequence_number_less_than': {'key': '', 'type': 'long', 'xml': {'name': 'if_sequence_number_less_than'}},
+        'if_sequence_number_equal_to': {'key': '', 'type': 'long', 'xml': {'name': 'if_sequence_number_equal_to'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, if_sequence_number_less_than_or_equal_to: int=None, if_sequence_number_less_than: int=None, if_sequence_number_equal_to: int=None, **kwargs) -> None:
@@ -1327,8 +1417,11 @@ class SignedIdentifier(Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
+        'id': {'key': 'Id', 'type': 'str', 'xml': {'name': 'Id'}},
+        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy', 'xml': {'name': 'AccessPolicy'}},
+    }
+    _xml_map = {
+        'name': 'SignedIdentifier'
     }
 
     def __init__(self, *, id: str, access_policy, **kwargs) -> None:
@@ -1355,10 +1448,12 @@ class SourceModifiedAccessConditions(Model):
     """
 
     _attribute_map = {
-        'source_if_modified_since': {'key': '', 'type': 'rfc-1123'},
-        'source_if_unmodified_since': {'key': '', 'type': 'rfc-1123'},
-        'source_if_match': {'key': '', 'type': 'str'},
-        'source_if_none_match': {'key': '', 'type': 'str'},
+        'source_if_modified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'source_if_modified_since'}},
+        'source_if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'source_if_unmodified_since'}},
+        'source_if_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_match'}},
+        'source_if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_none_match'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, source_if_modified_since=None, source_if_unmodified_since=None, source_if_match: str=None, source_if_none_match: str=None, **kwargs) -> None:
@@ -1389,9 +1484,11 @@ class StaticWebsite(Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'index_document': {'key': 'IndexDocument', 'type': 'str'},
-        'error_document404_path': {'key': 'ErrorDocument404Path', 'type': 'str'},
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+        'index_document': {'key': 'IndexDocument', 'type': 'str', 'xml': {'name': 'IndexDocument'}},
+        'error_document404_path': {'key': 'ErrorDocument404Path', 'type': 'str', 'xml': {'name': 'ErrorDocument404Path'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, enabled: bool, index_document: str=None, error_document404_path: str=None, **kwargs) -> None:
@@ -1409,7 +1506,9 @@ class StorageError(Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, message: str=None, **kwargs) -> None:
@@ -1455,13 +1554,15 @@ class StorageServiceProperties(Model):
     """
 
     _attribute_map = {
-        'logging': {'key': 'Logging', 'type': 'Logging'},
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]'},
-        'default_service_version': {'key': 'DefaultServiceVersion', 'type': 'str'},
-        'delete_retention_policy': {'key': 'DeleteRetentionPolicy', 'type': 'RetentionPolicy'},
-        'static_website': {'key': 'StaticWebsite', 'type': 'StaticWebsite'},
+        'logging': {'key': 'Logging', 'type': 'Logging', 'xml': {'name': 'Logging'}},
+        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
+        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
+        'default_service_version': {'key': 'DefaultServiceVersion', 'type': 'str', 'xml': {'name': 'DefaultServiceVersion'}},
+        'delete_retention_policy': {'key': 'DeleteRetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'DeleteRetentionPolicy'}},
+        'static_website': {'key': 'StaticWebsite', 'type': 'StaticWebsite', 'xml': {'name': 'StaticWebsite'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, logging=None, hour_metrics=None, minute_metrics=None, cors=None, default_service_version: str=None, delete_retention_policy=None, static_website=None, **kwargs) -> None:
@@ -1483,7 +1584,9 @@ class StorageServiceStats(Model):
     """
 
     _attribute_map = {
-        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
+        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication', 'xml': {'name': 'GeoReplication'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, geo_replication=None, **kwargs) -> None:
@@ -1508,8 +1611,10 @@ class Tag(Model):
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        'key': {'key': 'Key', 'type': 'str', 'xml': {'name': 'Key'}},
+        'value': {'key': 'Value', 'type': 'str', 'xml': {'name': 'Value'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, key: str, value: str, **kwargs) -> None:
@@ -1553,13 +1658,15 @@ class UserDelegationKey(Model):
     }
 
     _attribute_map = {
-        'signed_oid': {'key': 'SignedOid', 'type': 'str'},
-        'signed_tid': {'key': 'SignedTid', 'type': 'str'},
-        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601'},
-        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601'},
-        'signed_service': {'key': 'SignedService', 'type': 'str'},
-        'signed_version': {'key': 'SignedVersion', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        'signed_oid': {'key': 'SignedOid', 'type': 'str', 'xml': {'name': 'SignedOid'}},
+        'signed_tid': {'key': 'SignedTid', 'type': 'str', 'xml': {'name': 'SignedTid'}},
+        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601', 'xml': {'name': 'SignedStart'}},
+        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601', 'xml': {'name': 'SignedExpiry'}},
+        'signed_service': {'key': 'SignedService', 'type': 'str', 'xml': {'name': 'SignedService'}},
+        'signed_version': {'key': 'SignedVersion', 'type': 'str', 'xml': {'name': 'SignedVersion'}},
+        'value': {'key': 'Value', 'type': 'str', 'xml': {'name': 'Value'}},
+    }
+    _xml_map = {
     }
 
     def __init__(self, *, signed_oid: str, signed_tid: str, signed_start, signed_expiry, signed_service: str, signed_version: str, value: str, **kwargs) -> None:

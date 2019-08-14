@@ -576,8 +576,9 @@ class ContainerOperations:
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct body
+        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifiers', 'wrapped': True}}
         if container_acl is not None:
-            body_content = self._serialize.body(container_acl, '[SignedIdentifier]')
+            body_content = self._serialize.body(container_acl, '[SignedIdentifier]', serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
 
