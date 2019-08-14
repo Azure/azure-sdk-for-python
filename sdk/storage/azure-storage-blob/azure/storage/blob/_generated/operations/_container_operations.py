@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -99,8 +98,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if access is not None:
@@ -182,8 +179,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -278,8 +273,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -375,8 +368,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -458,8 +449,6 @@ class ContainerOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -561,8 +550,6 @@ class ContainerOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if access is not None:
             header_parameters['x-ms-blob-public-access'] = self._serialize.header("access", access, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -667,8 +654,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if duration is not None:
             header_parameters['x-ms-lease-duration'] = self._serialize.header("duration", duration, 'int')
         if proposed_lease_id is not None:
@@ -760,8 +745,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -849,8 +832,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -947,8 +928,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if break_period is not None:
             header_parameters['x-ms-lease-break-period'] = self._serialize.header("break_period", break_period, 'int')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1043,8 +1022,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-proposed-lease-id'] = self._serialize.header("proposed_lease_id", proposed_lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1152,8 +1129,6 @@ class ContainerOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1267,8 +1242,6 @@ class ContainerOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1329,8 +1302,6 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request

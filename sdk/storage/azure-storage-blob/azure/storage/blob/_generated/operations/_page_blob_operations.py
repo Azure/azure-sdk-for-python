@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from azure.core.exceptions import map_error
 
 from .. import models
@@ -34,9 +33,9 @@ class PageBlobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.x_ms_blob_type = "PageBlob"
 
         self._config = config
+        self.x_ms_blob_type = "PageBlob"
 
     def create(self, content_length, blob_content_length, timeout=None, metadata=None, tags=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, customer_provided_key_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create operation creates a new page blob.
@@ -171,8 +170,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
@@ -354,8 +351,6 @@ class PageBlobOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/octet-stream'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if transactional_content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
@@ -494,8 +489,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
@@ -654,8 +647,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-copy-source'] = self._serialize.header("source_url", source_url, 'str')
         header_parameters['x-ms-source-range'] = self._serialize.header("source_range", source_range, 'str')
         if source_content_md5 is not None:
@@ -797,8 +788,6 @@ class PageBlobOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -936,8 +925,6 @@ class PageBlobOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1049,8 +1036,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-blob-content-length'] = self._serialize.header("blob_content_length", blob_content_length, 'long')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -1161,8 +1146,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-sequence-number-action'] = self._serialize.header("sequence_number_action", sequence_number_action, 'SequenceNumberActionType')
         if blob_sequence_number is not None:
             header_parameters['x-ms-blob-sequence-number'] = self._serialize.header("blob_sequence_number", blob_sequence_number, 'long')
@@ -1268,8 +1251,6 @@ class PageBlobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:

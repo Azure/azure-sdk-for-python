@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from azure.core.exceptions import map_error
 
 from ... import models
@@ -34,9 +33,9 @@ class DirectoryOperations:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.resource = "directory"
 
         self._config = config
+        self.resource = "directory"
 
     async def create(self, timeout=None, directory_properties=None, posix_permissions=None, posix_umask=None, request_id=None, directory_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """Create a directory. By default, the destination is overwritten and if
@@ -142,8 +141,6 @@ class DirectoryOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if directory_properties is not None:
             header_parameters['x-ms-properties'] = self._serialize.header("directory_properties", directory_properties, 'str')
         if posix_permissions is not None:
@@ -336,8 +333,6 @@ class DirectoryOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-rename-source'] = self._serialize.header("rename_source", rename_source, 'str')
         if directory_properties is not None:
             header_parameters['x-ms-properties'] = self._serialize.header("directory_properties", directory_properties, 'str')
@@ -474,8 +469,6 @@ class DirectoryOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')

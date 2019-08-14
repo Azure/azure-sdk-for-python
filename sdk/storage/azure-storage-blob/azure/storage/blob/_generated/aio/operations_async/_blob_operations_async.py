@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from azure.core.exceptions import map_error
 
 from ... import models
@@ -36,11 +35,11 @@ class BlobOperations:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+
+        self._config = config
         self.x_ms_requires_sync = "true"
         self.x_ms_copy_action = "abort"
         self.restype = "account"
-
-        self._config = config
 
     async def download(self, snapshot=None, version_id=None, timeout=None, range=None, range_get_content_md5=None, range_get_content_crc64=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Download operation reads or downloads a blob from the system,
@@ -148,8 +147,6 @@ class BlobOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         if range_get_content_md5 is not None:
@@ -361,8 +358,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -531,8 +526,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if delete_snapshots is not None:
             header_parameters['x-ms-delete-snapshots'] = self._serialize.header("delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -700,8 +693,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-rename-source'] = self._serialize.header("rename_source", rename_source, 'str')
         if directory_properties is not None:
             header_parameters['x-ms-properties'] = self._serialize.header("directory_properties", directory_properties, 'str')
@@ -802,8 +793,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -909,8 +898,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1062,8 +1049,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1171,8 +1156,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if duration is not None:
             header_parameters['x-ms-lease-duration'] = self._serialize.header("duration", duration, 'int')
         if proposed_lease_id is not None:
@@ -1271,8 +1254,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -1367,8 +1348,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -1469,8 +1448,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         header_parameters['x-ms-proposed-lease-id'] = self._serialize.header("proposed_lease_id", proposed_lease_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1575,8 +1552,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if break_period is not None:
             header_parameters['x-ms-lease-break-period'] = self._serialize.header("break_period", break_period, 'int')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1716,8 +1691,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1865,8 +1838,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if tags is not None:
@@ -2022,8 +1993,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if tags is not None:
@@ -2130,8 +2099,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -2218,8 +2185,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
         if rehydrate_priority is not None:
             header_parameters['x-ms-rehydrate-priority'] = self._serialize.header("rehydrate_priority", rehydrate_priority, 'str')
@@ -2275,8 +2240,6 @@ class BlobOperations:
 
         # Construct headers
         header_parameters = {}
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -2350,8 +2313,6 @@ class BlobOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if transactional_content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
@@ -2439,8 +2400,6 @@ class BlobOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:

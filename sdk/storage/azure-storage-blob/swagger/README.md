@@ -25,6 +25,7 @@ namespace: azure.storage.blob
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: true
+vanilla: true
 clear-output-folder: true
 python: true
 ```

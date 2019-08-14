@@ -13,6 +13,7 @@ from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureBlobStorageConfiguration
+from azure.core.exceptions import map_error
 from .operations import ServiceOperations
 from .operations import ContainerOperations
 from .operations import DirectoryOperations
@@ -42,9 +43,6 @@ class AzureBlobStorage(object):
     :ivar block_blob: BlockBlob operations
     :vartype block_blob: azure.storage.blob.operations.BlockBlobOperations
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
@@ -57,11 +55,10 @@ class AzureBlobStorage(object):
     :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     """
 
-    def __init__(
-            self, credentials, url, filter, path_rename_mode=None, **kwargs):
+    def __init__(self, url, filter, path_rename_mode=None, **kwargs):
 
         base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(credentials, url, filter, path_rename_mode, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url, filter, path_rename_mode, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

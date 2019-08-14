@@ -8,6 +8,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
@@ -19,9 +20,6 @@ class AzureBlobStorageConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
@@ -37,10 +35,8 @@ class AzureBlobStorageConfiguration(Configuration):
     :type version: str
     """
 
-    def __init__(self, credentials, url, filter, path_rename_mode=None, **kwargs):
+    def __init__(self, url, filter, path_rename_mode=None, **kwargs):
 
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
         if filter is None:
@@ -51,8 +47,8 @@ class AzureBlobStorageConfiguration(Configuration):
 
         self.user_agent_policy.add_user_agent('azsdk-python-azureblobstorage/{}'.format(VERSION))
         self.generate_client_request_id = True
+        self.accept_language = None
 
-        self.credentials = credentials
         self.url = url
         self.filter = filter
         self.path_rename_mode = path_rename_mode
