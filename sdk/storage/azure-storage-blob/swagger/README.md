@@ -42,6 +42,7 @@ directive:
 
 ### Use strings for dates when python doesn't have enough precision
 ``` yaml
+directive:
 - from: swagger-document
   where: $.definitions.AccessPolicy.properties
   transform: >
