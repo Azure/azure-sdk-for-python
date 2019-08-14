@@ -4,8 +4,9 @@
 # ------------------------------------
 
 """
-Pylint custom checkers for SDK guidelines: CXXXX - CXXXX
+Pylint custom checkers for SDK guidelines: C4717 - CXXXX
 """
+import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 
@@ -22,7 +23,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             "missing-client-constructor-parameter-credentials",
             "All client types should accept a credentials parameter.",
         ),
-        "C4719": (
+        "C4718": (
             "Client constructor is missing a **kwargs parameter. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "missing-client-constructor-parameter-kwargs",
@@ -86,7 +87,7 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     name = "configuration-policies-kwargs"
     priority = -1
     msgs = {
-        "C4714": (
+        "C4719": (
             "A policy in the create_configuration() function is missing a **kwargs argument. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "config-missing-kwargs-in-policy",
@@ -132,7 +133,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
     name = "client-approved-method-name-prefix"
     priority = -1
     msgs = {
-        "C4715": (
+        "C4720": (
             "Client is not using an approved method name prefix. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#service-operations",
             "unapproved-client-method-name-prefix",
@@ -182,7 +183,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     name = "client-method-multiple-parameters"
     priority = -1
     msgs = {
-        "C4720": (
+        "C4721": (
             "Client has too many positional arguments. Use keyword-only arguments."
             " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "client-method-has-more-than-5-positional-arguments",
@@ -246,7 +247,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
     name = "client-method-type-annotations"
     priority = -1
     msgs = {
-        "C4721": (
+        "C4722": (
             "Client method is missing type annotations and/or return type annotations. See details:"
             " https://azure.github.io/azure-sdk/python_introduction.html#types-or-not",
             "client-method-missing-type-annotations",
@@ -326,13 +327,13 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     name = "client-method-has-tracing-decorator"
     priority = -1
     msgs = {
-        "C4722": (
+        "C4723": (
             "Client method is missing the distributed tracing decorator - `distributed_trace`. See details:"
             " https://azure.github.io/azure-sdk/python_implementation.html#distributed-tracing",
             "client-method-missing-tracing-decorator",
             "Client method should support distributed tracing.",
         ),
-        "C4723": (
+        "C4724": (
             "Client async method is missing the distributed tracing decorator - `distributed_trace_async`. "
             " See details: https://azure.github.io/azure-sdk/python_implementation.html#distributed-tracing",
             "client-method-missing-tracing-decorator-async",
@@ -393,7 +394,7 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     def visit_functiondef(self, node):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
-                if not node.name.startswith("_"):
+                if not node.name.startswith("_") and not node.name.startswith("from"):
                     if "azure.core.tracing.decorator.distributed_trace" not in node.decoratornames():
                         self.add_message(
                             msg_id="client-method-missing-tracing-decorator", node=node, confidence=None
@@ -404,7 +405,7 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     def visit_asyncfunctiondef(self, node):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
-                if not node.name.startswith("_"):
+                if not node.name.startswith("_") and not node.name.startswith("from"):
                     if "azure.core.tracing.decorator_async.distributed_trace_async" not in node.decoratornames():
                         self.add_message(
                             msg_id="client-method-missing-tracing-decorator-async", node=node, confidence=None
@@ -419,7 +420,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
     name = "client-does-not-use-static-methods"
     priority = -1
     msgs = {
-        "C4724": (
+        "C4725": (
             "Client should not use static methods (staticmethod). See details:"
             " https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "client-method-should-not-use-static-method",
@@ -478,7 +479,7 @@ class FileHasCopyrightHeader(BaseChecker):
     name = "file-has-copyright-header"
     priority = -1
     msgs = {
-        "C4730": (
+        "C4726": (
             "File is missing a copyright header. See details:"
             " https://azure.github.io/azure-sdk/policies_opensource.html",
             "file-needs-copyright-header",
@@ -515,7 +516,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
     name = "client-naming-conventions"
     priority = -1
     msgs = {
-        "C4726": (
+        "C4727": (
             "Client is using an incorrect naming convention. See details:"
             " https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions",
             "client-incorrect-naming-convention",
@@ -587,7 +588,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
     name = "client-methods-have-kwargs"
     priority = -1
     msgs = {
-        "C4727": (
+        "C4728": (
             "Client method is missing a **kwargs parameter. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
             "client-method-missing-kwargs",
@@ -620,6 +621,8 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
     def visit_functiondef(self, node):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
+                if node.decorators is not None and "builtins.property" in node.decoratornames():
+                    return
                 if not node.name.startswith("_"):
                     if not node.args.kwarg:
                         self.add_message(
@@ -631,6 +634,8 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
     def visit_asyncfunctiondef(self, node):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
+                if node.decorators is not None and "builtins.property" in node.decoratornames():
+                    return
                 if not node.name.startswith("_"):
                     if not node.args.kwarg:
                         self.add_message(
@@ -646,7 +651,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
     name = "client-methods-no-double-underscore"
     priority = -1
     msgs = {
-        "C4731": (
+        "C4729": (
             "Client method name should not use a double underscore prefix. See details:"
             " https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private",
             "client-method-name-no-double-underscore",
@@ -665,7 +670,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
         ),
     )
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
-    acceptable_names = ["__init__"]
+    acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__"]
 
     def __init__(self, linter=None):
         super().__init__(linter)
@@ -704,7 +709,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
     name = "client-docstring-literal-include"
     priority = -1
     msgs = {
-        "C4732": (
+        "C4730": (
             "Client docstring should use a literal include directive for the code example. See details:"
             " https://azure.github.io/azure-sdk/python_documentation.html#code-snippets",
             "client-docstring-use-literal-include",
@@ -770,7 +775,7 @@ class AsyncClientCorrectNaming(BaseChecker):
     name = "async-client-correct-naming"
     priority = -1
     msgs = {
-        "C4728": (
+        "C4731": (
             "Async client should not include `Async` in the client name. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#async-support",
             "async-client-bad-name",
@@ -807,7 +812,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     name = "specify-parameter-names"
     priority = -1
     msgs = {
-        "C4729": (
+        "C4732": (
             "Specify the parameter names when calling methods with more than 2 required positional parameters."
             " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
             "specify-parameter-names-in-call",
@@ -848,6 +853,261 @@ class SpecifyParameterNamesInCall(BaseChecker):
         except AttributeError:
             pass
 
+
+class ClientListMethodsUseCorePaging(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-list-methods-use-paging"
+    priority = -1
+    msgs = {
+        "C4733": (
+            "Operations that return collections should return a value that implements the Paging protocol. See details:"
+            " https://azure.github.io/azure-sdk/python_design.html#response-formats",
+            "client-list-methods-use-paging",
+            "Client methods that return collections should use the Paging protocol.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-list-methods-use-paging",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow collections method to not use paging protocol.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
+            self.is_client.append(True)
+        else:
+            self.is_client.append(False)
+
+    def visit_functiondef(self, node):
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name.startswith("list"):
+                    returns = next(node.infer_call_result()).as_string()
+                    if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1:
+                        self.add_message(
+                            msg_id="client-list-methods-use-paging", node=node, confidence=None
+                        )
+        except AttributeError:
+            pass
+
+
+class ClientLROMethodsUseCorePolling(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-lro-methods-use-polling"
+    priority = -1
+    msgs = {
+        "C4734": (
+            "Long running operations should return a value that implements the Poller protocol. See details:"
+            " https://azure.github.io/azure-sdk/python_design.html#response-formats",
+            "client-lro-methods-use-polling",
+            "Long running operations should use the polling protocol.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-lro-methods-use-polling",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow LRO method to not use polling protocol.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
+            self.is_client.append(True)
+        else:
+            self.is_client.append(False)
+
+    def visit_functiondef(self, node):
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method():
+                if node.name.startswith("begin"):
+                    try:
+                        returns = next(node.infer_call_result()).as_string()
+                        if returns.find("LROPoller") == -1:
+                            self.add_message(
+                                msg_id="client-lro-methods-use-polling", node=node, confidence=None
+                            )
+                    except astroid.exceptions.InferenceError:
+                        pass
+        except AttributeError:
+            pass
+
+
+class ClientLROMethodsUseCorrectNaming(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-lro-methods-use-correct-naming"
+    priority = -1
+    msgs = {
+        "C4735": (
+            "Methods that return an LROPoller should be prefixed with `begin_`. See details:"
+            " https://azure.github.io/azure-sdk/python_design.html#service-operations",
+            "lro-methods-use-correct-naming",
+            "Methods that return an LROPoller should be prefixed with `begin_`.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-lro-methods-use-correct-naming",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow LRO method to use a different name.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
+            self.is_client.append(True)
+        else:
+            self.is_client.append(False)
+
+    def visit_functiondef(self, node):
+        try:
+            if self.is_client and self.is_client[-1] and node.is_method() and not node.name.startswith("_"):
+                try:
+                    returns = next(node.infer_call_result()).as_string()
+                    if returns.find("LROPoller") != -1 and not \
+                            isinstance(returns.find("LROPoller"), type(astroid.util.Uninferable)):
+                        if not node.name.startswith("begin"):
+                            self.add_message(
+                                msg_id="lro-methods-use-correct-naming", node=node, confidence=None
+                            )
+                except astroid.exceptions.InferenceError:
+                    pass
+        except AttributeError:
+            pass
+
+
+class ClientHasFromConnectionStringMethod(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-has-from-connection-string-method"
+    priority = -1
+    msgs = {
+        "C4736": (
+            "Missing method to create the client with a connection string "
+            "(disable me if client doesn't support connection strings). See details:"
+            "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            "missing-client-creation-from-connection-string",
+            "Client should have a method to create the client with a connection string.",
+        ),
+    }
+    options = (
+        (
+            "ignore-missing-client-creation-from-connection-string",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow client to not have from_connection_string() method.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.is_client = []
+        self.is_async = False
+
+    def visit_module(self, node):
+        self.is_async = bool(node.file.find("aio") != -1)
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client") and node.name not in self.ignore_clients:
+            self.is_client.append(True)
+        else:
+            self.is_client.append(False)
+
+        try:
+            client_methods = set()
+            if self.is_async is False:
+                for func in node.body:
+                    client_methods.add(func.name)
+
+                if self.is_client and self.is_client[-1] and "from_connection_string" not in client_methods:
+                    self.add_message(
+                        msg_id="missing-client-creation-from-connection-string", node=node, confidence=None
+                    )
+        except AttributeError:
+            pass
+
+
+# class LibraryProvidesLogging(BaseChecker):
+#     __implements__ = IAstroidChecker
+#
+#     name = "library-provides-logging"
+#     priority = -1
+#     msgs = {
+#         "C4736": (
+#             "Library should provide logging at INFO, WARNING, ERROR, and DEBUG levels. See details:"
+#             " https://azure.github.io/azure-sdk/python_implementation.html#logging",
+#             "library-should-provide-loggers",
+#             "Library should provide a named logger.",
+#         )
+#     }
+#     options = (
+#         (
+#             "ignore-library-should-provide-loggers",
+#             {
+#                 "default": False,
+#                 "type": "yn",
+#                 "metavar": "<y_or_n>",
+#                 "help": "Allow library to not have a named logger.",
+#             },
+#         ),
+#     )
+#
+#     def __init__(self, linter=None):
+#         super().__init__(linter)
+#         self.logging_imported = False
+#
+#     def visit_classdef(self, node):
+#         # print(node.name)
+#         error, warning, info, debug = False, False, False, False
+#         if node.name.lower().find("logging") != -1 or node.name.lower().find("logger") != -1:
+#             for idx in range(len(node.body)):
+#                 line = list(node.get_children())[idx].as_string()
+#                 if line.find("isEnabledFor(logging.ERROR"): error = True
+#                 if line.find("isEnabledFor(logging.WARNING"): warning = True
+#                 if line.find("isEnabledFor(logging.INFO"): info = True
+#                 if line.find("isEnabledFor(logging.DEBUG"): debug = True
+#
+#             if error and warning and info and debug:
+#                 self.add_message(
+#                     msg_id="library-should-provide-loggers", node=node, confidence=None
+#                 )
+#
 #
 # class ClientExceptionsDeriveFromCore(BaseChecker):
 #     __implements__ = IAstroidChecker
@@ -855,7 +1115,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
 #     name = "client-exceptions-derive-from-core"
 #     priority = -1
 #     msgs = {
-#         "C4731": (
+#         "C4735": (
 #             "Client exceptions should be based on existing exception types present in azure-core. See details:"
 #             " https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html#sec-error-handling",
 #             "client-bad-exception-type",
@@ -873,33 +1133,57 @@ class SpecifyParameterNamesInCall(BaseChecker):
 #             },
 #         ),
 #     )
+#     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 #
 #     def __init__(self, linter=None):
 #         super().__init__(linter)
-#         self.is_client = []
-#
-#     def visit_classdef(self, node):
-#         if node.name.endswith("ErrorException"):
-#             core_exception = [ex for ex in node.bases if ex.name == "HttpResponseError"]
-#             if not core_exception:
-#                 self.add_message(
-#                     msg_id="client-bad-exception-type", node=node, confidence=None
-#                 )
-#
+#         # self.is_client = []
+
+    # def visit_classdef(self, node):
+    #     if node.name.endswith("Client") and node.name not in self.ignore_clients:
+    #         self.is_client.append(True)
+    #     else:
+    #         self.is_client.append(False)
+    #
+    # def visit_functiondef(self, node):
+    #     try:
+    #         if self.is_client and self.is_client[-1] and node.is_method():
+    #             # print(node.infer_call_result())
+    #             # returns = next(node.infer_call_result()).as_string()
+    #             # print(returns)
+    #             self.add_message(
+    #                 msg_id="client-bad-exception-type", node=node, confidence=None
+    #             )
+    #     except AttributeError:
+    #         pass
+
+    # def visit_classdef(self, node):
+    #     if node.name.endswith("Error") or node.name.endswith("Exception"):
+    #         core_exception = [ex for ex in node.bases if ex.name == "HttpResponseError"]
+    #         if not core_exception:
+    #             self.add_message(
+    #                 msg_id="client-bad-exception-type", node=node, confidence=None
+    #             )
+
 
 def register(linter):
     linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
-    linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
+    # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
     linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
     linter.register_checker(ClientUsesCorrectNamingConventions(linter))
-    linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
+    # linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
     linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
     linter.register_checker(AsyncClientCorrectNaming(linter))
     linter.register_checker(FileHasCopyrightHeader(linter))
     linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
     linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
     linter.register_checker(SpecifyParameterNamesInCall(linter))
+    linter.register_checker(ClientListMethodsUseCorePaging(linter))
+    linter.register_checker(ClientLROMethodsUseCorePolling(linter))
+    linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
+    linter.register_checker(ClientHasFromConnectionStringMethod(linter))
+    # linter.register_checker(LibraryProvidesLogging(linter))
     # linter.register_checker(ClientExceptionsDeriveFromCore(linter))

@@ -1,5 +1,5 @@
 [MASTER]
-ignore-patterns=test_*
+ignore-patterns=test_*,conftest,setup
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST
@@ -7,6 +7,7 @@ ignore=
     _generated,
     _shared,
     samples,
+    tests,
     azure-mgmt-advisor,
     azure-mgmt-devspaces,
     azure-mgmt-alertsmanagement,
@@ -48,6 +49,7 @@ ignore=
     azure-mgmt-eventhub,
     azure-mgmt-hanaonazure,
     azure-mgmt-hdinsight,
+    azure-mgmt-healthcareapis,
     azure-mgmt-iotcentral,
     azure-mgmt-iothub,
     azure-mgmt-iothubprovisioningservices,
@@ -104,6 +106,7 @@ init-hook='import sys; sys.path.insert(0, "C:\\Users\\krpratic\\azure-sdk-for-py
 # init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.getcwd(), "plugins")))'
 # init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.path.abspath(os.path.dirname(__file__)), "plugins")))'
 load-plugins=pylint_guidelines_checker,pylint.extensions.docparams
+# load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
