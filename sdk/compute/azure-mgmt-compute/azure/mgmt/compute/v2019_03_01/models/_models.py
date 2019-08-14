@@ -4297,6 +4297,20 @@ class VirtualMachine(Resource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param priority: Specifies the priority for the virtual machine.
+     <br><br>Minimum api-version: 2019-03-01. Possible values include:
+     'Regular', 'Low'
+    :type priority: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
+    :param eviction_policy: Specifies the eviction policy for the low priority
+     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
+     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+    :type eviction_policy: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
     :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
@@ -4356,6 +4370,9 @@ class VirtualMachine(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
@@ -4377,6 +4394,9 @@ class VirtualMachine(Resource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+        self.priority = kwargs.get('priority', None)
+        self.eviction_policy = kwargs.get('eviction_policy', None)
+        self.billing_profile = kwargs.get('billing_profile', None)
         self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
@@ -7013,6 +7033,20 @@ class VirtualMachineUpdate(UpdateResource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param priority: Specifies the priority for the virtual machine.
+     <br><br>Minimum api-version: 2019-03-01. Possible values include:
+     'Regular', 'Low'
+    :type priority: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
+    :param eviction_policy: Specifies the eviction policy for the low priority
+     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
+     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+    :type eviction_policy: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
     :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
@@ -7060,6 +7094,9 @@ class VirtualMachineUpdate(UpdateResource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
@@ -7080,6 +7117,9 @@ class VirtualMachineUpdate(UpdateResource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+        self.priority = kwargs.get('priority', None)
+        self.eviction_policy = kwargs.get('eviction_policy', None)
+        self.billing_profile = kwargs.get('billing_profile', None)
         self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
