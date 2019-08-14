@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-
     check_call(
         [
             "python",
@@ -42,7 +41,7 @@ if __name__ == "__main__":
     discovered_wheels = [
         f
         for f in os.listdir(args.distribution_directory)
-        if os.path.isfile(os.path.join(args.distribution_directory, f))
+        if f.endswith(".whl")
     ]
 
     for wheel in discovered_wheels:
