@@ -51,7 +51,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         enabled_for_disk_encryption=True,
         enabled_for_template_deployment=True,
         enable_soft_delete=None,
-        name_prefix="vault" + str(hash(os.environ['RECORDING_NAME_SEED'])).replace("-", "")[:4],
+        name_prefix="vault",
         location="westus",
         parameter_name="vault_client",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -59,6 +59,10 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
+        try:
+            name_prefix += str(hash(os.environ['RECORDING_NAME_SEED'])).replace("-", "")[:4]
+        except KeyError as e:
+            pass
         super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
