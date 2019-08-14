@@ -32,9 +32,6 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 from keys_vault_client import VaultClient
-from random import choice, seed
-from string import ascii_lowercase
-from conftest import seed_to_file
 
 DEFAULT_PERMISSIONS = Permissions(
     keys=[perm.value for perm in KeyPermissions],
@@ -54,7 +51,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         enabled_for_disk_encryption=True,
         enabled_for_template_deployment=True,
         enable_soft_delete=None,
-        name_prefix="vault" + hash(os.environ['RECORDING_NAME_SEED']),
+        name_prefix="vault" + str(hash(os.environ['RECORDING_NAME_SEED'])).replace("-", "")[:4],
         location="westus",
         parameter_name="vault_client",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -62,21 +59,6 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        is_live = False
-        print(os.getcwd())
-        with open(os.path.abspath("azure-sdk-for-python/testsettings_local.cfg"), "r") as f:
-            if "true" in f.readline():
-                is_live = True
-        if is_live:
-            seed(seed_to_file)
-            random_padding = ''.join(choice(ascii_lowercase) for i in range(4))
-        else:
-            with open("seed.txt", "r") as f:
-                seed_from_file = f.readline()
-            seed(seed_from_file)
-            random_padding = ''.join(choice(ascii_lowercase) for i in range(4))
-        name_prefix += random_padding
-
         super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
