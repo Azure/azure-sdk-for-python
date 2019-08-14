@@ -133,7 +133,13 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
-    for package_dir in [package for package in targeted_packages]:
+
+    for index, package_dir in enumerate(targeted_packages):
+        logging.info(
+            "Running tox for {}. {} of {}.".format(
+                package_dir, index, len(targeted_packages)
+            )
+        )
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
         tox_execution_array = ["tox"]
@@ -171,7 +177,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
 
         run_check_call(tox_execution_array, package_dir)
 
-    # TODO: a bit smarter here
+    # TODO: get a bit smarter here
     if not tox_env:
         collect_tox_coverage_files(targeted_packages)
 
