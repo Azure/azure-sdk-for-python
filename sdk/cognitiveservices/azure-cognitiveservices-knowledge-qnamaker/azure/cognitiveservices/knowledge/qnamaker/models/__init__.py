@@ -10,128 +10,65 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import ActiveLearningSettingsDTO
-    from ._models_py3 import AlterationsDTO
     from ._models_py3 import ContextDTO
-    from ._models_py3 import CreateKbDTO
-    from ._models_py3 import CreateKbInputDTO
-    from ._models_py3 import DeleteKbContentsDTO
-    from ._models_py3 import EndpointKeysDTO
-    from ._models_py3 import EndpointSettingsDTO
-    from ._models_py3 import EndpointSettingsDTOActiveLearning
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ErrorResponseError
-    from ._models_py3 import FileDTO
+    from ._models_py3 import FeedbackRecordDTO
+    from ._models_py3 import FeedbackRecordsDTO
     from ._models_py3 import InnerErrorModel
-    from ._models_py3 import KnowledgebaseDTO
-    from ._models_py3 import KnowledgebasesDTO
     from ._models_py3 import MetadataDTO
-    from ._models_py3 import Operation
     from ._models_py3 import PromptDTO
     from ._models_py3 import PromptDTOQna
-    from ._models_py3 import QnADocumentsDTO
     from ._models_py3 import QnADTO
     from ._models_py3 import QnADTOContext
-    from ._models_py3 import ReplaceKbDTO
-    from ._models_py3 import UpdateContextDTO
-    from ._models_py3 import UpdateKbContentsDTO
-    from ._models_py3 import UpdateKbOperationDTO
-    from ._models_py3 import UpdateKbOperationDTOAdd
-    from ._models_py3 import UpdateKbOperationDTODelete
-    from ._models_py3 import UpdateKbOperationDTOUpdate
-    from ._models_py3 import UpdateMetadataDTO
-    from ._models_py3 import UpdateQnaDTO
-    from ._models_py3 import UpdateQnaDTOContext
-    from ._models_py3 import UpdateQnaDTOMetadata
-    from ._models_py3 import UpdateQnaDTOQuestions
-    from ._models_py3 import UpdateQuestionsDTO
-    from ._models_py3 import WordAlterationsDTO
+    from ._models_py3 import QnASearchResult
+    from ._models_py3 import QnASearchResultContext
+    from ._models_py3 import QnASearchResultList
+    from ._models_py3 import QueryContextDTO
+    from ._models_py3 import QueryDTO
+    from ._models_py3 import QueryDTOContext
 except (SyntaxError, ImportError):
-    from ._models import ActiveLearningSettingsDTO
-    from ._models import AlterationsDTO
     from ._models import ContextDTO
-    from ._models import CreateKbDTO
-    from ._models import CreateKbInputDTO
-    from ._models import DeleteKbContentsDTO
-    from ._models import EndpointKeysDTO
-    from ._models import EndpointSettingsDTO
-    from ._models import EndpointSettingsDTOActiveLearning
     from ._models import Error
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ErrorResponseError
-    from ._models import FileDTO
+    from ._models import FeedbackRecordDTO
+    from ._models import FeedbackRecordsDTO
     from ._models import InnerErrorModel
-    from ._models import KnowledgebaseDTO
-    from ._models import KnowledgebasesDTO
     from ._models import MetadataDTO
-    from ._models import Operation
     from ._models import PromptDTO
     from ._models import PromptDTOQna
-    from ._models import QnADocumentsDTO
     from ._models import QnADTO
     from ._models import QnADTOContext
-    from ._models import ReplaceKbDTO
-    from ._models import UpdateContextDTO
-    from ._models import UpdateKbContentsDTO
-    from ._models import UpdateKbOperationDTO
-    from ._models import UpdateKbOperationDTOAdd
-    from ._models import UpdateKbOperationDTODelete
-    from ._models import UpdateKbOperationDTOUpdate
-    from ._models import UpdateMetadataDTO
-    from ._models import UpdateQnaDTO
-    from ._models import UpdateQnaDTOContext
-    from ._models import UpdateQnaDTOMetadata
-    from ._models import UpdateQnaDTOQuestions
-    from ._models import UpdateQuestionsDTO
-    from ._models import WordAlterationsDTO
-from ._qn_amaker_client_enums import (
-    EnvironmentType,
+    from ._models import QnASearchResult
+    from ._models import QnASearchResultContext
+    from ._models import QnASearchResultList
+    from ._models import QueryContextDTO
+    from ._models import QueryDTO
+    from ._models import QueryDTOContext
+from ._qn_amaker_runtime_client_enums import (
     ErrorCodeType,
-    KnowledgebaseEnvironmentType,
-    OperationStateType,
 )
 
 __all__ = [
-    'ActiveLearningSettingsDTO',
-    'AlterationsDTO',
     'ContextDTO',
-    'CreateKbDTO',
-    'CreateKbInputDTO',
-    'DeleteKbContentsDTO',
-    'EndpointKeysDTO',
-    'EndpointSettingsDTO',
-    'EndpointSettingsDTOActiveLearning',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
     'ErrorResponseError',
-    'FileDTO',
+    'FeedbackRecordDTO',
+    'FeedbackRecordsDTO',
     'InnerErrorModel',
-    'KnowledgebaseDTO',
-    'KnowledgebasesDTO',
     'MetadataDTO',
-    'Operation',
     'PromptDTO',
     'PromptDTOQna',
-    'QnADocumentsDTO',
     'QnADTO',
     'QnADTOContext',
-    'ReplaceKbDTO',
-    'UpdateContextDTO',
-    'UpdateKbContentsDTO',
-    'UpdateKbOperationDTO',
-    'UpdateKbOperationDTOAdd',
-    'UpdateKbOperationDTODelete',
-    'UpdateKbOperationDTOUpdate',
-    'UpdateMetadataDTO',
-    'UpdateQnaDTO',
-    'UpdateQnaDTOContext',
-    'UpdateQnaDTOMetadata',
-    'UpdateQnaDTOQuestions',
-    'UpdateQuestionsDTO',
-    'WordAlterationsDTO',
-    'KnowledgebaseEnvironmentType',
+    'QnASearchResult',
+    'QnASearchResultContext',
+    'QnASearchResultList',
+    'QueryContextDTO',
+    'QueryDTO',
+    'QueryDTOContext',
     'ErrorCodeType',
-    'OperationStateType',
-    'EnvironmentType',
 ]
