@@ -49,18 +49,24 @@ directive:
     $.Expiry.format = "str";
 ```
 
-### Add comp=metadata
+### BlobTagFilter
 ``` yaml
 directive:
-- from: ./blob-2019-02-02.json
-  where: $["x-ms-paths"]["/{containerName}?restype=container"]
+- from: swagger-document
+  where: $.parameters.BlobTagFilter
   transform: >
-    $.get.parameters.splice(0, 0, { name: "comp", in: "query", required: false, type: "string", enum: [ "metadata" ] });
-- from: ./blob-2019-02-02.json
-  where: $["x-ms-paths"]["/{containerName}/{blob}"]
-  transform: >
-    $.head.parameters.splice(0, 0, { name: "comp", in: "query", required: false, type: "string", enum: [ "metadata" ] });
+    $["x-ms-parameter-location"] = "method";
 ```
+
+### PathRenameMode
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters.PathRenameMode
+  transform: >
+    $["x-ms-parameter-location"] = "method";
+```
+
 
 ### Make AccessTier Unique
 autorest.python complains that the same enum has different values
