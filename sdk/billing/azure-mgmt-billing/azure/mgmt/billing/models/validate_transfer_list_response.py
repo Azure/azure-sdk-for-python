@@ -20,21 +20,16 @@ class ValidateTransferListResponse(Model):
 
     :ivar value: The list of transfer validation results.
     :vartype value: list[~azure.mgmt.billing.models.ValidateTransferResponse]
-    :ivar next_link: The link (url) to the next page of results.
-    :vartype next_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
-        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ValidateTransferResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ValidateTransferListResponse, self).__init__(**kwargs)
         self.value = None
-        self.next_link = None
