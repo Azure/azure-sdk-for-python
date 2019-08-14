@@ -23,24 +23,15 @@ class AzureBlobStorageConfiguration(Configuration):
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
-    :param filter: The filter parameter enables the caller to query blobs
-     whose tags match a given expression. The given expression must evaluate to
-     true for a blob to be returned in the results.
-    :type filter: str
-    :param path_rename_mode: Determines the behavior of the rename operation.
-     Possible values include: 'legacy', 'posix'
-    :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     :ivar version: Specifies the version of the operation to use for this
      request.
     :type version: str
     """
 
-    def __init__(self, url, filter, path_rename_mode=None, **kwargs):
+    def __init__(self, url, **kwargs):
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        if filter is None:
-            raise ValueError("Parameter 'filter' must not be None.")
 
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
@@ -50,8 +41,6 @@ class AzureBlobStorageConfiguration(Configuration):
         self.accept_language = None
 
         self.url = url
-        self.filter = filter
-        self.path_rename_mode = path_rename_mode
         self.version = "2019-02-02"
 
     def _configure(self, **kwargs):

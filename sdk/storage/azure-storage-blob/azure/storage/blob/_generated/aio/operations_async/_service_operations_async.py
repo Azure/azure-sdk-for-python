@@ -483,10 +483,14 @@ class ServiceOperations:
             return cls(response, None, response_headers)
     get_account_info.metadata = {'url': '/'}
 
-    async def filter_blobs(self, marker=None, maxresults=None, timeout=None, request_id=None, *, cls=None, **kwargs):
+    async def filter_blobs(self, filter, marker=None, maxresults=None, timeout=None, request_id=None, *, cls=None, **kwargs):
         """The Filter Blobs operation enables callers to list blobs in an account
         whose tags match a given search expression.
 
+        :param filter: The filter parameter enables the caller to query blobs
+         whose tags match a given expression. The given expression must
+         evaluate to true for a blob to be returned in the results.
+        :type filter: str
         :param marker: A string value that identifies the portion of the list
          of containers to be returned with the next listing operation. The
          operation returns the NextMarker value within the response body if the
@@ -536,7 +540,7 @@ class ServiceOperations:
             query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
         if maxresults is not None:
             query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
-        query_parameters['filter'] = self._serialize.query("self._config.filter", self._config.filter, 'str')
+        query_parameters['filter'] = self._serialize.query("filter", filter, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')

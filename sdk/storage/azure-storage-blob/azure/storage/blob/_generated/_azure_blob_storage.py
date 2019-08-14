@@ -46,19 +46,12 @@ class AzureBlobStorage(object):
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
     :type url: str
-    :param filter: The filter parameter enables the caller to query blobs
-     whose tags match a given expression. The given expression must evaluate to
-     true for a blob to be returned in the results.
-    :type filter: str
-    :param path_rename_mode: Determines the behavior of the rename operation.
-     Possible values include: 'legacy', 'posix'
-    :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     """
 
-    def __init__(self, url, filter, path_rename_mode=None, **kwargs):
+    def __init__(self, url, **kwargs):
 
         base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(url, filter, path_rename_mode, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
