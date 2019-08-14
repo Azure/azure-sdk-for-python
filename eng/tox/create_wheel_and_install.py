@@ -51,7 +51,7 @@ if __name__ == "__main__":
             # find the wheel in the set of prebuilt wheels
             if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
                 check_call(
-                    ["pip", "install", os.path.join(args.distribution_directory, wheel)]
+                    ["pip", "install", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)]
                 )
                 logging.info("Installed {w} from wheel directory".format(w=wheel))
             # it does't exist, so we need to error out
