@@ -17,7 +17,10 @@ import logging
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
+OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy",
+                        "azure-data-appconfiguration" #not certain what's going on here
+
+]
 
 
 def cleanup_folder(target_folder):
@@ -56,7 +59,7 @@ def process_glob_string(glob_string, target_root_dir):
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        return remove_omitted_packages(collected_directories)
+        return sorted(remove_omitted_packages(collected_directories))
 
 
 def remove_omitted_packages(collected_directories):
