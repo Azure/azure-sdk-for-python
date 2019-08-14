@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .arm_resource_properties import ARMResourceProperties
 
 
-class DatabaseAccountCreateUpdateParameters(Resource):
+class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB database accounts.
 
     Variables are only populated by the server, and will be ignored when

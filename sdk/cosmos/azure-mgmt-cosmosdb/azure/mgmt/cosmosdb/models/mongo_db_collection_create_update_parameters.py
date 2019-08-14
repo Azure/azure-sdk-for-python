@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .arm_resource_properties import ARMResourceProperties
 
 
-class MongoDBCollectionCreateUpdateParameters(Resource):
+class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB MongoDB collection.
 
     Variables are only populated by the server, and will be ignored when

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .arm_resource_properties import ARMResourceProperties
 
 
-class CassandraKeyspaceCreateUpdateParameters(Resource):
+class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB Cassandra keyspace.
 
     Variables are only populated by the server, and will be ignored when

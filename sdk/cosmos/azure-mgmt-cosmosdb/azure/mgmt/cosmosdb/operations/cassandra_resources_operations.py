@@ -53,9 +53,9 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of CassandraKeyspace
+        :return: An iterator like instance of CassandraKeyspaceGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.CassandraKeyspacePaged[~azure.mgmt.cosmosdb.models.CassandraKeyspace]
+         ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResultsPaged[~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -100,11 +100,11 @@ class CassandraResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.CassandraKeyspacePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.CassandraKeyspaceGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.CassandraKeyspacePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.CassandraKeyspaceGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -126,8 +126,8 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CassandraKeyspace or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.CassandraKeyspace or
+        :return: CassandraKeyspaceGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -167,7 +167,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CassandraKeyspace', response)
+            deserialized = self._deserialize('CassandraKeyspaceGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -219,7 +219,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CassandraKeyspace', response)
+            deserialized = self._deserialize('CassandraKeyspaceGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -246,12 +246,13 @@ class CassandraResourcesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns CassandraKeyspace or
-         ClientRawResponse<CassandraKeyspace> if raw==True
+        :return: An instance of LROPoller that returns
+         CassandraKeyspaceGetResults or
+         ClientRawResponse<CassandraKeyspaceGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraKeyspace]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraKeyspace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_cassandra_keyspace_initial(
@@ -265,7 +266,7 @@ class CassandraResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('CassandraKeyspace', response)
+            deserialized = self._deserialize('CassandraKeyspaceGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -381,8 +382,8 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Throughput or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Throughput or
+        :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -422,7 +423,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -460,7 +461,7 @@ class CassandraResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputUpdateParameters')
+        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -474,7 +475,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -495,18 +496,19 @@ class CassandraResourcesOperations(object):
         :param update_throughput_parameters: The RUs per second of the
          parameters to provide for the current Cassandra Keyspace.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Throughput or
-         ClientRawResponse<Throughput> if raw==True
+        :return: An instance of LROPoller that returns
+         ThroughputSettingsGetResults or
+         ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Throughput]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Throughput]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_cassandra_keyspace_throughput_initial(
@@ -520,7 +522,7 @@ class CassandraResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -553,9 +555,9 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of CassandraTable
+        :return: An iterator like instance of CassandraTableGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.CassandraTablePaged[~azure.mgmt.cosmosdb.models.CassandraTable]
+         ~azure.mgmt.cosmosdb.models.CassandraTableGetResultsPaged[~azure.mgmt.cosmosdb.models.CassandraTableGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -601,11 +603,11 @@ class CassandraResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.CassandraTablePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.CassandraTableGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.CassandraTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.CassandraTableGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -629,8 +631,8 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CassandraTable or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.CassandraTable or
+        :return: CassandraTableGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraTableGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -671,7 +673,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CassandraTable', response)
+            deserialized = self._deserialize('CassandraTableGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -724,7 +726,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CassandraTable', response)
+            deserialized = self._deserialize('CassandraTableGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -753,12 +755,13 @@ class CassandraResourcesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns CassandraTable or
-         ClientRawResponse<CassandraTable> if raw==True
+        :return: An instance of LROPoller that returns
+         CassandraTableGetResults or
+         ClientRawResponse<CassandraTableGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraTable]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraTableGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraTable]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraTableGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_cassandra_table_initial(
@@ -773,7 +776,7 @@ class CassandraResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('CassandraTable', response)
+            deserialized = self._deserialize('CassandraTableGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -895,8 +898,8 @@ class CassandraResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Throughput or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Throughput or
+        :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -937,7 +940,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -976,7 +979,7 @@ class CassandraResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputUpdateParameters')
+        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -990,7 +993,7 @@ class CassandraResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1013,18 +1016,19 @@ class CassandraResourcesOperations(object):
         :param update_throughput_parameters: The RUs per second of the
          parameters to provide for the current Cassandra table.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Throughput or
-         ClientRawResponse<Throughput> if raw==True
+        :return: An instance of LROPoller that returns
+         ThroughputSettingsGetResults or
+         ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Throughput]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Throughput]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_cassandra_table_throughput_initial(
@@ -1039,7 +1043,7 @@ class CassandraResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

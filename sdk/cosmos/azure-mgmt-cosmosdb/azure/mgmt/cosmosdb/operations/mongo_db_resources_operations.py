@@ -53,9 +53,9 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongoDBDatabase
+        :return: An iterator like instance of MongoDBDatabaseGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongoDBDatabasePaged[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResultsPaged[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -100,11 +100,11 @@ class MongoDBResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBDatabaseGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBDatabaseGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -126,8 +126,8 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongoDBDatabase or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabase or
+        :return: MongoDBDatabaseGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -167,7 +167,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDBDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -219,7 +219,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDBDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -246,12 +246,13 @@ class MongoDBResourcesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongoDBDatabase or
-         ClientRawResponse<MongoDBDatabase> if raw==True
+        :return: An instance of LROPoller that returns
+         MongoDBDatabaseGetResults or
+         ClientRawResponse<MongoDBDatabaseGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabase]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_mongo_db_database_initial(
@@ -265,7 +266,7 @@ class MongoDBResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongoDBDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -381,8 +382,8 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Throughput or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Throughput or
+        :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -422,7 +423,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -460,7 +461,7 @@ class MongoDBResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputUpdateParameters')
+        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -474,7 +475,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -495,18 +496,19 @@ class MongoDBResourcesOperations(object):
         :param update_throughput_parameters: The RUs per second of the
          parameters to provide for the current MongoDB database.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Throughput or
-         ClientRawResponse<Throughput> if raw==True
+        :return: An instance of LROPoller that returns
+         ThroughputSettingsGetResults or
+         ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Throughput]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Throughput]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_mongo_db_database_throughput_initial(
@@ -520,7 +522,7 @@ class MongoDBResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -553,9 +555,9 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongoDBCollection
+        :return: An iterator like instance of MongoDBCollectionGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongoDBCollectionPaged[~azure.mgmt.cosmosdb.models.MongoDBCollection]
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResultsPaged[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -601,11 +603,11 @@ class MongoDBResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBCollectionGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBCollectionGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -629,8 +631,8 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongoDBCollection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollection or
+        :return: MongoDBCollectionGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -671,7 +673,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDBCollection', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -724,7 +726,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDBCollection', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -753,12 +755,13 @@ class MongoDBResourcesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongoDBCollection or
-         ClientRawResponse<MongoDBCollection> if raw==True
+        :return: An instance of LROPoller that returns
+         MongoDBCollectionGetResults or
+         ClientRawResponse<MongoDBCollectionGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_mongo_db_collection_initial(
@@ -773,7 +776,7 @@ class MongoDBResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongoDBCollection', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -895,8 +898,8 @@ class MongoDBResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Throughput or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Throughput or
+        :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -937,7 +940,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -976,7 +979,7 @@ class MongoDBResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputUpdateParameters')
+        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -990,7 +993,7 @@ class MongoDBResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1013,18 +1016,19 @@ class MongoDBResourcesOperations(object):
         :param update_throughput_parameters: The RUs per second of the
          parameters to provide for the current MongoDB collection.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Throughput or
-         ClientRawResponse<Throughput> if raw==True
+        :return: An instance of LROPoller that returns
+         ThroughputSettingsGetResults or
+         ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Throughput]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Throughput]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_mongo_db_collection_throughput_initial(
@@ -1039,7 +1043,7 @@ class MongoDBResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

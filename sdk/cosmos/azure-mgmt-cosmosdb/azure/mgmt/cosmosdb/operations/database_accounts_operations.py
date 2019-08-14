@@ -53,8 +53,8 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.DatabaseAccount or
+        :return: DatabaseAccountGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -93,7 +93,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseAccount', response)
+            deserialized = self._deserialize('DatabaseAccountGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -146,7 +146,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseAccount', response)
+            deserialized = self._deserialize('DatabaseAccountGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -171,12 +171,13 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DatabaseAccount or
-         ClientRawResponse<DatabaseAccount> if raw==True
+        :return: An instance of LROPoller that returns
+         DatabaseAccountGetResults or
+         ClientRawResponse<DatabaseAccountGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.DatabaseAccount]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.DatabaseAccount]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._patch_initial(
@@ -190,7 +191,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('DatabaseAccount', response)
+            deserialized = self._deserialize('DatabaseAccountGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -249,7 +250,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseAccount', response)
+            deserialized = self._deserialize('DatabaseAccountGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -274,12 +275,13 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DatabaseAccount or
-         ClientRawResponse<DatabaseAccount> if raw==True
+        :return: An instance of LROPoller that returns
+         DatabaseAccountGetResults or
+         ClientRawResponse<DatabaseAccountGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.DatabaseAccount]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.DatabaseAccount]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -292,7 +294,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('DatabaseAccount', response)
+            deserialized = self._deserialize('DatabaseAccountGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -491,9 +493,9 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DatabaseAccount
+        :return: An iterator like instance of DatabaseAccountGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.DatabaseAccountPaged[~azure.mgmt.cosmosdb.models.DatabaseAccount]
+         ~azure.mgmt.cosmosdb.models.DatabaseAccountGetResultsPaged[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -536,11 +538,11 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabaseAccountPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DatabaseAccountGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabaseAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DatabaseAccountGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -558,9 +560,9 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DatabaseAccount
+        :return: An iterator like instance of DatabaseAccountGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.DatabaseAccountPaged[~azure.mgmt.cosmosdb.models.DatabaseAccount]
+         ~azure.mgmt.cosmosdb.models.DatabaseAccountGetResultsPaged[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -604,11 +606,11 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabaseAccountPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DatabaseAccountGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabaseAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DatabaseAccountGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .arm_resource_properties import ARMResourceProperties
 
 
-class GremlinDatabaseCreateUpdateParameters(Resource):
+class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB Gremlin database.
 
     Variables are only populated by the server, and will be ignored when

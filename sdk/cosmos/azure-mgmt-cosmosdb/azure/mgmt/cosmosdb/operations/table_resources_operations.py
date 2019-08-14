@@ -52,9 +52,9 @@ class TableResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Table
+        :return: An iterator like instance of TableGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.models.TablePaged[~azure.mgmt.cosmosdb.models.Table]
+         ~azure.mgmt.cosmosdb.models.TableGetResultsPaged[~azure.mgmt.cosmosdb.models.TableGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -99,11 +99,11 @@ class TableResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TablePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.TableGetResultsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.TableGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -125,8 +125,8 @@ class TableResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Table or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Table or
+        :return: TableGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.TableGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -166,7 +166,7 @@ class TableResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Table', response)
+            deserialized = self._deserialize('TableGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -218,7 +218,7 @@ class TableResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Table', response)
+            deserialized = self._deserialize('TableGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -245,12 +245,12 @@ class TableResourcesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Table or
-         ClientRawResponse<Table> if raw==True
+        :return: An instance of LROPoller that returns TableGetResults or
+         ClientRawResponse<TableGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Table]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Table]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.TableGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_table_initial(
@@ -264,7 +264,7 @@ class TableResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Table', response)
+            deserialized = self._deserialize('TableGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -380,8 +380,8 @@ class TableResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Throughput or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Throughput or
+        :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -421,7 +421,7 @@ class TableResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -459,7 +459,7 @@ class TableResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputUpdateParameters')
+        body_content = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -473,7 +473,7 @@ class TableResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -494,18 +494,19 @@ class TableResourcesOperations(object):
         :param update_throughput_parameters: The parameters to provide for the
          RUs per second of the current Table.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Throughput or
-         ClientRawResponse<Throughput> if raw==True
+        :return: An instance of LROPoller that returns
+         ThroughputSettingsGetResults or
+         ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Throughput]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Throughput]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_table_throughput_initial(
@@ -519,7 +520,7 @@ class TableResourcesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Throughput', response)
+            deserialized = self._deserialize('ThroughputSettingsGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .arm_resource_properties_py3 import ARMResourceProperties
 
 
-class SqlDatabaseCreateUpdateParameters(Resource):
+class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB SQL database.
 
     Variables are only populated by the server, and will be ignored when

@@ -15,8 +15,8 @@ try:
     from .location_py3 import Location
     from .failover_policy_py3 import FailoverPolicy
     from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .database_account_py3 import DatabaseAccount
-    from .sql_database_py3 import SqlDatabase
+    from .database_account_get_results_py3 import DatabaseAccountGetResults
+    from .sql_database_get_results_py3 import SqlDatabaseGetResults
     from .indexes_py3 import Indexes
     from .included_path_py3 import IncludedPath
     from .excluded_path_py3 import ExcludedPath
@@ -25,20 +25,21 @@ try:
     from .unique_key_py3 import UniqueKey
     from .unique_key_policy_py3 import UniqueKeyPolicy
     from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
-    from .sql_container_py3 import SqlContainer
-    from .mongo_db_database_py3 import MongoDBDatabase
-    from .mongo_db_collection_py3 import MongoDBCollection
-    from .table_py3 import Table
-    from .cassandra_keyspace_py3 import CassandraKeyspace
-    from .cassandra_table_py3 import CassandraTable
-    from .gremlin_database_py3 import GremlinDatabase
-    from .gremlin_graph_py3 import GremlinGraph
+    from .sql_container_get_results_py3 import SqlContainerGetResults
+    from .mongo_db_database_get_results_py3 import MongoDBDatabaseGetResults
+    from .mongo_db_collection_get_results_py3 import MongoDBCollectionGetResults
+    from .table_get_results_py3 import TableGetResults
+    from .cassandra_keyspace_get_results_py3 import CassandraKeyspaceGetResults
+    from .cassandra_table_get_results_py3 import CassandraTableGetResults
+    from .gremlin_database_get_results_py3 import GremlinDatabaseGetResults
+    from .gremlin_graph_get_results_py3 import GremlinGraphGetResults
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .failover_policies_py3 import FailoverPolicies
     from .region_for_online_offline_py3 import RegionForOnlineOffline
-    from .resource_py3 import Resource
+    from .arm_resource_properties_py3 import ARMResourceProperties
     from .extended_resource_properties_py3 import ExtendedResourceProperties
-    from .throughput_py3 import Throughput
+    from .extended_throughput_settings_properties_py3 import ExtendedThroughputSettingsProperties
+    from .throughput_settings_get_results_py3 import ThroughputSettingsGetResults
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
@@ -46,8 +47,8 @@ try:
     from .database_account_connection_string_py3 import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
-    from .throughput_resource_py3 import ThroughputResource
-    from .throughput_update_parameters_py3 import ThroughputUpdateParameters
+    from .throughput_settings_resource_py3 import ThroughputSettingsResource
+    from .throughput_settings_update_parameters_py3 import ThroughputSettingsUpdateParameters
     from .sql_database_resource_py3 import SqlDatabaseResource
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource_py3 import SqlContainerResource
@@ -91,8 +92,8 @@ except (SyntaxError, ImportError):
     from .location import Location
     from .failover_policy import FailoverPolicy
     from .virtual_network_rule import VirtualNetworkRule
-    from .database_account import DatabaseAccount
-    from .sql_database import SqlDatabase
+    from .database_account_get_results import DatabaseAccountGetResults
+    from .sql_database_get_results import SqlDatabaseGetResults
     from .indexes import Indexes
     from .included_path import IncludedPath
     from .excluded_path import ExcludedPath
@@ -101,20 +102,21 @@ except (SyntaxError, ImportError):
     from .unique_key import UniqueKey
     from .unique_key_policy import UniqueKeyPolicy
     from .conflict_resolution_policy import ConflictResolutionPolicy
-    from .sql_container import SqlContainer
-    from .mongo_db_database import MongoDBDatabase
-    from .mongo_db_collection import MongoDBCollection
-    from .table import Table
-    from .cassandra_keyspace import CassandraKeyspace
-    from .cassandra_table import CassandraTable
-    from .gremlin_database import GremlinDatabase
-    from .gremlin_graph import GremlinGraph
+    from .sql_container_get_results import SqlContainerGetResults
+    from .mongo_db_database_get_results import MongoDBDatabaseGetResults
+    from .mongo_db_collection_get_results import MongoDBCollectionGetResults
+    from .table_get_results import TableGetResults
+    from .cassandra_keyspace_get_results import CassandraKeyspaceGetResults
+    from .cassandra_table_get_results import CassandraTableGetResults
+    from .gremlin_database_get_results import GremlinDatabaseGetResults
+    from .gremlin_graph_get_results import GremlinGraphGetResults
     from .error_response import ErrorResponse, ErrorResponseException
     from .failover_policies import FailoverPolicies
     from .region_for_online_offline import RegionForOnlineOffline
-    from .resource import Resource
+    from .arm_resource_properties import ARMResourceProperties
     from .extended_resource_properties import ExtendedResourceProperties
-    from .throughput import Throughput
+    from .extended_throughput_settings_properties import ExtendedThroughputSettingsProperties
+    from .throughput_settings_get_results import ThroughputSettingsGetResults
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
@@ -122,8 +124,8 @@ except (SyntaxError, ImportError):
     from .database_account_connection_string import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
-    from .throughput_resource import ThroughputResource
-    from .throughput_update_parameters import ThroughputUpdateParameters
+    from .throughput_settings_resource import ThroughputSettingsResource
+    from .throughput_settings_update_parameters import ThroughputSettingsUpdateParameters
     from .sql_database_resource import SqlDatabaseResource
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource import SqlContainerResource
@@ -161,7 +163,7 @@ except (SyntaxError, ImportError):
     from .percentile_metric_value import PercentileMetricValue
     from .percentile_metric import PercentileMetric
     from .partition_metric import PartitionMetric
-from .database_account_paged import DatabaseAccountPaged
+from .database_account_get_results_paged import DatabaseAccountGetResultsPaged
 from .metric_paged import MetricPaged
 from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
@@ -169,15 +171,15 @@ from .operation_paged import OperationPaged
 from .percentile_metric_paged import PercentileMetricPaged
 from .partition_metric_paged import PartitionMetricPaged
 from .partition_usage_paged import PartitionUsagePaged
-from .sql_database_paged import SqlDatabasePaged
-from .sql_container_paged import SqlContainerPaged
-from .mongo_db_database_paged import MongoDBDatabasePaged
-from .mongo_db_collection_paged import MongoDBCollectionPaged
-from .table_paged import TablePaged
-from .cassandra_keyspace_paged import CassandraKeyspacePaged
-from .cassandra_table_paged import CassandraTablePaged
-from .gremlin_database_paged import GremlinDatabasePaged
-from .gremlin_graph_paged import GremlinGraphPaged
+from .sql_database_get_results_paged import SqlDatabaseGetResultsPaged
+from .sql_container_get_results_paged import SqlContainerGetResultsPaged
+from .mongo_db_database_get_results_paged import MongoDBDatabaseGetResultsPaged
+from .mongo_db_collection_get_results_paged import MongoDBCollectionGetResultsPaged
+from .table_get_results_paged import TableGetResultsPaged
+from .cassandra_keyspace_get_results_paged import CassandraKeyspaceGetResultsPaged
+from .cassandra_table_get_results_paged import CassandraTableGetResultsPaged
+from .gremlin_database_get_results_paged import GremlinDatabaseGetResultsPaged
+from .gremlin_graph_get_results_paged import GremlinGraphGetResultsPaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
@@ -199,8 +201,8 @@ __all__ = [
     'Location',
     'FailoverPolicy',
     'VirtualNetworkRule',
-    'DatabaseAccount',
-    'SqlDatabase',
+    'DatabaseAccountGetResults',
+    'SqlDatabaseGetResults',
     'Indexes',
     'IncludedPath',
     'ExcludedPath',
@@ -209,20 +211,21 @@ __all__ = [
     'UniqueKey',
     'UniqueKeyPolicy',
     'ConflictResolutionPolicy',
-    'SqlContainer',
-    'MongoDBDatabase',
-    'MongoDBCollection',
-    'Table',
-    'CassandraKeyspace',
-    'CassandraTable',
-    'GremlinDatabase',
-    'GremlinGraph',
+    'SqlContainerGetResults',
+    'MongoDBDatabaseGetResults',
+    'MongoDBCollectionGetResults',
+    'TableGetResults',
+    'CassandraKeyspaceGetResults',
+    'CassandraTableGetResults',
+    'GremlinDatabaseGetResults',
+    'GremlinGraphGetResults',
     'ErrorResponse', 'ErrorResponseException',
     'FailoverPolicies',
     'RegionForOnlineOffline',
-    'Resource',
+    'ARMResourceProperties',
     'ExtendedResourceProperties',
-    'Throughput',
+    'ExtendedThroughputSettingsProperties',
+    'ThroughputSettingsGetResults',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
@@ -230,8 +233,8 @@ __all__ = [
     'DatabaseAccountConnectionString',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
-    'ThroughputResource',
-    'ThroughputUpdateParameters',
+    'ThroughputSettingsResource',
+    'ThroughputSettingsUpdateParameters',
     'SqlDatabaseResource',
     'SqlDatabaseCreateUpdateParameters',
     'SqlContainerResource',
@@ -269,7 +272,7 @@ __all__ = [
     'PercentileMetricValue',
     'PercentileMetric',
     'PartitionMetric',
-    'DatabaseAccountPaged',
+    'DatabaseAccountGetResultsPaged',
     'MetricPaged',
     'UsagePaged',
     'MetricDefinitionPaged',
@@ -277,15 +280,15 @@ __all__ = [
     'PercentileMetricPaged',
     'PartitionMetricPaged',
     'PartitionUsagePaged',
-    'SqlDatabasePaged',
-    'SqlContainerPaged',
-    'MongoDBDatabasePaged',
-    'MongoDBCollectionPaged',
-    'TablePaged',
-    'CassandraKeyspacePaged',
-    'CassandraTablePaged',
-    'GremlinDatabasePaged',
-    'GremlinGraphPaged',
+    'SqlDatabaseGetResultsPaged',
+    'SqlContainerGetResultsPaged',
+    'MongoDBDatabaseGetResultsPaged',
+    'MongoDBCollectionGetResultsPaged',
+    'TableGetResultsPaged',
+    'CassandraKeyspaceGetResultsPaged',
+    'CassandraTableGetResultsPaged',
+    'GremlinDatabaseGetResultsPaged',
+    'GremlinGraphGetResultsPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
