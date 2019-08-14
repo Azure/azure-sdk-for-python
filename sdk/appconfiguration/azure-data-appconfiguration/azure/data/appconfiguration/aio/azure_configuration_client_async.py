@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import re
-from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.tracing.decorator import distributed_trace
@@ -120,8 +119,8 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def list_configuration_settings(
-            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
-    ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+            self, labels=None, keys=None, **kwargs
+    ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_date_time
@@ -164,16 +163,14 @@ class AzureAppConfigurationClient():
         return self._impl.list_configuration_settings(
             label=labels,
             key=keys,
-            fields=fields,
-            accept_date_time=accept_date_time,
             **kwargs
         )
 
     @distributed_trace_async
     async def get_configuration_setting(
-            self, key, label=None, accept_date_time=None, **kwargs
+            self, key, label=None, **kwargs
     ):
-        # type: (str, str, datetime, dict) -> ConfigurationSetting
+        # type: (str, str, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -201,7 +198,7 @@ class AzureAppConfigurationClient():
         return await self._impl.get_configuration_setting(
             key=key,
             label=label,
-            accept_date_time=accept_date_time,
+            accept_date_time=kwargs.get("accept_date_time"),
             headers=kwargs.get("headers"),
             error_map=error_map,
         )
@@ -248,13 +245,11 @@ class AzureAppConfigurationClient():
             self,
             key,
             value=None,
-            content_type=None,
-            tags=None,
             label=None,
             etag=None,
             **kwargs
     ):
-        # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
+        # type: (str, str, str, str, dict) -> ConfigurationSetting
         """Update specified attributes of the ConfigurationSetting
 
         :param key: key used to identify the ConfigurationSetting
@@ -287,8 +282,10 @@ class AzureAppConfigurationClient():
         current_configuration_setting = await self.get_configuration_setting(key, label)
         if value is not None:
             current_configuration_setting.value = value
+        content_type = kwargs.get("content_type")
         if content_type is not None:
             current_configuration_setting.content_type = content_type
+        tags = kwargs.get("tags")
         if tags is not None:
             current_configuration_setting.tags = tags
         return await self._impl.create_or_update_configuration_setting(
@@ -362,7 +359,7 @@ class AzureAppConfigurationClient():
         :type kwargs: dict
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -390,7 +387,7 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def list_revisions(
-            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
+            self, labels=None, keys=None, **kwargs
     ):  # type: (list, list, datetime, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
@@ -435,7 +432,5 @@ class AzureAppConfigurationClient():
         return self._impl.list_revisions(
             label=labels,
             key=keys,
-            fields=fields,
-            accept_date_time=accept_date_time,
-            headers=kwargs.get("headers"),
+            **kwargs
         )
