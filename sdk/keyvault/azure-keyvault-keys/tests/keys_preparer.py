@@ -59,10 +59,6 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        try:
-            name_prefix += str(hash(os.environ['RECORDING_NAME_SEED'])).replace("-", "")[:4]
-        except KeyError as e:
-            pass
         super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
@@ -117,12 +113,16 @@ class VaultClientPreparer(AzureMgmtPreparer):
             parameters = VaultCreateOrUpdateParameters(location=self.location, properties=properties)
 
             self.management_client = self.create_mgmt_client(KeyVaultManagementClient)
+            try:
+                hashed_padding = str(hash(os.environ['RECORDING_NAME_SEED'])).replace("-", "")[:4]
+            except KeyError as e:
+                hashed_padding = ""
 
             # ARM may return not found at first even though the resource group has been created
             retries = 4
             for i in range(retries):
                 try:
-                    vault = self.management_client.vaults.create_or_update(group, name, parameters).result()
+                    vault = self.management_client.vaults.create_or_update(group, name + hashed_padding, parameters).result()
                 except Exception as ex:
                     if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
                         raise
