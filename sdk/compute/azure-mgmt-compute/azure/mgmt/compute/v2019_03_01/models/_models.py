@@ -392,6 +392,36 @@ class AvailabilitySetUpdate(UpdateResource):
         self.sku = kwargs.get('sku', None)
 
 
+class BillingProfile(Model):
+    """Specifies the billing related details of a low priority VM or VMSS.
+    <br><br>Minimum api-version: 2019-03-01.
+
+    :param max_price: Specifies the maximum price you are willing to pay for a
+     low priority VM/VMSS. This price is in US Dollars. <br><br> This price
+     will be compared with the current low priority price for the VM size.
+     Also, the prices are compared at the time of create/update of low priority
+     VM/VMSS and the operation will only succeed if  the maxPrice is greater
+     than the current low priority price. <br><br> The maxPrice will also be
+     used for evicting a low priority VM/VMSS if the current low priority price
+     goes beyond the maxPrice after creation of VM/VMSS. <br><br> Possible
+     values are: <br><br> - Any decimal value greater than zero. Example:
+     $0.01538 <br><br> -1 – indicates default price to be up-to on-demand.
+     <br><br> You can set the maxPrice to -1 to indicate that the low priority
+     VM/VMSS should not be evicted for price reasons. Also, the default max
+     price is -1 if it is not provided by you. <br><br>Minimum api-version:
+     2019-03-01.
+    :type max_price: float
+    """
+
+    _attribute_map = {
+        'max_price': {'key': 'maxPrice', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BillingProfile, self).__init__(**kwargs)
+        self.max_price = kwargs.get('max_price', None)
+
+
 class BootDiagnostics(Model):
     """Boot Diagnostics is a debugging feature which allows you to view Console
     Output and Screenshot to diagnose VM status. <br><br> You can easily view
@@ -633,360 +663,6 @@ class DataDiskImage(Model):
         self.lun = None
 
 
-class DedicatedHost(Resource):
-    """Specifies information about the Dedicated host.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param platform_fault_domain: Fault domain of the dedicated host within a
-     dedicated host group.
-    :type platform_fault_domain: int
-    :param auto_replace_on_failure: Specifies whether the dedicated host
-     should be replaced automatically in case of a failure. The value is
-     defaulted to 'true' when not provided.
-    :type auto_replace_on_failure: bool
-    :ivar host_id: A unique id generated and assigned to the dedicated host by
-     the platform. <br><br> Does not change throughout the lifetime of the
-     host.
-    :vartype host_id: str
-    :ivar virtual_machines: A list of references to all virtual machines in
-     the Dedicated Host.
-    :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param license_type: Specifies the software license type that will be
-     applied to the VMs deployed on the dedicated host. <br><br> Possible
-     values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
-     **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
-     include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
-    :type license_type: str or
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
-    :ivar provisioning_time: The date when the host was first provisioned.
-    :vartype provisioning_time: datetime
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
-    :vartype provisioning_state: str
-    :ivar instance_view: The dedicated host instance view.
-    :vartype instance_view:
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostInstanceView
-    :param sku: Required. SKU of the dedicated host for Hardware Generation
-     and VM family. Only name is required to be set. List Microsoft.Compute
-     SKUs for a list of possible values.
-    :type sku: ~azure.mgmt.compute.v2019_03_01.models.Sku
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
-        'host_id': {'readonly': True},
-        'virtual_machines': {'readonly': True},
-        'provisioning_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'sku': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
-        'host_id': {'key': 'properties.hostId', 'type': 'str'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'DedicatedHostLicenseTypes'},
-        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHost, self).__init__(**kwargs)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
-        self.host_id = None
-        self.virtual_machines = None
-        self.license_type = kwargs.get('license_type', None)
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.sku = kwargs.get('sku', None)
-
-
-class DedicatedHostAllocatableVM(Model):
-    """Represents the dedicated host unutilized capacity in terms of a specific VM
-    size.
-
-    :param vm_size: VM size in terms of which the unutilized capacity is
-     represented.
-    :type vm_size: str
-    :param count: Maximum number of VMs of size vmSize that can fit in the
-     dedicated host's remaining capacity.
-    :type count: float
-    """
-
-    _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'float'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostAllocatableVM, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.count = kwargs.get('count', None)
-
-
-class DedicatedHostAvailableCapacity(Model):
-    """Dedicated host unutilized capacity.
-
-    :param allocatable_vms: The unutilized capacity of the dedicated host
-     represented in terms of each VM size that is allowed to be deployed to the
-     dedicated host.
-    :type allocatable_vms:
-     list[~azure.mgmt.compute.v2019_03_01.models.DedicatedHostAllocatableVM]
-    """
-
-    _attribute_map = {
-        'allocatable_vms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
-        self.allocatable_vms = kwargs.get('allocatable_vms', None)
-
-
-class DedicatedHostGroup(Resource):
-    """Specifies information about the dedicated host group that the dedicated
-    hosts should be assigned to. <br><br> Currently, a dedicated host can only
-    be added to a dedicated host group at creation time. An existing dedicated
-    host cannot be added to another dedicated host group.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param platform_fault_domain_count: Required. Number of fault domains that
-     the host group can span.
-    :type platform_fault_domain_count: int
-    :ivar hosts: A list of references to all dedicated hosts in the dedicated
-     host group.
-    :vartype hosts:
-     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group. Only single
-     zone is supported. The zone can be assigned only during creation. If not
-     provided, the group supports all zones in the region. If provided,
-     enforces each host in the group to be in the same zone.
-    :type zones: list[str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
-        'hosts': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostGroup, self).__init__(**kwargs)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.hosts = None
-        self.zones = kwargs.get('zones', None)
-
-
-class DedicatedHostGroupUpdate(UpdateResource):
-    """Specifies information about the dedicated host group that the dedicated
-    host should be assigned to. Only tags may be updated.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param platform_fault_domain_count: Required. Number of fault domains that
-     the host group can span.
-    :type platform_fault_domain_count: int
-    :ivar hosts: A list of references to all dedicated hosts in the dedicated
-     host group.
-    :vartype hosts:
-     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param zones: Availability Zone to use for this host group. Only single
-     zone is supported. The zone can be assigned only during creation. If not
-     provided, the group supports all zones in the region. If provided,
-     enforces each host in the group to be in the same zone.
-    :type zones: list[str]
-    """
-
-    _validation = {
-        'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
-        'hosts': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostGroupUpdate, self).__init__(**kwargs)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.hosts = None
-        self.zones = kwargs.get('zones', None)
-
-
-class DedicatedHostInstanceView(Model):
-    """The instance view of a dedicated host.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar asset_id: Specifies the unique id of the dedicated physical machine
-     on which the dedicated host resides.
-    :vartype asset_id: str
-    :param available_capacity: Unutilized capacity of the dedicated host.
-    :type available_capacity:
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostAvailableCapacity
-    :param statuses: The resource status information.
-    :type statuses:
-     list[~azure.mgmt.compute.v2019_03_01.models.InstanceViewStatus]
-    """
-
-    _validation = {
-        'asset_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostInstanceView, self).__init__(**kwargs)
-        self.asset_id = None
-        self.available_capacity = kwargs.get('available_capacity', None)
-        self.statuses = kwargs.get('statuses', None)
-
-
-class DedicatedHostUpdate(UpdateResource):
-    """Specifies information about the dedicated host. Only tags,
-    autoReplaceOnFailure and licenseType may be updated.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param platform_fault_domain: Fault domain of the dedicated host within a
-     dedicated host group.
-    :type platform_fault_domain: int
-    :param auto_replace_on_failure: Specifies whether the dedicated host
-     should be replaced automatically in case of a failure. The value is
-     defaulted to 'true' when not provided.
-    :type auto_replace_on_failure: bool
-    :ivar host_id: A unique id generated and assigned to the dedicated host by
-     the platform. <br><br> Does not change throughout the lifetime of the
-     host.
-    :vartype host_id: str
-    :ivar virtual_machines: A list of references to all virtual machines in
-     the Dedicated Host.
-    :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2019_03_01.models.SubResourceReadOnly]
-    :param license_type: Specifies the software license type that will be
-     applied to the VMs deployed on the dedicated host. <br><br> Possible
-     values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
-     **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
-     include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
-    :type license_type: str or
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostLicenseTypes
-    :ivar provisioning_time: The date when the host was first provisioned.
-    :vartype provisioning_time: datetime
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
-    :vartype provisioning_state: str
-    :ivar instance_view: The dedicated host instance view.
-    :vartype instance_view:
-     ~azure.mgmt.compute.v2019_03_01.models.DedicatedHostInstanceView
-    """
-
-    _validation = {
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
-        'host_id': {'readonly': True},
-        'virtual_machines': {'readonly': True},
-        'provisioning_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
-        'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
-        'host_id': {'key': 'properties.hostId', 'type': 'str'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResourceReadOnly]'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'DedicatedHostLicenseTypes'},
-        'provisioning_time': {'key': 'properties.provisioningTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DedicatedHostUpdate, self).__init__(**kwargs)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
-        self.host_id = None
-        self.virtual_machines = None
-        self.license_type = kwargs.get('license_type', None)
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-
-
 class DiagnosticsProfile(Model):
     """Specifies the boot diagnostic settings state. <br><br>Minimum api-version:
     2015-06-15.
@@ -1158,256 +834,32 @@ class Gallery(Resource):
         self.provisioning_state = None
 
 
-class GalleryApplication(Resource):
-    """Specifies information about the gallery Application Definition that you
-    want to create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this gallery Application Definition
-     resource. This property is updatable.
-    :type description: str
-    :param eula: The Eula agreement for the gallery Application Definition.
-    :type eula: str
-    :param privacy_statement_uri: The privacy statement uri.
-    :type privacy_statement_uri: str
-    :param release_note_uri: The release note uri.
-    :type release_note_uri: str
-    :param end_of_life_date: The end of life date of the gallery Application
-     Definition. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param supported_os_type: Required. This property allows you to specify
-     the supported type of the OS that application is built for. <br><br>
-     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
-     values include: 'Windows', 'Linux'
-    :type supported_os_type: str or
-     ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemTypes
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'supported_os_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplication, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.eula = kwargs.get('eula', None)
-        self.privacy_statement_uri = kwargs.get('privacy_statement_uri', None)
-        self.release_note_uri = kwargs.get('release_note_uri', None)
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.supported_os_type = kwargs.get('supported_os_type', None)
-
-
-class GalleryApplicationVersion(Resource):
-    """Specifies information about the gallery Application Version that you want
-    to create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param publishing_profile: Required.
-    :type publishing_profile:
-     ~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery Application
-     Version. The provisioning state, which only appears in the response.
-     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
-     'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_03_01.models.enum
-    :ivar replication_status:
-    :vartype replication_status:
-     ~azure.mgmt.compute.v2019_03_01.models.ReplicationStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'publishing_profile': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplicationVersion, self).__init__(**kwargs)
-        self.publishing_profile = kwargs.get('publishing_profile', None)
-        self.provisioning_state = None
-        self.replication_status = None
-
-
 class GalleryArtifactPublishingProfileBase(Model):
     """Describes the basic gallery artifact publishing profile.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param target_regions: The target regions where the Image Version is going
-     to be replicated to. This property is updatable.
-    :type target_regions:
-     list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
-    :param replica_count: The number of replicas of the Image Version to be
-     created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified. This property is updatable.
-    :type replica_count: int
-    :param exclude_from_latest: If set to true, Virtual Machines deployed from
-     the latest version of the Image Definition won't use this Image Version.
-    :type exclude_from_latest: bool
-    :ivar published_date: The timestamp for when the gallery Image Version is
-     published.
-    :vartype published_date: datetime
-    :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
-    """
-
-    _validation = {
-        'published_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
-        self.target_regions = kwargs.get('target_regions', None)
-        self.replica_count = kwargs.get('replica_count', None)
-        self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
-        self.published_date = None
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
-
-
-class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
-    """The publishing profile of a gallery Image Version.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param target_regions: The target regions where the Image Version is going
      to be replicated to. This property is updatable.
     :type target_regions:
      list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
-    :param replica_count: The number of replicas of the Image Version to be
-     created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified. This property is updatable.
-    :type replica_count: int
-    :param exclude_from_latest: If set to true, Virtual Machines deployed from
-     the latest version of the Image Definition won't use this Image Version.
-    :type exclude_from_latest: bool
-    :ivar published_date: The timestamp for when the gallery Image Version is
-     published.
-    :vartype published_date: datetime
-    :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
     :param source: Required.
-    :type source: ~azure.mgmt.compute.v2019_03_01.models.UserArtifactSource
-    :param content_type: Optional. May be used to help process this file. The
-     type of file contained in the source, e.g. zip, json, etc.
-    :type content_type: str
-    :param enable_health_check: Optional. Whether or not this application
-     reports health.
-    :type enable_health_check: bool
+    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
     """
 
     _validation = {
-        'published_date': {'readonly': True},
         'source': {'required': True},
     }
 
     _attribute_map = {
         'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
+        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
     }
 
     def __init__(self, **kwargs):
-        super(GalleryApplicationVersionPublishingProfile, self).__init__(**kwargs)
+        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
+        self.target_regions = kwargs.get('target_regions', None)
         self.source = kwargs.get('source', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.enable_health_check = kwargs.get('enable_health_check', None)
 
 
 class GalleryArtifactSource(Model):
@@ -1561,9 +1013,8 @@ class GalleryImage(Resource):
      **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemTypes
-    :param os_state: Required. This property allows the user to specify
-     whether the virtual machines created under this image are 'Generalized' or
-     'Specialized'. Possible values include: 'Generalized', 'Specialized'
+    :param os_state: Required. The allowed values for OS State are
+     'Generalized'. Possible values include: 'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2019_03_01.models.OperatingSystemStateTypes
     :param end_of_life_date: The end of life date of the gallery Image
@@ -1748,6 +1199,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      to be replicated to. This property is updatable.
     :type target_regions:
      list[~azure.mgmt.compute.v2019_03_01.models.TargetRegion]
+    :param source: Required.
+    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
     :param replica_count: The number of replicas of the Image Version to be
      created per region. This property would take effect for a region when
      regionalReplicaCount is not specified. This property is updatable.
@@ -1767,32 +1220,34 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      include: 'Standard_LRS', 'Standard_ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
-    :param source: Required.
-    :type source: ~azure.mgmt.compute.v2019_03_01.models.GalleryArtifactSource
     """
 
     _validation = {
-        'published_date': {'readonly': True},
         'source': {'required': True},
+        'published_date': {'readonly': True},
     }
 
     _attribute_map = {
         'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
+        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
         'replica_count': {'key': 'replicaCount', 'type': 'int'},
         'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
         'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
     }
 
     def __init__(self, **kwargs):
         super(GalleryImageVersionPublishingProfile, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
+        self.replica_count = kwargs.get('replica_count', None)
+        self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
+        self.published_date = None
+        self.end_of_life_date = kwargs.get('end_of_life_date', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
 class GalleryImageVersionStorageProfile(Model):
-    """This is the storage profile of a Gallery Image Version.
+    """This is the storage profile of a gallery Image Version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3634,24 +3089,6 @@ class RunCommandResult(Model):
         self.value = kwargs.get('value', None)
 
 
-class ScheduledEventsProfile(Model):
-    """ScheduledEventsProfile.
-
-    :param terminate_notification_profile: Specifies Terminate Scheduled Event
-     related configurations.
-    :type terminate_notification_profile:
-     ~azure.mgmt.compute.v2019_03_01.models.TerminateNotificationProfile
-    """
-
-    _attribute_map = {
-        'terminate_notification_profile': {'key': 'terminateNotificationProfile', 'type': 'TerminateNotificationProfile'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ScheduledEventsProfile, self).__init__(**kwargs)
-        self.terminate_notification_profile = kwargs.get('terminate_notification_profile', None)
-
-
 class Sku(Model):
     """Describes a virtual machine scale set sku.
 
@@ -3813,31 +3250,6 @@ class TargetRegion(Model):
         self.name = kwargs.get('name', None)
         self.regional_replica_count = kwargs.get('regional_replica_count', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
-
-
-class TerminateNotificationProfile(Model):
-    """TerminateNotificationProfile.
-
-    :param not_before_timeout: Configurable length of time a Virtual Machine
-     being deleted will have to potentially approve the Terminate Scheduled
-     Event before the event is auto approved (timed out). The configuration
-     must be specified in ISO 8601 format, the default value is 5 minutes
-     (PT5M)
-    :type not_before_timeout: str
-    :param enable: Specifies whether the Terminate Scheduled event is enabled
-     or disabled.
-    :type enable: bool
-    """
-
-    _attribute_map = {
-        'not_before_timeout': {'key': 'notBeforeTimeout', 'type': 'str'},
-        'enable': {'key': 'enable', 'type': 'bool'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TerminateNotificationProfile, self).__init__(**kwargs)
-        self.not_before_timeout = kwargs.get('not_before_timeout', None)
-        self.enable = kwargs.get('enable', None)
 
 
 class ThrottledRequestsInput(LogAnalyticsInputBase):
@@ -4099,34 +3511,6 @@ class UsageName(Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
-class UserArtifactSource(Model):
-    """The source image from which the Image Version is going to be created.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param file_name: Required. Required. The fileName of the artifact.
-    :type file_name: str
-    :param media_link: Required. Required. The mediaLink of the artifact, must
-     be a readable storage blob.
-    :type media_link: str
-    """
-
-    _validation = {
-        'file_name': {'required': True},
-        'media_link': {'required': True},
-    }
-
-    _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'media_link': {'key': 'mediaLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(UserArtifactSource, self).__init__(**kwargs)
-        self.file_name = kwargs.get('file_name', None)
-        self.media_link = kwargs.get('media_link', None)
-
-
 class VaultCertificate(Model):
     """Describes a single certificate reference in a Key Vault, and where the
     certificate should reside on the VM.
@@ -4267,9 +3651,6 @@ class VirtualMachine(Resource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
-    :param host: Specifies information about the dedicated host that the
-     virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -4326,7 +3707,6 @@ class VirtualMachine(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
@@ -4347,7 +3727,6 @@ class VirtualMachine(Resource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
         self.license_type = kwargs.get('license_type', None)
@@ -4901,9 +4280,6 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param automatic_os_upgrade_properties:
     :type automatic_os_upgrade_properties:
      ~azure.mgmt.compute.v2019_03_01.models.AutomaticOSUpgradeProperties
-    :param hyper_vgeneration: Possible values include: 'V1', 'V2'
-    :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_03_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -4920,7 +4296,6 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
-        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4929,7 +4304,6 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.os_disk_image = kwargs.get('os_disk_image', None)
         self.data_disk_images = kwargs.get('data_disk_images', None)
         self.automatic_os_upgrade_properties = kwargs.get('automatic_os_upgrade_properties', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
 
 
 class VirtualMachineInstanceView(Model):
@@ -6385,10 +5759,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
-    :param scheduled_events_profile: Specifies Scheduled Event related
-     configurations.
-    :type scheduled_events_profile:
-     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
+    :param billing_profile: Specifies the billing related details of a low
+     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     """
 
     _attribute_map = {
@@ -6398,7 +5772,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
-        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
+        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -6409,7 +5783,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.extension_profile = kwargs.get('extension_profile', None)
         self.license_type = kwargs.get('license_type', None)
-        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
+        self.billing_profile = kwargs.get('billing_profile', None)
 
 
 class VirtualMachineScaleSetVM(Resource):
@@ -6791,10 +6165,10 @@ class VirtualMachineScaleSetVMProfile(Model):
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param scheduled_events_profile: Specifies Scheduled Event related
-     configurations.
-    :type scheduled_events_profile:
-     ~azure.mgmt.compute.v2019_03_01.models.ScheduledEventsProfile
+    :param billing_profile: Specifies the billing related details of a low
+     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     """
 
     _attribute_map = {
@@ -6806,7 +6180,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
         'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
-        'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
+        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
     }
 
     def __init__(self, **kwargs):
@@ -6819,7 +6193,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.license_type = kwargs.get('license_type', None)
         self.priority = kwargs.get('priority', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
-        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
+        self.billing_profile = kwargs.get('billing_profile', None)
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(Model):
@@ -6971,9 +6345,6 @@ class VirtualMachineUpdate(UpdateResource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
-    :param host: Specifies information about the dedicated host that the
-     virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -7018,7 +6389,6 @@ class VirtualMachineUpdate(UpdateResource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
-        'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
@@ -7038,7 +6408,6 @@ class VirtualMachineUpdate(UpdateResource):
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.host = kwargs.get('host', None)
         self.provisioning_state = None
         self.instance_view = None
         self.license_type = kwargs.get('license_type', None)
