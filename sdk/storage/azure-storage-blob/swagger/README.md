@@ -67,6 +67,16 @@ directive:
     $["x-ms-parameter-location"] = "method";
 ```
 
+### BlobHierarchyListSegment
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.BlobHierarchyListSegment
+  transform: >
+    $.properties.BlobPrefixes.xml = { "name": "BlobPrefix" };
+    $.properties.BlobItems.xml = { "name": "Blob" };
+
+```
 
 ### Make AccessTier Unique
 autorest.python complains that the same enum has different values

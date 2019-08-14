@@ -121,8 +121,8 @@ class BlobHierarchyListSegment(Model):
     }
 
     _attribute_map = {
-        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefixes', 'itemsName': 'BlobPrefix'}},
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
+        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefix', 'itemsName': 'BlobPrefix'}},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
     }
     _xml_map = {
         'name': 'Blobs'
