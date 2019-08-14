@@ -1,6 +1,7 @@
 [MASTER]
 ignore-patterns=test_*
 reports=no
+load-plugins=pylint.extensions.docparams
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
